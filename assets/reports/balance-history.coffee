@@ -14,7 +14,8 @@ selectAccountsBtn = $('#select-accouts')
 activeAccountsField = selectAccountsBtn.find('span')
 
 accountsModal = $('#accounts-modal')
-accountsModalCheckboxes = accountsModal.find('input[type = checkbox]')
+accountsModalAccountCheckboxes = accountsModal.find('.account-check-box')
+accountsModalGroupCheckboxes = accountsModal.find('.group-check-box')
 accountsModalUpdateBtn = accountsModal.find('#update-btn')
 
 startBalanceField = $('.start-balance')
@@ -88,8 +89,8 @@ setDateUi = (start, end) -> $('#report-range span').html(start.format('D MMM, YY
 
 updateActiveAccounts = () ->
 	activeAccounts = []
-	accountsModalCheckboxes.each(() -> if ($(this).is(':checked')) then activeAccounts.push($(this).val()))
-	activeAccountsField.html(activeAccounts.length + ' of ' + accountsModalCheckboxes.length)
+	accountsModalAccountCheckboxes.each(() -> if ($(this).is(':checked')) then activeAccounts.push($(this).val()))
+	activeAccountsField.html(activeAccounts.length + ' of ' + accountsModalAccountCheckboxes.length)
 
 busy = false
 
@@ -165,6 +166,34 @@ populateChart = (data) ->
 
 selectAccountsBtn.click(() ->
 	accountsModal.modal('show')
+)
+
+accountsModalAccountCheckboxes.change(() ->
+	group = $(this).closest('.group-wrapper')
+	groupCheckbox = group.find('.group-check-box')
+	countChecked = 0
+	countUnchecked = 0
+	group.find('.account-check-box').each(() ->
+		if ($(this).is(':checked'))
+			++countChecked
+		else
+			++countUnchecked
+	)
+	if (countChecked == 0)
+		groupCheckbox.prop('checked', false)
+		groupCheckbox.prop('indeterminate', false)
+	else if (countUnchecked == 0)
+		groupCheckbox.prop('checked', true)
+		groupCheckbox.prop('indeterminate', false)
+	else
+		groupCheckbox.prop('checked', false)
+		groupCheckbox.prop('indeterminate', true)
+)
+
+accountsModalGroupCheckboxes.change(() ->
+	accountCheckboxes = $(this).closest('.group-wrapper').find('.account-check-box')
+	accountCheckboxes.prop('checked', $(this).is(':checked'))
+	accountCheckboxes.first().trigger('change')
 )
 
 accountsModalUpdateBtn.click(() ->
