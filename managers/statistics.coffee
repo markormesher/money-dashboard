@@ -174,11 +174,19 @@ manager = {
 					"""
 					SELECT
 						COALESCE(SUM(amount), 0) AS balance,
-						GREATEST(?, (SELECT MIN(#{dateField}) FROM transaction WHERE owner = ?)) AS initial_date
+						GREATEST(?, (
+							SELECT MIN(#{dateField})
+							FROM transaction
+							WHERE owner = ? AND account_id IN (?))
+						) AS initial_date
 					FROM transaction
-					WHERE #{dateField} <= GREATEST(?, (SELECT MIN(#{dateField}) FROM transaction WHERE owner = ?)) AND owner = ? AND account_id IN (?);
+					WHERE #{dateField} <= GREATEST(?, (
+						SELECT MIN(#{dateField})
+						FROM transaction
+						WHERE owner = ? AND account_id IN (?))
+					) AND owner = ? AND account_id IN (?);
 					"""
-					[start, user.activeProfile.id, start, user.activeProfile.id, user.activeProfile.id, accounts]
+					[start, user.activeProfile.id, accounts, start, user.activeProfile.id, accounts, user.activeProfile.id, accounts]
 					(err, results) ->
 						conn.release()
 						if (err) then return c(err)
