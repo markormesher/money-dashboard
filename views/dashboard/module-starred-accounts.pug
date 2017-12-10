@@ -1,4 +1,4 @@
-- starredAccounts = starredAccounts || {}
+- starredAccounts = starredAccounts || []
 
 mixin account(account)
 	div.col-xs-12.col-sm-6
@@ -6,15 +6,16 @@ mixin account(account)
 			strong= account['name']
 		canvas(id = 'history-chart-' + account['id'])
 
-div.x_panel
-	div.x_title
-		h2
-			i.fa.fa-fw.fa-star.text-muted.title-icon
-			| Starred Accounts
-		div.clearfix
-	div.x_content
-		for account in starredAccounts
-			+account(account)
+if (starredAccounts.length)
+	div.x_panel
+		div.x_title
+			h2
+				i.fa.fa-fw.fa-star.text-muted.title-icon
+				| Starred Accounts
+			div.clearfix
+		div.x_content
+			for account in starredAccounts
+				+account(account)
 
-script
-	| var starredAccounts = !{JSON.stringify(starredAccounts)}
+	script
+		| var starredAccounts = !{JSON.stringify(starredAccounts)}
