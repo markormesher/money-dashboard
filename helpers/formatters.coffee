@@ -8,7 +8,9 @@ formatters = {
 
 	formatCurrency: (amount, forGraph) ->
 		if (forGraph)
-			if (amount >= 1000 && amount / 1000 == Math.floor(amount / 1000))
+			if (amount >= 1000000 && amount / 1000000 == Math.floor(amount / 1000000))
+				return Math.floor(amount / 1000000) + 'm'
+			else if (amount >= 1000 && amount / 1000 == Math.floor(amount / 1000))
 				return Math.floor(amount / 1000) + 'k'
 			else
 				return amount.toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')
