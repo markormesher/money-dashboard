@@ -1,5 +1,6 @@
 async = require('async')
 rfr = require('rfr')
+moment = require('moment')
 mysql = rfr('./helpers/mysql')
 formatters = rfr('./helpers/formatters')
 BudgetManager = rfr('./managers/budgets')
@@ -248,6 +249,36 @@ manager = {
 
 				callback(null, output)
 		)
+
+
+	getStarredAccountBalanceHistory: (user, callback) ->
+		start = moment().subtract(1, 'year').format('YYYY-MM-DD')
+		end = moment().format('YYYY-MM-DD')
+		mysql.getConnection((conn) -> conn.query(
+			"""
+			SELECT id, name
+			FROM account
+			WHERE active = true AND show_on_dashboard = true AND owner = ?
+			ORDER BY display_order ASC;
+			"""
+			user.activeProfile.id
+			(err, accounts) ->
+				conn.release()
+				if (err) then return callback(err)
+
+				queries = []
+				makeCallback = (account) -> ((c) -> manager.getBalanceHistory(user, start, end, [account['id']], c))
+				for account in accounts
+					queries.push(makeCallback(account))
+
+				async.parallel(queries, (innerErr, results) ->
+					if (innerErr) then return callback(innerErr)
+					for result, i in results
+						result['id'] = accounts[i]['id']
+						result['name'] = accounts[i]['name']
+					callback(null, results)
+				)
+		))
 
 
 	getBudgetPerformance: (user, start, end, callback) ->

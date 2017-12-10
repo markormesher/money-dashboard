@@ -1,13 +1,20 @@
-getActionsHtml = (id, active) ->
+getActionsHtml = (id, active, showOnDash) ->
 	toggleIcon = if (active) then 'fa-toggle-on' else 'fa-toggle-off'
+	showOnDashIcon = if (active && showOnDash) then 'fa-star' else 'fa-star-o'
+	showOnDashDisabled = if (!active) then 'disabled' else ''
 	rawHtml = """
 		<div class="btn-group">
 			<button class="btn btn-mini btn-default edit-btn" data-id="__ID__"><i class="fa fa-fw fa-pencil"></i></button>
 			<button class="btn btn-mini btn-default active-toggle-btn" data-id="__ID__"><i class="fa fa-fw __TOGGLE_ICON__"></i></button>
+			<button class="btn btn-mini btn-default show-on-dash-toggle-btn" data-id="__ID__" __SHOW_ON_DASH_DISABLED__><i class="fa fa-fw __SHOW_ON_DASH_ICON__"></i></button>
 			<button class="btn btn-mini btn-default delete-btn" data-id="__ID__"><i class="fa fa-fw fa-trash"></i></button>
 		</div>
 	"""
-	return rawHtml.replace(///__ID__///g, id).replace(///__TOGGLE_ICON__///g, toggleIcon)
+	return rawHtml
+		.replace(///__ID__///g, id)
+		.replace(///__TOGGLE_ICON__///g, toggleIcon)
+		.replace(///__SHOW_ON_DASH_ICON__///g, showOnDashIcon)
+		.replace(///__SHOW_ON_DASH_DISABLED__///g, showOnDashDisabled)
 
 getOrderingHtml = (id) ->
 	rawHtml = """
@@ -55,7 +62,7 @@ initDataTable = () ->
 					displayData.push([
 						d['name']
 						typeNames[d['type']]
-						getActionsHtml(d['id'], d['active'])
+						getActionsHtml(d['id'], d['active'], d['show_on_dashboard'])
 						getOrderingHtml(d['id'])
 					])
 				return displayData
@@ -67,6 +74,7 @@ initDataTable = () ->
 onTableReload = () ->
 	$('.delete-btn').click(() -> deleteAccount($(this), $(this).data('id')))
 	$('.active-toggle-btn').click(() -> toggleAccountActive($(this), $(this).data('id')))
+	$('.show-on-dash-toggle-btn').click(() -> toggleShowOnDashboard($(this), $(this).data('id')))
 	$('.edit-btn').click(() -> startEditAccount($(this).data('id')))
 	rows = $('#accounts tbody tr')
 	rows.first().find('.move-up-btn').prop('disabled', true)
@@ -123,21 +131,26 @@ setEditorModalLock = (locked) ->
 		editorModal['save-btn'].find('i').addClass('fa-save').removeClass('fa-circle-o-notch').removeClass('fa-spin')
 
 toggleAccountActive = (btn, id) ->
-	if (btn.hasClass('btn-danger'))
-		btn.find('i').removeClass('fa-toggle-on').removeClass('fa-toggle-off').addClass('fa-circle-o-notch').addClass('fa-spin')
-		$.post(
-			"/settings/accounts/toggleactive/#{id}"
-		).done(() ->
-			dataTable.ajax.reload()
-		).fail(() ->
-			toastr.error('Sorry, that account couldn\'t be activated/deactivated!')
-			dataTable.ajax.reload()
-		)
-	else
-		btn.removeClass('btn-default').addClass('btn-danger')
-		setTimeout((() ->
-			btn.addClass('btn-default').removeClass('btn-danger')
-		), 2000)
+	btn.find('i').removeClass('fa-toggle-on').removeClass('fa-toggle-off').addClass('fa-circle-o-notch').addClass('fa-spin')
+	$.post(
+		"/settings/accounts/toggleactive/#{id}"
+	).done(() ->
+		dataTable.ajax.reload()
+	).fail(() ->
+		toastr.error('Sorry, that account couldn\'t be activated/deactivated!')
+		dataTable.ajax.reload()
+	)
+
+toggleShowOnDashboard = (btn, id) ->
+	btn.find('i').removeClass('fa-star').removeClass('fa-star-o').addClass('fa-circle-o-notch').addClass('fa-spin')
+	$.post(
+		"/settings/accounts/toggleshowondashboard/#{id}"
+	).done(() ->
+		dataTable.ajax.reload()
+	).fail(() ->
+		toastr.error('Sorry, that account couldn\'t be added/removed from the dashboard!')
+		dataTable.ajax.reload()
+	)
 
 deleteAccount = (btn, id) ->
 	if (btn.hasClass('btn-danger'))

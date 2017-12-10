@@ -16,6 +16,7 @@ router.get('/', auth.checkAndRefuse, (req, res, next) ->
 			'budgets': (callback) -> StatisticsManager.getCurrentBudgets(res.locals.user, (err, result) -> callback(err, result))
 			'alerts': (callback) -> StatisticsManager.getAlerts(res.locals.user, (err, result) -> callback(err, result))
 			'summaryData': (callback) -> StatisticsManager.getSummaryData(res.locals.user, startDate, endDate, (err, result) -> callback(err, result))
+			'starredAccounts': (callback) -> StatisticsManager.getStarredAccountBalanceHistory(res.locals.user, (err, result) -> callback(err, result))
 		},
 		(err, results) ->
 			if (err)
@@ -30,6 +31,7 @@ router.get('/', auth.checkAndRefuse, (req, res, next) ->
 				budgets: results['budgets']
 				alerts: results['alerts']
 				summaryData: results['summaryData']
+				starredAccounts: results['starredAccounts']
 			})
 	)
 )
