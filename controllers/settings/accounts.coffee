@@ -45,6 +45,16 @@ router.post('/edit/:accountId', auth.checkAndRefuse, (req, res) ->
 	)
 )
 
+router.post('/reorder/:accountId', auth.checkAndRefuse, (req, res) ->
+	accountId = req.params['accountId']
+	direction = req.body['direction']
+
+	AccountManager.reorderAccount(res.locals.user, accountId, direction, (err) ->
+		res.status(if (err) then 400 else 200)
+		res.end()
+	)
+)
+
 router.post('/toggleactive/:accountId', auth.checkAndRefuse, (req, res) ->
 	accountId = req.params['accountId']
 
@@ -58,16 +68,6 @@ router.post('/delete/:accountId', auth.checkAndRefuse, (req, res) ->
 	accountId = req.params['accountId']
 
 	AccountManager.deleteAccount(res.locals.user, accountId, (err) ->
-		res.status(if (err) then 400 else 200)
-		res.end()
-	)
-)
-
-router.post('/reorder/:accountId', auth.checkAndRefuse, (req, res) ->
-	accountId = req.params['accountId']
-	direction = req.body['direction']
-
-	AccountManager.reorderAccount(res.locals.user, accountId, direction, (err) ->
 		res.status(if (err) then 400 else 200)
 		res.end()
 	)
