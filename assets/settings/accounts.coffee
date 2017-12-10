@@ -131,38 +131,26 @@ setEditorModalLock = (locked) ->
 		editorModal['save-btn'].find('i').addClass('fa-save').removeClass('fa-circle-o-notch').removeClass('fa-spin')
 
 toggleAccountActive = (btn, id) ->
-	if (btn.hasClass('btn-danger'))
-		btn.find('i').removeClass('fa-toggle-on').removeClass('fa-toggle-off').addClass('fa-circle-o-notch').addClass('fa-spin')
-		$.post(
-			"/settings/accounts/toggleactive/#{id}"
-		).done(() ->
-			dataTable.ajax.reload()
-		).fail(() ->
-			toastr.error('Sorry, that account couldn\'t be activated/deactivated!')
-			dataTable.ajax.reload()
-		)
-	else
-		btn.removeClass('btn-default').addClass('btn-danger')
-		setTimeout((() ->
-			btn.addClass('btn-default').removeClass('btn-danger')
-		), 2000)
+	btn.find('i').removeClass('fa-toggle-on').removeClass('fa-toggle-off').addClass('fa-circle-o-notch').addClass('fa-spin')
+	$.post(
+		"/settings/accounts/toggleactive/#{id}"
+	).done(() ->
+		dataTable.ajax.reload()
+	).fail(() ->
+		toastr.error('Sorry, that account couldn\'t be activated/deactivated!')
+		dataTable.ajax.reload()
+	)
 
 toggleShowOnDashboard = (btn, id) ->
-	if (btn.hasClass('btn-danger'))
-		btn.find('i').removeClass('fa-star').removeClass('fa-star-o').addClass('fa-circle-o-notch').addClass('fa-spin')
-		$.post(
-			"/settings/accounts/toggleshowondashboard/#{id}"
-		).done(() ->
-			dataTable.ajax.reload()
-		).fail(() ->
-			toastr.error('Sorry, that account couldn\'t be added/removed from the dashboard!')
-			dataTable.ajax.reload()
-		)
-	else
-		btn.removeClass('btn-default').addClass('btn-danger')
-		setTimeout((() ->
-			btn.addClass('btn-default').removeClass('btn-danger')
-		), 2000)
+	btn.find('i').removeClass('fa-star').removeClass('fa-star-o').addClass('fa-circle-o-notch').addClass('fa-spin')
+	$.post(
+		"/settings/accounts/toggleshowondashboard/#{id}"
+	).done(() ->
+		dataTable.ajax.reload()
+	).fail(() ->
+		toastr.error('Sorry, that account couldn\'t be added/removed from the dashboard!')
+		dataTable.ajax.reload()
+	)
 
 deleteAccount = (btn, id) ->
 	if (btn.hasClass('btn-danger'))
