@@ -271,8 +271,6 @@ manager = {
 				for account in accounts
 					queries.push(makeCallback(account))
 
-				console.log(queries)
-
 				async.parallel(queries, (innerErr, results) ->
 					if (innerErr) then return callback(innerErr)
 					for result, i in results
