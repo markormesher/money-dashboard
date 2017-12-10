@@ -28,7 +28,7 @@ makeChart = (id) ->
 					type: 'linear'
 					position: 'left'
 					ticks: {
-						callback: (value) -> window.formatters.formatCurrency(value)
+						callback: (value) -> window.formatters.formatCurrency(value, true)
 						beginAtZero: window.user.settings['report_bal_history_settings_start_at_zero'] == 'yes'
 					}
 				}]

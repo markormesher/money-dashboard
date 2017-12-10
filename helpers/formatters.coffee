@@ -6,8 +6,14 @@ monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oc
 
 formatters = {
 
-	formatCurrency: (amount) ->
-		return amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')
+	formatCurrency: (amount, forGraph) ->
+		if (forGraph)
+			if (amount >= 1000 && amount / 1000 == Math.floor(amount / 1000))
+				return Math.floor(amount / 1000) + 'k'
+			else
+				return amount.toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')
+		else
+			return amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')
 
 	formatDate: (input) ->
 		if (!(typeof input == typeof new Date()))
