@@ -125,21 +125,21 @@ manager = {
 
 
 	toggleAccountActive: (user, id, callback) ->
-		mysql.getConnection((conn) -> conn.query('UPDATE account SET active = !active WHERE id = ? AND owner = ?;', [id, user.id], (err) ->
+		mysql.getConnection((conn) -> conn.query('UPDATE account SET active = !active WHERE id = ? AND owner = ?;', [id, user.activeProfile.id], (err) ->
 			conn.release()
 			callback(err)
 		))
 
 
 	toggleShowAccountOnDashboard: (user, id, callback) ->
-		mysql.getConnection((conn) -> conn.query('UPDATE account SET show_on_dashboard = !show_on_dashboard WHERE id = ? AND owner = ?;', [id, user.id], (err) ->
+		mysql.getConnection((conn) -> conn.query('UPDATE account SET show_on_dashboard = !show_on_dashboard WHERE id = ? AND owner = ?;', [id, user.activeProfile.id], (err) ->
 			conn.release()
 			callback(err)
 		))
 
 
 	deleteAccount: (user, id, callback) ->
-		mysql.getConnection((conn) -> conn.query('UPDATE account SET deleted = true WHERE id = ? AND owner = ?;', [id, user.id], (err) ->
+		mysql.getConnection((conn) -> conn.query('UPDATE account SET deleted = true WHERE id = ? AND owner = ?;', [id, user.activeProfile.id], (err) ->
 			conn.release()
 			callback(err)
 		))
