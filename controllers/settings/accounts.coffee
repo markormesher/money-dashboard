@@ -64,6 +64,15 @@ router.post('/toggleactive/:accountId', auth.checkAndRefuse, (req, res) ->
 	)
 )
 
+router.post('/toggleshowondashboard/:accountId', auth.checkAndRefuse, (req, res) ->
+	accountId = req.params['accountId']
+
+	AccountManager.toggleShowAccountOnDashboard(res.locals.user, accountId, (err) ->
+		res.status(if (err) then 400 else 200)
+		res.end()
+	)
+)
+
 router.post('/delete/:accountId', auth.checkAndRefuse, (req, res) ->
 	accountId = req.params['accountId']
 
