@@ -1,5 +1,6 @@
 async = require('async')
 rfr = require('rfr')
+moment = require('moment')
 mysql = rfr('./helpers/mysql')
 formatters = rfr('./helpers/formatters')
 BudgetManager = rfr('./managers/budgets')
@@ -251,8 +252,8 @@ manager = {
 
 
 	getStarredAccountBalanceHistory: (user, callback) ->
-		start = '2016-12-10'
-		end = '2017-12-10'
+		start = moment().subtract(1, 'year').format('YYYY-MM-DD')
+		end = moment().format('YYYY-MM-DD')
 		mysql.getConnection((conn) -> conn.query(
 			"""
 			SELECT id, name
