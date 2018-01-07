@@ -38,7 +38,7 @@ chart = new Chart($('#history-chart'), {
 				tension: 0
 			}
 			point: {
-				radius: 1
+				radius: 0
 			}
 		}
 		tooltips: {
@@ -125,6 +125,7 @@ populateChart = (data) ->
 	dataset = {
 		label: 'Balance'
 		borderColor: 'rgba(115, 135, 156, 1.0)'
+		borderWidth: 1
 		backgroundColor: 'rgba(115, 135, 156, 0.2)'
 		data: []
 	}
