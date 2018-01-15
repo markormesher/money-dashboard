@@ -18,7 +18,7 @@ div#accounts-modal.modal.fade(tabindex = -1)
 						if (groupedAccounts[group].length > 0)
 							div.group-wrapper
 								div.checkbox(class = firstGroup ? 'no-margin' : 'top-margin'): label
-									input(type = 'checkbox', value = group, checked = true).group-check-box.text-muted
+									input(type = 'checkbox', value = group, checked = true).group-check-box
 									strong  #{groupTitles[group]}
 
 								for a in groupedAccounts[group]
