@@ -1,21 +1,14 @@
 import {Profile} from "../../models/Profile";
 import {User} from "../../models/User";
+import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
 
 const getActions = (profile: Profile) => {
 	const user: User = window.MoneyDashboard.user;
 
-	const actions: string[] = [];
-	actions.push(`<a href="/settings/profiles/edit/${profile.id}">Edit</a>`);
-
-	if (user.profiles.length > 1) {
-		actions.push(`<a href="/settings/profiles/delete/${profile.id}">Delete</a>`);
-	}
-
-	if (actions.length === 0) {
-		return '<span class="text-muted">None</span>';
-	} else {
-		return actions.join(' <span class="text-muted">&bull;</span> ');
-	}
+	return generationActionsHtml([
+		createEditAction(`/settings/profiles/edit/${profile.id}`),
+		user.profiles.length > 1 && !profile.active ? createDeleteAction(`/settings/profiles/delete/${profile.id}`) : null
+	]);
 };
 
 $(() => {

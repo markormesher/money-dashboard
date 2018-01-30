@@ -2,7 +2,7 @@ import Bluebird = require('bluebird');
 import {User} from '../models/User';
 import {Profile} from '../models/Profile';
 
-function getById(id: string, user?: User): Bluebird<Profile> {
+function getProfileById(id: string, user?: User): Bluebird<Profile> {
 	return Profile
 			.findOne({where: {id: id}})
 			.then((profile) => {
@@ -14,36 +14,60 @@ function getById(id: string, user?: User): Bluebird<Profile> {
 			});
 }
 
-function createAndAddToUser(name: string, user: User): Bluebird<User> {
-	return Profile.create({
-		name: name,
-		userId: user.id
-	}).then((profile) => {
-		if (!user.profiles) {
-			user.profiles = [];
-		}
-		user.profiles.push(profile);
-		return user.save();
-	});
+function createAndAddToUser(user: User, profileName: string): Bluebird<User> {
+	return Profile
+			.create({
+				name: profileName,
+				userId: user.id
+			})
+			.then((profile) => {
+				if (!user.profiles) {
+					user.profiles = [];
+				}
+				user.profiles.push(profile);
+				return user.save();
+			});
 }
 
-function setActiveProfile(user: User, profile: Profile): Bluebird<User> {
-	return Bluebird.resolve()
-			.then(() => {
-				if (profile.userId !== user.id) {
-					throw new Error("Cannot set active profile");
+function deleteProfile(user: User, profileId: string): Bluebird<void> {
+	return getProfileById(profileId, user)
+			.then((profile) => {
+				if (!profile) {
+					throw new Error('That profile does not exist');
+				} else if (profile.active) {
+					throw new Error('Cannot delete an active profile');
+				} else if (user.profiles.length <= 1) {
+					throw new Error('Cannot delete a user\'s last profile');
+				} else {
+					return profile;
 				}
-			}).then(() => {
+			})
+			.then((profile) => profile.destroy());
+}
+
+function setActiveProfile(user: User, profileId: string): Bluebird<User> {
+	return getProfileById(profileId, user)
+			.then((profile) => {
+				if (!profile) {
+					throw new Error('That profile does not exist');
+				} else {
+					return;
+				}
+			})
+			.then(() => {
 				return Profile.update({active: false}, {where: {userId: user.id}});
-			}).then(() => {
-				return Profile.update({active: true}, {where: {id: profile.id}})
-			}).then(() => {
+			})
+			.then(() => {
+				return Profile.update({active: true}, {where: {id: profileId}})
+			})
+			.then(() => {
 				return user;
 			});
 }
 
 export {
-	getById,
+	getProfileById,
 	createAndAddToUser,
+	deleteProfile,
 	setActiveProfile
 }

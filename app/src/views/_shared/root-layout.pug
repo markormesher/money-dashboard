@@ -30,7 +30,7 @@ html
 
 		script(type = 'text/javascript') window.MoneyDashboard = {};
 		script(type = 'text/javascript') window.MoneyDashboard.toastrMessages = !{JSON.stringify(locals.flash || [])};
-		script(type = 'text/javascript') window.MoneyDashboard.user = !{JSON.stringify(locals.user, null, 0)};
+		script(type = 'text/javascript') window.MoneyDashboard.user = !{JSON.stringify(locals.user || {})};
 
 		script(src = '/global/bundle.js')
 

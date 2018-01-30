@@ -6,7 +6,7 @@
 
 // globally-useful styles
 
-a, button {
+a:not(.btn-mini), button:not(.btn-mini) {
 	i.fa.fa-fw {
 		margin-right: 8px;
 	}
@@ -19,6 +19,12 @@ a, button {
 .text-muted {
 	color: inherit !important;
 	opacity: 0.6;
+}
+
+.btn-mini {
+	padding: 2px 6px;
+	font-size: 11px;
+	line-height: 13px;
 }
 
 // core layout

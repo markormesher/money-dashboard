@@ -32,7 +32,7 @@ function getOrRegisterWithGoogleProfile(googleProfile: any): Bluebird<User> {
 	}).then((user: User) => {
 		// make sure the user has a profile
 		if (!user.profiles || user.profiles.length === 0) {
-			return ProfileManager.createAndAddToUser('Default Profile', user);
+			return ProfileManager.createAndAddToUser(user, 'Default Profile');
 		} else {
 			return user;
 		}
@@ -40,7 +40,7 @@ function getOrRegisterWithGoogleProfile(googleProfile: any): Bluebird<User> {
 		// make sure exactly one profile is active
 		const activeProfileCount = _.sumBy(user.profiles, (profile) => profile.active ? 1 : 0);
 		if (activeProfileCount !== 1) {
-			return ProfileManager.setActiveProfile(user, user.profiles[0]);
+			return ProfileManager.setActiveProfile(user, user.profiles[0].id);
 		} else {
 			return user;
 		}
