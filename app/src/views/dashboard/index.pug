@@ -4,7 +4,7 @@ block page-body
 
 	div.row
 		div.col-xs-12.col-md-8
-			p Main
+			pre= JSON.stringify(locals.user, null, 2)
 
 		div.col-xs-12.col-md-4
-			p Side
+			p Side content

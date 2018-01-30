@@ -33,11 +33,11 @@ block body
 					li.dropdown
 						a.dropdown-toggle(data-toggle = 'dropdown', href = 'javascript:;')
 							span.hidden-xs= activeProfile.name
-							i.fa.fa-fw.fa-caret-down.text-muted
+							i.fa.fa-caret-down.text-muted
 
 						ul.dropdown-menu.pull-right
 							each profile in user.profiles
-								li: a(href = '#')
+								li: a(href = '/settings/profiles/select/' + profile.id)
 									if (profile.active)
 										i.fa.fa-fw.fa-check-square-o
 									else
@@ -46,7 +46,11 @@ block body
 
 							li.divider
 
-							li: a(href = '#')
+							li: a(href = '/settings/profiles')
+								i.fa.fa-fw.fa-pencil
+								| Edit Profiles
+
+							li: a(href = '/settings/profiles/edit')
 								i.fa.fa-fw.fa-plus
 								| New Profile
 
@@ -54,7 +58,7 @@ block body
 						a.user-profile.dropdown-toggle(data-toggle = 'dropdown', href = 'javascript:;')
 							img(src = user.image)
 							span.hidden-xs= user.displayName
-							i.fa.fa-fw.fa-caret-down.text-muted
+							i.fa.fa-caret-down.text-muted
 
 						ul.dropdown-menu.pull-right
 							li: a(href = '/auth/logout')
@@ -63,16 +67,13 @@ block body
 
 			div.right_col(style = 'min-height: 425px;')
 				div.container-fluid
-					if (!_.noTitle)
+					if (_.title)
 						div.page-title
 							h3= _.title
 							div.extra
 								block page-title-extra
 
 						div.clearfix
-
-					// TODO: remove this later
-					pre= JSON.stringify(user, null, 2)
 
 					block page-body
 

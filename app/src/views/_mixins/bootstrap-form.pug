@@ -1,0 +1,44 @@
+mixin bootstrapForm(form)
+	- const action = form.action || '#'
+	- const method = form.method || 'post'
+	- const rows = form.rows || []
+
+	form.validate(action= action, method= method)
+		for row in rows
+			div.row
+				- var fields = row.fields || []
+				for field in fields
+					-
+						var sizes = field.sizes || ['xs-12', 'md-6']
+						var type = field.type || 'text'
+						var name = field.name || ''
+						var btnClasses = field.btnClasses || []
+						var label = field.label || 'You forgot the label'
+						var value = field.value || undefined
+						var btnIcon = field.btnIcon || undefined
+
+						var wrapperAttrs = field.wrapperAttrs || {}
+						var labelAttrs = field.labelAttrs || {}
+						var inputAttrs = field.inputAttrs || {}
+
+						var classes = 'form-group'
+						for (const i in sizes)
+							classes += ' col-' + sizes[i]
+
+					div(class= classes)&attributes(wrapperAttrs)
+						case type
+							when 'text'
+								label(for= name)&attributes(labelAttrs)= label
+								input.form-control(id= name, name= name, type = 'text', value= value)&attributes(inputAttrs)
+
+							when 'submit'
+								-
+									var btnClass = 'btn'
+									for (const i in btnClasses)
+										btnClass += ' ' + btnClasses[i]
+								button(class= btnClass)&attributes(inputAttrs)
+									if (btnIcon)
+										i(class= 'fa fa-fw ' + btnIcon)
+									| #{label}
+
+

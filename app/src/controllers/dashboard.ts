@@ -7,7 +7,6 @@ const router = Express.Router();
 router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 	res.render('dashboard/index', {
 		_: {
-			noTitle: true,
 			activePage: 'dashboard',
 		}
 	})

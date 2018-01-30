@@ -1,0 +1,24 @@
+extends ../../_shared/page-layout
+
+block page-head
+	link(rel = 'stylesheet', href = '/_npm/datatables.net-bs/css/dataTables.bootstrap.css')
+
+block page-title-extra
+	a.btn.btn-success(href = '/settings/profiles/edit')
+		i.fa.fa-fw.fa-plus
+		| New Profile
+
+block page-body
+
+	div.row
+		div.col-xs-12
+			table#profiles.table.table-hover
+				thead
+					tr
+						th Name
+						th Actions
+
+block page-scripts
+	script(src = '/_npm/datatables.net/js/jquery.dataTables.js')
+	script(src = '/_npm/datatables.net-bs/js/dataTables.bootstrap.js')
+	script(src = '/profiles/bundle.js')

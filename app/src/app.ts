@@ -8,9 +8,9 @@ import Passport = require('passport');
 import NodeSassMiddleware = require('node-sass-middleware');
 import ConfigLoader = require('./helpers/config-loader');
 import PassportConfig = require('./helpers/passport-config');
-import AuthHelper = require('./helpers/auth-helper');
 import SequelizeDb = require('./helpers/db');
 import {StatusError} from './extensions/StatusError';
+import {User} from "./models/User";
 
 const app = Express();
 
@@ -46,11 +46,11 @@ app.use(ExpressFlash());
 PassportConfig.init(Passport);
 app.use(Passport.initialize());
 app.use(Passport.session());
-app.use(AuthHelper.loadUser);
 
 // controllers
 app.use('/', require('./controllers/dashboard'));
 app.use('/auth', require('./controllers/auth'));
+app.use('/settings/profiles', require('./controllers/settings/profiles'));
 
 // kill favicon requests
 app.use('/favicon.ico', (req: Request, res: Response) => res.end());

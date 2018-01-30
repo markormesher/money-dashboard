@@ -6,7 +6,7 @@
 
 // globally-useful styles
 
-a {
+a, button {
 	i.fa.fa-fw {
 		margin-right: 8px;
 	}
@@ -27,6 +27,12 @@ a {
 	font-size: 20px;
 	i {
 		padding: 2px 0;
+	}
+}
+
+a.dropdown-toggle {
+	i.fa {
+		margin-left: 8px;
 	}
 }
 

@@ -1,3 +1,4 @@
+- _ = _ || {}
 - active = _.activePage || undefined
 
 div.menu_section
@@ -7,3 +8,10 @@ div.menu_section
 		li(class = (active === 'dashboard' ? 'active' : '')): a(href = '/')
 			i.fa.fa-fw.fa-dashboard
 			| Dashboard
+
+	h3 Settings
+	ul.nav.side-menu
+
+		li(class = (active === 'settings/profiles' ? 'active' : '')): a(href = '/settings/profiles')
+			i.fa.fa-fw.fa-users
+			| Profiles

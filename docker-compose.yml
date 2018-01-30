@@ -13,6 +13,8 @@ services:
       - session.secret
     environment:
       - ENV=dev
+    volumes:
+      - ./app/src/views:/usr/src/app/dist/views
     ports:
       - "3006:3000"
     command: ["./wait-for-it/wait-for-it.sh", "postgres:5432", "--timeout=30", "--strict", "--", "node", "./dist/app.js"]

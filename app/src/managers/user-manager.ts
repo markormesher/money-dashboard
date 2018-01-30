@@ -11,6 +11,11 @@ function getById(id: string): Bluebird<User> {
 		where: {
 			id: id
 		}
+	}).then((user) => {
+		if (user) {
+			user.profiles.sort((a, b) => a.name.localeCompare(b.name))
+		}
+		return user;
 	});
 }
 
