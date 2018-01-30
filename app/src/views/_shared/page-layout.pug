@@ -1,0 +1,81 @@
+extends root-layout
+
+block head
+	block page-head
+
+block body
+
+	- user = locals.user
+	- activeProfile = locals.activeProfile
+
+	div.container.body
+		div.main_container
+
+			div.col-md-3.left_col
+				div.left_col.scroll-view
+
+					div.navbar.nav_title
+						a.site_title(href = '/')
+							i.fa.fa-fw.fa-gbp
+							| &nbsp;
+							span Money Dashboard
+
+					div.clearfix
+
+					br
+
+					div#sidebar-menu.main_menu_side.hidden-print.main_menu
+						include navigation
+
+			div.top_nav: div.nav_menu: nav
+				div.nav.toggle: a#menu_toggle: i.fa.fa-bars
+				ul.nav.navbar-nav.navbar-right
+					li.dropdown
+						a.dropdown-toggle(data-toggle = 'dropdown', href = 'javascript:;')
+							span.hidden-xs= activeProfile.name
+							i.fa.fa-fw.fa-caret-down.text-muted
+
+						ul.dropdown-menu.pull-right
+							each profile in user.profiles
+								li: a(href = '#')
+									if (profile.active)
+										i.fa.fa-fw.fa-check-square-o
+									else
+										i.fa.fa-fw.fa-square-o
+									| #{profile.name}
+
+							li.divider
+
+							li: a(href = '#')
+								i.fa.fa-fw.fa-plus
+								| New Profile
+
+					li.dropdown
+						a.user-profile.dropdown-toggle(data-toggle = 'dropdown', href = 'javascript:;')
+							img(src = user.image)
+							span.hidden-xs= user.displayName
+							i.fa.fa-fw.fa-caret-down.text-muted
+
+						ul.dropdown-menu.pull-right
+							li: a(href = '/auth/logout')
+								i.fa.fa-fw.fa-sign-out.title-icon
+								| Logout
+
+			div.right_col(style = 'min-height: 425px;')
+				div.container-fluid
+					if (!_.noTitle)
+						div.page-title
+							h3= _.title
+							div.extra
+								block page-title-extra
+
+						div.clearfix
+
+					// TODO: remove this later
+					pre= JSON.stringify(user, null, 2)
+
+					block page-body
+
+block scripts
+
+	block page-scripts

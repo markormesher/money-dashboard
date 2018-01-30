@@ -1,0 +1,9 @@
+- active = _.activePage || undefined
+
+div.menu_section
+	h3 General
+	ul.nav.side-menu
+
+		li(class = (active === 'dashboard' ? 'active' : '')): a(href = '/')
+			i.fa.fa-fw.fa-dashboard
+			| Dashboard
