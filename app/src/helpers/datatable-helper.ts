@@ -1,6 +1,6 @@
 import Bluebird = require("bluebird");
-import {WhereOptions} from "sequelize";
 import {Request} from "express";
+import {IFindOptions} from "sequelize-typescript";
 
 interface DatatableResponse<T> {
 	recordsTotal: number;
@@ -10,7 +10,7 @@ interface DatatableResponse<T> {
 
 // TODO: figure out what type "model" is meant to be
 
-function getData<T>(model: any, req: Request, countFilter: WhereOptions<T>, dataFilter: WhereOptions<T>): Bluebird<DatatableResponse<T>> {
+function getData<T>(model: any, req: Request, countFilter: IFindOptions<T>, dataFilter: IFindOptions<T>): Bluebird<DatatableResponse<T>> {
 
 	const offset = parseInt(req.query['start']);
 	const limit = parseInt(req.query['length']);
@@ -21,14 +21,13 @@ function getData<T>(model: any, req: Request, countFilter: WhereOptions<T>, data
 		return [columns[rawOrderItem.column].data, rawOrderItem.dir];
 	});
 
+	dataFilter.order = order;
+	dataFilter.offset = offset;
+	dataFilter.limit = limit;
+
 	return Bluebird.all([
-		model.count({where: countFilter}),
-		model.findAll({
-			where: dataFilter,
-			order: order,
-			offset: offset,
-			limit: limit
-		}),
+		model.count(countFilter),
+		model.findAll(dataFilter),
 	]).then(results => {
 		const [totalCount, data] = results;
 		return {

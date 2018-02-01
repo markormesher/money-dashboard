@@ -6,7 +6,6 @@ block head
 block body
 
 	- user = locals.user
-	- activeProfile = locals.activeProfile
 
 	div.container.body
 		div.main_container
@@ -32,13 +31,13 @@ block body
 				ul.nav.navbar-nav.navbar-right
 					li.dropdown
 						a.dropdown-toggle(data-toggle = 'dropdown', href = 'javascript:;')
-							span.hidden-xs= activeProfile.name
+							span.hidden-xs= user.activeProfile.name
 							i.fa.fa-caret-down.text-muted
 
 						ul.dropdown-menu.pull-right
 							each profile in user.profiles
 								li: a(href = '/settings/profiles/select/' + profile.id)
-									if (profile.active)
+									if (profile.id === user.activeProfile.id)
 										i.fa.fa-fw.fa-check-square-o
 									else
 										i.fa.fa-fw.fa-square-o

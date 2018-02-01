@@ -1,11 +1,13 @@
 import Express = require('express');
 
-import {Op, WhereOptions} from 'sequelize'
+import {Op} from 'sequelize'
 import {NextFunction, Request, Response} from 'express';
 import AuthHelper = require('../../helpers/auth-helper');
 import ProfileManager = require('../../managers/profile-manager');
 import {Profile} from '../../models/Profile';
 import {getData} from "../../helpers/datatable-helper";
+import {IFindOptions} from "sequelize-typescript";
+import {User} from "../../models/User";
 
 const router = Express.Router();
 
@@ -21,12 +23,25 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user;
 	const searchTerm = req.query['search']['value'];
-	const countQuery: WhereOptions<Profile> = {
-		userId: user.id
+
+	const countQuery: IFindOptions<Profile> = {
+		include: [{
+			model: User,
+			where: {
+				id: user.id
+			}
+		}]
 	};
-	const dataQuery: WhereOptions<Profile> = {
-		userId: user.id,
-		name: {[Op.iLike]: `%${searchTerm}%`}
+	const dataQuery: IFindOptions<Profile> = {
+		where: {
+			name: {[Op.iLike]: `%${searchTerm}%`}
+		},
+		include: [{
+			model: User,
+			where: {
+				id: user.id
+			}
+		}]
 	};
 
 	getData(Profile, req, countQuery, dataQuery)
@@ -37,8 +52,9 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 router.get('/edit/:profileId?', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user;
 	const profileId = req.params['profileId'];
+
 	ProfileManager
-			.getProfileById(profileId, user)
+			.getProfile(user, profileId)
 			.then((profile) => {
 				res.render('settings/profiles/edit', {
 					_: {
@@ -54,17 +70,12 @@ router.get('/edit/:profileId?', AuthHelper.requireUser, (req: Request, res: Resp
 router.post('/edit/:profileId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user;
 	const profileId = req.params['profileId'];
-	ProfileManager
-			.getProfileById(profileId)
-			.then((profile) => {
-				profile = profile || new Profile();
+	const properties = {
+		name: req.body['name']
+	};
 
-				// update and save profile
-				profile.name = req.body['name'];
-				profile.active = profile.active || false;
-				profile.userId = user.id;
-				return profile.save();
-			})
+	ProfileManager
+			.saveProfile(user, profileId, properties)
 			.then(() => {
 				res.flash('success', 'Profile saved');
 				res.redirect('/settings/profiles');
@@ -82,14 +93,12 @@ router.post('/delete/:profileId', AuthHelper.requireUser, (req: Request, res: Re
 			.catch(next);
 });
 
-router.get('/select/:profileId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/select/:profileId', AuthHelper.requireUser, (req: Request, res: Response) => {
 	const user = req.user;
 	const profileId = req.params['profileId'];
 
-	ProfileManager
-			.setActiveProfile(user, profileId)
-			.then(() => res.redirect(req.get('Referrer') || '/'))
-			.catch(next);
+	user.activeProfile = user.profiles.find((p: Profile) => p.id === profileId);
+	req.login(user, () => res.redirect(req.get('Referrer') || '/'));
 });
 
 export = router;

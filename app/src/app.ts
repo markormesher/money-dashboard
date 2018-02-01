@@ -10,7 +10,6 @@ import ConfigLoader = require('./helpers/config-loader');
 import PassportConfig = require('./helpers/passport-config');
 import SequelizeDb = require('./helpers/db');
 import {StatusError} from './extensions/StatusError';
-import {User} from "./models/User";
 
 const app = Express();
 
@@ -89,6 +88,8 @@ app.use((error: StatusError, req: Request, res: Response, next: NextFunction) =>
 	if (name === message) {
 		message = undefined;
 	}
+
+	console.log(error);
 
 	res.status(status);
 	res.render('_shared/error', {

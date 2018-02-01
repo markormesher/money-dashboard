@@ -1,7 +1,11 @@
 import Sequelize = require('sequelize');
-import {Column, DataType, HasMany, IsUUID, Model, Table} from "sequelize-typescript";
+import {BelongsToMany, Column, DataType, DefaultScope, IsUUID, Model, Table} from "sequelize-typescript";
 import {Profile} from "./Profile";
+import {UserProfile} from "./UserProfile";
 
+@DefaultScope({
+	include: [() => Profile]
+})
 @Table
 export class User extends Model<User> {
 
@@ -22,7 +26,10 @@ export class User extends Model<User> {
 	@Column
 	image: string;
 
-	@HasMany(() => Profile)
-	profiles: Profile[]
+	@BelongsToMany(() => Profile, () => UserProfile)
+	profiles: Profile[];
+
+	// set in session, not stored in DB
+	activeProfile: Profile;
 
 }

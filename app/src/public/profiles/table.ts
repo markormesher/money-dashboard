@@ -7,7 +7,7 @@ const getActions = (profile: Profile) => {
 
 	return generationActionsHtml([
 		createEditAction(`/settings/profiles/edit/${profile.id}`),
-		user.profiles.length > 1 && !profile.active ? createDeleteAction(`/settings/profiles/delete/${profile.id}`) : null
+		user.profiles.length > 1 ? createDeleteAction(`/settings/profiles/delete/${profile.id}`) : null
 	]);
 };
 

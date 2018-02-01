@@ -1,11 +1,11 @@
-import _ = require('lodash');
 import {Request, Response, NextFunction, RequestHandler} from 'express';
+import {User} from "../models/User";
+import {Profile} from "../models/Profile";
 
 const loadUser: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	if (user) {
 		res.locals.user = user;
-		res.locals.activeProfile = _.filter(user.profiles, (profile) => profile.active)[0];
 	} else {
 		res.locals.user = undefined;
 	}

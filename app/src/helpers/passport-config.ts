@@ -14,11 +14,33 @@ const init = (passport: Passport) => {
 		passReqToCallback: true
 	};
 
-	passport.serializeUser((user: User, callback) => callback(null, user.id));
+	passport.serializeUser((user: User, callback) => {
+		const userId = user.id;
+		const profileId = user.activeProfile ? user.activeProfile.id : null;
+		callback(null, JSON.stringify([userId, profileId]));
+	});
 
-	passport.deserializeUser((userId: string, callback) => {
+	passport.deserializeUser((serialised: string, callback) => {
+		if (!serialised) {
+			return callback(null, null);
+		}
+
+		const userAndProfileId = JSON.parse(serialised) as string[];
+		if (userAndProfileId.length !== 2) {
+			return callback(new Error('Invalid user serialisation'));
+		}
+
+		const userId = userAndProfileId[0];
+		const profileId = userAndProfileId[1];
+
 		UserManager.getById(userId)
-				.then(user => callback(null, user))
+				.then(user => {
+					user.activeProfile = user.profiles.find(p => !profileId || p.id === profileId);
+					if (!user.activeProfile) {
+						user.activeProfile = user.profiles[0];
+					}
+					callback(null, user)
+				})
 				.catch(callback);
 	});
 

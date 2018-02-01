@@ -2,11 +2,25 @@ import Bluebird = require('bluebird');
 import {User} from '../models/User';
 import {Profile} from '../models/Profile';
 
-function getProfileById(id: string, user?: User): Bluebird<Profile> {
+export type ProfileOrId = Profile | string;
+
+function convertProfileOrIdToId(profileOrId: ProfileOrId): string {
+	if (profileOrId instanceof Profile) {
+		return (profileOrId as Profile).id;
+	} else {
+		return (profileOrId as string);
+	}
+}
+
+function getProfile(user: User, profileOrId: ProfileOrId): Bluebird<Profile> {
+	const profileId = convertProfileOrIdToId(profileOrId);
 	return Profile
-			.findOne({where: {id: id}})
+			.findOne({
+				where: {id: profileId},
+				include: [User]
+			})
 			.then((profile) => {
-				if (profile && user && profile.userId !== user.id) {
+				if (profile && user && !profile.users.some((u) => u.id === user.id)) {
 					throw new Error('User does not own this profile');
 				} else {
 					return profile;
@@ -18,24 +32,31 @@ function createAndAddToUser(user: User, profileName: string): Bluebird<User> {
 	return Profile
 			.create({
 				name: profileName,
-				userId: user.id
 			})
 			.then((profile) => {
-				if (!user.profiles) {
-					user.profiles = [];
-				}
-				user.profiles.push(profile);
-				return user.save();
+				return user.$add('profile', profile);
+			})
+			.then(() => {
+				return user.reload({include: [Profile]});
 			});
 }
 
-function deleteProfile(user: User, profileId: string): Bluebird<void> {
-	return getProfileById(profileId, user)
+function saveProfile(user: User, profileOrId: ProfileOrId, properties: any): Bluebird<Profile> {
+	return getProfile(user, profileOrId)
+			.then((profile) => {
+				profile = profile || new Profile();
+				return profile.update(properties);
+			})
+			.then((profile) => {
+				return profile.$add('user', user);
+			});
+}
+
+function deleteProfile(user: User, profileOrId: ProfileOrId): Bluebird<void> {
+	return getProfile(user, profileOrId)
 			.then((profile) => {
 				if (!profile) {
 					throw new Error('That profile does not exist');
-				} else if (profile.active) {
-					throw new Error('Cannot delete an active profile');
 				} else if (user.profiles.length <= 1) {
 					throw new Error('Cannot delete a user\'s last profile');
 				} else {
@@ -45,29 +66,9 @@ function deleteProfile(user: User, profileId: string): Bluebird<void> {
 			.then((profile) => profile.destroy());
 }
 
-function setActiveProfile(user: User, profileId: string): Bluebird<User> {
-	return getProfileById(profileId, user)
-			.then((profile) => {
-				if (!profile) {
-					throw new Error('That profile does not exist');
-				} else {
-					return;
-				}
-			})
-			.then(() => {
-				return Profile.update({active: false}, {where: {userId: user.id}});
-			})
-			.then(() => {
-				return Profile.update({active: true}, {where: {id: profileId}})
-			})
-			.then(() => {
-				return user;
-			});
-}
-
 export {
-	getProfileById,
+	getProfile,
 	createAndAddToUser,
-	deleteProfile,
-	setActiveProfile
+	saveProfile,
+	deleteProfile
 }

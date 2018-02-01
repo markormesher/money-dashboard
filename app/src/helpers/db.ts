@@ -21,7 +21,7 @@ const sequelize = new Sequelize({
 		paranoid: true,
 		version: true
 	},
-	logging: () => {}
+	//logging: () => {}
 });
 
 export = sequelize
