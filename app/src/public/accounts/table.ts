@@ -8,6 +8,19 @@ const getActions = (account: Account) => {
 	]);
 };
 
+function formatAccoutType(type: string): string {
+	switch (type) {
+		case 'current':
+			return 'Current Account';
+		case 'savings':
+			return 'Savings Account';
+		case 'asset':
+			return 'Asset';
+		default:
+			return 'Other'
+	}
+}
+
 $(() => {
 	$('table#accounts').DataTable({
 		columns: [
@@ -22,6 +35,7 @@ $(() => {
 			dataSrc: (raw: { data: Account[] }) => {
 				return raw.data.map(account => {
 					const rawAccount = (account as any);
+					rawAccount.type = formatAccoutType(rawAccount.type);
 					rawAccount._actions = getActions(account);
 					return rawAccount
 				});
