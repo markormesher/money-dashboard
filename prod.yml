@@ -4,4 +4,4 @@ services:
   app:
     environment:
       - ENV=prod
-  	volumes: []
+    volumes: []
