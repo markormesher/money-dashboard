@@ -2,7 +2,7 @@ import {Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
 import {User} from "./User";
 import {Profile} from "./Profile";
 
-@Table
+@Table({tableName: 'user_profile'})
 export class UserProfile extends Model<UserProfile> {
 
 	@ForeignKey(() => User)

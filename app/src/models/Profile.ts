@@ -3,7 +3,7 @@ import {BelongsToMany, Column, DataType, IsUUID, Model, Table} from "sequelize-t
 import {User} from "./User";
 import {UserProfile} from "./UserProfile";
 
-@Table
+@Table({tableName: 'profile'})
 export class Profile extends Model<Profile> {
 
 	@IsUUID(4)

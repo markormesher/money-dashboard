@@ -14,7 +14,7 @@ import {StatusError} from './extensions/StatusError';
 const app = Express();
 
 // db connection
-SequelizeDb.sync({force: true}).then(() => {
+SequelizeDb.sync({force: false}).then(() => {
 	console.log('Database models synced successfully');
 }).catch(err => {
 	console.log('Failed to sync database models');
@@ -49,6 +49,7 @@ app.use(Passport.session());
 // controllers
 app.use('/', require('./controllers/dashboard'));
 app.use('/auth', require('./controllers/auth'));
+app.use('/settings/accounts', require('./controllers/settings/accounts'));
 app.use('/settings/profiles', require('./controllers/settings/profiles'));
 
 // kill favicon requests

@@ -6,7 +6,7 @@ block page-body
 	div.row
 		div.col-xs-12
 			+bootstrapForm({
-				action: '/settings/profiles/edit/' + profile.id,
+				action: '/settings/accounts/edit/' + account.id,
 				method: 'post',
 				rows: [
 					{
@@ -15,7 +15,16 @@ block page-body
 								type: 'text',
 								name: 'name',
 								label: 'Name',
-								value: profile.name,
+								value: account.name,
+								inputAttrs: {
+									required: true
+								}
+							},
+							{
+								type: 'text',
+								name: 'type',
+								label: 'Type',
+								value: account.type,
 								inputAttrs: {
 									required: true
 								}

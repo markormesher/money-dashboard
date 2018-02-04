@@ -6,7 +6,7 @@ import {UserProfile} from "./UserProfile";
 @DefaultScope({
 	include: [() => Profile]
 })
-@Table
+@Table({tableName: 'user'})
 export class User extends Model<User> {
 
 	@IsUUID(4)

@@ -17,6 +17,7 @@ const sequelize = new Sequelize({
 	operatorsAliases: false,
 	modelPaths: [Path.join(__dirname, '../models')],
 	define: {
+		freezeTableName: true,
 		timestamps: true,
 		paranoid: true,
 		version: true
