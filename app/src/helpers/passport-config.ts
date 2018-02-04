@@ -10,7 +10,7 @@ const init = (passport: Passport) => {
 	const googleConfig: StrategyOptionsWithRequest = {
 		clientID: ConfigLoader.getSecret('google.client.id'),
 		clientSecret: ConfigLoader.getSecret('google.client.secret'),
-		callbackURL: 'http://localhost:3006/auth/google/callback',
+		callbackURL: ConfigLoader.getConstants().host + '/auth/google/callback',
 		passReqToCallback: true
 	};
 
