@@ -21,9 +21,15 @@ block page-body
 								}
 							},
 							{
-								type: 'text',
+								type: 'select',
 								name: 'type',
 								label: 'Type',
+								options: [
+									['current', 'Current Account'],
+									['savings', 'Savings Account'],
+									['asset', 'Asset'],
+									['other', 'Other']
+								],
 								value: account.type,
 								inputAttrs: {
 									required: true

@@ -15,6 +15,7 @@ mixin bootstrapForm(form)
 						var btnClasses = field.btnClasses || []
 						var label = field.label || 'You forgot the label'
 						var value = field.value || undefined
+						var options = field.options || []
 						var btnIcon = field.btnIcon || undefined
 
 						var wrapperAttrs = field.wrapperAttrs || {}
@@ -30,6 +31,12 @@ mixin bootstrapForm(form)
 							when 'text'
 								label(for= name)&attributes(labelAttrs)= label
 								input.form-control(id= name, name= name, type = 'text', value= value)&attributes(inputAttrs)
+
+							when 'select'
+								label(for= name)&attributes(labelAttrs)= label
+								select.form-control(id= name, name= name, type = 'text')&attributes(inputAttrs)
+									for option in options
+										option(value= option[0], selected= (option[0] === value))= option[1]
 
 							when 'submit'
 								-
