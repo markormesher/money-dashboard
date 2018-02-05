@@ -29,7 +29,7 @@ function getAccount(user: User, accountOrId: AccountOrId): Bluebird<Account> {
 			});
 }
 
-function saveAccount(user: User, accountOrId: AccountOrId, properties: any): Bluebird<Account> {
+function saveAccount(user: User, accountOrId: AccountOrId, properties: Partial<Account>): Bluebird<Account> {
 	return getAccount(user, accountOrId)
 			.then((account) => {
 				account = account || new Account();

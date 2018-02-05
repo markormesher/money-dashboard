@@ -1,4 +1,5 @@
 import Bluebird = require("bluebird");
+import _ = require('lodash');
 import {Request} from "express";
 import {IFindOptions} from "sequelize-typescript";
 
@@ -14,19 +15,21 @@ function getData<T>(model: any, req: Request, countFilter: IFindOptions<T>, data
 	const columns: { data: string }[] = req.query['columns'];
 	const rawOrder: { column: number, dir: string }[] = req.query['order'];
 
-	dataFilter.offset = parseInt(req.query['start']);
-	dataFilter.limit = parseInt(req.query['length']);
-	dataFilter.order = rawOrder.map((rawOrderItem) => {
+	const limitedDataFilter = _.cloneDeep(dataFilter);
+	limitedDataFilter.offset = parseInt(req.query['start']);
+	limitedDataFilter.limit = parseInt(req.query['length']);
+	limitedDataFilter.order = rawOrder.map((rawOrderItem) => {
 		return [columns[rawOrderItem.column].data, rawOrderItem.dir];
 	});
 
 	return Bluebird.all([
 		model.count(countFilter),
-		model.findAll(dataFilter),
-	]).spread((totalCount: number, data: T[]) => {
+		model.count(countFilter),
+		model.findAll(limitedDataFilter),
+	]).spread((totalCount: number, dataCount: number, data: T[]) => {
 		return {
 			recordsTotal: totalCount,
-			recordsFiltered: data.length,
+			recordsFiltered: dataCount,
 			data: data
 		}
 	});

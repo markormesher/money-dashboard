@@ -70,7 +70,7 @@ router.get('/edit/:profileId?', AuthHelper.requireUser, (req: Request, res: Resp
 router.post('/edit/:profileId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user;
 	const profileId = req.params['profileId'];
-	const properties = {
+	const properties: Partial<Profile> = {
 		name: req.body['name']
 	};
 

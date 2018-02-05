@@ -8,7 +8,7 @@ const getActions = (account: Account) => {
 	]);
 };
 
-function formatAccoutType(type: string): string {
+function formatAccountType(type: string): string {
 	switch (type) {
 		case 'current':
 			return 'Current Account';
@@ -28,6 +28,7 @@ $(() => {
 			{data: 'type'},
 			{data: '_actions', orderable: false}
 		],
+		lengthMenu: [[25, 50, 100], [25, 50, 100]],
 		serverSide: true,
 		ajax: {
 			url: '/settings/accounts/table-data',
@@ -35,7 +36,7 @@ $(() => {
 			dataSrc: (raw: { data: Account[] }) => {
 				return raw.data.map(account => {
 					const rawAccount = (account as any);
-					rawAccount.type = formatAccoutType(rawAccount.type);
+					rawAccount.type = formatAccountType(rawAccount.type);
 					rawAccount._actions = getActions(account);
 					return rawAccount
 				});

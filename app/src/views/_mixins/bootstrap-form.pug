@@ -38,6 +38,15 @@ mixin bootstrapForm(form)
 									for option in options
 										option(value= option[0], selected= (option[0] === value))= option[1]
 
+							when 'checkbox'
+								label= label
+								for option in options
+									div.checkbox
+										- var checked = value === option[0] || value.indexOf(option[0]) >= 0
+										label&attributes(labelAttrs)
+											input(id= name, name= name, type= 'checkbox', value= option[0], checked= checked)
+											| #{option[1]}
+
 							when 'submit'
 								-
 									var btnClass = 'btn'

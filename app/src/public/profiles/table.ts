@@ -17,6 +17,7 @@ $(() => {
 			{data: 'name'},
 			{data: '_actions', orderable: false}
 		],
+		lengthMenu: [[25, 50, 100], [25, 50, 100]],
 		serverSide: true,
 		ajax: {
 			url: '/settings/profiles/table-data',

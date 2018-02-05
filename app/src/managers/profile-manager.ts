@@ -41,7 +41,7 @@ function createAndAddToUser(user: User, profileName: string): Bluebird<User> {
 			});
 }
 
-function saveProfile(user: User, profileOrId: ProfileOrId, properties: any): Bluebird<Profile> {
+function saveProfile(user: User, profileOrId: ProfileOrId, properties: Partial<Profile>): Bluebird<Profile> {
 	return getProfile(user, profileOrId)
 			.then((profile) => {
 				profile = profile || new Profile();

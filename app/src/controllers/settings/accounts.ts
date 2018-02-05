@@ -1,11 +1,10 @@
 import Express = require('express');
 
-import {Op, or, and} from 'sequelize'
+import {Op} from 'sequelize'
 import {NextFunction, Request, Response} from 'express';
 import AuthHelper = require('../../helpers/auth-helper');
 import AccountManager = require('../../managers/account-manager');
 import {Account} from '../../models/Account';
-import {Profile} from '../../models/Profile';
 import {getData} from "../../helpers/datatable-helper";
 import {IFindOptions} from "sequelize-typescript";
 
@@ -71,7 +70,7 @@ router.get('/edit/:accountId?', AuthHelper.requireUser, (req: Request, res: Resp
 router.post('/edit/:accountId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user;
 	const accountId = req.params['accountId'];
-	const properties = {
+	const properties: Partial<Account> = {
 		name: req.body['name'],
 		type: req.body['type']
 	};
