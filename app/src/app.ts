@@ -50,6 +50,7 @@ app.use(Passport.session());
 app.use('/', require('./controllers/dashboard'));
 app.use('/auth', require('./controllers/auth'));
 app.use('/settings/accounts', require('./controllers/settings/accounts'));
+app.use('/settings/budgets', require('./controllers/settings/budgets'));
 app.use('/settings/categories', require('./controllers/settings/categories'));
 app.use('/settings/profiles', require('./controllers/settings/profiles'));
 
