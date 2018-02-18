@@ -2,14 +2,14 @@ import {Profile} from "../../models/Profile";
 import {User} from "../../models/User";
 import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
 
-const getActions = (profile: Profile) => {
+function getActions(profile: Profile): string {
 	const user: User = window.MoneyDashboard.user;
 
 	return generationActionsHtml([
 		createEditAction(`/settings/profiles/edit/${profile.id}`),
 		user.profiles.length > 1 ? createDeleteAction(`/settings/profiles/delete/${profile.id}`) : null
 	]);
-};
+}
 
 $(() => {
 	$('table#profiles').DataTable({

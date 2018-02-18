@@ -18,7 +18,6 @@
     "express": "^4.16.2",
     "express-flash-2": "^1.0.1",
     "express-session": "^1.15.6",
-    "font-awesome": "^4.7.0",
     "gentelella": "^1.4.0",
     "jquery-validation": "^1.17.0",
     "lodash": "^4.17.4",

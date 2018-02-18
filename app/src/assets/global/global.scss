@@ -7,7 +7,7 @@
 // globally-useful styles
 
 a:not(.btn-mini), button:not(.btn-mini) {
-	i.fa.fa-fw {
+	svg[data-fa-i2svg] {
 		margin-right: 8px;
 	}
 }
@@ -37,7 +37,7 @@ a:not(.btn-mini), button:not(.btn-mini) {
 }
 
 a.dropdown-toggle {
-	i.fa {
+	svg[data-fa-i2svg] {
 		margin-left: 8px;
 	}
 }

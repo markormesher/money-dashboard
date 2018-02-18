@@ -14,7 +14,7 @@ import {StatusError} from './extensions/StatusError';
 const app = Express();
 
 // db connection
-SequelizeDb.sync({force: false}).then(() => {
+SequelizeDb.sync({force: true}).then(() => {
 	console.log('Database models synced successfully');
 }).catch(err => {
 	console.log('Failed to sync database models');
@@ -63,12 +63,12 @@ app.set('view engine', 'pug');
 
 // static files
 app.use(Express.static(Path.join(__dirname, 'public')));
+app.use(Express.static(Path.join(__dirname, 'assets')));
 [
 	'bootstrap',
 	'bootstrap-progressbar',
 	'datatables.net',
 	'datatables.net-bs',
-	'font-awesome',
 	'gentelella',
 	'jquery',
 	'jquery-validation',

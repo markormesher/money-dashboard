@@ -4,33 +4,70 @@ include ../../_mixins/bootstrap-form
 block page-body
 
 	div.row
-		div.col-xs-12
+		div.col-xs-12.col-md-6
 			+bootstrapForm({
-				action: '/settings/categories/edit/' + category.id,
+				action: '/settings/budgets/edit/' + budget.id,
 				method: 'post',
 				rows: [
 					{
 						fields: [
 							{
-								type: 'text',
-								name: 'name',
-								label: 'Name',
-								value: category.name,
+								type: 'select',
+								name: 'category',
+								label: 'Category',
+								options: categories,
+								value: budget.categoryId,
 								inputAttrs: {
 									required: true
 								}
 							},
 							{
-								type: 'checkbox',
-								name: 'types[]',
-								label: 'Type(s)',
+								type: 'currency',
+								name: 'amount',
+								label: 'Amount',
+								value: budget.amount,
+								inputAttrs: {
+									required: true
+								}
+							}
+						]
+					},
+					{
+						fields: [
+							{
+								type: 'date',
+								name: 'startDate',
+								label: 'Start',
+								value: budget.startDate,
+								inputAttrs: {
+									required: true
+								}
+							},
+							{
+								type: 'date',
+								name: 'endDate',
+								label: 'End',
+								value: budget.endDate,
+								inputAttrs: {
+									required: true
+								}
+							}
+						]
+					},
+					{
+						fields: [
+							{
+								type: 'select',
+								name: 'type',
+								label: 'Type',
 								options: [
-									['memo', 'Memo'],
-									['income', 'Income'],
-									['expense', 'Expense'],
-									['asset-growth', 'Asset Growth']
+									['budget', 'Budget'],
+									['bill', 'Bill']
 								],
-								value: typesSelected
+								value: budget.type,
+								inputAttrs: {
+									required: true
+								}
 							}
 						]
 					},
@@ -46,3 +83,5 @@ block page-body
 					}
 				]
 			})
+
+			// TODO: date range shortcut links

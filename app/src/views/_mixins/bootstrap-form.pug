@@ -32,6 +32,19 @@ mixin bootstrapForm(form)
 								label(for= name)&attributes(labelAttrs)= label
 								input.form-control(id= name, name= name, type = 'text', value= value)&attributes(inputAttrs)
 
+							when 'currency'
+								label(for= name)&attributes(labelAttrs)= label
+								div.input-group
+									span.input-group-addon: i.far.fa-pound-sign
+									input.form-control(id= name, name= name, type = 'number', value= value)&attributes(inputAttrs)
+
+							when 'date'
+								- if (value) value = new Date(value).toISOString().substr(0, 10)
+								label(for= name)&attributes(labelAttrs)= label
+								div.input-group
+									span.input-group-addon: i.far.fa-calendar-alt
+									input.form-control(id= name, name= name, type = 'date', value= value)&attributes(inputAttrs)
+
 							when 'select'
 								label(for= name)&attributes(labelAttrs)= label
 								select.form-control(id= name, name= name, type = 'text')&attributes(inputAttrs)
@@ -54,7 +67,7 @@ mixin bootstrapForm(form)
 										btnClass += ' ' + btnClasses[i]
 								button(class= btnClass)&attributes(inputAttrs)
 									if (btnIcon)
-										i(class= 'fa fa-fw ' + btnIcon)
+										i(class= 'far fa-fw ' + btnIcon)
 									| #{label}
 
 

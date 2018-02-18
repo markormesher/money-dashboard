@@ -29,6 +29,17 @@ function getCategory(user: User, categoryOrId: CategoryOrId): Bluebird<Category>
 			});
 }
 
+function getAllCategories(user: User): Bluebird<Category[]> {
+	return Category.findAll({
+		include: [{
+			model: Profile,
+			where: {
+				id: user.activeProfile.id
+			}
+		}]
+	});
+}
+
 function saveCategory(user: User, categoryOrId: CategoryOrId, properties: Partial<Category>): Bluebird<Category> {
 	return getCategory(user, categoryOrId)
 			.then((category) => {
@@ -54,6 +65,7 @@ function deleteCategory(user: User, categoryOrId: CategoryOrId): Bluebird<void> 
 
 export {
 	getCategory,
+	getAllCategories,
 	saveCategory,
 	deleteCategory
 }

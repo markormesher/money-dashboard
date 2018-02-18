@@ -1,24 +1,12 @@
 import {Account} from "../../models/Account";
 import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
+import {formatAccountType} from "../../helpers/formatters";
 
-const getActions = (account: Account) => {
+function getActions(account: Account): string {
 	return generationActionsHtml([
 		createEditAction(`/settings/accounts/edit/${account.id}`),
 		createDeleteAction(`/settings/accounts/delete/${account.id}`)
 	]);
-};
-
-function formatAccountType(type: string): string {
-	switch (type) {
-		case 'current':
-			return 'Current Account';
-		case 'savings':
-			return 'Savings Account';
-		case 'asset':
-			return 'Asset';
-		default:
-			return 'Other'
-	}
 }
 
 $(() => {

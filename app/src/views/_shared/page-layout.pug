@@ -15,8 +15,6 @@ block body
 
 					div.navbar.nav_title
 						a.site_title(href = '/')
-							i.fa.fa-fw.fa-gbp
-							| &nbsp;
 							span Money Dashboard
 
 					div.clearfix
@@ -27,41 +25,41 @@ block body
 						include navigation
 
 			div.top_nav: div.nav_menu: nav
-				div.nav.toggle: a#menu_toggle: i.fa.fa-bars
+				div.nav.toggle: a#menu_toggle: i.far.fa-bars
 				ul.nav.navbar-nav.navbar-right
 					li.dropdown
 						a.dropdown-toggle(data-toggle = 'dropdown', href = 'javascript:;')
 							span.hidden-xs= user.activeProfile.name
-							i.fa.fa-caret-down.text-muted
+							i.far.fa-caret-down.text-muted
 
 						ul.dropdown-menu.pull-right
 							each profile in user.profiles
 								li: a(href = '/settings/profiles/select/' + profile.id)
 									if (profile.id === user.activeProfile.id)
-										i.fa.fa-fw.fa-check-square-o
+										i.far.fa-fw.fa-check-square
 									else
-										i.fa.fa-fw.fa-square-o
+										i.far.fa-fw.fa-square
 									| #{profile.name}
 
 							li.divider
 
 							li: a(href = '/settings/profiles')
-								i.fa.fa-fw.fa-pencil
+								i.far.fa-fw.fa-pencil
 								| Edit Profiles
 
 							li: a(href = '/settings/profiles/edit')
-								i.fa.fa-fw.fa-plus
+								i.far.fa-fw.fa-plus
 								| New Profile
 
 					li.dropdown
 						a.user-profile.dropdown-toggle(data-toggle = 'dropdown', href = 'javascript:;')
 							img(src = user.image)
 							span.hidden-xs= user.displayName
-							i.fa.fa-caret-down.text-muted
+							i.far.fa-caret-down.text-muted
 
 						ul.dropdown-menu.pull-right
 							li: a(href = '/auth/logout')
-								i.fa.fa-fw.fa-sign-out.title-icon
+								i.far.fa-fw.fa-sign-out.title-icon
 								| Logout
 
 			div.right_col(style = 'min-height: 425px;')

@@ -31,7 +31,7 @@ function getData<T>(model: any, req: Request, countFilter: IFindOptions<T>, data
 	const limitedDataFilter = _.cloneDeep(dataFilter);
 	limitedDataFilter.offset = parseInt(req.query['start']);
 	limitedDataFilter.limit = parseInt(req.query['length']);
-	limitedDataFilter.order = rawOrder.map((rawOrderItem) => {
+	/*limitedDataFilter.order = rawOrder.map((rawOrderItem) => {
 		const col = columns[rawOrderItem.column].data;
 		const dir = rawOrderItem.dir;
 
@@ -50,7 +50,7 @@ function getData<T>(model: any, req: Request, countFilter: IFindOptions<T>, data
 		} else {
 			return [col, dir];
 		}
-	});
+	});*/
 
 	console.log(limitedDataFilter.order);
 

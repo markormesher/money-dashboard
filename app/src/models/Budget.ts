@@ -22,10 +22,14 @@ export class Budget extends Model<Budget> {
 	@Column
 	amount: number;
 
-	@Column
+	@Column({
+		type: DataType.DATEONLY
+	})
 	startDate: Date;
 
-	@Column
+	@Column({
+		type: DataType.DATEONLY
+	})
 	endDate: Date;
 
 	@ForeignKey(() => Category)
