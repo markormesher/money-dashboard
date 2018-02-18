@@ -1,8 +1,8 @@
 import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
 import {formatCurrency, formatBudgetPeriod, formatBudgetType} from "../../helpers/formatters";
-import {PrimitiveBudget} from "../../model-thins/ThinBudget";
+import {ThinBudget} from "../../model-thins/ThinBudget";
 
-function getActions(budget: PrimitiveBudget): string {
+function getActions(budget: ThinBudget): string {
 	return generationActionsHtml([
 		createEditAction(`/settings/budgets/edit/${budget.id}`),
 		createDeleteAction(`/settings/budgets/delete/${budget.id}`)
@@ -23,7 +23,7 @@ $(() => {
 		ajax: {
 			url: '/settings/budgets/table-data',
 			type: 'get',
-			dataSrc: (raw: { data: PrimitiveBudget[] }) => {
+			dataSrc: (raw: { data: ThinBudget[] }) => {
 				return raw.data.map(budget => {
 					const output = budget as any;
 					output.period = formatBudgetPeriod(new Date(budget.startDate), new Date(budget.endDate));

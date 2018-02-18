@@ -1,10 +1,10 @@
-import {PrimitiveProfile} from "./ThinProfile";
+import {ThinProfile} from "./ThinProfile";
 
-export class PrimitiveUser {
+export class ThinUser {
 	id: string;
 	googleId: string;
 	displayName: string;
 	image: string;
-	profiles: PrimitiveProfile[];
-	activeProfile: PrimitiveProfile;
+	profiles: ThinProfile[];
+	activeProfile: ThinProfile;
 }

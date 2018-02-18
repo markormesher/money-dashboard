@@ -1,7 +1,6 @@
 import {Category} from "../models/Category";
 import * as moment from "moment";
-import {PrimitiveProfile} from "ThinProfile.ts";
-import {PrimitiveCategory} from "ThinCategory.ts";
+import {ThinCategory} from "../model-thins/ThinCategory";
 
 // generic
 
@@ -85,7 +84,7 @@ function formatBudgetPeriod(start: Date, end: Date): string {
 
 // categories
 
-function formatCategoryTypes(category: Category | PrimitiveCategory): string {
+function formatCategoryTypes(category: Category | ThinCategory): string {
 	let output = '';
 	if (category.isMemoCategory) {
 		output += formatTag('Memo', 'info');

@@ -1,6 +1,6 @@
-import {PrimitiveProfile} from "./ThinProfile";
+import {ThinProfile} from "./ThinProfile";
 
-export class PrimitiveCategory {
+export class ThinCategory {
 	id: string;
 	name: string;
 	isMemoCategory: boolean;
@@ -8,5 +8,5 @@ export class PrimitiveCategory {
 	isExpenseCategory: boolean;
 	isAssetGrowthCategory: boolean;
 	profileId: string;
-	profile: PrimitiveProfile;
+	profile: ThinProfile;
 }

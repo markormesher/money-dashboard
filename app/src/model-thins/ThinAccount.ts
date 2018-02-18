@@ -1,9 +1,9 @@
-import {PrimitiveProfile} from "./ThinProfile";
+import {ThinProfile} from "./ThinProfile";
 
-export class PrimitiveAccount {
+export class ThinAccount {
 	id: string;
 	name: string;
 	type: string;
 	profileId: string;
-	profile: PrimitiveProfile;
+	profile: ThinProfile;
 }

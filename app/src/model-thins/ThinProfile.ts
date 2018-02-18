@@ -1,7 +1,7 @@
-import {PrimitiveUser} from "./ThinUser";
+import {ThinUser} from "./ThinUser";
 
-export class PrimitiveProfile {
+export class ThinProfile {
 	id: string;
 	name: string;
-	users: PrimitiveUser[];
+	users: ThinUser[];
 }
