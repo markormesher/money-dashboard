@@ -1,4 +1,7 @@
 import {Category} from "../models/Category";
+import * as moment from "moment";
+import {PrimitiveProfile} from "ThinProfile.ts";
+import {PrimitiveCategory} from "ThinCategory.ts";
 
 // generic
 
@@ -13,6 +16,10 @@ function formatCurrency(amount: number, styled: boolean = true): string {
 function formatTag(tag: string, tagClass?: string): string {
 	tagClass = tagClass || 'default';
 	return ` <span class="label label-${tagClass}">${tag}</span>`;
+}
+
+function formatDate(date: Date): string {
+	return moment(date).format('DD/MM/YYYY');
 }
 
 // accounts
@@ -43,13 +50,42 @@ function formatBudgetType(type: string): string {
 }
 
 function formatBudgetPeriod(start: Date, end: Date): string {
-	// TODO: period formatted
-	return 'period';
+	const oneDay = 24 * 60 * 60 * 1000;
+
+	console.log(start);
+	console.log(typeof start);
+
+	if (start.getDate() == 1
+			&& start.getMonth() == end.getMonth()
+			&& new Date(end.getTime() + oneDay).getMonth() != end.getMonth()) {
+		// type: month
+		return moment(start).format('MMM, YYYY');
+
+	} else if (start.getDate() == 1
+			&& start.getMonth() == 0
+			&& end.getDate() == 31
+			&& end.getMonth() == 11
+			&& start.getFullYear() == end.getFullYear()) {
+		// type: calendar year
+		return moment(start).format('YYYY');
+
+	} else if (start.getDate() == 6
+			&& start.getMonth() == 3
+			&& end.getDate() == 5
+			&& end.getMonth() == 3
+			&& start.getFullYear() == end.getFullYear() - 1) {
+		// type: tax year
+		return `${moment(start).format('YYYY')}/${moment(end).format('YYYY')} tax year`
+
+	} else {
+		// unrecognised type
+		return `${formatDate(start)} to ${formatDate(end)}`;
+	}
 }
 
 // categories
 
-function formatCategoryTypes(category: Category): string {
+function formatCategoryTypes(category: Category | PrimitiveCategory): string {
 	let output = '';
 	if (category.isMemoCategory) {
 		output += formatTag('Memo', 'info');

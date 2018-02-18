@@ -1,8 +1,8 @@
-import {Profile} from "../../models/Profile";
 import {User} from "../../models/User";
 import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
+import {PrimitiveProfile} from "../../model-thins/ThinProfile";
 
-function getActions(profile: Profile): string {
+function getActions(profile: PrimitiveProfile): string {
 	const user: User = window.MoneyDashboard.user;
 
 	return generationActionsHtml([
@@ -22,9 +22,9 @@ $(() => {
 		ajax: {
 			url: '/settings/profiles/table-data',
 			type: 'get',
-			dataSrc: (raw: { data: Profile[] }) => {
+			dataSrc: (raw: { data: PrimitiveProfile[] }) => {
 				return raw.data.map(profile => {
-					const rawProfile = (profile as any);
+					const rawProfile = profile as any;
 					rawProfile._actions = getActions(profile);
 					return rawProfile
 				});

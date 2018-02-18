@@ -1,8 +1,8 @@
-import {Category} from "../../models/Category";
 import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
 import {formatCategoryTypes} from "../../helpers/formatters";
+import {PrimitiveCategory} from "../../model-thins/ThinCategory";
 
-const getActions = (category: Category) => {
+const getActions = (category: PrimitiveCategory) => {
 	return generationActionsHtml([
 		createEditAction(`/settings/categories/edit/${category.id}`),
 		createDeleteAction(`/settings/categories/delete/${category.id}`)
@@ -21,10 +21,9 @@ $(() => {
 		ajax: {
 			url: '/settings/categories/table-data',
 			type: 'get',
-			dataSrc: (raw: { data: Category[] }) => {
-				return raw.data.map((category: Category) => {
-					const output = {} as any;
-					output.name = category.name;
+			dataSrc: (raw: { data: PrimitiveCategory[] }) => {
+				return raw.data.map(category => {
+					const output = category as any;
 					output.types = formatCategoryTypes(category);
 					output._actions = getActions(category);
 					return output

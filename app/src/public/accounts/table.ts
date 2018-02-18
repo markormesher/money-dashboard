@@ -1,8 +1,8 @@
-import {Account} from "../../models/Account";
 import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
 import {formatAccountType} from "../../helpers/formatters";
+import {PrimitiveAccount} from "../../model-thins/ThinAccount";
 
-function getActions(account: Account): string {
+function getActions(account: PrimitiveAccount): string {
 	return generationActionsHtml([
 		createEditAction(`/settings/accounts/edit/${account.id}`),
 		createDeleteAction(`/settings/accounts/delete/${account.id}`)
@@ -21,9 +21,9 @@ $(() => {
 		ajax: {
 			url: '/settings/accounts/table-data',
 			type: 'get',
-			dataSrc: (raw: { data: Account[] }) => {
+			dataSrc: (raw: { data: PrimitiveAccount[] }) => {
 				return raw.data.map(account => {
-					const rawAccount = (account as any);
+					const rawAccount = account as any;
 					rawAccount.type = formatAccountType(rawAccount.type);
 					rawAccount._actions = getActions(account);
 					return rawAccount
