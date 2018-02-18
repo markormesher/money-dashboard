@@ -10,3 +10,7 @@ secrets/**
 # Linux
 *~
 .Trash-*
+
+# OSX
+.DS_Store
+._*
