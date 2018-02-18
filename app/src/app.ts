@@ -14,7 +14,7 @@ import {StatusError} from './extensions/StatusError';
 const app = Express();
 
 // db connection
-SequelizeDb.sync({force: true}).then(() => {
+SequelizeDb.sync({force: false}).then(() => {
 	console.log('Database models synced successfully');
 }).catch(err => {
 	console.log('Failed to sync database models');
