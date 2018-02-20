@@ -104,6 +104,8 @@ function formatCategoryTypes(category: Category | ThinCategory): string {
 export {
 	formatCurrency,
 	formatTag,
+	formatDate,
+
 	formatAccountType,
 	formatBudgetType,
 	formatBudgetPeriod,

@@ -98,3 +98,26 @@ td span {
 		border: none !important;
 	}
 }
+
+// forms
+
+ul.inline-form-links {
+	padding-left: 0;
+
+	li {
+		display: inline;
+		margin-right: 10px;
+	}
+
+	li:last-child {
+		margin-right: 0;
+	}
+}
+
+ul.inline-form-links.stacked {
+	margin-bottom: 2px;
+}
+
+ul.inline-form-links.stacked:last-child {
+	margin-bottom: 10px;
+}

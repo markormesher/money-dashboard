@@ -3,6 +3,19 @@ include ../../_mixins/bootstrap-form
 
 block page-body
 
+	mixin staticFormContent(name)
+		case name
+			when 'date-links'
+				// TODO: date range shortcut links
+				ul.inline-form-links.stacked
+					li: a(href = '#') This Month
+					li: a(href = '#') This Year
+					li: a(href = '#') This Tax Year
+				ul.inline-form-links.stacked
+					li: a(href = '#') Next Month
+					li: a(href = '#') Next Year
+					li: a(href = '#') Next Tax Year
+
 	div.row
 		div.col-xs-12.col-md-6
 			+bootstrapForm({
@@ -25,7 +38,7 @@ block page-body
 								type: 'currency',
 								name: 'amount',
 								label: 'Amount',
-								value: budget.amount,
+								value: budget.amount ? budget.amount.toFixed(2) : '',
 								inputAttrs: {
 									required: true
 								}
@@ -51,6 +64,16 @@ block page-body
 								inputAttrs: {
 									required: true
 								}
+							}
+						]
+					},
+					{
+						fields: [
+							{
+								type: 'static',
+								label: 'Quick Periods',
+								name: 'date-links',
+								sizes: ['xs-12']
 							}
 						]
 					},
@@ -83,5 +106,3 @@ block page-body
 					}
 				]
 			})
-
-			// TODO: date range shortcut links

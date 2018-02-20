@@ -70,4 +70,9 @@ mixin bootstrapForm(form)
 										i(class= 'far fa-fw ' + btnIcon)
 									| #{label}
 
+							when 'static'
+								if label
+									label&attributes(labelAttrs)= label
+								+staticFormContent(name)
+
 
