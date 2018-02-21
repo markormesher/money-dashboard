@@ -16,7 +16,7 @@ const requireUser: RequestHandler = (req: Request, res: Response, next: NextFunc
 		loadUser(req, res, next);
 	} else {
 		res.flash('error', 'You need to log in first.');
-		res.redirect('/auth/login'); // TODO: redirect URL
+		res.redirect('/auth/login');
 	}
 };
 
