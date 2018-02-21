@@ -16,8 +16,8 @@ $(() => {
 	table.DataTable({
 		columns: [
 			{data: 'category.name', orderable: true},
-			{data: 'type', orderable: false},
-			{data: 'period', orderable: true},
+			{data: 'type', orderable: true},
+			{data: 'period', name: 'startDate', orderable: true},
 			{data: 'amount', orderable: true},
 			{data: '_actions', orderable: false}
 		],

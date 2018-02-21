@@ -7,7 +7,7 @@ import BudgetManager = require('../../managers/budget-manager');
 import CategoryManager = require('../../managers/category-manager');
 import {Budget} from '../../models/Budget';
 import {getData} from "../../helpers/datatable-helper";
-import {IFindOptions} from "sequelize-typescript";
+import {IFindOptions, Sequelize} from "sequelize-typescript";
 import {Category} from "../../models/Category";
 import Bluebird = require("bluebird");
 import _ = require("lodash");
@@ -29,7 +29,6 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 	const user = req.user;
 	const searchTerm = req.query['search']['value'];
 
-	// TODO: sorting
 	// TODO: current only
 
 	const countQuery: IFindOptions<Budget> = {
@@ -44,18 +43,18 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 				[Op.or]: {
 					type: {
 						[Op.iLike]: `%${searchTerm}%`
+					},
+					'$category.name$': {
+						[Op.iLike]: `%${searchTerm}%`
 					}
 				}
 			}
 		},
-		include: [{
-			model: Category,
-			where: {
-				name: {
-					[Op.iLike]: `%${searchTerm}%`
-				}
+		include: [
+			{
+				model: Category
 			}
-		}]
+		]
 	};
 
 	getData(Budget, req, countQuery, dataQuery)
