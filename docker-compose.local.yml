@@ -5,5 +5,5 @@ services:
     environment:
       - ENV=dev
     volumes:
-      - ./app/src/views:/usr/src/app/dist/views
-      - ./app/src/assets:/usr/src/app/dist/assets
+      - ./app/views:/usr/src/app/views
+      - ./app/assets:/usr/src/app/assets

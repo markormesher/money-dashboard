@@ -26,7 +26,7 @@ app.use(BodyParser.urlencoded({extended: false}));
 
 // sass conversion
 app.use(NodeSassMiddleware({
-	src: Path.join(__dirname, '/assets/'),
+	src: Path.join(__dirname, '../assets/'),
 	dest: Path.join(__dirname, '/public'),
 	outputStyle: 'compressed'
 }));
@@ -58,12 +58,12 @@ app.use('/settings/profiles', require('./controllers/settings/profiles'));
 app.use('/favicon.ico', (req: Request, res: Response) => res.end());
 
 // views
-app.set('views', Path.join(__dirname, 'views'));
+app.set('views', Path.join(__dirname, '../views'));
 app.set('view engine', 'pug');
 
 // static files
 app.use(Express.static(Path.join(__dirname, 'public')));
-app.use(Express.static(Path.join(__dirname, 'assets')));
+app.use(Express.static(Path.join(__dirname, '../assets')));
 [
 	'bootstrap',
 	'bootstrap-progressbar',
