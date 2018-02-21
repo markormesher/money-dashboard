@@ -1,6 +1,7 @@
 import {Category} from "../models/Category";
 import * as moment from "moment";
 import {ThinCategory} from "../model-thins/ThinCategory";
+import {Moment} from "moment";
 
 // generic
 
@@ -17,8 +18,14 @@ function formatTag(tag: string, tagClass?: string): string {
 	return ` <span class="label label-${tagClass}">${tag}</span>`;
 }
 
-function formatDate(date: Date): string {
-	return moment(date).format('DD/MM/YYYY');
+function formatDate(date: Date | Moment, format: 'user' | 'system' = 'user'): string {
+	if (format == 'user') {
+		return moment(date).format('DD/MM/YYYY');
+	} else if (format == 'system') {
+		return moment(date).format('YYYY-MM-DD');
+	} else {
+		throw new Error(`Illegal format: ${format}`);
+	}
 }
 
 // accounts

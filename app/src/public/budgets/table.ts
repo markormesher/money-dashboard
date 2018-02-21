@@ -10,7 +10,10 @@ function getActions(budget: ThinBudget): string {
 }
 
 $(() => {
-	$('table#budgets').DataTable({
+	const table = $('table#budgets');
+	if (table.length == 0) return;
+
+	table.DataTable({
 		columns: [
 			{data: 'category.name', orderable: true},
 			{data: 'type', orderable: false},

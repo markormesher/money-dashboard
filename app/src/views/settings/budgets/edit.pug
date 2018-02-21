@@ -6,15 +6,10 @@ block page-body
 	mixin staticFormContent(name)
 		case name
 			when 'date-links'
-				// TODO: date range shortcut links
-				ul.inline-form-links.stacked
-					li: a(href = '#') This Month
-					li: a(href = '#') This Year
-					li: a(href = '#') This Tax Year
-				ul.inline-form-links.stacked
-					li: a(href = '#') Next Month
-					li: a(href = '#') Next Year
-					li: a(href = '#') Next Tax Year
+				each linkSet in quickPeriodDates
+					ul.inline-form-links.stacked
+						each link in linkSet
+							li: a.quick-period-link(href = '#', data-start = link[1], data-end = link[2])= link[0]
 
 	div.row
 		div.col-xs-12.col-md-6
@@ -106,3 +101,6 @@ block page-body
 					}
 				]
 			})
+
+block page-scripts
+	script(src = '/budgets/bundle.js')
