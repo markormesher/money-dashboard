@@ -1,6 +1,7 @@
 import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
 import {formatCurrency, formatBudgetPeriod, formatBudgetType} from "../../helpers/formatters";
 import {ThinBudget} from "../../model-thins/ThinBudget";
+import {refreshCloning} from "./cloning";
 
 function getActions(budget: ThinBudget): string {
 	return generationActionsHtml([
@@ -9,18 +10,24 @@ function getActions(budget: ThinBudget): string {
 	]);
 }
 
+function getCloneCheckbox(budget: ThinBudget): string {
+	return `<input type="checkbox" name="cloneBudget" value="${budget.id}" />`;
+}
+
 $(() => {
 	const table = $('table#budgets');
 	if (table.length == 0) return;
 
 	table.DataTable({
 		columns: [
+			{data: '_clone', orderable: false},
 			{data: 'category.name', orderable: true},
 			{data: 'type', orderable: true},
 			{data: 'period', name: 'startDate', orderable: true},
 			{data: 'amount', orderable: true},
 			{data: '_actions', orderable: false}
 		],
+		order: [[1, 'asc']],
 		lengthMenu: [[25, 50, 100], [25, 50, 100]],
 		serverSide: true,
 		ajax: {
@@ -29,6 +36,7 @@ $(() => {
 			dataSrc: (raw: { data: ThinBudget[] }) => {
 				return raw.data.map(budget => {
 					const output = budget as any;
+					output._clone = getCloneCheckbox(budget);
 					output.period = formatBudgetPeriod(new Date(budget.startDate), new Date(budget.endDate));
 					output.type = formatBudgetType(budget.type);
 					output.amount = formatCurrency(budget.amount);
@@ -36,6 +44,7 @@ $(() => {
 					return output
 				});
 			}
-		}
+		},
+		drawCallback: refreshCloning
 	})
 });

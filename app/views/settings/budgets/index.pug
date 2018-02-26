@@ -4,6 +4,9 @@ block page-head
 	link(rel = 'stylesheet', href = '/_npm/datatables.net-bs/css/dataTables.bootstrap.css')
 
 block page-title-extra
+	a#clone-btn.btn.btn-info(href = '/settings/budgets/clone')
+		i.far.fa-fw.fa-copy
+		| Clone Selected
 	a.btn.btn-success(href = '/settings/budgets/edit')
 		i.far.fa-fw.fa-plus
 		| New Budget
@@ -18,6 +21,7 @@ block page-body
 			table#budgets.table.table-hover.table-condensed.dataTable
 				thead
 					tr
+						th: i.far.fa-fw.fa-copy
 						th Category
 						th Type
 						th Period

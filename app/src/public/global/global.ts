@@ -1,7 +1,3 @@
-interface Window {
-	MoneyDashboard: any;
-}
-
 // top-level toastr defaults
 toastr.options.closeButton = true;
 toastr.options.timeOut = 2000;

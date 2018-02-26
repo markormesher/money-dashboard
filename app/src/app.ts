@@ -39,6 +39,7 @@ app.use(ExpressSession({
 	secret: ConfigLoader.getSecret('session.secret'),
 	resave: false,
 	saveUninitialized: false
+	// TODO: persist in redis
 }));
 
 // flash messages
