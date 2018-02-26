@@ -2,6 +2,7 @@ import Bluebird = require('bluebird');
 import {User} from '../models/User';
 import {Profile} from '../models/Profile';
 import {Budget} from '../models/Budget';
+import {Category} from "../models/Category";
 
 export type BudgetOrId = Budget | string;
 
@@ -18,7 +19,7 @@ function getBudget(user: User, budgetOrId: BudgetOrId): Bluebird<Budget> {
 	return Budget
 			.findOne({
 				where: {id: budgetId},
-				include: [Profile]
+				include: [Profile, Category]
 			})
 			.then((budget) => {
 				if (budget && user && budget.profile.id !== user.activeProfile.id) {

@@ -12,10 +12,54 @@ import {Category} from "../../models/Category";
 import Bluebird = require("bluebird");
 import _ = require("lodash");
 import * as moment from "moment";
-import {formatDate} from "../../helpers/formatters";
+import {formatCurrency, formatDate} from "../../helpers/formatters";
 import {User} from "../../models/User";
 
 const router = Express.Router();
+
+function getQuickPeriodDates(): string[][][] {
+	const now = moment();
+	const thisTaxYearStart = now.clone().month('april').date(6);
+	if (thisTaxYearStart.isAfter(now)) {
+		thisTaxYearStart.subtract(1, 'year');
+	}
+	return [
+		[
+			[
+				'This Month',
+				formatDate(now.clone().startOf('month'), 'system'),
+				formatDate(now.clone().endOf('month'), 'system')
+			],
+			[
+				'This Year',
+				formatDate(now.clone().startOf('year'), 'system'),
+				formatDate(now.clone().endOf('year'), 'system')
+			],
+			[
+				'This Tax Year',
+				formatDate(thisTaxYearStart, 'system'),
+				formatDate(thisTaxYearStart.clone().add(1, 'year').date(5), 'system')
+			],
+		],
+		[
+			[
+				'Next Month',
+				formatDate(now.clone().add(1, 'month').startOf('month'), 'system'),
+				formatDate(now.clone().add(1, 'month').endOf('month'), 'system')
+			],
+			[
+				'Next Year',
+				formatDate(now.clone().add(1, 'year').startOf('year'), 'system'),
+				formatDate(now.clone().add(1, 'year').endOf('year'), 'system')
+			],
+			[
+				'Next Tax Year',
+				formatDate(thisTaxYearStart.clone().add(1, 'year'), 'system'),
+				formatDate(thisTaxYearStart.clone().add(2, 'years').date(5), 'system')
+			],
+		],
+	];
+}
 
 router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 	res.render('settings/budgets/index', {
@@ -67,49 +111,6 @@ router.get('/edit/:budgetId?', AuthHelper.requireUser, (req: Request, res: Respo
 	const user = req.user as User;
 	const budgetId = req.params['budgetId'];
 
-	// dates for quick period links
-	const now = moment();
-	const thisTaxYearStart = now.clone().month('april').date(6);
-	if (thisTaxYearStart.isAfter(now)) {
-		thisTaxYearStart.subtract(1, 'year');
-	}
-	const quickPeriodDates: string[][][] = [
-		[
-			[
-				'This Month',
-				formatDate(now.clone().startOf('month'), 'system'),
-				formatDate(now.clone().endOf('month'), 'system')
-			],
-			[
-				'This Year',
-				formatDate(now.clone().startOf('year'), 'system'),
-				formatDate(now.clone().endOf('year'), 'system')
-			],
-			[
-				'This Tax Year',
-				formatDate(thisTaxYearStart, 'system'),
-				formatDate(thisTaxYearStart.clone().add(1, 'year').date(5), 'system')
-			],
-		],
-		[
-			[
-				'Next Month',
-				formatDate(now.clone().add(1, 'month').startOf('month'), 'system'),
-				formatDate(now.clone().add(1, 'month').endOf('month'), 'system')
-			],
-			[
-				'Next Year',
-				formatDate(now.clone().add(1, 'year').startOf('year'), 'system'),
-				formatDate(now.clone().add(1, 'year').endOf('year'), 'system')
-			],
-			[
-				'Next Tax Year',
-				formatDate(thisTaxYearStart.clone().add(1, 'year'), 'system'),
-				formatDate(thisTaxYearStart.clone().add(2, 'years').date(5), 'system')
-			],
-		],
-	];
-
 	Bluebird
 			.all([
 				BudgetManager.getBudget(user, budgetId),
@@ -129,7 +130,7 @@ router.get('/edit/:budgetId?', AuthHelper.requireUser, (req: Request, res: Respo
 					},
 					budget: budget || new Budget(),
 					categories: categoriesForView,
-					quickPeriodDates: quickPeriodDates
+					quickPeriodDates: getQuickPeriodDates()
 				});
 			})
 			.catch(next);
@@ -162,6 +163,33 @@ router.post('/delete/:budgetId', AuthHelper.requireUser, (req: Request, res: Res
 	BudgetManager
 			.deleteBudget(user, budgetId)
 			.then(() => res.status(200).end())
+			.catch(next);
+});
+
+router.get('/clone/:budgetIds', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const user = req.user as User;
+	const budgetIds: string[] = req.params['budgetIds'].split(',');
+
+	const tasks = budgetIds.map(id => BudgetManager.getBudget(user, id));
+	Bluebird.all(tasks)
+			.then((budgets: Budget[]) => {
+				if (budgets.some(budget => budget == null)) {
+					throw new Error("Budget does not exist");
+				} else {
+					return budgets;
+				}
+			})
+			.then((budgets: Budget[]) => {
+				budgets.sort((a, b) => a.category.name.localeCompare(b.category.name));
+				res.render('settings/budgets/clone', {
+					_: {
+						activePage: 'settings/budget',
+						title: budgets.length > 1 ? 'Clone Budgets' : 'Clone Budget'
+					},
+					budgets: budgets,
+					quickPeriodDates: getQuickPeriodDates()
+				});
+			})
 			.catch(next);
 });
 

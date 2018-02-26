@@ -12,6 +12,7 @@ import ConfigLoader = require('./helpers/config-loader');
 import PassportConfig = require('./helpers/passport-config');
 import SequelizeDb = require('./helpers/db');
 import {StatusError} from './extensions/StatusError';
+import {formatterMiddleware} from "./helpers/formatters";
 
 const app = Express();
 
@@ -44,6 +45,9 @@ app.use(ExpressSession({
 
 // flash messages
 app.use(ExpressFlash());
+
+// formatters
+app.use(formatterMiddleware);
 
 // auth
 PassportConfig.init(Passport);

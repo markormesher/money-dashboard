@@ -2,6 +2,7 @@ import {Category} from "../models/Category";
 import * as moment from "moment";
 import {ThinCategory} from "../model-thins/ThinCategory";
 import {Moment} from "moment";
+import {NextFunction, Request, Response} from "express";
 
 // generic
 
@@ -108,6 +109,17 @@ function formatCategoryTypes(category: Category | ThinCategory): string {
 	return output.trim();
 }
 
+// publishing
+
+const formatterMiddleware = (req: Request, res: Response, next: NextFunction) => {
+	res.locals.formatters = {
+		formatCurrency: formatCurrency,
+		formatTag: formatTag,
+		formatDate: formatDate,
+	};
+	next();
+};
+
 export {
 	formatCurrency,
 	formatTag,
@@ -116,5 +128,7 @@ export {
 	formatAccountType,
 	formatBudgetType,
 	formatBudgetPeriod,
-	formatCategoryTypes
+	formatCategoryTypes,
+
+	formatterMiddleware
 }
