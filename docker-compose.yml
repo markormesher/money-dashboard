@@ -16,7 +16,7 @@ services:
       - ENV=prod
     ports:
       - "3006:3000"
-    command: ["./wait-for-it/wait-for-it.sh", "postgres:5432", "--timeout=30", "--strict", "--", "node", "./dist/app.js"]
+    command: ["./entry-point.sh"]
 
   postgres:
     image: postgres:10.1-alpine
