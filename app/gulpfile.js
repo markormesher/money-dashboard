@@ -42,9 +42,6 @@ gulp.task('compile-ts', function () {
 gulp.task('ts-assets', ['compile-ts'], function () {
 	const folders = getFolders(tsAssets);
 
-	console.log("folders: ");
-	console.log(folders);
-
 	return folders.map(function (folder) {
 		const inputFileGlob = path.join(folder, '*.js');
 		const inputFiles = glob.sync(inputFileGlob);
