@@ -7,12 +7,13 @@ import BudgetManager = require('../../managers/budget-manager');
 import CategoryManager = require('../../managers/category-manager');
 import {Budget} from '../../models/Budget';
 import {getData} from "../../helpers/datatable-helper";
-import {IFindOptions, Sequelize} from "sequelize-typescript";
+import {IFindOptions} from "sequelize-typescript";
 import {Category} from "../../models/Category";
 import Bluebird = require("bluebird");
 import _ = require("lodash");
 import * as moment from "moment";
 import {formatDate} from "../../helpers/formatters";
+import {User} from "../../models/User";
 
 const router = Express.Router();
 
@@ -26,7 +27,7 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 });
 
 router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
 
 	// TODO: current only
@@ -63,7 +64,7 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 });
 
 router.get('/edit/:budgetId?', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const budgetId = req.params['budgetId'];
 
 	// dates for quick period links
@@ -135,7 +136,7 @@ router.get('/edit/:budgetId?', AuthHelper.requireUser, (req: Request, res: Respo
 });
 
 router.post('/edit/:budgetId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const budgetId = req.params['budgetId'];
 	const properties: Partial<Budget> = {
 		categoryId: req.body['category'],
@@ -155,7 +156,7 @@ router.post('/edit/:budgetId', AuthHelper.requireUser, (req: Request, res: Respo
 });
 
 router.post('/delete/:budgetId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const budgetId = req.params['budgetId'];
 
 	BudgetManager

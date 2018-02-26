@@ -21,7 +21,7 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 });
 
 router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
 
 	const countQuery: IFindOptions<Profile> = {
@@ -50,7 +50,7 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 });
 
 router.get('/edit/:profileId?', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const profileId = req.params['profileId'];
 
 	ProfileManager
@@ -68,7 +68,7 @@ router.get('/edit/:profileId?', AuthHelper.requireUser, (req: Request, res: Resp
 });
 
 router.post('/edit/:profileId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const profileId = req.params['profileId'];
 	const properties: Partial<Profile> = {
 		name: req.body['name']
@@ -84,7 +84,7 @@ router.post('/edit/:profileId', AuthHelper.requireUser, (req: Request, res: Resp
 });
 
 router.post('/delete/:profileId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const profileId = req.params['profileId'];
 
 	ProfileManager
@@ -94,7 +94,7 @@ router.post('/delete/:profileId', AuthHelper.requireUser, (req: Request, res: Re
 });
 
 router.get('/select/:profileId', AuthHelper.requireUser, (req: Request, res: Response) => {
-	const user = req.user;
+	const user = req.user as User;
 	const profileId = req.params['profileId'];
 
 	user.activeProfile = user.profiles.find((p: Profile) => p.id === profileId);

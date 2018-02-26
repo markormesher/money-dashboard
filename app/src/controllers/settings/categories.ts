@@ -7,6 +7,7 @@ import CategoryManager = require('../../managers/category-manager');
 import {Category} from '../../models/Category';
 import {getData} from "../../helpers/datatable-helper";
 import {IFindOptions} from "sequelize-typescript";
+import {User} from "../../models/User";
 
 const router = Express.Router();
 
@@ -20,7 +21,7 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 });
 
 router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
 
 	const countQuery: IFindOptions<Category> = {
@@ -47,7 +48,7 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 });
 
 router.get('/edit/:categoryId?', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const categoryId = req.params['categoryId'];
 
 	CategoryManager
@@ -65,7 +66,7 @@ router.get('/edit/:categoryId?', AuthHelper.requireUser, (req: Request, res: Res
 });
 
 router.post('/edit/:categoryId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const categoryId = req.params['categoryId'];
 	const rawTypes = req.body['types[]'] as string[] || [];
 	const properties: Partial<Category> = {
@@ -86,7 +87,7 @@ router.post('/edit/:categoryId', AuthHelper.requireUser, (req: Request, res: Res
 });
 
 router.post('/delete/:categoryId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const categoryId = req.params['categoryId'];
 
 	CategoryManager

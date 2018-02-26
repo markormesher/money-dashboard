@@ -7,6 +7,7 @@ import AccountManager = require('../../managers/account-manager');
 import {Account} from '../../models/Account';
 import {getData} from "../../helpers/datatable-helper";
 import {IFindOptions} from "sequelize-typescript";
+import {User} from "../../models/User";
 
 const router = Express.Router();
 
@@ -20,7 +21,7 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 });
 
 router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
 
 	const countQuery: IFindOptions<Account> = {
@@ -50,7 +51,7 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 });
 
 router.get('/edit/:accountId?', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const accountId = req.params['accountId'];
 
 	AccountManager
@@ -68,7 +69,7 @@ router.get('/edit/:accountId?', AuthHelper.requireUser, (req: Request, res: Resp
 });
 
 router.post('/edit/:accountId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const accountId = req.params['accountId'];
 	const properties: Partial<Account> = {
 		name: req.body['name'],
@@ -85,7 +86,7 @@ router.post('/edit/:accountId', AuthHelper.requireUser, (req: Request, res: Resp
 });
 
 router.post('/delete/:accountId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user;
+	const user = req.user as User;
 	const accountId = req.params['accountId'];
 
 	AccountManager
