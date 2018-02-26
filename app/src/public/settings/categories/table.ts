@@ -1,6 +1,6 @@
-import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
-import {formatCategoryTypes} from "../../helpers/formatters";
-import {ThinCategory} from "../../model-thins/ThinCategory";
+import {createDeleteAction, createEditAction, generationActionsHtml} from "../../../helpers/entity-action-creator";
+import {formatCategoryTypes} from "../../../helpers/formatters";
+import {ThinCategory} from "../../../model-thins/ThinCategory";
 
 const getActions = (category: ThinCategory) => {
 	return generationActionsHtml([

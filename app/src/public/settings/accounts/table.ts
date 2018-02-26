@@ -1,6 +1,6 @@
-import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
-import {formatAccountType} from "../../helpers/formatters";
-import {ThinAccount} from "../../model-thins/ThinAccount";
+import {createDeleteAction, createEditAction, generationActionsHtml} from "../../../helpers/entity-action-creator";
+import {formatAccountType} from "../../../helpers/formatters";
+import {ThinAccount} from "../../../model-thins/ThinAccount";
 
 function getActions(account: ThinAccount): string {
 	return generationActionsHtml([

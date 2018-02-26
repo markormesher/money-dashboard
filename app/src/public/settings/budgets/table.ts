@@ -1,6 +1,6 @@
-import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
-import {formatCurrency, formatBudgetPeriod, formatBudgetType} from "../../helpers/formatters";
-import {ThinBudget} from "../../model-thins/ThinBudget";
+import {createDeleteAction, createEditAction, generationActionsHtml} from "../../../helpers/entity-action-creator";
+import {formatCurrency, formatBudgetPeriod, formatBudgetType} from "../../../helpers/formatters";
+import {ThinBudget} from "../../../model-thins/ThinBudget";
 import {refreshCloning} from "./cloning";
 
 function getActions(budget: ThinBudget): string {

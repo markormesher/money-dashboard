@@ -16,10 +16,16 @@ const tsConfig = 'tsconfig.json';
 const distOutput = 'dist';
 
 function getFolders(dir) {
-	return fs.readdirSync(dir)
-			.filter(function (file) {
-				return fs.statSync(path.join(dir, file)).isDirectory();
-			});
+	var folders = [];
+	fs.readdirSync(dir).filter(function (file) {
+		const fullPath = path.join(dir, file);
+		if (fs.statSync(fullPath).isDirectory()) {
+			folders.push(fullPath);
+			const subFolders = getFolders(fullPath);
+			folders = folders.concat(subFolders);
+		}
+	});
+	return folders;
 }
 
 gulp.task('clean', function () {
@@ -36,12 +42,13 @@ gulp.task('compile-ts', function () {
 gulp.task('ts-assets', ['compile-ts'], function () {
 	const folders = getFolders(tsAssets);
 
-	return folders.map(function (folder) {
-		const inputFileGlob = path.join(tsAssets, folder, '**/*.js');
-		const inputFiles = glob.sync(inputFileGlob);
+	console.log("folders: ");
+	console.log(folders);
 
-		const outputFilePath = path.join(tsAssets, folder);
-		const outputFile = path.join(tsAssets, folder, 'bundle.js');
+	return folders.map(function (folder) {
+		const inputFileGlob = path.join(folder, '*.js');
+		const inputFiles = glob.sync(inputFileGlob);
+		const outputFile = path.join(folder, 'bundle.js');
 
 		const bundleStream = browserify({entries: inputFiles}).bundle();
 		return bundleStream
@@ -50,8 +57,8 @@ gulp.task('ts-assets', ['compile-ts'], function () {
 				.pipe(streamify(sourcemaps.init()))
 				.pipe(streamify(uglify()))
 				.pipe(streamify(sourcemaps.write()))
-				.pipe(gulp.dest(outputFilePath));
+				.pipe(gulp.dest(folder));
 	});
 });
 
-gulp.task('default', ['compile-ts', 'ts-assets']);
+gulp.task('default', ['clean', 'compile-ts', 'ts-assets']);
