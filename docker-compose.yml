@@ -5,6 +5,7 @@ services:
     build: ./app
     depends_on:
       - postgres
+      - redis
     restart: always
     secrets:
       - google.client.id
@@ -28,6 +29,10 @@ services:
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres.password
     volumes:
       - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:3.2-alpine
+    restart: always
 
 volumes:
   postgres-data:

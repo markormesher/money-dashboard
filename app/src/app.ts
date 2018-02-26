@@ -3,6 +3,8 @@ import Express = require('express')
 import BodyParser = require('body-parser')
 import {Request, Response, NextFunction} from 'express';
 import ExpressSession = require('express-session');
+
+const RedisSessionStore = require('connect-redis')(ExpressSession);
 import ExpressFlash = require('express-flash-2');
 import Passport = require('passport');
 import NodeSassMiddleware = require('node-sass-middleware');
@@ -33,6 +35,7 @@ app.use(NodeSassMiddleware({
 
 // cookies and sessions
 app.use(ExpressSession({
+	store: new RedisSessionStore({host: 'redis'}),
 	secret: ConfigLoader.getSecret('session.secret'),
 	resave: false,
 	saveUninitialized: false
