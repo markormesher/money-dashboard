@@ -59,9 +59,6 @@ function formatBudgetType(type: string): string {
 function formatBudgetPeriod(start: Date, end: Date): string {
 	const oneDay = 24 * 60 * 60 * 1000;
 
-	console.log(start);
-	console.log(typeof start);
-
 	if (start.getDate() == 1
 			&& start.getMonth() == end.getMonth()
 			&& new Date(end.getTime() + oneDay).getMonth() != end.getMonth()) {
