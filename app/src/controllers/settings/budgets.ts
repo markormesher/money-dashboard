@@ -12,7 +12,7 @@ import {Category} from "../../models/Category";
 import Bluebird = require("bluebird");
 import _ = require("lodash");
 import * as moment from "moment";
-import {formatCurrency, formatDate} from "../../helpers/formatters";
+import {formatDate} from "../../helpers/formatters";
 import {User} from "../../models/User";
 
 const router = Express.Router();
