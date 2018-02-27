@@ -19,6 +19,8 @@ interface ModalFields {
 let editorModal: JQuery = null;
 let modalFields: ModalFields = {};
 
+let saveInProgress = false;
+
 function initEditControls() {
 	editorModal = $('#editor-modal');
 	modalFields.transactionDate = editorModal.find('#transactionDate');
@@ -37,20 +39,8 @@ function initEditControls() {
 		evt.preventDefault();
 		startTransactionEdit();
 	});
-}
 
-function startTransactionEdit(transaction?: ThinTransaction) {
-	if (transaction) {
-		populateModal(transaction);
-		modalFields.createOnlyElements.hide();
-		modalFields.editOnlyElements.show();
-	} else {
-		clearModal(true);
-		modalFields.createOnlyElements.show();
-		modalFields.editOnlyElements.hide();
-	}
-
-	editorModal.modal('show');
+	modalFields.saveBtn.on('click', saveTransaction);
 }
 
 function populateModal(transaction: ThinTransaction) {
@@ -86,6 +76,37 @@ function setModalLock(locked: boolean) {
 	modalFields.category.prop('disabled', locked);
 	modalFields.amount.prop('disabled', locked);
 	modalFields.note.prop('disabled', locked);
+	modalFields.saveBtn.prop('disabled', locked);
+	modalFields.addAnotherCheckbox.prop('disabled', locked);
+}
+
+function startTransactionEdit(transaction?: ThinTransaction) {
+	if (transaction) {
+		populateModal(transaction);
+		modalFields.createOnlyElements.hide();
+		modalFields.editOnlyElements.show();
+	} else {
+		clearModal(true);
+		modalFields.createOnlyElements.show();
+		modalFields.editOnlyElements.hide();
+	}
+
+	editorModal.modal('show');
+}
+
+function saveTransaction() {
+	if (saveInProgress) {
+		return;
+	}
+	saveInProgress = true;
+
+	// TODO: gather data from fields
+	// TODO: send data to backend
+
+	setTimeout(() => {
+		setModalLock(false);
+		saveInProgress = false;
+	}, 2000);
 }
 
 $(() => {
