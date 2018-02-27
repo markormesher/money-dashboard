@@ -2,6 +2,9 @@ import {createDeleteAction, createEditAction, generationActionsHtml} from "../..
 import {formatCurrency, formatBudgetPeriod, formatBudgetType} from "../../../helpers/formatters";
 import {ThinBudget} from "../../../model-thins/ThinBudget";
 import {refreshCloning} from "./cloning";
+import {getCurrentOnlyState} from "./current-budgets";
+
+let datatable: DataTables.Api = null;
 
 function getActions(budget: ThinBudget): string {
 	return generationActionsHtml([
@@ -14,11 +17,15 @@ function getCloneCheckbox(budget: ThinBudget): string {
 	return `<input type="checkbox" name="cloneBudget" value="${budget.id}" />`;
 }
 
+function reloadTable() {
+	datatable.ajax.reload();
+}
+
 $(() => {
 	const table = $('table#budgets');
 	if (table.length == 0) return;
 
-	table.DataTable({
+	datatable = table.DataTable({
 		columns: [
 			{data: '_clone', orderable: false},
 			{data: 'category.name', orderable: true},
@@ -32,6 +39,10 @@ $(() => {
 		serverSide: true,
 		ajax: {
 			url: '/settings/budgets/table-data',
+			data: ((data: { [key: string]: any }) => {
+				data['currentOnly'] = getCurrentOnlyState();
+				return data
+			}),
 			type: 'get',
 			dataSrc: (raw: { data: ThinBudget[] }) => {
 				return raw.data.map(budget => {
@@ -48,3 +59,7 @@ $(() => {
 		drawCallback: refreshCloning
 	})
 });
+
+export {
+	reloadTable
+}

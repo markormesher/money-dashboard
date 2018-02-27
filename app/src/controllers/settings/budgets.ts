@@ -73,8 +73,19 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
+	const currentOnly = req.query['currentOnly'] == 'true';
+	const now = new Date();
 
-	// TODO: current only
+	const currentOnlyQueryFragment = currentOnly ? {
+		[Op.and]: {
+			startDate: {
+				[Op.lte]: now
+			},
+			endDate: {
+				[Op.gte]: now
+			}
+		}
+	} : {};
 
 	const countQuery: IFindOptions<Budget> = {
 		where: {
@@ -92,14 +103,11 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 					'$category.name$': {
 						[Op.iLike]: `%${searchTerm}%`
 					}
-				}
+				},
+				[Op.and]: currentOnlyQueryFragment
 			}
 		},
-		include: [
-			{
-				model: Category
-			}
-		]
+		include: [Category]
 	};
 
 	getData(Budget, req, countQuery, dataQuery)

@@ -7,13 +7,15 @@ block page-title-extra
 	a#clone-btn.btn.btn-info(href = '/settings/budgets/clone')
 		i.far.fa-fw.fa-copy
 		| Clone Selected
+	a#current-only-btn.btn.btn-info(href = '#')
+		i.far.fa-fw.fa-check-square
+		i.far.fa-fw.fa-square(style = 'display: none;')
+		| Current Budgets Only
 	a.btn.btn-success(href = '/settings/budgets/edit')
 		i.far.fa-fw.fa-plus
 		| New Budget
 
 block page-body
-
-	// TODO: current only
 
 	div.row
 		div.col-xs-12
