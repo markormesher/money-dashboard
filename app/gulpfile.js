@@ -58,4 +58,4 @@ gulp.task('ts-assets', ['compile-ts'], function () {
 	});
 });
 
-gulp.task('default', ['clean', 'compile-ts', 'ts-assets']);
+gulp.task('default', ['compile-ts', 'ts-assets']);
