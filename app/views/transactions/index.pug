@@ -1,0 +1,30 @@
+extends ../_shared/page-layout
+
+block page-head
+	link(rel = 'stylesheet', href = '/_npm/datatables.net-bs/css/dataTables.bootstrap.css')
+
+block page-title-extra
+	a#create-btn.btn.btn-success(href = '#')
+		i.far.fa-fw.fa-plus
+		| New Transaction
+
+block page-body
+
+	div.row
+		div.col-xs-12
+			table#transactions.table.table-hover.table-condensed.dataTable
+				thead
+					tr
+						th Date
+						th Account
+						th Payee
+						th Amount
+						th Category
+						th Actions
+
+	include ./edit-modal
+
+block page-scripts
+	script(src = '/_npm/datatables.net/js/jquery.dataTables.js')
+	script(src = '/_npm/datatables.net-bs/js/dataTables.bootstrap.js')
+	script(src = '/transactions/bundle.js')

@@ -60,6 +60,7 @@ app.use('/settings/accounts', require('./controllers/settings/accounts'));
 app.use('/settings/budgets', require('./controllers/settings/budgets'));
 app.use('/settings/categories', require('./controllers/settings/categories'));
 app.use('/settings/profiles', require('./controllers/settings/profiles'));
+app.use('/transactions', require('./controllers/transactions'));
 
 // kill favicon requests
 app.use('/favicon.ico', (req: Request, res: Response) => res.end());

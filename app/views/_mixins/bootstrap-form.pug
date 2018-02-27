@@ -32,6 +32,10 @@ mixin bootstrapForm(form)
 								label(for= name)&attributes(labelAttrs)= label
 								input.form-control(id= name, name= name, type = 'text', value= value)&attributes(inputAttrs)
 
+							when 'textarea'
+								label(for= name)&attributes(labelAttrs)= label
+								textarea.form-control(id= name, name= name)&attributes(inputAttrs)= value
+
 							when 'currency'
 								label(for= name)&attributes(labelAttrs)= label
 								div.input-group

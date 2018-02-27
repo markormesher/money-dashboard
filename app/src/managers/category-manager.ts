@@ -31,12 +31,10 @@ function getCategory(user: User, categoryOrId: CategoryOrId): Bluebird<Category>
 
 function getAllCategories(user: User): Bluebird<Category[]> {
 	return Category.findAll({
-		include: [{
-			model: Profile,
-			where: {
-				id: user.activeProfile.id
-			}
-		}]
+		where: {
+			profileId: user.activeProfile.id
+		},
+		include: [Profile]
 	});
 }
 

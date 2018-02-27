@@ -29,6 +29,15 @@ function getAccount(user: User, accountOrId: AccountOrId): Bluebird<Account> {
 			});
 }
 
+function getAllAccounts(user: User): Bluebird<Account[]> {
+	return Account.findAll({
+		where: {
+			profileId: user.activeProfile.id
+		},
+		include: [Profile]
+	});
+}
+
 function saveAccount(user: User, accountOrId: AccountOrId, properties: Partial<Account>): Bluebird<Account> {
 	return getAccount(user, accountOrId)
 			.then((account) => {
@@ -54,6 +63,7 @@ function deleteAccount(user: User, accountOrId: AccountOrId): Bluebird<void> {
 
 export {
 	getAccount,
+	getAllAccounts,
 	saveAccount,
 	deleteAccount
 }

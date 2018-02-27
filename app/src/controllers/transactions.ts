@@ -1,0 +1,97 @@
+import Express = require('express');
+
+import {Op} from 'sequelize'
+import {NextFunction, Request, Response} from 'express';
+import AuthHelper = require('../helpers/auth-helper');
+import AccountManager = require('../managers/account-manager');
+import CategoryManager = require('../managers/category-manager');
+import TransactionManager = require('../managers/transaction-manager');
+import {Transaction} from '../models/Transaction';
+import {getData} from "../helpers/datatable-helper";
+import {IFindOptions} from "sequelize-typescript";
+import {Category} from "../models/Category";
+import {User} from "../models/User";
+import {Account} from "../models/Account";
+import Bluebird = require("bluebird");
+import _ = require("lodash");
+
+const router = Express.Router();
+
+router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
+	const user = req.user as User;
+
+	Bluebird
+			.all([
+				AccountManager.getAllAccounts(user),
+				CategoryManager.getAllCategories(user)
+			])
+			.spread((accounts: Account[], categories: Category[]) => {
+				const accountsForView: string[][] = _(accounts)
+						.map((a: Account) => [a.id, a.name])
+						.sortBy((a: string[]) => a[1])
+						.value();
+				const categoriesForView: string[][] = _(categories)
+						.map((c: Category) => [c.id, c.name])
+						.sortBy((c: string[]) => c[1])
+						.value();
+				return [accountsForView, categoriesForView];
+			})
+			.spread((accounts: Account[], categories: Category[]) => {
+				res.render('transactions/index', {
+					_: {
+						title: 'Transactions',
+						activePage: 'transactions'
+					},
+					accounts: accounts,
+					categories: categories
+				});
+			});
+});
+
+router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const user = req.user as User;
+	const searchTerm = req.query['search']['value'];
+
+	const countQuery: IFindOptions<Transaction> = {
+		where: {
+			profileId: user.activeProfile.id
+		}
+	};
+	const dataQuery: IFindOptions<Transaction> = {
+		where: {
+			[Op.and]: {
+				profileId: user.activeProfile.id,
+				[Op.or]: {
+					payee: {
+						[Op.iLike]: `%${searchTerm}%`
+					},
+					note: {
+						[Op.iLike]: `%${searchTerm}%`
+					},
+					'$category.name$': {
+						[Op.iLike]: `%${searchTerm}%`
+					}
+				}
+			}
+		},
+		include: [Category, Account]
+	};
+
+	getData(Transaction, req, countQuery, dataQuery)
+			.then((response) => res.json(response))
+			.catch(next);
+});
+
+// TODO: editing
+
+router.post('/delete/:transactionId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const user = req.user as User;
+	const transactionId = req.params['transactionId'];
+
+	TransactionManager
+			.deleteTransaction(user, transactionId)
+			.then(() => res.status(200).end())
+			.catch(next);
+});
+
+export = router;
