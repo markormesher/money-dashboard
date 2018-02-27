@@ -14,7 +14,7 @@ function convertBudgetOrIdToId(budgetOrId: BudgetOrId): string {
 	}
 }
 
-function getBudget(user: User, budgetOrId: BudgetOrId): Bluebird<Budget> {
+function getBudget(user: User, budgetOrId: BudgetOrId, mustExist: boolean = false): Bluebird<Budget> {
 	const budgetId = convertBudgetOrIdToId(budgetOrId);
 	return Budget
 			.findOne({
@@ -22,7 +22,9 @@ function getBudget(user: User, budgetOrId: BudgetOrId): Bluebird<Budget> {
 				include: [Profile, Category]
 			})
 			.then((budget) => {
-				if (budget && user && budget.profile.id !== user.activeProfile.id) {
+				if (!budget && mustExist) {
+					throw new Error('That budget does not exist');
+				} else if (budget && user && budget.profile.id !== user.activeProfile.id) {
 					throw new Error('User does not own this budget');
 				} else {
 					return budget;
@@ -53,8 +55,25 @@ function deleteBudget(user: User, budgetOrId: BudgetOrId): Bluebird<void> {
 			.then((budget) => budget.destroy());
 }
 
+function cloneBudgets(user: User, budgetsOrIds: BudgetOrId[], startDate: Date, endDate: Date): Bluebird<Budget[]> {
+	return Bluebird
+			.all(budgetsOrIds.map(b => getBudget(user, b, true)))
+			.then((budgets: Budget[]) => {
+				return budgets.map(budget => {
+					const clonedBudget = budget.buildClone();
+					clonedBudget.startDate = startDate;
+					clonedBudget.endDate = endDate;
+					return clonedBudget;
+				});
+			})
+			.then((clonedBudgets: Budget[]) => {
+				return Bluebird.all(clonedBudgets.map(b => b.save()));
+			});
+}
+
 export {
 	getBudget,
 	saveBudget,
-	deleteBudget
+	deleteBudget,
+	cloneBudgets
 }

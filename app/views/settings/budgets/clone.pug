@@ -22,7 +22,7 @@ block page-body
 				h2 Settings for New Budgets
 
 			+bootstrapForm({
-				action: '/settings/budgets/clone',
+				action: '/settings/budgets/clone/' + budgetIds.join(','),
 				method: 'post',
 				rows: [
 					{

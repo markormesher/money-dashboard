@@ -170,25 +170,34 @@ router.get('/clone/:budgetIds', AuthHelper.requireUser, (req: Request, res: Resp
 	const user = req.user as User;
 	const budgetIds: string[] = req.params['budgetIds'].split(',');
 
-	const tasks = budgetIds.map(id => BudgetManager.getBudget(user, id));
+	const tasks = budgetIds.map(id => BudgetManager.getBudget(user, id, true));
 	Bluebird.all(tasks)
-			.then((budgets: Budget[]) => {
-				if (budgets.some(budget => budget == null)) {
-					throw new Error("Budget does not exist");
-				} else {
-					return budgets;
-				}
-			})
 			.then((budgets: Budget[]) => {
 				budgets.sort((a, b) => a.category.name.localeCompare(b.category.name));
 				res.render('settings/budgets/clone', {
 					_: {
 						activePage: 'settings/budget',
-						title: budgets.length > 1 ? 'Clone Budgets' : 'Clone Budget'
+						title: budgets.length == 1 ? 'Clone Budget' : 'Clone Budgets'
 					},
+					budgetIds: budgetIds,
 					budgets: budgets,
 					quickPeriodDates: getQuickPeriodDates()
 				});
+			})
+			.catch(next);
+});
+
+router.post('/clone/:budgetIds', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const user = req.user as User;
+	const budgetIds: string[] = req.params['budgetIds'].split(',');
+	const startDate = new Date(req.body['startDate']);
+	const endDate = new Date(req.body['endDate']);
+
+	BudgetManager
+			.cloneBudgets(user, budgetIds, startDate, endDate)
+			.then(() => {
+				res.flash('success', budgetIds.length == 1 ? 'Budget saved' : 'Budgets saved');
+				res.redirect('/settings/budgets');
 			})
 			.catch(next);
 });

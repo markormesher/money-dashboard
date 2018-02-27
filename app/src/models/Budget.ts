@@ -46,4 +46,15 @@ export class Budget extends Model<Budget> {
 	@BelongsTo(() => Profile)
 	profile: Profile;
 
+	buildClone = (): Budget => {
+		return Budget.build({
+			type: this.type,
+			amount: this.amount,
+			startDate: this.startDate,
+			endDate: this.endDate,
+			categoryId: this.categoryId,
+			profileId: this.profileId,
+		});
+	}
+
 }
