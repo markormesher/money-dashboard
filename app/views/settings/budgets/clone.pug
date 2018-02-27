@@ -16,7 +16,10 @@ block page-body
 
 	div.row
 		div.col-xs-12.col-md-6
-			h2 Settings for New Budgets
+			if (budgets.length === 1)
+				h2 Settings for New Budget
+			else
+				h2 Settings for New Budgets
 
 			+bootstrapForm({
 				action: '/settings/budgets/clone',
