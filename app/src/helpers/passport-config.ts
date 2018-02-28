@@ -35,6 +35,10 @@ function init(passport: Passport) {
 
 		UserManager.getById(userId)
 				.then(user => {
+					if (!user) {
+						throw new Error('Could not find user');
+					}
+
 					user.activeProfile = user.profiles.find(p => !profileId || p.id === profileId);
 					if (!user.activeProfile) {
 						user.activeProfile = user.profiles[0];

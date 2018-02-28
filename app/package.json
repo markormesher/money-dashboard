@@ -47,6 +47,7 @@
     "@types/express-flash-2": "^1.0.3",
     "@types/express-session": "^1.15.6",
     "@types/jquery": "^3.2.17",
+    "@types/jquery.validation": "^1.16.4",
     "@types/lodash": "^4.14.98",
     "@types/node": "^8.5.2",
     "@types/node-sass-middleware": "0.0.30",

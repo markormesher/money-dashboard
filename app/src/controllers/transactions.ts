@@ -14,6 +14,7 @@ import {User} from "../models/User";
 import {Account} from "../models/Account";
 import Bluebird = require("bluebird");
 import _ = require("lodash");
+import {Budget} from "../models/Budget";
 
 const router = Express.Router();
 
@@ -82,7 +83,28 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 			.catch(next);
 });
 
-// TODO: editing
+router.post('/edit/:transactionId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const user = req.user as User;
+	const transactionId = req.params['transactionId'] == 'new' ? null : req.params['transactionId'];
+	const properties: Partial<Transaction> = {
+		transactionDate: new Date(req.body['transactionDate']),
+		effectiveDate: new Date(req.body['effectiveDate']),
+		amount: parseFloat(req.body['amount']),
+		payee: req.body['payee'].trim(),
+		note: req.body['note'].trim(),
+		accountId: req.body['accountId'],
+		categoryId: req.body['categoryId'],
+	};
+
+	if (properties.note.length == 0) {
+		properties.note = null;
+	}
+
+	TransactionManager
+			.saveTransaction(user, transactionId, properties)
+			.then(() => res.status(200).end())
+			.catch(next);
+});
 
 router.post('/delete/:transactionId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;

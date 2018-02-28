@@ -3,6 +3,7 @@ $(() => {
 		$('btn.delete-btn').on('click', function () {
 			const btn = $(this);
 			if (btn.hasClass('btn-danger')) {
+				// TODO: fix icon swapping for FA5
 				btn.find('i').removeClass('fa-trash').addClass('fa-circle-o-notch').addClass('fa-spin');
 				$.post(btn.data('action-url'))
 						.done(() => {

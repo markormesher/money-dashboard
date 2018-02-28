@@ -25,7 +25,9 @@ export class Transaction extends Model<Transaction> {
 	})
 	effectiveDate: Date;
 
-	@Column
+	@Column({
+		type: DataType.FLOAT
+	})
 	amount: number;
 
 	@Column

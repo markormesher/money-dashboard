@@ -19,7 +19,9 @@ export class Budget extends Model<Budget> {
 	})
 	type: string;
 
-	@Column
+	@Column({
+		type: DataType.FLOAT
+	})
 	amount: number;
 
 	@Column({

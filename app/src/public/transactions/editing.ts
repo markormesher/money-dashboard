@@ -1,5 +1,6 @@
 import {ThinTransaction} from "../../model-thins/ThinTransaction";
 import {formatCurrency, formatDate} from "../../helpers/formatters";
+import {reloadTable} from "./table";
 
 interface ModalFields {
 	transactionDate?: JQuery
@@ -17,12 +18,16 @@ interface ModalFields {
 }
 
 let editorModal: JQuery = null;
+let editorForm: JQuery = null;
 let modalFields: ModalFields = {};
 
+let currentlyEditingId: string = null;
 let saveInProgress = false;
 
 function initEditControls() {
 	editorModal = $('#editor-modal');
+	editorForm = editorModal.find('form');
+
 	modalFields.transactionDate = editorModal.find('#transactionDate');
 	modalFields.effectiveDate = editorModal.find('#effectiveDate');
 	modalFields.account = editorModal.find('#account');
@@ -65,10 +70,16 @@ function clearModal(full: boolean) {
 		modalFields.account.prop('selectedIndex', 0);
 		modalFields.category.prop('selectedIndex', 0);
 		modalFields.addAnotherCheckbox.prop('checked', true);
+
+		modalFields.transactionDate.focus();
+	} else {
+		modalFields.payee.focus();
 	}
 }
 
 function setModalLock(locked: boolean) {
+	// TODO: prevent modal from being dismissed
+
 	modalFields.transactionDate.prop('disabled', locked);
 	modalFields.effectiveDate.prop('disabled', locked);
 	modalFields.account.prop('disabled', locked);
@@ -82,10 +93,12 @@ function setModalLock(locked: boolean) {
 
 function startTransactionEdit(transaction?: ThinTransaction) {
 	if (transaction) {
+		currentlyEditingId = transaction.id;
 		populateModal(transaction);
 		modalFields.createOnlyElements.hide();
 		modalFields.editOnlyElements.show();
 	} else {
+		currentlyEditingId = 'new';
 		clearModal(true);
 		modalFields.createOnlyElements.show();
 		modalFields.editOnlyElements.hide();
@@ -98,17 +111,57 @@ function saveTransaction() {
 	if (saveInProgress) {
 		return;
 	}
+
+	editorForm.validate();
+	if (!editorForm.valid()) {
+		return;
+	}
+
 	saveInProgress = true;
 
-	// TODO: gather data from fields
-	// TODO: send data to backend
+	const data: Partial<ThinTransaction> = {
+		transactionDate: new Date(modalFields.transactionDate.val().toString()),
+		effectiveDate: new Date(modalFields.effectiveDate.val().toString()),
+		amount: parseFloat(modalFields.amount.val().toString()),
+		payee: modalFields.payee.val().toString(),
+		note: modalFields.note.val().toString(),
+		accountId: modalFields.account.val().toString(),
+		categoryId: modalFields.category.val().toString(),
+	};
 
-	setTimeout(() => {
-		setModalLock(false);
-		saveInProgress = false;
-	}, 2000);
+	onStartSaveTransaction();
+	$.post(`/transactions/edit/${currentlyEditingId}`, data)
+			.done(() => onFinishSaveTransaction(true))
+			.fail(() => onFinishSaveTransaction(false));
+}
+
+function onStartSaveTransaction() {
+	setModalLock(true);
+}
+
+function onFinishSaveTransaction(successful: boolean) {
+	setModalLock(false);
+
+	if (successful) {
+		toastr.success('Transaction saved');
+		reloadTable();
+		if (currentlyEditingId == 'new' && modalFields.addAnotherCheckbox.is(':checked')) {
+			clearModal(false);
+		} else {
+			clearModal(true);
+			editorModal.modal('hide');
+		}
+	} else {
+		toastr.error('Transaction could not be saved');
+	}
+
+	saveInProgress = false;
 }
 
 $(() => {
 	initEditControls()
 });
+
+export {
+	startTransactionEdit // TODO: move handler into this file to remove export need
+}
