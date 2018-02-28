@@ -19,9 +19,9 @@ function generationActionsHtml(actions: EntityAction[]): string {
 					break;
 
 				case 'delete':
-					output += `<btn class="btn btn-mini btn-default delete-btn" data-action-url="${action.actionUrl}" data-id="${action.dataId || ''}">`;
+					output += `<button class="btn btn-mini btn-default delete-btn" data-action-url="${action.actionUrl}" data-id="${action.dataId || ''}">`;
 					output += `<i class="far fa-fw fa-trash"></i>`;
-					output += `</btn>`;
+					output += `</button>`;
 					break;
 			}
 		});

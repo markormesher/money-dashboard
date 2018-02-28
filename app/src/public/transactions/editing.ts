@@ -137,10 +137,12 @@ function saveTransaction() {
 
 function onStartSaveTransaction() {
 	setModalLock(true);
+	modalFields.saveBtn.find('[data-fa-i2svg]').toggleClass('fa-asterisk').addClass('fa-spin');
 }
 
 function onFinishSaveTransaction(successful: boolean) {
 	setModalLock(false);
+	modalFields.saveBtn.find('[data-fa-i2svg]').toggleClass('fa-save').removeClass('fa-spin');
 
 	if (successful) {
 		toastr.success('Transaction saved');

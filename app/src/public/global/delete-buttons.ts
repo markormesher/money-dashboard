@@ -1,10 +1,11 @@
 $(() => {
 	$('table.dataTable').on('draw.dt', () => {
-		$('btn.delete-btn').on('click', function () {
+		$('button.delete-btn').on('click', function () {
 			const btn = $(this);
 			if (btn.hasClass('btn-danger')) {
-				// TODO: fix icon swapping for FA5
-				btn.find('i').removeClass('fa-trash').addClass('fa-circle-o-notch').addClass('fa-spin');
+				btn.addClass('delete-confirmed');
+				btn.find('[data-fa-i2svg]').toggleClass('fa-asterisk').addClass('fa-spin');
+
 				$.post(btn.data('action-url'))
 						.done(() => {
 							btn.closest('.dataTable').DataTable().ajax.reload();
@@ -14,7 +15,11 @@ $(() => {
 						})
 			} else {
 				btn.removeClass('btn-default').addClass('btn-danger');
-				setTimeout((() => btn.addClass('btn-default').removeClass('btn-danger')), 2000);
+				setTimeout((() => {
+					if (!btn.hasClass('delete-confirmed')) {
+						btn.addClass('btn-default').removeClass('btn-danger');
+					}
+				}), 2000);
 			}
 		});
 	});
