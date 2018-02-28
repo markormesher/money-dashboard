@@ -1,9 +1,10 @@
-import {User} from "../../../models/User";
 import {createDeleteAction, createEditAction, generationActionsHtml} from "../../../helpers/entity-action-creator";
 import {ThinProfile} from "../../../model-thins/ThinProfile";
+import {MDWindow} from "../../global/window";
+import {ThinUser} from "../../../model-thins/ThinUser";
 
 function getActions(profile: ThinProfile): string {
-	const user: User = window.MoneyDashboard.user;
+	const user: ThinUser = (window as MDWindow).MoneyDashboard.user;
 
 	return generationActionsHtml([
 		createEditAction(`/settings/profiles/edit/${profile.id}`),

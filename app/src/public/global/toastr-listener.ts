@@ -1,5 +1,7 @@
+import {MDWindow} from "./window";
+
 $(() => {
-	const toastrMessages = window.MoneyDashboard.toastrMessages;
+	const toastrMessages = (window as MDWindow).MoneyDashboard.toastrMessages;
 	for (let type in toastrMessages) {
 		if (toastrMessages.hasOwnProperty(type)) {
 			const messages = toastrMessages[type];
