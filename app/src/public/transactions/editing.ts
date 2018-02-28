@@ -159,9 +159,9 @@ function onFinishSaveTransaction(successful: boolean) {
 }
 
 $(() => {
-	initEditControls()
+	initEditControls();
 });
 
 export {
-	startTransactionEdit // TODO: move handler into this file to remove export need
+	startTransactionEdit
 }
