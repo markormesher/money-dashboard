@@ -78,8 +78,6 @@ function clearModal(full: boolean) {
 }
 
 function setModalLock(locked: boolean) {
-	// TODO: prevent modal from being dismissed
-
 	modalFields.transactionDate.prop('disabled', locked);
 	modalFields.effectiveDate.prop('disabled', locked);
 	modalFields.account.prop('disabled', locked);
@@ -89,6 +87,10 @@ function setModalLock(locked: boolean) {
 	modalFields.note.prop('disabled', locked);
 	modalFields.saveBtn.prop('disabled', locked);
 	modalFields.addAnotherCheckbox.prop('disabled', locked);
+
+	// prevent modal from being dismissed
+	editorModal.data('bs.modal').options.backdrop = locked ? 'static' : true;
+	editorModal.data('bs.modal').options.keyboard = !locked;
 }
 
 function startTransactionEdit(transaction?: ThinTransaction) {
