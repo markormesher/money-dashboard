@@ -1,10 +1,14 @@
-import {createDeleteAction, createEditAction, generationActionsHtml} from "../../../helpers/entity-action-creator";
+import {
+	createDeleteAction, createEditAction, createToggleAction,
+	generationActionsHtml
+} from "../../../helpers/entity-action-creator";
 import {formatAccountType} from "../../../helpers/formatters";
 import {ThinAccount} from "../../../model-thins/ThinAccount";
 
 function getActions(account: ThinAccount): string {
 	return generationActionsHtml([
 		createEditAction(`/settings/accounts/edit/${account.id}`),
+		createToggleAction(null, account.id, account.active),
 		createDeleteAction(`/settings/accounts/delete/${account.id}`)
 	]);
 }

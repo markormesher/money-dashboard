@@ -49,6 +49,14 @@ function saveAccount(user: User, accountOrId: AccountOrId, properties: Partial<A
 			});
 }
 
+function toggleActiveStatus(user: User, accountOrId: AccountOrId): Bluebird<Account> {
+	return getAccount(user, accountOrId)
+			.then((account) => {
+				account.active = !account.active;
+				return account.save();
+			});
+}
+
 function deleteAccount(user: User, accountOrId: AccountOrId): Bluebird<void> {
 	return getAccount(user, accountOrId)
 			.then((account) => {
@@ -65,5 +73,6 @@ export {
 	getAccount,
 	getAllAccounts,
 	saveAccount,
+	toggleActiveStatus,
 	deleteAccount
 }

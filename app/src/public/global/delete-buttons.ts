@@ -4,6 +4,7 @@ $(() => {
 			const btn = $(this);
 			if (btn.hasClass('btn-danger')) {
 				btn.addClass('delete-confirmed');
+				btn.prop('disabled', true);
 				btn.find('[data-fa-i2svg]').toggleClass('fa-asterisk').addClass('fa-spin');
 
 				$.post(btn.data('action-url'))
@@ -12,7 +13,8 @@ $(() => {
 						})
 						.fail(() => {
 							toastr.error('Sorry, that couldn\'t be deleted!');
-						})
+							btn.closest('.dataTable').DataTable().ajax.reload();
+						});
 			} else {
 				btn.removeClass('btn-default').addClass('btn-danger');
 				setTimeout((() => {

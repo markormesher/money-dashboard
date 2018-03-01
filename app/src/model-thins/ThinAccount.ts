@@ -4,6 +4,7 @@ export class ThinAccount {
 	id: string;
 	name: string;
 	type: string;
+	active: boolean;
 	profileId: string;
 	profile: ThinProfile;
 	createdAt: Date;

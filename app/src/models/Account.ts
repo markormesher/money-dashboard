@@ -21,6 +21,9 @@ export class Account extends Model<Account> {
 	})
 	type: string;
 
+	@Column
+	active: boolean;
+
 	@ForeignKey(() => Profile)
 	@Column({type: DataType.UUID})
 	profileId: string;

@@ -85,6 +85,16 @@ router.post('/edit/:accountId', AuthHelper.requireUser, (req: Request, res: Resp
 			.catch(next);
 });
 
+router.post('/toggle-active/:accountId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const user = req.user as User;
+	const accountId = req.params['accountId'];
+
+	AccountManager
+			.toggleActiveStatus(user, accountId)
+			.then(() => res.status(200).end())
+			.catch(next);
+});
+
 router.post('/delete/:accountId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const accountId = req.params['accountId'];
