@@ -89,9 +89,9 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 			}
 		]
 	};
+	const postOrder = [['createdAt', 'DESC']];
 
-	// TODO: force "<custom sort> + order by created date desc"
-	getData(Transaction, req, countQuery, dataQuery)
+	getData(Transaction, req, countQuery, dataQuery, [], postOrder)
 			.then((response) => res.json(response))
 			.catch(next);
 });
