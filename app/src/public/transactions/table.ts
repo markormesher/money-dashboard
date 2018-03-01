@@ -1,5 +1,5 @@
 import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
-import {formatCurrency} from "../../helpers/formatters";
+import {formatCurrency, formatTooltip} from "../../helpers/formatters";
 import {ThinTransaction} from "../../model-thins/ThinTransaction";
 import {startTransactionEdit} from "./editing";
 import _ = require("lodash");
@@ -28,7 +28,6 @@ $(() => {
 	if (table.length == 0) return;
 
 	// TODO: toggle display of effective/transaction date
-	// TODO: display notes
 	datatable = table.DataTable({
 		columns: [
 			{data: 'effectiveDate', orderable: true},
@@ -51,6 +50,9 @@ $(() => {
 					const output = transaction as any;
 					output.amount = formatCurrency(transaction.amount);
 					output._actions = getActions(transaction);
+					if (transaction.note != null && transaction.note != '') {
+						output.payee += ' ' + formatTooltip('<i class="far fa-fw fa-info-circle"></i>', transaction.note);
+					}
 					return output
 				});
 			}

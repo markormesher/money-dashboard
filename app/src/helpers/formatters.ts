@@ -33,6 +33,10 @@ function formatMutedText(text: string): string {
 	return `<span class="text-muted">${text}</span>`;
 }
 
+function formatTooltip(text: string, tooltip: string) {
+	return `<span class="text-muted" data-toggle="tooltip" title="${tooltip}">${text}</span>`;
+}
+
 // accounts
 
 function formatAccountType(type: string): string {
@@ -131,6 +135,7 @@ export {
 	formatTag,
 	formatDate,
 	formatMutedText,
+	formatTooltip,
 
 	formatAccountType,
 	formatBudgetType,
