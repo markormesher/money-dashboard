@@ -38,13 +38,13 @@ function formatMutedText(text: string): string {
 function formatAccountType(type: string): string {
 	switch (type) {
 		case 'current':
-			return 'Current Account';
+			return formatTag('Current Account', 'info');
 		case 'savings':
-			return 'Savings Account';
+			return formatTag('Savings Account', 'success');
 		case 'asset':
-			return 'Asset';
+			return formatTag('Asset', 'warning');
 		default:
-			return 'Other'
+			return formatTag('Other', 'danger');
 	}
 }
 
@@ -107,7 +107,12 @@ function formatCategoryTypes(category: Category | ThinCategory): string {
 	if (category.isAssetGrowthCategory) {
 		output += formatTag('Asset Growth', 'warning');
 	}
-	return output.trim();
+
+	if (output != '') {
+		return output.trim();
+	} else {
+		return formatMutedText('None');
+	}
 }
 
 // publishing

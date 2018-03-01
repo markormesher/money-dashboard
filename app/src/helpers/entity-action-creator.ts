@@ -1,3 +1,5 @@
+import {formatMutedText} from "./formatters";
+
 export interface EntityAction {
 	type: 'edit' | 'delete' | 'toggle';
 	actionUrl?: string;
@@ -8,7 +10,7 @@ export interface EntityAction {
 function generationActionsHtml(actions: EntityAction[]): string {
 	const concreteActions = actions.filter((action) => action !== null && action !== undefined);
 	if (concreteActions.length === 0) {
-		return '<span class="text-muted">None</span>';
+		return formatMutedText('None');
 	} else {
 		let output = '<div class="btn-group">';
 		concreteActions.forEach((action) => {
