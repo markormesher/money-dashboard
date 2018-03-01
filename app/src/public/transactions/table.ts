@@ -32,6 +32,7 @@ $(() => {
 			{data: 'category.name', orderable: false},
 			{data: '_actions', orderable: false}
 		],
+		order: [[0, 'desc']],
 		lengthMenu: [[25, 50, 100], [25, 50, 100]],
 		serverSide: true,
 		ajax: {

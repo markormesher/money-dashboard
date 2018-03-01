@@ -1,5 +1,6 @@
 secrets/**
 !secrets/.gitkeep
+copy-prod-data.sh
 
 # IntelliJ
 *.iml
