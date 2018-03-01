@@ -71,6 +71,9 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 					},
 					'$category.name$': {
 						[Op.iLike]: `%${searchTerm}%`
+					},
+					'$account.name$': {
+						[Op.iLike]: `%${searchTerm}%`
 					}
 				}
 			}
