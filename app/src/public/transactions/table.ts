@@ -9,10 +9,14 @@ let datatable: DataTables.Api = null;
 const transactionCache: { [key: string]: ThinTransaction } = {};
 
 function getActions(transaction: ThinTransaction): string {
-	return generationActionsHtml([
-		createEditAction(null, transaction.id),
-		createDeleteAction(`/transactions/delete/${transaction.id}`)
-	]);
+	if (transaction.account.deletedAt != null || transaction.category.deletedAt != null) {
+		return generationActionsHtml([]);
+	} else {
+		return generationActionsHtml([
+			createEditAction(null, transaction.id),
+			createDeleteAction(`/transactions/delete/${transaction.id}`)
+		]);
+	}
 }
 
 function reloadTable() {
@@ -52,7 +56,7 @@ $(() => {
 			}
 		},
 		drawCallback: () => {
-			$('.edit-btn').on('click', function(evt) {
+			$('.edit-btn').on('click', function (evt) {
 				evt.preventDefault();
 				const transactionId = $(this).data('id').toString();
 				const transaction = transactionCache[transactionId];

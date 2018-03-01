@@ -6,4 +6,7 @@ export class ThinAccount {
 	type: string;
 	profileId: string;
 	profile: ThinProfile;
+	createdAt: Date;
+	updateedAt: Date;
+	deletedAt: Date;
 }

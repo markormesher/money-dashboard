@@ -7,4 +7,7 @@ export class ThinUser {
 	image: string;
 	profiles: ThinProfile[];
 	activeProfile: ThinProfile;
+	createdAt: Date;
+	updateedAt: Date;
+	deletedAt: Date;
 }

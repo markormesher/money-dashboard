@@ -11,4 +11,7 @@ export class ThinBudget {
 	category: ThinCategory;
 	profileId: string;
 	profile: ThinProfile;
+	createdAt: Date;
+	updateedAt: Date;
+	deletedAt: Date;
 }

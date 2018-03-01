@@ -9,4 +9,7 @@ export class ThinCategory {
 	isAssetGrowthCategory: boolean;
 	profileId: string;
 	profile: ThinProfile;
+	createdAt: Date;
+	updateedAt: Date;
+	deletedAt: Date;
 }

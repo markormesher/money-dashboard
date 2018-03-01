@@ -15,4 +15,7 @@ export class ThinTransaction {
 	category: ThinCategory;
 	profileId: string;
 	profile: ThinProfile;
+	createdAt: Date;
+	updateedAt: Date;
+	deletedAt: Date;
 }
