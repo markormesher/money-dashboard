@@ -3,6 +3,7 @@ import {formatCurrency, formatBudgetPeriod, formatBudgetType} from "../../../hel
 import {ThinBudget} from "../../../model-thins/ThinBudget";
 import {refreshCloning} from "./cloning";
 import {getCurrentOnlyState} from "./current-budgets";
+import {withDataTableDefaults} from "../../global/data-table-defaults";
 
 let datatable: DataTables.Api = null;
 
@@ -25,7 +26,7 @@ $(() => {
 	const table = $('table#budgets');
 	if (table.length == 0) return;
 
-	datatable = table.DataTable({
+	datatable = table.DataTable(withDataTableDefaults({
 		columns: [
 			{data: '_clone', orderable: false},
 			{data: 'category.name', orderable: true},
@@ -35,15 +36,12 @@ $(() => {
 			{data: '_actions', orderable: false}
 		],
 		order: [[1, 'asc']],
-		lengthMenu: [[25, 50, 100], [25, 50, 100]],
-		serverSide: true,
 		ajax: {
 			url: '/settings/budgets/table-data',
 			data: ((data: { [key: string]: any }) => {
 				data['currentOnly'] = getCurrentOnlyState();
 				return data
 			}),
-			type: 'get',
 			dataSrc: (raw: { data: ThinBudget[] }) => {
 				return raw.data.map(budget => {
 					const output = budget as any;
@@ -57,7 +55,7 @@ $(() => {
 			}
 		},
 		drawCallback: refreshCloning
-	})
+	}))
 });
 
 export {

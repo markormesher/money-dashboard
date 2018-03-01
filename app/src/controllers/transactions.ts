@@ -14,7 +14,6 @@ import {User} from "../models/User";
 import {Account} from "../models/Account";
 import Bluebird = require("bluebird");
 import _ = require("lodash");
-import {Budget} from "../models/Budget";
 
 const router = Express.Router();
 

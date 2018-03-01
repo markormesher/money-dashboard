@@ -1,6 +1,7 @@
 import {createDeleteAction, createEditAction, generationActionsHtml} from "../../../helpers/entity-action-creator";
 import {formatCategoryTypes} from "../../../helpers/formatters";
 import {ThinCategory} from "../../../model-thins/ThinCategory";
+import {withDataTableDefaults} from "../../global/data-table-defaults";
 
 const getActions = (category: ThinCategory) => {
 	return generationActionsHtml([
@@ -10,17 +11,14 @@ const getActions = (category: ThinCategory) => {
 };
 
 $(() => {
-	$('table#categories').DataTable({
+	$('table#categories').DataTable(withDataTableDefaults({
 		columns: [
 			{data: 'name'},
 			{data: 'types', orderable: false},
 			{data: '_actions', orderable: false}
 		],
-		lengthMenu: [[25, 50, 100], [25, 50, 100]],
-		serverSide: true,
 		ajax: {
 			url: '/settings/categories/table-data',
-			type: 'get',
 			dataSrc: (raw: { data: ThinCategory[] }) => {
 				return raw.data.map(category => {
 					const output = category as any;
@@ -30,5 +28,5 @@ $(() => {
 				});
 			}
 		}
-	})
+	}))
 });

@@ -2,6 +2,7 @@ import {createDeleteAction, createEditAction, generationActionsHtml} from "../..
 import {ThinProfile} from "../../../model-thins/ThinProfile";
 import {MDWindow} from "../../global/window";
 import {ThinUser} from "../../../model-thins/ThinUser";
+import {withDataTableDefaults} from "../../global/data-table-defaults";
 
 function getActions(profile: ThinProfile): string {
 	const user: ThinUser = (window as MDWindow).MoneyDashboard.user;
@@ -13,17 +14,13 @@ function getActions(profile: ThinProfile): string {
 }
 
 $(() => {
-	// TODO: merge with default DT options
-	$('table#profiles').DataTable({
+	$('table#profiles').DataTable(withDataTableDefaults({
 		columns: [
 			{data: 'name'},
 			{data: '_actions', orderable: false}
 		],
-		lengthMenu: [[25, 50, 100], [25, 50, 100]],
-		serverSide: true,
 		ajax: {
 			url: '/settings/profiles/table-data',
-			type: 'get',
 			dataSrc: (raw: { data: ThinProfile[] }) => {
 				return raw.data.map(profile => {
 					const rawProfile = profile as any;
@@ -32,5 +29,5 @@ $(() => {
 				});
 			}
 		}
-	})
+	}))
 });

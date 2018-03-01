@@ -7,6 +7,7 @@ import {
 import {formatAccountType, formatMutedText} from "../../../helpers/formatters";
 import {ThinAccount} from "../../../model-thins/ThinAccount";
 import {getActiveOnlyState} from "./active-accounts";
+import {withDataTableDefaults} from "../../global/data-table-defaults";
 
 let datatable: DataTables.Api = null;
 
@@ -26,21 +27,18 @@ $(() => {
 	const table = $('table#accounts');
 	if (table.length == 0) return;
 
-	datatable = table.DataTable({
+	datatable = table.DataTable(withDataTableDefaults({
 		columns: [
 			{data: 'name'},
 			{data: 'type'},
 			{data: '_actions', orderable: false}
 		],
-		lengthMenu: [[25, 50, 100], [25, 50, 100]],
-		serverSide: true,
 		ajax: {
 			url: '/settings/accounts/table-data',
 			data: ((data: { [key: string]: any }) => {
 				data['activeOnly'] = getActiveOnlyState();
 				return data
 			}),
-			type: 'get',
 			dataSrc: (raw: { data: ThinAccount[] }) => {
 				return raw.data.map(account => {
 					const rawAccount = account as any;
@@ -51,7 +49,7 @@ $(() => {
 				});
 			}
 		}
-	})
+	}))
 });
 
 export {

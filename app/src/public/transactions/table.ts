@@ -3,6 +3,7 @@ import {formatCurrency, formatTooltip} from "../../helpers/formatters";
 import {ThinTransaction} from "../../model-thins/ThinTransaction";
 import {startTransactionEdit} from "./editing";
 import _ = require("lodash");
+import {withDataTableDefaults} from "../global/data-table-defaults";
 
 let datatable: DataTables.Api = null;
 
@@ -28,7 +29,7 @@ $(() => {
 	if (table.length == 0) return;
 
 	// TODO: toggle display of effective/transaction date
-	datatable = table.DataTable({
+	datatable = table.DataTable(withDataTableDefaults({
 		columns: [
 			{data: 'effectiveDate', orderable: true},
 			{data: 'account.name', orderable: false},
@@ -38,11 +39,8 @@ $(() => {
 			{data: '_actions', orderable: false}
 		],
 		order: [[0, 'desc']],
-		lengthMenu: [[25, 50, 100], [25, 50, 100]],
-		serverSide: true,
 		ajax: {
 			url: '/transactions/table-data',
-			type: 'get',
 			dataSrc: (raw: { data: ThinTransaction[] }) => {
 				return raw.data.map(transaction => {
 					transactionCache[transaction.id] = _.clone(transaction);
@@ -65,7 +63,7 @@ $(() => {
 				startTransactionEdit(transaction);
 			});
 		}
-	})
+	}))
 });
 
 export {
