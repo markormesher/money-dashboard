@@ -23,6 +23,13 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
+	const currentOnly = req.query['activeOnly'] == 'true';
+
+	const activeOnlyQueryFragment = currentOnly ? {
+		[Op.and]: {
+			active: true
+		}
+	} : {};
 
 	const countQuery: IFindOptions<Account> = {
 		where: {
@@ -40,7 +47,8 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 					type: {
 						[Op.iLike]: `%${searchTerm}%`
 					}
-				}
+				},
+				[Op.and]: activeOnlyQueryFragment
 			}
 		}
 	};

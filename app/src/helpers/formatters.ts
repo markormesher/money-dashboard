@@ -29,6 +29,10 @@ function formatDate(date: Date | Moment, format: 'user' | 'system' = 'user'): st
 	}
 }
 
+function formatMutedText(text: string): string {
+	return `<span class="text-muted">${text}</span>`;
+}
+
 // accounts
 
 function formatAccountType(type: string): string {
@@ -121,6 +125,7 @@ export {
 	formatCurrency,
 	formatTag,
 	formatDate,
+	formatMutedText,
 
 	formatAccountType,
 	formatBudgetType,

@@ -1,9 +1,14 @@
 import {
-	createDeleteAction, createEditAction, createToggleAction,
+	createDeleteAction,
+	createEditAction,
+	createToggleAction,
 	generationActionsHtml
 } from "../../../helpers/entity-action-creator";
-import {formatAccountType} from "../../../helpers/formatters";
+import {formatAccountType, formatMutedText} from "../../../helpers/formatters";
 import {ThinAccount} from "../../../model-thins/ThinAccount";
+import {getActiveOnlyState} from "./active-accounts";
+
+let datatable: DataTables.Api = null;
 
 function getActions(account: ThinAccount): string {
 	return generationActionsHtml([
@@ -13,8 +18,15 @@ function getActions(account: ThinAccount): string {
 	]);
 }
 
+function reloadTable() {
+	datatable.ajax.reload();
+}
+
 $(() => {
-	$('table#accounts').DataTable({
+	const table = $('table#accounts');
+	if (table.length == 0) return;
+
+	datatable = table.DataTable({
 		columns: [
 			{data: 'name'},
 			{data: 'type'},
@@ -24,10 +36,15 @@ $(() => {
 		serverSide: true,
 		ajax: {
 			url: '/settings/accounts/table-data',
+			data: ((data: { [key: string]: any }) => {
+				data['activeOnly'] = getActiveOnlyState();
+				return data
+			}),
 			type: 'get',
 			dataSrc: (raw: { data: ThinAccount[] }) => {
 				return raw.data.map(account => {
 					const rawAccount = account as any;
+					rawAccount.name = account.active ? account.name : formatMutedText(account.name);
 					rawAccount.type = formatAccountType(rawAccount.type);
 					rawAccount._actions = getActions(account);
 					return rawAccount
@@ -36,3 +53,7 @@ $(() => {
 		}
 	})
 });
+
+export {
+	reloadTable
+}
