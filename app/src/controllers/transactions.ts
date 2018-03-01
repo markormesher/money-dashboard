@@ -53,6 +53,8 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
 
+	// TODO: handle transactions with deleted accounts/categories
+
 	const countQuery: IFindOptions<Transaction> = {
 		where: {
 			profileId: user.activeProfile.id
@@ -81,6 +83,7 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 		include: [Category, Account]
 	};
 
+	// TODO: force "<custom sort> + order by created date desc"
 	getData(Transaction, req, countQuery, dataQuery)
 			.then((response) => res.json(response))
 			.catch(next);

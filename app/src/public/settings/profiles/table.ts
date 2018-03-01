@@ -13,6 +13,7 @@ function getActions(profile: ThinProfile): string {
 }
 
 $(() => {
+	// TODO: merge with default DT options
 	$('table#profiles').DataTable({
 		columns: [
 			{data: 'name'},

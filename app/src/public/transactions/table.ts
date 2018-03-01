@@ -23,6 +23,8 @@ $(() => {
 	const table = $('table#transactions');
 	if (table.length == 0) return;
 
+	// TODO: toggle display of effective/transaction date
+	// TODO: display notes
 	datatable = table.DataTable({
 		columns: [
 			{data: 'effectiveDate', orderable: true},
