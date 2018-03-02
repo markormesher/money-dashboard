@@ -1,0 +1,35 @@
+-
+	var accountBalances = locals.accountBalances || []
+	var accountTypes = [
+			// [type, title]
+			['current', 'Current Accounts'],
+			['savings', 'Savings Accounts'],
+			['asset', 'Assets'],
+			['other', 'Other Accounts']
+	]
+	var totalBalance = accountBalances.map(b => b.balance).reduce((a, b) => a + b, 0)
+
+div.x_panel
+	div.x_title
+		h2
+			i.far.fa-fw.fa-university
+			| Account Balances
+		div.clearfix
+
+	div.x_content
+		each accountType in accountTypes
+			- var filteredAccountBalances = accountBalances.filter(b => b.account.type === accountType[0])
+			if (filteredAccountBalances.length > 0)
+				h4= accountType[1]
+
+				each accountBalance in filteredAccountBalances
+					p
+						| #{accountBalance.account.name}
+						span.pull-right !{formatters.formatCurrency(accountBalance.balance)}
+
+		div.hr: hr
+
+		p
+			| Total
+			span.pull-right !{formatters.formatCurrency(totalBalance)}
+

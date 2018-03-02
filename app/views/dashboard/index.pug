@@ -4,7 +4,7 @@ block page-body
 
 	div.row
 		div.col-xs-12.col-md-8
-			p Main content
+			pre= JSON.stringify(locals, null, 2)
 
 		div.col-xs-12.col-md-4
-			p Side content
+			include widget-account-balances

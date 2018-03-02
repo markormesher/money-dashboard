@@ -31,9 +31,23 @@ a:not(.btn-mini), button:not(.btn-mini) {
 
 .site_title {
 	font-size: 20px;
-	i {
-		padding: 2px 0;
+}
+
+h2 {
+	svg {
+		margin-right: 6px;
 	}
+}
+
+h4 {
+	margin-top: 16px !important;
+	border-bottom: 1px solid #dddddd;
+	padding-bottom: 1px;
+
+}
+
+h4:first-of-type {
+	margin-top: 0 !important;
 }
 
 a.dropdown-toggle {

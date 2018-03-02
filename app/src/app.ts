@@ -48,7 +48,7 @@ app.use(ExpressFlash());
 // formatters
 app.use(formatterMiddleware);
 
-// auth
+// auth TODO: prevent user query for non-auth requests
 PassportConfig.init(Passport);
 app.use(Passport.initialize());
 app.use(Passport.session());

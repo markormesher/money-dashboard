@@ -1,3 +1,4 @@
+import {Op} from "sequelize";
 import Bluebird = require('bluebird');
 import {User} from '../models/User';
 import {Profile} from '../models/Profile';
@@ -29,10 +30,13 @@ function getAccount(user: User, accountOrId: AccountOrId): Bluebird<Account> {
 			});
 }
 
-function getAllAccounts(user: User): Bluebird<Account[]> {
+function getAllAccounts(user: User, activeOnly: boolean = true): Bluebird<Account[]> {
+	const activeOnlyQueryFragment = activeOnly ? {active: true} : {};
+
 	return Account.findAll({
 		where: {
-			profileId: user.activeProfile.id
+			profileId: user.activeProfile.id,
+			[Op.and]: activeOnlyQueryFragment
 		},
 		include: [Profile]
 	});
