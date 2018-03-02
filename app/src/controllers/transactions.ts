@@ -90,6 +90,15 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 	};
 	const postOrder = [['createdAt', 'DESC']];
 
+	// "fix" displayDate column name
+	const dateField = req.query['dateField'];
+	req.query['columns'] = req.query['columns'].map((col: { name: string, data: string }) => {
+		return {
+			name: col.name.replace('displayDate', dateField),
+			data: col.data.replace('displayDate', dateField)
+		}
+	});
+
 	getData(Transaction, req, countQuery, dataQuery, [], postOrder)
 			.then((response) => res.json(response))
 			.catch(next);

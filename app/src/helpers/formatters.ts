@@ -19,7 +19,7 @@ function formatTag(tag: string, tagClass?: string): string {
 	return ` <span class="label label-${tagClass}">${tag}</span>`;
 }
 
-function formatDate(date: Date | Moment, format: 'user' | 'system' = 'user'): string {
+function formatDate(date: Date | Moment | string, format: 'user' | 'system' = 'user'): string {
 	if (format == 'user') {
 		return moment(date).format('DD/MM/YYYY');
 	} else if (format == 'system') {
@@ -35,6 +35,10 @@ function formatMutedText(text: string): string {
 
 function formatTooltip(text: string, tooltip: string) {
 	return `<span class="text-muted" data-toggle="tooltip" title="${tooltip}">${text}</span>`;
+}
+
+function formatInfoIcon(info: string): string {
+	return formatTooltip(formatMutedText(`<i class="far fa-fw fa-info-circle"></i>`), info);
 }
 
 // accounts
@@ -136,6 +140,7 @@ export {
 	formatDate,
 	formatMutedText,
 	formatTooltip,
+	formatInfoIcon,
 
 	formatAccountType,
 	formatBudgetType,
