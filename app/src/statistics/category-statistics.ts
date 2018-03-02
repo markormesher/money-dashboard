@@ -1,36 +1,38 @@
-import {User} from "../models/User";
+/*import {User} from "../models/User";
 import Bluebird = require("bluebird");
 import {Transaction} from "../models/Transaction";
 import * as sequelize from "sequelize";
 import {Account} from "../models/Account";
-import AccountManager = require("../managers/account-manager");
+import CategoryManager = require("../managers/category-manager");
 
 export interface AccountBalance {
 	account: Account;
 	balance: number
 }
 
-function getAccountBalances(user: User): Bluebird<AccountBalance[]> {
-	const getAccountBalances = Transaction.findAll({
+function getCategoryBalances(user: User, start: Date = null, end: Date = null): Bluebird<AccountBalance[]> {
+	let dateQuery
+
+	const getCategoryBalances = Transaction.findAll({
 		attributes: [
-			'accountId',
+			'categoryId',
 			[sequelize.fn('SUM', sequelize.col('amount')), 'balance']
 		],
 		where: {
 			profileId: user.activeProfile.id
 		},
-		group: [['accountId']]
+		group: [['categoryId']]
 	});
 
 	return Bluebird
 			.all([
-				AccountManager.getAllAccounts(user),
-				getAccountBalances
+				CategoryManager.getAllCategories(user),
+				getCategoryBalances
 			])
 			.spread((accounts: Account[], balances: Transaction[]) => {
 				const balanceMap: { [key: string]: number } = {};
 				balances.forEach(sum => {
-					balanceMap[sum.accountId] = Math.round(sum.getDataValue('balance') * 100) / 100;
+					balanceMap[sum.accountId] = sum.getDataValue('balance');
 				});
 
 				return accounts
@@ -40,10 +42,12 @@ function getAccountBalances(user: User): Bluebird<AccountBalance[]> {
 								balance: balanceMap[account.id] || 0
 							} as AccountBalance;
 						})
+						.filter(entry => includeZero || entry.balance != 0)
 						.sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance));
 			});
 }
 
 export {
-	getAccountBalances
+	getCategoryBalances
 }
+*/

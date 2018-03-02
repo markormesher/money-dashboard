@@ -7,6 +7,7 @@ import {NextFunction, Request, Response} from "express";
 // generic
 
 function formatCurrency(amount: number, styled: boolean = true): string {
+	// TODO: thousand separators
 	if (styled) {
 		return `<span class="currency">${amount.toFixed(2)}</span>`;
 	} else {

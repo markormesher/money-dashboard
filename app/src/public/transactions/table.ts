@@ -1,12 +1,10 @@
 import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
-import {formatCurrency, formatDate, formatInfoIcon, formatTooltip} from "../../helpers/formatters";
+import {formatCurrency, formatDate, formatInfoIcon} from "../../helpers/formatters";
 import {ThinTransaction} from "../../model-thins/ThinTransaction";
 import {startTransactionEdit} from "./editing";
 import _ = require("lodash");
 import {withDataTableDefaults} from "../global/data-table-defaults";
 import {getDateField} from "./toggle-date-field";
-
-const INFO_ICON = '<i class="far fa-fw fa-info-circle"></i>';
 
 let datatable: DataTables.Api = null;
 
@@ -58,8 +56,8 @@ $(() => {
 					output.effectiveDate = formatDate(transaction.effectiveDate);
 					output.transactionDate = formatDate(transaction.transactionDate);
 					if (transaction.effectiveDate != transaction.transactionDate) {
-						output.effectiveDate += ' ' + formatInfoIcon(`Transaction: ${output.transactionDate}`);
-						output.transactionDate += ' ' + formatInfoIcon(`Effective: ${output.effectiveDate}`);
+						output.effectiveDate += ' ' + formatInfoIcon(`Transaction: ${formatDate(transaction.transactionDate)}`);
+						output.transactionDate += ' ' + formatInfoIcon(`Effective: ${formatDate(transaction.effectiveDate)}`);
 					}
 					output.displayDate = output[getDateField()];
 

@@ -18,7 +18,7 @@ div.x_panel
 
 	div.x_content
 		each accountType in accountTypes
-			- var filteredAccountBalances = accountBalances.filter(b => b.account.type === accountType[0])
+			- var filteredAccountBalances = accountBalances.filter(b => b.balance != 0 && b.account.type === accountType[0])
 			if (filteredAccountBalances.length > 0)
 				h4= accountType[1]
 
