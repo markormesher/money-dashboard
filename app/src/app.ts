@@ -1,25 +1,21 @@
-// TODO: optimise imports across the project
-
-import Path = require('path')
-import Express = require('express')
-import BodyParser = require('body-parser')
-import {Request, Response, NextFunction} from 'express';
-import ExpressSession = require('express-session');
-
-const RedisSessionStore = require('connect-redis')(ExpressSession);
+import BodyParser = require('body-parser');
+import ConnectRedis = require('connect-redis');
+import Express = require('express');
 import ExpressFlash = require('express-flash-2');
+import ExpressSession = require('express-session');
 import Passport = require('passport');
-import NodeSassMiddleware = require('node-sass-middleware');
-import ConfigLoader = require('./helpers/config-loader');
-import PassportConfig = require('./helpers/passport-config');
 import SequelizeDb = require('./helpers/db');
-import {StatusError} from './extensions/StatusError';
-import {formatterMiddleware} from "./helpers/formatters";
+import PassportConfig = require('./helpers/passport-config');
+import { NextFunction, Request, Response } from 'express';
+import { join } from 'path';
+import { StatusError } from './extensions/StatusError';
+import { getSecret } from "./helpers/config-loader";
+import { formatterMiddleware } from "./helpers/formatters";
 
 const app = Express();
 
 // db connection
-SequelizeDb.sync({force: false}).then(() => {
+SequelizeDb.sync({ force: false }).then(() => {
 	console.log('Database models synced successfully');
 }).catch(err => {
 	console.log('Failed to sync database models');
@@ -27,19 +23,13 @@ SequelizeDb.sync({force: false}).then(() => {
 });
 
 // form body content
-app.use(BodyParser.urlencoded({extended: false}));
-
-// sass conversion
-app.use(NodeSassMiddleware({
-	src: Path.join(__dirname, '../assets/'),
-	dest: Path.join(__dirname, '/public'),
-	outputStyle: 'compressed'
-}));
+app.use(BodyParser.urlencoded({ extended: false }));
 
 // cookies and sessions
+const RedisSessionStore = ConnectRedis(ExpressSession);
 app.use(ExpressSession({
-	store: new RedisSessionStore({host: 'redis'}),
-	secret: ConfigLoader.getSecret('session.secret'),
+	store: new RedisSessionStore({ host: 'redis' }),
+	secret: getSecret('session.secret'),
 	resave: false,
 	saveUninitialized: false
 }));
@@ -68,12 +58,12 @@ app.use('/transactions', require('./controllers/transactions'));
 app.use('/favicon.ico', (req: Request, res: Response) => res.end());
 
 // views
-app.set('views', Path.join(__dirname, '../views'));
+app.set('views', join(__dirname, '../views'));
 app.set('view engine', 'pug');
 
 // static files
-app.use(Express.static(Path.join(__dirname, 'public')));
-app.use(Express.static(Path.join(__dirname, '../assets')));
+app.use(Express.static(join(__dirname, 'public')));
+app.use(Express.static(join(__dirname, '../assets')));
 [
 	'bootstrap',
 	'bootstrap-progressbar',
@@ -84,7 +74,7 @@ app.use(Express.static(Path.join(__dirname, '../assets')));
 	'jquery-validation',
 	'toastr'
 ].forEach(lib => {
-	app.use(`/_npm/${lib}`, Express.static(Path.join(__dirname, `../node_modules/${lib}`)));
+	app.use(`/_npm/${lib}`, Express.static(join(__dirname, `../node_modules/${lib}`)));
 });
 
 // error handlers

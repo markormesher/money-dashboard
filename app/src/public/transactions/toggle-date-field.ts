@@ -1,4 +1,4 @@
-import {reloadTable} from "./table";
+import { reloadTable } from "./table";
 
 const TRANSACTION_DATE = 'transactionDate';
 const EFFECTIVE_DATE = 'effectiveDate';

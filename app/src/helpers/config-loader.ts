@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import { readFileSync } from 'fs';
 
 export class Constants {
 	host: string;
@@ -21,7 +21,7 @@ function getConstants(): Constants {
 
 function getSecret(key: string): string {
 	if (loadedSecrets[key] === undefined) {
-		loadedSecrets[key] = fs.readFileSync(`/run/secrets/${key}`).toString().trim();
+		loadedSecrets[key] = readFileSync(`/run/secrets/${key}`).toString().trim();
 	}
 	return loadedSecrets[key];
 }

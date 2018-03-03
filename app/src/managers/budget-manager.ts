@@ -1,8 +1,8 @@
 import Bluebird = require('bluebird');
-import {User} from '../models/User';
-import {Profile} from '../models/Profile';
-import {Budget} from '../models/Budget';
-import {Category} from "../models/Category";
+import { Budget } from '../models/Budget';
+import { Category } from "../models/Category";
+import { Profile } from '../models/Profile';
+import { User } from '../models/User';
 
 export type BudgetOrId = Budget | string;
 
@@ -18,7 +18,7 @@ function getBudget(user: User, budgetOrId: BudgetOrId, mustExist: boolean = fals
 	const budgetId = convertBudgetOrIdToId(budgetOrId);
 	return Budget
 			.findOne({
-				where: {id: budgetId},
+				where: { id: budgetId },
 				include: [Profile, Category]
 			})
 			.then((budget) => {

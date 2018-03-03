@@ -1,5 +1,5 @@
-import {ThinCategory} from "./ThinCategory";
-import {ThinProfile} from "./ThinProfile";
+import { ThinCategory } from "./ThinCategory";
+import { ThinProfile } from "./ThinProfile";
 
 export class ThinBudget {
 	id: string;

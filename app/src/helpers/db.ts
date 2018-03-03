@@ -1,11 +1,11 @@
-import {Sequelize} from 'sequelize-typescript';
-import Path = require('path');
-import ConfigLoader = require('./config-loader');
+import { Sequelize } from 'sequelize-typescript';
+import { join } from 'path';
+import { getSecret } from "./config-loader";
 
 const sequelize = new Sequelize({
 	host: 'postgres',
 	username: 'money_dashboard',
-	password: ConfigLoader.getSecret('postgres.password'),
+	password: getSecret('postgres.password'),
 	database: 'money_dashboard',
 	dialect: 'postgres',
 	pool: {
@@ -15,14 +15,16 @@ const sequelize = new Sequelize({
 		idle: 10000
 	},
 	operatorsAliases: false,
-	modelPaths: [Path.join(__dirname, '../models')],
+	modelPaths: [join(__dirname, '../models')],
 	define: {
 		freezeTableName: true,
 		timestamps: true,
 		paranoid: true,
 		version: true
 	},
-	logging: () => {}
+	logging: () => {
+		// NO-OP
+	}
 });
 
 export = sequelize

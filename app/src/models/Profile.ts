@@ -1,9 +1,9 @@
 import Sequelize = require('sequelize');
-import {BelongsToMany, Column, DataType, IsUUID, Model, Table} from "sequelize-typescript";
-import {User} from "./User";
-import {UserProfile} from "./UserProfile";
+import { BelongsToMany, Column, DataType, IsUUID, Model, Table } from "sequelize-typescript";
+import { User } from "./User";
+import { UserProfile } from "./UserProfile";
 
-@Table({tableName: 'profile'})
+@Table({ tableName: 'profile' })
 export class Profile extends Model<Profile> {
 
 	@IsUUID(4)

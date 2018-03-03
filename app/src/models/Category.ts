@@ -1,8 +1,8 @@
 import Sequelize = require('sequelize');
-import {BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table} from "sequelize-typescript";
-import {Profile} from "./Profile";
+import { BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table } from "sequelize-typescript";
+import { Profile } from "./Profile";
 
-@Table({tableName: 'category'})
+@Table({ tableName: 'category' })
 export class Category extends Model<Category> {
 
 	@IsUUID(4)
@@ -16,20 +16,20 @@ export class Category extends Model<Category> {
 	@Column
 	name: string;
 
-	@Column({defaultValue: false})
+	@Column({ defaultValue: false })
 	isMemoCategory: boolean;
 
-	@Column({defaultValue: false})
+	@Column({ defaultValue: false })
 	isIncomeCategory: boolean;
 
-	@Column({defaultValue: false})
+	@Column({ defaultValue: false })
 	isExpenseCategory: boolean;
 
-	@Column({defaultValue: false})
+	@Column({ defaultValue: false })
 	isAssetGrowthCategory: boolean;
 
 	@ForeignKey(() => Profile)
-	@Column({type: DataType.UUID})
+	@Column({ type: DataType.UUID })
 	profileId: string;
 
 	@BelongsTo(() => Profile)

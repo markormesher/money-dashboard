@@ -1,9 +1,9 @@
-import {createDeleteAction, createEditAction, generationActionsHtml} from "../../../helpers/entity-action-creator";
-import {formatCurrency, formatBudgetPeriod, formatBudgetType} from "../../../helpers/formatters";
-import {ThinBudget} from "../../../model-thins/ThinBudget";
-import {refreshCloning} from "./cloning";
-import {getCurrentOnlyState} from "./current-budgets";
-import {withDataTableDefaults} from "../../global/data-table-defaults";
+import { createDeleteAction, createEditAction, generationActionsHtml } from "../../../helpers/entity-action-creator";
+import { formatBudgetPeriod, formatBudgetType, formatCurrency } from "../../../helpers/formatters";
+import { ThinBudget } from "../../../model-thins/ThinBudget";
+import { withDataTableDefaults } from "../../global/data-table-defaults";
+import { refreshCloning } from "./cloning";
+import { getCurrentOnlyState } from "./current-budgets";
 
 let datatable: DataTables.Api = null;
 
@@ -28,12 +28,12 @@ $(() => {
 
 	datatable = table.DataTable(withDataTableDefaults({
 		columns: [
-			{data: '_clone', orderable: false},
-			{data: 'category.name', orderable: true},
-			{data: 'type', orderable: true},
-			{data: 'period', name: 'startDate', orderable: true},
-			{data: 'amount', orderable: true},
-			{data: '_actions', orderable: false}
+			{ data: '_clone', orderable: false },
+			{ data: 'category.name', orderable: true },
+			{ data: 'type', orderable: true },
+			{ data: 'period', name: 'startDate', orderable: true },
+			{ data: 'amount', orderable: true },
+			{ data: '_actions', orderable: false }
 		],
 		order: [[1, 'asc']],
 		ajax: {

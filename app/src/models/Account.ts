@@ -1,8 +1,8 @@
 import Sequelize = require('sequelize');
-import {BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table} from "sequelize-typescript";
-import {Profile} from "./Profile";
+import { BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table } from "sequelize-typescript";
+import { Profile } from "./Profile";
 
-@Table({tableName: 'account'})
+@Table({ tableName: 'account' })
 export class Account extends Model<Account> {
 
 	@IsUUID(4)
@@ -25,7 +25,7 @@ export class Account extends Model<Account> {
 	active: boolean;
 
 	@ForeignKey(() => Profile)
-	@Column({type: DataType.UUID})
+	@Column({ type: DataType.UUID })
 	profileId: string;
 
 	@BelongsTo(() => Profile)

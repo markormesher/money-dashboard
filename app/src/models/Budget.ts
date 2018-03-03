@@ -1,9 +1,9 @@
 import Sequelize = require('sequelize');
-import {BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table} from "sequelize-typescript";
-import {Profile} from "./Profile";
-import {Category} from "./Category";
+import { BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table } from "sequelize-typescript";
+import { Category } from "./Category";
+import { Profile } from "./Profile";
 
-@Table({tableName: 'budget'})
+@Table({ tableName: 'budget' })
 export class Budget extends Model<Budget> {
 
 	@IsUUID(4)
@@ -35,14 +35,14 @@ export class Budget extends Model<Budget> {
 	endDate: Date;
 
 	@ForeignKey(() => Category)
-	@Column({type: DataType.UUID})
+	@Column({ type: DataType.UUID })
 	categoryId: string;
 
 	@BelongsTo(() => Category)
 	category: Category;
 
 	@ForeignKey(() => Profile)
-	@Column({type: DataType.UUID})
+	@Column({ type: DataType.UUID })
 	profileId: string;
 
 	@BelongsTo(() => Profile)

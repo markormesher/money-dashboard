@@ -1,4 +1,4 @@
-import {reloadTable} from "./table";
+import { reloadTable } from "./table";
 
 let currentOnlyBtn: JQuery = null;
 let currentOnly = true;

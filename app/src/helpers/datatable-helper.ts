@@ -1,7 +1,7 @@
 import Bluebird = require("bluebird");
-import _ = require('lodash');
-import {Request} from "express";
-import {IFindOptions} from "sequelize-typescript";
+import cloneDeep = require('lodash.clonedeep');
+import { Request } from "express";
+import { IFindOptions } from "sequelize-typescript";
 
 interface DatatableResponse<T> {
 	recordsTotal: number;
@@ -29,7 +29,7 @@ function getData<T>(model: any, req: Request, countFilter: IFindOptions<T>, data
 			.forEach(o => finalOrdering.push(o));
 	postOrder.forEach(o => finalOrdering.push(o));
 
-	const limitedDataFilter: IFindOptions<T> = _.cloneDeep(dataFilter);
+	const limitedDataFilter: IFindOptions<T> = cloneDeep(dataFilter);
 	limitedDataFilter.offset = parseInt(req.query['start']);
 	limitedDataFilter.limit = parseInt(req.query['length']);
 	limitedDataFilter.order = finalOrdering;

@@ -1,17 +1,17 @@
 import Express = require('express');
+import { NextFunction, Request, Response } from 'express';
 
-import {Op} from 'sequelize'
-import {NextFunction, Request, Response} from 'express';
-import AuthHelper = require('../../helpers/auth-helper');
-import ProfileManager = require('../../managers/profile-manager');
-import {Profile} from '../../models/Profile';
-import {getData} from "../../helpers/datatable-helper";
-import {IFindOptions} from "sequelize-typescript";
-import {User} from "../../models/User";
+import { Op } from 'sequelize'
+import { IFindOptions } from "sequelize-typescript";
+import { requireUser } from "../../helpers/auth-helper";
+import { getData } from "../../helpers/datatable-helper";
+import { deleteProfile, getProfile, saveProfile } from '../../managers/profile-manager';
+import { Profile } from '../../models/Profile';
+import { User } from "../../models/User";
 
 const router = Express.Router();
 
-router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
+router.get('/', requireUser, (req: Request, res: Response) => {
 	res.render('settings/profiles/index', {
 		_: {
 			title: 'Profiles',
@@ -20,7 +20,7 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 	});
 });
 
-router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/table-data', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
 
@@ -34,7 +34,7 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 	};
 	const dataQuery: IFindOptions<Profile> = {
 		where: {
-			name: {[Op.iLike]: `%${searchTerm}%`}
+			name: { [Op.iLike]: `%${searchTerm}%` }
 		},
 		include: [{
 			model: User,
@@ -49,12 +49,11 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 			.catch(next);
 });
 
-router.get('/edit/:profileId?', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/edit/:profileId?', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const profileId = req.params['profileId'];
 
-	ProfileManager
-			.getProfile(user, profileId)
+	getProfile(user, profileId)
 			.then((profile) => {
 				res.render('settings/profiles/edit', {
 					_: {
@@ -67,15 +66,14 @@ router.get('/edit/:profileId?', AuthHelper.requireUser, (req: Request, res: Resp
 			.catch(next);
 });
 
-router.post('/edit/:profileId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/edit/:profileId', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const profileId = req.params['profileId'];
 	const properties: Partial<Profile> = {
 		name: req.body['name']
 	};
 
-	ProfileManager
-			.saveProfile(user, profileId, properties)
+	saveProfile(user, profileId, properties)
 			.then(() => {
 				res.flash('success', 'Profile saved');
 				res.redirect('/settings/profiles');
@@ -83,17 +81,16 @@ router.post('/edit/:profileId', AuthHelper.requireUser, (req: Request, res: Resp
 			.catch(next);
 });
 
-router.post('/delete/:profileId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/delete/:profileId', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const profileId = req.params['profileId'];
 
-	ProfileManager
-			.deleteProfile(user, profileId)
+	deleteProfile(user, profileId)
 			.then(() => res.status(200).end())
 			.catch(next);
 });
 
-router.get('/select/:profileId', AuthHelper.requireUser, (req: Request, res: Response) => {
+router.get('/select/:profileId', requireUser, (req: Request, res: Response) => {
 	const user = req.user as User;
 	const profileId = req.params['profileId'];
 

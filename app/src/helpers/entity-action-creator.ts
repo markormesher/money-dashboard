@@ -1,4 +1,4 @@
-import {formatMutedText} from "./formatters";
+import { formatMutedText } from "./formatters";
 
 export interface EntityAction {
 	type: 'edit' | 'delete' | 'toggle';

@@ -1,17 +1,17 @@
 import Express = require('express');
+import { NextFunction, Request, Response } from 'express';
 
-import {Op} from 'sequelize'
-import {NextFunction, Request, Response} from 'express';
-import AuthHelper = require('../../helpers/auth-helper');
-import CategoryManager = require('../../managers/category-manager');
-import {Category} from '../../models/Category';
-import {getData} from "../../helpers/datatable-helper";
-import {IFindOptions} from "sequelize-typescript";
-import {User} from "../../models/User";
+import { Op } from 'sequelize'
+import { IFindOptions } from "sequelize-typescript";
+import { requireUser } from "../../helpers/auth-helper";
+import { getData } from "../../helpers/datatable-helper";
+import { deleteCategory, getCategory, saveCategory } from "../../managers/category-manager";
+import { Category } from '../../models/Category';
+import { User } from "../../models/User";
 
 const router = Express.Router();
 
-router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
+router.get('/', requireUser, (req: Request, res: Response) => {
 	res.render('settings/categories/index', {
 		_: {
 			title: 'Categories',
@@ -20,7 +20,7 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 	});
 });
 
-router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/table-data', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
 
@@ -47,12 +47,11 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 			.catch(next);
 });
 
-router.get('/edit/:categoryId?', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/edit/:categoryId?', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const categoryId = req.params['categoryId'];
 
-	CategoryManager
-			.getCategory(user, categoryId)
+	getCategory(user, categoryId)
 			.then(category => {
 				res.render('settings/categories/edit', {
 					_: {
@@ -65,7 +64,7 @@ router.get('/edit/:categoryId?', AuthHelper.requireUser, (req: Request, res: Res
 			.catch(next);
 });
 
-router.post('/edit/:categoryId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/edit/:categoryId', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const categoryId = req.params['categoryId'];
 	const rawTypes = req.body['types[]'] as string[] || [];
@@ -77,8 +76,7 @@ router.post('/edit/:categoryId', AuthHelper.requireUser, (req: Request, res: Res
 		isAssetGrowthCategory: rawTypes.indexOf('asset-growth') >= 0,
 	};
 
-	CategoryManager
-			.saveCategory(user, categoryId, properties)
+	saveCategory(user, categoryId, properties)
 			.then(() => {
 				res.flash('success', 'Category saved');
 				res.redirect('/settings/categories');
@@ -86,12 +84,11 @@ router.post('/edit/:categoryId', AuthHelper.requireUser, (req: Request, res: Res
 			.catch(next);
 });
 
-router.post('/delete/:categoryId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/delete/:categoryId', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const categoryId = req.params['categoryId'];
 
-	CategoryManager
-			.deleteCategory(user, categoryId)
+	deleteCategory(user, categoryId)
 			.then(() => res.status(200).end())
 			.catch(next);
 });

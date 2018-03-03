@@ -1,6 +1,6 @@
 import Bluebird = require('bluebird');
-import {User} from '../models/User';
-import {Profile} from '../models/Profile';
+import { Profile } from '../models/Profile';
+import { User } from '../models/User';
 
 export type ProfileOrId = Profile | string;
 
@@ -16,7 +16,7 @@ function getProfile(user: User, profileOrId: ProfileOrId): Bluebird<Profile> {
 	const profileId = convertProfileOrIdToId(profileOrId);
 	return Profile
 			.findOne({
-				where: {id: profileId},
+				where: { id: profileId },
 				include: [User]
 			})
 			.then((profile) => {
@@ -28,7 +28,7 @@ function getProfile(user: User, profileOrId: ProfileOrId): Bluebird<Profile> {
 			});
 }
 
-function createAndAddToUser(user: User, profileName: string): Bluebird<User> {
+function createProfileAndAddToUser(user: User, profileName: string): Bluebird<User> {
 	return Profile
 			.create({
 				name: profileName,
@@ -37,7 +37,7 @@ function createAndAddToUser(user: User, profileName: string): Bluebird<User> {
 				return user.$add('profile', profile);
 			})
 			.then(() => {
-				return user.reload({include: [Profile]});
+				return user.reload({ include: [Profile] });
 			});
 }
 
@@ -68,7 +68,7 @@ function deleteProfile(user: User, profileOrId: ProfileOrId): Bluebird<void> {
 
 export {
 	getProfile,
-	createAndAddToUser,
+	createProfileAndAddToUser,
 	saveProfile,
 	deleteProfile
 }

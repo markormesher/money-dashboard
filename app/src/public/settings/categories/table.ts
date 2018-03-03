@@ -1,7 +1,7 @@
-import {createDeleteAction, createEditAction, generationActionsHtml} from "../../../helpers/entity-action-creator";
-import {formatCategoryTypes} from "../../../helpers/formatters";
-import {ThinCategory} from "../../../model-thins/ThinCategory";
-import {withDataTableDefaults} from "../../global/data-table-defaults";
+import { createDeleteAction, createEditAction, generationActionsHtml } from "../../../helpers/entity-action-creator";
+import { formatCategoryTypes } from "../../../helpers/formatters";
+import { ThinCategory } from "../../../model-thins/ThinCategory";
+import { withDataTableDefaults } from "../../global/data-table-defaults";
 
 const getActions = (category: ThinCategory) => {
 	return generationActionsHtml([
@@ -13,9 +13,9 @@ const getActions = (category: ThinCategory) => {
 $(() => {
 	$('table#categories').DataTable(withDataTableDefaults({
 		columns: [
-			{data: 'name'},
-			{data: 'types', orderable: false},
-			{data: '_actions', orderable: false}
+			{ data: 'name' },
+			{ data: 'types', orderable: false },
+			{ data: '_actions', orderable: false }
 		],
 		ajax: {
 			url: '/settings/categories/table-data',

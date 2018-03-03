@@ -1,16 +1,16 @@
-import {Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
-import {User} from "./User";
-import {Profile} from "./Profile";
+import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { Profile } from "./Profile";
+import { User } from "./User";
 
-@Table({tableName: 'user_profile'})
+@Table({ tableName: 'user_profile' })
 export class UserProfile extends Model<UserProfile> {
 
 	@ForeignKey(() => User)
-	@Column({type: DataType.UUID})
+	@Column({ type: DataType.UUID })
 	userId: string;
 
 	@ForeignKey(() => Profile)
-	@Column({type: DataType.UUID})
+	@Column({ type: DataType.UUID })
 	profileId: string;
 
 }

@@ -1,10 +1,10 @@
-import {createDeleteAction, createEditAction, generationActionsHtml} from "../../helpers/entity-action-creator";
-import {formatCurrency, formatDate, formatInfoIcon} from "../../helpers/formatters";
-import {ThinTransaction} from "../../model-thins/ThinTransaction";
-import {startTransactionEdit} from "./editing";
-import _ = require("lodash");
-import {withDataTableDefaults} from "../global/data-table-defaults";
-import {getDateField} from "./toggle-date-field";
+import { createDeleteAction, createEditAction, generationActionsHtml } from "../../helpers/entity-action-creator";
+import { formatCurrency, formatDate, formatInfoIcon } from "../../helpers/formatters";
+import { ThinTransaction } from "../../model-thins/ThinTransaction";
+import { withDataTableDefaults } from "../global/data-table-defaults";
+import { startTransactionEdit } from "./editing";
+import { getDateField } from "./toggle-date-field";
+import cloneDeep = require("lodash.clonedeep");
 
 let datatable: DataTables.Api = null;
 
@@ -31,12 +31,12 @@ $(() => {
 
 	datatable = table.DataTable(withDataTableDefaults({
 		columns: [
-			{data: 'displayDate', orderable: true},
-			{data: 'account.name', orderable: false},
-			{data: 'payee', orderable: false},
-			{data: 'amount', name: 'startDate', orderable: false},
-			{data: 'category.name', orderable: false},
-			{data: '_actions', orderable: false}
+			{ data: 'displayDate', orderable: true },
+			{ data: 'account.name', orderable: false },
+			{ data: 'payee', orderable: false },
+			{ data: 'amount', name: 'startDate', orderable: false },
+			{ data: 'category.name', orderable: false },
+			{ data: '_actions', orderable: false }
 		],
 		order: [[0, 'desc']],
 		ajax: {
@@ -47,9 +47,9 @@ $(() => {
 			}),
 			dataSrc: (raw: { data: ThinTransaction[] }) => {
 				return raw.data.map(transaction => {
-					transactionCache[transaction.id] = _.clone(transaction);
+					transactionCache[transaction.id] = cloneDeep(transaction);
 
-					const output = _.clone(transaction) as any;
+					const output = cloneDeep(transaction) as any;
 					output.amount = formatCurrency(transaction.amount);
 					output._actions = getActions(transaction);
 

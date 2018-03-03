@@ -1,11 +1,11 @@
 import Bluebird = require("bluebird");
 
-import ProfileManager = require('../managers/profile-manager');
-import {User} from "../models/User";
+import { User } from "../models/User";
+import { createProfileAndAddToUser } from "./profile-manager";
 
-function getById(id: string): Bluebird<User> {
+function getUser(id: string): Bluebird<User> {
 	return User.findOne({
-		where: {id: id}
+		where: { id: id }
 	}).then((user) => {
 		if (user) {
 			user.profiles.sort((a, b) => a.name.localeCompare(b.name))
@@ -14,7 +14,7 @@ function getById(id: string): Bluebird<User> {
 	});
 }
 
-function getOrRegisterWithGoogleProfile(googleProfile: any): Bluebird<User> {
+function getOrRegisterUserWithGoogleProfile(googleProfile: any): Bluebird<User> {
 	// retrieve or create the user account
 	return User.findOrCreate({
 		where: {
@@ -26,7 +26,7 @@ function getOrRegisterWithGoogleProfile(googleProfile: any): Bluebird<User> {
 	}).then((user: User) => {
 		// make sure the user has a profile
 		if (!user.profiles || user.profiles.length === 0) {
-			return ProfileManager.createAndAddToUser(user, 'Default Profile');
+			return createProfileAndAddToUser(user, 'Default Profile');
 		} else {
 			return user;
 		}
@@ -39,6 +39,6 @@ function getOrRegisterWithGoogleProfile(googleProfile: any): Bluebird<User> {
 }
 
 export {
-	getById,
-	getOrRegisterWithGoogleProfile
+	getUser,
+	getOrRegisterUserWithGoogleProfile
 }

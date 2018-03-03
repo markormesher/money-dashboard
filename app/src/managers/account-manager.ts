@@ -1,8 +1,8 @@
-import {Op} from "sequelize";
+import { Op } from "sequelize";
+import { Account } from '../models/Account';
+import { Profile } from '../models/Profile';
+import { User } from '../models/User';
 import Bluebird = require('bluebird');
-import {User} from '../models/User';
-import {Profile} from '../models/Profile';
-import {Account} from '../models/Account';
 
 export type AccountOrId = Account | string;
 
@@ -18,7 +18,7 @@ function getAccount(user: User, accountOrId: AccountOrId): Bluebird<Account> {
 	const accountId = convertAccountOrIdToId(accountOrId);
 	return Account
 			.findOne({
-				where: {id: accountId},
+				where: { id: accountId },
 				include: [Profile]
 			})
 			.then((account) => {
@@ -31,7 +31,7 @@ function getAccount(user: User, accountOrId: AccountOrId): Bluebird<Account> {
 }
 
 function getAllAccounts(user: User, activeOnly: boolean = true): Bluebird<Account[]> {
-	const activeOnlyQueryFragment = activeOnly ? {active: true} : {};
+	const activeOnlyQueryFragment = activeOnly ? { active: true } : {};
 
 	return Account.findAll({
 		where: {
@@ -53,7 +53,7 @@ function saveAccount(user: User, accountOrId: AccountOrId, properties: Partial<A
 			});
 }
 
-function toggleActiveStatus(user: User, accountOrId: AccountOrId): Bluebird<Account> {
+function toggleAccountActive(user: User, accountOrId: AccountOrId): Bluebird<Account> {
 	return getAccount(user, accountOrId)
 			.then((account) => {
 				account.active = !account.active;
@@ -77,6 +77,6 @@ export {
 	getAccount,
 	getAllAccounts,
 	saveAccount,
-	toggleActiveStatus,
+	toggleAccountActive,
 	deleteAccount
 }

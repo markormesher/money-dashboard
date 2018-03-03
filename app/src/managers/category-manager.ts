@@ -1,7 +1,7 @@
 import Bluebird = require('bluebird');
-import {User} from '../models/User';
-import {Profile} from '../models/Profile';
-import {Category} from '../models/Category';
+import { Category } from '../models/Category';
+import { Profile } from '../models/Profile';
+import { User } from '../models/User';
 
 export type CategoryOrId = Category | string;
 
@@ -17,7 +17,7 @@ function getCategory(user: User, categoryOrId: CategoryOrId): Bluebird<Category>
 	const categoryId = convertCategoryOrIdToId(categoryOrId);
 	return Category
 			.findOne({
-				where: {id: categoryId},
+				where: { id: categoryId },
 				include: [Profile]
 			})
 			.then((category) => {

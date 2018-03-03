@@ -1,9 +1,9 @@
-import {User} from "../models/User";
-import Bluebird = require("bluebird");
-import {Transaction} from "../models/Transaction";
 import * as sequelize from "sequelize";
-import {Account} from "../models/Account";
-import AccountManager = require("../managers/account-manager");
+import { getAllAccounts } from "../managers/account-manager";
+import { Account } from "../models/Account";
+import { Transaction } from "../models/Transaction";
+import { User } from "../models/User";
+import Bluebird = require("bluebird");
 
 export interface AccountBalance {
 	account: Account;
@@ -24,7 +24,7 @@ function getAccountBalances(user: User): Bluebird<AccountBalance[]> {
 
 	return Bluebird
 			.all([
-				AccountManager.getAllAccounts(user),
+				getAllAccounts(user),
 				getAccountBalances
 			])
 			.spread((accounts: Account[], balances: Transaction[]) => {

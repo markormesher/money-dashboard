@@ -1,4 +1,4 @@
-import {ThinUser} from "../../model-thins/ThinUser";
+import { ThinUser } from "../../model-thins/ThinUser";
 
 export interface MDWindow extends Window {
 	MoneyDashboard: WindowEmbeds;

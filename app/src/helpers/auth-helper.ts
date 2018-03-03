@@ -1,5 +1,5 @@
-import {Request, Response, NextFunction, RequestHandler} from 'express';
-import {User} from "../models/User";
+import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { User } from "../models/User";
 
 const loadUser: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;

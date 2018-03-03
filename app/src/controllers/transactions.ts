@@ -1,39 +1,38 @@
-import Express = require('express');
-
-import {Op} from 'sequelize'
-import {NextFunction, Request, Response} from 'express';
-import AuthHelper = require('../helpers/auth-helper');
-import AccountManager = require('../managers/account-manager');
-import CategoryManager = require('../managers/category-manager');
-import TransactionManager = require('../managers/transaction-manager');
-import {Transaction} from '../models/Transaction';
-import {getData} from "../helpers/datatable-helper";
-import {IFindOptions} from "sequelize-typescript";
-import {Category} from "../models/Category";
-import {User} from "../models/User";
-import {Account} from "../models/Account";
 import Bluebird = require("bluebird");
-import _ = require("lodash");
+import Express = require('express');
+import { NextFunction, Request, Response } from 'express';
+
+import { Op } from 'sequelize'
+import { IFindOptions } from "sequelize-typescript";
+import { requireUser } from "../helpers/auth-helper";
+import { getData } from "../helpers/datatable-helper";
+import { getAllAccounts } from "../managers/account-manager";
+import { getAllCategories } from "../managers/category-manager";
+import { deleteTransaction, saveTransaction } from "../managers/transaction-manager";
+import { Account } from "../models/Account";
+import { Category } from "../models/Category";
+import { Transaction } from '../models/Transaction';
+import { User } from "../models/User";
 
 const router = Express.Router();
 
-router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
+router.get('/', requireUser, (req: Request, res: Response) => {
 	const user = req.user as User;
 
 	Bluebird
 			.all([
-				AccountManager.getAllAccounts(user),
-				CategoryManager.getAllCategories(user)
+				getAllAccounts(user),
+				getAllCategories(user)
 			])
 			.spread((accounts: Account[], categories: Category[]) => {
-				const accountsForView: string[][] = _(accounts)
-						.map((a: Account) => [a.id, a.name])
-						.sortBy((a: string[]) => a[1])
-						.value();
-				const categoriesForView: string[][] = _(categories)
-						.map((c: Category) => [c.id, c.name])
-						.sortBy((c: string[]) => c[1])
-						.value();
+				const accountsForView: string[][] = accounts
+						.map(a => [a.id, a.name])
+						.sort((a: string[], b: string[]) => a[1].localeCompare(b[1]));
+
+				const categoriesForView: string[][] = categories
+						.map(c => [c.id, c.name])
+						.sort((a: string[], b: string[]) => a[1].localeCompare(b[1]));
+
 				return [accountsForView, categoriesForView];
 			})
 			.spread((accounts: Account[], categories: Category[]) => {
@@ -48,7 +47,7 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 			});
 });
 
-router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/table-data', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
 
@@ -104,7 +103,7 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 			.catch(next);
 });
 
-router.post('/edit/:transactionId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/edit/:transactionId', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const transactionId = req.params['transactionId'] == 'new' ? null : req.params['transactionId'];
 	const properties: Partial<Transaction> = {
@@ -121,18 +120,16 @@ router.post('/edit/:transactionId', AuthHelper.requireUser, (req: Request, res: 
 		properties.note = null;
 	}
 
-	TransactionManager
-			.saveTransaction(user, transactionId, properties)
+	saveTransaction(user, transactionId, properties)
 			.then(() => res.status(200).end())
 			.catch(next);
 });
 
-router.post('/delete/:transactionId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/delete/:transactionId', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const transactionId = req.params['transactionId'];
 
-	TransactionManager
-			.deleteTransaction(user, transactionId)
+	deleteTransaction(user, transactionId)
 			.then(() => res.status(200).end())
 			.catch(next);
 });

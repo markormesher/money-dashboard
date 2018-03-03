@@ -4,6 +4,7 @@ const glob = require('glob');
 const gulp = require('gulp');
 const clean = require('gulp-clean');
 const ts = require('gulp-typescript');
+const sass = require('gulp-sass');
 const uglify = require('gulp-uglify-es').default;
 const streamify = require('gulp-streamify');
 const sourcemaps = require('gulp-sourcemaps');
@@ -11,9 +12,13 @@ const rename = require('gulp-rename');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 
-const tsAssets = 'dist/public';
 const tsConfig = 'tsconfig.json';
 const distOutput = 'dist';
+
+const tsAssetsInput = 'dist/public';
+
+const sassAssetsInput = 'assets/**/*.scss';
+const sassAssetsOutput = 'dist/public';
 
 function getFolders(dir) {
 	var folders = [];
@@ -40,7 +45,7 @@ gulp.task('compile-ts', function () {
 });
 
 gulp.task('ts-assets', ['compile-ts'], function () {
-	const folders = getFolders(tsAssets);
+	const folders = getFolders(tsAssetsInput);
 
 	return folders.map(function (folder) {
 		const inputFileGlob = path.join(folder, '*.js');
@@ -58,4 +63,10 @@ gulp.task('ts-assets', ['compile-ts'], function () {
 	});
 });
 
-gulp.task('default', ['compile-ts', 'ts-assets']);
+gulp.task('sass-assets', function () {
+	return gulp.src(sassAssetsInput)
+			.pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+			.pipe(gulp.dest(sassAssetsOutput));
+});
+
+gulp.task('default', ['compile-ts', 'sass-assets', 'ts-assets']);

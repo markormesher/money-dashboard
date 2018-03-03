@@ -1,7 +1,7 @@
-import _ = require("lodash");
+import merge = require("lodash.merge");
 
 function withDataTableDefaults(settings: DataTables.Settings): DataTables.Settings {
-	return _.merge({
+	return merge({
 		autoWidth: false,
 		order: [[0, 'asc']],
 		lengthMenu: [[25, 50, 100], [25, 50, 100]],

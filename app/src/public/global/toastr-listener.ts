@@ -1,4 +1,4 @@
-import {MDWindow} from "./window";
+import { MDWindow } from "./window";
 
 $(() => {
 	const toastrMessages = (window as MDWindow).MoneyDashboard.toastrMessages;

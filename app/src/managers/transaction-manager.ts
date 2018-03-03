@@ -1,8 +1,8 @@
 import Bluebird = require('bluebird');
-import {User} from '../models/User';
-import {Profile} from '../models/Profile';
-import {Transaction} from '../models/Transaction';
-import {Category} from "../models/Category";
+import { Category } from "../models/Category";
+import { Profile } from '../models/Profile';
+import { Transaction } from '../models/Transaction';
+import { User } from '../models/User';
 
 export type TransactionOrId = Transaction | string;
 
@@ -18,7 +18,7 @@ function getTransaction(user: User, transactionOrId: TransactionOrId, mustExist:
 	const transactionId = convertTransactionOrIdToId(transactionOrId);
 	return Transaction
 			.findOne({
-				where: {id: transactionId},
+				where: { id: transactionId },
 				include: [Profile, Category]
 			})
 			.then((transaction) => {

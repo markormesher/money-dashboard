@@ -1,24 +1,23 @@
-import Express = require('express');
-
-import {Op} from 'sequelize'
-import {NextFunction, Request, Response} from 'express';
-import AuthHelper = require('../../helpers/auth-helper');
-import BudgetManager = require('../../managers/budget-manager');
-import CategoryManager = require('../../managers/category-manager');
-import {Budget} from '../../models/Budget';
-import {getData} from "../../helpers/datatable-helper";
-import {IFindOptions} from "sequelize-typescript";
-import {Category} from "../../models/Category";
 import Bluebird = require("bluebird");
-import _ = require("lodash");
-import * as moment from "moment";
-import {formatDate} from "../../helpers/formatters";
-import {User} from "../../models/User";
+import Express = require('express');
+import { NextFunction, Request, Response } from 'express';
+import * as Moment from "moment";
+
+import { Op } from 'sequelize'
+import { IFindOptions } from "sequelize-typescript";
+import { requireUser } from "../../helpers/auth-helper";
+import { getData } from "../../helpers/datatable-helper";
+import { formatDate } from "../../helpers/formatters";
+import { cloneBudgets, deleteBudget, getBudget, saveBudget } from "../../managers/budget-manager";
+import { getAllCategories } from "../../managers/category-manager";
+import { Budget } from '../../models/Budget';
+import { Category } from "../../models/Category";
+import { User } from "../../models/User";
 
 const router = Express.Router();
 
 function getQuickPeriodDates(): string[][][] {
-	const now = moment();
+	const now = Moment();
 	const thisTaxYearStart = now.clone().month('april').date(6);
 	if (thisTaxYearStart.isAfter(now)) {
 		thisTaxYearStart.subtract(1, 'year');
@@ -61,7 +60,7 @@ function getQuickPeriodDates(): string[][][] {
 	];
 }
 
-router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
+router.get('/', requireUser, (req: Request, res: Response) => {
 	res.render('settings/budgets/index', {
 		_: {
 			title: 'Budgets',
@@ -70,7 +69,7 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 	});
 });
 
-router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/table-data', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
 	const currentOnly = req.query['currentOnly'] == 'true';
@@ -115,21 +114,20 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 			.catch(next);
 });
 
-router.get('/edit/:budgetId?', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/edit/:budgetId?', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const budgetId = req.params['budgetId'];
 
 	Bluebird
 			.all([
-				BudgetManager.getBudget(user, budgetId),
-				CategoryManager.getAllCategories(user)
+				getBudget(user, budgetId),
+				getAllCategories(user)
 			])
 			.spread((budget: Budget, categories: Category[]) => {
 				// convert categories to [[id, name], [id, name], ...]
-				const categoriesForView: string[][] = _(categories)
-						.map((c: Category) => [c.id, c.name])
-						.sortBy((c: string[]) => c[1])
-						.value();
+				const categoriesForView: string[][] = categories
+						.map(c => [c.id, c.name])
+						.sort((a: string[], b: string[]) => a[1].localeCompare(b[1]));
 
 				res.render('settings/budgets/edit', {
 					_: {
@@ -144,7 +142,7 @@ router.get('/edit/:budgetId?', AuthHelper.requireUser, (req: Request, res: Respo
 			.catch(next);
 });
 
-router.post('/edit/:budgetId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/edit/:budgetId', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const budgetId = req.params['budgetId'];
 	const properties: Partial<Budget> = {
@@ -155,8 +153,7 @@ router.post('/edit/:budgetId', AuthHelper.requireUser, (req: Request, res: Respo
 		endDate: new Date(req.body['endDate'])
 	};
 
-	BudgetManager
-			.saveBudget(user, budgetId, properties)
+	saveBudget(user, budgetId, properties)
 			.then(() => {
 				res.flash('success', 'Budget saved');
 				res.redirect('/settings/budgets');
@@ -164,21 +161,20 @@ router.post('/edit/:budgetId', AuthHelper.requireUser, (req: Request, res: Respo
 			.catch(next);
 });
 
-router.post('/delete/:budgetId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/delete/:budgetId', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const budgetId = req.params['budgetId'];
 
-	BudgetManager
-			.deleteBudget(user, budgetId)
+	deleteBudget(user, budgetId)
 			.then(() => res.status(200).end())
 			.catch(next);
 });
 
-router.get('/clone/:budgetIds', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/clone/:budgetIds', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const budgetIds: string[] = req.params['budgetIds'].split(',');
 
-	const tasks = budgetIds.map(id => BudgetManager.getBudget(user, id, true));
+	const tasks = budgetIds.map(id => getBudget(user, id, true));
 	Bluebird.all(tasks)
 			.then((budgets: Budget[]) => {
 				budgets.sort((a, b) => a.category.name.localeCompare(b.category.name));
@@ -195,14 +191,13 @@ router.get('/clone/:budgetIds', AuthHelper.requireUser, (req: Request, res: Resp
 			.catch(next);
 });
 
-router.post('/clone/:budgetIds', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/clone/:budgetIds', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const budgetIds: string[] = req.params['budgetIds'].split(',');
 	const startDate = new Date(req.body['startDate']);
 	const endDate = new Date(req.body['endDate']);
 
-	BudgetManager
-			.cloneBudgets(user, budgetIds, startDate, endDate)
+	cloneBudgets(user, budgetIds, startDate, endDate)
 			.then(() => {
 				res.flash('success', budgetIds.length == 1 ? 'Budget saved' : 'Budgets saved');
 				res.redirect('/settings/budgets');

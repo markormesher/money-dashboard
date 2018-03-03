@@ -1,8 +1,7 @@
-import {Category} from "../models/Category";
-import * as moment from "moment";
-import {ThinCategory} from "../model-thins/ThinCategory";
-import {Moment} from "moment";
-import {NextFunction, Request, Response} from "express";
+import { NextFunction, Request, Response } from "express";
+import * as Moment from "moment";
+import { ThinCategory } from "../model-thins/ThinCategory";
+import { Category } from "../models/Category";
 
 // generic
 
@@ -19,11 +18,11 @@ function formatTag(tag: string, tagClass?: string): string {
 	return ` <span class="label label-${tagClass}">${tag}</span>`;
 }
 
-function formatDate(date: Date | Moment | string, format: 'user' | 'system' = 'user'): string {
+function formatDate(date: Date | Moment.Moment | string, format: 'user' | 'system' = 'user'): string {
 	if (format == 'user') {
-		return moment(date).format('DD/MM/YYYY');
+		return Moment(date).format('DD/MM/YYYY');
 	} else if (format == 'system') {
-		return moment(date).format('YYYY-MM-DD');
+		return Moment(date).format('YYYY-MM-DD');
 	} else {
 		throw new Error(`Illegal format: ${format}`);
 	}
@@ -75,7 +74,7 @@ function formatBudgetPeriod(start: Date, end: Date): string {
 			&& start.getMonth() == end.getMonth()
 			&& new Date(end.getTime() + oneDay).getMonth() != end.getMonth()) {
 		// type: month
-		return moment(start).format('MMM, YYYY');
+		return Moment(start).format('MMM, YYYY');
 
 	} else if (start.getDate() == 1
 			&& start.getMonth() == 0
@@ -83,7 +82,7 @@ function formatBudgetPeriod(start: Date, end: Date): string {
 			&& end.getMonth() == 11
 			&& start.getFullYear() == end.getFullYear()) {
 		// type: calendar year
-		return moment(start).format('YYYY');
+		return Moment(start).format('YYYY');
 
 	} else if (start.getDate() == 6
 			&& start.getMonth() == 3
@@ -91,7 +90,7 @@ function formatBudgetPeriod(start: Date, end: Date): string {
 			&& end.getMonth() == 3
 			&& start.getFullYear() == end.getFullYear() - 1) {
 		// type: tax year
-		return `${moment(start).format('YYYY')}/${moment(end).format('YYYY')} tax year`
+		return `${Moment(start).format('YYYY')}/${Moment(end).format('YYYY')} tax year`
 
 	} else {
 		// unrecognised type

@@ -1,4 +1,4 @@
-import {ThinUser} from "./ThinUser";
+import { ThinUser } from "./ThinUser";
 
 export class ThinProfile {
 	id: string;

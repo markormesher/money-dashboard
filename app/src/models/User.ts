@@ -1,12 +1,12 @@
 import Sequelize = require('sequelize');
-import {BelongsToMany, Column, DataType, DefaultScope, IsUUID, Model, Table} from "sequelize-typescript";
-import {Profile} from "./Profile";
-import {UserProfile} from "./UserProfile";
+import { BelongsToMany, Column, DataType, DefaultScope, IsUUID, Model, Table } from "sequelize-typescript";
+import { Profile } from "./Profile";
+import { UserProfile } from "./UserProfile";
 
 @DefaultScope({
 	include: [() => Profile]
 })
-@Table({tableName: 'user'})
+@Table({ tableName: 'user' })
 export class User extends Model<User> {
 
 	@IsUUID(4)

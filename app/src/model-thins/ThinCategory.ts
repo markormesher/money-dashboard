@@ -1,4 +1,4 @@
-import {ThinProfile} from "./ThinProfile";
+import { ThinProfile } from "./ThinProfile";
 
 export class ThinCategory {
 	id: string;

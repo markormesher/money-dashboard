@@ -1,17 +1,17 @@
 import Express = require('express');
+import { NextFunction, Request, Response } from 'express';
 
-import {Op} from 'sequelize'
-import {NextFunction, Request, Response} from 'express';
-import AuthHelper = require('../../helpers/auth-helper');
-import AccountManager = require('../../managers/account-manager');
-import {Account} from '../../models/Account';
-import {getData} from "../../helpers/datatable-helper";
-import {IFindOptions} from "sequelize-typescript";
-import {User} from "../../models/User";
+import { Op } from 'sequelize'
+import { IFindOptions } from "sequelize-typescript";
+import { requireUser } from "../../helpers/auth-helper";
+import { getData } from "../../helpers/datatable-helper";
+import { deleteAccount, getAccount, saveAccount, toggleAccountActive } from "../../managers/account-manager";
+import { Account } from '../../models/Account';
+import { User } from "../../models/User";
 
 const router = Express.Router();
 
-router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
+router.get('/', requireUser, (req: Request, res: Response) => {
 	res.render('settings/accounts/index', {
 		_: {
 			title: 'Accounts',
@@ -20,7 +20,7 @@ router.get('/', AuthHelper.requireUser, (req: Request, res: Response) => {
 	});
 });
 
-router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/table-data', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const searchTerm = req.query['search']['value'];
 	const currentOnly = req.query['activeOnly'] == 'true';
@@ -58,12 +58,11 @@ router.get('/table-data', AuthHelper.requireUser, (req: Request, res: Response, 
 			.catch(next);
 });
 
-router.get('/edit/:accountId?', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/edit/:accountId?', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const accountId = req.params['accountId'];
 
-	AccountManager
-			.getAccount(user, accountId)
+	getAccount(user, accountId)
 			.then(account => {
 				res.render('settings/accounts/edit', {
 					_: {
@@ -76,7 +75,7 @@ router.get('/edit/:accountId?', AuthHelper.requireUser, (req: Request, res: Resp
 			.catch(next);
 });
 
-router.post('/edit/:accountId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/edit/:accountId', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const accountId = req.params['accountId'];
 	const properties: Partial<Account> = {
@@ -84,8 +83,7 @@ router.post('/edit/:accountId', AuthHelper.requireUser, (req: Request, res: Resp
 		type: req.body['type']
 	};
 
-	AccountManager
-			.saveAccount(user, accountId, properties)
+	saveAccount(user, accountId, properties)
 			.then(() => {
 				res.flash('success', 'Account saved');
 				res.redirect('/settings/accounts');
@@ -93,22 +91,20 @@ router.post('/edit/:accountId', AuthHelper.requireUser, (req: Request, res: Resp
 			.catch(next);
 });
 
-router.post('/toggle-active/:accountId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/toggle-active/:accountId', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const accountId = req.params['accountId'];
 
-	AccountManager
-			.toggleActiveStatus(user, accountId)
+	toggleAccountActive(user, accountId)
 			.then(() => res.status(200).end())
 			.catch(next);
 });
 
-router.post('/delete/:accountId', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post('/delete/:accountId', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const accountId = req.params['accountId'];
 
-	AccountManager
-			.deleteAccount(user, accountId)
+	deleteAccount(user, accountId)
 			.then(() => res.status(200).end())
 			.catch(next);
 });

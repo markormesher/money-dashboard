@@ -1,16 +1,16 @@
-import {PassportStatic as Passport} from 'passport';
-import {Strategy as GoogleStrategy, StrategyOptionsWithRequest} from 'passport-google-oauth2';
-import ConfigLoader = require('./config-loader');
+import { PassportStatic as Passport } from 'passport';
+import { Strategy as GoogleStrategy, StrategyOptionsWithRequest } from 'passport-google-oauth2';
+import { getUser, getOrRegisterUserWithGoogleProfile } from "../managers/user-manager";
 
-import {User} from '../models/User';
-import UserManager = require('../managers/user-manager');
+import { User } from '../models/User';
+import { getConstants, getSecret } from "./config-loader";
 
 function init(passport: Passport) {
 
 	const googleConfig: StrategyOptionsWithRequest = {
-		clientID: ConfigLoader.getSecret('google.client.id'),
-		clientSecret: ConfigLoader.getSecret('google.client.secret'),
-		callbackURL: ConfigLoader.getConstants().host + '/auth/google/callback',
+		clientID: getSecret('google.client.id'),
+		clientSecret: getSecret('google.client.secret'),
+		callbackURL: getConstants().host + '/auth/google/callback',
 		passReqToCallback: true
 	};
 
@@ -33,7 +33,7 @@ function init(passport: Passport) {
 		const userId = userAndProfileId[0];
 		const profileId = userAndProfileId[1];
 
-		UserManager.getById(userId)
+		getUser(userId)
 				.then(user => {
 					if (!user) {
 						throw new Error('Could not find user');
@@ -49,10 +49,10 @@ function init(passport: Passport) {
 	});
 
 	passport.use(new GoogleStrategy(googleConfig, (request, accessToken, refreshToken, profile, callback) => {
-		UserManager.getOrRegisterWithGoogleProfile(profile)
+		getOrRegisterUserWithGoogleProfile(profile)
 				.then(user => callback(null, user))
 				.catch(callback);
 	}));
 }
 
-export {init};
+export { init };

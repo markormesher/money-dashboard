@@ -1,6 +1,6 @@
-import {ThinTransaction} from "../../model-thins/ThinTransaction";
-import {formatCurrency, formatDate} from "../../helpers/formatters";
-import {reloadTable} from "./table";
+import { formatCurrency, formatDate } from "../../helpers/formatters";
+import { ThinTransaction } from "../../model-thins/ThinTransaction";
+import { reloadTable } from "./table";
 
 interface ModalFields {
 	transactionDate?: JQuery

@@ -1,19 +1,19 @@
-import Express = require('express');
-import {NextFunction, Request, Response} from 'express';
-import AuthHelper = require('../helpers/auth-helper');
 import Bluebird = require("bluebird");
-import AccountStatistics = require("../statistics/account-statistics");
-import {User} from "../models/User";
-import {Account} from "../models/Account";
+import Express = require('express');
+import { NextFunction, Request, Response } from 'express';
+import { requireUser } from "../helpers/auth-helper";
+import { Account } from "../models/Account";
+import { User } from "../models/User";
+import { getAccountBalances } from "../statistics/account-statistics";
 
 const router = Express.Router();
 
-router.get('/', AuthHelper.requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get('/', requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 
 	Bluebird
 			.all([
-				AccountStatistics.getAccountBalances(user),
+				getAccountBalances(user),
 			])
 			.spread((accountBalances: [Account, number]) => {
 				res.render('dashboard/index', {

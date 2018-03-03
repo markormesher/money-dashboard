@@ -4,10 +4,10 @@ import {
 	createToggleAction,
 	generationActionsHtml
 } from "../../../helpers/entity-action-creator";
-import {formatAccountType, formatMutedText} from "../../../helpers/formatters";
-import {ThinAccount} from "../../../model-thins/ThinAccount";
-import {getActiveOnlyState} from "./active-accounts";
-import {withDataTableDefaults} from "../../global/data-table-defaults";
+import { formatAccountType, formatMutedText } from "../../../helpers/formatters";
+import { ThinAccount } from "../../../model-thins/ThinAccount";
+import { withDataTableDefaults } from "../../global/data-table-defaults";
+import { getActiveOnlyState } from "./active-accounts";
 
 let datatable: DataTables.Api = null;
 
@@ -29,9 +29,9 @@ $(() => {
 
 	datatable = table.DataTable(withDataTableDefaults({
 		columns: [
-			{data: 'name'},
-			{data: 'type'},
-			{data: '_actions', orderable: false}
+			{ data: 'name' },
+			{ data: 'type' },
+			{ data: '_actions', orderable: false }
 		],
 		ajax: {
 			url: '/settings/accounts/table-data',

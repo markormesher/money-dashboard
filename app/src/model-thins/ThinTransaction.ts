@@ -1,6 +1,6 @@
-import {ThinCategory} from "./ThinCategory";
-import {ThinAccount} from "./ThinAccount";
-import {ThinProfile} from "./ThinProfile";
+import { ThinAccount } from "./ThinAccount";
+import { ThinCategory } from "./ThinCategory";
+import { ThinProfile } from "./ThinProfile";
 
 export class ThinTransaction {
 	id: string;
