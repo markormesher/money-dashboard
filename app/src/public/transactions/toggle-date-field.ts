@@ -1,5 +1,3 @@
-import { reloadTable } from "./table";
-
 const TRANSACTION_DATE = 'transactionDate';
 const EFFECTIVE_DATE = 'effectiveDate';
 
@@ -7,7 +5,7 @@ let toggleFieldBtn: JQuery = null;
 let toggleFieldLabel: JQuery = null;
 let field = TRANSACTION_DATE;
 
-function initCurrentOnly() {
+function initToggleField() {
 	toggleFieldBtn = $('#toggle-field-btn');
 	toggleFieldLabel = toggleFieldBtn.find('span');
 	toggleFieldBtn.on('click', toggleField);
@@ -16,7 +14,7 @@ function initCurrentOnly() {
 function toggleField() {
 	field = field == TRANSACTION_DATE ? EFFECTIVE_DATE : TRANSACTION_DATE;
 	updateToggleFieldBtn();
-	reloadTable();
+	$('.dataTable').DataTable().ajax.reload();
 }
 
 function updateToggleFieldBtn() {
@@ -32,7 +30,7 @@ function getDateField(): string {
 }
 
 $(() => {
-	initCurrentOnly();
+	initToggleField();
 	updateToggleFieldBtn();
 });
 

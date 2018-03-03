@@ -1,5 +1,3 @@
-import { reloadTable } from "./table";
-
 let currentOnlyBtn: JQuery = null;
 let currentOnly = true;
 
@@ -11,7 +9,7 @@ function initCurrentOnly() {
 function toggleCurrentOnly() {
 	currentOnly = !currentOnly;
 	updateCurrentOnlyButton();
-	reloadTable();
+	$('.dataTable').DataTable().ajax.reload();
 }
 
 function updateCurrentOnlyButton() {

@@ -1,6 +1,5 @@
 import { formatCurrency, formatDate } from "../../helpers/formatters";
 import { ThinTransaction } from "../../model-thins/ThinTransaction";
-import { reloadTable } from "./table";
 
 interface ModalFields {
 	transactionDate?: JQuery
@@ -148,7 +147,7 @@ function onFinishSaveTransaction(successful: boolean) {
 
 	if (successful) {
 		toastr.success('Transaction saved');
-		reloadTable();
+		$('.dataTable').DataTable().ajax.reload();
 		if (currentlyEditingId == 'new' && modalFields.addAnotherCheckbox.is(':checked')) {
 			clearModal(false);
 		} else {

@@ -26,8 +26,5 @@ function updateCloneButton() {
 $(() => {
 	initCloning();
 	updateCloneButton();
+	$('table.dataTable').on('draw.dt', refreshCloning);
 });
-
-export {
-	refreshCloning
-}

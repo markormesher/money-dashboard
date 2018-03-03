@@ -6,8 +6,6 @@ import { startTransactionEdit } from "./editing";
 import { getDateField } from "./toggle-date-field";
 import cloneDeep = require("lodash.clonedeep");
 
-let datatable: DataTables.Api = null;
-
 const transactionCache: { [key: string]: ThinTransaction } = {};
 
 function getActions(transaction: ThinTransaction): string {
@@ -21,15 +19,8 @@ function getActions(transaction: ThinTransaction): string {
 	}
 }
 
-function reloadTable() {
-	datatable.ajax.reload();
-}
-
 $(() => {
-	const table = $('table#transactions');
-	if (table.length == 0) return;
-
-	datatable = table.DataTable(withDataTableDefaults({
+	$('table#transactions').DataTable(withDataTableDefaults({
 		columns: [
 			{ data: 'displayDate', orderable: true },
 			{ data: 'account.name', orderable: false },
@@ -79,7 +70,3 @@ $(() => {
 		}
 	}))
 });
-
-export {
-	reloadTable
-}

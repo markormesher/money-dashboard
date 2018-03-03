@@ -7,9 +7,7 @@ import {
 import { formatAccountType, formatMutedText } from "../../../helpers/formatters";
 import { ThinAccount } from "../../../model-thins/ThinAccount";
 import { withDataTableDefaults } from "../../global/data-table-defaults";
-import { getActiveOnlyState } from "./active-accounts";
-
-let datatable: DataTables.Api = null;
+import { getActiveOnlyState } from "./filter-active-accounts";
 
 function getActions(account: ThinAccount): string {
 	return generationActionsHtml([
@@ -19,15 +17,8 @@ function getActions(account: ThinAccount): string {
 	]);
 }
 
-function reloadTable() {
-	datatable.ajax.reload();
-}
-
 $(() => {
-	const table = $('table#accounts');
-	if (table.length == 0) return;
-
-	datatable = table.DataTable(withDataTableDefaults({
+	$('table#accounts').DataTable(withDataTableDefaults({
 		columns: [
 			{ data: 'name' },
 			{ data: 'type' },
@@ -51,7 +42,3 @@ $(() => {
 		}
 	}))
 });
-
-export {
-	reloadTable
-}

@@ -1,5 +1,3 @@
-import { reloadTable } from "./table";
-
 let activeOnlyBtn: JQuery = null;
 let activeOnly = true;
 
@@ -11,10 +9,11 @@ function initActiveOnly() {
 function toggleActiveOnly() {
 	activeOnly = !activeOnly;
 	updateActiveOnlyButton();
-	reloadTable();
+	$('.dataTable').DataTable().ajax.reload();
 }
 
 function updateActiveOnlyButton() {
+	activeOnlyBtn.data('activeOnly', activeOnly);
 	if (activeOnly) {
 		activeOnlyBtn.find('[data-fa-i2svg]').toggleClass('fa-check-square');
 	} else {
