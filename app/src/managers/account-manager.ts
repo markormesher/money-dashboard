@@ -4,18 +4,7 @@ import { Profile } from '../models/Profile';
 import { User } from '../models/User';
 import Bluebird = require('bluebird');
 
-export type AccountOrId = Account | string;
-
-function convertAccountOrIdToId(accountOrId: AccountOrId): string {
-	if (accountOrId instanceof Account) {
-		return (accountOrId as Account).id;
-	} else {
-		return (accountOrId as string);
-	}
-}
-
-function getAccount(user: User, accountOrId: AccountOrId): Bluebird<Account> {
-	const accountId = convertAccountOrIdToId(accountOrId);
+function getAccount(user: User, accountId: string): Bluebird<Account> {
 	return Account
 			.findOne({
 				where: { id: accountId },
@@ -42,8 +31,8 @@ function getAllAccounts(user: User, activeOnly: boolean = true): Bluebird<Accoun
 	});
 }
 
-function saveAccount(user: User, accountOrId: AccountOrId, properties: Partial<Account>): Bluebird<Account> {
-	return getAccount(user, accountOrId)
+function saveAccount(user: User, accountId: string, properties: Partial<Account>): Bluebird<Account> {
+	return getAccount(user, accountId)
 			.then((account) => {
 				account = account || new Account();
 				return account.update(properties);
@@ -53,16 +42,16 @@ function saveAccount(user: User, accountOrId: AccountOrId, properties: Partial<A
 			});
 }
 
-function toggleAccountActive(user: User, accountOrId: AccountOrId): Bluebird<Account> {
-	return getAccount(user, accountOrId)
+function toggleAccountActive(user: User, accountId: string): Bluebird<Account> {
+	return getAccount(user, accountId)
 			.then((account) => {
 				account.active = !account.active;
 				return account.save();
 			});
 }
 
-function deleteAccount(user: User, accountOrId: AccountOrId): Bluebird<void> {
-	return getAccount(user, accountOrId)
+function deleteAccount(user: User, accountId: string): Bluebird<void> {
+	return getAccount(user, accountId)
 			.then((account) => {
 				if (!account) {
 					throw new Error('That account does not exist');

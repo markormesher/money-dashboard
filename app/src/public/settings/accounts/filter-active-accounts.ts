@@ -1,18 +1,20 @@
 let activeOnlyBtn: JQuery = null;
 let activeOnly = true;
 
-function initActiveOnly() {
+function initActiveOnlyBtn() {
 	activeOnlyBtn = $('#active-only-btn');
 	activeOnlyBtn.on('click', toggleActiveOnly);
+
+	updateActiveOnlyBtn();
 }
 
 function toggleActiveOnly() {
 	activeOnly = !activeOnly;
-	updateActiveOnlyButton();
+	updateActiveOnlyBtn();
 	$('.dataTable').DataTable().ajax.reload();
 }
 
-function updateActiveOnlyButton() {
+function updateActiveOnlyBtn() {
 	activeOnlyBtn.data('activeOnly', activeOnly);
 	if (activeOnly) {
 		activeOnlyBtn.find('[data-fa-i2svg]').toggleClass('fa-check-square');
@@ -26,8 +28,7 @@ function getActiveOnlyState(): boolean {
 }
 
 $(() => {
-	initActiveOnly();
-	updateActiveOnlyButton();
+	initActiveOnlyBtn();
 });
 
 export {

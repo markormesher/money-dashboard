@@ -3,6 +3,12 @@ import Bluebird = require("bluebird");
 import { User } from "../models/User";
 import { createProfileAndAddToUser } from "./profile-manager";
 
+interface GoogleProfile {
+	id: string;
+	displayName: string;
+	photos: { value: string }[];
+}
+
 function getUser(id: string): Bluebird<User> {
 	return User.findOne({
 		where: { id: id }
@@ -14,7 +20,7 @@ function getUser(id: string): Bluebird<User> {
 	});
 }
 
-function getOrRegisterUserWithGoogleProfile(googleProfile: any): Bluebird<User> {
+function getOrRegisterUserWithGoogleProfile(googleProfile: GoogleProfile): Bluebird<User> {
 	// retrieve or create the user account
 	return User.findOrCreate({
 		where: {

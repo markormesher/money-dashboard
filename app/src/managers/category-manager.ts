@@ -3,18 +3,7 @@ import { Category } from '../models/Category';
 import { Profile } from '../models/Profile';
 import { User } from '../models/User';
 
-export type CategoryOrId = Category | string;
-
-function convertCategoryOrIdToId(categoryOrId: CategoryOrId): string {
-	if (categoryOrId instanceof Category) {
-		return (categoryOrId as Category).id;
-	} else {
-		return (categoryOrId as string);
-	}
-}
-
-function getCategory(user: User, categoryOrId: CategoryOrId): Bluebird<Category> {
-	const categoryId = convertCategoryOrIdToId(categoryOrId);
+function getCategory(user: User, categoryId: string): Bluebird<Category> {
 	return Category
 			.findOne({
 				where: { id: categoryId },
@@ -38,8 +27,8 @@ function getAllCategories(user: User): Bluebird<Category[]> {
 	});
 }
 
-function saveCategory(user: User, categoryOrId: CategoryOrId, properties: Partial<Category>): Bluebird<Category> {
-	return getCategory(user, categoryOrId)
+function saveCategory(user: User, categoryId: string, properties: Partial<Category>): Bluebird<Category> {
+	return getCategory(user, categoryId)
 			.then((category) => {
 				category = category || new Category();
 				return category.update(properties);
@@ -49,8 +38,8 @@ function saveCategory(user: User, categoryOrId: CategoryOrId, properties: Partia
 			});
 }
 
-function deleteCategory(user: User, categoryOrId: CategoryOrId): Bluebird<void> {
-	return getCategory(user, categoryOrId)
+function deleteCategory(user: User, categoryId: string): Bluebird<void> {
+	return getCategory(user, categoryId)
 			.then((category) => {
 				if (!category) {
 					throw new Error('That category does not exist');

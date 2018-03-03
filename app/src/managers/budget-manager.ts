@@ -4,18 +4,7 @@ import { Category } from "../models/Category";
 import { Profile } from '../models/Profile';
 import { User } from '../models/User';
 
-export type BudgetOrId = Budget | string;
-
-function convertBudgetOrIdToId(budgetOrId: BudgetOrId): string {
-	if (budgetOrId instanceof Budget) {
-		return (budgetOrId as Budget).id;
-	} else {
-		return (budgetOrId as string);
-	}
-}
-
-function getBudget(user: User, budgetOrId: BudgetOrId, mustExist: boolean = false): Bluebird<Budget> {
-	const budgetId = convertBudgetOrIdToId(budgetOrId);
+function getBudget(user: User, budgetId: string, mustExist: boolean = false): Bluebird<Budget> {
 	return Budget
 			.findOne({
 				where: { id: budgetId },
@@ -32,8 +21,8 @@ function getBudget(user: User, budgetOrId: BudgetOrId, mustExist: boolean = fals
 			});
 }
 
-function saveBudget(user: User, budgetOrId: BudgetOrId, properties: Partial<Budget>): Bluebird<Budget> {
-	return getBudget(user, budgetOrId)
+function saveBudget(user: User, budgetId: string, properties: Partial<Budget>): Bluebird<Budget> {
+	return getBudget(user, budgetId)
 			.then((budget) => {
 				budget = budget || new Budget();
 				return budget.update(properties);
@@ -43,8 +32,8 @@ function saveBudget(user: User, budgetOrId: BudgetOrId, properties: Partial<Budg
 			});
 }
 
-function deleteBudget(user: User, budgetOrId: BudgetOrId): Bluebird<void> {
-	return getBudget(user, budgetOrId)
+function deleteBudget(user: User, budgetId: string): Bluebird<void> {
+	return getBudget(user, budgetId)
 			.then((budget) => {
 				if (!budget) {
 					throw new Error('That budget does not exist');
@@ -55,9 +44,9 @@ function deleteBudget(user: User, budgetOrId: BudgetOrId): Bluebird<void> {
 			.then((budget) => budget.destroy());
 }
 
-function cloneBudgets(user: User, budgetsOrIds: BudgetOrId[], startDate: Date, endDate: Date): Bluebird<Budget[]> {
+function cloneBudgets(user: User, budgetsIds: string[], startDate: Date, endDate: Date): Bluebird<Budget[]> {
 	return Bluebird
-			.all(budgetsOrIds.map(b => getBudget(user, b, true)))
+			.all(budgetsIds.map(id => getBudget(user, id, true)))
 			.then((budgets: Budget[]) => {
 				return budgets.map(budget => {
 					const clonedBudget = budget.buildClone();

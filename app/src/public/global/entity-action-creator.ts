@@ -1,7 +1,7 @@
 import { formatMutedText } from "./formatters";
 
 export interface EntityAction {
-	type: 'edit' | 'delete' | 'toggle';
+	type: string;
 	actionUrl?: string;
 	dataId?: string;
 	toggleEnabled?: boolean;
@@ -36,6 +36,9 @@ function generationActionsHtml(actions: EntityAction[]): string {
 					}
 					output += `</button>`;
 					break;
+
+				default:
+					throw new Error(`Unknown action type: ${action.type}`);
 			}
 		});
 		output += '</div>';
@@ -43,7 +46,7 @@ function generationActionsHtml(actions: EntityAction[]): string {
 	}
 }
 
-function createEditAction(url: string, dataId: string = null) {
+function createEditAction(url: string, dataId: string = null): EntityAction {
 	return {
 		type: 'edit',
 		actionUrl: url,
@@ -51,7 +54,7 @@ function createEditAction(url: string, dataId: string = null) {
 	} as EntityAction;
 }
 
-function createDeleteAction(url: string, dataId: string = null) {
+function createDeleteAction(url: string, dataId: string = null): EntityAction {
 	return {
 		type: 'delete',
 		actionUrl: url,
@@ -59,7 +62,7 @@ function createDeleteAction(url: string, dataId: string = null) {
 	} as EntityAction;
 }
 
-function createToggleAction(url: string, dataId: string = null, toggleEnabled: boolean = true) {
+function createToggleAction(url: string, dataId: string = null, toggleEnabled: boolean = true): EntityAction {
 	return {
 		type: 'toggle',
 		actionUrl: url,

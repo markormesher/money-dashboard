@@ -3,8 +3,8 @@ import {
 	createEditAction,
 	createToggleAction,
 	generationActionsHtml
-} from "../../../helpers/entity-action-creator";
-import { formatAccountType, formatMutedText } from "../../../helpers/formatters";
+} from "../../global/entity-action-creator";
+import { formatAccountType, formatMutedText } from "../../global/formatters";
 import { ThinAccount } from "../../../model-thins/ThinAccount";
 import { withDataTableDefaults } from "../../global/data-table-defaults";
 import { getActiveOnlyState } from "./filter-active-accounts";
@@ -17,7 +17,7 @@ function getActions(account: ThinAccount): string {
 	]);
 }
 
-$(() => {
+function initDataTable() {
 	$('table#accounts').DataTable(withDataTableDefaults({
 		columns: [
 			{ data: 'name' },
@@ -41,4 +41,8 @@ $(() => {
 			}
 		}
 	}))
+}
+
+$(() => {
+	initDataTable();
 });

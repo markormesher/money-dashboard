@@ -1,4 +1,4 @@
-import { formatCurrency, formatDate } from "../../helpers/formatters";
+import { formatCurrency, formatDate } from "../global/formatters";
 import { ThinTransaction } from "../../model-thins/ThinTransaction";
 
 interface ModalFields {

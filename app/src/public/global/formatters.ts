@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
-import { ThinCategory } from "../model-thins/ThinCategory";
-import { Category } from "../models/Category";
+import { ThinCategory } from "../../model-thins/ThinCategory";
+import { Category } from "../../models/Category";
 
 // generic
 
@@ -32,7 +32,7 @@ function formatMutedText(text: string): string {
 	return `<span class="text-muted">${text}</span>`;
 }
 
-function formatTooltip(text: string, tooltip: string) {
+function formatTooltip(text: string, tooltip: string): string {
 	return `<span class="text-muted" data-toggle="tooltip" title="${tooltip}">${text}</span>`;
 }
 

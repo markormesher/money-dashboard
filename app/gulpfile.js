@@ -15,7 +15,7 @@ const source = require('vinyl-source-stream');
 const tsConfig = 'tsconfig.json';
 const distOutput = 'dist';
 
-const tsAssetsInput = 'dist/public';
+const tsAssetsDir = 'dist/public';
 
 const sassAssetsInput = 'assets/**/*.scss';
 const sassAssetsOutput = 'dist/public';
@@ -45,7 +45,7 @@ gulp.task('compile-ts', function () {
 });
 
 gulp.task('ts-assets', ['compile-ts'], function () {
-	const folders = getFolders(tsAssetsInput);
+	const folders = getFolders(tsAssetsDir);
 
 	return folders.map(function (folder) {
 		const inputFileGlob = path.join(folder, '*.js');

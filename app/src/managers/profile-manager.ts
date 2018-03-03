@@ -2,18 +2,7 @@ import Bluebird = require('bluebird');
 import { Profile } from '../models/Profile';
 import { User } from '../models/User';
 
-export type ProfileOrId = Profile | string;
-
-function convertProfileOrIdToId(profileOrId: ProfileOrId): string {
-	if (profileOrId instanceof Profile) {
-		return (profileOrId as Profile).id;
-	} else {
-		return (profileOrId as string);
-	}
-}
-
-function getProfile(user: User, profileOrId: ProfileOrId): Bluebird<Profile> {
-	const profileId = convertProfileOrIdToId(profileOrId);
+function getProfile(user: User, profileId: string): Bluebird<Profile> {
 	return Profile
 			.findOne({
 				where: { id: profileId },
@@ -41,8 +30,8 @@ function createProfileAndAddToUser(user: User, profileName: string): Bluebird<Us
 			});
 }
 
-function saveProfile(user: User, profileOrId: ProfileOrId, properties: Partial<Profile>): Bluebird<Profile> {
-	return getProfile(user, profileOrId)
+function saveProfile(user: User, profileId: string, properties: Partial<Profile>): Bluebird<Profile> {
+	return getProfile(user, profileId)
 			.then((profile) => {
 				profile = profile || new Profile();
 				return profile.update(properties);
@@ -52,8 +41,8 @@ function saveProfile(user: User, profileOrId: ProfileOrId, properties: Partial<P
 			});
 }
 
-function deleteProfile(user: User, profileOrId: ProfileOrId): Bluebird<void> {
-	return getProfile(user, profileOrId)
+function deleteProfile(user: User, profileId: string): Bluebird<void> {
+	return getProfile(user, profileId)
 			.then((profile) => {
 				if (!profile) {
 					throw new Error('That profile does not exist');

@@ -1,6 +1,7 @@
 import { PassportStatic as Passport } from 'passport';
 import { Strategy as GoogleStrategy, StrategyOptionsWithRequest } from 'passport-google-oauth2';
-import { getUser, getOrRegisterUserWithGoogleProfile } from "../managers/user-manager";
+import { getOrRegisterUserWithGoogleProfile, getUser } from "../managers/user-manager";
+import { Profile } from "../models/Profile";
 
 import { User } from '../models/User';
 import { getConstants, getSecret } from "./config-loader";
@@ -39,7 +40,7 @@ function init(passport: Passport) {
 						throw new Error('Could not find user');
 					}
 
-					user.activeProfile = user.profiles.find(p => !profileId || p.id === profileId);
+					user.activeProfile = user.profiles.find((p: Profile) => !profileId || p.id === profileId);
 					if (!user.activeProfile) {
 						user.activeProfile = user.profiles[0];
 					}

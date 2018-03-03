@@ -1,11 +1,12 @@
 let cloneBtn: JQuery = null;
 let inputs: JQuery = null;
 
-function initCloning() {
+function initCloningBtn() {
 	cloneBtn = $('#clone-btn');
+	updateCloneButton();
 }
 
-function refreshCloning() {
+function attachCheckboxListeners() {
 	inputs = $('input[name=cloneBudget]');
 	inputs.on('change', updateCloneButton);
 }
@@ -24,7 +25,7 @@ function updateCloneButton() {
 }
 
 $(() => {
-	initCloning();
-	updateCloneButton();
-	$('table.dataTable').on('draw.dt', refreshCloning);
+	initCloningBtn();
+
+	$('.dataTable').on('draw.dt', attachCheckboxListeners);
 });

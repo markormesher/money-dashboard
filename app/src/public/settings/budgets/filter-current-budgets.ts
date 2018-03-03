@@ -1,18 +1,20 @@
 let currentOnlyBtn: JQuery = null;
 let currentOnly = true;
 
-function initCurrentOnly() {
+function initCurrentOnlyBtn() {
 	currentOnlyBtn = $('#current-only-btn');
 	currentOnlyBtn.on('click', toggleCurrentOnly);
+
+	updateCurrentOnlyBtn();
 }
 
 function toggleCurrentOnly() {
 	currentOnly = !currentOnly;
-	updateCurrentOnlyButton();
+	updateCurrentOnlyBtn();
 	$('.dataTable').DataTable().ajax.reload();
 }
 
-function updateCurrentOnlyButton() {
+function updateCurrentOnlyBtn() {
 	if (currentOnly) {
 		currentOnlyBtn.find('[data-fa-i2svg]').toggleClass('fa-check-square');
 	} else {
@@ -25,8 +27,7 @@ function getCurrentOnlyState(): boolean {
 }
 
 $(() => {
-	initCurrentOnly();
-	updateCurrentOnlyButton();
+	initCurrentOnlyBtn();
 });
 
 export {

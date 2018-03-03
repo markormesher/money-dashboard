@@ -1,7 +1,7 @@
-import { createDeleteAction, createEditAction, generationActionsHtml } from "../../../helpers/entity-action-creator";
 import { ThinProfile } from "../../../model-thins/ThinProfile";
 import { ThinUser } from "../../../model-thins/ThinUser";
 import { withDataTableDefaults } from "../../global/data-table-defaults";
+import { createDeleteAction, createEditAction, generationActionsHtml } from "../../global/entity-action-creator";
 import { MDWindow } from "../../global/window";
 
 function getActions(profile: ThinProfile): string {
@@ -13,7 +13,7 @@ function getActions(profile: ThinProfile): string {
 	]);
 }
 
-$(() => {
+function initDataTable() {
 	$('table#profiles').DataTable(withDataTableDefaults({
 		columns: [
 			{ data: 'name' },
@@ -30,4 +30,8 @@ $(() => {
 			}
 		}
 	}))
+}
+
+$(() => {
+	initDataTable();
 });

@@ -1,7 +1,7 @@
-import { createDeleteAction, createEditAction, generationActionsHtml } from "../../../helpers/entity-action-creator";
-import { formatCategoryTypes } from "../../../helpers/formatters";
 import { ThinCategory } from "../../../model-thins/ThinCategory";
 import { withDataTableDefaults } from "../../global/data-table-defaults";
+import { createDeleteAction, createEditAction, generationActionsHtml } from "../../global/entity-action-creator";
+import { formatCategoryTypes } from "../../global/formatters";
 
 const getActions = (category: ThinCategory) => {
 	return generationActionsHtml([
@@ -10,7 +10,7 @@ const getActions = (category: ThinCategory) => {
 	]);
 };
 
-$(() => {
+function initDataTable() {
 	$('table#categories').DataTable(withDataTableDefaults({
 		columns: [
 			{ data: 'name' },
@@ -29,4 +29,8 @@ $(() => {
 			}
 		}
 	}))
+}
+
+$(() => {
+	initDataTable();
 });

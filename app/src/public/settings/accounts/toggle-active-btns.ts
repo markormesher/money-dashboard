@@ -16,11 +16,11 @@ function toggleAccountActiveState(accountId: string) {
 				$('.dataTable').DataTable().ajax.reload();
 			})
 			.fail(() => {
-				toastr.error('Sorry, that couldn\'t be change!');
+				toastr.error('Sorry, that couldn\'t be changed!');
 				$('.dataTable').DataTable().ajax.reload();
 			});
 }
 
 $(() => {
-	$('table.dataTable').on('draw.dt', refreshToggleBtns);
+	$('.dataTable').on('draw.dt', refreshToggleBtns);
 });

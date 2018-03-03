@@ -1,7 +1,7 @@
-import { createDeleteAction, createEditAction, generationActionsHtml } from "../../../helpers/entity-action-creator";
-import { formatBudgetPeriod, formatBudgetType, formatCurrency } from "../../../helpers/formatters";
 import { ThinBudget } from "../../../model-thins/ThinBudget";
 import { withDataTableDefaults } from "../../global/data-table-defaults";
+import { createDeleteAction, createEditAction, generationActionsHtml } from "../../global/entity-action-creator";
+import { formatBudgetPeriod, formatBudgetType, formatCurrency } from "../../global/formatters";
 import { getCurrentOnlyState } from "./filter-current-budgets";
 
 function getActions(budget: ThinBudget): string {
@@ -15,7 +15,7 @@ function getCloneCheckbox(budget: ThinBudget): string {
 	return `<input type="checkbox" name="cloneBudget" value="${budget.id}" />`;
 }
 
-$(() => {
+function initDataTable() {
 	$('table#budgets').DataTable(withDataTableDefaults({
 		columns: [
 			{ data: '_clone', orderable: false },
@@ -44,5 +44,9 @@ $(() => {
 				});
 			}
 		}
-	}))
+	}));
+}
+
+$(() => {
+	initDataTable();
 });

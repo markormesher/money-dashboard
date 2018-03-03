@@ -10,7 +10,7 @@ import { NextFunction, Request, Response } from 'express';
 import { join } from 'path';
 import { StatusError } from './extensions/StatusError';
 import { getSecret } from "./helpers/config-loader";
-import { formatterMiddleware } from "./helpers/formatters";
+import { formatterMiddleware } from "./public/global/formatters";
 
 const app = Express();
 

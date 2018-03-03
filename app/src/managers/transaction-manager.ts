@@ -4,18 +4,7 @@ import { Profile } from '../models/Profile';
 import { Transaction } from '../models/Transaction';
 import { User } from '../models/User';
 
-export type TransactionOrId = Transaction | string;
-
-function convertTransactionOrIdToId(transactionOrId: TransactionOrId): string {
-	if (transactionOrId instanceof Transaction) {
-		return (transactionOrId as Transaction).id;
-	} else {
-		return (transactionOrId as string);
-	}
-}
-
-function getTransaction(user: User, transactionOrId: TransactionOrId, mustExist: boolean = false): Bluebird<Transaction> {
-	const transactionId = convertTransactionOrIdToId(transactionOrId);
+function getTransaction(user: User, transactionId: string, mustExist: boolean = false): Bluebird<Transaction> {
 	return Transaction
 			.findOne({
 				where: { id: transactionId },
@@ -32,8 +21,8 @@ function getTransaction(user: User, transactionOrId: TransactionOrId, mustExist:
 			});
 }
 
-function saveTransaction(user: User, transactionOrId: TransactionOrId, properties: Partial<Transaction>): Bluebird<Transaction> {
-	return getTransaction(user, transactionOrId)
+function saveTransaction(user: User, transactionId: string, properties: Partial<Transaction>): Bluebird<Transaction> {
+	return getTransaction(user, transactionId)
 			.then((transaction) => {
 				transaction = transaction || new Transaction();
 				return transaction.update(properties);
@@ -43,8 +32,8 @@ function saveTransaction(user: User, transactionOrId: TransactionOrId, propertie
 			});
 }
 
-function deleteTransaction(user: User, transactionOrId: TransactionOrId): Bluebird<void> {
-	return getTransaction(user, transactionOrId)
+function deleteTransaction(user: User, transactionId: string): Bluebird<void> {
+	return getTransaction(user, transactionId)
 			.then((transaction) => {
 				if (!transaction) {
 					throw new Error('That transaction does not exist');
