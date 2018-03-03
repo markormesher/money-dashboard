@@ -1,17 +1,33 @@
-/*import {User} from "../models/User";
-import Bluebird = require("bluebird");
-import {Transaction} from "../models/Transaction";
 import * as sequelize from "sequelize";
-import {Account} from "../models/Account";
+import { Op } from "sequelize";
+import { Category } from "../models/Category";
+import { Transaction } from "../models/Transaction";
+import { User } from "../models/User";
+import Bluebird = require("bluebird");
 import CategoryManager = require("../managers/category-manager");
 
-export interface AccountBalance {
-	account: Account;
+export interface CategoryBalance {
+	category: Category;
 	balance: number
 }
 
-function getCategoryBalances(user: User, start: Date = null, end: Date = null): Bluebird<AccountBalance[]> {
-	let dateQuery
+function getCategoryBalances(user: User, start: Date = null, end: Date = null): Bluebird<CategoryBalance[]> {
+	let dateQueryFragment = [];
+
+	if (start != null) {
+		dateQueryFragment.push({
+			effectiveDate: {
+				[Op.gte]: start
+			}
+		});
+	}
+	if (end != null) {
+		dateQueryFragment.push({
+			effectiveDate: {
+				[Op.lte]: end
+			}
+		});
+	}
 
 	const getCategoryBalances = Transaction.findAll({
 		attributes: [
@@ -19,7 +35,8 @@ function getCategoryBalances(user: User, start: Date = null, end: Date = null): 
 			[sequelize.fn('SUM', sequelize.col('amount')), 'balance']
 		],
 		where: {
-			profileId: user.activeProfile.id
+			profileId: user.activeProfile.id,
+			[Op.and]: dateQueryFragment
 		},
 		group: [['categoryId']]
 	});
@@ -29,20 +46,19 @@ function getCategoryBalances(user: User, start: Date = null, end: Date = null): 
 				CategoryManager.getAllCategories(user),
 				getCategoryBalances
 			])
-			.spread((accounts: Account[], balances: Transaction[]) => {
+			.spread((categories: Category[], balances: Transaction[]) => {
 				const balanceMap: { [key: string]: number } = {};
 				balances.forEach(sum => {
-					balanceMap[sum.accountId] = sum.getDataValue('balance');
+					balanceMap[sum.categoryId] = sum.getDataValue('balance');
 				});
 
-				return accounts
-						.map(account => {
+				return categories
+						.map(category => {
 							return {
-								account: account,
-								balance: balanceMap[account.id] || 0
-							} as AccountBalance;
+								category: category,
+								balance: balanceMap[category.id] || 0
+							} as CategoryBalance;
 						})
-						.filter(entry => includeZero || entry.balance != 0)
 						.sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance));
 			});
 }
@@ -50,4 +66,3 @@ function getCategoryBalances(user: User, start: Date = null, end: Date = null): 
 export {
 	getCategoryBalances
 }
-*/

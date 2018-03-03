@@ -22,9 +22,7 @@ const sequelize = new Sequelize({
 		paranoid: true,
 		version: true
 	},
-	logging: () => {
-		// NO-OP
-	}
+	//logging: () => {}
 });
 
 export = sequelize
