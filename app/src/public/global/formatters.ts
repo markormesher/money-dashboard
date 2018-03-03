@@ -129,6 +129,14 @@ const formatterMiddleware = (req: Request, res: Response, next: NextFunction) =>
 		formatCurrency: formatCurrency,
 		formatTag: formatTag,
 		formatDate: formatDate,
+		formatMutedText: formatMutedText,
+		formatTooltip: formatTooltip,
+		formatInfoIcon: formatInfoIcon,
+
+		formatAccountType: formatAccountType,
+		formatBudgetType: formatBudgetType,
+		formatBudgetPeriod: formatBudgetPeriod,
+		formatCategoryTypes: formatCategoryTypes,
 	};
 	next();
 };
