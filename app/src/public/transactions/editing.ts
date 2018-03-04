@@ -39,6 +39,16 @@ function initEditControls() {
 	modalFields.createOnlyElements = editorModal.find('.create-only');
 	modalFields.editOnlyElements = editorModal.find('.edit-only');
 
+	// automatically copy transaction date to effective date
+	modalFields.transactionDate.on('change', () => {
+		modalFields.effectiveDate.val(modalFields.transactionDate.val());
+	});
+
+	// highlight the first input when the modal opens
+	editorModal.on('shown.bs.modal', () => {
+		modalFields.transactionDate.focus();
+	});
+
 	$('#create-btn').on('click', (evt) => {
 		evt.preventDefault();
 		startTransactionEdit();

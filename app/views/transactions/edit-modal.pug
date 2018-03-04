@@ -1,6 +1,5 @@
 // TODO: save on enter
 // TODO: suggestions for payees
-// TODO: copy effective/transaction date
 
 include ../_mixins/bootstrap-form
 
@@ -23,7 +22,8 @@ div#editor-modal.modal.fade(tabindex = -1)
 										name: 'transactionDate',
 										label: 'Transaction Date',
 										inputAttrs: {
-											required: true
+											required: true,
+											tabindex: 1
 										}
 									},
 									{
@@ -31,7 +31,8 @@ div#editor-modal.modal.fade(tabindex = -1)
 										name: 'effectiveDate',
 										label: 'Effective Date',
 										inputAttrs: {
-											required: true
+											required: true,
+											tabindex: -1
 										}
 									}
 								]
@@ -44,7 +45,8 @@ div#editor-modal.modal.fade(tabindex = -1)
 										label: 'Account',
 										options: accounts,
 										inputAttrs: {
-											required: true
+											required: true,
+											tabindex: 2
 										}
 									},
 									{
@@ -52,7 +54,8 @@ div#editor-modal.modal.fade(tabindex = -1)
 										name: 'payee',
 										label: 'Payee',
 										inputAttrs: {
-											required: true
+											required: true,
+											tabindex: 3
 										}
 									}
 								]
@@ -65,7 +68,8 @@ div#editor-modal.modal.fade(tabindex = -1)
 										label: 'Category',
 										options: categories,
 										inputAttrs: {
-											required: true
+											required: true,
+											tabindex: 4
 										}
 									},
 									{
@@ -73,7 +77,8 @@ div#editor-modal.modal.fade(tabindex = -1)
 										name: 'amount',
 										label: 'Amount',
 										inputAttrs: {
-											required: true
+											required: true,
+											tabindex: 5
 										}
 									}
 								]
@@ -84,7 +89,10 @@ div#editor-modal.modal.fade(tabindex = -1)
 										sizes: ['xs-12'],
 										type: 'textarea',
 										name: 'note',
-										label: 'Note'
+										label: 'Note',
+										inputAttrs: {
+											tabindex: 6
+										}
 									}
 								]
 							}
@@ -97,6 +105,6 @@ div#editor-modal.modal.fade(tabindex = -1)
 							input#add-another(type = 'checkbox', checked = 'checked')
 							| Add another
 
-					button#save-btn.btn.btn-primary
+					button#save-btn.btn.btn-primary(tabindex = 7)
 						i.far.fa-fw.fa-save
 						|  Save

@@ -28,6 +28,9 @@ mixin bootstrapForm(form)
 
 					div(class= classes)&attributes(wrapperAttrs)
 						case type
+							when 'blank'
+								// nothing to see here...
+
 							when 'text'
 								label(for= name)&attributes(labelAttrs)= label
 								input.form-control(id= name, name= name, type = 'text', value= value)&attributes(inputAttrs)

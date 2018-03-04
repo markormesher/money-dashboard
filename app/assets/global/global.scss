@@ -155,6 +155,10 @@ ul.inline-form-links.stacked:last-child {
 	margin-bottom: 10px;
 }
 
+.form-control:focus {
+	border-color: #66afe9;
+}
+
 // progress bars
 
 .progress-bar {
