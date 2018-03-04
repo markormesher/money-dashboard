@@ -3,7 +3,10 @@ let activeOnly = true;
 
 function initActiveOnlyBtn() {
 	activeOnlyBtn = $('#active-only-btn');
-	activeOnlyBtn.on('click', toggleActiveOnly);
+	activeOnlyBtn.on('click', (evt) => {
+		evt.preventDefault();
+		toggleActiveOnly();
+	});
 
 	updateActiveOnlyBtn();
 }

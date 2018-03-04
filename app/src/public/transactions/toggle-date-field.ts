@@ -8,7 +8,10 @@ let field = TRANSACTION_DATE;
 function initToggleField() {
 	toggleFieldBtn = $('#toggle-field-btn');
 	toggleFieldLabel = toggleFieldBtn.find('span');
-	toggleFieldBtn.on('click', toggleField);
+	toggleFieldBtn.on('click', (evt) => {
+		evt.preventDefault();
+		toggleField();
+	});
 }
 
 function toggleField() {

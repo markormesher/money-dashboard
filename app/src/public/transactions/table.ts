@@ -19,15 +19,13 @@ function getActions(transaction: ThinTransaction): string {
 	}
 }
 
-// TODO: align amounts to right
-
 $(() => {
 	$('table#transactions').DataTable(withDataTableDefaults({
 		columns: [
 			{ data: 'displayDate', orderable: true },
 			{ data: 'account.name', orderable: false },
 			{ data: 'payee', orderable: false },
-			{ data: 'amount', name: 'startDate', orderable: false },
+			{ data: 'amount', name: 'startDate', orderable: false, className: 'text-right' },
 			{ data: 'category.name', orderable: false },
 			{ data: '_actions', orderable: false }
 		],

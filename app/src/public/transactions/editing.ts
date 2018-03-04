@@ -2,7 +2,7 @@ import { formatCurrency, formatDate } from "../global/formatters";
 import { ThinTransaction } from "../../model-thins/ThinTransaction";
 
 interface ModalFields {
-	transactionDate?: JQuery
+	transactionDate?: JQuery;
 	effectiveDate?: JQuery;
 	account?: JQuery;
 	payee?: JQuery;
@@ -14,6 +14,8 @@ interface ModalFields {
 
 	createOnlyElements?: JQuery;
 	editOnlyElements?: JQuery;
+
+	[key: string]: JQuery;
 }
 
 let editorModal: JQuery = null;
@@ -46,15 +48,28 @@ function initEditControls() {
 
 	// highlight the first input when the modal opens
 	editorModal.on('shown.bs.modal', () => {
-		modalFields.transactionDate.focus();
+		modalFields.transactionDate.trigger('focus');
 	});
+
+	// "click" the enter button when ctrl/cmd+enter is pressed
+	for (let key in modalFields) {
+		const field = modalFields[key];
+		if (['INPUT', 'SELECT'].indexOf(field.prop('tagName')) >= 0) {
+			field.on('keydown', (evt) => {
+				console.log(evt);
+				if ((evt.ctrlKey || evt.metaKey) && (evt.keyCode == 13 || evt.keyCode == 10)) {
+					modalFields.saveBtn.trigger('click');
+				}
+			});
+		}
+	}
+
+	modalFields.saveBtn.on('click', saveTransaction);
 
 	$('#create-btn').on('click', (evt) => {
 		evt.preventDefault();
 		startTransactionEdit();
 	});
-
-	modalFields.saveBtn.on('click', saveTransaction);
 }
 
 function populateModal(transaction: ThinTransaction) {

@@ -3,7 +3,10 @@ let currentOnly = true;
 
 function initCurrentOnlyBtn() {
 	currentOnlyBtn = $('#current-only-btn');
-	currentOnlyBtn.on('click', toggleCurrentOnly);
+	currentOnlyBtn.on('click', (evt) => {
+		evt.preventDefault();
+		toggleCurrentOnly();
+	});
 
 	updateCurrentOnlyBtn();
 }
