@@ -1,4 +1,5 @@
 import Bluebird = require('bluebird');
+import { Op } from "sequelize";
 import { Budget } from '../models/Budget';
 import { Category } from "../models/Category";
 import { Profile } from '../models/Profile';
@@ -18,6 +19,34 @@ function getBudget(user: User, budgetId: string, mustExist: boolean = false): Bl
 				} else {
 					return budget;
 				}
+			});
+}
+
+function getAllBudgets(user: User, start: Date = null, end: Date = null): Bluebird<Budget[]> {
+	const dateQueryFragment = [];
+
+	if (start != null) {
+		dateQueryFragment.push({
+			endDate: {
+				[Op.gte]: start
+			}
+		});
+	}
+	if (end != null) {
+		dateQueryFragment.push({
+			startDate: {
+				[Op.lte]: end
+			}
+		});
+	}
+
+	return Budget
+			.findAll({
+				where: {
+					profileId: user.activeProfile.id,
+					[Op.and]: dateQueryFragment
+				},
+				include: [Profile, Category]
 			});
 }
 
@@ -62,6 +91,7 @@ function cloneBudgets(user: User, budgetsIds: string[], startDate: Date, endDate
 
 export {
 	getBudget,
+	getAllBudgets,
 	saveBudget,
 	deleteBudget,
 	cloneBudgets

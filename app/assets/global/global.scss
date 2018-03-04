@@ -83,6 +83,18 @@ div.page-title {
 	}
 }
 
+div.hr {
+	margin: 0 0 20px;
+	padding: 0;
+	width: 100%;
+	height: 1px;
+	background-color: #dddddd;
+
+	hr {
+		display: none;
+	}
+}
+
 // navigation
 
 li.divider {
@@ -134,4 +146,16 @@ ul.inline-form-links.stacked {
 
 ul.inline-form-links.stacked:last-child {
 	margin-bottom: 10px;
+}
+
+// progress bars
+
+.progress-bar {
+	span {
+		margin-right: 4px;
+	}
+
+	span:last-of-type {
+		margin-right: 0;
+	}
 }
