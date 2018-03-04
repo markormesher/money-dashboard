@@ -1,6 +1,6 @@
 import Bluebird = require("bluebird");
-import cloneDeep = require('lodash.clonedeep');
 import { Request } from "express";
+import { cloneDeep } from 'lodash';
 import { IFindOptions } from "sequelize-typescript";
 
 interface DatatableResponse<T> {

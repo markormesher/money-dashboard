@@ -4,7 +4,7 @@ import { ThinTransaction } from "../../model-thins/ThinTransaction";
 import { withDataTableDefaults } from "../global/data-table-defaults";
 import { startTransactionEdit } from "./editing";
 import { getDateField } from "./toggle-date-field";
-import cloneDeep = require("lodash.clonedeep");
+import { cloneDeep } from "lodash";
 
 const transactionCache: { [key: string]: ThinTransaction } = {};
 

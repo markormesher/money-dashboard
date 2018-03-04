@@ -1,4 +1,4 @@
-import merge = require("lodash.merge");
+import { merge } from "lodash";
 
 function withDataTableDefaults(settings: DataTables.Settings): DataTables.Settings {
 	return merge({
