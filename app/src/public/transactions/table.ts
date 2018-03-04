@@ -19,6 +19,8 @@ function getActions(transaction: ThinTransaction): string {
 	}
 }
 
+// TODO: align amounts to right
+
 $(() => {
 	$('table#transactions').DataTable(withDataTableDefaults({
 		columns: [
