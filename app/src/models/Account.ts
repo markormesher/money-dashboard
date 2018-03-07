@@ -21,7 +21,9 @@ export class Account extends Model<Account> {
 	})
 	type: string;
 
-	@Column
+	@Column({
+		defaultValue: true
+	})
 	active: boolean;
 
 	@ForeignKey(() => Profile)
