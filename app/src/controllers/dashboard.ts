@@ -6,6 +6,7 @@ import { requireUser } from "../helpers/auth-helper";
 import { User } from "../models/User";
 import { getAccountBalances } from "../statistics/account-statistics";
 import { getBudgetBalances } from "../statistics/budget-statistics";
+import { getMemoCategoryBalances } from "../statistics/category-statistics";
 
 const router = Express.Router();
 
@@ -19,15 +20,17 @@ router.get('/', requireUser, (req: Request, res: Response, next: NextFunction) =
 	Bluebird
 			.all([
 				getAccountBalances(user),
-				getBudgetBalances(user, dashboardRangeStart, dashboardRangeEnd)
+				getBudgetBalances(user, dashboardRangeStart, dashboardRangeEnd),
+				getMemoCategoryBalances(user)
 			])
-			.spread((accountBalances, budgetBalances) => {
+			.spread((accountBalances, budgetBalances, memoCategoryBalances) => {
 				res.render('dashboard/index', {
 					_: {
 						activePage: 'dashboard',
 					},
 					accountBalances: accountBalances,
 					budgetBalances: budgetBalances,
+					memoCategoryBalances: memoCategoryBalances
 				})
 			})
 			.catch(next);

@@ -1,10 +1,10 @@
 -
-	const formatCurrency = formatters.formatCurrency;
-	const getBudgetPeriodType = formatters.getBudgetPeriodType;
-	const formatBudgetPeriod = formatters.formatBudgetPeriod;
+	var formatCurrency = formatters.formatCurrency;
+	var getBudgetPeriodType = formatters.getBudgetPeriodType;
+	var formatBudgetPeriod = formatters.formatBudgetPeriod;
 
-	const budgetBalances = locals.budgetBalances || [];
-	const budgetPeriodSortOrder = {
+	var budgetBalances = locals.budgetBalances || [];
+	var budgetPeriodSortOrder = {
 		'month': 0,
 		'calendar year': 1,
 		'tax year': 2,
@@ -12,10 +12,10 @@
 	};
 
 	// pre-process budgets into their period types (month, year, etc.)
-	const groupedBudgets = {};
-	const periods = [];
+	var groupedBudgets = {};
+	var periods = [];
 	budgetBalances.forEach(bb => {
-		const period = [bb.budget.startDate, bb.budget.endDate];
+		var period = [bb.budget.startDate, bb.budget.endDate];
 		if (!groupedBudgets[period]) {
 			periods.push(period);
 			groupedBudgets[period] = { budgets: [], bills: [] };
@@ -29,20 +29,20 @@
 
 	// sort groups into display order (month, year, tax year, other)
 	function comparePeriods(a, b) {
-		const aType = getBudgetPeriodType(a[0], a[1]);
-		const bType = getBudgetPeriodType(b[0], b[1]);
+		var aType = getBudgetPeriodType(a[0], a[1]);
+		var bType = getBudgetPeriodType(b[0], b[1]);
 		return budgetPeriodSortOrder[aType] - budgetPeriodSortOrder[bType];
 	}
 	periods.sort(comparePeriods);
 
 mixin budgetOrBill(budgetBalance)
 	-
-		const budget = budgetBalance.budget;
-		const spend = budgetBalance.balance * -1;
-		const percentSpent = spend / budget.amount;
-		const width = percentSpent > 0 ? Math.min(100, percentSpent * 100) + '%' : '1px';
+		var budget = budgetBalance.budget;
+		var spend = budgetBalance.balance * -1;
+		var percentSpent = spend / budget.amount;
+		var width = percentSpent > 0 ? Math.min(100, percentSpent * 100) + '%' : '1px';
 
-		const tooltip = `Spent ${formatCurrency(spend, false)} of ${formatCurrency(budget.amount, false)}`;
+		var tooltip = `Spent ${formatCurrency(spend, false)} of ${formatCurrency(budget.amount, false)}`;
 
 		let barClass = 'info';
 		let barIcon = null;
@@ -87,8 +87,8 @@ each period in periods
 		function compareBudgetBalances(a, b) {
 			return a.budget.category.name.localeCompare(b.budget.category.name);
 		}
-		const budgetBalances = groupedBudgets[period].budgets.sort(compareBudgetBalances);
-		const billBalances = groupedBudgets[period].bills.sort(compareBudgetBalances);
+		var budgetBalances = groupedBudgets[period].budgets.sort(compareBudgetBalances);
+		var billBalances = groupedBudgets[period].bills.sort(compareBudgetBalances);
 
 	div.x_panel
 		div.x_title
