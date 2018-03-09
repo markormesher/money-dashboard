@@ -2,15 +2,16 @@ extends ../_shared/page-layout
 
 block page-body
 
-	// TODO: alerts
 	// TODO: starred accounts
 
 	div.row
 		div.col-xs-12.col-md-8
 			include widget-budgets
 
-			pre= JSON.stringify(locals, null, 2)
-
 		div.col-xs-12.col-md-4
 			include widget-warnings
 			include widget-account-balances
+
+	div.row
+		div.col-xs-12
+			pre= JSON.stringify(locals, null, 2)
