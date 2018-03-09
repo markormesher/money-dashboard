@@ -30,7 +30,7 @@ function getMemoCategoryBalances(user: User): Bluebird<CategoryBalance[]> {
 			.spread((categories: Category[], balances: Transaction[]) => {
 				const balanceMap: { [key: string]: number } = {};
 				balances.forEach(sum => {
-					balanceMap[sum.accountId] = Math.round(sum.getDataValue('balance') * 100) / 100;
+					balanceMap[sum.categoryId] = Math.round(sum.getDataValue('balance') * 100) / 100;
 				});
 
 				return categories
