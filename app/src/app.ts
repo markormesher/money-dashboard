@@ -1,25 +1,25 @@
 import BodyParser = require("body-parser");
 import ConnectRedis = require("connect-redis");
 import Express = require("express");
-import { NextFunction, Request, Response } from "express";
 import ExpressFlash = require("express-flash-2");
 import ExpressSession = require("express-session");
 import Passport = require("passport");
-import { join } from "path";
 import Winston = require("winston");
 
 import AuthController = require("./controllers/auth");
 import DashboardController = require("./controllers/dashboard");
 import AccountSettingsController = require("./controllers/settings/accounts");
 import BudgetSettingsController = require("./controllers/settings/budgets");
-import TransactionsController = require("./controllers/settings/categories");
 import CategorySettingsController = require("./controllers/settings/categories");
-import ProfileSettingsController = require("./controllers/settings/categories");
+import ProfileSettingsController = require("./controllers/settings/profiles");
+import TransactionsController = require("./controllers/transactions");
+import SequelizeDb = require("./helpers/db");
+import PassportConfig = require("./helpers/passport-config");
+import { NextFunction, Request, Response } from "express";
+import { join } from "path";
 
 import { StatusError } from "./extensions/StatusError";
 import { getSecret } from "./helpers/config-loader";
-import SequelizeDb = require("./helpers/db");
-import PassportConfig = require("./helpers/passport-config");
 import { formatterMiddleware } from "./helpers/formatters";
 
 const app = Express();

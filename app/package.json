@@ -7,7 +7,7 @@
   "scripts": {
     "build:compile-ts": "tsc -p ./tsconfig.json",
     "build:compile-sass": "node-sass --output-style compressed --source-map true ./src/public/sass/*.scss -o ./dist/public",
-    "build:bundle-public-ts": "browserify ./dist/public/js/**/*.js --plugin tinyify > ./dist/public/bundle.js",
+    "build:bundle-public-ts": "browserify $(find ./dist/public/js -name '*.js') --plugin tinyify > ./dist/public/bundle.js",
     "build:clean-public-ts": "rm -r ./dist/public/js",
     "build": "npm-run-all build:compile-ts build:compile-sass build:bundle-public-ts build:clean-public-ts"
   },

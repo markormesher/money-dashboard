@@ -1,7 +1,5 @@
-import { merge } from "lodash";
-
 function withDataTableDefaults(settings: DataTables.Settings): DataTables.Settings {
-	return merge({
+	const defaults: DataTables.Settings = {
 		autoWidth: false,
 		order: [[0, "asc"]],
 		lengthMenu: [[25, 50, 100], [25, 50, 100]],
@@ -9,7 +7,9 @@ function withDataTableDefaults(settings: DataTables.Settings): DataTables.Settin
 		ajax: {
 			type: "get",
 		},
-	} as DataTables.Settings, settings);
+	};
+
+	return Object.assign(defaults, settings);
 }
 
 export {

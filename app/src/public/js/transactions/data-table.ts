@@ -1,5 +1,3 @@
-import { cloneDeep } from "lodash";
-
 import { ThinTransaction } from "../../../model-thins/ThinTransaction";
 import { withDataTableDefaults } from "../global/data-table-defaults";
 import { createDeleteAction, createEditAction, generationActionsHtml } from "../global/entity-action-creator";
@@ -39,10 +37,13 @@ $(() => {
 			}),
 			dataSrc: (raw: { data: ThinTransaction[] }) => {
 				return raw.data.map((transaction) => {
-					transactionCache[transaction.id] = cloneDeep(transaction);
+					transactionCache[transaction.id] = transaction;
 
-					const output = cloneDeep(transaction) as any;
+					const output = {} as any;
+					output.account = transaction.account;
+					output.payee = transaction.payee;
 					output.amount = formatCurrency(transaction.amount);
+					output.category = transaction.category;
 					output._actions = getActions(transaction);
 
 					output.effectiveDate = formatDate(transaction.effectiveDate);
