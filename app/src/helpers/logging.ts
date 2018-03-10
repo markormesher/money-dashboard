@@ -1,6 +1,5 @@
 import { TransformableInfo } from "logform";
-
-const { format } = require("logform");
+import { format } from "logform";
 const Winston = require("winston");
 
 const consoleLogFormat = format.combine(

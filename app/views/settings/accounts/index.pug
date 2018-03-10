@@ -4,10 +4,10 @@ block page-head
 	link(rel = 'stylesheet', href = '/_npm/datatables.net-bs/css/dataTables.bootstrap.css')
 
 block page-title-extra
-	a#active-only-btn.btn.btn-info(href = '#')
+	button#active-only-btn.btn.btn-info
 		i.far.fa-fw.fa-check-square
 		| Active Accounts Only
-	a.btn.btn-success(href = '/settings/accounts/edit')
+	a.btn.btn-success.create-btn(href = '/settings/accounts/edit')
 		i.far.fa-fw.fa-plus
 		| New Account
 

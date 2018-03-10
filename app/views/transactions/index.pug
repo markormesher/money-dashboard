@@ -4,10 +4,10 @@ block page-head
 	link(rel = 'stylesheet', href = '/_npm/datatables.net-bs/css/dataTables.bootstrap.css')
 
 block page-title-extra
-	a#toggle-field-btn.btn.btn-info(href = '#')
+	button#toggle-field-btn.btn.btn-info
 		i.far.fa-fw.fa-random
 		| Date Mode: #[span Transaction]
-	a#create-btn.btn.btn-success(href = '#')
+	button#create-btn.btn.btn-success.create-btn
 		i.far.fa-fw.fa-plus
 		| New Transaction
 
