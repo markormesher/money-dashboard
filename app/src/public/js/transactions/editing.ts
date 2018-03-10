@@ -16,6 +16,10 @@ const modalAddAnotherCheckbox = editorModal.find("#add-another");
 const modalCreateOnlyElements = editorModal.find(".create-only");
 const modalEditOnlyElements = editorModal.find(".edit-only");
 
+interface IJQueryWithModal {
+	options: ModalOptions;
+}
+
 const modalAllInputs = [
 	modalTransactionDate,
 	modalEffectiveDate,
@@ -93,8 +97,8 @@ function setModalLock(locked: boolean) {
 	modalAllInputs.forEach((input) => input.prop("disabled", locked));
 
 	// prevent modal from being dismissed
-	editorModal.data("bs.modal").options.backdrop = locked ? "static" : true;
-	editorModal.data("bs.modal").options.keyboard = !locked;
+	(editorModal.data("bs.modal") as IJQueryWithModal).options.backdrop = locked ? "static" : true;
+	(editorModal.data("bs.modal") as IJQueryWithModal).options.keyboard = !locked;
 }
 
 function startTransactionEdit(transaction?: ThinTransaction) {
