@@ -24,12 +24,27 @@ import { logger } from "./helpers/logging"
 
 const app = Express();
 
-
 // db connection
 SequelizeDb.sync({ force: false }).then(() => {
 	logger.info("Database models synced successfully");
 }).catch((err) => {
 	logger.error("Failed to sync database models", err);
+});
+
+// static files
+app.use(Express.static(join(__dirname, "public")));
+app.use(Express.static(join(__dirname, "../assets")));
+[
+	"bootstrap",
+	"bootstrap-progressbar",
+	"datatables.net",
+	"datatables.net-bs",
+	"gentelella",
+	"jquery",
+	"jquery-validation",
+	"toastr",
+].forEach((lib) => {
+	app.use(`/_npm/${lib}`, Express.static(join(__dirname, `../node_modules/${lib}`)));
 });
 
 // form body content
@@ -50,7 +65,7 @@ app.use(ExpressFlash());
 // formatters
 app.use(formatterMiddleware);
 
-// auth TODO: prevent user query for non-auth requests
+// auth
 PassportConfig.init(Passport);
 app.use(Passport.initialize());
 app.use(Passport.session());
@@ -67,22 +82,6 @@ app.use("/transactions", TransactionsController);
 // views
 app.set("views", join(__dirname, "../views"));
 app.set("view engine", "pug");
-
-// static files
-app.use(Express.static(join(__dirname, "public")));
-app.use(Express.static(join(__dirname, "../assets")));
-[
-	"bootstrap",
-	"bootstrap-progressbar",
-	"datatables.net",
-	"datatables.net-bs",
-	"gentelella",
-	"jquery",
-	"jquery-validation",
-	"toastr",
-].forEach((lib) => {
-	app.use(`/_npm/${lib}`, Express.static(join(__dirname, `../node_modules/${lib}`)));
-});
 
 // error handlers
 app.use((req: Request, res: Response, next: NextFunction) => {
