@@ -6,3 +6,4 @@ services:
       - ENV=dev
     volumes:
       - ./app/views:/usr/src/app/views
+      - ./logs:/usr/src/app/logs

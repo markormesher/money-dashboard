@@ -1,7 +1,6 @@
 import { join } from "path";
 import { Sequelize } from "sequelize-typescript";
-import Winston = require("winston");
-
+import { logger } from "./logging"
 import { getSecret } from "./config-loader";
 
 const sequelize = new Sequelize({
@@ -24,7 +23,7 @@ const sequelize = new Sequelize({
 		paranoid: true,
 		version: true,
 	},
-	logging: (query: string) => Winston.verbose(query),
+	logging: (query: string) => logger.verbose(query),
 });
 
 export = sequelize;
