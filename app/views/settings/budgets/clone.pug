@@ -85,6 +85,3 @@ block page-body
 						tr
 							td= budget.category.name
 							td!= locals.formatters.formatCurrency(budget.amount)
-
-block page-scripts
-	script(src = '/settings/budgets/bundle.js')

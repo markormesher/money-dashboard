@@ -1,4 +1,4 @@
-import { ThinAccount } from "../../../model-thins/ThinAccount";
+import { ThinAccount } from "../../../../model-thins/ThinAccount";
 import { withDataTableDefaults } from "../../global/data-table-defaults";
 import {
 	createDeleteAction,

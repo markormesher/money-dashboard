@@ -1,4 +1,4 @@
-import { ThinBudget } from "../../../model-thins/ThinBudget";
+import { ThinBudget } from "../../../../model-thins/ThinBudget";
 import { withDataTableDefaults } from "../../global/data-table-defaults";
 import { createDeleteAction, createEditAction, generationActionsHtml } from "../../global/entity-action-creator";
 import { formatBudgetPeriod, formatBudgetType, formatCurrency } from "../../global/formatters";

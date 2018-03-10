@@ -1,4 +1,4 @@
-import { ThinTransaction } from "../../model-thins/ThinTransaction";
+import { ThinTransaction } from "../../../model-thins/ThinTransaction";
 import { formatCurrency, formatDate } from "../global/formatters";
 
 const editorModal = $("#editor-modal");

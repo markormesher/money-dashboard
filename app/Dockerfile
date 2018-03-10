@@ -11,7 +11,7 @@ RUN npm i
 COPY . .
 
 # compile
-RUN node ./node_modules/gulp/bin/gulp.js
+RUN npm run build
 
 # run
 EXPOSE 3000

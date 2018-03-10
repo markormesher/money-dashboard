@@ -4,7 +4,13 @@
   "description": "Web application for tracking spending, budgets and investments.",
   "repository": "https://github.com/markormesher/money-dashboard",
   "main": "./dist/app.js",
-  "scripts": {},
+  "scripts": {
+    "build:compile-ts": "tsc -p ./tsconfig.json",
+    "build:compile-sass": "node-sass --output-style compressed --source-map true ./src/public/sass/*.scss -o ./dist/public",
+    "build:bundle-public-ts": "browserify ./dist/public/js/**/*.js --plugin tinyify > ./dist/public/bundle.js",
+    "build:clean-public-ts": "rm -r ./dist/public/js",
+    "build": "npm-run-all build:compile-ts build:compile-sass build:bundle-public-ts build:clean-public-ts"
+  },
   "author": "Mark Ormesher",
   "license": "Apache-2.0",
   "dependencies": {
@@ -57,17 +63,9 @@
     "@types/uuid": "^3.4.3",
     "@types/winston": "^2.3.8",
     "browserify": "^14.5.0",
-    "glob": "^7.1.2",
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.4.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-sass": "^3.1.0",
-    "gulp-sourcemaps": "^2.6.3",
-    "gulp-streamify": "^1.0.2",
-    "gulp-typescript": "^4.0.1",
-    "gulp-uglify-es": "^0.2.0",
-    "ts-node": "^4.1.0",
-    "typescript": "^2.6.2",
-    "vinyl-source-stream": "^2.0.0"
+    "node-sass": "^4.7.2",
+    "npm-run-all": "^4.1.2",
+    "tinyify": "^2.4.0",
+    "typescript": "2.3.4"
   }
 }

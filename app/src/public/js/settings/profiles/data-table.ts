@@ -1,5 +1,5 @@
-import { ThinProfile } from "../../../model-thins/ThinProfile";
-import { ThinUser } from "../../../model-thins/ThinUser";
+import { ThinProfile } from "../../../../model-thins/ThinProfile";
+import { ThinUser } from "../../../../model-thins/ThinUser";
 import { withDataTableDefaults } from "../../global/data-table-defaults";
 import { createDeleteAction, createEditAction, generationActionsHtml } from "../../global/entity-action-creator";
 import { IWindow } from "../../global/window";
