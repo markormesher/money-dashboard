@@ -1,136 +1,116 @@
-import { formatCurrency, formatDate } from "../global/formatters";
 import { ThinTransaction } from "../../model-thins/ThinTransaction";
+import { formatCurrency, formatDate } from "../global/formatters";
 
-interface ModalFields {
-	transactionDate?: JQuery;
-	effectiveDate?: JQuery;
-	account?: JQuery;
-	payee?: JQuery;
-	category?: JQuery;
-	amount?: JQuery;
-	note?: JQuery;
-	saveBtn?: JQuery;
-	addAnotherCheckbox?: JQuery;
+const editorModal = $("#editor-modal");
+const editorForm = editorModal.find("form");
 
-	createOnlyElements?: JQuery;
-	editOnlyElements?: JQuery;
+const modalTransactionDate = editorModal.find("#transactionDate");
+const modalEffectiveDate = editorModal.find("#effectiveDate");
+const modalAccount = editorModal.find("#account");
+const modalPayee = editorModal.find("#payee");
+const modalCategory = editorModal.find("#category");
+const modalAmount = editorModal.find("#amount");
+const modalNote = editorModal.find("#note");
+const modalSaveBtn = editorModal.find("#save-btn");
+const modalAddAnotherCheckbox = editorModal.find("#add-another");
+const modalCreateOnlyElements = editorModal.find(".create-only");
+const modalEditOnlyElements = editorModal.find(".edit-only");
 
-	[key: string]: JQuery;
-}
-
-let editorModal: JQuery = null;
-let editorForm: JQuery = null;
-let modalFields: ModalFields = {};
+const modalAllInputs = [
+	modalTransactionDate,
+	modalEffectiveDate,
+	modalAccount,
+	modalPayee,
+	modalCategory,
+	modalAmount,
+	modalNote,
+	modalSaveBtn,
+	modalAddAnotherCheckbox,
+];
 
 let currentlyEditingId: string = null;
 let saveInProgress = false;
 
 function initEditControls() {
-	editorModal = $('#editor-modal');
-	editorForm = editorModal.find('form');
-
-	modalFields.transactionDate = editorModal.find('#transactionDate');
-	modalFields.effectiveDate = editorModal.find('#effectiveDate');
-	modalFields.account = editorModal.find('#account');
-	modalFields.payee = editorModal.find('#payee');
-	modalFields.category = editorModal.find('#category');
-	modalFields.amount = editorModal.find('#amount');
-	modalFields.note = editorModal.find('#note');
-	modalFields.saveBtn = editorModal.find('#save-btn');
-	modalFields.addAnotherCheckbox = editorModal.find('#add-another');
-	modalFields.createOnlyElements = editorModal.find('.create-only');
-	modalFields.editOnlyElements = editorModal.find('.edit-only');
-
 	// automatically copy transaction date to effective date
-	modalFields.transactionDate.on('change', () => {
-		modalFields.effectiveDate.val(modalFields.transactionDate.val());
+	modalTransactionDate.on("change", () => {
+		modalEffectiveDate.val(modalTransactionDate.val());
 	});
 
 	// highlight the first input when the modal opens
-	editorModal.on('shown.bs.modal', () => {
-		modalFields.transactionDate.trigger('focus');
+	editorModal.on("shown.bs.modal", () => {
+		modalTransactionDate.trigger("focus");
 	});
 
 	// "click" the enter button when ctrl/cmd+enter is pressed
-	for (let key in modalFields) {
-		const field = modalFields[key];
-		if (['INPUT', 'SELECT'].indexOf(field.prop('tagName')) >= 0) {
-			field.on('keydown', (evt) => {
-				console.log(evt);
-				if ((evt.ctrlKey || evt.metaKey) && (evt.keyCode == 13 || evt.keyCode == 10)) {
-					modalFields.saveBtn.trigger('click');
-				}
-			});
-		}
-	}
+	modalAllInputs.forEach((input) => {
+		input.on("keydown", (evt) => {
+			if ((evt.ctrlKey || evt.metaKey) && (evt.keyCode === 13 || evt.keyCode === 10)) {
+				modalSaveBtn.trigger("click");
+			}
+		});
+	});
 
-	modalFields.saveBtn.on('click', saveTransaction);
+	modalSaveBtn.on("click", saveTransaction);
 
-	$('#create-btn').on('click', (evt) => {
+	$("#create-btn").on("click", (evt) => {
 		evt.preventDefault();
 		startTransactionEdit();
 	});
 }
 
 function populateModal(transaction: ThinTransaction) {
-	modalFields.transactionDate.val(formatDate(transaction.transactionDate, 'system'));
-	modalFields.effectiveDate.val(formatDate(transaction.effectiveDate, 'system'));
-	modalFields.account.val(transaction.accountId);
-	modalFields.payee.val(transaction.payee);
-	modalFields.category.val(transaction.categoryId);
-	modalFields.amount.val(formatCurrency(transaction.amount, false));
-	modalFields.note.val(transaction.note);
+	modalTransactionDate.val(formatDate(transaction.transactionDate, "system"));
+	modalEffectiveDate.val(formatDate(transaction.effectiveDate, "system"));
+	modalAccount.val(transaction.accountId);
+	modalPayee.val(transaction.payee);
+	modalCategory.val(transaction.categoryId);
+	modalAmount.val(formatCurrency(transaction.amount, false));
+	modalNote.val(transaction.note);
 }
 
 function clearModal(full: boolean) {
-	modalFields.payee.val(null);
-	modalFields.amount.val(null);
-	modalFields.note.val(null);
+	modalPayee.val(null);
+	modalAmount.val(null);
+	modalNote.val(null);
 
 	if (full) {
 		const now = new Date();
-		modalFields.transactionDate.val(formatDate(now, 'system'));
-		modalFields.effectiveDate.val(formatDate(now, 'system'));
-		modalFields.account.prop('selectedIndex', 0);
-		modalFields.category.prop('selectedIndex', 0);
-		modalFields.addAnotherCheckbox.prop('checked', true);
+		modalTransactionDate.val(formatDate(now, "system"));
+		modalEffectiveDate.val(formatDate(now, "system"));
+		modalAccount.prop("selectedIndex", 0);
+		modalCategory.prop("selectedIndex", 0);
+		modalAddAnotherCheckbox.prop("checked", true);
 
-		modalFields.transactionDate.focus();
+		modalTransactionDate.focus();
 	} else {
-		modalFields.payee.focus();
+		modalPayee.focus();
 	}
 }
 
 function setModalLock(locked: boolean) {
-	modalFields.transactionDate.prop('disabled', locked);
-	modalFields.effectiveDate.prop('disabled', locked);
-	modalFields.account.prop('disabled', locked);
-	modalFields.payee.prop('disabled', locked);
-	modalFields.category.prop('disabled', locked);
-	modalFields.amount.prop('disabled', locked);
-	modalFields.note.prop('disabled', locked);
-	modalFields.saveBtn.prop('disabled', locked);
-	modalFields.addAnotherCheckbox.prop('disabled', locked);
+	// lock all inputs
+	modalAllInputs.forEach((input) => input.prop("disabled", locked));
 
 	// prevent modal from being dismissed
-	editorModal.data('bs.modal').options.backdrop = locked ? 'static' : true;
-	editorModal.data('bs.modal').options.keyboard = !locked;
+	editorModal.data("bs.modal").options.backdrop = locked ? "static" : true;
+	editorModal.data("bs.modal").options.keyboard = !locked;
 }
 
 function startTransactionEdit(transaction?: ThinTransaction) {
 	if (transaction) {
 		currentlyEditingId = transaction.id;
 		populateModal(transaction);
-		modalFields.createOnlyElements.hide();
-		modalFields.editOnlyElements.show();
+		modalCreateOnlyElements.hide();
+		modalEditOnlyElements.show();
 	} else {
-		currentlyEditingId = 'new';
+		currentlyEditingId = "new";
 		clearModal(true);
-		modalFields.createOnlyElements.show();
-		modalFields.editOnlyElements.hide();
+		modalCreateOnlyElements.show();
+		modalEditOnlyElements.hide();
 	}
 
-	editorModal.modal('show');
+	editorModal.modal("show");
 }
 
 function saveTransaction() {
@@ -146,13 +126,13 @@ function saveTransaction() {
 	saveInProgress = true;
 
 	const data: Partial<ThinTransaction> = {
-		transactionDate: new Date(modalFields.transactionDate.val().toString()),
-		effectiveDate: new Date(modalFields.effectiveDate.val().toString()),
-		amount: parseFloat(modalFields.amount.val().toString()),
-		payee: modalFields.payee.val().toString(),
-		note: modalFields.note.val().toString(),
-		accountId: modalFields.account.val().toString(),
-		categoryId: modalFields.category.val().toString(),
+		transactionDate: new Date(modalTransactionDate.val() as string),
+		effectiveDate: new Date(modalEffectiveDate.val() as string),
+		amount: modalAmount.val() as number,
+		payee: modalPayee.val() as string,
+		note: modalNote.val() as string,
+		accountId: modalAccount.val() as string,
+		categoryId: modalCategory.val() as string,
 	};
 
 	onStartSaveTransaction();
@@ -163,24 +143,24 @@ function saveTransaction() {
 
 function onStartSaveTransaction() {
 	setModalLock(true);
-	modalFields.saveBtn.find('[data-fa-i2svg]').toggleClass('fa-asterisk').addClass('fa-spin');
+	modalSaveBtn.find("[data-fa-i2svg]").toggleClass("fa-asterisk").addClass("fa-spin");
 }
 
 function onFinishSaveTransaction(successful: boolean) {
 	setModalLock(false);
-	modalFields.saveBtn.find('[data-fa-i2svg]').toggleClass('fa-save').removeClass('fa-spin');
+	modalSaveBtn.find("[data-fa-i2svg]").toggleClass("fa-save").removeClass("fa-spin");
 
 	if (successful) {
-		toastr.success('Transaction saved');
-		$('.dataTable').DataTable().ajax.reload();
-		if (currentlyEditingId == 'new' && modalFields.addAnotherCheckbox.is(':checked')) {
+		toastr.success("Transaction saved");
+		$(".dataTable").DataTable().ajax.reload();
+		if (currentlyEditingId === "new" && modalAddAnotherCheckbox.is(":checked")) {
 			clearModal(false);
 		} else {
 			clearModal(true);
-			editorModal.modal('hide');
+			editorModal.modal("hide");
 		}
 	} else {
-		toastr.error('Transaction could not be saved');
+		toastr.error("Transaction could not be saved");
 	}
 
 	saveInProgress = false;
@@ -191,5 +171,5 @@ $(() => {
 });
 
 export {
-	startTransactionEdit
-}
+	startTransactionEdit,
+};

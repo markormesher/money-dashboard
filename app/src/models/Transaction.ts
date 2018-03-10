@@ -1,60 +1,61 @@
-import Sequelize = require('sequelize');
+import Sequelize = require("sequelize");
 import { BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table } from "sequelize-typescript";
+
 import { Account } from "./Account";
 import { Category } from "./Category";
 import { Profile } from "./Profile";
 
-@Table({ tableName: 'transaction' })
+@Table({ tableName: "transaction" })
 export class Transaction extends Model<Transaction> {
 
 	@IsUUID(4)
 	@Column({
 		primaryKey: true,
 		type: DataType.UUID,
-		defaultValue: Sequelize.UUIDV4
+		defaultValue: Sequelize.UUIDV4,
 	})
-	id: string;
+	public id: string;
 
 	@Column({
-		type: DataType.DATEONLY
+		type: DataType.DATEONLY,
 	})
-	transactionDate: Date;
+	public transactionDate: Date;
 
 	@Column({
-		type: DataType.DATEONLY
+		type: DataType.DATEONLY,
 	})
-	effectiveDate: Date;
+	public effectiveDate: Date;
 
 	@Column({
-		type: DataType.FLOAT
+		type: DataType.FLOAT,
 	})
-	amount: number;
+	public amount: number;
 
 	@Column
-	payee: string;
+	public payee: string;
 
 	@Column
-	note: string;
+	public note: string;
 
 	@ForeignKey(() => Account)
 	@Column({ type: DataType.UUID })
-	accountId: string;
+	public accountId: string;
 
 	@BelongsTo(() => Account)
-	account: Account;
+	public account: Account;
 
 	@ForeignKey(() => Category)
 	@Column({ type: DataType.UUID })
-	categoryId: string;
+	public categoryId: string;
 
 	@BelongsTo(() => Category)
-	category: Category;
+	public category: Category;
 
 	@ForeignKey(() => Profile)
 	@Column({ type: DataType.UUID })
-	profileId: string;
+	public profileId: string;
 
 	@BelongsTo(() => Profile)
-	profile: Profile;
+	public profile: Profile;
 
 }

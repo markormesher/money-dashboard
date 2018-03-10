@@ -1,13 +1,13 @@
 import { ThinProfile } from "./ThinProfile";
 
 export class ThinAccount {
-	id: string;
-	name: string;
-	type: string;
-	active: boolean;
-	profileId: string;
-	profile: ThinProfile;
-	createdAt: Date;
-	updateedAt: Date;
-	deletedAt: Date;
+	public id: string;
+	public name: string;
+	public type: string;
+	public active: boolean;
+	public profileId: string;
+	public profile: ThinProfile;
+	public createdAt: Date;
+	public updateedAt: Date;
+	public deletedAt: Date;
 }

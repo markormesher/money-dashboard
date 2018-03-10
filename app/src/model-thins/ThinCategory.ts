@@ -1,15 +1,15 @@
 import { ThinProfile } from "./ThinProfile";
 
 export class ThinCategory {
-	id: string;
-	name: string;
-	isMemoCategory: boolean;
-	isIncomeCategory: boolean;
-	isExpenseCategory: boolean;
-	isAssetGrowthCategory: boolean;
-	profileId: string;
-	profile: ThinProfile;
-	createdAt: Date;
-	updateedAt: Date;
-	deletedAt: Date;
+	public id: string;
+	public name: string;
+	public isMemoCategory: boolean;
+	public isIncomeCategory: boolean;
+	public isExpenseCategory: boolean;
+	public isAssetGrowthCategory: boolean;
+	public profileId: string;
+	public profile: ThinProfile;
+	public createdAt: Date;
+	public updateedAt: Date;
+	public deletedAt: Date;
 }

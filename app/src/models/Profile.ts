@@ -1,23 +1,24 @@
-import Sequelize = require('sequelize');
+import Sequelize = require("sequelize");
 import { BelongsToMany, Column, DataType, IsUUID, Model, Table } from "sequelize-typescript";
+
 import { User } from "./User";
 import { UserProfile } from "./UserProfile";
 
-@Table({ tableName: 'profile' })
+@Table({ tableName: "profile" })
 export class Profile extends Model<Profile> {
 
 	@IsUUID(4)
 	@Column({
 		primaryKey: true,
 		type: DataType.UUID,
-		defaultValue: Sequelize.UUIDV4
+		defaultValue: Sequelize.UUIDV4,
 	})
-	id: string;
+	public id: string;
 
 	@Column
-	name: string;
+	public name: string;
 
 	@BelongsToMany(() => User, () => UserProfile)
-	users: User[];
+	public users: User[];
 
 }

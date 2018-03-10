@@ -1,38 +1,39 @@
-import Sequelize = require('sequelize');
+import Sequelize = require("sequelize");
 import { BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table } from "sequelize-typescript";
+
 import { Profile } from "./Profile";
 
-@Table({ tableName: 'category' })
+@Table({ tableName: "category" })
 export class Category extends Model<Category> {
 
 	@IsUUID(4)
 	@Column({
 		primaryKey: true,
 		type: DataType.UUID,
-		defaultValue: Sequelize.UUIDV4
+		defaultValue: Sequelize.UUIDV4,
 	})
-	id: string;
+	public id: string;
 
 	@Column
-	name: string;
+	public name: string;
 
 	@Column({ defaultValue: false })
-	isMemoCategory: boolean;
+	public isMemoCategory: boolean;
 
 	@Column({ defaultValue: false })
-	isIncomeCategory: boolean;
+	public isIncomeCategory: boolean;
 
 	@Column({ defaultValue: false })
-	isExpenseCategory: boolean;
+	public isExpenseCategory: boolean;
 
 	@Column({ defaultValue: false })
-	isAssetGrowthCategory: boolean;
+	public isAssetGrowthCategory: boolean;
 
 	@ForeignKey(() => Profile)
 	@Column({ type: DataType.UUID })
-	profileId: string;
+	public profileId: string;
 
 	@BelongsTo(() => Profile)
-	profile: Profile;
+	public profile: Profile;
 
 }

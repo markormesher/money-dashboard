@@ -1,10 +1,10 @@
 import { ThinUser } from "../../model-thins/ThinUser";
 
-export interface MDWindow extends Window {
+export interface IWindow extends Window {
 	MoneyDashboard: WindowEmbeds;
 }
 
-interface WindowEmbeds {
-	toastrMessages: { [key: string]: string[] };
-	user: ThinUser;
+class WindowEmbeds {
+	public toastrMessages: { [key: string]: string[] };
+	public user: ThinUser;
 }

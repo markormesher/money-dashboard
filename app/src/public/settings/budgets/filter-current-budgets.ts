@@ -1,9 +1,8 @@
-let currentOnlyBtn: JQuery = null;
+const currentOnlyBtn = $("#current-only-btn");
 let currentOnly = true;
 
 function initCurrentOnlyBtn() {
-	currentOnlyBtn = $('#current-only-btn');
-	currentOnlyBtn.on('click', (evt) => {
+	currentOnlyBtn.on("click", (evt) => {
 		evt.preventDefault();
 		toggleCurrentOnly();
 	});
@@ -14,14 +13,14 @@ function initCurrentOnlyBtn() {
 function toggleCurrentOnly() {
 	currentOnly = !currentOnly;
 	updateCurrentOnlyBtn();
-	$('.dataTable').DataTable().ajax.reload();
+	$(".dataTable").DataTable().ajax.reload();
 }
 
 function updateCurrentOnlyBtn() {
 	if (currentOnly) {
-		currentOnlyBtn.find('[data-fa-i2svg]').toggleClass('fa-check-square');
+		currentOnlyBtn.find("[data-fa-i2svg]").toggleClass("fa-check-square");
 	} else {
-		currentOnlyBtn.find('[data-fa-i2svg]').toggleClass('fa-square');
+		currentOnlyBtn.find("[data-fa-i2svg]").toggleClass("fa-square");
 	}
 }
 
@@ -34,5 +33,5 @@ $(() => {
 });
 
 export {
-	getCurrentOnlyState
-}
+	getCurrentOnlyState,
+};

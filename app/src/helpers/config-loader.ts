@@ -1,19 +1,19 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from "fs";
 
 export class Constants {
-	host: string;
+	public host: string;
 }
 
-let loadedConstants: Constants = undefined;
+let loadedConstants: Constants;
 
 const loadedSecrets: { [key: string]: string } = {};
 
 function getConstants(): Constants {
 	if (!loadedConstants) {
-		if (process.env.ENV === 'prod') {
-			loadedConstants = require('../../constants.prod.json') as Constants;
+		if (process.env.ENV === "prod") {
+			loadedConstants = require("../../constants.prod.json") as Constants;
 		} else {
-			loadedConstants = require('../../constants.dev.json') as Constants;
+			loadedConstants = require("../../constants.dev.json") as Constants;
 		}
 	}
 	return loadedConstants;
@@ -28,5 +28,5 @@ function getSecret(key: string): string {
 
 export {
 	getConstants,
-	getSecret
+	getSecret,
 };

@@ -1,9 +1,9 @@
 import Bluebird = require("bluebird");
-import Express = require('express');
-import { NextFunction, Request, Response } from 'express';
-
-import { Op } from 'sequelize'
+import Express = require("express");
+import { NextFunction, Request, Response } from "express";
+import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
+
 import { requireUser } from "../helpers/auth-helper";
 import { getData } from "../helpers/datatable-helper";
 import { getAllAccounts } from "../managers/account-manager";
@@ -11,91 +11,91 @@ import { getAllCategories } from "../managers/category-manager";
 import { deleteTransaction, saveTransaction } from "../managers/transaction-manager";
 import { Account } from "../models/Account";
 import { Category } from "../models/Category";
-import { Transaction } from '../models/Transaction';
+import { Transaction } from "../models/Transaction";
 import { User } from "../models/User";
 
 const router = Express.Router();
 
-router.get('/', requireUser, (req: Request, res: Response) => {
+router.get("/", requireUser, (req: Request, res: Response) => {
 	const user = req.user as User;
 
 	Bluebird
 			.all([
 				getAllAccounts(user),
-				getAllCategories(user)
+				getAllCategories(user),
 			])
 			.spread((accounts: Account[], categories: Category[]) => {
 				const accountsForView: string[][] = accounts
-						.map(a => [a.id, a.name])
+						.map((a) => [a.id, a.name])
 						.sort((a: string[], b: string[]) => a[1].localeCompare(b[1]));
 
 				const categoriesForView: string[][] = categories
-						.map(c => [c.id, c.name])
+						.map((c) => [c.id, c.name])
 						.sort((a: string[], b: string[]) => a[1].localeCompare(b[1]));
 
 				return [accountsForView, categoriesForView];
 			})
 			.spread((accounts: Account[], categories: Category[]) => {
-				res.render('transactions/index', {
+				res.render("transactions/index", {
 					_: {
-						title: 'Transactions',
-						activePage: 'transactions'
+						title: "Transactions",
+						activePage: "transactions",
 					},
-					accounts: accounts,
-					categories: categories
+					accounts,
+					categories,
 				});
 			});
 });
 
-router.get('/table-data', requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
-	const searchTerm = req.query['search']['value'];
+	const searchTerm = req.query.search.value;
 
 	const countQuery: IFindOptions<Transaction> = {
 		where: {
-			profileId: user.activeProfile.id
-		}
+			profileId: user.activeProfile.id,
+		},
 	};
 	const dataQuery: IFindOptions<Transaction> = {
 		where: {
 			[Op.and]: {
 				profileId: user.activeProfile.id,
 				[Op.or]: {
-					payee: {
-						[Op.iLike]: `%${searchTerm}%`
+					"payee": {
+						[Op.iLike]: `%${searchTerm}%`,
 					},
-					note: {
-						[Op.iLike]: `%${searchTerm}%`
+					"note": {
+						[Op.iLike]: `%${searchTerm}%`,
 					},
-					'$category.name$': {
-						[Op.iLike]: `%${searchTerm}%`
+					"$category.name$": {
+						[Op.iLike]: `%${searchTerm}%`,
 					},
-					'$account.name$': {
-						[Op.iLike]: `%${searchTerm}%`
-					}
-				}
-			}
+					"$account.name$": {
+						[Op.iLike]: `%${searchTerm}%`,
+					},
+				},
+			},
 		},
 		include: [
 			{
 				model: Category,
-				paranoid: false
+				paranoid: false,
 			},
 			{
 				model: Account,
-				paranoid: false
-			}
-		]
+				paranoid: false,
+			},
+		],
 	};
-	const postOrder = [['createdAt', 'DESC']];
+	const postOrder = [["createdAt", "DESC"]];
 
 	// "fix" displayDate column name
-	const dateField = req.query['dateField'];
-	req.query['columns'] = req.query['columns'].map((col: { name: string, data: string }) => {
+	const dateField = req.query.dateField;
+	req.query.columns = req.query.columns.map((col: { name: string, data: string }) => {
 		return {
-			name: col.name.replace('displayDate', dateField),
-			data: col.data.replace('displayDate', dateField)
-		}
+			name: col.name.replace("displayDate", dateField),
+			data: col.data.replace("displayDate", dateField),
+		};
 	});
 
 	getData(Transaction, req, countQuery, dataQuery, [], postOrder)
@@ -103,20 +103,20 @@ router.get('/table-data', requireUser, (req: Request, res: Response, next: NextF
 			.catch(next);
 });
 
-router.post('/edit/:transactionId', requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/edit/:transactionId", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
-	const transactionId = req.params['transactionId'] == 'new' ? null : req.params['transactionId'];
+	const transactionId = req.params.transactionId === "new" ? null : req.params.transactionId;
 	const properties: Partial<Transaction> = {
-		transactionDate: new Date(req.body['transactionDate']),
-		effectiveDate: new Date(req.body['effectiveDate']),
-		amount: parseFloat(req.body['amount']),
-		payee: req.body['payee'].trim(),
-		note: req.body['note'].trim(),
-		accountId: req.body['accountId'],
-		categoryId: req.body['categoryId'],
+		transactionDate: new Date(req.body.transactionDate),
+		effectiveDate: new Date(req.body.effectiveDate),
+		amount: parseFloat(req.body.amount),
+		payee: req.body.payee.trim(),
+		note: req.body.note.trim(),
+		accountId: req.body.accountId,
+		categoryId: req.body.categoryId,
 	};
 
-	if (properties.note.length == 0) {
+	if (properties.note.length === 0) {
 		properties.note = null;
 	}
 
@@ -125,9 +125,9 @@ router.post('/edit/:transactionId', requireUser, (req: Request, res: Response, n
 			.catch(next);
 });
 
-router.post('/delete/:transactionId', requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/delete/:transactionId", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
-	const transactionId = req.params['transactionId'];
+	const transactionId = req.params.transactionId;
 
 	deleteTransaction(user, transactionId)
 			.then(() => res.status(200).end())

@@ -1,35 +1,36 @@
-import Sequelize = require('sequelize');
+import Sequelize = require("sequelize");
 import { BelongsToMany, Column, DataType, DefaultScope, IsUUID, Model, Table } from "sequelize-typescript";
+
 import { Profile } from "./Profile";
 import { UserProfile } from "./UserProfile";
 
 @DefaultScope({
-	include: [() => Profile]
+	include: [() => Profile],
 })
-@Table({ tableName: 'user' })
+@Table({ tableName: "user" })
 export class User extends Model<User> {
 
 	@IsUUID(4)
 	@Column({
 		primaryKey: true,
 		type: DataType.UUID,
-		defaultValue: Sequelize.UUIDV4
+		defaultValue: Sequelize.UUIDV4,
 	})
-	id: string;
+	public id: string;
 
 	@Column
-	googleId: string;
+	public googleId: string;
 
 	@Column
-	displayName: string;
+	public displayName: string;
 
 	@Column
-	image: string;
+	public image: string;
 
 	@BelongsToMany(() => Profile, () => UserProfile)
-	profiles: Profile[];
+	public profiles: Profile[];
 
 	// set in session, not stored in DB
-	activeProfile: Profile;
+	public activeProfile: Profile;
 
 }

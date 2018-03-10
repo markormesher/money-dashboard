@@ -1,8 +1,8 @@
 function initTooltips() {
-	$('[data-toggle="tooltip"]').tooltip();
+	$("[data-toggle=tooltip]").tooltip();
 }
 
 $(() => {
 	initTooltips();
-	$('.dataTable').on('draw.dt', initTooltips);
+	$(".dataTable").on("draw.dt", initTooltips);
 });

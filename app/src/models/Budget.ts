@@ -1,54 +1,55 @@
-import Sequelize = require('sequelize');
+import Sequelize = require("sequelize");
 import { BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table } from "sequelize-typescript";
+
 import { Category } from "./Category";
 import { Profile } from "./Profile";
 
-@Table({ tableName: 'budget' })
+@Table({ tableName: "budget" })
 export class Budget extends Model<Budget> {
 
 	@IsUUID(4)
 	@Column({
 		primaryKey: true,
 		type: DataType.UUID,
-		defaultValue: Sequelize.UUIDV4
+		defaultValue: Sequelize.UUIDV4,
 	})
-	id: string;
+	public id: string;
 
 	@Column({
-		defaultValue: 'budget'
+		defaultValue: "budget",
 	})
-	type: string;
+	public type: string;
 
 	@Column({
-		type: DataType.FLOAT
+		type: DataType.FLOAT,
 	})
-	amount: number;
+	public amount: number;
 
 	@Column({
-		type: DataType.DATEONLY
+		type: DataType.DATEONLY,
 	})
-	startDate: Date;
+	public startDate: Date;
 
 	@Column({
-		type: DataType.DATEONLY
+		type: DataType.DATEONLY,
 	})
-	endDate: Date;
+	public endDate: Date;
 
 	@ForeignKey(() => Category)
 	@Column({ type: DataType.UUID })
-	categoryId: string;
+	public categoryId: string;
 
 	@BelongsTo(() => Category)
-	category: Category;
+	public category: Category;
 
 	@ForeignKey(() => Profile)
 	@Column({ type: DataType.UUID })
-	profileId: string;
+	public profileId: string;
 
 	@BelongsTo(() => Profile)
-	profile: Profile;
+	public profile: Profile;
 
-	buildClone = (): Budget => {
+	public buildClone = (): Budget => {
 		return Budget.build({
 			type: this.type,
 			amount: this.amount,

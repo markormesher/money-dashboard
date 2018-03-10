@@ -1,20 +1,21 @@
-import Bluebird = require('bluebird');
+import Bluebird = require("bluebird");
+
 import { Category } from "../models/Category";
-import { Profile } from '../models/Profile';
-import { Transaction } from '../models/Transaction';
-import { User } from '../models/User';
+import { Profile } from "../models/Profile";
+import { Transaction } from "../models/Transaction";
+import { User } from "../models/User";
 
 function getTransaction(user: User, transactionId: string, mustExist: boolean = false): Bluebird<Transaction> {
 	return Transaction
 			.findOne({
 				where: { id: transactionId },
-				include: [Profile, Category]
+				include: [Profile, Category],
 			})
 			.then((transaction) => {
 				if (!transaction && mustExist) {
-					throw new Error('That transaction does not exist');
+					throw new Error("That transaction does not exist");
 				} else if (transaction && user && transaction.profile.id !== user.activeProfile.id) {
-					throw new Error('User does not own this transaction');
+					throw new Error("User does not own this transaction");
 				} else {
 					return transaction;
 				}
@@ -28,7 +29,7 @@ function saveTransaction(user: User, transactionId: string, properties: Partial<
 				return transaction.update(properties);
 			})
 			.then((transaction) => {
-				return transaction.$set('profile', user.activeProfile);
+				return transaction.$set("profile", user.activeProfile);
 			});
 }
 
@@ -36,7 +37,7 @@ function deleteTransaction(user: User, transactionId: string): Bluebird<void> {
 	return getTransaction(user, transactionId)
 			.then((transaction) => {
 				if (!transaction) {
-					throw new Error('That transaction does not exist');
+					throw new Error("That transaction does not exist");
 				} else {
 					return transaction;
 				}
@@ -47,5 +48,5 @@ function deleteTransaction(user: User, transactionId: string): Bluebird<void> {
 export {
 	getTransaction,
 	saveTransaction,
-	deleteTransaction
-}
+	deleteTransaction,
+};

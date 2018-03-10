@@ -1,21 +1,22 @@
-import Bluebird = require('bluebird');
+import Bluebird = require("bluebird");
 import { Op } from "sequelize";
-import { Budget } from '../models/Budget';
+
+import { Budget } from "../models/Budget";
 import { Category } from "../models/Category";
-import { Profile } from '../models/Profile';
-import { User } from '../models/User';
+import { Profile } from "../models/Profile";
+import { User } from "../models/User";
 
 function getBudget(user: User, budgetId: string, mustExist: boolean = false): Bluebird<Budget> {
 	return Budget
 			.findOne({
 				where: { id: budgetId },
-				include: [Profile, Category]
+				include: [Profile, Category],
 			})
 			.then((budget) => {
 				if (!budget && mustExist) {
-					throw new Error('That budget does not exist');
+					throw new Error("That budget does not exist");
 				} else if (budget && user && budget.profile.id !== user.activeProfile.id) {
-					throw new Error('User does not own this budget');
+					throw new Error("User does not own this budget");
 				} else {
 					return budget;
 				}
@@ -25,18 +26,18 @@ function getBudget(user: User, budgetId: string, mustExist: boolean = false): Bl
 function getAllBudgets(user: User, start: Date = null, end: Date = null): Bluebird<Budget[]> {
 	const dateQueryFragment = [];
 
-	if (start != null) {
+	if (start !== null) {
 		dateQueryFragment.push({
 			endDate: {
-				[Op.gte]: start
-			}
+				[Op.gte]: start,
+			},
 		});
 	}
-	if (end != null) {
+	if (end !== null) {
 		dateQueryFragment.push({
 			startDate: {
-				[Op.lte]: end
-			}
+				[Op.lte]: end,
+			},
 		});
 	}
 
@@ -44,9 +45,9 @@ function getAllBudgets(user: User, start: Date = null, end: Date = null): Bluebi
 			.findAll({
 				where: {
 					profileId: user.activeProfile.id,
-					[Op.and]: dateQueryFragment
+					[Op.and]: dateQueryFragment,
 				},
-				include: [Profile, Category]
+				include: [Profile, Category],
 			});
 }
 
@@ -57,7 +58,7 @@ function saveBudget(user: User, budgetId: string, properties: Partial<Budget>): 
 				return budget.update(properties);
 			})
 			.then((budget) => {
-				return budget.$set('profile', user.activeProfile);
+				return budget.$set("profile", user.activeProfile);
 			});
 }
 
@@ -65,7 +66,7 @@ function deleteBudget(user: User, budgetId: string): Bluebird<void> {
 	return getBudget(user, budgetId)
 			.then((budget) => {
 				if (!budget) {
-					throw new Error('That budget does not exist');
+					throw new Error("That budget does not exist");
 				} else {
 					return budget;
 				}
@@ -75,9 +76,9 @@ function deleteBudget(user: User, budgetId: string): Bluebird<void> {
 
 function cloneBudgets(user: User, budgetsIds: string[], startDate: Date, endDate: Date): Bluebird<Budget[]> {
 	return Bluebird
-			.all(budgetsIds.map(id => getBudget(user, id, true)))
+			.all(budgetsIds.map((id) => getBudget(user, id, true)))
 			.then((budgets: Budget[]) => {
-				return budgets.map(budget => {
+				return budgets.map((budget) => {
 					const clonedBudget = budget.buildClone();
 					clonedBudget.startDate = startDate;
 					clonedBudget.endDate = endDate;
@@ -85,7 +86,7 @@ function cloneBudgets(user: User, budgetsIds: string[], startDate: Date, endDate
 				});
 			})
 			.then((clonedBudgets: Budget[]) => {
-				return Bluebird.all(clonedBudgets.map(b => b.save()));
+				return Bluebird.all(clonedBudgets.map((b) => b.save()));
 			});
 }
 
@@ -94,5 +95,5 @@ export {
 	getAllBudgets,
 	saveBudget,
 	deleteBudget,
-	cloneBudgets
-}
+	cloneBudgets,
+};

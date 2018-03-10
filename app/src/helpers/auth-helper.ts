@@ -1,4 +1,5 @@
-import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from "express";
+
 import { User } from "../models/User";
 
 const loadUser: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
@@ -15,8 +16,8 @@ const requireUser: RequestHandler = (req: Request, res: Response, next: NextFunc
 	if (req.user) {
 		loadUser(req, res, next);
 	} else {
-		res.flash('error', 'You need to log in first.');
-		res.redirect('/auth/login');
+		res.flash("error", "You need to log in first.");
+		res.redirect("/auth/login");
 	}
 };
 

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
+
 import { ThinCategory } from "../../model-thins/ThinCategory";
 import { Category } from "../../models/Category";
 
@@ -7,22 +8,22 @@ import { Category } from "../../models/Category";
 
 function formatCurrency(amount: number, styled: boolean = true): string {
 	if (styled) {
-		return `<span class="currency">${amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}</span>`;
+		return `<span class="currency">${amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")}</span>`;
 	} else {
-		return amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+		return amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
 	}
 }
 
 function formatTag(tag: string, tagClass?: string): string {
-	tagClass = tagClass || 'default';
+	tagClass = tagClass || "default";
 	return ` <span class="label label-${tagClass}">${tag}</span>`;
 }
 
-function formatDate(date: Date | Moment.Moment | string, format: 'user' | 'system' = 'user'): string {
-	if (format == 'user') {
-		return Moment(date).format('DD/MM/YYYY');
-	} else if (format == 'system') {
-		return Moment(date).format('YYYY-MM-DD');
+function formatDate(date: Date | Moment.Moment | string, format: "user" | "system" = "user"): string {
+	if (format === "user") {
+		return Moment(date).format("DD/MM/YYYY");
+	} else if (format === "system") {
+		return Moment(date).format("YYYY-MM-DD");
 	} else {
 		throw new Error(`Illegal format: ${format}`);
 	}
@@ -44,24 +45,24 @@ function formatInfoIcon(info: string): string {
 
 function formatAccountType(type: string): string {
 	switch (type) {
-		case 'current':
-			return formatTag('Current Account', 'info');
-		case 'savings':
-			return formatTag('Savings Account', 'success');
-		case 'asset':
-			return formatTag('Asset', 'warning');
+		case "current":
+			return formatTag("Current Account", "info");
+		case "savings":
+			return formatTag("Savings Account", "success");
+		case "asset":
+			return formatTag("Asset", "warning");
 		default:
-			return formatTag('Other', 'danger');
+			return formatTag("Other", "danger");
 	}
 }
 
 // budgets
 
 function formatBudgetType(type: string): string {
-	if (type == 'budget') {
-		return formatTag('Budget', 'info');
-	} else if (type == 'bill') {
-		return formatTag('Bill', 'warning');
+	if (type === "budget") {
+		return formatTag("Budget", "info");
+	} else if (type === "bill") {
+		return formatTag("Bill", "warning");
 	} else {
 		return formatTag(type);
 	}
@@ -70,55 +71,55 @@ function formatBudgetType(type: string): string {
 function getBudgetPeriodType(start: Date | string, end: Date | string): string {
 	const oneDay = 24 * 60 * 60 * 1000;
 
-	if (typeof start == "string") {
+	if (typeof start === "string") {
 		start = new Date(start);
 	}
 
-	if (typeof end == "string") {
+	if (typeof end === "string") {
 		end = new Date(end);
 	}
 
-	if (start.getDate() == 1
-			&& start.getMonth() == end.getMonth()
-			&& new Date(end.getTime() + oneDay).getMonth() != end.getMonth()) {
-		return 'month';
+	if (start.getDate() === 1
+			&& start.getMonth() === end.getMonth()
+			&& new Date(end.getTime() + oneDay).getMonth() !== end.getMonth()) {
+		return "month";
 
-	} else if (start.getDate() == 1
-			&& start.getMonth() == 0
-			&& end.getDate() == 31
-			&& end.getMonth() == 11
-			&& start.getFullYear() == end.getFullYear()) {
-		return 'calendar year';
+	} else if (start.getDate() === 1
+			&& start.getMonth() === 0
+			&& end.getDate() === 31
+			&& end.getMonth() === 11
+			&& start.getFullYear() === end.getFullYear()) {
+		return "calendar year";
 
-	} else if (start.getDate() == 6
-			&& start.getMonth() == 3
-			&& end.getDate() == 5
-			&& end.getMonth() == 3
-			&& start.getFullYear() == end.getFullYear() - 1) {
-		return 'tax year';
+	} else if (start.getDate() === 6
+			&& start.getMonth() === 3
+			&& end.getDate() === 5
+			&& end.getMonth() === 3
+			&& start.getFullYear() === end.getFullYear() - 1) {
+		return "tax year";
 
 	} else {
-		return 'other';
+		return "other";
 	}
 }
 
 function formatBudgetPeriod(start: Date | string, end: Date | string): string {
-	if (typeof start == "string") {
+	if (typeof start === "string") {
 		start = new Date(start);
 	}
 
-	if (typeof end == "string") {
+	if (typeof end === "string") {
 		end = new Date(end);
 	}
 
 	const type = getBudgetPeriodType(start, end);
 
-	if (type == 'month') {
-		return Moment(start).format('MMM, YYYY');
-	} else if (type == 'calendar year') {
-		return Moment(start).format('YYYY');
-	} else if (type == 'tax year') {
-		return `${Moment(start).format('YYYY')}/${Moment(end).format('YYYY')} tax year`
+	if (type === "month") {
+		return Moment(start).format("MMM, YYYY");
+	} else if (type === "calendar year") {
+		return Moment(start).format("YYYY");
+	} else if (type === "tax year") {
+		return `${Moment(start).format("YYYY")}/${Moment(end).format("YYYY")} tax year`;
 	} else {
 		return `${formatDate(start)} to ${formatDate(end)}`;
 	}
@@ -127,24 +128,24 @@ function formatBudgetPeriod(start: Date | string, end: Date | string): string {
 // categories
 
 function formatCategoryTypes(category: Category | ThinCategory): string {
-	let output = '';
+	let output = "";
 	if (category.isMemoCategory) {
-		output += formatTag('Memo', 'info');
+		output += formatTag("Memo", "info");
 	}
 	if (category.isIncomeCategory) {
-		output += formatTag('Income', 'success');
+		output += formatTag("Income", "success");
 	}
 	if (category.isExpenseCategory) {
-		output += formatTag('Expense', 'danger');
+		output += formatTag("Expense", "danger");
 	}
 	if (category.isAssetGrowthCategory) {
-		output += formatTag('Asset Growth', 'warning');
+		output += formatTag("Asset Growth", "warning");
 	}
 
-	if (output != '') {
+	if (output !== "") {
 		return output.trim();
 	} else {
-		return formatMutedText('None');
+		return formatMutedText("None");
 	}
 }
 
@@ -152,18 +153,18 @@ function formatCategoryTypes(category: Category | ThinCategory): string {
 
 const formatterMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	res.locals.formatters = {
-		formatCurrency: formatCurrency,
-		formatTag: formatTag,
-		formatDate: formatDate,
-		formatMutedText: formatMutedText,
-		formatTooltip: formatTooltip,
-		formatInfoIcon: formatInfoIcon,
+		formatCurrency,
+		formatTag,
+		formatDate,
+		formatMutedText,
+		formatTooltip,
+		formatInfoIcon,
 
-		formatAccountType: formatAccountType,
-		formatBudgetType: formatBudgetType,
-		getBudgetPeriodType: getBudgetPeriodType,
-		formatBudgetPeriod: formatBudgetPeriod,
-		formatCategoryTypes: formatCategoryTypes,
+		formatAccountType,
+		formatBudgetType,
+		getBudgetPeriodType,
+		formatBudgetPeriod,
+		formatCategoryTypes,
 	};
 	next();
 };
@@ -182,5 +183,5 @@ export {
 	formatBudgetPeriod,
 	formatCategoryTypes,
 
-	formatterMiddleware
-}
+	formatterMiddleware,
+};

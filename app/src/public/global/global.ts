@@ -6,12 +6,12 @@ toastr.options.progressBar = true;
 
 $(() => {
 	// set up names on ID'd form inputs
-	$('input').each((i, e) => {
-		if (!$(e).attr('name')) {
-			$(e).attr('name', e.id);
+	$("input").each((i, e: Element) => {
+		if (!$(e).attr("name")) {
+			$(e).attr("name", e.id);
 		}
 	});
 
 	// tooltips
-	$('[data-toggle="tooltip"]').tooltip();
+	$("[data-toggle=tooltip]").tooltip();
 });

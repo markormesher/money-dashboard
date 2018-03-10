@@ -1,30 +1,28 @@
-const TRANSACTION_DATE = 'transactionDate';
-const EFFECTIVE_DATE = 'effectiveDate';
+const TRANSACTION_DATE = "transactionDate";
+const EFFECTIVE_DATE = "effectiveDate";
 
-let toggleFieldBtn: JQuery = null;
-let toggleFieldLabel: JQuery = null;
+const toggleFieldBtn = $("#toggle-field-btn");
+const toggleFieldLabel = toggleFieldBtn.find("span");
 let field = TRANSACTION_DATE;
 
 function initToggleField() {
-	toggleFieldBtn = $('#toggle-field-btn');
-	toggleFieldLabel = toggleFieldBtn.find('span');
-	toggleFieldBtn.on('click', (evt) => {
+	toggleFieldBtn.on("click", (evt) => {
 		evt.preventDefault();
 		toggleField();
 	});
 }
 
 function toggleField() {
-	field = field == TRANSACTION_DATE ? EFFECTIVE_DATE : TRANSACTION_DATE;
+	field = field === TRANSACTION_DATE ? EFFECTIVE_DATE : TRANSACTION_DATE;
 	updateToggleFieldBtn();
-	$('.dataTable').DataTable().ajax.reload();
+	$(".dataTable").DataTable().ajax.reload();
 }
 
 function updateToggleFieldBtn() {
-	if (field == TRANSACTION_DATE) {
-		toggleFieldLabel.html('Transaction');
+	if (field === TRANSACTION_DATE) {
+		toggleFieldLabel.html("Transaction");
 	} else {
-		toggleFieldLabel.html('Effective');
+		toggleFieldLabel.html("Effective");
 	}
 }
 
@@ -38,5 +36,5 @@ $(() => {
 });
 
 export {
-	getDateField
-}
+	getDateField,
+};

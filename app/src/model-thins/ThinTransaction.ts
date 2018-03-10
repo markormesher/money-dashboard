@@ -3,19 +3,19 @@ import { ThinCategory } from "./ThinCategory";
 import { ThinProfile } from "./ThinProfile";
 
 export class ThinTransaction {
-	id: string;
-	transactionDate: Date;
-	effectiveDate: Date;
-	amount: number;
-	payee: string;
-	note: string;
-	accountId: string;
-	account: ThinAccount;
-	categoryId: string;
-	category: ThinCategory;
-	profileId: string;
-	profile: ThinProfile;
-	createdAt: Date;
-	updateedAt: Date;
-	deletedAt: Date;
+	public id: string;
+	public transactionDate: Date;
+	public effectiveDate: Date;
+	public amount: number;
+	public payee: string;
+	public note: string;
+	public accountId: string;
+	public account: ThinAccount;
+	public categoryId: string;
+	public category: ThinCategory;
+	public profileId: string;
+	public profile: ThinProfile;
+	public createdAt: Date;
+	public updateedAt: Date;
+	public deletedAt: Date;
 }

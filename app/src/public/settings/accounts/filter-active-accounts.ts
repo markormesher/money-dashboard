@@ -1,9 +1,9 @@
-let activeOnlyBtn: JQuery = null;
+const activeOnlyBtn = $("#active-only-btn");
+
 let activeOnly = true;
 
 function initActiveOnlyBtn() {
-	activeOnlyBtn = $('#active-only-btn');
-	activeOnlyBtn.on('click', (evt) => {
+	activeOnlyBtn.on("click", (evt) => {
 		evt.preventDefault();
 		toggleActiveOnly();
 	});
@@ -14,15 +14,15 @@ function initActiveOnlyBtn() {
 function toggleActiveOnly() {
 	activeOnly = !activeOnly;
 	updateActiveOnlyBtn();
-	$('.dataTable').DataTable().ajax.reload();
+	$(".dataTable").DataTable().ajax.reload();
 }
 
 function updateActiveOnlyBtn() {
-	activeOnlyBtn.data('activeOnly', activeOnly);
+	activeOnlyBtn.data("activeOnly", activeOnly);
 	if (activeOnly) {
-		activeOnlyBtn.find('[data-fa-i2svg]').toggleClass('fa-check-square');
+		activeOnlyBtn.find("[data-fa-i2svg]").toggleClass("fa-check-square");
 	} else {
-		activeOnlyBtn.find('[data-fa-i2svg]').toggleClass('fa-square');
+		activeOnlyBtn.find("[data-fa-i2svg]").toggleClass("fa-square");
 	}
 }
 
@@ -35,5 +35,5 @@ $(() => {
 });
 
 export {
-	getActiveOnlyState
-}
+	getActiveOnlyState,
+};

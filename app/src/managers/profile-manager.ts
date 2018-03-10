@@ -1,16 +1,17 @@
-import Bluebird = require('bluebird');
-import { Profile } from '../models/Profile';
-import { User } from '../models/User';
+import Bluebird = require("bluebird");
+
+import { Profile } from "../models/Profile";
+import { User } from "../models/User";
 
 function getProfile(user: User, profileId: string): Bluebird<Profile> {
 	return Profile
 			.findOne({
 				where: { id: profileId },
-				include: [User]
+				include: [User],
 			})
 			.then((profile) => {
 				if (profile && user && !profile.users.some((u) => u.id === user.id)) {
-					throw new Error('User does not own this profile');
+					throw new Error("User does not own this profile");
 				} else {
 					return profile;
 				}
@@ -23,7 +24,7 @@ function createProfileAndAddToUser(user: User, profileName: string): Bluebird<Us
 				name: profileName,
 			})
 			.then((profile) => {
-				return user.$add('profile', profile);
+				return user.$add("profile", profile);
 			})
 			.then(() => {
 				return user.reload({ include: [Profile] });
@@ -37,7 +38,7 @@ function saveProfile(user: User, profileId: string, properties: Partial<Profile>
 				return profile.update(properties);
 			})
 			.then((profile) => {
-				return profile.$add('user', user);
+				return profile.$add("user", user);
 			});
 }
 
@@ -45,9 +46,9 @@ function deleteProfile(user: User, profileId: string): Bluebird<void> {
 	return getProfile(user, profileId)
 			.then((profile) => {
 				if (!profile) {
-					throw new Error('That profile does not exist');
+					throw new Error("That profile does not exist");
 				} else if (user.profiles.length <= 1) {
-					throw new Error('Cannot delete a user\'s last profile');
+					throw new Error("Cannot delete a user\"s last profile");
 				} else {
 					return profile;
 				}
@@ -59,5 +60,5 @@ export {
 	getProfile,
 	createProfileAndAddToUser,
 	saveProfile,
-	deleteProfile
-}
+	deleteProfile,
+};
