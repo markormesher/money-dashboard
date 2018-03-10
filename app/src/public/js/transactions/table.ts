@@ -3,7 +3,7 @@ import { cloneDeep } from "lodash";
 import { ThinTransaction } from "../../../model-thins/ThinTransaction";
 import { withDataTableDefaults } from "../global/data-table-defaults";
 import { createDeleteAction, createEditAction, generationActionsHtml } from "../global/entity-action-creator";
-import { formatCurrency, formatDate, formatInfoIcon } from "../global/formatters";
+import { formatCurrency, formatDate, formatInfoIcon } from "../../../helpers/formatters";
 import { startTransactionEdit } from "./editing";
 import { getDateField } from "./toggle-date-field";
 

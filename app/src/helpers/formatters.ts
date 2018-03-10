@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
 
-import { ThinCategory } from "../../../model-thins/ThinCategory";
-import { Category } from "../../../models/Category";
+import { ThinCategory } from "../model-thins/ThinCategory";
+import { Category } from "../models/Category";
 
 // generic
 

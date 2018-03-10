@@ -1,4 +1,4 @@
-import { formatMutedText } from "./formatters";
+import { formatMutedText } from "../../../helpers/formatters";
 
 export interface IEntityAction {
 	type: string;

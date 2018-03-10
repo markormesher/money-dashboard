@@ -20,7 +20,7 @@ import { StatusError } from "./extensions/StatusError";
 import { getSecret } from "./helpers/config-loader";
 import SequelizeDb = require("./helpers/db");
 import PassportConfig = require("./helpers/passport-config");
-import { formatterMiddleware } from "./public/js/global/formatters";
+import { formatterMiddleware } from "./helpers/formatters";
 
 const app = Express();
 

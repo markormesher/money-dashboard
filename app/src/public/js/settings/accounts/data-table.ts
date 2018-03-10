@@ -6,7 +6,7 @@ import {
 	createToggleAction,
 	generationActionsHtml,
 } from "../../global/entity-action-creator";
-import { formatAccountType, formatMutedText } from "../../global/formatters";
+import { formatAccountType, formatMutedText } from "../../../../helpers/formatters";
 import { getActiveOnlyState } from "./filter-active-accounts";
 
 function getActions(account: ThinAccount): string {

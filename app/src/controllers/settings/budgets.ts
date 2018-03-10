@@ -12,7 +12,7 @@ import { getAllCategories } from "../../managers/category-manager";
 import { Budget } from "../../models/Budget";
 import { Category } from "../../models/Category";
 import { User } from "../../models/User";
-import { formatDate } from "../../public/js/global/formatters";
+import { formatDate } from "../../helpers/formatters";
 
 const router = Express.Router();
 

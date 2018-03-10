@@ -1,7 +1,7 @@
 import { ThinCategory } from "../../../../model-thins/ThinCategory";
 import { withDataTableDefaults } from "../../global/data-table-defaults";
 import { createDeleteAction, createEditAction, generationActionsHtml } from "../../global/entity-action-creator";
-import { formatCategoryTypes } from "../../global/formatters";
+import { formatCategoryTypes } from "../../../../helpers/formatters";
 
 const getActions = (category: ThinCategory) => {
 	return generationActionsHtml([
