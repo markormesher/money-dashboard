@@ -22,6 +22,16 @@ function getTransaction(user: User, transactionId: string, mustExist: boolean = 
 			});
 }
 
+function getAllPayees(user: User): Bluebird<string[]> {
+	return Transaction
+			.findAll({
+				where: { profileId: user.activeProfile.id }
+			})
+			.then((transactions: Transaction[]) => {
+				return Array.from(new Set(transactions.map((t) => t.payee))).sort();
+			});
+}
+
 function saveTransaction(user: User, transactionId: string, properties: Partial<Transaction>): Bluebird<Transaction> {
 	return getTransaction(user, transactionId)
 			.then((transaction) => {
@@ -47,6 +57,7 @@ function deleteTransaction(user: User, transactionId: string): Bluebird<void> {
 
 export {
 	getTransaction,
+	getAllPayees,
 	saveTransaction,
 	deleteTransaction,
 };

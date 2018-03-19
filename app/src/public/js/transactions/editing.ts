@@ -1,5 +1,6 @@
 import { ThinTransaction } from "../../../model-thins/ThinTransaction";
 import { formatCurrency, formatDate } from "../../../helpers/formatters";
+import { IWindow } from "../global/window";
 
 const editorModal = $("#editor-modal");
 const editorForm = editorModal.find("form");
@@ -39,6 +40,12 @@ function initEditControls() {
 	// automatically copy transaction date to effective date
 	modalTransactionDate.on("change", () => {
 		modalEffectiveDate.val(modalTransactionDate.val());
+	});
+
+	// set up payee autocomplete
+	modalPayee.autocomplete({
+		source: (window as IWindow).MoneyDashboard.transactions.payees,
+		appendTo: editorModal
 	});
 
 	// highlight the first input when the modal opens

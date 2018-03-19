@@ -8,7 +8,7 @@ import { requireUser } from "../helpers/auth-helper";
 import { getData } from "../helpers/datatable-helper";
 import { getAllAccounts } from "../managers/account-manager";
 import { getAllCategories } from "../managers/category-manager";
-import { deleteTransaction, saveTransaction } from "../managers/transaction-manager";
+import { deleteTransaction, getAllPayees, saveTransaction } from "../managers/transaction-manager";
 import { Account } from "../models/Account";
 import { Category } from "../models/Category";
 import { Transaction } from "../models/Transaction";
@@ -16,15 +16,16 @@ import { User } from "../models/User";
 
 const router = Express.Router();
 
-router.get("/", requireUser, (req: Request, res: Response) => {
+router.get("/", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 
 	Bluebird
 			.all([
 				getAllAccounts(user),
 				getAllCategories(user),
+				getAllPayees(user)
 			])
-			.spread((accounts: Account[], categories: Category[]) => {
+			.spread((accounts: Account[], categories: Category[], payees: string[]) => {
 				const accountsForView: string[][] = accounts
 						.map((a) => [a.id, a.name])
 						.sort((a: string[], b: string[]) => a[1].localeCompare(b[1]));
@@ -33,9 +34,9 @@ router.get("/", requireUser, (req: Request, res: Response) => {
 						.map((c) => [c.id, c.name])
 						.sort((a: string[], b: string[]) => a[1].localeCompare(b[1]));
 
-				return [accountsForView, categoriesForView];
+				return [accountsForView, categoriesForView, payees];
 			})
-			.spread((accounts: Account[], categories: Category[]) => {
+			.spread((accounts: Account[], categories: Category[], payees: string[]) => {
 				res.render("transactions/index", {
 					_: {
 						title: "Transactions",
@@ -43,8 +44,10 @@ router.get("/", requireUser, (req: Request, res: Response) => {
 					},
 					accounts,
 					categories,
+					payees
 				});
-			});
+			})
+			.catch(next);
 });
 
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {

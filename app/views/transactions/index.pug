@@ -2,6 +2,7 @@ extends ../_shared/page-layout
 
 block page-head
 	link(rel = 'stylesheet', href = '/_npm/datatables.net-bs/css/dataTables.bootstrap.css')
+	link(rel = 'stylesheet', href = '/_npm/jquery-ui-dist/jquery-ui.min.css')
 
 block page-title-extra
 	button#toggle-field-btn.btn.btn-info
@@ -26,3 +27,9 @@ block page-body
 						th Actions
 
 	include ./edit-modal
+
+block page-scripts
+
+	script(type = 'text/javascript') window.MoneyDashboard.transactions = window.MoneyDashboard.transactions || {};
+	script(type = 'text/javascript') window.MoneyDashboard.transactions.payees = !{JSON.stringify(locals.payees || [])};
+	script(src = '/_npm/jquery-ui-dist/jquery-ui.min.js')

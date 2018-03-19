@@ -180,3 +180,15 @@ ul.inline-form-links.stacked:last-child {
 #key-shortcut-modal kbd {
 	margin-right: 4px;
 }
+
+// jquery ui fixes
+
+ul.ui-autocomplete {
+	li.ui-menu-item {
+		.ui-state-active {
+			color: inherit !important;
+			background-color: #eeeeee;
+			border-color: #dddddd;
+		}
+	}
+}

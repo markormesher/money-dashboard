@@ -41,6 +41,7 @@ app.use(Express.static(join(__dirname, "../assets")));
 	"datatables.net-bs",
 	"gentelella",
 	"jquery",
+	"jquery-ui-dist",
 	"jquery-validation",
 	"toastr",
 ].forEach((lib) => {
