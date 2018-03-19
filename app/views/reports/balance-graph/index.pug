@@ -1,0 +1,24 @@
+extends ../../_shared/page-layout
+
+block page-head
+	link(rel = 'stylesheet', href = '/_npm/daterangepicker/daterangepicker.css')
+	link(rel = 'stylesheet', href = '/_npm/chartist/dist/chartist.min.css')
+
+block page-title-extra
+	button#settings-btn.btn.btn-info
+		i.far.fa-fw.fa-cogs
+		| Configure
+	button#date-range-btn.btn.btn-default
+		i.far.fa-fw.fa-calendar-alt
+		| #[span.startDate] - #[span.endDate]
+
+block page-body
+
+	div.row
+		div.col-xs-12
+			div#balance-graph
+
+block page-scripts
+	script(src = '/_npm/moment/moment.js')
+	script(src = '/_npm/daterangepicker/daterangepicker.js')
+	script(src = '/_npm/chartist/dist/chartist.min.js')

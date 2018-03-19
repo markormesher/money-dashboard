@@ -9,6 +9,7 @@ import { join } from "path";
 
 import AuthController = require("./controllers/auth");
 import DashboardController = require("./controllers/dashboard");
+import BalanceGraphReportController = require("./controllers/reports/balance-graph");
 import AccountSettingsController = require("./controllers/settings/accounts");
 import BudgetSettingsController = require("./controllers/settings/budgets");
 import CategorySettingsController = require("./controllers/settings/categories");
@@ -37,12 +38,15 @@ app.use(Express.static(join(__dirname, "../assets")));
 [
 	"bootstrap",
 	"bootstrap-progressbar",
+	"chartist",
 	"datatables.net",
 	"datatables.net-bs",
+	"daterangepicker",
 	"gentelella",
 	"jquery",
 	"jquery-ui-dist",
 	"jquery-validation",
+	"moment",
 	"toastr",
 ].forEach((lib) => {
 	app.use(`/_npm/${lib}`, Express.static(join(__dirname, `../node_modules/${lib}`)));
@@ -74,6 +78,7 @@ app.use(Passport.session());
 // controllers
 app.use("/", DashboardController);
 app.use("/auth", AuthController);
+app.use("/reports/balance-graph", BalanceGraphReportController);
 app.use("/settings/accounts", AccountSettingsController);
 app.use("/settings/budgets", BudgetSettingsController);
 app.use("/settings/categories", CategorySettingsController);

@@ -43,10 +43,12 @@ function initEditControls() {
 	});
 
 	// set up payee autocomplete
-	modalPayee.autocomplete({
-		source: (window as IWindow).MoneyDashboard.transactions.payees,
-		appendTo: editorModal
-	});
+	if ((window as IWindow).MoneyDashboard.transactions && (window as IWindow).MoneyDashboard.transactions.payees) {
+		modalPayee.autocomplete({
+			source: (window as IWindow).MoneyDashboard.transactions.payees,
+			appendTo: editorModal
+		});
+	}
 
 	// highlight the first input when the modal opens
 	editorModal.on("shown.bs.modal", () => {

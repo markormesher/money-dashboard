@@ -1,3 +1,5 @@
+// TODO: split into multiple files
+
 // conveniences
 
 .no-margin {
@@ -191,4 +193,23 @@ ul.ui-autocomplete {
 			border-color: #dddddd;
 		}
 	}
+}
+
+// reports
+
+#balance-graph {
+	height: 500px;
+}
+
+.ct-line {
+	stroke: #2A3F54 !important;
+	stroke-width: 1px !important;
+}
+
+.ct-area {
+	fill: #2A3F54 !important;
+}
+
+.ct-label {
+	font-size: 1rem !important;
 }

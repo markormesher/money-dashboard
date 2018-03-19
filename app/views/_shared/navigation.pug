@@ -13,7 +13,14 @@ div.menu_section
 			i.far.fa-fw.fa-table
 			| Transactions
 
-// TODO: balance history
+div.menu_section
+	h3 Reports
+	ul.nav.side-menu
+
+		li(class = (active === 'reports/balance-graph' ? 'active' : '')): a(href = '/reports/balance-graph')
+			i.far.fa-fw.fa-chart-area
+			| Balance Graph
+
 // TODO: budget history
 
 div.menu_section
