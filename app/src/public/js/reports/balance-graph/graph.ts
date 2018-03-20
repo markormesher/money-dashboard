@@ -1,7 +1,16 @@
 import { IChartistLineChart } from "chartist";
-import { formatCurrency } from "../../../../helpers/formatters";
+import { formatCurrency, formatDate } from "../../../../helpers/formatters";
 import Chartist = require("chartist");
 import moment = require("moment");
+
+interface IApiResponse {
+	data: { x: number, y: number }[];
+	minTotal: number;
+	minDate: number;
+	maxTotal: number;
+	maxDate: number;
+	changeAbsolute: number;
+}
 
 const dateRangeBtn = $("#date-range-btn");
 const startDateText = dateRangeBtn.find("span.startDate");
@@ -13,6 +22,12 @@ let endDate = moment();
 const chartArea = $("#balance-graph");
 let chart: IChartistLineChart;
 let chartUpdateInProgress = false;
+
+const minValueText = $("#min-value");
+const minValueDateText = $("#min-value-date");
+const maxValueText = $("#max-value");
+const maxValueDateText = $("#max-value-date");
+const changeAbsoluteText = $("#change-abs");
 
 function updateDateRangeUi() {
 	startDateText.text(startDate.format("DD MMM YY"));
@@ -30,10 +45,9 @@ function updateChart() {
 	$.get("/reports/balance-graph/data", {
 		startDate: startDate.toISOString(),
 		endDate: endDate.toISOString(),
-	}).done((data) => {
-		chart.update({
-			series: [{ data }]
-		});
+	}).done((raw: IApiResponse) => {
+		chart.update({ series: [{ data: raw.data }] });
+		updateSummary(raw);
 		chartUpdateInProgress = false;
 		setUiLock(false);
 	}).fail(() => {
@@ -41,6 +55,30 @@ function updateChart() {
 		chartUpdateInProgress = false;
 		setUiLock(false);
 	});
+}
+
+function updateSummary(raw: IApiResponse) {
+	minValueText.html(formatCurrency(raw.minTotal));
+	minValueDateText.html(raw.minDate > 0 ? formatDate(new Date(raw.minDate)) : "N/A");
+	maxValueText.html(formatCurrency(raw.maxTotal));
+	maxValueDateText.html(raw.maxDate > 0 ? formatDate(new Date(raw.maxDate)) : "N/A");
+
+	const absChangeIcon = changeAbsoluteText.closest("p").find("[data-fa-i2svg]");
+	const absChangeIconAndText = changeAbsoluteText.closest("p").find("span, [data-fa-i2svg]");
+
+	if (raw.changeAbsolute == 0) {
+		changeAbsoluteText.html(formatCurrency(raw.changeAbsolute));
+		absChangeIcon.toggleClass("fa-caret-right");
+		absChangeIconAndText.removeClass("text-danger text-success");
+	} else if (raw.changeAbsolute > 0) {
+		changeAbsoluteText.html(formatCurrency(raw.changeAbsolute));
+		absChangeIcon.toggleClass("fa-caret-up");
+		absChangeIconAndText.removeClass("text-danger").addClass("text-success");
+	} else {
+		changeAbsoluteText.html(formatCurrency(raw.changeAbsolute * -1));
+		absChangeIcon.toggleClass("fa-caret-down");
+		absChangeIconAndText.removeClass("text-success").addClass("text-danger");
+	}
 }
 
 function setUiLock(locked: boolean) {
@@ -93,7 +131,9 @@ $(() => {
 					labelInterpolationFnc: (value: number) => formatCurrency(value, false),
 				},
 				chartPadding: {
+					top: 0,
 					left: 20,
+					right: 0,
 				},
 				showLine: true,
 				showPoint: false,

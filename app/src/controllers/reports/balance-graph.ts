@@ -1,13 +1,12 @@
+import Bluebird = require("bluebird");
 import Express = require("express");
 import { NextFunction, Request, Response } from "express";
 import * as sequelize from "sequelize";
 import { Op } from "sequelize";
 
-
 import { requireUser } from "../../helpers/auth-helper";
 import { Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
-import Bluebird = require("bluebird");
 
 const router = Express.Router();
 
@@ -57,19 +56,49 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				let lastDate = 0;
 				let runningTotal = sumBeforeRange.getDataValue("balance") as number;
 
+				let minTotal = Number.MAX_VALUE;
+				let maxTotal = Number.MIN_VALUE;
+				let minDate = 0;
+				let maxDate = 0;
+
+				const takeValues = () => {
+					data.push({ x: lastDate, y: runningTotal });
+
+					if (runningTotal < minTotal) {
+						minTotal = runningTotal;
+						minDate = lastDate;
+					}
+
+					if (runningTotal > maxTotal) {
+						maxTotal = runningTotal;
+						maxDate = lastDate;
+					}
+				};
+
 				transactionsInRange.forEach((transaction: Transaction) => {
 					const date = new Date(transaction.effectiveDate).getTime();
 					if (lastDate > 0 && lastDate != date) {
-						data.push({ x: lastDate, y: runningTotal });
+						takeValues();
 					}
 
 					lastDate = date;
 					runningTotal += transaction.amount;
 				});
+				if (lastDate > 0) {
+					takeValues();
+				}
 
-				data.push({ x: lastDate, y: runningTotal });
+				let changeAbsolute = 0;
+				if (data.length == 0) {
+					minTotal = 0;
+					maxTotal = 0;
+					minDate = -1;
+					maxDate = -1;
+				} else {
+					changeAbsolute = data.length == 0 ? 0 : data[data.length - 1].y - data[0].y;
+				}
 
-				res.json(data);
+				res.json({ data, minTotal, minDate, maxTotal, maxDate, changeAbsolute });
 			})
 			.catch(next);
 });
