@@ -10,7 +10,9 @@ const endDateText = dateRangeBtn.find("span.endDate");
 let startDate = moment().subtract(1, "year");
 let endDate = moment();
 
+const chartArea = $("#balance-graph");
 let chart: IChartistLineChart;
+let chartUpdateInProgress = false;
 
 function updateDateRangeUi() {
 	startDateText.text(startDate.format("DD MMM YY"));
@@ -18,21 +20,32 @@ function updateDateRangeUi() {
 }
 
 function updateChart() {
-	// TODO: fade chart whilst updating
-	// TODO: lock controls when updating
+	if (chartUpdateInProgress) {
+		return;
+	}
+
+	chartUpdateInProgress = true;
+	setUiLock(true);
 
 	$.get("/reports/balance-graph/data", {
 		startDate: startDate.toISOString(),
 		endDate: endDate.toISOString(),
-	})
-			.done((data) => {
-				chart.update({
-					series: [{ data }]
-				});
-			})
-			.fail(() => {
-				// TODO: handle failure
-			});
+	}).done((data) => {
+		chart.update({
+			series: [{ data }]
+		});
+		chartUpdateInProgress = false;
+		setUiLock(false);
+	}).fail(() => {
+		toastr.error("The chart failed to update; please try again");
+		chartUpdateInProgress = false;
+		setUiLock(false);
+	});
+}
+
+function setUiLock(locked: boolean) {
+	dateRangeBtn.prop("disabled", locked);
+	chartArea.fadeTo(0, locked ? 0.4 : 1.0);
 }
 
 $(() => {
