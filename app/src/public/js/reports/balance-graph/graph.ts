@@ -31,7 +31,7 @@ const changeAbsoluteText = $("#change-abs");
 
 function updateDateRangeUi() {
 	startDateText.text(startDate.format("DD MMM YY"));
-	endDateText.text(endDate.format("DD MMM, YY"));
+	endDateText.text(endDate.format("DD MMM YY"));
 }
 
 function updateChart() {
@@ -124,7 +124,7 @@ $(() => {
 				axisX: {
 					type: Chartist.AutoScaleAxis,
 					scaleMinSpace: 40,
-					labelInterpolationFnc: (value: number) => moment(value).format("DD MMM, YY"),
+					labelInterpolationFnc: (value: number) => moment(value).format("DD MMM YY"),
 				},
 				axisY: {
 					low: 0,
