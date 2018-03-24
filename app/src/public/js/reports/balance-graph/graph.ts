@@ -29,9 +29,60 @@ const maxValueText = $("#max-value");
 const maxValueDateText = $("#max-value-date");
 const changeAbsoluteText = $("#change-abs");
 
+const accountGroupCheckboxes = $(".account-group-check-box");
+const accountCheckboxes = $(".account-check-box");
+const accountCountText = $(".account-count");
+
 function updateDateRangeUi() {
 	startDateText.text(startDate.format("DD MMM YY"));
 	endDateText.text(endDate.format("DD MMM YY"));
+}
+
+function initAccountCheckboxes() {
+	accountCheckboxes.on("change", function () {
+		const groupWrapper = $(this).closest(".group-wrapper");
+		const groupCheckbox = groupWrapper.find(".account-group-check-box");
+		let countChecked = 0;
+		let countUnchecked = 0;
+		groupWrapper.find(".account-check-box").each(function () {
+			if ($(this).is(":checked")) {
+				++countChecked;
+			} else {
+				++countUnchecked;
+			}
+		});
+
+		if (countChecked == 0) {
+			groupCheckbox.prop("checked", false);
+			groupCheckbox.prop("indeterminate", false);
+		} else if (countUnchecked == 0) {
+			groupCheckbox.prop("checked", true);
+			groupCheckbox.prop("indeterminate", false);
+		} else {
+			groupCheckbox.prop("checked", false);
+			groupCheckbox.prop("indeterminate", true);
+		}
+
+		updateChart();
+		updateAccountCount();
+	});
+
+	accountGroupCheckboxes.on("change", function () {
+		const groupedAccountCheckboxes = $(this).closest(".group-wrapper").find(".account-check-box");
+		groupedAccountCheckboxes.prop("checked", $(this).is(":checked"));
+		groupedAccountCheckboxes.first().trigger("change");
+	});
+}
+
+function updateAccountCount() {
+	const totalAccounts = accountCheckboxes.length;
+	const checkedAccounts = accountCheckboxes.filter(":checked").length;
+
+	if (totalAccounts == checkedAccounts) {
+		accountCountText.html("");
+	} else {
+		accountCountText.html(`${checkedAccounts} of ${totalAccounts} selected`);
+	}
 }
 
 function updateChart() {
@@ -42,9 +93,15 @@ function updateChart() {
 	chartUpdateInProgress = true;
 	setUiLock(true);
 
+	const accounts: string[] = [];
+	accountCheckboxes.filter(":checked").each(function() {
+		accounts.push($(this).val().toString());
+	});
+
 	$.get("/reports/balance-graph/data", {
 		startDate: startDate.toISOString(),
 		endDate: endDate.toISOString(),
+		accounts
 	}).done((raw: IApiResponse) => {
 		chart.update({ series: [{ data: raw.data }] });
 		updateSummary(raw);
@@ -127,8 +184,9 @@ $(() => {
 					labelInterpolationFnc: (value: number) => moment(value).format("DD MMM YY"),
 				},
 				axisY: {
-					low: 0,
+					type: Chartist.AutoScaleAxis,
 					labelInterpolationFnc: (value: number) => formatCurrency(value, false),
+					referenceValue: 0
 				},
 				chartPadding: {
 					top: 0,
@@ -141,6 +199,7 @@ $(() => {
 			}
 	);
 
+	initAccountCheckboxes();
 	updateDateRangeUi();
 	updateChart();
 });

@@ -5,18 +5,26 @@ import * as sequelize from "sequelize";
 import { Op } from "sequelize";
 
 import { requireUser } from "../../helpers/auth-helper";
+import { getAllAccounts } from "../../managers/account-manager";
 import { Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
 
 const router = Express.Router();
 
-router.get("/", requireUser, (req: Request, res: Response) => {
-	res.render("reports/balance-graph", {
-		_: {
-			title: "Balance Graph",
-			activePage: "reports/balance-graph",
-		}
-	});
+router.get("/", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const user = req.user as User;
+
+	getAllAccounts(user, false)
+			.then((accounts) => {
+				res.render("reports/balance-graph", {
+					_: {
+						title: "Balance Graph",
+						activePage: "reports/balance-graph",
+					},
+					accounts
+				});
+			})
+			.catch(next);
 });
 
 router.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
@@ -24,6 +32,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 
 	const startDate = req.query.startDate;
 	const endDate = req.query.endDate;
+	const accounts: string[] = req.query.accounts || [];
 
 	const getSumBeforeRange = Transaction.findOne({
 		attributes: [[sequelize.fn("SUM", sequelize.col("amount")), "balance"]],
@@ -31,6 +40,9 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 			profileId: user.activeProfile.id,
 			effectiveDate: {
 				[Op.lt]: startDate
+			},
+			accountId: {
+				[Op.in]: accounts
 			}
 		},
 	});
@@ -40,6 +52,9 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 			effectiveDate: {
 				[Op.gte]: startDate,
 				[Op.lte]: endDate,
+			},
+			accountId: {
+				[Op.in]: accounts
 			}
 		},
 		order: [["effectiveDate", "ASC"]]
