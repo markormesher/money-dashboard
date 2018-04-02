@@ -1,0 +1,50 @@
+version: '3.3'
+
+services:
+  app:
+    build: ./app
+    depends_on:
+      - postgres
+      - redis
+    restart: always
+    secrets:
+      - google.client.id
+      - google.client.secret
+      - postgres.password
+      - session.secret
+    environment:
+      - ENV=prod
+    volumes:
+      - ./logs:/usr/src/app/logs
+    ports:
+      - "3006:3000"
+    command: ["./entry-point.sh"]
+
+  postgres:
+    image: postgres:10.1-alpine
+    restart: always
+    secrets:
+      - postgres.password
+    environment:
+      - POSTGRES_DATABASE=money_dashboard
+      - POSTGRES_USER=money_dashboard
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres.password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:3.2-alpine
+    restart: always
+
+volumes:
+  postgres-data:
+
+secrets:
+  google.client.id:
+    file: ./secrets/google.client.id
+  google.client.secret:
+    file: ./secrets/google.client.secret
+  postgres.password:
+    file: ./secrets/postgres.password
+  session.secret:
+    file: ./secrets/session.secret

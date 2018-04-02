@@ -1,0 +1,44 @@
+- _ = _ || {}
+- active = _.activePage || undefined
+
+div.menu_section
+	h3 General
+	ul.nav.side-menu
+
+		li(class = (active === 'dashboard' ? 'active' : '')): a(href = '/')
+			i.far.fa-fw.fa-tv
+			| Dashboard
+
+		li(class = (active === 'transactions' ? 'active' : '')): a(href = '/transactions')
+			i.far.fa-fw.fa-table
+			| Transactions
+
+div.menu_section
+	h3 Reports
+	ul.nav.side-menu
+
+		li(class = (active === 'reports/balance-graph' ? 'active' : '')): a(href = '/reports/balance-graph')
+			i.far.fa-fw.fa-chart-area
+			| Balance Graph
+
+// TODO: budget history
+
+div.menu_section
+	h3 Settings
+	ul.nav.side-menu
+
+		li(class = (active === 'settings/accounts' ? 'active' : '')): a(href = '/settings/accounts')
+			i.far.fa-fw.fa-university
+			| Accounts
+
+		li(class = (active === 'settings/budgets' ? 'active' : '')): a(href = '/settings/budgets')
+			i.far.fa-fw.fa-sliders-h
+			| Budgets
+
+		li(class = (active === 'settings/categories' ? 'active' : '')): a(href = '/settings/categories')
+			i.far.fa-fw.fa-tags
+			| Categories
+
+		li(class = (active === 'settings/profiles' ? 'active' : '')): a(href = '/settings/profiles')
+			i.far.fa-fw.fa-users
+			| Profiles

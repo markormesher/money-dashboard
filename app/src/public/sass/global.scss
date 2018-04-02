@@ -1,0 +1,215 @@
+// TODO: split into multiple files
+
+// conveniences
+
+.no-margin {
+	margin: 0 !important;
+}
+
+// globally-useful styles
+
+a:not(.btn-mini), button:not(.btn-mini) {
+	svg[data-fa-i2svg] {
+		margin-right: 8px;
+	}
+}
+
+.currency {
+	font-family: monospace;
+}
+
+.text-muted {
+	color: inherit !important;
+	opacity: 0.6;
+}
+
+.btn-mini {
+	padding: 2px 6px;
+	font-size: 11px;
+	line-height: 13px;
+}
+
+// core layout
+
+.site_title {
+	font-size: 20px;
+}
+
+h2 {
+	svg {
+		margin-right: 6px;
+	}
+}
+
+h4 {
+	margin-top: 16px !important;
+	border-bottom: 1px solid #dddddd;
+	padding-bottom: 1px;
+
+}
+
+h4:first-of-type {
+	margin-top: 0 !important;
+}
+
+.modal-header h4 {
+	border-bottom: none;
+}
+
+a.dropdown-toggle {
+	svg[data-fa-i2svg] {
+		margin-left: 8px;
+	}
+}
+
+div.page-title {
+	h3 {
+		float: left;
+	}
+
+	div.extra {
+		float: right;
+		text-align: right;
+	}
+}
+
+@media (max-width: 992px) {
+	div.page-title {
+		h3 {
+			display: block;
+		}
+
+		div.extra {
+			display: block;
+			text-align: inherit;
+			width: 100%;
+			clear: both;
+			margin-bottom: 12px;
+		}
+	}
+}
+
+div.hr {
+	margin: 0 0 20px;
+	padding: 0;
+	width: 100%;
+	height: 1px;
+	background-color: #dddddd;
+
+	hr {
+		display: none;
+	}
+}
+
+// navigation
+
+li.divider {
+	margin: 0 !important;
+}
+
+.nav-sm .nav.side-menu li a svg[data-fa-i2svg] {
+	font-size: 25px !important;
+	text-align: center;
+	width: 100% !important;
+	margin-bottom: 5px;
+}
+
+// tables
+
+table.table {
+	width: 99%;
+}
+
+table.non-full-width {
+	width: auto !important;
+}
+
+table tfoot tr td {
+	border-top: 2px solid #dddddd !important;
+}
+
+td span {
+	line-height: inherit !important;
+}
+
+@media screen and (max-width: 767px) {
+	.table-responsive {
+		border: none !important;
+	}
+}
+
+// forms
+
+ul.inline-form-links {
+	padding-left: 0;
+
+	li {
+		display: inline;
+		margin-right: 14px;
+	}
+
+	li:last-child {
+		margin-right: 0;
+	}
+}
+
+ul.inline-form-links.stacked {
+	margin-bottom: 2px;
+}
+
+ul.inline-form-links.stacked:last-child {
+	margin-bottom: 10px;
+}
+
+.form-control:focus {
+	border-color: #66afe9;
+}
+
+// progress bars
+
+.progress-bar {
+	span {
+		margin-right: 4px;
+	}
+
+	span:last-of-type {
+		margin-right: 0;
+	}
+}
+
+// misc
+
+#key-shortcut-modal kbd {
+	margin-right: 4px;
+}
+
+// jquery ui fixes
+
+ul.ui-autocomplete {
+	li.ui-menu-item {
+		.ui-state-active {
+			color: inherit !important;
+			background-color: #eeeeee;
+			border-color: #dddddd;
+		}
+	}
+}
+
+// reports
+
+#balance-graph {
+	height: 400px;
+}
+
+.ct-line {
+	stroke: #2A3F54 !important;
+	stroke-width: 1px !important;
+}
+
+.ct-area {
+	fill: #2A3F54 !important;
+}
+
+.ct-label {
+	font-size: 1rem !important;
+}

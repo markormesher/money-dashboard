@@ -1,0 +1,17 @@
+extends ../_shared/root-layout
+
+block variables
+	- bodyClass = 'login'
+
+block body
+
+	div
+		div.login_wrapper
+			div.form.login_form
+				section.login_content
+					form(action = '/auth/google/login', method = 'get')
+						h1 Login
+
+						div: button.btn.btn-default
+							i.fab.fa-google
+							| Login with Google
