@@ -1,0 +1,10 @@
+- var formatCurrency = formatters.formatCurrency;
+
+each memoCategoryBalance in memoCategoryBalances
+	-
+		var category = memoCategoryBalance.category;
+		var balance = memoCategoryBalance.balance;
+
+	if (balance != 0)
+		div.alert.alert-danger
+			p #[strong #{category.name}] balance is !{formatCurrency(balance)}.

@@ -1,0 +1,107 @@
+include ../_mixins/bootstrap-form
+
+div#editor-modal.modal.fade(tabindex = -1)
+	div.modal-dialog
+		div.modal-content
+			form#editor-form.validate
+				div.modal-header
+					button.close(type = "button", data-dismiss = "modal" aria-label = "Close"): span(aria-hidden = "true") &times;
+					h4.modal-title.create-only Create Transaction
+					h4.modal-title.edit-only Edit Transaction
+
+				div.modal-body
+					+bootstrapForm({
+						rows: [
+							{
+								fields: [
+									{
+										type: 'date',
+										name: 'transactionDate',
+										label: 'Transaction Date',
+										inputAttrs: {
+											required: true,
+											tabindex: 1
+										}
+									},
+									{
+										type: 'date',
+										name: 'effectiveDate',
+										label: 'Effective Date',
+										inputAttrs: {
+											required: true,
+											tabindex: -1
+										}
+									}
+								]
+							},
+							{
+								fields: [
+									{
+										type: 'select',
+										name: 'account',
+										label: 'Account',
+										options: accounts,
+										inputAttrs: {
+											required: true,
+											tabindex: 2
+										}
+									},
+									{
+										type: 'text',
+										name: 'payee',
+										label: 'Payee',
+										inputAttrs: {
+											required: true,
+											tabindex: 3
+										}
+									}
+								]
+							},
+							{
+								fields: [
+									{
+										type: 'select',
+										name: 'category',
+										label: 'Category',
+										options: categories,
+										inputAttrs: {
+											required: true,
+											tabindex: 4
+										}
+									},
+									{
+										type: 'currency',
+										name: 'amount',
+										label: 'Amount',
+										inputAttrs: {
+											required: true,
+											tabindex: 5
+										}
+									}
+								]
+							},
+							{
+								fields: [
+									{
+										sizes: ['xs-12'],
+										type: 'textarea',
+										name: 'note',
+										label: 'Note',
+										inputAttrs: {
+											tabindex: 6
+										}
+									}
+								]
+							}
+						]
+					})
+
+				div.modal-footer
+					div.checkbox.pull-left.create-only
+						label.text-muted
+							input#add-another(type = 'checkbox', checked = 'checked')
+							| Add another
+
+					button#save-btn.btn.btn-primary(tabindex = 7)
+						i.far.fa-fw.fa-save
+						|  Save

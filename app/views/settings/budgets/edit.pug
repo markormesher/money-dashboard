@@ -1,0 +1,103 @@
+extends ../../_shared/page-layout
+include ../../_mixins/bootstrap-form
+
+block page-body
+
+	mixin staticFormContent(name)
+		case name
+			when 'date-links'
+				each linkSet in quickPeriodDates
+					ul.inline-form-links.stacked
+						each link in linkSet
+							li: a.quick-period-link(href = '#', data-start = link[1], data-end = link[2])= link[0]
+
+	div.row
+		div.col-xs-12.col-md-6
+			+bootstrapForm({
+				action: '/settings/budgets/edit/' + budget.id,
+				method: 'post',
+				rows: [
+					{
+						fields: [
+							{
+								type: 'select',
+								name: 'category',
+								label: 'Category',
+								options: categories,
+								value: budget.categoryId,
+								inputAttrs: {
+									required: true
+								}
+							},
+							{
+								type: 'currency',
+								name: 'amount',
+								label: 'Amount',
+								value: budget.amount ? budget.amount.toFixed(2) : '',
+								inputAttrs: {
+									required: true
+								}
+							}
+						]
+					},
+					{
+						fields: [
+							{
+								type: 'date',
+								name: 'startDate',
+								label: 'Start',
+								value: budget.startDate,
+								inputAttrs: {
+									required: true
+								}
+							},
+							{
+								type: 'date',
+								name: 'endDate',
+								label: 'End',
+								value: budget.endDate,
+								inputAttrs: {
+									required: true
+								}
+							}
+						]
+					},
+					{
+						fields: [
+							{
+								type: 'static',
+								label: 'Quick Periods',
+								name: 'date-links',
+								sizes: ['xs-12']
+							}
+						]
+					},
+					{
+						fields: [
+							{
+								type: 'select',
+								name: 'type',
+								label: 'Type',
+								options: [
+									['budget', 'Budget'],
+									['bill', 'Bill']
+								],
+								value: budget.type,
+								inputAttrs: {
+									required: true
+								}
+							}
+						]
+					},
+					{
+						fields: [
+							{
+								type: 'submit',
+								label: 'Save',
+								btnClasses: ['btn-success'],
+								btnIcon: 'fa-save'
+							}
+						]
+					}
+				]
+			})

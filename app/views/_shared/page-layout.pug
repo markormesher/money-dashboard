@@ -1,0 +1,79 @@
+extends root-layout
+
+block head
+	block page-head
+
+block body
+
+	- user = locals.user
+
+	div.container.body
+		div.main_container
+
+			div.col-md-3.left_col
+				div.left_col.scroll-view
+
+					div.navbar.nav_title
+						a.site_title(href = '/')
+							span Money Dashboard
+
+					div.clearfix
+
+					br
+
+					div#sidebar-menu.main_menu_side.hidden-print.main_menu
+						include navigation
+
+			div.top_nav: div.nav_menu: nav
+				div.nav.toggle: a#menu_toggle: i.far.fa-bars
+				ul.nav.navbar-nav.navbar-right
+					li.dropdown
+						a.dropdown-toggle(data-toggle = 'dropdown', href = 'javascript:;')
+							span.hidden-xs= user.activeProfile.name
+							i.far.fa-caret-down.text-muted
+
+						ul.dropdown-menu.pull-right
+							each profile in user.profiles
+								li: a(href = '/settings/profiles/select/' + profile.id)
+									if (profile.id === user.activeProfile.id)
+										i.far.fa-fw.fa-check-square
+									else
+										i.far.fa-fw.fa-square
+									| #{profile.name}
+
+							li.divider
+
+							li: a(href = '/settings/profiles')
+								i.far.fa-fw.fa-pencil
+								| Edit Profiles
+
+							li: a(href = '/settings/profiles/edit')
+								i.far.fa-fw.fa-plus
+								| New Profile
+
+					li.dropdown
+						a.user-profile.dropdown-toggle(data-toggle = 'dropdown', href = 'javascript:;')
+							img(src = user.image)
+							span.hidden-xs= user.displayName
+							i.far.fa-caret-down.text-muted
+
+						ul.dropdown-menu.pull-right
+							li: a(href = '/auth/logout')
+								i.far.fa-fw.fa-sign-out.title-icon
+								| Logout
+
+			div.right_col(style = 'min-height: 425px;')
+				div.container-fluid
+					if (_.title)
+						div.page-title
+							h3= _.title
+							div.extra
+								block page-title-extra
+
+						div.clearfix
+
+					block page-body
+
+block scripts
+
+	block page-scripts
