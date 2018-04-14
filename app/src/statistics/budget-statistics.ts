@@ -3,12 +3,18 @@ import * as sequelize from "sequelize";
 import { Op } from "sequelize";
 
 import { getAllBudgets } from "../managers/budget-manager";
+import { ThinBudget } from "../model-thins/ThinBudget";
 import { Budget } from "../models/Budget";
 import { Transaction } from "../models/Transaction";
 import { User } from "../models/User";
 
 export class BudgetBalance {
 	public budget: Budget;
+	public balance: number;
+}
+
+export class ThinBudgetBalance {
+	public budget: ThinBudget;
 	public balance: number;
 }
 

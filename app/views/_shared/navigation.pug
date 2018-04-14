@@ -21,7 +21,9 @@ div.menu_section
 			i.far.fa-fw.fa-chart-area
 			| Balance Graph
 
-// TODO: budget history
+		li(class = (active === 'reports/budget-performance' ? 'active' : '')): a(href = '/reports/budget-performance')
+			i.far.fa-fw.fa-chart-pie
+			| Budget Performance
 
 div.menu_section
 	h3 Settings
