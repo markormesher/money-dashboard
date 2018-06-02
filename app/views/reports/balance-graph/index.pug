@@ -5,6 +5,9 @@ block page-head
 	link(rel = 'stylesheet', href = '/_npm/chartist/dist/chartist.min.css')
 
 block page-title-extra
+	button#toggle-field-btn.btn.btn-info
+		i.far.fa-fw.fa-random
+		| Date Mode: #[span Transaction]
 	button#date-range-btn.btn.btn-default
 		i.far.fa-fw.fa-calendar-alt
 		| #[span.startDate] - #[span.endDate]
