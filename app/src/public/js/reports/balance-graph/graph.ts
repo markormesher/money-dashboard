@@ -1,5 +1,6 @@
 import { IChartistLineChart } from "chartist";
 import { formatCurrency, formatDate } from "../../../../helpers/formatters";
+import { getDateField } from "./toggle-date-field";
 import Chartist = require("chartist");
 import moment = require("moment");
 
@@ -101,6 +102,7 @@ function updateChart() {
 	$.get("/reports/balance-graph/data", {
 		startDate: startDate.toISOString(),
 		endDate: endDate.toISOString(),
+		dateField: getDateField(),
 		accounts
 	}).done((raw: IApiResponse) => {
 		chart.update({ series: [{ data: raw.data }] });
@@ -203,3 +205,7 @@ $(() => {
 	updateDateRangeUi();
 	updateChart();
 });
+
+export {
+	updateChart,
+}
