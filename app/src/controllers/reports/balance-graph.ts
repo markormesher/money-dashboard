@@ -32,13 +32,14 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 
 	const startDate = req.query.startDate;
 	const endDate = req.query.endDate;
+	const dateField: "effectiveDate" | "transactionDate" = req.query.dateField;
 	const accounts: string[] = req.query.accounts || [];
 
 	const getSumBeforeRange = Transaction.findOne({
 		attributes: [[sequelize.fn("SUM", sequelize.col("amount")), "balance"]],
 		where: {
 			profileId: user.activeProfile.id,
-			effectiveDate: {
+			[dateField]: {
 				[Op.lt]: startDate
 			},
 			accountId: {
@@ -49,7 +50,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 	const getTransactionsInRange = Transaction.findAll({
 		where: {
 			profileId: user.activeProfile.id,
-			effectiveDate: {
+			[dateField]: {
 				[Op.gte]: startDate,
 				[Op.lte]: endDate,
 			},
@@ -57,7 +58,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				[Op.in]: accounts
 			}
 		},
-		order: [["effectiveDate", "ASC"]]
+		order: [[dateField, "ASC"]]
 	});
 
 	Bluebird
@@ -91,7 +92,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				};
 
 				transactionsInRange.forEach((transaction: Transaction) => {
-					const date = new Date(transaction.effectiveDate).getTime();
+					const date = new Date(transaction[dateField]).getTime();
 					if (lastDate > 0 && lastDate != date) {
 						takeValues();
 					}
