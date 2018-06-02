@@ -1,3 +1,6 @@
+// TODO: persist setting for user
+// TODO: reduce duplicated code between here and the button used for transactions
+
 import { updateChart } from "./graph";
 
 const TRANSACTION_DATE = "transactionDate";
