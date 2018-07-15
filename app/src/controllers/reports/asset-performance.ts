@@ -1,7 +1,6 @@
 import Bluebird = require("bluebird");
 import Express = require("express");
 import { NextFunction, Request, Response } from "express";
-import * as sequelize from "sequelize";
 import { Op } from "sequelize";
 
 import { requireUser } from "../../helpers/auth-helper";
