@@ -201,9 +201,20 @@ ul.ui-autocomplete {
 	height: 400px;
 }
 
+#asset-performance {
+	height: 400px;
+}
+
 .ct-line {
-	stroke: #2A3F54 !important;
 	stroke-width: 1px !important;
+}
+
+.ct-series-a .ct-line {
+	stroke: #2A3F54 !important;
+}
+
+.ct-series-b .ct-line {
+	stroke: #521111 !important;
 }
 
 .ct-area {
