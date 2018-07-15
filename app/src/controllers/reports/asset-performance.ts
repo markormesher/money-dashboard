@@ -18,6 +18,12 @@ router.get("/", requireUser, (req: Request, res: Response, next: NextFunction) =
 			.then((accounts) => {
 				const assets = accounts.filter(a => a.type == "asset");
 
+				if (assets.length === 0) {
+					res.flash("info", "None of your accounts are assets.");
+					res.redirect("/");
+					return
+				}
+
 				res.render("reports/asset-performance", {
 					_: {
 						title: "Asset Performance",
