@@ -89,6 +89,9 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 
 				let lastDate = 0;
 
+				let totalChangeInclGrowth = 0;
+				let totalChangeExclGrowth = 0;
+
 				const takeValues = () => {
 					dataInclGrowth.push({ x: lastDate, y: runningTotalInclGrowth });
 					dataExclGrowth.push({ x: lastDate, y: runningTotalExclGrowth });
@@ -102,8 +105,10 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 
 					lastDate = date;
 					runningTotalInclGrowth += transaction.amount;
+					totalChangeInclGrowth += transaction.amount;
 					if (!transaction.category.isAssetGrowthCategory) {
 						runningTotalExclGrowth += transaction.amount;
+						totalChangeExclGrowth += transaction.amount;
 					}
 				});
 
@@ -111,7 +116,12 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 					takeValues();
 				}
 
-				res.json({ dataInclGrowth, dataExclGrowth });
+				res.json({
+					dataInclGrowth,
+					dataExclGrowth,
+					totalChangeInclGrowth,
+					totalChangeExclGrowth
+				});
 			})
 			.catch(next);
 });

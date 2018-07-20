@@ -1,13 +1,17 @@
+import { numberTypeAnnotation } from "babel-types";
 import { IChartistLineChart } from "chartist";
-import { formatCurrency } from "../../../../helpers/formatters";
+import { formatCurrency, formatDate } from "../../../../helpers/formatters";
 import { getDateField } from "./toggle-date-field";
 import { getSelectedAssetId } from "./asset-selector";
 import Chartist = require("chartist");
 import moment = require("moment");
+import Node = JQuery.Node;
 
 interface IApiResponse {
 	dataExclGrowth: { x: number, y: number }[];
 	dataInclGrowth: { x: number, y: number }[];
+	totalChangeInclGrowth: number;
+	totalChangeExclGrowth: number;
 }
 
 const dateRangeBtn = $("#date-range-btn");
@@ -20,6 +24,10 @@ let endDate = moment();
 const chartArea = $("#balance-graph");
 let chart: IChartistLineChart;
 let chartUpdateInProgress = false;
+
+const nonGrowthChangeText = $("#non-growth-change");
+const growthOnlyChangeText = $("#growth-only-change");
+const totalChangeText = $("#total-change");
 
 function updateDateRangeUi() {
 	startDateText.text(startDate.format("DD MMM YY"));
@@ -61,7 +69,36 @@ function updateChart() {
 }
 
 function updateSummary(raw: IApiResponse) {
-	// TODO
+	const nonGrowthChange = raw.totalChangeExclGrowth;
+	const growthOnlyChange = raw.totalChangeInclGrowth - raw.totalChangeExclGrowth;
+	const totalChange = raw.totalChangeInclGrowth;
+
+	const nonGrowthChangeIcon = nonGrowthChangeText.closest("p").find("[data-fa-i2svg]");
+	const growthOnlyChangeIcon = growthOnlyChangeText.closest("p").find("[data-fa-i2svg]");
+	const totalChangeIcon = totalChangeText.closest("p").find("[data-fa-i2svg]");
+
+	setAmountWithUpDownIndicator(nonGrowthChange, nonGrowthChangeText, nonGrowthChangeIcon);
+	setAmountWithUpDownIndicator(growthOnlyChange, growthOnlyChangeText, growthOnlyChangeIcon);
+	setAmountWithUpDownIndicator(totalChange, totalChangeText, totalChangeIcon);
+}
+
+function setAmountWithUpDownIndicator(amount: number, text: JQuery, icon: JQuery) {
+	if (amount == 0) {
+		text.html(formatCurrency(amount));
+		icon.toggleClass("fa-caret-right");
+		text.removeClass("text-danger text-success");
+		icon.removeClass("text-danger text-success");
+	} else if (amount > 0) {
+		text.html(formatCurrency(amount));
+		icon.toggleClass("fa-caret-up");
+		text.removeClass("text-danger").addClass("text-success");
+		icon.removeClass("text-danger").addClass("text-success");
+	} else {
+		text.html(formatCurrency(amount * -1));
+		icon.toggleClass("fa-caret-down");
+		text.removeClass("text-success").addClass("text-danger");
+		icon.removeClass("text-success").addClass("text-danger");
+	}
 }
 
 function setUiLock(locked: boolean) {

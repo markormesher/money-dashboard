@@ -27,6 +27,10 @@ block page-body
 
 	div.row: div.col-xs-12: div#asset-performance
 
+	div.row
+		div.col-xs-12.col-md-6
+			include ./widget-summary
+
 block page-scripts
 	script(src = '/_npm/moment/moment.js')
 	script(src = '/_npm/daterangepicker/daterangepicker.js')
