@@ -1,0 +1,37 @@
+extends ../../_shared/page-layout
+
+block page-head
+	link(rel = 'stylesheet', href = '/_npm/daterangepicker/daterangepicker.css')
+	link(rel = 'stylesheet', href = '/_npm/chartist/dist/chartist.min.css')
+
+block page-title-extra
+	- assets = assets.sort((a, b) => a.name.localeCompare(b.name))
+
+	button#toggle-field-btn.btn.btn-info
+		i.far.fa-fw.fa-random
+		| Date Mode: #[span Transaction]
+
+	div#asset-selector.dropdown(style = 'display: inline-block;')
+		button.btn.btn-default.dropdown-toggle(data-toggle = 'dropdown', aria-haspopup = 'true', aria-expanded = 'false')
+			i.far.fa-fw.fa-university
+			| #[span]
+		ul.dropdown-menu
+			each asset in assets
+				li: a(href = '#', data-id = asset.id, data-name = asset.name) #{asset.name}
+
+	button#date-range-btn.btn.btn-default
+		i.far.fa-fw.fa-calendar-alt
+		| #[span.startDate] - #[span.endDate]
+
+block page-body
+
+	div.row: div.col-xs-12: div#asset-performance
+
+	div.row
+		div.col-xs-12.col-md-6
+			include ./widget-summary
+
+block page-scripts
+	script(src = '/_npm/moment/moment.js')
+	script(src = '/_npm/daterangepicker/daterangepicker.js')
+	script(src = '/_npm/chartist/dist/chartist.min.js')

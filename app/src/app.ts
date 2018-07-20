@@ -9,6 +9,7 @@ import { join } from "path";
 
 import AuthController = require("./controllers/auth");
 import DashboardController = require("./controllers/dashboard");
+import AssetPerformanceReportController = require("./controllers/reports/asset-performance");
 import BalanceGraphReportController = require("./controllers/reports/balance-graph");
 import BudgetPerformanceReportController = require("./controllers/reports/budget-performance");
 import AccountSettingsController = require("./controllers/settings/accounts");
@@ -79,6 +80,7 @@ app.use(Passport.session());
 // controllers
 app.use("/", DashboardController);
 app.use("/auth", AuthController);
+app.use("/reports/asset-performance", AssetPerformanceReportController);
 app.use("/reports/balance-graph", BalanceGraphReportController);
 app.use("/reports/budget-performance", BudgetPerformanceReportController);
 app.use("/settings/accounts", AccountSettingsController);
