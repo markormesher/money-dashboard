@@ -1,9 +1,15 @@
 version: '3.3'
 
 services:
-  app:
+  server:
     environment:
       - ENV=dev
     volumes:
-      - ./app/views:/usr/src/app/views
+      - ./server/views:/usr/src/app/views
+      - ./logs:/usr/src/app/logs
+
+  client:
+    environment:
+      - ENV=dev
+    volumes:
       - ./logs:/usr/src/app/logs
