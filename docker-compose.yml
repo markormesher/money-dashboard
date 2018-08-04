@@ -8,6 +8,7 @@ services:
     restart: always
     environment:
       - ENV=prod
+      - NODE_ENV=production
     ports:
       - "3007:3000"
 
@@ -24,6 +25,7 @@ services:
       - session.secret
     environment:
       - ENV=prod
+      - NODE_ENV=production
     ports:
       - "3006:3000"
     command: ["./entry-point.sh"]

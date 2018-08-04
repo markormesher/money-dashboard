@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 # dependencies
 RUN git -c http.sslVerify=false clone https://github.com/vishnubob/wait-for-it.git
-COPY package.json ./
+COPY .npmrc package.json ./
 RUN npm i
 
 # source code

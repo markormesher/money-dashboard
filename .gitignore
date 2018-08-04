@@ -4,6 +4,7 @@ pull-data-from-prod.sh
 push-data-to-prod.sh
 logs/*
 !logs/.gitkeep
+yarn-error.log*
 
 # IntelliJ
 *.iml
