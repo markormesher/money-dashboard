@@ -1,10 +1,6 @@
 const { resolve, join } = require("path");
 const webpack = require("webpack");
 
-const isProd = process.env.NODE_ENV.indexOf("prod") >= 0;
-
-console.log(resolve(__dirname, isProd ? "tsconfig.prod.js" : "tsconfig.prod.js"));
-
 module.exports = {
 	target: "web",
 	entry: resolve(__dirname, "..", "src", "client", "index.tsx"),

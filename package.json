@@ -12,8 +12,8 @@
     "build:dev": "npm run build:dev:client && npm run build:dev:server",
     "build:dev:client": "cross-env NODE_ENV=development webpack -p --progress --config=./config/webpack.config.dev.js",
     "build:dev:server": "tsc --diagnostics",
-    "lint": "tslint -c ./config/tslint.json ./src/server/**/*.ts",
-    "lint:fix": "tslint --fix -c ./config/tslint.json ./src/server/**/*.ts"
+    "lint": "tslint -c ./tslint.json ./src/server/**/*.ts",
+    "lint:fix": "tslint --fix -c ./tslint.json ./src/server/**/*.ts"
   },
   "dependencies": {
     "async": "^2.6.0",
