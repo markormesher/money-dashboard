@@ -1,0 +1,11 @@
+.dockerignore
+.gitignore
+
+.git/
+build/
+dist/
+logs/
+node_modules/
+
+Dockerfile
+*.log

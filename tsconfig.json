@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es6",
+		"jsx": "react",
+		"noImplicitAny": true,
+		"moduleResolution": "node",
+		"outDir": "./build/server",
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"alwaysStrict": true,
+		"baseUrl": "./",
+		"allowJs": true,
+		"sourceMap": true
+	},
+	"include": [
+		"./src/server/app.ts"
+	],
+	"exclude": [
+		"./node_modules"
+	]
+}

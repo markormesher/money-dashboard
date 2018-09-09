@@ -1,19 +1,8 @@
 version: '3.3'
 
 services:
-  client:
-    build: ./client
-    depends_on:
-      - server
-    restart: always
-    environment:
-      - ENV=prod
-      - NODE_ENV=production
-    ports:
-      - "3007:3000"
-
-  server:
-    build: ./server
+  app:
+    build: .
     depends_on:
       - postgres
       - redis
@@ -28,7 +17,6 @@ services:
       - NODE_ENV=production
     ports:
       - "3006:3000"
-    command: ["./entry-point.sh"]
 
   postgres:
     image: postgres:10.1-alpine
@@ -51,10 +39,10 @@ volumes:
 
 secrets:
   google.client.id:
-    file: ./secrets/google.client.id
+    file: ./config/secrets/google.client.id
   google.client.secret:
-    file: ./secrets/google.client.secret
+    file: ./config/secrets/google.client.secret
   postgres.password:
-    file: ./secrets/postgres.password
+    file: ./config/secrets/postgres.password
   session.secret:
-    file: ./secrets/session.secret
+    file: ./config/secrets/session.secret
