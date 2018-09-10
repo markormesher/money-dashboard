@@ -18,11 +18,11 @@ module.exports = merge(commonConfig, {
 		new webpack.NamedModulesPlugin(),
 		new HtmlWebpackPlugin({
 			inject: true,
-			template: resolve(__dirname, "..", "src", "client", "index.html"),
+			template: resolve(__dirname, "src", "client", "index.html"),
 			alwaysWriteToDisk: true
 		}),
 		new HtmlWebpackHarddiskPlugin({
-			outputPath: resolve(__dirname, "..", "build", "client")
+			outputPath: resolve(__dirname, "build", "client")
 		})
 	]
 });

@@ -39,10 +39,10 @@ volumes:
 
 secrets:
   google.client.id:
-    file: ./config/secrets/google.client.id
+    file: ./src/server/config/secrets/google.client.id
   google.client.secret:
-    file: ./config/secrets/google.client.secret
+    file: ./src/server/config/secrets/google.client.secret
   postgres.password:
-    file: ./config/secrets/postgres.password
+    file: ./src/server/config/secrets/postgres.password
   session.secret:
-    file: ./config/secrets/session.secret
+    file: ./src/server/config/secrets/session.secret

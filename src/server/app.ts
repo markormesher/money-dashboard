@@ -30,6 +30,7 @@ SequelizeDb.sync({ force: false }).then(() => {
 // cookies and sessions
 const RedisSessionStore = ConnectRedis(ExpressSession);
 app.use(ExpressSession({
+	// TODO: be smarter about choosing host depending on environment (dev, docker-dev, docker-prod)
 	store: new RedisSessionStore({ host: isProd() ? "redis" : "localhost" }),
 	secret: getSecret("session.secret"),
 	resave: false,

@@ -15,7 +15,7 @@ module.exports = merge(commonConfig, {
 		new HtmlWebpackPlugin({
 			hash: true,
 			inject: true,
-			template: resolve(__dirname, "..", "src", "client", "index.html"),
+			template: resolve(__dirname, "src", "client", "index.html"),
 			minify: {
 				removeComments: true,
 				collapseWhitespace: true,

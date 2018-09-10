@@ -3,10 +3,10 @@ const webpack = require("webpack");
 
 module.exports = {
 	target: "web",
-	entry: resolve(__dirname, "..", "src", "client", "index.tsx"),
+	entry: resolve(__dirname, "src", "client", "index.tsx"),
 	output: {
 		publicPath: "/",
-		path: resolve(__dirname, "..", "build", "client"),
+		path: resolve(__dirname, "build", "client"),
 		filename: "[name].js"
 	},
 	module: {

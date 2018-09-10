@@ -4,6 +4,7 @@ import { getSecret, isProd } from "./config-loader";
 import { logger } from "./logging";
 
 const sequelize = new Sequelize({
+	// TODO: be smarter about choosing host depending on environment (dev, docker-dev, docker-prod)
 	host: isProd() ? "postgres" : "localhost",
 	username: "money_dashboard",
 	password: getSecret("postgres.password"),

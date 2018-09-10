@@ -5,15 +5,24 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development node ./build/server/app.js",
     "start": "cross-env NODE_ENV=production node ./build/server/app.js",
+
     "prebuild": "rimraf ./build",
-    "build": "npm run build:client && npm run build:server",
+    "prebuild:dev": "rimraf ./build",
+
+    "postbuild": "copyfiles -u 2 \"./src/server/config/**\" ./build/server/.",
+    "postbuild:dev": "copyfiles -u 2 \"./src/server/config/**\" ./build/server/.",
+
+    "build": "yarn build:client && yarn build:server",
+    "build:dev": "yarn build:dev:client && yarn build:dev:server",
+
     "build:server": "tsc",
-    "build:client": "cross-env NODE_ENV=production webpack -p --progress --config=./config/webpack.config.prod.js",
-    "build:dev": "npm run build:dev:client && npm run build:dev:server",
-    "build:dev:client": "cross-env NODE_ENV=development webpack -p --progress --config=./config/webpack.config.dev.js",
     "build:dev:server": "tsc --diagnostics",
-    "lint": "tslint -c ./tslint.json ./src/server/**/*.ts",
-    "lint:fix": "tslint --fix -c ./tslint.json ./src/server/**/*.ts"
+
+    "build:client": "cross-env NODE_ENV=production webpack -p --progress --config=./webpack.config.prod.js",
+    "build:dev:client": "cross-env NODE_ENV=development webpack -p --progress --config=./webpack.config.dev.js",
+
+    "lint": "tslint -c ./tslint.json ./src/server/**/*.ts ./src/client/**/*.ts ./src/client/**/*.tsx",
+    "lint:fix": "tslint --fix -c ./tslint.json ./src/server/**/*.ts ./src/client/**/*.ts ./src/client/**/*.tsx"
   },
   "dependencies": {
     "async": "^2.6.0",
@@ -91,6 +100,7 @@
     "babel-preset-react": "^6.24.1",
     "browserify": "^16.2.2",
     "classnames": "^2.2.6",
+    "copyfiles": "^2.1.0",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "file-loader": "^2.0.0",

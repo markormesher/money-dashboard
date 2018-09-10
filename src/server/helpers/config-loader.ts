@@ -8,7 +8,8 @@ export class Constants {
 let loadedConstants: Constants;
 const loadedSecrets: { [key: string]: string } = {};
 
-const configDir = resolve(__dirname, "..", "..", "..", "config");
+const projectDir = resolve(__dirname, "..", "..", "..");
+const configDir = resolve(__dirname, "..", "config");
 
 function isProd(): boolean {
 	return process.env.NODE_ENV.indexOf("prod") >= 0;
@@ -37,7 +38,7 @@ function getSecret(key: string): string {
 }
 
 function getDevWebpackConfig() {
-	return require(`${configDir}/webpack.config.dev.js`);
+	return require(`${projectDir}/webpack.config.dev.js`);
 }
 
 export {

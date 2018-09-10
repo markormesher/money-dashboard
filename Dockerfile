@@ -3,12 +3,11 @@ FROM node:carbon
 WORKDIR /usr/src/app
 
 # dependencies
-RUN git -c http.sslVerify=false clone https://github.com/vishnubob/wait-for-it.git
-COPY .yarnrc yarn.lock package.json ./
+COPY package.json .yarnrc yarn.lock ./
 RUN yarn
 
 # source code
-COPY . .
+COPY . ./
 
 # compile
 RUN yarn build
