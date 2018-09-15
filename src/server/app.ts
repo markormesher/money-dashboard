@@ -18,6 +18,8 @@ import { setupDevAppRoutes, setupProdAppRoutes } from "./middleware/app-routes";
 
 const app = Express();
 
+// TODO: check whether Redis and Postgres are up
+
 // db connection
 SequelizeDb.sync({ force: false }).then(() => {
 	logger.info("Database models synced successfully");
