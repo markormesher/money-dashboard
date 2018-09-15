@@ -24,7 +24,7 @@ function getConstants(): Constants {
 		if (isProd()) {
 			loadedConstants = require(`${configDir}/constants.prod.json`) as Constants;
 		} else {
-			loadedConstants = require(`${configDir}/constants.prod.json`) as Constants;
+			loadedConstants = require(`${configDir}/constants.dev.json`) as Constants;
 		}
 	}
 	return loadedConstants;

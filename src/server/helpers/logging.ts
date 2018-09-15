@@ -25,7 +25,7 @@ const logger = Winston.createLogger({
 if (process.env.NODE_ENV.indexOf("prod") === -1) {
 	logger.add(new Winston.transports.Console({
 		format: consoleLogFormat,
-		level: "debug",
+		level: "info",
 	}));
 }
 

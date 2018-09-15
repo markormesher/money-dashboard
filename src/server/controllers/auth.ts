@@ -1,19 +1,10 @@
 import Express = require("express");
-import {Request, Response} from "express";
+import { Request, Response } from "express";
 import Passport = require("passport");
+import { requireUser } from "../helpers/auth-helper";
+import { delay } from "../helpers/delay-middleware";
 
 const router = Express.Router();
-
-router.get("/old-index", (req: Request, res: Response) => res.redirect("/auth/login"));
-
-router.get("/login", (req: Request, res: Response) => {
-	res.render("auth/login", {
-		_: {
-			title: "Login",
-			activePage: "auth",
-		},
-	});
-});
 
 router.get("/google/login", Passport.authenticate("google", {
 	scope: ["https://www.googleapis.com/auth/plus.login"],
@@ -24,10 +15,13 @@ router.get("/google/callback", Passport.authenticate("google", {
 	failureRedirect: "/auth/login",
 }));
 
-router.get("/logout", (req: Request, res: Response) => {
+router.get("/current-user", delay(5000), requireUser, (req: Request, res: Response) => {
+	res.json(req.user);
+});
+
+router.post("/logout", (req: Request, res: Response) => {
 	req.logout();
-	res.flash("info", "You have been logged out.");
-	res.redirect("/auth/login");
+	res.sendStatus(200);
 });
 
 export = router;

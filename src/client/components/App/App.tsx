@@ -1,5 +1,8 @@
+import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios, { AxiosResponse } from "axios";
 import * as React from "react";
-import { Component } from "react";
+import { Component, MouseEvent } from "react";
 import { BrowserRouter, Link, Redirect, Route, Switch } from "react-router-dom";
 
 import "bootstrap/dist/js/bootstrap";
@@ -12,16 +15,76 @@ import Login from "../Login/Login";
 import Transactions from "../Transactions/Transactions";
 
 const initialState = {
+	waitingForAuth: true,
 	activeUser: undefined as ThinUser,
 	activeProfile: undefined as ThinProfile,
 };
 type State = Readonly<typeof initialState>;
 
-export class App extends Component {
+export class App extends Component<any, State> {
 
 	public readonly state: State = initialState;
 
+	constructor(props: any) {
+		super(props);
+
+		this.logout = this.logout.bind(this);
+	}
+
+	public componentDidMount() {
+		axios.get<ThinUser>("/auth/current-user")
+				.then((response: AxiosResponse<ThinUser>) => {
+					if (response.data.id) {
+						this.setState({
+							waitingForAuth: false,
+							activeUser: response.data,
+							// TODO: set active profile
+						});
+					} else {
+						this.setState({
+							waitingForAuth: false,
+							activeUser: undefined,
+							activeProfile: undefined,
+						});
+					}
+				})
+				.catch(() => {
+					this.setState({
+						waitingForAuth: false,
+						activeUser: undefined,
+						activeProfile: undefined,
+					});
+				});
+	}
+
+	public logout(event: MouseEvent) {
+		event.preventDefault();
+		this.setState({ waitingForAuth: true });
+		axios.post("/auth/logout")
+				.then(() => {
+					this.setState({
+						waitingForAuth: false,
+						activeUser: undefined,
+						activeProfile: undefined,
+					});
+				})
+				.catch(() => {
+					this.setState({
+						waitingForAuth: false,
+					});
+				});
+	}
+
 	public render() {
+		if (this.state.waitingForAuth) {
+			return (
+					// TODO: position in centre
+					<div>
+						<FontAwesomeIcon className={"icon"} icon={faCircleNotch} spin={true} size={"2x"}/>
+					</div>
+			);
+		}
+
 		if (!this.state.activeUser) {
 			return (
 					<BrowserRouter>
@@ -39,6 +102,7 @@ export class App extends Component {
 						<ul>
 							<li><Link to="/">Dashboard</Link></li>
 							<li><Link to="/transactions">Transactions</Link></li>
+							<li><Link to="#" onClick={this.logout}>Logout</Link></li>
 						</ul>
 
 						<Switch>
