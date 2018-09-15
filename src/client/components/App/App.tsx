@@ -8,6 +8,8 @@ import { BrowserRouter, Link, Redirect, Route, Switch } from "react-router-dom";
 import "bootstrap/dist/js/bootstrap";
 import "jquery/dist/jquery";
 
+import * as styles from "./App.scss";
+
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
 import Dashboard from "../Dashboard/Dashboard";
@@ -78,9 +80,8 @@ export class App extends Component<any, State> {
 	public render() {
 		if (this.state.waitingForAuth) {
 			return (
-					// TODO: position in centre
-					<div>
-						<FontAwesomeIcon className={"icon"} icon={faCircleNotch} spin={true} size={"2x"}/>
+					<div className={styles.waitingForAuth}>
+						<FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>
 					</div>
 			);
 		}

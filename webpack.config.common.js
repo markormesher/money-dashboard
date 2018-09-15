@@ -33,16 +33,17 @@ module.exports = {
 				loader: "html-loader"
 			},
 			{
-				test: /\.(s?)css/,
+				test: /\.(s?)css$/,
 				use: [
 					{
 						loader: "style-loader"
 					},
 					{
-						loader: "css-loader",
+						loader: "typings-for-css-modules-loader",
 						options: {
 							sourceMap: true,
 							modules: true,
+							namedExport: true,
 							localIdentName: "[name]__[local]___[hash:base64:5]"
 						}
 					},
