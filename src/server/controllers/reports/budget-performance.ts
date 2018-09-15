@@ -2,7 +2,7 @@ import Express = require("express");
 import _ = require("lodash");
 import { NextFunction, Request, Response } from "express";
 
-import { requireUser } from "../../helpers/auth-helper";
+import { requireUser } from "../../middleware/auth-middleware";
 import { getAllBudgets } from "../../managers/budget-manager";
 import { Budget } from "../../models/Budget";
 import { User } from "../../models/User";

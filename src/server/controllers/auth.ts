@@ -1,8 +1,8 @@
 import Express = require("express");
 import { Request, Response } from "express";
 import Passport = require("passport");
-import { requireUser } from "../helpers/auth-helper";
-import { delay } from "../helpers/delay-middleware";
+import { requireUser } from "../middleware/auth-middleware";
+import { delay } from "../middleware/delay-middleware";
 
 const router = Express.Router();
 

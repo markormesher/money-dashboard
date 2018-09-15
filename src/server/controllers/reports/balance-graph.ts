@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import * as sequelize from "sequelize";
 import { Op } from "sequelize";
 
-import { requireUser } from "../../helpers/auth-helper";
+import { requireUser } from "../../middleware/auth-middleware";
 import { getAllAccounts } from "../../managers/account-manager";
 import { Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";

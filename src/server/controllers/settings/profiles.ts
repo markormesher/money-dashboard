@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 
-import { requireUser } from "../../helpers/auth-helper";
+import { requireUser } from "../../middleware/auth-middleware";
 import { getData } from "../../helpers/datatable-helper";
 import { deleteProfile, getProfile, saveProfile } from "../../managers/profile-manager";
 import { Profile } from "../../models/Profile";

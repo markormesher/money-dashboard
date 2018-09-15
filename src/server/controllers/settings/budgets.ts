@@ -5,7 +5,7 @@ import * as Moment from "moment";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 
-import { requireUser } from "../../helpers/auth-helper";
+import { requireUser } from "../../middleware/auth-middleware";
 import { getData } from "../../helpers/datatable-helper";
 import { cloneBudgets, deleteBudget, getBudget, saveBudget } from "../../managers/budget-manager";
 import { getAllCategories } from "../../managers/category-manager";

@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 
-import { requireUser } from "../helpers/auth-helper";
+import { requireUser } from "../middleware/auth-middleware";
 import { getData } from "../helpers/datatable-helper";
 import { getAllAccounts } from "../managers/account-manager";
 import { getAllCategories } from "../managers/category-manager";

@@ -3,7 +3,7 @@ import Express = require("express");
 import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
 
-import { requireUser } from "../helpers/auth-helper";
+import { requireUser } from "../middleware/auth-middleware";
 import { User } from "../models/User";
 import { getAccountBalances } from "../statistics/account-statistics";
 import { getBudgetBalances } from "../statistics/budget-statistics";
