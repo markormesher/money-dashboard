@@ -15,6 +15,7 @@ services:
     environment:
       - ENV=prod
       - NODE_ENV=production
+      - RUNNING_IN=docker
     ports:
       - "3006:3000"
 

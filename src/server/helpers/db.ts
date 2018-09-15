@@ -1,11 +1,10 @@
 import { join } from "path";
 import { Sequelize } from "sequelize-typescript";
-import { getSecret, isProd } from "./config-loader";
+import { getSecret, runningInDocker } from "./config-loader";
 import { logger } from "./logging";
 
 const sequelize = new Sequelize({
-	// TODO: be smarter about choosing host depending on environment (dev, docker-dev, docker-prod)
-	host: isProd() ? "postgres" : "localhost",
+	host: runningInDocker() ? "postgres" : "localhost",
 	username: "money_dashboard",
 	password: getSecret("postgres.password"),
 	database: "money_dashboard",

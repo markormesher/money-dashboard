@@ -8,7 +8,7 @@ import Passport = require("passport");
 import { join } from "path";
 
 import { StatusError } from "./extensions/StatusError";
-import { getSecret, isProd } from "./helpers/config-loader";
+import { getSecret, runningInDocker } from "./helpers/config-loader";
 import SequelizeDb = require("./helpers/db");
 import { formatterMiddleware } from "./helpers/formatters";
 import { logger } from "./helpers/logging";
@@ -28,8 +28,7 @@ SequelizeDb.sync({ force: false }).then(() => {
 // cookies and sessions
 const RedisSessionStore = ConnectRedis(ExpressSession);
 app.use(ExpressSession({
-	// TODO: be smarter about choosing host depending on environment (dev, docker-dev, docker-prod)
-	store: new RedisSessionStore({ host: isProd() ? "redis" : "localhost" }),
+	store: new RedisSessionStore({ host: runningInDocker() ? "redis" : "localhost" }),
 	secret: getSecret("session.secret"),
 	resave: false,
 	saveUninitialized: false,

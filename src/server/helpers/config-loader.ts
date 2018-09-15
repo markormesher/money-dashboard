@@ -15,6 +15,10 @@ function isProd(): boolean {
 	return process.env.NODE_ENV.indexOf("prod") >= 0;
 }
 
+function runningInDocker(): boolean {
+	return process.env.RUNNING_IN === "docker";
+}
+
 function getConstants(): Constants {
 	if (!loadedConstants) {
 		if (isProd()) {
@@ -43,6 +47,7 @@ function getDevWebpackConfig() {
 
 export {
 	isProd,
+	runningInDocker,
 	getConstants,
 	getSecret,
 	getDevWebpackConfig,
