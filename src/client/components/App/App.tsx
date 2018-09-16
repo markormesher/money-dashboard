@@ -1,22 +1,20 @@
-import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { BrowserRouter, Link, Redirect, Route, Switch } from "react-router-dom";
-
-import "bootstrap/dist/js/bootstrap";
-import "jquery/dist/jquery";
 import { AnyAction, Dispatch } from "redux";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
 import { startLogOutCurrentUser } from "../../redux/auth/actions";
 import { IRootState } from "../../redux/root";
-
-import * as styles from "./App.scss";
-
 import Dashboard from "../Dashboard/Dashboard";
+import FullPageError from "../FullPageError/FullPageError";
+import FullPageSpinner from "../FullPageSpinner/FullPageSpinner";
 import Login from "../Login/Login";
 import { Transactions } from "../Transactions/Transactions";
+
+import "bootstrap/dist/js/bootstrap";
+import "jquery/dist/jquery";
+import "./App.scss";
 
 // TODO: any way to avoid making these all optional?
 interface IAppProps {
@@ -45,12 +43,7 @@ class App extends Component<IAppProps> {
 	public render() {
 		if (this.props.waitingFor.length > 0) {
 			return (
-					<div className={styles.waitingWrapper}>
-						<FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>
-						<div className={styles.debugNotes}>
-							Waiting for: {JSON.stringify(this.props.waitingFor)}
-						</div>
-					</div>
+					<FullPageSpinner/>
 			);
 		}
 
@@ -67,6 +60,7 @@ class App extends Component<IAppProps> {
 
 		return (
 				<BrowserRouter>
+					{/* TODO: extra nav, footer, etc. */}
 					<div>
 						<ul>
 							<li><Link to="/">Dashboard</Link></li>
@@ -79,15 +73,8 @@ class App extends Component<IAppProps> {
 						<Switch>
 							<Route exact path="/" component={Dashboard}/>
 							<Route path="/transactions" component={Transactions}/>
-							{/* TODO: 404 page */}
-							<Redirect to="/"/>
+							<Route render={() => <FullPageError message={"404: Not Found"}/>}/>
 						</Switch>
-
-						<hr/>
-
-						<pre>
-							{JSON.stringify(this.props, null, 2)};
-						</pre>
 					</div>
 				</BrowserRouter>
 		);

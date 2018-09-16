@@ -9,10 +9,17 @@ function* loadUserSaga() {
 	yield put(addWait("auth"));
 	try {
 		const user: ThinUser = yield call(() => axios.get("/auth/current-user").then((res) => res.data));
-		yield [
-			put(setCurrentUser(user)),
-			put(removeWait("auth")),
-		];
+		if (user !== undefined) {
+			yield [
+				put(setCurrentUser(user)),
+				put(removeWait("auth")),
+			];
+		} else {
+			yield [
+				put(unsetCurrentUser()),
+				put(removeWait("auth")),
+			];
+		}
 	} catch (err) {
 		yield [
 			put(unsetCurrentUser()), // TODO: put some kind of error state
