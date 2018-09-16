@@ -1,92 +1,60 @@
 import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios, { AxiosResponse } from "axios";
 import * as React from "react";
-import { Component, MouseEvent } from "react";
+import { Component } from "react";
+import { connect } from "react-redux";
 import { BrowserRouter, Link, Redirect, Route, Switch } from "react-router-dom";
 
 import "bootstrap/dist/js/bootstrap";
 import "jquery/dist/jquery";
+import { AnyAction, Dispatch } from "redux";
+import { ThinUser } from "../../../server/model-thins/ThinUser";
+import { startLogOutCurrentUser } from "../../redux/auth/actions";
+import { IRootState } from "../../redux/root";
 
 import * as styles from "./App.scss";
 
-import { ThinProfile } from "../../../server/model-thins/ThinProfile";
-import { ThinUser } from "../../../server/model-thins/ThinUser";
 import Dashboard from "../Dashboard/Dashboard";
 import Login from "../Login/Login";
-import Transactions from "../Transactions/Transactions";
+import { Transactions } from "../Transactions/Transactions";
 
-const initialState = {
-	waitingForAuth: true,
-	activeUser: undefined as ThinUser,
-	activeProfile: undefined as ThinProfile,
-};
-type State = Readonly<typeof initialState>;
+// TODO: any way to avoid making these all optional?
+interface IAppProps {
+	waitingFor?: string[];
+	activeUser?: ThinUser;
+	logout?: () => AnyAction;
+}
 
-export class App extends Component<any, State> {
+function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
+	return {
+		...props,
+		waitingFor: state.global.waitingFor,
+		activeUser: state.auth.activeUser,
+	};
+}
 
-	public readonly state: State = initialState;
+function mapDispatchToProps(dispatch: Dispatch, props: IAppProps): IAppProps {
+	return {
+		...props,
+		logout: () => dispatch(startLogOutCurrentUser()),
+	};
+}
 
-	constructor(props: any) {
-		super(props);
-
-		this.logout = this.logout.bind(this);
-	}
-
-	public componentDidMount() {
-		axios.get<ThinUser>("/auth/current-user")
-				.then((response: AxiosResponse<ThinUser>) => {
-					if (response.data.id) {
-						this.setState({
-							waitingForAuth: false,
-							activeUser: response.data,
-							// TODO: set active profile
-						});
-					} else {
-						this.setState({
-							waitingForAuth: false,
-							activeUser: undefined,
-							activeProfile: undefined,
-						});
-					}
-				})
-				.catch(() => {
-					this.setState({
-						waitingForAuth: false,
-						activeUser: undefined,
-						activeProfile: undefined,
-					});
-				});
-	}
-
-	public logout(event: MouseEvent) {
-		event.preventDefault();
-		this.setState({ waitingForAuth: true });
-		axios.post("/auth/logout")
-				.then(() => {
-					this.setState({
-						waitingForAuth: false,
-						activeUser: undefined,
-						activeProfile: undefined,
-					});
-				})
-				.catch(() => {
-					this.setState({
-						waitingForAuth: false,
-					});
-				});
-	}
+class App extends Component<IAppProps> {
 
 	public render() {
-		if (this.state.waitingForAuth) {
+		if (this.props.waitingFor.length > 0) {
 			return (
-					<div className={styles.waitingForAuth}>
+					<div className={styles.waitingWrapper}>
 						<FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>
+						<div className={styles.debugNotes}>
+							Waiting for: {JSON.stringify(this.props.waitingFor)}
+						</div>
 					</div>
 			);
 		}
 
-		if (!this.state.activeUser) {
+		if (!this.props.activeUser) {
 			return (
 					<BrowserRouter>
 						<Switch>
@@ -103,17 +71,27 @@ export class App extends Component<any, State> {
 						<ul>
 							<li><Link to="/">Dashboard</Link></li>
 							<li><Link to="/transactions">Transactions</Link></li>
-							<li><Link to="#" onClick={this.logout}>Logout</Link></li>
+							<li><Link to="#" onClick={this.props.logout}>Logout</Link></li>
 						</ul>
+
+						<hr/>
 
 						<Switch>
 							<Route exact path="/" component={Dashboard}/>
 							<Route path="/transactions" component={Transactions}/>
+							{/* TODO: 404 page */}
+							<Redirect to="/"/>
 						</Switch>
+
+						<hr/>
+
+						<pre>
+							{JSON.stringify(this.props, null, 2)};
+						</pre>
 					</div>
 				</BrowserRouter>
 		);
 	}
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);

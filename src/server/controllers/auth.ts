@@ -2,6 +2,7 @@ import Express = require("express");
 import { Request, Response } from "express";
 import Passport = require("passport");
 import { requireUser } from "../middleware/auth-middleware";
+import { delay } from "../middleware/delay-middleware";
 
 const router = Express.Router();
 
@@ -14,7 +15,7 @@ router.get("/google/callback", Passport.authenticate("google", {
 	failureRedirect: "/auth/login",
 }));
 
-router.get("/current-user", requireUser, (req: Request, res: Response) => {
+router.get("/current-user", delay(1000), requireUser, (req: Request, res: Response) => {
 	res.json(req.user);
 });
 
