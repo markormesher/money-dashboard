@@ -1,15 +1,17 @@
-import { AnyAction } from "redux";
+import { PayloadAction } from "../PayloadAction";
 import { GlobalActions } from "./actions";
 
 interface IGlobalState {
 	waitingFor: string[];
+	error?: Error;
 }
 
 const initialState: IGlobalState = {
 	waitingFor: [],
+	error: undefined,
 };
 
-function globalReducer(state = initialState, action: AnyAction): IGlobalState {
+function globalReducer(state = initialState, action: PayloadAction): IGlobalState {
 	switch (action.type) {
 		case GlobalActions.ADD_WAIT:
 			return (() => {
@@ -26,6 +28,15 @@ function globalReducer(state = initialState, action: AnyAction): IGlobalState {
 				return {
 					...state,
 					waitingFor: state.waitingFor.filter((w) => w !== wait),
+				};
+			})();
+
+		case GlobalActions.SET_ERROR:
+			return (() => {
+				const error = action.payload.error as Error;
+				return {
+					...state,
+					error,
 				};
 			})();
 

@@ -1,5 +1,6 @@
-import { Action, ActionCreator } from "redux";
+import { ActionCreator } from "redux";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
+import { PayloadAction } from "../PayloadAction";
 
 class AuthActions {
 	public static START_LOAD_CURRENT_USER = "START_LOAD_CURRENT_USER";
@@ -8,25 +9,23 @@ class AuthActions {
 	public static START_LOGOUT_CURRENT_USER = "START_LOGOUT_CURRENT_USER";
 }
 
-const startLoadCurrentUser: ActionCreator<Action> = () => {
+const startLoadCurrentUser: ActionCreator<PayloadAction> = () => {
 	return { type: AuthActions.START_LOAD_CURRENT_USER };
 };
 
-const startLogOutCurrentUser: ActionCreator<Action> = () => {
+const startLogOutCurrentUser: ActionCreator<PayloadAction> = () => {
 	return { type: AuthActions.START_LOGOUT_CURRENT_USER };
 };
 
-const setCurrentUser: ActionCreator<Action> = (user: ThinUser) => {
+const setCurrentUser: ActionCreator<PayloadAction> = (user: ThinUser) => {
 	return {
 		type: AuthActions.SET_CURRENT_USER,
 		payload: { user },
 	};
 };
 
-const unsetCurrentUser: ActionCreator<Action> = () => {
-	return {
-		type: AuthActions.UNSET_CURRENT_USER,
-	};
+const unsetCurrentUser: ActionCreator<PayloadAction> = () => {
+	return { type: AuthActions.UNSET_CURRENT_USER };
 };
 
 export {

@@ -4,4 +4,15 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	// TODO: re-do with bootstrap styles
+	div {
+		width: 600px;
+		h2 {
+			svg {
+				margin-right: 0.5rem;
+			}
+		}
+	}
+
 }

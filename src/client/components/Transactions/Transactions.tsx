@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Component } from "react";
 
-export class Transactions extends Component {
+class Transactions extends Component {
 	public render() {
 		return (
 				<div>
@@ -10,3 +10,5 @@ export class Transactions extends Component {
 		);
 	}
 }
+
+export default Transactions;

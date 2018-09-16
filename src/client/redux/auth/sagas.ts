@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, take } from "redux-saga/effects";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
-import { addWait, removeWait } from "../global/actions";
+import { addWait, removeWait, setError } from "../global/actions";
 import { AuthActions, setCurrentUser, unsetCurrentUser } from "./actions";
 
 function* loadUserSaga() {
@@ -22,7 +22,7 @@ function* loadUserSaga() {
 		}
 	} catch (err) {
 		yield [
-			put(unsetCurrentUser()), // TODO: put some kind of error state
+			put(setError(err)),
 			put(removeWait("auth")),
 		];
 	}
@@ -39,7 +39,7 @@ function* logOutCurrentUserSaga() {
 		];
 	} catch (err) {
 		yield [
-			put(unsetCurrentUser()), // TODO: put some kind of error state
+			put(setError(err)),
 			put(removeWait("auth")),
 		];
 	}

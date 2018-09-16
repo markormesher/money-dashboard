@@ -2,19 +2,32 @@ import { faExclamationTriangle } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
+import { DetailedError } from "../../helpers/errors/DetailedError";
 import * as styles from "./FullPageError.scss";
 
 interface IFullPageErrorProps {
-	message: string;
+	error: Error;
 }
 
 class FullPageError extends Component<IFullPageErrorProps> {
 
 	public render() {
+		const errorMessage = this.props.error.message || "Something went wrong";
+		const errorDescription = this.props.error instanceof DetailedError ? this.props.error.description : undefined;
+
 		return (
 				<div className={styles.errorWrapper}>
-					<FontAwesomeIcon icon={faExclamationTriangle} size={"2x"}/>
-					<h2>{this.props.message}</h2>
+					<div>
+						<h2>
+							<FontAwesomeIcon icon={faExclamationTriangle}/>
+							{errorMessage}
+						</h2>
+						{errorDescription ? <p>{errorDescription}</p> : undefined}
+						<p>
+							You might want to try reloading the page,
+							or <a href="/">going back to your dashboard</a>.
+						</p>
+					</div>
 				</div>
 		);
 
