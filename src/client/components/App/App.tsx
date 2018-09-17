@@ -12,6 +12,7 @@ import Dashboard from "../Dashboard/Dashboard";
 import FullPageError from "../FullPageError/FullPageError";
 import FullPageSpinner from "../FullPageSpinner/FullPageSpinner";
 import Login from "../Login/Login";
+import { Nav } from "../Nav/Nav";
 import Transactions from "../Transactions/Transactions";
 
 import * as bs from "bootstrap/dist/css/bootstrap.css";
@@ -104,30 +105,7 @@ class App extends Component<IAppProps> {
 
 						<div className={bs.containerFluid}>
 							<div className={bs.row}>
-								<nav className={cn(bs.colMd2, bs.dNone, bs.dMdBlock, bs.bgLight, style.sidebar)}>
-									<div className={style.sidebarSticky}>
-										<ul className={cn(bs.nav, bs.flexColumn)}>
-											<li className={bs.navItem}>
-												<Link to="/" className={cn(bs.navLink, style.navLink, style.active)}>
-													{/* ICON */}
-													Dashboard
-												</Link>
-											</li>
-										</ul>
-
-										<h6 className={cn(style.sidebarHeading, bs.dFlex, bs.justifyContentBetween, bs.alignItemsCenter, bs.px3, bs.mt4, bs.mb1, bs.textMuted)}>
-											<span>Reports</span>
-										</h6>
-										<ul className={cn(bs.nav, bs.flexColumn)}>
-											<li className={bs.navItem}>
-												<Link to="/transactions" className={cn(bs.navLink, style.navLink)}>
-													{/* ICON */}
-													Transactions
-												</Link>
-											</li>
-										</ul>
-									</div>
-								</nav>
+								<Nav/>
 
 								<main role="main" className={cn(bs.colMd9, bs.colLg10, bs.mlSmAuto, bs.pt3, bs.px4)}>
 									<div className={cn(bs.dFlex, bs.justifyContentBetween, bs.flexWrap, bs.flexMdNowrap, bs.alignItemsCenter, bs.pb2, bs.mb3)}>
