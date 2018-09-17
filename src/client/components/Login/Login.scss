@@ -1,0 +1,32 @@
+.loginWrapper {
+	margin: 10% 0 0;
+	text-align: center;
+
+	.titleWrapper {
+		margin: 0 auto;
+		width: 400px;
+		position: relative;
+
+		h1 {
+			display: inline-block;
+			margin: 0;
+
+			&:before, &:after {
+				content: "";
+				position: absolute;
+				top: 50%;
+				width: 20%;
+				height: 1px;
+				background-color: #c0c0c0;
+			}
+
+			&:before {
+				left: 0;
+			}
+
+			&:after {
+				right: 0;
+			}
+		}
+	}
+}
