@@ -7,8 +7,14 @@ import { IRootState } from "../../redux/root";
 
 import * as bs from "bootstrap/dist/css/bootstrap.css";
 
-function mapStateToProps(state: IRootState): IDashboardProps {
+interface IDashboardProps {
+	activeUser: ThinUser;
+	activeProfile?: ThinProfile;
+}
+
+function mapStateToProps(state: IRootState, props: IDashboardProps): IDashboardProps {
 	return {
+		...props,
 		activeUser: state.auth.activeUser,
 	};
 }
@@ -19,6 +25,7 @@ interface IDashboardProps {
 }
 
 class Dashboard extends Component<IDashboardProps> {
+
 	public render() {
 		return (
 				<div>

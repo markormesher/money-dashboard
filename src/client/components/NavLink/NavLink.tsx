@@ -3,7 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import cn = require("classnames");
 import * as React from "react";
 import { Component } from "react";
-import { Link } from "react-router-dom";
+import { StaticContext, withRouter } from "react-router";
+import { Link, RouteComponentProps } from "react-router-dom";
 
 import * as bs from "bootstrap/dist/css/bootstrap.css";
 import * as style from "./NavLink.scss";
@@ -14,16 +15,18 @@ interface INavLinkProps {
 	icon: IconProp;
 }
 
-export class NavLink extends Component<INavLinkProps> {
+class NavLink extends Component<RouteComponentProps<void, StaticContext, void> & INavLinkProps> {
+
 	private linkItemClasses = cn(bs.navItem);
-	private linkClasses = cn(bs.navLink, style.navLink);
-	private activeLinkClasses = cn(bs.navLink, style.navLink, style.active);
 	private iconClasses = cn(bs.mr2, bs.textMuted);
 
 	public render() {
+		const active = this.props.to === this.props.location.pathname;
+		const linkClasses = cn(bs.navLink, style.navLink, (active && style.active));
+
 		return (
 				<li className={this.linkItemClasses}>
-					<Link to={this.props.to} className={this.linkClasses}> {/* TODO: active link? */}
+					<Link to={this.props.to} className={linkClasses}>
 						<FontAwesomeIcon icon={this.props.icon} fixedWidth={true} className={this.iconClasses}/>
 						{this.props.text}
 					</Link>
@@ -31,3 +34,5 @@ export class NavLink extends Component<INavLinkProps> {
 		);
 	}
 }
+
+export default withRouter(NavLink);

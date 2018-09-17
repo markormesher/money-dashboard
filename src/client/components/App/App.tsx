@@ -1,12 +1,9 @@
-import cn = require("classnames");
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
-import { BrowserRouter, Link, Redirect, Route, Switch } from "react-router-dom";
-import { AnyAction, Dispatch } from "redux";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
 import { Http404Error } from "../../helpers/errors/Http404Error";
-import { startLogOutCurrentUser } from "../../redux/auth/actions";
 import { IRootState } from "../../redux/root";
 import { AppContentWrapper } from "../AppContentWrapper/AppContentWrapper";
 import { AppRootWrapper } from "../AppRootWrapper/AppRootWrapper";
@@ -15,13 +12,11 @@ import FullPageError from "../FullPageError/FullPageError";
 import FullPageSpinner from "../FullPageSpinner/FullPageSpinner";
 import Header from "../Header/Header";
 import Login from "../Login/Login";
-import { Nav } from "../Nav/Nav";
+import Nav from "../Nav/Nav";
 import Transactions from "../Transactions/Transactions";
 
-import * as bs from "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap";
 import "jquery/dist/jquery";
-import * as style from "./App.scss";
 
 // TODO: any way to avoid making these all optional?
 interface IAppProps {

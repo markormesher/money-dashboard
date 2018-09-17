@@ -13,12 +13,14 @@ import cn = require("classnames");
 import * as React from "react";
 import { Component } from "react";
 
-import * as bs from "bootstrap/dist/css/bootstrap.css";
-import { NavLink } from "../NavLink/NavLink";
+import NavLink from "../NavLink/NavLink";
 import { NavSection } from "../NavSection/NavSection";
+
+import * as bs from "bootstrap/dist/css/bootstrap.css";
 import * as style from "./Nav.scss";
 
-export class Nav extends Component {
+class Nav extends Component {
+
 	public render() {
 		return (
 				<nav className={cn(bs.colMd2, bs.dNone, bs.dMdBlock, bs.bgLight, style.sidebar)}>
@@ -29,19 +31,21 @@ export class Nav extends Component {
 						</NavSection>
 
 						<NavSection title="Reports">
-							<NavLink to="/transactions" text="Balance Graph" icon={faChartLine}/>
-							<NavLink to="/transactions" text="Asset Growth" icon={faAnalytics}/>
-							<NavLink to="/transactions" text="Budget Performance" icon={faChartPie}/>
+							<NavLink to="/reports/balance-graph" text="Balance Graph" icon={faChartLine}/>
+							<NavLink to="/reports/asset-growth" text="Asset Growth" icon={faAnalytics}/>
+							<NavLink to="/reports/budget-performance" text="Budget Performance" icon={faChartPie}/>
 						</NavSection>
 
 						<NavSection title="Settings">
-							<NavLink to="/transactions" text="Accounts" icon={faPiggyBank}/>
-							<NavLink to="/transactions" text="Budgets" icon={faSlidersH}/>
-							<NavLink to="/transactions" text="Categories" icon={faTags}/>
-							<NavLink to="/transactions" text="Profiles" icon={faUsers}/>
+							<NavLink to="/settings/accounts" text="Accounts" icon={faPiggyBank}/>
+							<NavLink to="/settings/budgets" text="Budgets" icon={faSlidersH}/>
+							<NavLink to="/settings/categories" text="Categories" icon={faTags}/>
+							<NavLink to="/settings/profiles" text="Profiles" icon={faUsers}/>
 						</NavSection>
 					</div>
 				</nav>
 		);
 	}
 }
+
+export default Nav;
