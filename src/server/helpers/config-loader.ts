@@ -32,7 +32,7 @@ function getConstants(): Constants {
 
 function getSecret(key: string): string {
 	if (loadedSecrets[key] === undefined) {
-		if (isProd()) {
+		if (runningInDocker()) {
 			loadedSecrets[key] = readFileSync(`/run/secrets/${key}`).toString().trim();
 		} else {
 			loadedSecrets[key] = readFileSync(`${configDir}/secrets/${key}`).toString().trim();
