@@ -1,3 +1,4 @@
+import cn = require("classnames");
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
@@ -13,9 +14,10 @@ import FullPageSpinner from "../FullPageSpinner/FullPageSpinner";
 import Login from "../Login/Login";
 import Transactions from "../Transactions/Transactions";
 
+import * as bs from "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap";
 import "jquery/dist/jquery";
-import "./App.scss";
+import * as style from "./App.scss";
 
 // TODO: any way to avoid making these all optional?
 interface IAppProps {
@@ -84,22 +86,71 @@ class App extends Component<IAppProps> {
 		return (
 				<BrowserRouter>
 					{/* TODO: extract nav, footer, etc. */}
+
 					<div>
-						<ul>
-							<li><Link to="/">Dashboard</Link></li>
-							<li><Link to="/transactions">Transactions</Link></li>
-							<li><Link to="#" onClick={this.props.actions.logout}>Logout</Link></li>
-						</ul>
+						<nav className={cn(bs.navbar, bs.navbarDark, bs.stickyTop, bs.bgDark, bs.flexMdNowrap, bs.p0)}>
+							<Link to="/"
+								  className={cn(bs.navbarBrand, style.navbarBrand, bs.colSm3, bs.colMd2, bs.mr0)}>
+								Money Dashboard
+							</Link>
+							<ul className={cn(bs.navbarNav, bs.px3)}>
+								<li className={cn(bs.navItem, bs.textNowrap)}>
+									<Link to="#" className={bs.navLink} onClick={this.props.actions.logout}>
+										Logout
+									</Link>
+								</li>
+							</ul>
+						</nav>
 
-						<hr/>
+						<div className={bs.containerFluid}>
+							<div className={bs.row}>
+								<nav className={cn(bs.colMd2, bs.dNone, bs.dMdBlock, bs.bgLight, style.sidebar)}>
+									<div className={style.sidebarSticky}>
+										<ul className={cn(bs.nav, bs.flexColumn)}>
+											<li className={bs.navItem}>
+												<Link to="/" className={cn(bs.navLink, style.navLink, style.active)}>
+													{/* ICON */}
+													Dashboard
+												</Link>
+											</li>
+										</ul>
 
-						<Switch>
-							<Route exact path="/" component={Dashboard}/>
-							<Route path="/transactions" component={Transactions}/>
+										<h6 className={cn(style.sidebarHeading, bs.dFlex, bs.justifyContentBetween, bs.alignItemsCenter, bs.px3, bs.mt4, bs.mb1, bs.textMuted)}>
+											<span>Reports</span>
+										</h6>
+										<ul className={cn(bs.nav, bs.flexColumn)}>
+											<li className={bs.navItem}>
+												<Link to="/transactions" className={cn(bs.navLink, style.navLink)}>
+													{/* ICON */}
+													Transactions
+												</Link>
+											</li>
+										</ul>
+									</div>
+								</nav>
 
-							{/* TODO: when rendering the 404, disable all the other UI elements */}
-							<Route render={() => (<FullPageError error={new Http404Error()}/>)}/>
-						</Switch>
+								<main role="main" className={cn(bs.colMd9, bs.colLg10, bs.mlSmAuto, bs.pt3, bs.px4)}>
+									<div className={cn(bs.dFlex, bs.justifyContentBetween, bs.flexWrap, bs.flexMdNowrap, bs.alignItemsCenter, bs.pb2, bs.mb3)}>
+										<Switch>
+											<Route exact path="/" component={Dashboard}/>
+											<Route path="/transactions" component={Transactions}/>
+
+											{/* TODO: when rendering the 404, disable all the other UI elements */}
+											<Route render={() => (<FullPageError error={new Http404Error()}/>)}/>
+										</Switch>
+										{/*
+										This will be useful somewhere
+										<div className="btn-toolbar mb-2 mb-md-0">
+											<div className="btn-group mr-2">
+												<button className="btn btn-sm btn-outline-secondary">Share</button>
+												<button className="btn btn-sm btn-outline-secondary">Export</button>
+											</div>
+										</div>
+										*/}
+									</div>
+								</main>
+							</div>
+						</div>
 					</div>
 				</BrowserRouter>
 		);

@@ -1,11 +1,13 @@
 import * as React from "react";
 import { Component } from "react";
 
+import * as bs from "bootstrap/dist/css/bootstrap.css";
+
 class Transactions extends Component {
 	public render() {
 		return (
 				<div>
-					<h2>Transactions</h2>
+					<h1 className={bs.h2}>Transactions</h1>
 				</div>
 		);
 	}

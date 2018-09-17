@@ -5,6 +5,8 @@ import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
 import { IRootState } from "../../redux/root";
 
+import * as bs from "bootstrap/dist/css/bootstrap.css";
+
 function mapStateToProps(state: IRootState): IDashboardProps {
 	return {
 		activeUser: state.auth.activeUser,
@@ -20,7 +22,7 @@ class Dashboard extends Component<IDashboardProps> {
 	public render() {
 		return (
 				<div>
-					<h2>Dashboard</h2>
+					<h1 className={bs.h2}>Dashboard</h1>
 					<p>Hello, {this.props.activeUser.displayName}!</p>
 				</div>
 		);
