@@ -1,47 +1,45 @@
+import {
+	faAnalytics,
+	faChartLine,
+	faChartPie,
+	faHome,
+	faPiggyBank,
+	faSlidersH,
+	faTable,
+	faUsers,
+} from "@fortawesome/pro-light-svg-icons";
+import { faTags } from "@fortawesome/pro-light-svg-icons/faTags";
 import cn = require("classnames");
 import * as React from "react";
 import { Component } from "react";
-import { Link } from "react-router-dom";
 
 import * as bs from "bootstrap/dist/css/bootstrap.css";
+import { NavLink } from "../NavLink/NavLink";
+import { NavSection } from "../NavSection/NavSection";
 import * as style from "./Nav.scss";
 
 export class Nav extends Component {
-	private sectionHeaderClasses = cn(
-			bs.alignItemsCenter, bs.justifyContentBetween,
-			bs.dFlex, bs.px3, bs.mt4, bs.mb1,
-			bs.textMuted, style.sidebarHeading,
-	);
-	private linkGroupClasses = cn(bs.nav, bs.flexColumn);
-	private linkItemClasses = cn(bs.navItem);
-	private linkClasses = cn(bs.navLink, style.navLink);
-	private activeLinkClasses = cn(bs.navLink, style.navLink, style.active);
-
 	public render() {
 		return (
 				<nav className={cn(bs.colMd2, bs.dNone, bs.dMdBlock, bs.bgLight, style.sidebar)}>
 					<div className={style.sidebarSticky}>
-						<ul className={this.linkGroupClasses}>
-							<li className={this.linkItemClasses}>
-								<Link to="/" className={this.linkClasses}>
-									{/* ICON */}
-									Dashboardd
-								</Link>
-							</li>
-						</ul>
+						<NavSection>
+							<NavLink to="/" text="Dashboard" icon={faHome}/>
+							<NavLink to="/transactions" text="Transactions" icon={faTable}/>
+						</NavSection>
 
-						<h6 className={this.sectionHeaderClasses}>
-							<span>Reports</span>
-						</h6>
+						<NavSection title="Reports">
+							<NavLink to="/transactions" text="Balance Graph" icon={faChartLine}/>
+							<NavLink to="/transactions" text="Asset Growth" icon={faAnalytics}/>
+							<NavLink to="/transactions" text="Budget Performance" icon={faChartPie}/>
+						</NavSection>
 
-						<ul className={this.linkGroupClasses}>
-							<li className={this.linkItemClasses}>
-								<Link to="/transactions" className={this.linkClasses}>
-									{/* ICON */}
-									Transactions
-								</Link>
-							</li>
-						</ul>
+						<NavSection title="Settings">
+							<NavLink to="/transactions" text="Accounts" icon={faPiggyBank}/>
+							<NavLink to="/transactions" text="Budgets" icon={faSlidersH}/>
+							<NavLink to="/transactions" text="Categories" icon={faTags}/>
+							<NavLink to="/transactions" text="Profiles" icon={faUsers}/>
+						</NavSection>
 					</div>
 				</nav>
 		);

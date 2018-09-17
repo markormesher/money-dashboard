@@ -1,5 +1,5 @@
 function initQuickPeriodLinks() {
-	$("a.quick-period-link").on("click", function(e) {
+	$("a.quick-period-to").on("click", function(e) {
 		e.preventDefault();
 		const link = $(this);
 		$("#startDate").val(link.data("start") as string);
