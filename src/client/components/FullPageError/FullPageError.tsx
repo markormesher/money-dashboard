@@ -5,7 +5,7 @@ import * as React from "react";
 import { Component } from "react";
 import { DetailedError } from "../../helpers/errors/DetailedError";
 
-import * as bs from "bootstrap/dist/css/bootstrap.css";
+import * as bs from "../../bootstrap-aliases";
 import * as styles from "./FullPageError.scss";
 
 interface IFullPageErrorProps {

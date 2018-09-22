@@ -21,11 +21,15 @@ const app = Express();
 // TODO: check whether Redis and Postgres are up
 
 // db connection
-SequelizeDb.sync({ force: false }).then(() => {
-	logger.info("Database models synced successfully");
-}).catch((err) => {
-	logger.error("Failed to sync database models", err);
-});
+SequelizeDb
+		.sync({ force: false })
+		.then(() => {
+			logger.info("Database models synced successfully");
+		})
+		.catch((err) => {
+			console.log(err);
+			logger.error("Failed to sync database models", err);
+		});
 
 // cookies and sessions
 const RedisSessionStore = ConnectRedis(ExpressSession);

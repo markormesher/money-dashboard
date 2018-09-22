@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Component } from "react";
 
-import * as bs from "bootstrap/dist/css/bootstrap.css";
+import * as bs from "../../bootstrap-aliases";
 
 class Transactions extends Component {
 	public render() {

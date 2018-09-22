@@ -3,7 +3,7 @@ import { Sequelize } from "sequelize-typescript";
 import { getSecret, runningInDocker } from "./config-loader";
 import { logger } from "./logging";
 
-const sequelize = new Sequelize({
+const conf = {
 	host: runningInDocker() ? "postgres" : "localhost",
 	username: "money_dashboard",
 	password: getSecret("postgres.password"),
@@ -24,6 +24,6 @@ const sequelize = new Sequelize({
 		version: true,
 	},
 	logging: (query: string) => logger.verbose(query),
-});
+};
 
-export = sequelize;
+export = new Sequelize(conf);

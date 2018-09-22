@@ -15,6 +15,7 @@ import Login from "../Login/Login";
 import Nav from "../Nav/Nav";
 import Transactions from "../Transactions/Transactions";
 
+import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap";
 import "jquery/dist/jquery";
 

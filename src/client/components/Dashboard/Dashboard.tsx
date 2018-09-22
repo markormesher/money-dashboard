@@ -5,7 +5,7 @@ import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
 import { IRootState } from "../../redux/root";
 
-import * as bs from "bootstrap/dist/css/bootstrap.css";
+import * as bs from "../../bootstrap-aliases";
 
 interface IDashboardProps {
 	activeUser: ThinUser;

@@ -33,7 +33,13 @@ module.exports = {
 				loader: "html-loader"
 			},
 			{
+				test: /\.css$/,
+				include: /node_modules/,
+				use: ["style-loader", "css-loader"]
+			},
+			{
 				test: /\.(s?)css$/,
+				exclude: /node_modules/,
 				use: [
 					{
 						loader: "style-loader"
@@ -60,6 +66,9 @@ module.exports = {
 		]
 	},
 	plugins: [
+		new webpack.WatchIgnorePlugin([
+			/css\.d\.ts$/
+		]),
 		new webpack.ProvidePlugin({
 			$: "jquery",
 			jQuery: "jquery"
