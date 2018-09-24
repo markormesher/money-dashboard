@@ -6,24 +6,33 @@ import {
 	faPiggyBank, faSignOut,
 	faSlidersH,
 	faTable,
+	faTags,
 	faUsers,
 } from "@fortawesome/pro-light-svg-icons";
-import { faTags } from "@fortawesome/pro-light-svg-icons/faTags";
 import cn = require("classnames");
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
+import * as bs from "../../bootstrap-aliases";
 import { startLogOutCurrentUser } from "../../redux/auth/actions";
+import { IRootState } from "../../redux/root";
 import NavLink from "../NavLink/NavLink";
 import { NavSection } from "../NavSection/NavSection";
-
-import * as bs from "../../bootstrap-aliases";
 import * as style from "./Nav.scss";
 
 interface INavProps {
+	isOpen?: boolean;
+
 	actions?: {
 		logout: () => AnyAction,
+	};
+}
+
+function mapStateToProps(state: IRootState, props: INavProps): INavProps {
+	return {
+		...props,
+		isOpen: state.nav.isOpen,
 	};
 }
 
@@ -39,8 +48,11 @@ function mapDispatchToProps(dispatch: Dispatch, props: INavProps): INavProps {
 class Nav extends Component<INavProps> {
 
 	public render() {
+		const isOpen = this.props.isOpen;
+		const wrapperClasses = cn((isOpen || bs.dNone), bs.dLgBlock, bs.col12, bs.colLg2, bs.p0, bs.bgLight, style.sidebar);
+
 		return (
-				<nav className={cn(bs.colMd2, bs.dNone, bs.dMdBlock, bs.p0, bs.bgLight, style.sidebar)}>
+				<nav className={wrapperClasses}>
 					<div className={style.sidebarSticky}>
 						<NavSection>
 							<NavLink to="/" text="Dashboard" icon={faHome}/>
@@ -70,4 +82,4 @@ class Nav extends Component<INavProps> {
 	}
 }
 
-export default connect(undefined, mapDispatchToProps)(Nav);
+export default connect(mapStateToProps, mapDispatchToProps)(Nav);

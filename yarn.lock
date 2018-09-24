@@ -66,17 +66,6 @@
     "@types/connect" "*"
     "@types/node" "*"
 
-"@types/bootstrap@^4.1.2":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@types/bootstrap/-/bootstrap-4.1.2.tgz#3d6a3ea111e88ca926803a0e02b1f3d4c9913a5b"
-  dependencies:
-    "@types/jquery" "*"
-    popper.js "^1.14.1"
-
-"@types/chartist@^0.9.38":
-  version "0.9.42"
-  resolved "https://registry.yarnpkg.com/@types/chartist/-/chartist-0.9.42.tgz#28da8cfff10887fb79eec0f5995125ddf2981ee4"
-
 "@types/classnames@^2.2.6":
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.2.6.tgz#dbe8a666156d556ed018e15a4c65f08937c3f628"
@@ -106,19 +95,6 @@
   resolved "https://registry.yarnpkg.com/@types/continuation-local-storage/-/continuation-local-storage-3.2.1.tgz#a33e0df9dce9b424d1c98fc4fdebd8578dceec7e"
   dependencies:
     "@types/node" "*"
-
-"@types/datatables.net@^1.10.8":
-  version "1.10.13"
-  resolved "https://registry.yarnpkg.com/@types/datatables.net/-/datatables.net-1.10.13.tgz#43458dc4ac31af3393b70f3589ba240b7aa3269e"
-  dependencies:
-    "@types/jquery" "*"
-
-"@types/daterangepicker@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/daterangepicker/-/daterangepicker-3.0.0.tgz#57abeccfddf0a2dc1d1a75945fae1315209e6016"
-  dependencies:
-    "@types/jquery" "*"
-    moment ">=2.14.0"
 
 "@types/events@*":
   version "1.2.0"
@@ -161,22 +137,6 @@
 "@types/history@*":
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.7.0.tgz#2fac51050c68f7d6f96c5aafc631132522f4aa3f"
-
-"@types/jquery.validation@^1.16.4":
-  version "1.16.4"
-  resolved "https://registry.yarnpkg.com/@types/jquery.validation/-/jquery.validation-1.16.4.tgz#4306dbf0630bb252648d75734c8cbd097122e78c"
-  dependencies:
-    "@types/jquery" "*"
-
-"@types/jquery@*", "@types/jquery@^3.2.17":
-  version "3.3.6"
-  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.6.tgz#5932ead926307ca21e5b36808257f7c926b06565"
-
-"@types/jqueryui@^1.12.2":
-  version "1.12.4"
-  resolved "https://registry.yarnpkg.com/@types/jqueryui/-/jqueryui-1.12.4.tgz#a9344871b83cb3d83926615efc4007060bb646d7"
-  dependencies:
-    "@types/jquery" "*"
 
 "@types/lodash@*", "@types/lodash@^4.14.05":
   version "4.14.116"
@@ -283,6 +243,13 @@
     "@types/history" "*"
     "@types/react" "*"
 
+"@types/react-router@^4.0.31":
+  version "4.0.31"
+  resolved "https://registry.yarnpkg.com/@types/react-router/-/react-router-4.0.31.tgz#416bac49d746800810886c7b8582a622ed9604fc"
+  dependencies:
+    "@types/history" "*"
+    "@types/react" "*"
+
 "@types/react@*", "@types/react@^16.4.13":
   version "16.4.13"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.4.13.tgz#1385f5dc3486aa493849a32ccce626a817543e28"
@@ -336,12 +303,6 @@
 "@types/tapable@^0":
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-0.2.5.tgz#2443fc12da514c81346b1a665675559cee21fa75"
-
-"@types/toastr@^2.1.35":
-  version "2.1.35"
-  resolved "https://registry.yarnpkg.com/@types/toastr/-/toastr-2.1.35.tgz#9b29ee786744994c4f7eafee415b125f835dd854"
-  dependencies:
-    "@types/jquery" "*"
 
 "@types/uglify-js@*":
   version "3.0.3"
@@ -1843,10 +1804,6 @@ chardet@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
 
-chartist@^0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/chartist/-/chartist-0.11.0.tgz#84ba5e05490d096d93dcfa9343ebc31ef6a3bd28"
-
 chokidar@^2.0.0, chokidar@^2.0.2:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-2.0.4.tgz#356ff4e2b0e8e43e322d18a372460bbcf3accd26"
@@ -2127,6 +2084,14 @@ connect-redis@^3.3.3:
     debug "^3.1.0"
     redis "^2.1.0"
 
+connected-react-router@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/connected-react-router/-/connected-react-router-4.5.0.tgz#b6f021cc284a244fbee70e16e5ff0f2a4613e3d3"
+  dependencies:
+    immutable "^3.8.1"
+    redux-seamless-immutable "^0.4.0"
+    seamless-immutable "^7.1.3"
+
 console-browserify@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/console-browserify/-/console-browserify-1.1.0.tgz#f0241c45730a9fc6323b206dbf38edc741d0bb10"
@@ -2374,29 +2339,9 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-datatables.net-bs@^1.10.16:
-  version "1.10.19"
-  resolved "https://registry.yarnpkg.com/datatables.net-bs/-/datatables.net-bs-1.10.19.tgz#08763b4e4d0cef1a427d019dc15e717c7ed67a4d"
-  dependencies:
-    datatables.net "1.10.19"
-    jquery ">=1.7"
-
-datatables.net@1.10.19, datatables.net@^1.10.16:
-  version "1.10.19"
-  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-1.10.19.tgz#97a1ed41c85e62d61040603481b59790a172dd1f"
-  dependencies:
-    jquery ">=1.7"
-
 date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
-
-daterangepicker@^3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/daterangepicker/-/daterangepicker-3.0.3.tgz#fc6c772c1b7921a2bcaaa535a4f0e5c973f0c7f1"
-  dependencies:
-    jquery ">=1.10"
-    moment "^2.9.0"
 
 debug@2.6.8:
   version "2.6.8"
@@ -3363,10 +3308,6 @@ generic-pool@^3.1.8:
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/generic-pool/-/generic-pool-3.4.2.tgz#92ff7196520d670839a67308092a12aadf2f6a59"
 
-gentelella@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/gentelella/-/gentelella-1.4.0.tgz#b3d15fd9c40c6ea47dc7f36290c8f89aee95efc5"
-
 get-assigned-identifiers@^1.1.0, get-assigned-identifiers@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/get-assigned-identifiers/-/get-assigned-identifiers-1.2.0.tgz#6dbf411de648cbaf8d9169ebb0d2d576191e2ff1"
@@ -3765,6 +3706,10 @@ ignore-walk@^3.0.1:
   dependencies:
     minimatch "^3.0.4"
 
+immutable@^3.8.1:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
+
 import-local@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/import-local/-/import-local-1.0.0.tgz#5e4ffdc03f4fe6c009c6729beb29631c2f8227bc"
@@ -4130,20 +4075,6 @@ isobject@^3.0.0, isobject@^3.0.1:
 isstream@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
-
-jquery-ui-dist@^1.12.1:
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/jquery-ui-dist/-/jquery-ui-dist-1.12.1.tgz#5c0815d3cc6f90ff5faaf5b268a6e23b4ca904fa"
-
-jquery-validation@^1.17.0:
-  version "1.18.0"
-  resolved "https://registry.yarnpkg.com/jquery-validation/-/jquery-validation-1.18.0.tgz#69898f6cddc3e8ef5811de84ff8b23fc24d93776"
-  dependencies:
-    jquery "^1.7 || ^2.0 || ^3.1"
-
-jquery@>=1.10, jquery@>=1.12.0, jquery@>=1.7, "jquery@^1.7 || ^2.0 || ^3.1", jquery@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
 
 js-base64@^2.1.8:
   version "2.4.9"
@@ -4780,7 +4711,7 @@ moment-timezone@^0.5.4:
   dependencies:
     moment ">= 2.9.0"
 
-"moment@>= 2.9.0", moment@>=2.14.0, moment@^2.13.0, moment@^2.20.1, moment@^2.9.0:
+"moment@>= 2.9.0", moment@>=2.14.0, moment@^2.13.0, moment@^2.20.1:
   version "2.22.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
@@ -5503,10 +5434,6 @@ pkg-dir@^3.0.0:
   dependencies:
     find-up "^3.0.0"
 
-popper.js@^1.14.1, popper.js@^1.14.4:
-  version "1.14.4"
-  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.14.4.tgz#8eec1d8ff02a5a3a152dd43414a15c7b79fd69b6"
-
 portfinder@^1.0.9:
   version "1.0.17"
   resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.17.tgz#a8a1691143e46c4735edefcf4fbcccedad26456a"
@@ -6119,6 +6046,10 @@ react-router-dom@^4.3.1:
     react-router "^4.3.1"
     warning "^4.0.1"
 
+react-router-redux@^4.0.0:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/react-router-redux/-/react-router-redux-4.0.8.tgz#227403596b5151e182377dab835b5d45f0f8054e"
+
 react-router@^4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/react-router/-/react-router-4.3.1.tgz#aada4aef14c809cb2e686b05cee4742234506c4e"
@@ -6243,6 +6174,13 @@ redis@^2.1.0:
 redux-saga@*, redux-saga@^0.16.0:
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/redux-saga/-/redux-saga-0.16.0.tgz#0a231db0a1489301dd980f6f2f88d8ced418f724"
+
+redux-seamless-immutable@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/redux-seamless-immutable/-/redux-seamless-immutable-0.4.0.tgz#b50f8680ecc5ef04021551267f78fa1ffd3cf985"
+  dependencies:
+    react-router-redux "^4.0.0"
+    seamless-immutable "^7.1.2"
 
 redux@*, redux@^4.0.0:
   version "4.0.0"
@@ -6561,6 +6499,10 @@ scss-tokenizer@^0.2.3:
   dependencies:
     js-base64 "^2.1.8"
     source-map "^0.4.2"
+
+seamless-immutable@^7.1.2, seamless-immutable@^7.1.3:
+  version "7.1.4"
+  resolved "https://registry.yarnpkg.com/seamless-immutable/-/seamless-immutable-7.1.4.tgz#6e9536def083ddc4dea0207d722e0e80d0f372f8"
 
 select-hose@^2.0.0:
   version "2.0.0"
@@ -7255,12 +7197,6 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     extend-shallow "^3.0.2"
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
-
-toastr@^2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/toastr/-/toastr-2.1.4.tgz#8b43be64fb9d0c414871446f2db8e8ca4e95f181"
-  dependencies:
-    jquery ">=1.12.0"
 
 token-stream@0.0.1:
   version "0.0.1"

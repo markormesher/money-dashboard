@@ -1,3 +1,5 @@
+/* TODO: generate this automagically */
+
 export const h1 = "h1";
 export const h2 = "h2";
 export const h3 = "h3";

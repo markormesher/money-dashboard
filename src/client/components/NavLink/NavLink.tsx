@@ -3,10 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import cn = require("classnames");
 import * as React from "react";
 import { Component, EventHandler } from "react";
-import { StaticContext, withRouter } from "react-router";
-import { Link, RouteComponentProps } from "react-router-dom";
-
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { AnyAction, Dispatch } from "redux";
 import * as bs from "../../bootstrap-aliases";
+import { closeNav } from "../../redux/nav/actions";
+import { IRootState } from "../../redux/root";
 import * as style from "./NavLink.scss";
 
 interface INavLinkProps {
@@ -14,20 +16,61 @@ interface INavLinkProps {
 	text: string;
 	icon: IconProp;
 	onClick?: EventHandler<any>;
+
+	navIsOpen?: boolean;
+	routerCurrentPath?: string;
+
+	actions?: {
+		closeNav: () => AnyAction,
+	};
 }
 
-class NavLink extends Component<RouteComponentProps<void, StaticContext, void> & INavLinkProps> {
+function mapStateToProps(state: IRootState, props: INavLinkProps): INavLinkProps {
+	return {
+		...props,
+		navIsOpen: state.nav.isOpen,
+		routerCurrentPath: state.router.location.pathname,
+	};
+}
+
+function mapDispatchToProps(dispatch: Dispatch, props: INavLinkProps): INavLinkProps {
+	return {
+		...props,
+		actions: {
+			closeNav: () => dispatch(closeNav()),
+		},
+	};
+}
+
+class NavLink extends Component<INavLinkProps> {
 
 	private linkItemClasses = cn(bs.navItem);
 	private iconClasses = cn(bs.mr2, bs.textMuted);
 
+	constructor(props: INavLinkProps) {
+		super(props);
+
+		this.handleOnClick = this.handleOnClick.bind(this);
+	}
+
+	public handleOnClick() {
+		if (this.props.navIsOpen) {
+			this.props.actions.closeNav();
+		}
+
+		if (this.props.onClick) {
+			this.props.onClick.call(this);
+		}
+	}
+
 	public render() {
-		const active = this.props.to === this.props.location.pathname;
+		const active = this.props.to === this.props.routerCurrentPath;
 		const linkClasses = cn(bs.navLink, style.navLink, (active && style.active));
 
 		return (
 				<li className={this.linkItemClasses}>
-					<Link to={this.props.to} className={linkClasses} onClick={this.props.onClick}>
+					<Link to={this.props.to} title={this.props.text} className={linkClasses}
+						  onClick={this.handleOnClick}>
 						<FontAwesomeIcon icon={this.props.icon} fixedWidth={true} className={this.iconClasses}/>
 						{this.props.text}
 					</Link>
@@ -36,4 +79,4 @@ class NavLink extends Component<RouteComponentProps<void, StaticContext, void> &
 	}
 }
 
-export default withRouter(NavLink);
+export default connect(mapStateToProps, mapDispatchToProps)(NavLink);

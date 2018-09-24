@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import cn = require("classnames");
 import * as React from "react";
 import { Component } from "react";
-
 import * as bs from "../../bootstrap-aliases";
 import * as style from "./Login.scss";
 

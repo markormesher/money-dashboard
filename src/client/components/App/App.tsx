@@ -1,5 +1,6 @@
-import * as React from "react";
+import "bootstrap/dist/css/bootstrap.css";
 import { Component } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
@@ -14,10 +15,6 @@ import Header from "../Header/Header";
 import Login from "../Login/Login";
 import Nav from "../Nav/Nav";
 import Transactions from "../Transactions/Transactions";
-
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap/dist/js/bootstrap";
-import "jquery/dist/jquery";
 
 // TODO: any way to avoid making these all optional?
 interface IAppProps {
@@ -61,33 +58,29 @@ class App extends Component<IAppProps> {
 
 		if (!this.props.auth.activeUser) {
 			return (
-					<BrowserRouter>
-						<Switch>
-							<Route exact path="/auth/login" component={Login}/>
-							<Redirect to="/auth/login"/>
-						</Switch>
-					</BrowserRouter>
+					<Switch>
+						<Route exact path="/auth/login" component={Login}/>
+						<Redirect to="/auth/login"/>
+					</Switch>
 			);
 		}
 
 		return (
-				<BrowserRouter>
-					<div>
-						<Header/>
-						<AppRootWrapper>
-							<Nav/>
-							<AppContentWrapper>
-								<Switch>
-									<Route exact path="/" component={Dashboard}/>
-									<Route path="/transactions" component={Transactions}/>
+				<div>
+					<Header/>
+					<AppRootWrapper>
+						<Nav/>
+						<AppContentWrapper>
+							<Switch>
+								<Route exact path="/" component={Dashboard}/>
+								<Route path="/transactions" component={Transactions}/>
 
-									{/* TODO: when rendering the 404, disable all the other UI elements */}
-									<Route render={() => (<FullPageError error={new Http404Error()}/>)}/>
-								</Switch>
-							</AppContentWrapper>
-						</AppRootWrapper>
-					</div>
-				</BrowserRouter>
+								{/* TODO: when rendering the 404, disable all the other UI elements */}
+								<Route render={() => (<FullPageError error={new Http404Error()}/>)}/>
+							</Switch>
+						</AppContentWrapper>
+					</AppRootWrapper>
+				</div>
 		);
 	}
 }

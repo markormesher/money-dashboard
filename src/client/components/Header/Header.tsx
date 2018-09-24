@@ -1,4 +1,4 @@
-import { faPoundSign } from "@fortawesome/pro-light-svg-icons";
+import { faBars, faPoundSign } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import cn = require("classnames");
 import * as React from "react";
@@ -6,22 +6,66 @@ import { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { AnyAction, Dispatch } from "redux";
-import { startLogOutCurrentUser } from "../../redux/auth/actions";
-
 import * as bs from "../../bootstrap-aliases";
+import { closeNav, openNav } from "../../redux/nav/actions";
+import { IRootState } from "../../redux/root";
 import * as style from "./Header.scss";
 
-class Header extends Component {
+interface IHeaderProps {
+	navIsOpen?: boolean;
+
+	actions?: {
+		openNav: () => AnyAction,
+		closeNav: () => AnyAction,
+	};
+}
+
+function mapStateToProps(state: IRootState, props: IHeaderProps): IHeaderProps {
+	return {
+		...props,
+		navIsOpen: state.nav.isOpen,
+	};
+}
+
+function mapDispatchToProps(dispatch: Dispatch, props: IHeaderProps): IHeaderProps {
+	return {
+		...props,
+		actions: {
+			openNav: () => dispatch(openNav()),
+			closeNav: () => dispatch(closeNav()),
+		},
+	};
+}
+
+class Header extends Component<IHeaderProps> {
+	constructor(props: IHeaderProps) {
+		super(props);
+
+		this.toggleNav = this.toggleNav.bind(this);
+	}
+
+	public toggleNav() {
+		if (this.props.navIsOpen) {
+			this.props.actions.closeNav();
+		} else {
+			this.props.actions.openNav();
+		}
+	}
+
 	public render() {
 		return (
-				<nav className={cn(bs.navbar, bs.navbarDark, bs.stickyTop, bs.bgDark, bs.flexMdNowrap, bs.p0)}>
-					<Link to="/" className={cn(bs.navbarBrand, style.navbarBrand, bs.colSm3, bs.colMd2)}>
-						<FontAwesomeIcon icon={faPoundSign} fixedWidth={true} className={cn(bs.textMuted, bs.mr3)}/>
+				<nav className={cn(bs.navbar, style.navbar, bs.navbarDark, bs.stickyTop, bs.bgDark, bs.flexMdNowrap, bs.p0)}>
+					<Link to="/" className={cn(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}>
+						<FontAwesomeIcon icon={faPoundSign} fixedWidth={true} className={cn(bs.textMuted, bs.mr2)}/>
 						Money Dashboard
+					</Link>
+
+					<Link to="#" onClick={this.toggleNav} className={cn(bs.dInlineBlock, bs.dLgNone, bs.mx2)}>
+						<FontAwesomeIcon icon={faBars} fixedWidth={true} className={style.navToggleIcon}/>
 					</Link>
 				</nav>
 		);
 	}
 }
 
-export default Header;
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
