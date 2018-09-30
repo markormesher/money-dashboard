@@ -17,8 +17,13 @@ interface INavLinkProps {
 	icon: IconProp;
 	onClick?: EventHandler<any>;
 
-	navIsOpen?: boolean;
-	routerCurrentPath?: string;
+	nav?: {
+		isOpen: boolean;
+	};
+
+	router?: {
+		currentPath: string;
+	};
 
 	actions?: {
 		closeNav: () => AnyAction,
@@ -28,8 +33,12 @@ interface INavLinkProps {
 function mapStateToProps(state: IRootState, props: INavLinkProps): INavLinkProps {
 	return {
 		...props,
-		navIsOpen: state.nav.isOpen,
-		routerCurrentPath: state.router.location.pathname,
+		nav: {
+			isOpen: state.nav.isOpen,
+		},
+		router: {
+			currentPath: state.router.location.pathname,
+		},
 	};
 }
 
@@ -54,7 +63,7 @@ class NavLink extends Component<INavLinkProps> {
 	}
 
 	public handleOnClick() {
-		if (this.props.navIsOpen) {
+		if (this.props.nav.isOpen) {
 			this.props.actions.closeNav();
 		}
 
@@ -64,7 +73,7 @@ class NavLink extends Component<INavLinkProps> {
 	}
 
 	public render() {
-		const active = this.props.to === this.props.routerCurrentPath;
+		const active = this.props.to === this.props.router.currentPath;
 		const linkClasses = combine(bs.navLink, style.navLink, (active && style.active));
 
 		return (

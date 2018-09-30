@@ -9,8 +9,6 @@ class AppContentWrapper extends Component {
 			bs.pt3, bs.px4,
 	);
 	private innerWrapperClasses = combine(
-			bs.dFlex, bs.flexWrap, bs.flexMdNowrap,
-			bs.justifyContentBetween, bs.alignItemsCenter,
 			bs.pb2, bs.mb3,
 	);
 

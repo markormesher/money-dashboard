@@ -14,10 +14,10 @@ import Nav from "../_layout/Nav/Nav";
 import AssetGrowth from "../_reports/AssetGrowth/AssetGrowth";
 import BalanceGrowth from "../_reports/BalanceGrowth/BalanceGrowth";
 import BudgetPerformance from "../_reports/BudgetPerformace/BudgetPerformance";
-import Accounts from "../_settings/Accounts/Accounts";
-import Budgets from "../_settings/Budgets/Budgets";
-import Categories from "../_settings/Categories/Categories";
-import Profiles from "../_settings/Profiles/Profiles";
+import AccountSettings from "../_settings/AccountSettings/AccountSettings";
+import BudgetSettings from "../_settings/BudgetSettings/BudgetSettings";
+import CategorySettings from "../_settings/CategorySettings/CategorySettings";
+import ProfileSettings from "../_settings/ProfileSettings/ProfileSettings";
 import Dashboard from "../Dashboard/Dashboard";
 import ErrorPage from "../ErrorPage/ErrorPage";
 import Login from "../Login/Login";
@@ -80,10 +80,10 @@ class App extends Component<IAppProps> {
 								<Route path="/reports/asset-growth" component={AssetGrowth}/>
 								<Route path="/reports/budget-performance" component={BudgetPerformance}/>
 
-								<Route path="/settings/accounts" component={Accounts}/>
-								<Route path="/settings/budgets" component={Budgets}/>
-								<Route path="/settings/categories" component={Categories}/>
-								<Route path="/settings/profiles" component={Profiles}/>
+								<Route path="/settings/accounts" component={AccountSettings}/>
+								<Route path="/settings/budgets" component={BudgetSettings}/>
+								<Route path="/settings/categories" component={CategorySettings}/>
+								<Route path="/settings/profiles" component={ProfileSettings}/>
 
 								{/* Adding a new route? Keep it above this one! */}
 								<Route render={() => {

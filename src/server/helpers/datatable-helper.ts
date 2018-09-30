@@ -19,8 +19,9 @@ function getData<T>(
 		preOrder: string[][] = [],
 		postOrder: string[][] = [],
 ): Bluebird<DatatableResponse<T>> {
-	const columns: Array<{ name: string, data: string }> = req.query.columns;
-	const rawOrder: Array<{ column: number, dir: string }> = req.query.order;
+	// TODO: restore this later
+	const columns: Array<{ name: string, data: string }> = []; // req.query.columns;
+	const rawOrder: Array<{ column: number, dir: string }> = []; // req.query.order;
 	const finalOrdering: string[][] = [];
 	preOrder.forEach((o) => finalOrdering.push(o));
 	rawOrder
@@ -58,4 +59,5 @@ function getData<T>(
 
 export {
 	getData,
+		DatatableResponse,
 };

@@ -12,7 +12,9 @@ import { IRootState } from "../../../redux/root";
 import * as style from "./Header.scss";
 
 interface IHeaderProps {
-	navIsOpen?: boolean;
+	nav?: {
+		isOpen?: boolean;
+	};
 
 	actions?: {
 		openNav: () => AnyAction,
@@ -23,7 +25,9 @@ interface IHeaderProps {
 function mapStateToProps(state: IRootState, props: IHeaderProps): IHeaderProps {
 	return {
 		...props,
-		navIsOpen: state.nav.isOpen,
+		nav: {
+			isOpen: state.nav.isOpen,
+		},
 	};
 }
 
@@ -45,7 +49,7 @@ class Header extends Component<IHeaderProps> {
 	}
 
 	public toggleNav() {
-		if (this.props.navIsOpen) {
+		if (this.props.nav.isOpen) {
 			this.props.actions.closeNav();
 		} else {
 			this.props.actions.openNav();
@@ -59,8 +63,10 @@ class Header extends Component<IHeaderProps> {
 						<FontAwesomeIcon icon={faBars} fixedWidth={true} className={style.navToggleIcon}/>
 					</Link>
 
-					<Link to="/" className={combine(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}>
-						<FontAwesomeIcon icon={faPoundSign} fixedWidth={true} className={combine(bs.textMuted, bs.mr2)}/>
+					<Link to="/"
+						  className={combine(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}>
+						<FontAwesomeIcon icon={faPoundSign} fixedWidth={true}
+										 className={combine(bs.textMuted, bs.mr2)}/>
 						Money Dashboard
 					</Link>
 				</nav>

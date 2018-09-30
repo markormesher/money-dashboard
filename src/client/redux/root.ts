@@ -4,11 +4,16 @@ import { authReducer, IAuthState } from "./auth/reducer";
 import { authSagas } from "./auth/sagas";
 import { globalReducer, IGlobalState } from "./global/reducer";
 import { INavState, navReducer } from "./nav/reducer";
+import { accountSettingsReducer, IAccountSettingsState } from "./settings/accounts/reducer";
+import { accountSettingsSagas } from "./settings/accounts/sagas";
 
 interface IRootState {
 	auth?: IAuthState;
 	global?: IGlobalState;
 	nav?: INavState;
+	settings?: {
+		accounts?: IAccountSettingsState;
+	};
 
 	// from connected-react-router
 	router?: {
@@ -19,6 +24,7 @@ interface IRootState {
 }
 
 const rootReducer = combineReducers({
+	accountSettings: accountSettingsReducer,
 	auth: authReducer,
 	global: globalReducer,
 	nav: navReducer,
@@ -26,6 +32,7 @@ const rootReducer = combineReducers({
 
 function* rootSaga() {
 	yield all([
+		accountSettingsSagas(),
 		authSagas(),
 	]);
 }

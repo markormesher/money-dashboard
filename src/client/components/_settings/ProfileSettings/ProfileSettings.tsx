@@ -2,7 +2,7 @@ import * as React from "react";
 import { Component } from "react";
 import * as bs from "../../../bootstrap-aliases";
 
-class Profiles extends Component {
+class ProfileSettings extends Component {
 	public render() {
 		return (
 				<div>
@@ -12,4 +12,4 @@ class Profiles extends Component {
 	}
 }
 
-export default Profiles;
+export default ProfileSettings;
