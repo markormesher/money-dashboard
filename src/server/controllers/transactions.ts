@@ -4,11 +4,11 @@ import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 
-import { requireUser } from "../middleware/auth-middleware";
 import { getData } from "../helpers/datatable-helper";
 import { getAllAccounts } from "../managers/account-manager";
 import { getAllCategories } from "../managers/category-manager";
 import { deleteTransaction, getAllPayees, saveTransaction } from "../managers/transaction-manager";
+import { requireUser } from "../middleware/auth-middleware";
 import { Account } from "../models/Account";
 import { Category } from "../models/Category";
 import { Transaction } from "../models/Transaction";

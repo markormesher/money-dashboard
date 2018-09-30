@@ -9,12 +9,12 @@ import {
 	faTags,
 	faUsers,
 } from "@fortawesome/pro-light-svg-icons";
-import cn = require("classnames");
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import * as bs from "../../bootstrap-aliases";
+import { combine } from "../../helpers/style-helpers";
 import { startLogOutCurrentUser } from "../../redux/auth/actions";
 import { IRootState } from "../../redux/root";
 import NavLink from "../NavLink/NavLink";
@@ -49,7 +49,11 @@ class Nav extends Component<INavProps> {
 
 	public render() {
 		const isOpen = this.props.isOpen;
-		const wrapperClasses = cn((isOpen || bs.dNone), bs.dLgBlock, bs.col12, bs.colLg2, bs.p0, bs.bgLight, style.sidebar);
+		const wrapperClasses = combine(
+				(isOpen || bs.dNone), bs.dLgBlock,
+				bs.col12, bs.colLg2,
+				bs.p0, bs.bgLight, style.sidebar,
+		);
 
 		return (
 				<nav className={wrapperClasses}>

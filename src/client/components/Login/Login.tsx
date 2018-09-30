@@ -1,9 +1,9 @@
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import cn = require("classnames");
 import * as React from "react";
 import { Component } from "react";
 import * as bs from "../../bootstrap-aliases";
+import { combine } from "../../helpers/style-helpers";
 import * as style from "./Login.scss";
 
 class Login extends Component {
@@ -14,7 +14,7 @@ class Login extends Component {
 						<h1>Login</h1>
 					</div>
 					<form action="/auth/google/login" method="get">
-						<button role="submit" className={cn(bs.btn, bs.btnOutlinePrimary, bs.mt4)}>
+						<button role="submit" className={combine(bs.btn, bs.btnOutlinePrimary, bs.mt4)}>
 							<FontAwesomeIcon icon={faGoogle} className={bs.mr2}/>
 							Login with Google
 						</button>

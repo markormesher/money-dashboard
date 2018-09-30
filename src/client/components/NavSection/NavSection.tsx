@@ -1,7 +1,7 @@
-import cn = require("classnames");
 import * as React from "react";
 import { Component } from "react";
 import * as bs from "../../bootstrap-aliases";
+import { combine } from "../../helpers/style-helpers";
 import * as style from "./NavSection.scss";
 
 interface INavSectionProps {
@@ -9,12 +9,12 @@ interface INavSectionProps {
 }
 
 export class NavSection extends Component<INavSectionProps> {
-	private sectionHeaderClasses = cn(
+	private sectionHeaderClasses = combine(
 			bs.alignItemsCenter, bs.justifyContentBetween,
 			bs.dFlex, bs.px3, bs.mt4, bs.mb1,
 			bs.textMuted, style.navSectionHeading,
 	);
-	private linkGroupClasses = cn(bs.nav, bs.flexColumn);
+	private linkGroupClasses = combine(bs.nav, bs.flexColumn);
 
 	public render() {
 

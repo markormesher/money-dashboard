@@ -1,14 +1,14 @@
-import cn = require("classnames");
 import * as React from "react";
 import { Component } from "react";
 import * as bs from "../../bootstrap-aliases";
+import { combine } from "../../helpers/style-helpers";
 
-export class AppContentWrapper extends Component {
-	private mainWrapperClasses = cn(
+class AppContentWrapper extends Component {
+	private mainWrapperClasses = combine(
 			bs.colLg10, bs.mlSmAuto,
 			bs.pt3, bs.px4,
 	);
-	private innerWrapperClasses = cn(
+	private innerWrapperClasses = combine(
 			bs.dFlex, bs.flexWrap, bs.flexMdNowrap,
 			bs.justifyContentBetween, bs.alignItemsCenter,
 			bs.pb2, bs.mb3,
@@ -24,3 +24,5 @@ export class AppContentWrapper extends Component {
 		);
 	}
 }
+
+export default AppContentWrapper;

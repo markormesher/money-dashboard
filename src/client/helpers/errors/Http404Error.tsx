@@ -1,7 +1,7 @@
 import * as React from "react";
 import { DetailedError } from "./DetailedError";
 
-export class Http404Error extends DetailedError {
+class Http404Error extends DetailedError {
 	constructor(path: string) {
 		super("Not Found");
 		this.httpStatus = 404;
@@ -10,3 +10,5 @@ export class Http404Error extends DetailedError {
 		);
 	}
 }
+
+export default Http404Error;

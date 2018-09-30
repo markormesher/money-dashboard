@@ -1,11 +1,10 @@
 import { faExclamationTriangle } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import cn = require("classnames");
-import classNames = require("classnames");
 import * as React from "react";
 import { Component } from "react";
 import * as bs from "../../bootstrap-aliases";
 import { DetailedError } from "../../helpers/errors/DetailedError";
+import { combine } from "../../helpers/style-helpers";
 
 interface IErrorPageProps {
 	error: DetailedError;
@@ -19,12 +18,12 @@ class ErrorPage extends Component<IErrorPageProps> {
 		const errorDetail = this.props.error.detail;
 		const errorDisplay = this.props.error.display;
 
-		const wrapperClass = this.props.fullPage ? classNames(bs.container, bs.pt5) : undefined;
+		const wrapperClass = this.props.fullPage ? combine(bs.container, bs.pt5) : undefined;
 
 		return (
 				<div className={wrapperClass}>
 					<h1 className={bs.h2}>
-						<FontAwesomeIcon icon={faExclamationTriangle} className={cn(bs.mr2, bs.textMuted)}/>
+						<FontAwesomeIcon icon={faExclamationTriangle} className={combine(bs.mr2, bs.textMuted)}/>
 						{errorMessage}
 					</h1>
 

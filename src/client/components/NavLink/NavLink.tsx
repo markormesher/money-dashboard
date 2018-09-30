@@ -1,12 +1,12 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import cn = require("classnames");
 import * as React from "react";
 import { Component, EventHandler } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { AnyAction, Dispatch } from "redux";
 import * as bs from "../../bootstrap-aliases";
+import { combine } from "../../helpers/style-helpers";
 import { closeNav } from "../../redux/nav/actions";
 import { IRootState } from "../../redux/root";
 import * as style from "./NavLink.scss";
@@ -44,8 +44,8 @@ function mapDispatchToProps(dispatch: Dispatch, props: INavLinkProps): INavLinkP
 
 class NavLink extends Component<INavLinkProps> {
 
-	private linkItemClasses = cn(bs.navItem);
-	private iconClasses = cn(bs.mr2, bs.textMuted);
+	private linkItemClasses = bs.navItem;
+	private iconClasses = combine(bs.mr2, bs.textMuted);
 
 	constructor(props: INavLinkProps) {
 		super(props);
@@ -65,7 +65,7 @@ class NavLink extends Component<INavLinkProps> {
 
 	public render() {
 		const active = this.props.to === this.props.routerCurrentPath;
-		const linkClasses = cn(bs.navLink, style.navLink, (active && style.active));
+		const linkClasses = combine(bs.navLink, style.navLink, (active && style.active));
 
 		return (
 				<li className={this.linkItemClasses}>
