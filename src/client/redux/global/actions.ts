@@ -1,4 +1,5 @@
 import { ActionCreator } from "redux";
+import { DetailedError } from "../../helpers/errors/DetailedError";
 import { PayloadAction } from "../PayloadAction";
 
 class GlobalActions {
@@ -21,7 +22,7 @@ const removeWait: ActionCreator<PayloadAction> = (wait: string) => {
 	};
 };
 
-const setError: ActionCreator<PayloadAction> = (error: Error) => {
+const setError: ActionCreator<PayloadAction> = (error: DetailedError) => {
 	return {
 		type: GlobalActions.SET_ERROR,
 		payload: { error },

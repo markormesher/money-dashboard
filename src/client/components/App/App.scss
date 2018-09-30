@@ -3,3 +3,8 @@
 body {
 	font-family: 'Open Sans', sans-serif;
 }
+
+h1, h2, h3 {
+	/* Bootstrap override */
+	margin-bottom: 1rem !important; // was 0.5rem
+}

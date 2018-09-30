@@ -1,9 +1,10 @@
+import { DetailedError } from "../../helpers/errors/DetailedError";
 import { PayloadAction } from "../PayloadAction";
 import { GlobalActions } from "./actions";
 
 interface IGlobalState {
 	waitingFor: string[];
-	error?: Error;
+	error?: DetailedError;
 }
 
 const initialState: IGlobalState = {
@@ -33,7 +34,7 @@ function globalReducer(state = initialState, action: PayloadAction): IGlobalStat
 
 		case GlobalActions.SET_ERROR:
 			return (() => {
-				const error = action.payload.error as Error;
+				const error = action.payload.error as DetailedError;
 				return {
 					...state,
 					error,

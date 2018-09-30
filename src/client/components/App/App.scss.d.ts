@@ -1,1 +1,1 @@
-export const navbarBrand: string;
+export {};
