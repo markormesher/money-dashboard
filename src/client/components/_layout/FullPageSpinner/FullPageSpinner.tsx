@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
-import { IRootState } from "../../redux/root";
+import { IRootState } from "../../../redux/root";
 import * as styles from "./FullPageSpinner.scss";
 
 interface IFullPageSpinnerProps {

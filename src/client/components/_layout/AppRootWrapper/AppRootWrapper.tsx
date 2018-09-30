@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Component } from "react";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../../bootstrap-aliases";
 
 class AppRootWrapper extends Component {
 	public render() {
