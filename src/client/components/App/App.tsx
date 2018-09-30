@@ -6,6 +6,13 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
 import Http404Error from "../../helpers/errors/Http404Error";
 import { IRootState } from "../../redux/root";
+import AssetGrowth from "../_reports/AssetGrowth/AssetGrowth";
+import BalanceGrowth from "../_reports/BalanceGrowth/BalanceGrowth";
+import BudgetPerformance from "../_reports/BudgetPerformace/BudgetPerformance";
+import Accounts from "../_settings/Accounts/Accounts";
+import Budgets from "../_settings/Budgets/Budgets";
+import Categories from "../_settings/Categories/Categories";
+import Profiles from "../_settings/Profiles/Profiles";
 import AppContentWrapper from "../AppContentWrapper/AppContentWrapper";
 import AppRootWrapper from "../AppRootWrapper/AppRootWrapper";
 import Dashboard from "../Dashboard/Dashboard";
@@ -68,6 +75,15 @@ class App extends Component<IAppProps> {
 							<Switch>
 								<Route exact path="/" component={Dashboard}/>
 								<Route path="/transactions" component={Transactions}/>
+
+								<Route path="/reports/balance-growth" component={BalanceGrowth}/>
+								<Route path="/reports/asset-growth" component={AssetGrowth}/>
+								<Route path="/reports/budget-performance" component={BudgetPerformance}/>
+
+								<Route path="/settings/accounts" component={Accounts}/>
+								<Route path="/settings/budgets" component={Budgets}/>
+								<Route path="/settings/categories" component={Categories}/>
+								<Route path="/settings/profiles" component={Profiles}/>
 
 								{/* Adding a new route? Keep it above this one! */}
 								<Route render={() => {
