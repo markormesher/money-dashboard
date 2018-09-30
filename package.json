@@ -1,5 +1,6 @@
 {
   "name": "money-dashboard",
+  "sideEffects": false,
   "version": "3.0.0",
   "license": "Apache-2.0",
   "scripts": {
