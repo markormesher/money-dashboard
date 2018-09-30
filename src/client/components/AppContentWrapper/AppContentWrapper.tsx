@@ -5,8 +5,7 @@ import * as bs from "../../bootstrap-aliases";
 
 export class AppContentWrapper extends Component {
 	private mainWrapperClasses = cn(
-			bs.colMd9, bs.colLg10,
-			bs.mlSmAuto,
+			bs.colLg10, bs.mlSmAuto,
 			bs.pt3, bs.px4,
 	);
 	private innerWrapperClasses = cn(

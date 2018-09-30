@@ -55,13 +55,13 @@ class Header extends Component<IHeaderProps> {
 	public render() {
 		return (
 				<nav className={cn(bs.navbar, style.navbar, bs.navbarDark, bs.stickyTop, bs.bgDark, bs.flexMdNowrap, bs.p0)}>
+					<Link to="#" onClick={this.toggleNav} className={cn(bs.dInlineBlock, bs.dLgNone, bs.mx2)}>
+						<FontAwesomeIcon icon={faBars} fixedWidth={true} className={style.navToggleIcon}/>
+					</Link>
+
 					<Link to="/" className={cn(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}>
 						<FontAwesomeIcon icon={faPoundSign} fixedWidth={true} className={cn(bs.textMuted, bs.mr2)}/>
 						Money Dashboard
-					</Link>
-
-					<Link to="#" onClick={this.toggleNav} className={cn(bs.dInlineBlock, bs.dLgNone, bs.mx2)}>
-						<FontAwesomeIcon icon={faBars} fixedWidth={true} className={style.navToggleIcon}/>
 					</Link>
 				</nav>
 		);
