@@ -33,8 +33,8 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 					<DataTable<ThinAccount>
 							api={"/settings/accounts/table-data"}
 							columns={[
-								{ title: "Name", field: "name" },
-								{ title: "Type" },
+								{ title: "Name", sortField: "name" },
+								{ title: "Type", sortField: "type" },
 								{ title: "Accounts", sortable: false },
 							]}
 							rowRenderer={(r: ThinAccount, idx: number) => (

@@ -1,19 +1,30 @@
-import { faArrowLeft, faArrowRight, faCircleNotch } from "@fortawesome/pro-light-svg-icons";
+import {
+	faArrowLeft,
+	faArrowRight,
+	faCircleNotch,
+	faExchange,
+	faSortAmountDown,
+	faSortAmountUp,
+} from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosResponse } from "axios";
-import { ReactNode } from "react";
+import { stringify } from "qs";
 import * as React from "react";
+import { ReactNode } from "react";
 import { DatatableResponse } from "../../../server/helpers/datatable-helper";
 import * as bs from "../../bootstrap-aliases";
 import { combine } from "../../helpers/style-helpers";
 import * as styles from "./DataTable.scss";
 
-// TODO: ordering
+// TODO: multi-sort
+// TODO: default sort
+
+type SortOrder = "asc" | "desc" | "none";
 
 interface IColumn {
 	title: string;
-	field?: string;
 	sortable?: boolean;
+	sortField?: string;
 }
 
 interface IDataTableProps<Model> {
@@ -29,6 +40,8 @@ interface IDataTableState<Model> {
 	failed: boolean;
 	currentPage?: number;
 	searchTerm?: string;
+	sortedColumn?: IColumn;
+	sortedColumnDirection: SortOrder;
 	data?: {
 		rows?: Model[],
 		filteredRowCount?: number,
@@ -42,6 +55,19 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		apiExtraParams: {},
 		pageSize: 15,
 	};
+
+	private static getNextSortDirection(dir: SortOrder): SortOrder {
+		switch (dir) {
+			case "asc":
+				return "desc";
+
+			case "desc":
+				return "none";
+
+			default:
+				return "asc";
+		}
+	}
 
 	// give each remote request an increasing "frame" number so that late arrivals will be dropped
 	private frameCounter = 0;
@@ -57,6 +83,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 			failed: false,
 			currentPage: 0,
 			searchTerm: "",
+			sortedColumnDirection: "none",
 			data: {
 				rows: [] as Model[],
 				filteredRowCount: 0,
@@ -64,10 +91,13 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 			},
 		};
 
+		// TODO: check that column names are unique
+
 		this.gotoNextPage = this.gotoNextPage.bind(this);
 		this.gotoPrevPage = this.gotoPrevPage.bind(this);
 		this.changePage = this.changePage.bind(this);
 		this.setSearchTerm = this.setSearchTerm.bind(this);
+		this.toggleColumnSortOrder = this.toggleColumnSortOrder.bind(this);
 		this.fetchData = this.fetchData.bind(this);
 		this.onDataLoaded = this.onDataLoaded.bind(this);
 		this.onDataLoadFailed = this.onDataLoadFailed.bind(this);
@@ -85,6 +115,14 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		if (this.state.searchTerm !== nextState.searchTerm) {
 			this.fetchPending = true;
 		}
+
+		if (this.state.sortedColumn !== nextState.sortedColumn) {
+			this.fetchPending = true;
+		}
+
+		if (this.state.sortedColumnDirection !== nextState.sortedColumnDirection) {
+			this.fetchPending = true;
+		}
 	}
 
 	public componentDidUpdate() {
@@ -98,7 +136,29 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		const { columns, rowRenderer } = this.props;
 		const { loading, failed, data } = this.state;
 
-		const columnHeaders = columns.map((col) => (<th key={col.title}>{col.title}</th>));
+		const columnHeaders = columns.map((col) => {
+			// TODO: extract
+			const { sortedColumn, sortedColumnDirection } = this.state;
+			const sortable = col.sortable !== false;
+			const sorted = sortedColumn === col && sortedColumnDirection !== "none";
+			const sortIcon = sorted ? (sortedColumnDirection === "asc" ? faSortAmountUp : faSortAmountDown) : faExchange;
+			const sortIconFlip = sortedColumnDirection === "asc" ? "vertical" : undefined;
+			const sortIconRotate = sorted ? undefined : 90;
+			const sortIconClasses = combine(bs.mr1, !sorted && styles.sortInactive);
+
+			return (
+					<th key={col.title} className={sortable && styles.sortable}
+						onClick={() => this.toggleColumnSortOrder(col)}>
+						{sortable && <FontAwesomeIcon
+								icon={sortIcon}
+								fixedWidth={true}
+								flip={sortIconFlip}
+								rotation={sortIconRotate}
+								className={sortIconClasses}/>}
+						{col.title}
+					</th>
+			);
+		});
 		const rows = data.rows.map(rowRenderer);
 
 		return (
@@ -140,6 +200,15 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		clearTimeout(this.searchTermUpdateTimeout);
 		const searchTerm = (event.target as HTMLInputElement).value;
 		this.searchTermUpdateTimeout = global.setTimeout(() => this.setState({ searchTerm }), 200);
+	}
+
+	private toggleColumnSortOrder(column: IColumn) {
+		const { sortedColumn, sortedColumnDirection } = this.state;
+		const nextDirection = DataTable.getNextSortDirection(sortedColumn === column ? sortedColumnDirection : undefined);
+		this.setState({
+			sortedColumn: column,
+			sortedColumnDirection: nextDirection,
+		});
 	}
 
 	private generateTableHeader() {
@@ -205,10 +274,15 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 
 	private fetchData() {
 		const { pageSize, apiExtraParams } = this.props;
-		const { currentPage } = this.state;
+		const { currentPage, searchTerm, sortedColumn, sortedColumnDirection } = this.state;
 
 		this.setState({ loading: true });
 		const frame = ++this.frameCounter;
+
+		const order: string[][] = [];
+		if (sortedColumn && sortedColumnDirection !== "none") {
+			order.push([sortedColumn.sortField, sortedColumnDirection]);
+		}
 
 		axios
 				.get(this.props.api, {
@@ -216,8 +290,10 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 						...apiExtraParams,
 						start: currentPage * pageSize,
 						length: pageSize,
-						searchTerm: this.state.searchTerm,
+						searchTerm,
+						order,
 					},
+					paramsSerializer: (params) => stringify(params, { arrayFormat: "indices" }),
 				})
 				.then((res: AxiosResponse<DatatableResponse<Model>>) => this.onDataLoaded(frame, res.data))
 				.catch(() => this.onDataLoadFailed(frame));

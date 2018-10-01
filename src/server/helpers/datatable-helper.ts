@@ -19,22 +19,10 @@ function getData<T>(
 		preOrder: string[][] = [],
 		postOrder: string[][] = [],
 ): Bluebird<DatatableResponse<T>> {
-	// TODO: restore this later
-	const columns: Array<{ name: string, data: string }> = []; // req.query.columns;
-	const rawOrder: Array<{ column: number, dir: string }> = []; // req.query.order;
+	const rawOrder: string[][] = req.query.order || [];
 	const finalOrdering: string[][] = [];
 	preOrder.forEach((o) => finalOrdering.push(o));
-	rawOrder
-			.map((rawOrderItem) => {
-				const column = columns[rawOrderItem.column];
-				const columnName = column.name || column.data;
-				const dir = rawOrderItem.dir;
-
-				const ordering = columnName.split(".");
-				ordering.push(dir.toUpperCase());
-				return ordering;
-			})
-			.forEach((o) => finalOrdering.push(o));
+	rawOrder.forEach((o) => finalOrdering.push(o));
 	postOrder.forEach((o) => finalOrdering.push(o));
 
 	const limitedDataFilter: IFindOptions<T> = cloneDeep(dataFilter);
@@ -59,5 +47,5 @@ function getData<T>(
 
 export {
 	getData,
-		DatatableResponse,
+	DatatableResponse,
 };

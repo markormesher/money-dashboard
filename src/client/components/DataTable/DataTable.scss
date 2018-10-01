@@ -37,3 +37,11 @@
 	width: 99%;
 	font-size: 60%;
 }
+
+.sortInactive {
+	opacity: 0.3;
+}
+
+th.sortable {
+	cursor: pointer;
+}
