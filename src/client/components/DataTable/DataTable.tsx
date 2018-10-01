@@ -8,6 +8,8 @@ import * as bs from "../../bootstrap-aliases";
 import { combine } from "../../helpers/style-helpers";
 import * as styles from "./DataTable.scss";
 
+// TODO: ordering
+
 interface IColumn {
 	title: string;
 	field?: string;
@@ -37,7 +39,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 
 	public static defaultProps: Partial<IDataTableProps<any>> = {
 		apiExtraParams: {},
-		pageSize: 20,
+		pageSize: 15,
 	};
 
 	private fetchPending = false;
@@ -95,16 +97,14 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 				<div className={combine(styles.tableWrapper, loading && styles.loading)}>
 					{this.generateTableHeader()}
 
-					<div className={styles.tableBody}>
+					<div className={styles.tableBodyWrapper}>
 						<div className={styles.loadingIconWrapper}>
 							{loading && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
 						</div>
 
 						<table className={combine(bs.table, styles.table, bs.tableStriped, bs.tableSm)}>
 							<thead>
-							<tr>
-								{columnHeaders}
-							</tr>
+							<tr>{columnHeaders}</tr>
 							</thead>
 							<tbody>
 							{(!data || data.rows.length === 0) && this.generateNoDataMsg()}
@@ -118,13 +118,8 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		);
 	}
 
-	private gotoPrevPage() {
-		this.changePage(-1);
-	}
-
-	private gotoNextPage() {
-		this.changePage(1);
-	}
+	private readonly gotoPrevPage = () => this.changePage(-1);
+	private readonly gotoNextPage = () => this.changePage(1);
 
 	private changePage(direction: number) {
 		this.setState({
@@ -141,9 +136,10 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 	private generateTableHeader() {
 		const { pageSize } = this.props;
 		const { loading, currentPage, data } = this.state;
+		const { filteredRowCount } = data;
 
-		const displayCurrentPage = data.filteredRowCount === 0 ? 0 : currentPage + 1;
-		const totalPages = data.filteredRowCount === 0 ? 0 : Math.ceil(data.filteredRowCount / pageSize);
+		const displayCurrentPage = filteredRowCount === 0 ? 0 : currentPage + 1;
+		const totalPages = filteredRowCount === 0 ? 0 : Math.ceil(filteredRowCount / pageSize);
 
 		const prevBtnDisabled = loading || currentPage === 0;
 		const nextBtnDisabled = loading || currentPage >= totalPages - 1;
