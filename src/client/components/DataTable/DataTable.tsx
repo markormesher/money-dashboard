@@ -147,7 +147,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 			const sortIconClasses = combine(bs.mr1, !sorted && styles.sortInactive);
 
 			return (
-					<th key={col.title} className={sortable && styles.sortable}
+					<th key={col.title} className={sortable ? styles.sortable : undefined}
 						onClick={() => this.toggleColumnSortOrder(col)}>
 						{sortable && <FontAwesomeIcon
 								icon={sortIcon}
