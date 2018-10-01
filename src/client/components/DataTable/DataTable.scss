@@ -1,18 +1,39 @@
 .tableWrapper {
+	&.loading {
+		td {
+			color: transparent;
+		}
 
-}
-
-.tableWrapper.loading {
-	opacity: 0.4;
+		.tableHeader, .tableFooter, .table {
+			opacity: 0.4;
+		}
+	}
 }
 
 .table {
 	/* Bootstrap override */
-	width: 99% !important;
+	margin-bottom: 0.4rem !important;
+}
+
+.tableBody {
+	position: relative;
+	width: 99%;
+
+	.loadingIconWrapper {
+		width: 100%;
+		position: absolute;
+		top: 4em;
+		text-align: center;
+	}
 }
 
 .tableHeader {
-	width: 99% !important;
-	margin-bottom: 5px;
+	width: 99%;
+	margin-bottom: 0.4rem;
 	overflow: auto; // allows the div to have height even though it only contains floated elements
+}
+
+.tableFooter {
+	width: 99%;
+	font-size: 60%;
 }

@@ -1,4 +1,4 @@
-import { faArrowLeft, faArrowRight } from "@fortawesome/pro-light-svg-icons";
+import { faArrowLeft, faArrowRight, faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosResponse } from "axios";
 import { ReactNode } from "react";
@@ -80,71 +80,35 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 	}
 
 	public render() {
-		const { pageSize, columns, rowRenderer } = this.props;
-		const { loading, currentPage, data } = this.state;
+		const { columns, rowRenderer } = this.props;
+		const { loading, data } = this.state;
 
-		const columnHeaders = columns.map((col) => (
-				<th key={col.title}>{col.title}</th>
-		));
+		const columnHeaders = columns.map((col) => (<th key={col.title}>{col.title}</th>));
 		const rows = data.rows.map(rowRenderer);
 
-		const displayCurrentPage = data.filteredRowCount === 0 ? 0 : currentPage + 1;
-		const totalPages = data.filteredRowCount === 0 ? 0 : Math.ceil(data.filteredRowCount / pageSize);
-		const prevPageBtnDisabled = loading || currentPage === 0;
-		const nextPageBtnDisabled = loading || currentPage >= totalPages - 1;
-
-		const pageBtnStyles = combine(bs.btn, bs.btnOutlineDark);
-
 		return (
-				// TODO: break out components
 				<div className={combine(styles.tableWrapper, loading && styles.loading)}>
-					<div className={styles.tableHeader}>
-						<div className={combine(bs.floatLeft, bs.btnGroup, bs.btnGroupSm)}>
-							<button className={pageBtnStyles} disabled={prevPageBtnDisabled}
-									onClick={this.gotoPrevPage}>
-								<FontAwesomeIcon icon={faArrowLeft}/>
-							</button>
-							<button className={pageBtnStyles} disabled={true}>
-								Page {displayCurrentPage} of {totalPages}
-							</button>
-							<button className={pageBtnStyles} disabled={nextPageBtnDisabled}
-									onClick={this.gotoNextPage}>
-								<FontAwesomeIcon icon={faArrowRight}/>
-							</button>
+					{this.generateTableHeader()}
+
+					<div className={styles.tableBody}>
+						<div className={styles.loadingIconWrapper}>
+							{loading && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
 						</div>
 
-						<div className={bs.floatRight}>
-							<input type={"text"} placeholder={"Search"} className={bs.formControl}
-								   onKeyUp={this.setSearchTerm}/>
-						</div>
+						<table className={combine(bs.table, styles.table, bs.tableStriped, bs.tableSm)}>
+							<thead>
+							<tr>
+								{columnHeaders}
+							</tr>
+							</thead>
+							<tbody>
+							{(!data || data.rows.length === 0) && this.generateNoDataMsg()}
+							{rows}
+							</tbody>
+						</table>
 					</div>
 
-					<table className={combine(bs.table, styles.table, bs.tableStriped, bs.tableSm)}>
-						<thead>
-						<tr>
-							{columnHeaders}
-						</tr>
-						</thead>
-						<tbody>
-						{(() => {
-							if (!data.rows || data.rows.length === 0) {
-								return (
-										<tr>
-											<td colSpan={columns.length}>No data to display</td>
-										</tr>
-								);
-							}
-						})()}
-
-						{rows}
-						</tbody>
-					</table>
-
-					<div>
-						<p>
-							TODO: display stats
-						</p>
-					</div>
+					{this.generateTableFooter()}
 				</div>
 		);
 	}
@@ -168,6 +132,68 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		this.setState({
 			searchTerm: (event.target as HTMLInputElement).value,
 		});
+	}
+
+	private generateTableHeader() {
+		const { pageSize } = this.props;
+		const { loading, currentPage, data } = this.state;
+
+		const displayCurrentPage = data.filteredRowCount === 0 ? 0 : currentPage + 1;
+		const totalPages = data.filteredRowCount === 0 ? 0 : Math.ceil(data.filteredRowCount / pageSize);
+
+		const prevBtnDisabled = loading || currentPage === 0;
+		const nextBtnDisabled = loading || currentPage >= totalPages - 1;
+		const btnStyles = combine(bs.btn, bs.btnOutlineDark);
+
+		return (
+				<div className={styles.tableHeader}>
+					<div className={combine(bs.floatLeft, bs.btnGroup, bs.btnGroupSm)}>
+						<button className={btnStyles} disabled={prevBtnDisabled} onClick={this.gotoPrevPage}>
+							<FontAwesomeIcon icon={faArrowLeft}/>
+						</button>
+						<button className={btnStyles} disabled={true}>
+							Page {displayCurrentPage} of {totalPages}
+						</button>
+						<button className={btnStyles} disabled={nextBtnDisabled} onClick={this.gotoNextPage}>
+							<FontAwesomeIcon icon={faArrowRight}/>
+						</button>
+					</div>
+					<div className={bs.floatRight}>
+						<input placeholder={"Search"} className={combine(bs.formControl, bs.formControlSm)}
+							   onKeyUp={this.setSearchTerm}/>
+					</div>
+				</div>
+		);
+	}
+
+	private generateTableFooter() {
+		const { pageSize } = this.props;
+		const { currentPage, data } = this.state;
+		const { filteredRowCount, totalRowCount } = data;
+
+		const rowRangeFrom = Math.min(data.filteredRowCount, (currentPage * pageSize) + 1);
+		const rowRangeTo = Math.min(data.filteredRowCount, (currentPage + 1) * pageSize);
+		const showTotal = filteredRowCount !== totalRowCount;
+
+		return (
+				<div className={styles.tableFooter}>
+					<p className={bs.floatRight}>
+						Showing rows {rowRangeFrom} to {rowRangeTo} of {filteredRowCount}
+						{showTotal && <> (filtered from {totalRowCount} total)</>}
+					</p>
+				</div>
+		);
+	}
+
+	private generateNoDataMsg() {
+		const { columns } = this.props;
+		return (
+				<tr>
+					<td colSpan={columns.length} className={combine(bs.textCenter, bs.textMuted)}>
+						No rows to display
+					</td>
+				</tr>
+		);
 	}
 
 	private fetchData() {
