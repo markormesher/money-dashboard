@@ -37,6 +37,7 @@ interface IDataTableState<Model> {
 class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTableState<Model>> {
 
 	private fetchPending = false;
+	private searchTermUpdateTimeout: NodeJS.Timer = undefined;
 
 	constructor(props: IDataTableProps<Model>) {
 		super(props);
@@ -128,10 +129,9 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 	}
 
 	private setSearchTerm(event: React.KeyboardEvent) {
-		// TODO: buffer changes
-		this.setState({
-			searchTerm: (event.target as HTMLInputElement).value,
-		});
+		clearTimeout(this.searchTermUpdateTimeout);
+		const searchTerm = (event.target as HTMLInputElement).value;
+		this.searchTermUpdateTimeout = global.setTimeout(() => this.setState({ searchTerm }), 200);
 	}
 
 	private generateTableHeader() {
