@@ -15,10 +15,9 @@ interface IColumn {
 }
 
 interface IDataTableProps<Model> {
-	// TODO: make some props optional and provide defaults
 	api: string;
 	apiExtraParams?: { [key: string]: any };
-	pageSize: number;
+	pageSize?: number;
 	columns: IColumn[];
 	rowRenderer: (row: Model, index: number) => ReactNode;
 }
@@ -35,6 +34,11 @@ interface IDataTableState<Model> {
 }
 
 class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTableState<Model>> {
+
+	public static defaultProps: Partial<IDataTableProps<any>> = {
+		apiExtraParams: {},
+		pageSize: 20,
+	};
 
 	private fetchPending = false;
 	private searchTermUpdateTimeout: NodeJS.Timer = undefined;
