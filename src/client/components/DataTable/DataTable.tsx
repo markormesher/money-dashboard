@@ -26,6 +26,7 @@ interface IDataTableProps<Model> {
 
 interface IDataTableState<Model> {
 	loading?: boolean;
+	failed: boolean;
 	currentPage?: number;
 	searchTerm?: string;
 	data?: {
@@ -42,6 +43,10 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		pageSize: 15,
 	};
 
+	// give each remote request an increasing "frame" number so that late arrivals will be dropped
+	private frameCounter = 0;
+	private lastFrameDrawn = -1;
+
 	private fetchPending = false;
 	private searchTermUpdateTimeout: NodeJS.Timer = undefined;
 
@@ -49,6 +54,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		super(props);
 		this.state = {
 			loading: true,
+			failed: false,
 			currentPage: 0,
 			searchTerm: "",
 			data: {
@@ -63,6 +69,8 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		this.changePage = this.changePage.bind(this);
 		this.setSearchTerm = this.setSearchTerm.bind(this);
 		this.fetchData = this.fetchData.bind(this);
+		this.onDataLoaded = this.onDataLoaded.bind(this);
+		this.onDataLoadFailed = this.onDataLoadFailed.bind(this);
 	}
 
 	public componentDidMount() {
@@ -88,7 +96,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 
 	public render() {
 		const { columns, rowRenderer } = this.props;
-		const { loading, data } = this.state;
+		const { loading, failed, data } = this.state;
 
 		const columnHeaders = columns.map((col) => (<th key={col.title}>{col.title}</th>));
 		const rows = data.rows.map(rowRenderer);
@@ -107,7 +115,8 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 							<tr>{columnHeaders}</tr>
 							</thead>
 							<tbody>
-							{(!data || data.rows.length === 0) && this.generateNoDataMsg()}
+							{!failed && (!data || data.rows.length === 0) && this.generateMsgRow("No rows to display")}
+							{failed && this.generateMsgRow("Failed to load data")}
 							{rows}
 							</tbody>
 						</table>
@@ -185,13 +194,11 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		);
 	}
 
-	private generateNoDataMsg() {
+	private generateMsgRow(msg: string) {
 		const { columns } = this.props;
 		return (
 				<tr>
-					<td colSpan={columns.length} className={combine(bs.textCenter, bs.textMuted)}>
-						No rows to display
-					</td>
+					<td colSpan={columns.length} className={combine(bs.textCenter, bs.textMuted)}>{msg}</td>
 				</tr>
 		);
 	}
@@ -201,6 +208,8 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		const { currentPage } = this.state;
 
 		this.setState({ loading: true });
+		const frame = ++this.frameCounter;
+
 		axios
 				.get(this.props.api, {
 					params: {
@@ -210,33 +219,56 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 						searchTerm: this.state.searchTerm,
 					},
 				})
-				.then((res: AxiosResponse<DatatableResponse<Model>>) => {
-					const { data, filteredRowCount, totalRowCount } = res.data;
-					const maxPossiblePage = filteredRowCount === 0 ? 0 : Math.ceil(filteredRowCount / pageSize) - 1;
+				.then((res: AxiosResponse<DatatableResponse<Model>>) => this.onDataLoaded(frame, res.data))
+				.catch(() => this.onDataLoadFailed(frame));
+	}
 
-					setTimeout(() => {
-						this.setState({
-							loading: false,
-							currentPage: Math.min(currentPage, maxPossiblePage),
-							data: {
-								rows: data as Model[],
-								filteredRowCount,
-								totalRowCount,
-							},
-						});
-					}, 400);
-				})
-				.catch(() => {
-					this.setState({
-						loading: false,
-						currentPage: 0,
-						data: {
-							rows: [] as Model[],
-							filteredRowCount: 0,
-							totalRowCount: 0,
-						},
-					});
-				});
+	private shouldDrawFrame(frame: number): boolean {
+		if (frame < this.lastFrameDrawn) {
+			return false;
+		} else {
+			this.lastFrameDrawn = frame;
+			return true;
+		}
+	}
+
+	private onDataLoaded(frame: number, rawData: DatatableResponse<Model>) {
+		if (!this.shouldDrawFrame(frame)) {
+			return;
+		}
+
+		const { pageSize } = this.props;
+		const { currentPage } = this.state;
+		const { data, filteredRowCount, totalRowCount } = rawData;
+
+		const maxPossiblePage = filteredRowCount === 0 ? 0 : Math.ceil(filteredRowCount / pageSize) - 1;
+		this.setState({
+			loading: false,
+			failed: false,
+			currentPage: Math.min(currentPage, maxPossiblePage),
+			data: {
+				rows: data as Model[],
+				filteredRowCount,
+				totalRowCount,
+			},
+		});
+	}
+
+	private onDataLoadFailed(frame: number) {
+		if (!this.shouldDrawFrame(frame)) {
+			return;
+		}
+
+		this.setState({
+			loading: false,
+			failed: true,
+			currentPage: 0,
+			data: {
+				rows: [] as Model[],
+				filteredRowCount: 0,
+				totalRowCount: 0,
+			},
+		});
 	}
 }
 
