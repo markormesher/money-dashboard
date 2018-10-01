@@ -1,4 +1,18 @@
+.tableWrapper {
+
+}
+
+.tableWrapper.loading {
+	opacity: 0.4;
+}
+
 .table {
 	/* Bootstrap override */
-	width: 99%  !important;
+	width: 99% !important;
+}
+
+.tableHeader {
+	width: 99% !important;
+	margin-bottom: 5px;
+	overflow: auto; // allows the div to have height even though it only contains floated elements
 }

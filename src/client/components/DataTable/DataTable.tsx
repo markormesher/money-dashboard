@@ -1,7 +1,9 @@
+import { faArrowLeft, faArrowRight } from "@fortawesome/pro-light-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosResponse } from "axios";
+import { ReactNode } from "react";
 import * as React from "react";
 import { DatatableResponse } from "../../../server/helpers/datatable-helper";
-import { ThinUser } from "../../../server/model-thins/ThinUser";
 import * as bs from "../../bootstrap-aliases";
 import { combine } from "../../helpers/style-helpers";
 import * as styles from "./DataTable.scss";
@@ -13,13 +15,18 @@ interface IColumn {
 }
 
 interface IDataTableProps<Model> {
+	// TODO: make some props optional and provide defaults
 	api: string;
+	apiExtraParams?: { [key: string]: any };
+	pageSize: number;
 	columns: IColumn[];
+	rowRenderer: (row: Model, index: number) => ReactNode;
 }
 
 interface IDataTableState<Model> {
 	loading?: boolean;
 	currentPage?: number;
+	searchTerm?: string;
 	data?: {
 		rows?: Model[],
 		filteredRowCount?: number,
@@ -29,11 +36,14 @@ interface IDataTableState<Model> {
 
 class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTableState<Model>> {
 
+	private fetchPending = false;
+
 	constructor(props: IDataTableProps<Model>) {
 		super(props);
 		this.state = {
 			loading: true,
 			currentPage: 0,
+			searchTerm: "",
 			data: {
 				rows: [] as Model[],
 				filteredRowCount: 0,
@@ -41,6 +51,10 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 			},
 		};
 
+		this.gotoNextPage = this.gotoNextPage.bind(this);
+		this.gotoPrevPage = this.gotoPrevPage.bind(this);
+		this.changePage = this.changePage.bind(this);
+		this.setSearchTerm = this.setSearchTerm.bind(this);
 		this.fetchData = this.fetchData.bind(this);
 	}
 
@@ -48,23 +62,63 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		this.fetchData();
 	}
 
+	public componentWillUpdate(nextProps: IDataTableProps<Model>, nextState: IDataTableState<Model>) {
+		if (this.state.currentPage !== nextState.currentPage) {
+			this.fetchPending = true;
+		}
+
+		if (this.state.searchTerm !== nextState.searchTerm) {
+			this.fetchPending = true;
+		}
+	}
+
+	public componentDidUpdate() {
+		if (this.fetchPending) {
+			this.fetchData();
+			this.fetchPending = false;
+		}
+	}
+
 	public render() {
-		const { columns } = this.props;
+		const { pageSize, columns, rowRenderer } = this.props;
 		const { loading, currentPage, data } = this.state;
 
-		const columnHeaders = columns.map((c) => (<th key={c.title}>{c.title}</th>));
-
-		// TODO: make this not-shit
-		const rows = data.rows.map((r: any, i) => (
-				<tr key={i}>
-					<td>{r.name}</td>
-					<td></td>
-					<td></td>
-				</tr>
+		const columnHeaders = columns.map((col) => (
+				<th key={col.title}>{col.title}</th>
 		));
+		const rows = data.rows.map(rowRenderer);
+
+		const displayCurrentPage = data.filteredRowCount === 0 ? 0 : currentPage + 1;
+		const totalPages = data.filteredRowCount === 0 ? 0 : Math.ceil(data.filteredRowCount / pageSize);
+		const prevPageBtnDisabled = loading || currentPage === 0;
+		const nextPageBtnDisabled = loading || currentPage >= totalPages - 1;
+
+		const pageBtnStyles = combine(bs.btn, bs.btnOutlineDark);
 
 		return (
-				<div>
+				// TODO: break out components
+				<div className={combine(styles.tableWrapper, loading && styles.loading)}>
+					<div className={styles.tableHeader}>
+						<div className={combine(bs.floatLeft, bs.btnGroup, bs.btnGroupSm)}>
+							<button className={pageBtnStyles} disabled={prevPageBtnDisabled}
+									onClick={this.gotoPrevPage}>
+								<FontAwesomeIcon icon={faArrowLeft}/>
+							</button>
+							<button className={pageBtnStyles} disabled={true}>
+								Page {displayCurrentPage} of {totalPages}
+							</button>
+							<button className={pageBtnStyles} disabled={nextPageBtnDisabled}
+									onClick={this.gotoNextPage}>
+								<FontAwesomeIcon icon={faArrowRight}/>
+							</button>
+						</div>
+
+						<div className={bs.floatRight}>
+							<input type={"text"} placeholder={"Search"} className={bs.formControl}
+								   onKeyUp={this.setSearchTerm}/>
+						</div>
+					</div>
+
 					<table className={combine(bs.table, styles.table, bs.tableStriped, bs.tableSm)}>
 						<thead>
 						<tr>
@@ -85,36 +139,82 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 						{rows}
 						</tbody>
 					</table>
+
+					<div>
+						<p>
+							TODO: display stats
+						</p>
+					</div>
 				</div>
 		);
 	}
 
-	private fetchData() {
-		this.setState({ loading: true });
+	private gotoPrevPage() {
+		this.changePage(-1);
+	}
 
+	private gotoNextPage() {
+		this.changePage(1);
+	}
+
+	private changePage(direction: number) {
+		this.setState({
+			currentPage: this.state.currentPage + direction,
+		});
+	}
+
+	private setSearchTerm(event: React.KeyboardEvent) {
+		// TODO: buffer changes
+		this.setState({
+			searchTerm: (event.target as HTMLInputElement).value,
+		});
+	}
+
+	private fetchData() {
+		const { pageSize, apiExtraParams } = this.props;
+		const { currentPage } = this.state;
+
+		this.setState({ loading: true });
 		axios
 				.get(this.props.api, {
 					params: {
-						start: this.state.currentPage * 10,
-						length: 10,
-						dateField: "transactionDate",
-						search: {
-							value: "",
-						},
+						...apiExtraParams,
+						start: currentPage * pageSize,
+						length: pageSize,
+						searchTerm: this.state.searchTerm,
 					},
 				})
 				.then((res: AxiosResponse<DatatableResponse<Model>>) => {
+					const { data, filteredRowCount, totalRowCount } = res.data;
+					const maxPossiblePage = filteredRowCount === 0 ? 0 : Math.ceil(filteredRowCount / pageSize) - 1;
+
+					setTimeout(() => {
+						this.setState({
+							loading: false,
+							currentPage: Math.min(currentPage, maxPossiblePage),
+							data: {
+								rows: data as Model[],
+								filteredRowCount,
+								totalRowCount,
+							},
+						});
+					}, 400);
+				})
+				.catch(() => {
 					this.setState({
-						loading: true,
+						loading: false,
+						currentPage: 0,
 						data: {
-							// TODO: parity between field names
-							rows: res.data.data as Model[],
-							filteredRowCount: res.data.recordsFiltered,
-							totalRowCount: res.data.recordsTotal,
+							rows: [] as Model[],
+							filteredRowCount: 0,
+							totalRowCount: 0,
 						},
 					});
 				});
 	}
 }
 
-export default DataTable;
+export {
+	IColumn,
+	DataTable,
+};

@@ -4,8 +4,8 @@ import { cloneDeep } from "lodash";
 import { IFindOptions } from "sequelize-typescript";
 
 class DatatableResponse<T> {
-	public recordsTotal: number;
-	public recordsFiltered: number;
+	public filteredRowCount: number;
+	public totalRowCount: number;
 	public data: T[];
 }
 
@@ -50,8 +50,8 @@ function getData<T>(
 			])
 			.spread((totalCount: number, dataCount: number, data: T[]) => {
 				return {
-					recordsTotal: totalCount,
-					recordsFiltered: dataCount,
+					totalRowCount: totalCount,
+					filteredRowCount: dataCount,
 					data,
 				};
 			});
