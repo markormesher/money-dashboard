@@ -6,7 +6,7 @@ import { requireUser } from "../../middleware/auth-middleware";
 import { getAllBudgets } from "../../managers/budget-manager";
 import { Budget } from "../../models/Budget";
 import { User } from "../../models/User";
-import { BudgetBalance, getBudgetBalances } from "../../statistics/budget-statistics";
+import { IBudgetBalance, getBudgetBalances } from "../../statistics/budget-statistics";
 
 const router = Express.Router();
 
@@ -28,8 +28,8 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 
 	getBudgetBalances(user, startDate, endDate)
 			.then((budgets) => {
-				const budgetBuckets: [string, BudgetBalance[]][] = _(budgets)
-						.groupBy((b: BudgetBalance) => b.budget.category.name)
+				const budgetBuckets: [string, IBudgetBalance[]][] = _(budgets)
+						.groupBy((b: IBudgetBalance) => b.budget.category.name)
 						.toPairs()
 						.value();
 

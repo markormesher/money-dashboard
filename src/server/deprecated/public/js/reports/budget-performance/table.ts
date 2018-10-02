@@ -1,5 +1,5 @@
 import { formatBudgetPeriod, formatCurrency } from "../../../../../helpers/formatters";
-import { ThinBudgetBalance } from "../../../../../statistics/budget-statistics";
+import { IThinBudgetBalance } from "../../../../../statistics/budget-statistics";
 import { withDataTableDefaults } from "../../global/data-table-defaults";
 import { getDetailedViewState } from "./toggle-detailed-view";
 import moment = require("moment");
@@ -59,7 +59,7 @@ $(() => {
 				data.endDate = endDate.toISOString();
 				return data;
 			}),
-			dataSrc: (raw: { data: [string, ThinBudgetBalance[]][] }) => {
+			dataSrc: (raw: { data: [string, IThinBudgetBalance[]][] }) => {
 				return raw.data.map((budgetData) => {
 					const categoryName = budgetData[0];
 					const budgetBalances = budgetData[1].sort((a, b) => a.budget.startDate.localeCompare(b.budget.startDate));

@@ -8,17 +8,17 @@ import { Budget } from "../models/Budget";
 import { Transaction } from "../models/Transaction";
 import { User } from "../models/User";
 
-export class BudgetBalance {
-	public budget: Budget;
-	public balance: number;
+export interface IBudgetBalance {
+	budget: Budget;
+	balance: number;
 }
 
-export class ThinBudgetBalance {
-	public budget: ThinBudget;
-	public balance: number;
+export interface IThinBudgetBalance {
+	budget: ThinBudget;
+	balance: number;
 }
 
-function getBudgetBalances(user: User, start: Date = null, end: Date = null): Bluebird<BudgetBalance[]> {
+function getBudgetBalances(user: User, start: Date = null, end: Date = null): Bluebird<IBudgetBalance[]> {
 	return getAllBudgets(user, start, end)
 			.then((budgets: Budget[]) => {
 				const getBalanceTasks = budgets.map((budget) => {
@@ -40,12 +40,12 @@ function getBudgetBalances(user: User, start: Date = null, end: Date = null): Bl
 				return [budgets, Bluebird.all(balanceTasks)];
 			})
 			.spread((budgets: Budget[], balances: Transaction[]) => {
-				const result: BudgetBalance[] = [];
+				const result: IBudgetBalance[] = [];
 				for (let i = 0; i < budgets.length; ++i) {
 					result.push({
 						budget: budgets[i],
 						balance: Math.round(balances[i].getDataValue("balance") * 100) / 100,
-					} as BudgetBalance);
+					} as IBudgetBalance);
 				}
 				return result;
 			});
