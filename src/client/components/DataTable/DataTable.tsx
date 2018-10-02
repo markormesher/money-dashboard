@@ -25,6 +25,7 @@ const sortDirectionFull = {
 
 interface IColumn {
 	title: string;
+	lowercaseTitle?: string;
 	sortable?: boolean;
 	sortField?: string;
 	defaultSortDirection?: SortDirection;
@@ -288,10 +289,12 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		let sortingOrder = "Sorted by";
 		sortedColumns.forEach((entry, i) => {
 			if (i === 0) {
-				sortingOrder += " " + entry.column.title + " " + sortDirectionFull[entry.dir];
+				sortingOrder += " ";
 			} else {
-				sortingOrder += ", then " + entry.column.title + " " + sortDirectionFull[entry.dir];
+				sortingOrder += ", then ";
 			}
+			sortingOrder += entry.column.lowercaseTitle || entry.column.title.toLocaleLowerCase();
+			sortingOrder += " " + sortDirectionFull[entry.dir];
 		});
 
 		return (
