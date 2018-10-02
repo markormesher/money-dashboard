@@ -16,15 +16,19 @@ import * as bs from "../../bootstrap-aliases";
 import { combine } from "../../helpers/style-helpers";
 import * as styles from "./DataTable.scss";
 
-// TODO: multi-sort
 // TODO: default sort
 
-type SortOrder = "asc" | "desc" | "none";
+type SortDirection = "asc" | "desc";
 
 interface IColumn {
 	title: string;
 	sortable?: boolean;
 	sortField?: string;
+}
+
+interface ISortEntry {
+	column: IColumn;
+	dir: SortDirection;
 }
 
 interface IDataTableProps<Model> {
@@ -40,8 +44,7 @@ interface IDataTableState<Model> {
 	failed: boolean;
 	currentPage?: number;
 	searchTerm?: string;
-	sortedColumn?: IColumn;
-	sortedColumnDirection: SortOrder;
+	sortedColumns: ISortEntry[];
 	data?: {
 		rows?: Model[],
 		filteredRowCount?: number,
@@ -56,13 +59,13 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		pageSize: 15,
 	};
 
-	private static getNextSortDirection(dir: SortOrder): SortOrder {
+	private static getNextSortDirection(dir: SortDirection): SortDirection {
 		switch (dir) {
 			case "asc":
 				return "desc";
 
 			case "desc":
-				return "none";
+				return undefined;
 
 			default:
 				return "asc";
@@ -82,8 +85,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 			loading: true,
 			failed: false,
 			currentPage: 0,
-			searchTerm: "",
-			sortedColumnDirection: "none",
+			sortedColumns: [] as ISortEntry[],
 			data: {
 				rows: [] as Model[],
 				filteredRowCount: 0,
@@ -116,11 +118,8 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 			this.fetchPending = true;
 		}
 
-		if (this.state.sortedColumn !== nextState.sortedColumn) {
-			this.fetchPending = true;
-		}
-
-		if (this.state.sortedColumnDirection !== nextState.sortedColumnDirection) {
+		// JSON.stringify(...) is a neat hack to do deep comparison of data-only structures
+		if (JSON.stringify(this.state.sortedColumns) !== JSON.stringify(nextState.sortedColumns)) {
 			this.fetchPending = true;
 		}
 	}
@@ -180,12 +179,26 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 	}
 
 	private toggleColumnSortOrder(column: IColumn) {
-		const { sortedColumn, sortedColumnDirection } = this.state;
-		const nextDirection = DataTable.getNextSortDirection(sortedColumn === column ? sortedColumnDirection : undefined);
-		this.setState({
-			sortedColumn: column,
-			sortedColumnDirection: nextDirection,
-		});
+		// work on a copy
+		const sortedColumns = this.state.sortedColumns.slice(0);
+
+		const currentSortEntry: ISortEntry = sortedColumns.find((sc) => sc.column === column);
+		if (currentSortEntry === undefined) {
+			sortedColumns.unshift({ column, dir: "asc" });
+		} else {
+			const currentSortEntryIndex = sortedColumns.indexOf(currentSortEntry);
+			const nextDir = DataTable.getNextSortDirection(currentSortEntry.dir);
+			if (nextDir === undefined) {
+				// remove only
+				sortedColumns.splice(currentSortEntryIndex, 1);
+			} else {
+				// remove and re-add at the beginning
+				sortedColumns.splice(currentSortEntryIndex, 1);
+				sortedColumns.unshift({ column, dir: nextDir });
+			}
+		}
+
+		this.setState({ sortedColumns });
 	}
 
 	private generateTableHeader() {
@@ -223,14 +236,15 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 
 	private generateColumnHeaders() {
 		const { columns } = this.props;
-		const { sortedColumn, sortedColumnDirection } = this.state;
+		const { sortedColumns } = this.state;
 
 		const headers = columns.map((col) => {
 			const sortable = col.sortable !== false; // undefined implicitly means yes
-			const sorted = sortedColumn === col && sortedColumnDirection !== "none";
+			const sortEntry: ISortEntry = sortedColumns.find((sc) => sc.column === col);
+			const sorted = sortEntry !== undefined;
 
-			const sortIcon = sorted ? (sortedColumnDirection === "asc" ? faSortAmountUp : faSortAmountDown) : faExchange;
-			const sortIconFlip = sortedColumnDirection === "asc" ? "vertical" : undefined;
+			const sortIcon = sorted ? (sortEntry.dir === "asc" ? faSortAmountUp : faSortAmountDown) : faExchange;
+			const sortIconFlip = sorted && sortEntry.dir === "asc" ? "vertical" : undefined;
 			const sortIconRotate = sortIcon === faExchange ? 90 : undefined;
 			const sortIconClasses = combine(bs.mr1, !sorted && styles.sortInactive);
 
@@ -281,15 +295,12 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 
 	private fetchData() {
 		const { pageSize, apiExtraParams } = this.props;
-		const { currentPage, searchTerm, sortedColumn, sortedColumnDirection } = this.state;
+		const { currentPage, searchTerm, sortedColumns } = this.state;
 
 		this.setState({ loading: true });
 		const frame = ++this.frameCounter;
 
-		const order: string[][] = [];
-		if (sortedColumn && sortedColumnDirection !== "none") {
-			order.push([sortedColumn.sortField, sortedColumnDirection]);
-		}
+		const order = sortedColumns.map((sortEntry) => [sortEntry.column.sortField, sortEntry.dir]);
 
 		axios
 				.get(this.props.api, {
@@ -297,7 +308,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 						...apiExtraParams,
 						start: currentPage * pageSize,
 						length: pageSize,
-						searchTerm,
+						searchTerm: searchTerm || "",
 						order,
 					},
 					paramsSerializer: (params) => stringify(params, { arrayFormat: "indices" }),
@@ -357,5 +368,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 
 export {
 	IColumn,
+	ISortEntry,
+	SortDirection,
 	DataTable,
 };
