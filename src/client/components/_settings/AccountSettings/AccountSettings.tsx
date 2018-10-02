@@ -1,13 +1,11 @@
 import * as React from "react";
-import { Component, ReactNode } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import "react-table/react-table.css";
 import { Dispatch } from "redux";
 import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
 import * as bs from "../../../bootstrap-aliases";
 import { generateAccountTypeBadge } from "../../../helpers/formatters";
-import { capitaliseFirst } from "../../../helpers/string-helpers";
-import { combine } from "../../../helpers/style-helpers";
 import { IRootState } from "../../../redux/root";
 import { DataTable } from "../../DataTable/DataTable";
 
