@@ -5,7 +5,7 @@ import "react-table/react-table.css";
 import { Dispatch } from "redux";
 import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
 import * as bs from "../../../bootstrap-aliases";
-import { formatAccountType } from "../../../helpers/formatters";
+import { generateAccountTypeBadge } from "../../../helpers/formatters";
 import { capitaliseFirst } from "../../../helpers/string-helpers";
 import { combine } from "../../../helpers/style-helpers";
 import { IRootState } from "../../../redux/root";
@@ -43,7 +43,7 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 							rowRenderer={(account: ThinAccount) => (
 									<tr key={account.id}>
 										<td>{account.name}</td>
-										<td>{formatAccountType(account.type)}</td>
+										<td>{generateAccountTypeBadge(account.type)}</td>
 										<td>TODO: actions</td>
 									</tr>
 							)}

@@ -11,7 +11,7 @@ function generateBadge(content: string, badgeClass?: string): ReactNode {
 // accounts
 
 // TODO: make account type into strict type
-function formatAccountType(type: string): ReactNode {
+function generateAccountTypeBadge(type: string): ReactNode {
 	switch (type) {
 		case "current":
 			return generateBadge("Current Account", bs.badgeInfo);
@@ -26,5 +26,5 @@ function formatAccountType(type: string): ReactNode {
 
 export {
 	generateBadge,
-	formatAccountType,
+	generateAccountTypeBadge,
 };
