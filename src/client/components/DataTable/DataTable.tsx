@@ -143,7 +143,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 			const sorted = sortedColumn === col && sortedColumnDirection !== "none";
 			const sortIcon = sorted ? (sortedColumnDirection === "asc" ? faSortAmountUp : faSortAmountDown) : faExchange;
 			const sortIconFlip = sortedColumnDirection === "asc" ? "vertical" : undefined;
-			const sortIconRotate = sorted ? undefined : 90;
+			const sortIconRotate = sortIcon === faExchange ? 90 : undefined;
 			const sortIconClasses = combine(bs.mr1, !sorted && styles.sortInactive);
 
 			return (
