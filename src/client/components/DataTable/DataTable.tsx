@@ -139,8 +139,6 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 				<div className={combine(styles.tableWrapper, loading && styles.loading)}>
 					{this.generateTableHeader()}
 
-					<pre>{JSON.stringify(this.state.sortedColumns)}</pre>
-
 					<div className={styles.tableBodyWrapper}>
 						<div className={styles.loadingIconWrapper}>
 							{loading && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
