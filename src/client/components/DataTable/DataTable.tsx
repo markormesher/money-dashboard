@@ -133,32 +133,9 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 	}
 
 	public render() {
-		const { columns, rowRenderer } = this.props;
+		const { rowRenderer } = this.props;
 		const { loading, failed, data } = this.state;
 
-		const columnHeaders = columns.map((col) => {
-			// TODO: extract
-			const { sortedColumn, sortedColumnDirection } = this.state;
-			const sortable = col.sortable !== false;
-			const sorted = sortedColumn === col && sortedColumnDirection !== "none";
-			const sortIcon = sorted ? (sortedColumnDirection === "asc" ? faSortAmountUp : faSortAmountDown) : faExchange;
-			const sortIconFlip = sortedColumnDirection === "asc" ? "vertical" : undefined;
-			const sortIconRotate = sortIcon === faExchange ? 90 : undefined;
-			const sortIconClasses = combine(bs.mr1, !sorted && styles.sortInactive);
-
-			return (
-					<th key={col.title} className={sortable ? styles.sortable : undefined}
-						onClick={() => this.toggleColumnSortOrder(col)}>
-						{sortable && <FontAwesomeIcon
-								icon={sortIcon}
-								fixedWidth={true}
-								flip={sortIconFlip}
-								rotation={sortIconRotate}
-								className={sortIconClasses}/>}
-						{col.title}
-					</th>
-			);
-		});
 		const rows = data.rows.map(rowRenderer);
 
 		return (
@@ -172,7 +149,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 
 						<table className={combine(bs.table, styles.table, bs.tableStriped, bs.tableSm)}>
 							<thead>
-							<tr>{columnHeaders}</tr>
+							<tr>{this.generateColumnHeaders()}</tr>
 							</thead>
 							<tbody>
 							{!failed && (!data || data.rows.length === 0) && this.generateMsgRow("No rows to display")}
@@ -242,6 +219,36 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 					</div>
 				</div>
 		);
+	}
+
+	private generateColumnHeaders() {
+		const { columns } = this.props;
+		const { sortedColumn, sortedColumnDirection } = this.state;
+
+		const headers = columns.map((col) => {
+			const sortable = col.sortable !== false; // undefined implicitly means yes
+			const sorted = sortedColumn === col && sortedColumnDirection !== "none";
+
+			const sortIcon = sorted ? (sortedColumnDirection === "asc" ? faSortAmountUp : faSortAmountDown) : faExchange;
+			const sortIconFlip = sortedColumnDirection === "asc" ? "vertical" : undefined;
+			const sortIconRotate = sortIcon === faExchange ? 90 : undefined;
+			const sortIconClasses = combine(bs.mr1, !sorted && styles.sortInactive);
+
+			const clickHandler = sortable ? () => this.toggleColumnSortOrder(col) : undefined;
+
+			return (
+					<th key={col.title} className={sortable ? styles.sortable : undefined} onClick={clickHandler}>
+						{sortable && <FontAwesomeIcon
+								icon={sortIcon}
+								fixedWidth={true}
+								flip={sortIconFlip}
+								rotation={sortIconRotate}
+								className={sortIconClasses}/>}
+						{col.title}
+					</th>
+			);
+		});
+		return (<>{headers}</>);
 	}
 
 	private generateTableFooter() {
