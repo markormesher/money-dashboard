@@ -33,7 +33,7 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 					<DataTable<ThinAccount>
 							api={"/settings/accounts/table-data"}
 							columns={[
-								{ title: "Name", sortField: "name" },
+								{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
 								{ title: "Type", sortField: "type" },
 								{ title: "Accounts", sortable: false },
 							]}

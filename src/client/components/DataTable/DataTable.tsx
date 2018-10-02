@@ -16,14 +16,14 @@ import * as bs from "../../bootstrap-aliases";
 import { combine } from "../../helpers/style-helpers";
 import * as styles from "./DataTable.scss";
 
-// TODO: default sort
-
 type SortDirection = "asc" | "desc";
 
 interface IColumn {
 	title: string;
 	sortable?: boolean;
 	sortField?: string;
+	defaultSortDirection?: SortDirection;
+	defaultSortPriority?: number;
 }
 
 interface ISortEntry {
@@ -85,15 +85,13 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 			loading: true,
 			failed: false,
 			currentPage: 0,
-			sortedColumns: [] as ISortEntry[],
+			sortedColumns: this.generateDefaultSortedColumns(),
 			data: {
 				rows: [] as Model[],
 				filteredRowCount: 0,
 				totalRowCount: 0,
 			},
 		};
-
-		// TODO: check that column names are unique
 
 		this.gotoNextPage = this.gotoNextPage.bind(this);
 		this.gotoPrevPage = this.gotoPrevPage.bind(this);
@@ -140,6 +138,8 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		return (
 				<div className={combine(styles.tableWrapper, loading && styles.loading)}>
 					{this.generateTableHeader()}
+
+					<pre>{JSON.stringify(this.state.sortedColumns)}</pre>
 
 					<div className={styles.tableBodyWrapper}>
 						<div className={styles.loadingIconWrapper}>
@@ -199,6 +199,14 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		}
 
 		this.setState({ sortedColumns });
+	}
+
+	private generateDefaultSortedColumns(): ISortEntry[] {
+		const { columns } = this.props;
+		return columns
+				.filter((col) => col.defaultSortDirection !== undefined)
+				.sort((a, b) => (a.defaultSortPriority || 0) - (b.defaultSortPriority || 0))
+				.map((col) => ({ column: col, dir: col.defaultSortDirection }));
 	}
 
 	private generateTableHeader() {
@@ -368,7 +376,6 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 
 export {
 	IColumn,
-	ISortEntry,
 	SortDirection,
 	DataTable,
 };
