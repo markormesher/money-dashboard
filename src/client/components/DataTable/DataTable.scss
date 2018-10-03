@@ -1,9 +1,5 @@
 .tableWrapper {
 	&.loading {
-		td {
-			color: transparent;
-		}
-
 		.tableHeader, .tableFooter, .table {
 			opacity: 0.4;
 		}

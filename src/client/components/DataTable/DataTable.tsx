@@ -1,11 +1,4 @@
-import {
-	faArrowLeft,
-	faArrowRight,
-	faCircleNotch,
-	faExchange,
-	faSortAmountDown,
-	faSortAmountUp,
-} from "@fortawesome/pro-light-svg-icons";
+import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosResponse } from "axios";
 import { stringify } from "qs";
@@ -15,13 +8,11 @@ import { DatatableResponse } from "../../../server/helpers/datatable-helper";
 import * as bs from "../../bootstrap-aliases";
 import { combine } from "../../helpers/style-helpers";
 import * as styles from "./DataTable.scss";
+import { DataTableInnerHeader } from "./DataTableInnerHeader";
+import { DataTableOuterFooter } from "./DataTableOuterFooter";
+import { DataTableOuterHeader } from "./DataTableOuterHeader";
 
 type SortDirection = "asc" | "desc";
-
-const sortDirectionFull = {
-	asc: "ascending",
-	desc: "descending",
-};
 
 interface IColumn {
 	title: string;
@@ -83,7 +74,6 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 	private lastFrameReceived = -1;
 
 	private fetchPending = false;
-	private searchTermUpdateTimeout: NodeJS.Timer = undefined;
 
 	constructor(props: IDataTableProps<Model>) {
 		super(props);
@@ -99,10 +89,6 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 			},
 		};
 
-		this.gotoNextPage = this.gotoNextPage.bind(this);
-		this.gotoPrevPage = this.gotoPrevPage.bind(this);
-		this.changePage = this.changePage.bind(this);
-		this.setSearchTerm = this.setSearchTerm.bind(this);
 		this.toggleColumnSortOrder = this.toggleColumnSortOrder.bind(this);
 		this.fetchData = this.fetchData.bind(this);
 		this.onDataLoaded = this.onDataLoaded.bind(this);
@@ -114,16 +100,10 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 	}
 
 	public componentWillUpdate(nextProps: IDataTableProps<Model>, nextState: IDataTableState<Model>) {
-		if (this.state.currentPage !== nextState.currentPage) {
-			this.fetchPending = true;
-		}
-
-		if (this.state.searchTerm !== nextState.searchTerm) {
-			this.fetchPending = true;
-		}
-
 		// JSON.stringify(...) is a neat hack to do deep comparison of data-only structures
-		if (JSON.stringify(this.state.sortedColumns) !== JSON.stringify(nextState.sortedColumns)) {
+		if (this.state.currentPage !== nextState.currentPage
+				|| this.state.searchTerm !== nextState.searchTerm
+				|| JSON.stringify(this.state.sortedColumns) !== JSON.stringify(nextState.sortedColumns)) {
 			this.fetchPending = true;
 		}
 	}
@@ -136,14 +116,22 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 	}
 
 	public render() {
-		const { rowRenderer } = this.props;
-		const { loading, failed, data } = this.state;
+		const { columns, rowRenderer, pageSize } = this.props;
+		const { loading, failed, data, currentPage, sortedColumns } = this.state;
+		const { filteredRowCount, totalRowCount } = data;
 
 		const rows = data.rows.map(rowRenderer);
 
 		return (
 				<div className={combine(styles.tableWrapper, loading && styles.loading)}>
-					{this.generateTableHeader()}
+					<DataTableOuterHeader
+							loading={loading}
+							currentPage={currentPage}
+							pageSize={pageSize}
+							rowCount={data.filteredRowCount}
+							onPrevPageClick={() => this.setState({ currentPage: this.state.currentPage - 1 })}
+							onNextPageClick={() => this.setState({ currentPage: this.state.currentPage + 1 })}
+							onSearchTermSet={(searchTerm) => this.setState({ searchTerm })}/>
 
 					<div className={styles.tableBodyWrapper}>
 						<div className={styles.loadingIconWrapper}>
@@ -151,9 +139,11 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 						</div>
 
 						<table className={combine(bs.table, styles.table, bs.tableStriped, bs.tableSm)}>
-							<thead>
-							<tr>{this.generateColumnHeaders()}</tr>
-							</thead>
+							<DataTableInnerHeader
+									columns={columns}
+									sortedColumns={sortedColumns}
+									onToggleSortOrder={this.toggleColumnSortOrder}/>
+
 							<tbody>
 							{!failed && (!data || data.rows.length === 0) && this.generateMsgRow("No rows to display")}
 							{failed && this.generateMsgRow("Failed to load data")}
@@ -162,42 +152,29 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 						</table>
 					</div>
 
-					{this.generateTableFooter()}
+					<DataTableOuterFooter
+							currentPage={currentPage}
+							pageSize={pageSize}
+							filteredRowCount={filteredRowCount}
+							totalRowCount={totalRowCount}
+							sortedColumns={sortedColumns}/>
 				</div>
 		);
 	}
 
-	private readonly gotoPrevPage = () => this.changePage(-1);
-	private readonly gotoNextPage = () => this.changePage(1);
-
-	private changePage(direction: number) {
-		this.setState({
-			currentPage: this.state.currentPage + direction,
-		});
-	}
-
-	private setSearchTerm(event: React.KeyboardEvent) {
-		clearTimeout(this.searchTermUpdateTimeout);
-		const searchTerm = (event.target as HTMLInputElement).value;
-		this.searchTermUpdateTimeout = global.setTimeout(() => this.setState({ searchTerm }), 200);
-	}
-
 	private toggleColumnSortOrder(column: IColumn) {
-		// work on a copy
-		const sortedColumns = this.state.sortedColumns.slice(0);
-
+		const sortedColumns = this.state.sortedColumns.slice(0); // work on a copy
 		const currentSortEntry: ISortEntry = sortedColumns.find((sc) => sc.column === column);
+
 		if (currentSortEntry === undefined) {
 			sortedColumns.unshift({ column, dir: "asc" });
 		} else {
 			const currentSortEntryIndex = sortedColumns.indexOf(currentSortEntry);
 			const nextDir = DataTable.getNextSortDirection(currentSortEntry.dir);
-			if (nextDir === undefined) {
-				// remove only
-				sortedColumns.splice(currentSortEntryIndex, 1);
-			} else {
-				// remove and re-add at the beginning
-				sortedColumns.splice(currentSortEntryIndex, 1);
+			// remove...
+			sortedColumns.splice(currentSortEntryIndex, 1);
+			if (nextDir !== undefined) {
+				// ...and re-add at the beginning
 				sortedColumns.unshift({ column, dir: nextDir });
 			}
 		}
@@ -206,113 +183,18 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 	}
 
 	private generateDefaultSortedColumns(): ISortEntry[] {
-		const { columns } = this.props;
-		return columns
+		return this.props.columns
 				.filter((col) => col.defaultSortDirection !== undefined)
 				.sort((a, b) => (a.defaultSortPriority || 0) - (b.defaultSortPriority || 0))
 				.map((col) => ({ column: col, dir: col.defaultSortDirection }));
 	}
 
-	private generateTableHeader() {
-		const { pageSize } = this.props;
-		const { loading, currentPage, data } = this.state;
-		const { filteredRowCount } = data;
-
-		const displayCurrentPage = filteredRowCount === 0 ? 0 : currentPage + 1;
-		const totalPages = filteredRowCount === 0 ? 0 : Math.ceil(filteredRowCount / pageSize);
-
-		const prevBtnDisabled = loading || currentPage === 0;
-		const nextBtnDisabled = loading || currentPage >= totalPages - 1;
-		const btnStyles = combine(bs.btn, bs.btnOutlineDark);
-
-		return (
-				<div className={styles.tableHeader}>
-					<div className={combine(bs.floatLeft, bs.btnGroup, bs.btnGroupSm)}>
-						<button className={btnStyles} disabled={prevBtnDisabled} onClick={this.gotoPrevPage}>
-							<FontAwesomeIcon icon={faArrowLeft}/>
-						</button>
-						<button className={btnStyles} disabled={true}>
-							Page {displayCurrentPage} of {totalPages}
-						</button>
-						<button className={btnStyles} disabled={nextBtnDisabled} onClick={this.gotoNextPage}>
-							<FontAwesomeIcon icon={faArrowRight}/>
-						</button>
-					</div>
-					<div className={bs.floatRight}>
-						<input placeholder={"Search"} className={combine(bs.formControl, bs.formControlSm)}
-							   onKeyUp={this.setSearchTerm}/>
-					</div>
-				</div>
-		);
-	}
-
-	private generateColumnHeaders() {
-		const { columns } = this.props;
-		const { sortedColumns } = this.state;
-
-		const headers = columns.map((col) => {
-			const sortable = col.sortable !== false; // undefined implicitly means yes
-			const sortEntry: ISortEntry = sortedColumns.find((sc) => sc.column === col);
-			const sorted = sortEntry !== undefined;
-
-			const sortIcon = sorted ? (sortEntry.dir === "asc" ? faSortAmountUp : faSortAmountDown) : faExchange;
-			const sortIconFlip = sorted && sortEntry.dir === "asc" ? "vertical" : undefined;
-			const sortIconRotate = sortIcon === faExchange ? 90 : undefined;
-			const sortIconClasses = combine(bs.mr1, !sorted && styles.sortInactive);
-
-			const clickHandler = sortable ? () => this.toggleColumnSortOrder(col) : undefined;
-
-			return (
-					<th key={col.title} className={sortable ? styles.sortable : undefined} onClick={clickHandler}>
-						{sortable && <FontAwesomeIcon
-								icon={sortIcon}
-								fixedWidth={true}
-								flip={sortIconFlip}
-								rotation={sortIconRotate}
-								className={sortIconClasses}/>}
-						{col.title}
-					</th>
-			);
-		});
-		return (<>{headers}</>);
-	}
-
-	private generateTableFooter() {
-		const { pageSize } = this.props;
-		const { currentPage, data, sortedColumns } = this.state;
-		const { filteredRowCount, totalRowCount } = data;
-
-		const rowRangeFrom = Math.min(data.filteredRowCount, (currentPage * pageSize) + 1);
-		const rowRangeTo = Math.min(data.filteredRowCount, (currentPage + 1) * pageSize);
-		const showTotal = filteredRowCount !== totalRowCount;
-
-		let sortingOrder = "Sorted by";
-		sortedColumns.forEach((entry, i) => {
-			if (i === 0) {
-				sortingOrder += " ";
-			} else {
-				sortingOrder += ", then ";
-			}
-			sortingOrder += entry.column.lowercaseTitle || entry.column.title.toLocaleLowerCase();
-			sortingOrder += " " + sortDirectionFull[entry.dir];
-		});
-
-		return (
-				<div className={styles.tableFooter}>
-					<p className={bs.floatRight}>
-						Showing rows {rowRangeFrom} to {rowRangeTo} of {filteredRowCount}
-						{showTotal && <> (filtered from {totalRowCount} total)</>}
-						{sortedColumns.length > 0 && <> &bull; {sortingOrder}</>}
-					</p>
-				</div>
-		);
-	}
-
 	private generateMsgRow(msg: string) {
-		const { columns } = this.props;
 		return (
 				<tr>
-					<td colSpan={columns.length} className={combine(bs.textCenter, bs.textMuted)}>{msg}</td>
+					<td colSpan={this.props.columns.length} className={combine(bs.textCenter, bs.textMuted)}>
+						{msg}
+					</td>
 				</tr>
 		);
 	}
@@ -342,8 +224,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 	}
 
 	private onFrameReceived(frame: number) {
-		// TODO: cancel requests with lower frame number, if possible?
-		this.lastFrameReceived = frame;
+		this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
 	}
 
 	private shouldDrawFrame(frame: number): boolean {
@@ -374,6 +255,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 	}
 
 	private onDataLoadFailed(frame: number) {
+		this.onFrameReceived(frame);
 		if (!this.shouldDrawFrame(frame)) {
 			return;
 		}
@@ -393,6 +275,9 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 
 export {
 	IColumn,
+	IDataTableProps,
+	IDataTableState,
+	ISortEntry,
 	SortDirection,
 	DataTable,
 };
