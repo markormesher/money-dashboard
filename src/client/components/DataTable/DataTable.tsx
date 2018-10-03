@@ -80,7 +80,7 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 
 	// give each remote request an increasing "frame" number so that late arrivals will be dropped
 	private frameCounter = 0;
-	private lastFrameDrawn = -1;
+	private lastFrameReceived = -1;
 
 	private fetchPending = false;
 	private searchTermUpdateTimeout: NodeJS.Timer = undefined;
@@ -341,16 +341,17 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 				.catch(() => this.onDataLoadFailed(frame));
 	}
 
+	private onFrameReceived(frame: number) {
+		// TODO: cancel requests with lower frame number, if possible?
+		this.lastFrameReceived = frame;
+	}
+
 	private shouldDrawFrame(frame: number): boolean {
-		if (frame < this.lastFrameDrawn) {
-			return false;
-		} else {
-			this.lastFrameDrawn = frame;
-			return true;
-		}
+		return frame >= this.lastFrameReceived;
 	}
 
 	private onDataLoaded(frame: number, rawData: DatatableResponse<Model>) {
+		this.onFrameReceived(frame);
 		if (!this.shouldDrawFrame(frame)) {
 			return;
 		}
