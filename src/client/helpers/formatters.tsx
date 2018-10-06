@@ -8,9 +8,9 @@ import * as bs from "../bootstrap-aliases";
 import * as appStyles from "../components/App/App.scss";
 import { combine } from "./style-helpers";
 
-function generateBadge(content: string, badgeClass?: string): ReactNode {
+function generateBadge(content: string, badgeClass: string, marginRight: boolean = false): ReactNode {
 	badgeClass = badgeClass || bs.badgeLight;
-	return (<span className={combine(bs.badge, badgeClass)}>{content}</span>);
+	return (<span className={combine(bs.badge, badgeClass, marginRight && bs.mr1)}>{content}</span>);
 }
 
 function formatCurrency(amount: number): string {
@@ -109,15 +109,23 @@ function formatBudgetPeriod(start: Date | string, end: Date | string): string {
 
 // categories
 
-function generateCategoryTypeBadge(category: ThinCategory): ReactNode {
+function generateCategoryTypeBadge(category: ThinCategory): ReactNode | ReactNode[] {
+	const output = [] as ReactNode[];
 	if (category.isAssetGrowthCategory) {
-		return generateBadge("Asset", bs.badgeWarning);
-	} else if (category.isExpenseCategory) {
-		return generateBadge("Expense", bs.badgeDanger);
-	} else if (category.isIncomeCategory) {
-		return generateBadge("Income", bs.badgeSuccess);
-	} else if (category.isMemoCategory) {
-		return generateBadge("Memo", bs.badgeInfo);
+		output.push(generateBadge("Asset", bs.badgeWarning, true));
+	}
+	if (category.isExpenseCategory) {
+		output.push(generateBadge("Expense", bs.badgeDanger, true));
+	}
+	if (category.isIncomeCategory) {
+		output.push(generateBadge("Income", bs.badgeSuccess, true));
+	}
+	if (category.isMemoCategory) {
+		output.push(generateBadge("Memo", bs.badgeInfo, true));
+	}
+
+	if (output.length > 0) {
+		return output;
 	} else {
 		return (<span className={bs.textMuted}>None</span>);
 	}
