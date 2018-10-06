@@ -4,16 +4,16 @@ import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
-import * as bs from "../../../bootstrap-aliases";
-import { generateAccountTypeBadge } from "../../../helpers/formatters";
-import { combine } from "../../../helpers/style-helpers";
-import { IRootState } from "../../../redux/root";
-import { startDeleteAccount } from "../../../redux/settings/accounts/actions";
-import CheckboxBtn from "../../_ui/CheckboxBtn/CheckboxBtn";
-import { DataTable } from "../../_ui/DataTable/DataTable";
-import DeleteBtn from "../../_ui/DeleteBtn/DeleteBtn";
-import * as appStyles from "../../App/App.scss";
+import { ThinAccount } from "../../../server/model-thins/ThinAccount";
+import * as bs from "../../bootstrap-aliases";
+import { generateAccountTypeBadge } from "../../helpers/formatters";
+import { combine } from "../../helpers/style-helpers";
+import { IRootState } from "../../redux/root";
+import { startDeleteAccount } from "../../redux/settings/accounts/actions";
+import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
+import { DataTable } from "../_ui/DataTable/DataTable";
+import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
+import * as appStyles from "../App/App.scss";
 
 interface IAccountSettingsProps {
 	lastUpdate: number;

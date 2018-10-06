@@ -2,11 +2,11 @@ import { faPencil, faShareAlt, faTrash } from "@fortawesome/pro-light-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
-import { ThinProfile } from "../../../../server/model-thins/ThinProfile";
-import * as bs from "../../../bootstrap-aliases";
-import { combine } from "../../../helpers/style-helpers";
-import { DataTable } from "../../_ui/DataTable/DataTable";
-import * as appStyles from "../../App/App.scss";
+import { ThinProfile } from "../../../server/model-thins/ThinProfile";
+import * as bs from "../../bootstrap-aliases";
+import { combine } from "../../helpers/style-helpers";
+import { DataTable } from "../_ui/DataTable/DataTable";
+import * as appStyles from "../App/App.scss";
 
 class ProfileSettings extends Component {
 

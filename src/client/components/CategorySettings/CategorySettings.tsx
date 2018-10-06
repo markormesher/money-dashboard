@@ -4,15 +4,15 @@ import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinCategory } from "../../../../server/model-thins/ThinCategory";
-import * as bs from "../../../bootstrap-aliases";
-import { generateCategoryTypeBadge } from "../../../helpers/formatters";
-import { combine } from "../../../helpers/style-helpers";
-import { IRootState } from "../../../redux/root";
-import { startDeleteCategory } from "../../../redux/settings/categories/actions";
-import { DataTable } from "../../_ui/DataTable/DataTable";
-import DeleteBtn from "../../_ui/DeleteBtn/DeleteBtn";
-import * as appStyles from "../../App/App.scss";
+import { ThinCategory } from "../../../server/model-thins/ThinCategory";
+import * as bs from "../../bootstrap-aliases";
+import { generateCategoryTypeBadge } from "../../helpers/formatters";
+import { combine } from "../../helpers/style-helpers";
+import { IRootState } from "../../redux/root";
+import { startDeleteCategory } from "../../redux/settings/categories/actions";
+import { DataTable } from "../_ui/DataTable/DataTable";
+import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
+import * as appStyles from "../App/App.scss";
 
 interface ICategorySettingsProps {
 	lastUpdate: number;

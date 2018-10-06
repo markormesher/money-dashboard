@@ -4,16 +4,16 @@ import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinBudget } from "../../../../server/model-thins/ThinBudget";
-import * as bs from "../../../bootstrap-aliases";
-import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../../helpers/formatters";
-import { combine } from "../../../helpers/style-helpers";
-import { IRootState } from "../../../redux/root";
-import { startDeleteBudget } from "../../../redux/settings/budgets/actions";
-import CheckboxBtn from "../../_ui/CheckboxBtn/CheckboxBtn";
-import { DataTable } from "../../_ui/DataTable/DataTable";
-import DeleteBtn from "../../_ui/DeleteBtn/DeleteBtn";
-import * as appStyles from "../../App/App.scss";
+import { ThinBudget } from "../../../server/model-thins/ThinBudget";
+import * as bs from "../../bootstrap-aliases";
+import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
+import { combine } from "../../helpers/style-helpers";
+import { IRootState } from "../../redux/root";
+import { startDeleteBudget } from "../../redux/settings/budgets/actions";
+import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
+import { DataTable } from "../_ui/DataTable/DataTable";
+import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
+import * as appStyles from "../App/App.scss";
 
 interface IBudgetSettingsProps {
 	lastUpdate: number;
