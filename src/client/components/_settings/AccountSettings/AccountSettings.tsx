@@ -1,4 +1,4 @@
-import { faPencil, faTrash } from "@fortawesome/pro-light-svg-icons";
+import { faPencil } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
@@ -9,6 +9,7 @@ import { generateAccountTypeBadge } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
 import CheckboxBtn from "../../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable } from "../../_ui/DataTable/DataTable";
+import DeleteBtn from "../../_ui/DeleteBtn/DeleteBtn";
 import * as appStyles from "../../App/App.scss";
 
 interface IAccountSettingsState {
@@ -23,9 +24,8 @@ class AccountSettings extends Component<any, IAccountSettingsState> {
 					<button className={combine(bs.btn, bs.btnOutlineDark, appStyles.btnMini)}>
 						<FontAwesomeIcon icon={faPencil} fixedWidth={true}/> Edit
 					</button>
-					<button className={combine(bs.btn, bs.btnOutlineDark, appStyles.btnMini)}>
-						<FontAwesomeIcon icon={faTrash} fixedWidth={true}/> Delete
-					</button>
+					<DeleteBtn
+							btnClassNames={combine(bs.btnOutlineDark, appStyles.btnMini)}/>
 				</div>
 		);
 	}
