@@ -50,7 +50,7 @@ class AccountSettings extends Component<any, IAccountSettingsState> {
 									initiallyChecked={true}
 									onChange={this.toggleActiveOnly}
 									btnClassNames={combine(bs.btnOutlineInfo, bs.btnSm)}>
-								Current Budgets Only
+								Active Accounts Only
 							</CheckboxBtn>
 						</div>
 					</div>
