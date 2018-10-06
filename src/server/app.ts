@@ -23,13 +23,8 @@ const app = Express();
 // db connection
 SequelizeDb
 		.sync({ force: false })
-		.then(() => {
-			logger.info("Database models synced successfully");
-		})
-		.catch((err) => {
-			console.log(err);
-			logger.error("Failed to sync database models", err);
-		});
+		.then(() => logger.info("Database models synced successfully"))
+		.catch((err) => logger.error("Failed to sync database models", err));
 
 // cookies and sessions
 const RedisSessionStore = ConnectRedis(ExpressSession);

@@ -2,10 +2,9 @@ import Express = require("express");
 import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
-
-import { requireUser } from "../../middleware/auth-middleware";
 import { getData } from "../../helpers/datatable-helper";
 import { deleteAccount, getAccount, saveAccount, toggleAccountActive } from "../../managers/account-manager";
+import { requireUser } from "../../middleware/auth-middleware";
 import { Account } from "../../models/Account";
 import { User } from "../../models/User";
 
