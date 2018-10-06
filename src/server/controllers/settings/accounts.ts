@@ -84,7 +84,7 @@ router.post("/edit/:accountId", requireUser, (req: Request, res: Response, next:
 
 	saveAccount(user, accountId, properties)
 			.then(() => {
-				res.flash("success", "Account saved");
+				// TODO res.flash("success", "Account saved");
 				res.redirect("/settings/accounts");
 			})
 			.catch(next);

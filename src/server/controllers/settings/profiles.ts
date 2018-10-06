@@ -75,7 +75,7 @@ router.post("/edit/:profileId", requireUser, (req: Request, res: Response, next:
 
 	saveProfile(user, profileId, properties)
 			.then(() => {
-				res.flash("success", "Profile saved");
+				// TODO res.flash("success", "Profile saved");
 				res.redirect("/settings/profiles");
 			})
 			.catch(next);

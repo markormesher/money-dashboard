@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
-import "react-table/react-table.css";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
 import * as bs from "../../../bootstrap-aliases";

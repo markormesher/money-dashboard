@@ -155,7 +155,7 @@ router.post("/edit/:budgetId", requireUser, (req: Request, res: Response, next: 
 
 	saveBudget(user, budgetId, properties)
 			.then(() => {
-				res.flash("success", "Budget saved");
+				// TODO res.flash("success", "Budget saved");
 				res.redirect("/settings/budgets");
 			})
 			.catch(next);
@@ -199,7 +199,7 @@ router.post("/clone/:budgetIds", requireUser, (req: Request, res: Response, next
 
 	cloneBudgets(user, budgetIds, startDate, endDate)
 			.then(() => {
-				res.flash("success", budgetIds.length === 1 ? "Budget saved" : "Budgets saved");
+				// TODO res.flash("success", budgetIds.length === 1 ? "Budget saved" : "Budgets saved");
 				res.redirect("/settings/budgets");
 			})
 			.catch(next);

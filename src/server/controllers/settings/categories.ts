@@ -78,7 +78,7 @@ router.post("/edit/:categoryId", requireUser, (req: Request, res: Response, next
 
 	saveCategory(user, categoryId, properties)
 			.then(() => {
-				res.flash("success", "Category saved");
+				// TODO res.flash("success", "Category saved");
 				res.redirect("/settings/categories");
 			})
 			.catch(next);

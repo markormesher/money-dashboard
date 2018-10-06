@@ -19,7 +19,7 @@ router.get("/old-index", requireUser, (req: Request, res: Response, next: NextFu
 				const assets = accounts.filter(a => a.type == "asset");
 
 				if (assets.length === 0) {
-					res.flash("info", "None of your accounts are assets.");
+					// TODO res.flash("info", "None of your accounts are assets.");
 					res.redirect("/");
 					return
 				}

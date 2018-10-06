@@ -2,15 +2,11 @@ import BodyParser = require("body-parser");
 import ConnectRedis = require("connect-redis");
 import Express = require("express");
 import { NextFunction, Request, Response } from "express";
-import ExpressFlash = require("express-flash-2");
 import ExpressSession = require("express-session");
 import Passport = require("passport");
-import { join } from "path";
-
 import { StatusError } from "./extensions/StatusError";
 import { getSecret, runningInDocker } from "./helpers/config-loader";
 import SequelizeDb = require("./helpers/db");
-import { formatterMiddleware } from "./helpers/formatters";
 import { logger } from "./helpers/logging";
 import PassportConfig = require("./helpers/passport-config");
 import { setupApiRoutes } from "./middleware/api-routes";
@@ -22,6 +18,8 @@ const app = Express();
 // Warning: a promise was created in a handler at ... but was not returned from it, see http://goo.gl/rRqMUw
 
 // TODO: check whether Redis and Postgres are up
+
+// TODO: major refactoring of server-side
 
 // db connection
 SequelizeDb
@@ -43,29 +41,8 @@ PassportConfig.init(Passport);
 app.use(Passport.initialize());
 app.use(Passport.session());
 
-// front-end dependencies
-app.use(Express.static(join(__dirname, "../assets")));
-[
-	"bootstrap",
-	"bootstrap-progressbar",
-	"chartist",
-	"datatables.net",
-	"datatables.net-bs",
-	"daterangepicker",
-	"gentelella",
-	"jquery",
-	"jquery-ui-dist",
-	"jquery-validation",
-	"moment",
-	"toastr",
-].forEach((lib) => {
-	app.use(`/_npm/${lib}`, Express.static(join(__dirname, `../node_modules/${lib}`)));
-});
-
 // middleware
 app.use(BodyParser.urlencoded({ extended: false }));
-app.use(ExpressFlash());
-app.use(formatterMiddleware);
 
 // routes
 setupApiRoutes(app);
@@ -75,11 +52,6 @@ if (process.env.NODE_ENV.indexOf("prod") >= 0) {
 	setupDevAppRoutes(app);
 }
 
-// views TODO: deprecate
-app.use(Express.static(join(__dirname, "public")));
-app.set("views", join(__dirname, "../views"));
-app.set("view engine", "pug");
-
 // error handlers
 // noinspection JSUnusedLocalSymbols
 app.use((error: StatusError, req: Request, res: Response, next: NextFunction) => {
@@ -88,8 +60,7 @@ app.use((error: StatusError, req: Request, res: Response, next: NextFunction) =>
 
 	logger.error(`Error: ${name}`, error);
 
-	res.status(status);
-	res.json(error);
+	res.status(status).json(error);
 });
 
 // go!
