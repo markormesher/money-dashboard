@@ -1,29 +1,24 @@
 import axios from "axios";
-import { all, call, put, take } from "redux-saga/effects";
-import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
+import { all, call, put, takeEvery } from "redux-saga/effects";
 import { setError } from "../../global/actions";
-import { AccountSettingsActions, setAccountList } from "./actions";
+import { PayloadAction } from "../../PayloadAction";
+import { AccountSettingsActions, setLastUpdate } from "./actions";
 
-function* loadAccountListSaga() {
-	yield take(AccountSettingsActions.START_LOAD_ACCOUNT_LIST);
-	// yield put(addWait("auth"));
-	try {
-		const accounts: ThinAccount[] = yield call(() => axios.get("/settings/accounts").then((res) => res.data));
-		yield [
-			put(setAccountList(accounts)),
-			// put(removeWait("auth")),
-		];
-	} catch (err) {
-		yield [
-			put(setError(err)),
-			// put(removeWait("auth")),
-		];
-	}
+function*deleteAccountSaga() {
+	yield takeEvery(AccountSettingsActions.START_DELETE_ACCOUNT, function*(action: PayloadAction) {
+		try {
+			yield call(() => axios.post(`/settings/accounts/delete/${action.payload.accountId}`).then((res) => res.data));
+			yield put(setLastUpdate());
+		} catch (err) {
+			yield put(setError(err));
+		}
+
+	});
 }
 
-function* accountSettingsSagas() {
+function*accountSettingsSagas() {
 	yield all([
-		loadAccountListSaga(),
+		deleteAccountSaga(),
 	]);
 }
 

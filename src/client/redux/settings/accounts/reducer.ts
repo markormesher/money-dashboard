@@ -1,21 +1,20 @@
-import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
 import { PayloadAction } from "../../PayloadAction";
 import { AccountSettingsActions } from "./actions";
 
 interface IAccountSettingsState {
-	accountList: ThinAccount[];
+	lastUpdate: number;
 }
 
 const initialState: IAccountSettingsState = {
-	accountList: undefined,
+	lastUpdate: 0,
 };
 
 function accountSettingsReducer(state = initialState, action: PayloadAction): IAccountSettingsState {
 	switch (action.type) {
-		case AccountSettingsActions.SET_ACCOUNT_LIST:
+		case AccountSettingsActions.SET_LAST_UPDATE:
 			return {
 				...state,
-				accountList: action.payload.accounts,
+				lastUpdate: action.payload.lastUpdate,
 			};
 
 		default:

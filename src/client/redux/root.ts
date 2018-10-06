@@ -24,10 +24,12 @@ interface IRootState {
 }
 
 const rootReducer = combineReducers({
-	accountSettings: accountSettingsReducer,
 	auth: authReducer,
 	global: globalReducer,
 	nav: navReducer,
+	settings: combineReducers({
+		accounts: accountSettingsReducer,
+	}),
 });
 
 function* rootSaga() {

@@ -57,6 +57,9 @@ class DeleteBtn extends Component<IDeleteBtnProps, IDeleteBtnState> {
 		} else {
 			clearTimeout(this.triggerExpiryTimeout);
 			this.setState({ running: true });
+			if (this.props.onClick) {
+				this.props.onClick();
+			}
 		}
 	}
 

@@ -1,31 +1,29 @@
 import { ActionCreator } from "redux";
-import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
 import { PayloadAction } from "../../PayloadAction";
 
 class AccountSettingsActions {
-	public static START_LOAD_ACCOUNT_LIST = "START_LOAD_ACCOUNT_LIST";
-	public static SET_ACCOUNT_LIST = "SET_ACCOUNT_LIST";
-	public static UNSET_ACCOUNT_LIST = "UNSET_ACCOUNT_LIST";
+	public static START_DELETE_ACCOUNT = "START_DELETE_ACCOUNT";
+	public static SET_LAST_UPDATE = "SET_LAST_UPDATE";
 }
 
-const startLoadAccountList: ActionCreator<PayloadAction> = () => {
-	return { type: AccountSettingsActions.START_LOAD_ACCOUNT_LIST };
-};
-
-const setAccountList: ActionCreator<PayloadAction> = (accounts: ThinAccount[]) => {
+const startDeleteAccount: ActionCreator<PayloadAction> = (accountId: string) => {
 	return {
-		type: AccountSettingsActions.SET_ACCOUNT_LIST,
-		payload: { accounts },
+		type: AccountSettingsActions.START_DELETE_ACCOUNT, payload: {
+			accountId,
+		},
 	};
 };
 
-const unsetAccountList: ActionCreator<PayloadAction> = () => {
-	return { type: AccountSettingsActions.UNSET_ACCOUNT_LIST };
+const setLastUpdate: ActionCreator<PayloadAction> = () => {
+	return {
+		type: AccountSettingsActions.SET_LAST_UPDATE, payload: {
+			lastUpdate: new Date().getTime(),
+		},
+	};
 };
 
 export {
 	AccountSettingsActions,
-	startLoadAccountList,
-	setAccountList,
-	unsetAccountList,
+	startDeleteAccount,
+	setLastUpdate,
 };
