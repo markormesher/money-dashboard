@@ -6,10 +6,15 @@ import { ThinBudget } from "../../../../server/model-thins/ThinBudget";
 import * as bs from "../../../bootstrap-aliases";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
+import CheckboxBtn from "../../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable } from "../../_ui/DataTable/DataTable";
 import * as appStyles from "../../App/App.scss";
 
-class BudgetSettings extends Component {
+interface IBudgetSettingsState {
+	currentOnly?: boolean;
+}
+
+class BudgetSettings extends Component<any, IBudgetSettingsState> {
 
 	private static generateActionButtons(budget: ThinBudget) {
 		return (
@@ -24,19 +29,52 @@ class BudgetSettings extends Component {
 		);
 	}
 
+	constructor(props: any) {
+		super(props);
+		this.state = {
+			currentOnly: true,
+		};
+
+		this.toggleActiveOnly = this.toggleActiveOnly.bind(this);
+	}
+
 	public render() {
+		const { currentOnly } = this.state;
 		return (
 				<>
-					<h1 className={bs.h2}>Budgets</h1>
+					<div className={appStyles.headerWrapper}>
+						<h1 className={combine(bs.h2, bs.floatLeft)}>Budgets</h1>
+						<div className={combine(bs.btnGroupSm, bs.floatRight)}>
+							<CheckboxBtn
+									initiallyChecked={true}
+									onChange={this.toggleActiveOnly}
+									btnClassNames={combine(bs.btnOutlineInfo, bs.btnSm)}>
+								Current Budgets Only
+							</CheckboxBtn>
+						</div>
+					</div>
 					<DataTable<ThinBudget>
 							api={"/settings/budgets/table-data"}
 							columns={[
-								{ title: "Name", sortField: ["category", "name"], defaultSortDirection: "asc" },
+								{
+									title: "Name",
+									sortField: ["category", "name"],
+									defaultSortDirection: "asc",
+									defaultSortPriority: 1,
+								},
 								{ title: "Type", sortField: "type" },
-								{ title: "Period", sortField: "startDate" },
+								{
+									title: "Period",
+									sortField: "startDate",
+									defaultSortDirection: "desc",
+									defaultSortPriority: 0,
+								},
 								{ title: "Amount", sortField: "amount" },
 								{ title: "Actions", sortable: false },
 							]}
+							apiExtraParams={{
+								currentOnly,
+							}}
 							rowRenderer={(budget: ThinBudget) => (
 									<tr key={budget.id}>
 										<td>{budget.category.name}</td>
@@ -49,6 +87,10 @@ class BudgetSettings extends Component {
 					/>
 				</>
 		);
+	}
+
+	private toggleActiveOnly(currentOnly: boolean) {
+		this.setState({ currentOnly });
 	}
 }
 

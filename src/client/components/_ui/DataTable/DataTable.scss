@@ -13,7 +13,7 @@
 
 .tableBodyWrapper {
 	position: relative;
-	width: 99%;
+	width: 100%;
 
 	.loadingIconWrapper {
 		width: 100%;
@@ -24,13 +24,13 @@
 }
 
 .tableHeader {
-	width: 99%;
+	width: 100%;
 	margin-bottom: 0.4rem;
 	overflow: auto; // allows the div to have height even though it only contains floated elements
 }
 
 .tableFooter {
-	width: 99%;
+	width: 100%;
 	font-size: 60%;
 }
 

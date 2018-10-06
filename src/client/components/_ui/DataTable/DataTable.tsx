@@ -104,7 +104,8 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		// JSON.stringify(...) is a neat hack to do deep comparison of data-only structures
 		if (this.state.currentPage !== nextState.currentPage
 				|| this.state.searchTerm !== nextState.searchTerm
-				|| JSON.stringify(this.state.sortedColumns) !== JSON.stringify(nextState.sortedColumns)) {
+				|| JSON.stringify(this.state.sortedColumns) !== JSON.stringify(nextState.sortedColumns)
+				|| JSON.stringify(this.props.apiExtraParams) !== JSON.stringify(nextProps.apiExtraParams)) {
 			this.fetchPending = true;
 		}
 	}
