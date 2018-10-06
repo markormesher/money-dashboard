@@ -1,4 +1,4 @@
-import { faPencil } from "@fortawesome/pro-light-svg-icons";
+import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
@@ -10,6 +10,7 @@ import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { startDeleteCategory } from "../../redux/settings/categories/actions";
+import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import * as appStyles from "../App/App.scss";
@@ -43,7 +44,12 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 		const { lastUpdate } = this.props;
 		return (
 				<>
-					<h1 className={bs.h2}>Categories</h1>
+					<div className={appStyles.headerWrapper}>
+						<h1 className={combine(bs.h2, bs.floatLeft)}>Categories</h1>
+						<button className={combine(bs.floatRight, bs.btn, bs.btnSm, bs.btnSuccess)}>
+							<FontAwesomeIcon icon={faPlus} fixedWidth={true}/> New Category
+						</button>
+					</div>
 					<DataTable<ThinCategory>
 							api={"/settings/categories/table-data"}
 							columns={[

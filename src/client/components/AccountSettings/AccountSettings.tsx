@@ -1,4 +1,4 @@
-import { faPencil } from "@fortawesome/pro-light-svg-icons";
+import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
@@ -60,13 +60,16 @@ class AccountSettings extends Component<IAccountSettingsProps, IAccountSettingsS
 				<>
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Accounts</h1>
-						<div className={combine(bs.btnGroupSm, bs.floatRight)}>
+						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
 									initiallyChecked={true}
 									onChange={this.toggleActiveOnly}
 									btnClassNames={combine(bs.btnOutlineInfo, bs.btnSm)}>
 								Active Accounts Only
 							</CheckboxBtn>
+							<button className={combine(bs.btn, bs.btnSm, bs.btnSuccess)}>
+								<FontAwesomeIcon icon={faPlus} fixedWidth={true}/> New Account
+							</button>
 						</div>
 					</div>
 					<DataTable<ThinAccount>

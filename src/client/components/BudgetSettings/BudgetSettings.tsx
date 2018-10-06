@@ -1,4 +1,4 @@
-import { faPencil } from "@fortawesome/pro-light-svg-icons";
+import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
@@ -60,13 +60,16 @@ class BudgetSettings extends Component<IBudgetSettingsProps, IBudgetSettingsStat
 				<>
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Budgets</h1>
-						<div className={combine(bs.btnGroupSm, bs.floatRight)}>
+						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
 									initiallyChecked={true}
 									onChange={this.toggleCurrentOnly}
 									btnClassNames={combine(bs.btnOutlineInfo, bs.btnSm)}>
 								Current Budgets Only
 							</CheckboxBtn>
+							<button className={combine(bs.btn, bs.btnSm, bs.btnSuccess)}>
+								<FontAwesomeIcon icon={faPlus} fixedWidth={true}/> New Budget
+							</button>
 						</div>
 					</div>
 					<DataTable<ThinBudget>
