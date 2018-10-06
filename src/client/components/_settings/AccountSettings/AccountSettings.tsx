@@ -13,32 +13,16 @@ import { IRootState } from "../../../redux/root";
 import * as appStyles from "../../App/App.scss";
 import { DataTable } from "../../DataTable/DataTable";
 
-interface IAccountSettingsProps {
-
-}
-
-function mapStateToProps(state: IRootState, props: IAccountSettingsProps): IAccountSettingsProps {
-	return {
-		...props,
-	};
-}
-
-function mapDispatchToProps(dispatch: Dispatch, props: IAccountSettingsProps): IAccountSettingsProps {
-	return {
-		...props,
-	};
-}
-
-class AccountSettings extends Component<IAccountSettingsProps> {
+class AccountSettings extends Component {
 
 	private static generateActionButtons(account: ThinAccount) {
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<button className={combine(bs.btn, bs.btnOutlineDark, appStyles.btnMini)}>
-						<FontAwesomeIcon icon={faPencil} fixedWidth={true}/>
+						<FontAwesomeIcon icon={faPencil} fixedWidth={true}/> Edit
 					</button>
 					<button className={combine(bs.btn, bs.btnOutlineDark, appStyles.btnMini)}>
-						<FontAwesomeIcon icon={faTrash} fixedWidth={true}/>
+						<FontAwesomeIcon icon={faTrash} fixedWidth={true}/> Delete
 					</button>
 				</div>
 		);
@@ -58,7 +42,7 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 							rowRenderer={(account: ThinAccount) => (
 									<tr key={account.id}>
 										<td>{account.name}</td>
-										<td>{generateAccountTypeBadge(account.type)}</td>
+										<td>{generateAccountTypeBadge(account)}</td>
 										<td>{AccountSettings.generateActionButtons(account)}</td>
 									</tr>
 							)}
@@ -68,4 +52,4 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountSettings);
+export default AccountSettings;

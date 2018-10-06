@@ -22,7 +22,7 @@ router.get("/old-index", requireUser, (req: Request, res: Response) => {
 
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
-	const searchTerm = req.query.search.value;
+	const searchTerm = req.query.searchTerm;
 
 	const countQuery: IFindOptions<Profile> = {
 		include: [{

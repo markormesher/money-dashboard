@@ -1,6 +1,7 @@
 import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosResponse } from "axios";
+import { string } from "prop-types";
 import { stringify } from "qs";
 import * as React from "react";
 import { ReactNode } from "react";
@@ -18,7 +19,7 @@ interface IColumn {
 	title: string;
 	lowercaseTitle?: string;
 	sortable?: boolean;
-	sortField?: string;
+	sortField?: string | string[];
 	defaultSortDirection?: SortDirection;
 	defaultSortPriority?: number;
 }
@@ -206,7 +207,11 @@ class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTabl
 		this.setState({ loading: true });
 		const frame = ++this.frameCounter;
 
-		const order = sortedColumns.map((sortEntry) => [sortEntry.column.sortField, sortEntry.dir]);
+		const ensureArray = (val: string | string[]) => val instanceof string ? [val] : val;
+		const order = sortedColumns.map((sortEntry) => []
+				.concat(ensureArray(sortEntry.column.sortField))
+				.concat(sortEntry.dir),
+		);
 
 		axios
 				.get(this.props.api, {
