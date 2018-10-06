@@ -105,10 +105,7 @@ router.post("/delete/:accountId", requireUser, (req: Request, res: Response, nex
 	const accountId = req.params.accountId;
 
 	deleteAccount(user, accountId)
-			.then(() => {
-				res.status(200).end();
-				return null;
-			})
+			.then(() => res.status(200).end())
 			.catch(next);
 });
 

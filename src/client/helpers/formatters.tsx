@@ -10,7 +10,11 @@ import { combine } from "./style-helpers";
 
 function generateBadge(content: string, badgeClass: string, marginRight: boolean = false): ReactNode {
 	badgeClass = badgeClass || bs.badgeLight;
-	return (<span className={combine(bs.badge, badgeClass, marginRight && bs.mr1)}>{content}</span>);
+	return (
+			<span key={content + badgeClass} className={combine(bs.badge, badgeClass, marginRight && bs.mr1)}>
+				{content}
+			</span>
+	);
 }
 
 function formatCurrency(amount: number): string {
