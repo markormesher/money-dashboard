@@ -35,7 +35,7 @@ class BudgetSettings extends Component<any, IBudgetSettingsState> {
 			currentOnly: true,
 		};
 
-		this.toggleActiveOnly = this.toggleActiveOnly.bind(this);
+		this.toggleCurrentOnly = this.toggleCurrentOnly.bind(this);
 	}
 
 	public render() {
@@ -47,7 +47,7 @@ class BudgetSettings extends Component<any, IBudgetSettingsState> {
 						<div className={combine(bs.btnGroupSm, bs.floatRight)}>
 							<CheckboxBtn
 									initiallyChecked={true}
-									onChange={this.toggleActiveOnly}
+									onChange={this.toggleCurrentOnly}
 									btnClassNames={combine(bs.btnOutlineInfo, bs.btnSm)}>
 								Current Budgets Only
 							</CheckboxBtn>
@@ -72,9 +72,7 @@ class BudgetSettings extends Component<any, IBudgetSettingsState> {
 								{ title: "Amount", sortField: "amount" },
 								{ title: "Actions", sortable: false },
 							]}
-							apiExtraParams={{
-								currentOnly,
-							}}
+							apiExtraParams={{ currentOnly }}
 							rowRenderer={(budget: ThinBudget) => (
 									<tr key={budget.id}>
 										<td>{budget.category.name}</td>
@@ -89,7 +87,7 @@ class BudgetSettings extends Component<any, IBudgetSettingsState> {
 		);
 	}
 
-	private toggleActiveOnly(currentOnly: boolean) {
+	private toggleCurrentOnly(currentOnly: boolean) {
 		this.setState({ currentOnly });
 	}
 }
