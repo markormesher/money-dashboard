@@ -2,16 +2,13 @@ import { faPencil, faTrash } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
-import { connect } from "react-redux";
 import "react-table/react-table.css";
-import { Dispatch } from "redux";
 import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
 import * as bs from "../../../bootstrap-aliases";
 import { generateAccountTypeBadge } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
-import { IRootState } from "../../../redux/root";
+import { DataTable } from "../../_ui/DataTable/DataTable";
 import * as appStyles from "../../App/App.scss";
-import { DataTable } from "../../DataTable/DataTable";
 
 class AccountSettings extends Component {
 

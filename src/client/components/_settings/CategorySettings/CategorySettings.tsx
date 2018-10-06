@@ -6,8 +6,8 @@ import { ThinCategory } from "../../../../server/model-thins/ThinCategory";
 import * as bs from "../../../bootstrap-aliases";
 import { generateCategoryTypeBadge } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
+import { DataTable } from "../../_ui/DataTable/DataTable";
 import * as appStyles from "../../App/App.scss";
-import { DataTable } from "../../DataTable/DataTable";
 
 class CategorySettings extends Component {
 

@@ -6,8 +6,8 @@ import { ThinBudget } from "../../../../server/model-thins/ThinBudget";
 import * as bs from "../../../bootstrap-aliases";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
+import { DataTable } from "../../_ui/DataTable/DataTable";
 import * as appStyles from "../../App/App.scss";
-import { DataTable } from "../../DataTable/DataTable";
 
 class BudgetSettings extends Component {
 

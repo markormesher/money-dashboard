@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../../bootstrap-aliases";
 import { ISortEntry } from "./DataTable";
 import * as styles from "./DataTable.scss";
 

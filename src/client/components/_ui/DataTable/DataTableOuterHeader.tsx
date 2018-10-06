@@ -2,8 +2,8 @@ import { faArrowLeft, faArrowRight } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
-import * as bs from "../../bootstrap-aliases";
-import { combine } from "../../helpers/style-helpers";
+import * as bs from "../../../bootstrap-aliases";
+import { combine } from "../../../helpers/style-helpers";
 import * as styles from "./DataTable.scss";
 
 interface IDataTableOuterHeaderProps {
