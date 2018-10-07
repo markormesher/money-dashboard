@@ -60,15 +60,6 @@ function getQuickPeriodDates(): string[][][] {
 	];
 }
 
-router.get("/old-index", requireUser, (req: Request, res: Response) => {
-	res.render("settings/budgets/index", {
-		_: {
-			title: "Budgets",
-			activePage: "settings/budgets",
-		},
-	});
-});
-
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const searchTerm = req.query.searchTerm;
@@ -114,34 +105,6 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			.catch(next);
 });
 
-router.get("/edit/:budgetId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
-	const budgetId = req.params.budgetId;
-
-	Bluebird
-			.all([
-				getBudget(user, budgetId),
-				getAllCategories(user),
-			])
-			.spread((budget: Budget, categories: Category[]) => {
-				// convert categories to [[id, name], [id, name], ...]
-				const categoriesForView: string[][] = categories
-						.map((c) => [c.id, c.name])
-						.sort((a: string[], b: string[]) => a[1].localeCompare(b[1]));
-
-				res.render("settings/budgets/edit", {
-					_: {
-						activePage: "settings/budget",
-						title: budgetId ? "Edit Budget" : "New Budget",
-					},
-					budget: budget || new Budget(),
-					categories: categoriesForView,
-					quickPeriodDates: getQuickPeriodDates(),
-				});
-			})
-			.catch(next);
-});
-
 router.post("/edit/:budgetId", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const budgetId = req.params.budgetId;
@@ -154,10 +117,7 @@ router.post("/edit/:budgetId", requireUser, (req: Request, res: Response, next: 
 	};
 
 	saveBudget(user, budgetId, properties)
-			.then(() => {
-				// TODO res.flash("success", "Budget saved");
-				res.redirect("/settings/budgets");
-			})
+			.then(() => res.status(200).end())
 			.catch(next);
 });
 

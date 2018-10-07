@@ -2,23 +2,13 @@ import Express = require("express");
 import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
-
-import { requireUser } from "../../middleware/auth-middleware";
 import { getData } from "../../helpers/datatable-helper";
-import { deleteProfile, getProfile, saveProfile } from "../../managers/profile-manager";
+import { deleteProfile, saveProfile } from "../../managers/profile-manager";
+import { requireUser } from "../../middleware/auth-middleware";
 import { Profile } from "../../models/Profile";
 import { User } from "../../models/User";
 
 const router = Express.Router();
-
-router.get("/old-index", requireUser, (req: Request, res: Response) => {
-	res.render("settings/profiles/index", {
-		_: {
-			title: "Profiles",
-			activePage: "settings/profiles",
-		},
-	});
-});
 
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
@@ -51,23 +41,6 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			.catch(next);
 });
 
-router.get("/edit/:profileId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
-	const profileId = req.params.profileId;
-
-	getProfile(user, profileId)
-			.then((profile) => {
-				res.render("settings/profiles/edit", {
-					_: {
-						activePage: "settings/profiles",
-						title: profileId ? "Edit Profile" : "New Profile",
-					},
-					profile: profile || new Profile(),
-				});
-			})
-			.catch(next);
-});
-
 router.post("/edit/:profileId", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const profileId = req.params.profileId;
@@ -76,10 +49,7 @@ router.post("/edit/:profileId", requireUser, (req: Request, res: Response, next:
 	};
 
 	saveProfile(user, profileId, properties)
-			.then(() => {
-				// TODO res.flash("success", "Profile saved");
-				res.redirect("/settings/profiles");
-			})
+			.then(() => res.status(200).end())
 			.catch(next);
 });
 
