@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Component } from "react";
-import * as bs from "../../../bootstrap-aliases";
+import * as bs from "../../bootstrap-aliases";
 
-class BalanceGrowth extends Component {
+class BalanceGrowthReport extends Component {
 	public render() {
 		return (
 				<div>
@@ -12,4 +12,4 @@ class BalanceGrowth extends Component {
 	}
 }
 
-export default BalanceGrowth;
+export default BalanceGrowthReport;

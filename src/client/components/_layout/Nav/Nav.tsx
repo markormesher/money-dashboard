@@ -66,7 +66,6 @@ class Nav extends Component<INavProps> {
 						<NavSection title="Reports">
 							<NavLink to="/reports/balance-growth" text="Balance Growth" icon={faChartLine}/>
 							<NavLink to="/reports/asset-growth" text="Asset Growth" icon={faAnalytics}/>
-							<NavLink to="/reports/budget-performance" text="Budget Performance" icon={faChartPie}/>
 						</NavSection>
 
 						<NavSection title="Settings">

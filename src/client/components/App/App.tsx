@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.css";
-import { Component } from "react";
 import * as React from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
@@ -11,16 +11,15 @@ import AppRootWrapper from "../_layout/AppRootWrapper/AppRootWrapper";
 import FullPageSpinner from "../_layout/FullPageSpinner/FullPageSpinner";
 import Header from "../_layout/Header/Header";
 import Nav from "../_layout/Nav/Nav";
-import AssetGrowth from "../_reports/AssetGrowth/AssetGrowth";
-import BalanceGrowth from "../_reports/BalanceGrowth/BalanceGrowth";
-import BudgetPerformance from "../_reports/BudgetPerformace/BudgetPerformance";
 import AccountSettings from "../AccountSettings/AccountSettings";
+import AssetGrowthReport from "../AssetGrowthReport/AssetGrowthReport";
+import BalanceGrowthReport from "../BalanceGrowthReport/BalanceGrowthReport";
 import BudgetSettings from "../BudgetSettings/BudgetSettings";
 import CategorySettings from "../CategorySettings/CategorySettings";
-import ProfileSettings from "../ProfileSettings/ProfileSettings";
 import Dashboard from "../Dashboard/Dashboard";
 import ErrorPage from "../ErrorPage/ErrorPage";
 import Login from "../Login/Login";
+import ProfileSettings from "../ProfileSettings/ProfileSettings";
 import Transactions from "../Transactions/Transactions";
 import "./App.scss";
 
@@ -76,9 +75,8 @@ class App extends Component<IAppProps> {
 								<Route exact path="/" component={Dashboard}/>
 								<Route path="/transactions" component={Transactions}/>
 
-								<Route path="/reports/balance-growth" component={BalanceGrowth}/>
-								<Route path="/reports/asset-growth" component={AssetGrowth}/>
-								<Route path="/reports/budget-performance" component={BudgetPerformance}/>
+								<Route path="/reports/balance-growth" component={BalanceGrowthReport}/>
+								<Route path="/reports/asset-growth" component={AssetGrowthReport}/>
 
 								<Route path="/settings/accounts" component={AccountSettings}/>
 								<Route path="/settings/budgets" component={BudgetSettings}/>
