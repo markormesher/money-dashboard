@@ -1,15 +1,18 @@
-import { faSave, faTimes } from "@fortawesome/pro-light-svg-icons";
+import { faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 import BootstrapFadeWrapper from "../BootstrapFadeWrapper/BootstrapFadeWrapper";
 import IconBtn from "../IconBtn/IconBtn";
+import * as styles from "./Modal.scss";
 
 interface IModalProps {
 	title: string;
 	isOpen?: boolean;
 	buttons?: Array<"cancel" | "save">;
+	modalBusy?: boolean;
 	onCancel?: () => void;
 	onSave?: () => void;
 	onCloseRequest?: () => void;
@@ -17,8 +20,10 @@ interface IModalProps {
 
 class Modal extends Component<IModalProps> {
 
+	// TODO: show a spinner somewhere when the modal is busy
+
 	public render() {
-		const { title, buttons, isOpen, onCancel, onSave, onCloseRequest } = this.props;
+		const { title, buttons, modalBusy, isOpen, onCancel, onSave, onCloseRequest } = this.props;
 		return (
 				<>
 					<BootstrapFadeWrapper in={isOpen}>
@@ -34,24 +39,32 @@ class Modal extends Component<IModalProps> {
 									<div className={bs.modalBody}>
 										{this.props.children}
 									</div>
-									{buttons && buttons.length > 0 && <div className={bs.modalFooter}>
-										{buttons.indexOf("cancel") >= 0 && <IconBtn
+									<div className={combine(bs.modalFooter, styles.modalFooter)}>
+										{modalBusy
+										&& <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
+
+										{!modalBusy && buttons.indexOf("cancel") >= 0
+										&& <IconBtn
 												icon={faTimes}
 												text={"Cancel"}
 												btnProps={{
 													className: bs.btnOutlineDark,
 													onClick: onCancel || onCloseRequest,
+													disabled: modalBusy === true,
 												}}
 										/>}
-										{buttons.indexOf("save") >= 0 && <IconBtn
+
+										{!modalBusy && buttons.indexOf("save") >= 0
+										&& <IconBtn
 												icon={faSave}
 												text={"Save"}
 												btnProps={{
 													className: bs.btnSuccess,
 													onClick: onSave,
+													disabled: modalBusy === true,
 												}}
 										/>}
-									</div>}
+									</div>
 								</div>
 							</div>
 						</div>

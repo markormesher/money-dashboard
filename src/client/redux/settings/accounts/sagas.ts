@@ -3,7 +3,7 @@ import { all, call, put, takeEvery } from "redux-saga/effects";
 import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
 import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
-import { AccountSettingsActions, setAccountToEdit, setLastUpdate } from "./actions";
+import { AccountSettingsActions, setAccountToEdit, setEditorBusy, setLastUpdate } from "./actions";
 
 function*deleteAccountSaga() {
 	yield takeEvery(AccountSettingsActions.START_DELETE_ACCOUNT, function*(action: PayloadAction) {
@@ -23,9 +23,13 @@ function*saveAccountSaga() {
 		try {
 			const account: Partial<ThinAccount> = action.payload.account;
 			const accountId = account.id || "new";
-			yield call(() => axios.post(`/settings/accounts/edit/${accountId}`, account));
+			yield all([
+				put(setEditorBusy(true)),
+				call(() => axios.post(`/settings/accounts/edit/${accountId}`, account)),
+			]);
 			yield all([
 				put(setLastUpdate()),
+				put(setEditorBusy(false)),
 				put(setAccountToEdit(undefined)),
 			]);
 		} catch (err) {

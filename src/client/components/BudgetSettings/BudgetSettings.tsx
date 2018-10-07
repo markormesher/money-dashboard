@@ -89,7 +89,7 @@ class BudgetSettings extends Component<IBudgetSettingsProps> {
 								{ title: "Actions", sortable: false },
 							]}
 							apiExtraParams={{
-								activeOnly: displayCurrentOnly,
+								currentOnly: displayCurrentOnly,
 								lastUpdate,
 							}}
 							rowRenderer={(budget: ThinBudget) => (

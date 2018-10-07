@@ -6,12 +6,14 @@ interface IAccountSettingsState {
 	lastUpdate: number;
 	displayActiveOnly: boolean;
 	accountToEdit: ThinAccount;
+	editorBusy: boolean;
 }
 
 const initialState: IAccountSettingsState = {
 	lastUpdate: 0,
 	displayActiveOnly: true,
 	accountToEdit: undefined,
+	editorBusy: false,
 };
 
 function accountSettingsReducer(state = initialState, action: PayloadAction): IAccountSettingsState {
@@ -32,6 +34,12 @@ function accountSettingsReducer(state = initialState, action: PayloadAction): IA
 			return {
 				...state,
 				accountToEdit: action.payload.account,
+			};
+
+		case AccountSettingsActions.SET_EDITOR_BUSY:
+			return {
+				...state,
+				editorBusy: action.payload.editorBusy,
 			};
 
 		default:

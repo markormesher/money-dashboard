@@ -1,0 +1,1 @@
+export const modalFooter: string;
