@@ -6,7 +6,6 @@ enum GlobalActions {
 	ADD_WAIT = "GlobalActions.ADD_WAIT",
 	REMOVE_WAIT = "GlobalActions.REMOVE_WAIT",
 	SET_ERROR = "GlobalActions.SET_ERROR",
-	SET_MODAL_OPEN = "GlobalActions.SET_ERROR",
 }
 
 const addWait: ActionCreator<PayloadAction> = (wait: string) => {
@@ -30,17 +29,9 @@ const setError: ActionCreator<PayloadAction> = (error: DetailedError) => {
 	};
 };
 
-const setModalOpen: ActionCreator<PayloadAction> = (modalOpen: boolean) => {
-	return {
-		type: GlobalActions.SET_MODAL_OPEN,
-		payload: { modalOpen },
-	};
-};
-
 export {
 	GlobalActions,
 	addWait,
 	removeWait,
 	setError,
-	setModalOpen,
 };

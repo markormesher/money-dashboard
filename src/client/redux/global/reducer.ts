@@ -4,13 +4,11 @@ import { GlobalActions } from "./actions";
 
 interface IGlobalState {
 	waitingFor: string[];
-	modalOpen: boolean;
 	error?: DetailedError;
 }
 
 const initialState: IGlobalState = {
 	waitingFor: [],
-	modalOpen: false,
 	error: undefined,
 };
 
@@ -38,12 +36,6 @@ function globalReducer(state = initialState, action: PayloadAction): IGlobalStat
 			return {
 				...state,
 				error: action.payload.error,
-			};
-
-		case GlobalActions.SET_MODAL_OPEN:
-			return {
-				...state,
-				modalOpen: action.payload.modalOpen,
 			};
 
 		default:

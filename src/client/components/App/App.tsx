@@ -28,7 +28,6 @@ import "./App.scss";
 interface IAppProps {
 	waitingFor?: string[];
 	globalError?: Error;
-	modalOpen?: boolean;
 	activeUser?: ThinUser;
 	currentPath?: string;
 }
@@ -38,7 +37,6 @@ function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
 		...props,
 		waitingFor: state.global.waitingFor,
 		globalError: state.global.error,
-		modalOpen: state.global.modalOpen,
 		activeUser: state.auth.activeUser,
 		currentPath: state.router.location.pathname,
 	};
@@ -47,7 +45,7 @@ function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
 class App extends Component<IAppProps> {
 
 	public render() {
-		const { waitingFor, globalError, modalOpen, activeUser, currentPath } = this.props;
+		const { waitingFor, globalError, activeUser, currentPath } = this.props;
 
 		if (globalError) {
 			return (
