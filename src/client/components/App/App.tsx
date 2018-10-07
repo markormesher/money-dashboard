@@ -4,7 +4,9 @@ import { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
+import * as bs from "../../bootstrap-aliases";
 import Http404Error from "../../helpers/errors/Http404Error";
+import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import AppContentWrapper from "../_layout/AppContentWrapper/AppContentWrapper";
 import AppRootWrapper from "../_layout/AppRootWrapper/AppRootWrapper";
@@ -26,6 +28,7 @@ import "./App.scss";
 interface IAppProps {
 	waitingFor?: string[];
 	globalError?: Error;
+	modalOpen?: boolean;
 	activeUser?: ThinUser;
 	currentPath?: string;
 }
@@ -35,6 +38,7 @@ function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
 		...props,
 		waitingFor: state.global.waitingFor,
 		globalError: state.global.error,
+		modalOpen: state.global.modalOpen,
 		activeUser: state.auth.activeUser,
 		currentPath: state.router.location.pathname,
 	};
@@ -43,19 +47,21 @@ function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
 class App extends Component<IAppProps> {
 
 	public render() {
-		if (this.props.globalError) {
+		const { waitingFor, globalError, modalOpen, activeUser, currentPath } = this.props;
+
+		if (globalError) {
 			return (
-					<ErrorPage error={this.props.globalError} fullPage={true}/>
+					<ErrorPage error={globalError} fullPage={true}/>
 			);
 		}
 
-		if (this.props.waitingFor.length > 0) {
+		if (waitingFor.length > 0) {
 			return (
 					<FullPageSpinner/>
 			);
 		}
 
-		if (!this.props.activeUser) {
+		if (!activeUser) {
 			return (
 					<Switch>
 						<Route exact path="/auth/login" component={Login}/>
@@ -84,7 +90,7 @@ class App extends Component<IAppProps> {
 
 								{/* Adding a new route? Keep it above this one! */}
 								<Route render={() => {
-									const error = new Http404Error(this.props.currentPath);
+									const error = new Http404Error(currentPath);
 									return (
 											<ErrorPage error={error}/>
 									);
@@ -92,6 +98,7 @@ class App extends Component<IAppProps> {
 							</Switch>
 						</AppContentWrapper>
 					</AppRootWrapper>
+
 				</div>
 		);
 	}

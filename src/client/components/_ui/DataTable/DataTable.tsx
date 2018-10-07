@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from "axios";
 import { string } from "prop-types";
 import { stringify } from "qs";
 import * as React from "react";
-import { ReactNode } from "react";
+import { Component, ReactNode } from "react";
 import { DatatableResponse } from "../../../../server/helpers/datatable-helper";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
@@ -50,7 +50,7 @@ interface IDataTableState<Model> {
 	};
 }
 
-class DataTable<Model> extends React.Component<IDataTableProps<Model>, IDataTableState<Model>> {
+class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState<Model>> {
 
 	public static defaultProps: Partial<IDataTableProps<any>> = {
 		apiExtraParams: {},

@@ -39,9 +39,9 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAccountSettingsProps): I
 	return {
 		...props,
 		actions: {
-			deleteAccount: (id: string) => dispatch(startDeleteAccount(id)),
-			setDisplayActiveOnly: (active: boolean) => dispatch(setDisplayActiveOnly(active)),
-			setAccountToEdit: (account: ThinAccount) => dispatch(setAccountToEdit(account)),
+			deleteAccount: (id) => dispatch(startDeleteAccount(id)),
+			setDisplayActiveOnly: (active) => dispatch(setDisplayActiveOnly(active)),
+			setAccountToEdit: (account) => dispatch(setAccountToEdit(account)),
 		},
 	};
 }
@@ -67,14 +67,16 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 									stateModifier={this.props.actions.setDisplayActiveOnly}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
-									}}/>
+									}}
+							/>
 
 							<IconBtn
 									icon={faPlus}
 									text={"New Account"}
 									btnProps={{
 										className: combine(bs.btnSm, bs.btnSuccess),
-									}}/>
+									}}
+							/>
 						</div>
 					</div>
 

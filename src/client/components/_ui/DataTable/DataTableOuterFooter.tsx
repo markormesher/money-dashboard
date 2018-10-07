@@ -1,3 +1,4 @@
+import { Component } from "react";
 import * as React from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { ISortEntry } from "./DataTable";
@@ -16,7 +17,7 @@ const sortDirectionFull = {
 	desc: "descending",
 };
 
-class DataTableOuterFooter extends React.Component<IDataTableOuterFooterProps> {
+class DataTableOuterFooter extends Component<IDataTableOuterFooterProps> {
 	public render() {
 		const { pageSize, currentPage, sortedColumns, filteredRowCount, totalRowCount } = this.props;
 

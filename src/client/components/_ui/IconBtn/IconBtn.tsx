@@ -1,5 +1,6 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon, Props as FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
+import { Component } from "react";
 import * as React from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
@@ -11,7 +12,7 @@ interface IIconBtnProps {
 	iconProps?: Partial<FontAwesomeIconProps>;
 }
 
-class IconBtn extends React.Component<IIconBtnProps> {
+class IconBtn extends Component<IIconBtnProps> {
 
 	public render() {
 		const { icon, text, btnProps, iconProps } = this.props;

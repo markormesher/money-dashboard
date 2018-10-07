@@ -16,7 +16,7 @@
     "build:dev:server": "tsc --diagnostics",
     "build:client": "cross-env NODE_ENV=production webpack -p --progress --config=./webpack.config.prod.js",
     "build:dev:client": "cross-env NODE_ENV=development webpack -p --progress --config=./webpack.config.dev.js",
-    "lint": "tslint -c ./tslint.json ./src/server/**/*.ts ./src/client/**/*.ts ./src/client/**/*.tsx",
+    "lint": "tslint -c ./tslint.json ./src/server/**/*.ts ./src/client/**/*.{ts,tsx}",
     "lint:fix": "tslint --fix -c ./tslint.json ./src/server/**/*.ts ./src/client/**/*.ts ./src/client/**/*.tsx"
   },
   "dependencies": {
@@ -50,6 +50,7 @@
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
+    "react-transition-group": "^2.5.0",
     "redux": "^4.0.0",
     "redux-saga": "^0.16.0",
     "reflect-metadata": "^0.1.10",
@@ -80,6 +81,7 @@
     "@types/react-router": "^4.0.31",
     "@types/react-router-dom": "^4.3.0",
     "@types/react-table": "^6.7.12",
+    "@types/react-transition-group": "^2.0.14",
     "@types/uuid": "^3.4.3",
     "@types/webpack-dev-middleware": "^2.0.2",
     "@types/webpack-hot-middleware": "^2.16.4",

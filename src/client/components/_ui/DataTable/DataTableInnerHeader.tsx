@@ -1,5 +1,6 @@
 import { faExchange, faSortAmountDown, faSortAmountUp } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Component } from "react";
 import * as React from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
@@ -12,7 +13,7 @@ interface IDataTableInnerHeaderProps {
 	onToggleSortOrder: (column: IColumn) => void;
 }
 
-class DataTableInnerHeader extends React.Component<IDataTableInnerHeaderProps> {
+class DataTableInnerHeader extends Component<IDataTableInnerHeaderProps> {
 	public render() {
 		const { columns, sortedColumns } = this.props;
 
