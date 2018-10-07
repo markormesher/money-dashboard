@@ -37,6 +37,7 @@ interface IDataTableProps<Model> {
 	rowRenderer: (row: Model, index: number) => ReactNode;
 }
 
+// TODO: weird interactions with state here and Redux state: changing "active only" kills the sorting
 interface IDataTableState<Model> {
 	loading?: boolean;
 	failed: boolean;
