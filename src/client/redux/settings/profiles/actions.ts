@@ -1,9 +1,9 @@
 import { ActionCreator } from "redux";
 import { PayloadAction } from "../../PayloadAction";
 
-class ProfileSettingsActions {
-	public static START_DELETE_PROFILE = "START_DELETE_PROFILE";
-	public static SET_LAST_UPDATE = "SET_LAST_UPDATE";
+enum ProfileSettingsActions {
+	START_DELETE_PROFILE = "ProfileSettingsActions.START_DELETE_PROFILE",
+	SET_LAST_UPDATE = "ProfileSettingsActions.SET_LAST_UPDATE",
 }
 
 const startDeleteProfile: ActionCreator<PayloadAction> = (profileId: string) => {

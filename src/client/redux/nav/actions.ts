@@ -1,9 +1,9 @@
 import { ActionCreator } from "redux";
 import { PayloadAction } from "../PayloadAction";
 
-class NavActions {
-	public static OPEN_NAV = "OPEN_NAV";
-	public static CLOSE_NAV = "CLOSE_NAV";
+enum NavActions {
+	OPEN_NAV = "NavActions.OPEN_NAV",
+	CLOSE_NAV = "NavActions.CLOSE_NAV",
 }
 
 const openNav: ActionCreator<PayloadAction> = () => {

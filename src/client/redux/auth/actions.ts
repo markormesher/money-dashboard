@@ -2,11 +2,11 @@ import { ActionCreator } from "redux";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
 import { PayloadAction } from "../PayloadAction";
 
-class AuthActions {
-	public static START_LOAD_CURRENT_USER = "START_LOAD_CURRENT_USER";
-	public static SET_CURRENT_USER = "SET_CURRENT_USER";
-	public static UNSET_CURRENT_USER = "UNSET_CURRENT_USER";
-	public static START_LOGOUT_CURRENT_USER = "START_LOGOUT_CURRENT_USER";
+enum AuthActions {
+	START_LOAD_CURRENT_USER = "AuthActions.START_LOAD_CURRENT_USER",
+	SET_CURRENT_USER = "AuthActions.SET_CURRENT_USER",
+	UNSET_CURRENT_USER = "AuthActions.UNSET_CURRENT_USER",
+	START_LOGOUT_CURRENT_USER = "AuthActions.START_LOGOUT_CURRENT_USER",
 }
 
 const startLoadCurrentUser: ActionCreator<PayloadAction> = () => {

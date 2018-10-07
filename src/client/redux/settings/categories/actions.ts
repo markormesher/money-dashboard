@@ -1,9 +1,9 @@
 import { ActionCreator } from "redux";
 import { PayloadAction } from "../../PayloadAction";
 
-class CategorySettingsActions {
-		public static START_DELETE_CATEGORY = "START_DELETE_CATEGORY";
-	public static SET_LAST_UPDATE = "SET_LAST_UPDATE";
+enum CategorySettingsActions {
+	START_DELETE_CATEGORY = "CategorySettingsActions.START_DELETE_CATEGORY",
+	SET_LAST_UPDATE = "CategorySettingsActions.SET_LAST_UPDATE",
 }
 
 const startDeleteCategory: ActionCreator<PayloadAction> = (categoryId: string) => {

@@ -1,10 +1,10 @@
 import { ActionCreator } from "redux";
 import { PayloadAction } from "../../PayloadAction";
 
-class BudgetSettingsActions {
-	public static START_DELETE_BUDGET = "START_DELETE_BUDGET";
-	public static SET_DISPLAY_CURRENT_ONLY = "SET_DISPLAY_CURRENT_ONLY";
-	public static SET_LAST_UPDATE = "SET_LAST_UPDATE";
+enum BudgetSettingsActions {
+	START_DELETE_BUDGET = "BudgetSettingsActions.START_DELETE_BUDGET",
+	SET_DISPLAY_CURRENT_ONLY = "BudgetSettingsActions.SET_DISPLAY_CURRENT_ONLY",
+	SET_LAST_UPDATE = "BudgetSettingsActions.SET_LAST_UPDATE",
 }
 
 const startDeleteBudget: ActionCreator<PayloadAction> = (budgetId: string) => {
