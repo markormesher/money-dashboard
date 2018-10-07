@@ -42,6 +42,10 @@ function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
 	};
 }
 
+// TODO: remove lambdas in JSX (++perf)
+// TODO: rewire some components to be pure components
+// TODO: implement shouldComponentUpdate() where sensible
+
 class App extends Component<IAppProps> {
 
 	public render() {
