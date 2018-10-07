@@ -1,5 +1,4 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
@@ -10,7 +9,6 @@ import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { startDeleteCategory } from "../../redux/settings/categories/actions";
-import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
@@ -55,6 +53,7 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 									className: combine(bs.floatRight, bs.btnSm, bs.btnSuccess),
 								}}/>
 					</div>
+
 					<DataTable<ThinCategory>
 							api={"/settings/categories/table-data"}
 							columns={[

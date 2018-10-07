@@ -8,7 +8,7 @@ import * as bs from "../../bootstrap-aliases";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
-import { startDeleteBudget } from "../../redux/settings/budgets/actions";
+import { setDisplayCurrentOnly, startDeleteBudget } from "../../redux/settings/budgets/actions";
 import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
@@ -17,19 +17,17 @@ import * as appStyles from "../App/App.scss";
 
 interface IBudgetSettingsProps {
 	lastUpdate: number;
+	displayCurrentOnly: boolean;
 	actions?: {
 		deleteBudget: (id: string) => AnyAction,
+		setDisplayActiveOnly: (active: boolean) => AnyAction,
 	};
-}
-
-interface IBudgetSettingsState {
-	currentOnly?: boolean;
 }
 
 function mapStateToProps(state: IRootState, props: IBudgetSettingsProps): IBudgetSettingsProps {
 	return {
 		...props,
-		lastUpdate: state.settings.accounts.lastUpdate,
+		...state.settings.budgets,
 	};
 }
 
@@ -38,24 +36,15 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetSettingsProps): IB
 		...props,
 		actions: {
 			deleteBudget: (id) => dispatch(startDeleteBudget(id)),
+			setDisplayActiveOnly: (active) => dispatch(setDisplayCurrentOnly(active)),
 		},
 	};
 }
 
-class BudgetSettings extends Component<IBudgetSettingsProps, IBudgetSettingsState> {
-
-	constructor(props: IBudgetSettingsProps) {
-		super(props);
-		this.state = {
-			currentOnly: true,
-		};
-
-		this.toggleCurrentOnly = this.toggleCurrentOnly.bind(this);
-	}
+class BudgetSettings extends Component<IBudgetSettingsProps> {
 
 	public render() {
-		const { lastUpdate } = this.props;
-		const { currentOnly } = this.state;
+		const { lastUpdate, displayCurrentOnly } = this.props;
 		return (
 				<>
 					<div className={appStyles.headerWrapper}>
@@ -63,7 +52,8 @@ class BudgetSettings extends Component<IBudgetSettingsProps, IBudgetSettingsStat
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
 									text={"Current Budgets Only"}
-									onChange={this.toggleCurrentOnly}
+									stateFilter={(state) => state.settings.budgets.displayCurrentOnly}
+									stateModifier={this.props.actions.setDisplayActiveOnly}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
 									}}/>
@@ -76,6 +66,7 @@ class BudgetSettings extends Component<IBudgetSettingsProps, IBudgetSettingsStat
 									}}/>
 						</div>
 					</div>
+
 					<DataTable<ThinBudget>
 							api={"/settings/budgets/table-data"}
 							columns={[
@@ -95,7 +86,10 @@ class BudgetSettings extends Component<IBudgetSettingsProps, IBudgetSettingsStat
 								{ title: "Amount", sortField: "amount" },
 								{ title: "Actions", sortable: false },
 							]}
-							apiExtraParams={{ currentOnly, lastUpdate }}
+							apiExtraParams={{
+								activeOnly: displayCurrentOnly,
+								lastUpdate,
+							}}
 							rowRenderer={(budget: ThinBudget) => (
 									<tr key={budget.id}>
 										<td>{budget.category.name}</td>
@@ -126,10 +120,6 @@ class BudgetSettings extends Component<IBudgetSettingsProps, IBudgetSettingsStat
 							}}/>
 				</div>
 		);
-	}
-
-	private toggleCurrentOnly(currentOnly: boolean) {
-		this.setState({ currentOnly });
 	}
 }
 

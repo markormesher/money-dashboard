@@ -8,7 +8,7 @@ import * as bs from "../../bootstrap-aliases";
 import { generateAccountTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
-import { startDeleteAccount } from "../../redux/settings/accounts/actions";
+import { setAccountToEdit, setDisplayActiveOnly, startDeleteAccount } from "../../redux/settings/accounts/actions";
 import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
@@ -18,20 +18,20 @@ import EditAccountModal from "./EditAccountModal";
 
 interface IAccountSettingsProps {
 	lastUpdate: number;
+	displayActiveOnly: boolean;
+	accountToEdit: ThinAccount;
+
 	actions?: {
 		deleteAccount: (id: string) => AnyAction,
+		setDisplayActiveOnly: (active: boolean) => AnyAction,
+		setAccountToEdit: (account: ThinAccount) => AnyAction,
 	};
-}
-
-interface IAccountSettingsState {
-	activeOnly: boolean;
-	modalOpen: boolean;
 }
 
 function mapStateToProps(state: IRootState, props: IAccountSettingsProps): IAccountSettingsProps {
 	return {
 		...props,
-		lastUpdate: state.settings.accounts.lastUpdate,
+		...state.settings.accounts,
 	};
 }
 
@@ -39,32 +39,23 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAccountSettingsProps): I
 	return {
 		...props,
 		actions: {
-			deleteAccount: (id) => dispatch(startDeleteAccount(id)),
+			deleteAccount: (id: string) => dispatch(startDeleteAccount(id)),
+			setDisplayActiveOnly: (active: boolean) => dispatch(setDisplayActiveOnly(active)),
+			setAccountToEdit: (account: ThinAccount) => dispatch(setAccountToEdit(account)),
 		},
 	};
 }
 
-class AccountSettings extends Component<IAccountSettingsProps, IAccountSettingsState> {
-
-	constructor(props: IAccountSettingsProps) {
-		super(props);
-		this.state = {
-			activeOnly: true,
-			modalOpen: false,
-		};
-
-		this.toggleActiveOnly = this.toggleActiveOnly.bind(this);
-	}
+class AccountSettings extends Component<IAccountSettingsProps> {
 
 	public render() {
-		const { lastUpdate } = this.props;
-		const { activeOnly, modalOpen } = this.state;
+		const { lastUpdate, displayActiveOnly, accountToEdit } = this.props;
 		return (
 				<>
 					<EditAccountModal
-							accountId={""}
-							isOpen={modalOpen}
-							onCloseRequest={() => this.setState({ modalOpen: false })}
+							account={accountToEdit}
+							isOpen={accountToEdit !== undefined}
+							onCloseRequest={() => this.props.actions.setAccountToEdit(undefined)}
 					/>
 
 					<div className={appStyles.headerWrapper}>
@@ -72,7 +63,8 @@ class AccountSettings extends Component<IAccountSettingsProps, IAccountSettingsS
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
 									text={"Active Accounts Only"}
-									onChange={this.toggleActiveOnly}
+									stateFilter={(state) => state.settings.accounts.displayActiveOnly}
+									stateModifier={this.props.actions.setDisplayActiveOnly}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
 									}}/>
@@ -85,6 +77,7 @@ class AccountSettings extends Component<IAccountSettingsProps, IAccountSettingsS
 									}}/>
 						</div>
 					</div>
+
 					<DataTable<ThinAccount>
 							api={"/settings/accounts/table-data"}
 							columns={[
@@ -92,7 +85,10 @@ class AccountSettings extends Component<IAccountSettingsProps, IAccountSettingsS
 								{ title: "Type", sortField: "type" },
 								{ title: "Actions", sortable: false },
 							]}
-							apiExtraParams={{ activeOnly, lastUpdate }}
+							apiExtraParams={{
+								activeOnly: displayActiveOnly,
+								lastUpdate,
+							}}
 							rowRenderer={(account: ThinAccount) => (
 									<tr key={account.id}>
 										<td>{account.name}</td>
@@ -113,7 +109,7 @@ class AccountSettings extends Component<IAccountSettingsProps, IAccountSettingsS
 							text={"Edit"}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-								onClick: () => this.setState({ modalOpen: true }),
+								onClick: () => this.props.actions.setAccountToEdit(account),
 							}}/>
 
 					<DeleteBtn
@@ -125,9 +121,6 @@ class AccountSettings extends Component<IAccountSettingsProps, IAccountSettingsS
 		);
 	}
 
-	private toggleActiveOnly(activeOnly: boolean) {
-		this.setState({ activeOnly });
-	}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountSettings);

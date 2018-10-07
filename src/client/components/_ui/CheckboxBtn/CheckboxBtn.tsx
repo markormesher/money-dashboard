@@ -1,33 +1,36 @@
 import { faCheckSquare, faSquare } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { Component } from "react";
+import { connect } from "react-redux";
+import { IRootState } from "../../../redux/root";
 import IconBtn from "../IconBtn/IconBtn";
 
 interface ICheckboxBtnProps {
 	text: string;
-	initiallyChecked?: boolean;
+	stateFilter: (state: IRootState) => boolean;
+	stateModifier: (checked: boolean) => void;
+	checked?: boolean;
 	onChange?: (checked: boolean) => void;
 	btnProps?: React.HTMLProps<HTMLButtonElement>;
 }
 
-interface ICheckboxBtnState {
-	checked: boolean;
+function mapStateToProps(state: IRootState, props: ICheckboxBtnProps): ICheckboxBtnProps {
+	return {
+		...props,
+		checked: props.stateFilter(state),
+	};
 }
 
-class CheckboxBtn extends Component<ICheckboxBtnProps, ICheckboxBtnState> {
+class CheckboxBtn extends Component<ICheckboxBtnProps> {
 
 	constructor(props: ICheckboxBtnProps) {
 		super(props);
-		this.state = {
-			checked: props.initiallyChecked || true,
-		};
 
 		this.toggleChecked = this.toggleChecked.bind(this);
 	}
 
 	public render() {
-		const { text, btnProps } = this.props;
-		const { checked } = this.state;
+		const { text, checked, btnProps } = this.props;
 		const icon = checked ? faCheckSquare : faSquare;
 
 		return (
@@ -42,13 +45,11 @@ class CheckboxBtn extends Component<ICheckboxBtnProps, ICheckboxBtnState> {
 	}
 
 	private toggleChecked() {
-		const newState = !this.state.checked;
-		this.setState({ checked: newState });
-		if (this.props.onChange) {
-			this.props.onChange(newState);
-		}
+		const { checked, stateModifier } = this.props;
+		const newState = !checked;
+		stateModifier(newState);
 	}
 
 }
 
-export default CheckboxBtn;
+export default connect(mapStateToProps)(CheckboxBtn);

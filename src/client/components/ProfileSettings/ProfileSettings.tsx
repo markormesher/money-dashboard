@@ -45,6 +45,7 @@ class ProfileSettings extends Component<IProfileSettingsProps> {
 		return (
 				<>
 					<h1 className={bs.h2}>Profiles</h1>
+
 					<DataTable<ThinProfile>
 							api={"/settings/profiles/table-data"}
 							columns={[

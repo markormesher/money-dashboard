@@ -3,10 +3,12 @@ import { BudgetSettingsActions } from "./actions";
 
 interface IBudgetSettingsState {
 	lastUpdate: number;
+	displayCurrentOnly: boolean;
 }
 
 const initialState: IBudgetSettingsState = {
 	lastUpdate: 0,
+	displayCurrentOnly: true,
 };
 
 function budgetSettingsReducer(state = initialState, action: PayloadAction): IBudgetSettingsState {
@@ -15,6 +17,12 @@ function budgetSettingsReducer(state = initialState, action: PayloadAction): IBu
 			return {
 				...state,
 				lastUpdate: action.payload.lastUpdate,
+			};
+
+		case BudgetSettingsActions.SET_DISPLAY_CURRENT_ONLY:
+			return {
+				...state,
+				displayCurrentOnly: action.payload.currentOnly,
 			};
 
 		default:
