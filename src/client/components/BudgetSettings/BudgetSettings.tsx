@@ -1,5 +1,4 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
@@ -63,14 +62,18 @@ class BudgetSettings extends Component<IBudgetSettingsProps, IBudgetSettingsStat
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Budgets</h1>
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
-									initiallyChecked={true}
+									text={"Current Budgets Only"}
 									onChange={this.toggleCurrentOnly}
-									btnClassNames={combine(bs.btnOutlineInfo, bs.btnSm)}>
-								Current Budgets Only
-							</CheckboxBtn>
-							<button className={combine(bs.btn, bs.btnSm, bs.btnSuccess)}>
-								<FontAwesomeIcon icon={faPlus} fixedWidth={true}/> New Budget
-							</button>
+									btnProps={{
+										className: combine(bs.btnOutlineInfo, bs.btnSm),
+									}}/>
+
+							<IconBtn
+									icon={faPlus}
+									text={"New Budget"}
+									btnProps={{
+										className: combine(bs.btnSm, bs.btnSuccess),
+									}}/>
 						</div>
 					</div>
 					<DataTable<ThinBudget>

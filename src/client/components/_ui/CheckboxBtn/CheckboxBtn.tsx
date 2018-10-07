@@ -1,14 +1,13 @@
 import { faCheckSquare, faSquare } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
-import * as bs from "../../../bootstrap-aliases";
-import { combine } from "../../../helpers/style-helpers";
+import IconBtn from "../IconBtn/IconBtn";
 
 interface ICheckboxBtnProps {
-	initiallyChecked: boolean;
-	btnClassNames?: string;
+	text: string;
+	initiallyChecked?: boolean;
 	onChange?: (checked: boolean) => void;
+	btnProps?: React.HTMLProps<HTMLButtonElement>;
 }
 
 interface ICheckboxBtnState {
@@ -20,21 +19,25 @@ class CheckboxBtn extends Component<ICheckboxBtnProps, ICheckboxBtnState> {
 	constructor(props: ICheckboxBtnProps) {
 		super(props);
 		this.state = {
-			checked: props.initiallyChecked,
+			checked: props.initiallyChecked || true,
 		};
 
 		this.toggleChecked = this.toggleChecked.bind(this);
 	}
 
 	public render() {
-		const { btnClassNames } = this.props;
+		const { text, btnProps } = this.props;
 		const { checked } = this.state;
 		const icon = checked ? faCheckSquare : faSquare;
 
 		return (
-				<button className={combine(bs.btn, btnClassNames)} onClick={this.toggleChecked}>
-					<FontAwesomeIcon fixedWidth={true} icon={icon}/> {this.props.children}
-				</button>
+				<IconBtn
+						icon={icon}
+						text={text}
+						btnProps={{
+							...btnProps,
+							onClick: this.toggleChecked,
+						}}/>
 		);
 	}
 

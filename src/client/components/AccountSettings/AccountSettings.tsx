@@ -1,5 +1,4 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
@@ -63,14 +62,18 @@ class AccountSettings extends Component<IAccountSettingsProps, IAccountSettingsS
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Accounts</h1>
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
-									initiallyChecked={true}
+									text={"Active Accounts Only"}
 									onChange={this.toggleActiveOnly}
-									btnClassNames={combine(bs.btnOutlineInfo, bs.btnSm)}>
-								Active Accounts Only
-							</CheckboxBtn>
-							<button className={combine(bs.btn, bs.btnSm, bs.btnSuccess)}>
-								<FontAwesomeIcon icon={faPlus} fixedWidth={true}/> New Account
-							</button>
+									btnProps={{
+										className: combine(bs.btnOutlineInfo, bs.btnSm),
+									}}/>
+
+							<IconBtn
+									icon={faPlus}
+									text={"New Account"}
+									btnProps={{
+										className: combine(bs.btnSm, bs.btnSuccess),
+									}}/>
 						</div>
 					</div>
 					<DataTable<ThinAccount>

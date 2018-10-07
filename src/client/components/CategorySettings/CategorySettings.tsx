@@ -10,6 +10,7 @@ import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { startDeleteCategory } from "../../redux/settings/categories/actions";
+import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
@@ -46,9 +47,13 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 				<>
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Categories</h1>
-						<button className={combine(bs.floatRight, bs.btn, bs.btnSm, bs.btnSuccess)}>
-							<FontAwesomeIcon icon={faPlus} fixedWidth={true}/> New Category
-						</button>
+
+						<IconBtn
+								icon={faPlus}
+								text={"New Category"}
+								btnProps={{
+									className: combine(bs.floatRight, bs.btnSm, bs.btnSuccess),
+								}}/>
 					</div>
 					<DataTable<ThinCategory>
 							api={"/settings/categories/table-data"}
