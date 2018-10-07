@@ -5,10 +5,11 @@ import { Component } from "react";
 import { run } from "tslint/lib/runner";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
+import IconBtn from "../IconBtn/IconBtn";
 
 interface IDeleteBtnProps {
-	btnClassNames?: string;
-	onClick?: () => void;
+	onConfirmedClick?: () => void;
+	btnProps?: React.HTMLProps<HTMLButtonElement>;
 }
 
 interface IDeleteBtnState {
@@ -31,16 +32,25 @@ class DeleteBtn extends Component<IDeleteBtnProps, IDeleteBtnState> {
 	}
 
 	public render() {
-		const { btnClassNames } = this.props;
+		const { btnProps } = this.props;
 		const { triggered, running } = this.state;
 
 		const btnIcon = running ? faCircleNotch : (triggered ? faExclamationTriangle : faTrash);
 		const btnText = running ? undefined : (triggered ? "Sure?" : "Delete");
 
 		return (
-				<button className={combine(bs.btn, btnClassNames)} onClick={this.handleClick}>
-					<FontAwesomeIcon icon={btnIcon} fixedWidth={triggered} spin={running}/> {btnText}
-				</button>
+				<IconBtn
+						icon={btnIcon}
+						text={btnText}
+						btnProps={{
+							...btnProps,
+							onClick: this.handleClick,
+							disabled: running,
+						}}
+						iconProps={{
+							spin: running,
+						}}
+				/>
 		);
 	}
 
@@ -57,8 +67,8 @@ class DeleteBtn extends Component<IDeleteBtnProps, IDeleteBtnState> {
 		} else {
 			clearTimeout(this.triggerExpiryTimeout);
 			this.setState({ running: true });
-			if (this.props.onClick) {
-				this.props.onClick();
+			if (this.props.onConfirmedClick) {
+				this.props.onConfirmedClick();
 			}
 		}
 	}

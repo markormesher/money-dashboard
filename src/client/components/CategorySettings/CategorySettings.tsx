@@ -10,9 +10,9 @@ import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { startDeleteCategory } from "../../redux/settings/categories/actions";
-import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
+import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
 
 interface ICategorySettingsProps {
@@ -73,12 +73,17 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 	private generateActionButtons(category: ThinCategory) {
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
-					<button className={combine(bs.btn, bs.btnOutlineDark, appStyles.btnMini)}>
-						<FontAwesomeIcon icon={faPencil} fixedWidth={true}/> Edit
-					</button>
+					<IconBtn
+							icon={faPencil}
+							text={"Edit"}
+							btnProps={{
+								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+							}}/>
 					<DeleteBtn
-							btnClassNames={combine(bs.btnOutlineDark, appStyles.btnMini)}
-							onClick={() => this.props.actions.deleteCategory(category.id)}/>
+							onConfirmedClick={() => this.props.actions.deleteCategory(category.id)}
+							btnProps={{
+								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+							}}/>
 				</div>
 		);
 	}

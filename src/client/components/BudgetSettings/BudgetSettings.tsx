@@ -13,6 +13,7 @@ import { startDeleteBudget } from "../../redux/settings/budgets/actions";
 import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
+import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
 
 interface IBudgetSettingsProps {
@@ -109,12 +110,17 @@ class BudgetSettings extends Component<IBudgetSettingsProps, IBudgetSettingsStat
 	private generateActionButtons(budget: ThinBudget) {
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
-					<button className={combine(bs.btn, bs.btnOutlineDark, appStyles.btnMini)}>
-						<FontAwesomeIcon icon={faPencil} fixedWidth={true}/> Edit
-					</button>
+					<IconBtn
+							icon={faPencil}
+							text={"Edit"}
+							btnProps={{
+								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+							}}/>
 					<DeleteBtn
-							btnClassNames={combine(bs.btnOutlineDark, appStyles.btnMini)}
-							onClick={() => this.props.actions.deleteBudget(budget.id)}/>
+							onConfirmedClick={() => this.props.actions.deleteBudget(budget.id)}
+							btnProps={{
+								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+							}}/>
 				</div>
 		);
 	}

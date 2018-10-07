@@ -10,6 +10,8 @@ import { budgetSettingsReducer, IBudgetSettingsState } from "./settings/budgets/
 import { budgetSettingsSagas } from "./settings/budgets/sagas";
 import { categorySettingsReducer, ICategorySettingsState } from "./settings/categories/reducer";
 import { categorySettingsSagas } from "./settings/categories/sagas";
+import { IProfileSettingsState, profileSettingsReducer } from "./settings/profiles/reducer";
+import { profileSettingsSagas } from "./settings/profiles/sagas";
 
 interface IRootState {
 	auth?: IAuthState;
@@ -19,6 +21,7 @@ interface IRootState {
 		accounts?: IAccountSettingsState;
 		budgets?: IBudgetSettingsState;
 		categories?: ICategorySettingsState;
+		profiles?: IProfileSettingsState;
 	};
 
 	// from connected-react-router
@@ -37,6 +40,7 @@ const rootReducer = combineReducers({
 		accounts: accountSettingsReducer,
 		budgets: budgetSettingsReducer,
 		categories: categorySettingsReducer,
+		profiles: profileSettingsReducer,
 	}),
 });
 
@@ -46,6 +50,7 @@ function*rootSaga() {
 		accountSettingsSagas(),
 		budgetSettingsSagas(),
 		categorySettingsSagas(),
+		profileSettingsSagas(),
 	]);
 }
 

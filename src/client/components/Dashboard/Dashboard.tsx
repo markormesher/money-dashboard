@@ -15,6 +15,7 @@ function mapStateToProps(state: IRootState, props: IDashboardProps): IDashboardP
 	return {
 		...props,
 		activeUser: state.auth.activeUser,
+		activeProfile: state.auth.activeUser.profiles[state.auth.activeProfile],
 	};
 }
 
@@ -29,7 +30,7 @@ class Dashboard extends Component<IDashboardProps> {
 		return (
 				<div>
 					<h1 className={bs.h2}>Dashboard</h1>
-					<p>Hello, {this.props.activeUser.displayName}!</p>
+					<pre>{JSON.stringify(this.props, null, 2)}</pre>
 				</div>
 		);
 	}

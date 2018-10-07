@@ -9,6 +9,11 @@ h1, h2, h3 {
 	margin-bottom: 1rem !important; // was 0.5rem
 }
 
+button:focus {
+	/* Bootstrap override */
+	box-shadow: none !important;
+}
+
 .headerWrapper {
 	width: 100%;
 	overflow: auto; // allows the div to have height even though it only contains floated elements
