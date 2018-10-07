@@ -14,6 +14,7 @@ import { DataTable } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
+import EditAccountModal from "./EditAccountModal";
 
 interface IAccountSettingsProps {
 	lastUpdate: number;
@@ -24,6 +25,7 @@ interface IAccountSettingsProps {
 
 interface IAccountSettingsState {
 	activeOnly: boolean;
+	modalOpen: boolean;
 }
 
 function mapStateToProps(state: IRootState, props: IAccountSettingsProps): IAccountSettingsProps {
@@ -48,6 +50,7 @@ class AccountSettings extends Component<IAccountSettingsProps, IAccountSettingsS
 		super(props);
 		this.state = {
 			activeOnly: true,
+			modalOpen: false,
 		};
 
 		this.toggleActiveOnly = this.toggleActiveOnly.bind(this);
@@ -55,9 +58,15 @@ class AccountSettings extends Component<IAccountSettingsProps, IAccountSettingsS
 
 	public render() {
 		const { lastUpdate } = this.props;
-		const { activeOnly } = this.state;
+		const { activeOnly, modalOpen } = this.state;
 		return (
 				<>
+					<EditAccountModal
+							accountId={""}
+							isOpen={modalOpen}
+							onCloseRequest={() => this.setState({ modalOpen: false })}
+					/>
+
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Accounts</h1>
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
@@ -104,6 +113,7 @@ class AccountSettings extends Component<IAccountSettingsProps, IAccountSettingsS
 							text={"Edit"}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								onClick: () => this.setState({ modalOpen: true }),
 							}}/>
 
 					<DeleteBtn

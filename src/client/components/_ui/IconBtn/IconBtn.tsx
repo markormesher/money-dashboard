@@ -15,7 +15,7 @@ class IconBtn extends React.Component<IIconBtnProps> {
 
 	public render() {
 		const { icon, text, btnProps, iconProps } = this.props;
-		const { className: btnClassName, ...otherBtnProps } = btnProps;
+		const { className: btnClassName, ...otherBtnProps } = { ...btnProps };
 		return (
 				<button className={combine(bs.btn, btnClassName)} {...otherBtnProps}>
 					<FontAwesomeIcon icon={icon} fixedWidth={true} className={bs.mr1} {...iconProps}/>
