@@ -16,9 +16,7 @@ class EditAccountModal extends Component<IEditAccountModalProps & Partial<IModal
 		const { account, ...modalProps } = this.props;
 		return (
 				<Modal{...modalProps} title={"Edit Account"}>
-
 					<pre>{JSON.stringify(account, null, 2)}</pre>
-
 					<ModalFooter>
 						<IconBtn icon={faTimes} text={"Cancel"} btnProps={{ className: bs.btnOutlineDark }}/>
 						<IconBtn icon={faSave} text={"Save"} btnProps={{ className: bs.btnSuccess }}/>

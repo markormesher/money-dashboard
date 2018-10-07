@@ -40,7 +40,8 @@ class CheckboxBtn extends Component<ICheckboxBtnProps> {
 						btnProps={{
 							...btnProps,
 							onClick: this.toggleChecked,
-						}}/>
+						}}
+				/>
 		);
 	}
 

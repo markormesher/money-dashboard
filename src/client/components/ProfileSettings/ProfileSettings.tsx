@@ -73,7 +73,8 @@ class ProfileSettings extends Component<IProfileSettingsProps> {
 							text={"Edit"}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-							}}/>
+							}}
+					/>
 
 					{/* TODO: tooltip showing that active account cannot be deleted */}
 					<DeleteBtn
@@ -81,14 +82,16 @@ class ProfileSettings extends Component<IProfileSettingsProps> {
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
 								disabled: deleteDisabled,
-							}}/>
+							}}
+					/>
 
 					<IconBtn
 							icon={faUserPlus}
 							text={"Share"}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-							}}/>
+							}}
+					/>
 				</div>
 		);
 	}

@@ -51,7 +51,8 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 								text={"New Category"}
 								btnProps={{
 									className: combine(bs.floatRight, bs.btnSm, bs.btnSuccess),
-								}}/>
+								}}
+						/>
 					</div>
 
 					<DataTable<ThinCategory>
@@ -82,12 +83,14 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 							text={"Edit"}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-							}}/>
+							}}
+					/>
 					<DeleteBtn
 							onConfirmedClick={() => this.props.actions.deleteCategory(category.id)}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-							}}/>
+							}}
+					/>
 				</div>
 		);
 	}

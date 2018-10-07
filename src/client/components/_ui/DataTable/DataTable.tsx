@@ -133,7 +133,8 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 							rowCount={data.filteredRowCount}
 							onPrevPageClick={() => this.setState({ currentPage: this.state.currentPage - 1 })}
 							onNextPageClick={() => this.setState({ currentPage: this.state.currentPage + 1 })}
-							onSearchTermSet={(searchTerm) => this.setState({ searchTerm })}/>
+							onSearchTermSet={(searchTerm) => this.setState({ searchTerm })}
+					/>
 
 					<div className={styles.tableBodyWrapper}>
 						<div className={styles.loadingIconWrapper}>
@@ -144,7 +145,8 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 							<DataTableInnerHeader
 									columns={columns}
 									sortedColumns={sortedColumns}
-									onToggleSortOrder={this.toggleColumnSortOrder}/>
+									onToggleSortOrder={this.toggleColumnSortOrder}
+							/>
 
 							<tbody>
 							{!failed && (!data || data.rows.length === 0) && this.generateMsgRow("No rows to display")}
@@ -159,7 +161,8 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 							pageSize={pageSize}
 							filteredRowCount={filteredRowCount}
 							totalRowCount={totalRowCount}
-							sortedColumns={sortedColumns}/>
+							sortedColumns={sortedColumns}
+					/>
 				</div>
 		);
 	}

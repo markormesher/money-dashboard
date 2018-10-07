@@ -64,7 +64,7 @@ class App extends Component<IAppProps> {
 		if (!activeUser) {
 			return (
 					<Switch>
-						<Route exact path="/auth/login" component={Login}/>
+						<Route exact={true} path="/auth/login" component={Login}/>
 						<Redirect to="/auth/login"/>
 					</Switch>
 			);
@@ -77,7 +77,7 @@ class App extends Component<IAppProps> {
 						<Nav/>
 						<AppContentWrapper>
 							<Switch>
-								<Route exact path="/" component={Dashboard}/>
+								<Route exact={true} path="/" component={Dashboard}/>
 								<Route path="/transactions" component={Transactions}/>
 
 								<Route path="/reports/balance-growth" component={BalanceGrowthReport}/>
@@ -89,12 +89,14 @@ class App extends Component<IAppProps> {
 								<Route path="/settings/profiles" component={ProfileSettings}/>
 
 								{/* Adding a new route? Keep it above this one! */}
-								<Route render={() => {
-									const error = new Http404Error(currentPath);
-									return (
-											<ErrorPage error={error}/>
-									);
-								}}/>
+								<Route
+										render={() => {
+											const error = new Http404Error(currentPath);
+											return (
+													<ErrorPage error={error}/>
+											);
+										}}
+								/>
 							</Switch>
 						</AppContentWrapper>
 					</AppRootWrapper>

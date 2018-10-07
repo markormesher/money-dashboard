@@ -78,8 +78,12 @@ class NavLink extends Component<INavLinkProps> {
 
 		return (
 				<li className={this.linkItemClasses}>
-					<Link to={this.props.to} title={this.props.text} className={linkClasses}
-						  onClick={this.handleOnClick}>
+					<Link
+							to={this.props.to}
+							title={this.props.text}
+							className={linkClasses}
+							onClick={this.handleOnClick}
+					>
 						<FontAwesomeIcon icon={this.props.icon} fixedWidth={true} className={this.iconClasses}/>
 						{this.props.text}
 					</Link>

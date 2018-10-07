@@ -49,8 +49,11 @@ class DataTableOuterHeader<Model> extends Component<IDataTableOuterHeaderProps> 
 						</button>
 					</div>
 					<div className={bs.floatRight}>
-						<input placeholder={"Search"} className={combine(bs.formControl, bs.formControlSm)}
-							   onKeyUp={this.handleSearchTermChange}/>
+						<input
+								placeholder={"Search"}
+								className={combine(bs.formControl, bs.formControlSm)}
+								onKeyUp={this.handleSearchTermChange}
+						/>
 					</div>
 				</div>
 		);

@@ -56,14 +56,16 @@ class BudgetSettings extends Component<IBudgetSettingsProps> {
 									stateModifier={this.props.actions.setDisplayActiveOnly}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
-									}}/>
+									}}
+							/>
 
 							<IconBtn
 									icon={faPlus}
 									text={"New Budget"}
 									btnProps={{
 										className: combine(bs.btnSm, bs.btnSuccess),
-									}}/>
+									}}
+							/>
 						</div>
 					</div>
 
@@ -112,12 +114,14 @@ class BudgetSettings extends Component<IBudgetSettingsProps> {
 							text={"Edit"}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-							}}/>
+							}}
+					/>
 					<DeleteBtn
 							onConfirmedClick={() => this.props.actions.deleteBudget(budget.id)}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-							}}/>
+							}}
+					/>
 				</div>
 		);
 	}

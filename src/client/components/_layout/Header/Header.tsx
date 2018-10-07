@@ -63,10 +63,15 @@ class Header extends Component<IHeaderProps> {
 						<FontAwesomeIcon icon={faBars} fixedWidth={true} className={style.navToggleIcon}/>
 					</Link>
 
-					<Link to="/"
-						  className={combine(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}>
-						<FontAwesomeIcon icon={faPoundSign} fixedWidth={true}
-										 className={combine(bs.textMuted, bs.mr2)}/>
+					<Link
+							to="/"
+							className={combine(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}
+					>
+						<FontAwesomeIcon
+								icon={faPoundSign}
+								fixedWidth={true}
+								className={combine(bs.textMuted, bs.mr2)}
+						/>
 						Money Dashboard
 					</Link>
 				</nav>

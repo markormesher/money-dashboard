@@ -36,7 +36,8 @@ class DataTableInnerHeader extends Component<IDataTableInnerHeaderProps> {
 								fixedWidth={true}
 								flip={sortIconFlip}
 								rotation={sortIconRotate}
-								className={sortIconClasses}/>}
+								className={sortIconClasses}
+						/>}
 						{col.title}
 					</th>
 			);

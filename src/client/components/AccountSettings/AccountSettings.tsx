@@ -112,13 +112,15 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
 								onClick: () => this.props.actions.setAccountToEdit(account),
-							}}/>
+							}}
+					/>
 
 					<DeleteBtn
 							onConfirmedClick={() => this.props.actions.deleteAccount(account.id)}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-							}}/>
+							}}
+					/>
 				</div>
 		);
 	}
