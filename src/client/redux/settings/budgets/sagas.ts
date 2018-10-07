@@ -12,7 +12,6 @@ function*deleteBudgetSaga() {
 		} catch (err) {
 			yield put(setError(err));
 		}
-
 	});
 }
 

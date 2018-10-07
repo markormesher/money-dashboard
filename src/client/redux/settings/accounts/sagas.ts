@@ -14,7 +14,6 @@ function*deleteAccountSaga() {
 		} catch (err) {
 			yield put(setError(err));
 		}
-
 	});
 }
 
@@ -22,7 +21,7 @@ function*saveAccountSaga() {
 	yield takeEvery(AccountSettingsActions.START_SAVE_ACCOUNT, function*(action: PayloadAction) {
 		try {
 			const account: Partial<ThinAccount> = action.payload.account;
-			const accountId = account.id || "new";
+			const accountId = account.id || "";
 			yield all([
 				put(setEditorBusy(true)),
 				call(() => axios.post(`/settings/accounts/edit/${accountId}`, account)),
@@ -35,7 +34,6 @@ function*saveAccountSaga() {
 		} catch (err) {
 			yield put(setError(err));
 		}
-
 	});
 }
 

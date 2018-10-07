@@ -67,6 +67,7 @@ class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAcc
 						<div className={bs.formGroup}>
 							<label htmlFor="name">Name</label>
 							<input
+									id="name"
 									name="name"
 									type="text"
 									ref={this.nameInputRef}
@@ -79,6 +80,7 @@ class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAcc
 						<div className={bs.formGroup}>
 							<label htmlFor="type">Type</label>
 							<select
+									id="type"
 									name="type"
 									ref={this.typeInputRef}
 									disabled={editorBusy}

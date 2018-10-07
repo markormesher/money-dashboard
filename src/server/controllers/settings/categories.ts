@@ -37,16 +37,15 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			.catch(next);
 });
 
-router.post("/edit/:categoryId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/edit/:categoryId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const categoryId = req.params.categoryId;
-	const rawTypes = req.body["types[]"] as string[] || [];
 	const properties: Partial<Category> = {
 		name: req.body.name,
-		isMemoCategory: rawTypes.indexOf("memo") >= 0,
-		isIncomeCategory: rawTypes.indexOf("income") >= 0,
-		isExpenseCategory: rawTypes.indexOf("expense") >= 0,
-		isAssetGrowthCategory: rawTypes.indexOf("asset-growth") >= 0,
+		isIncomeCategory: req.body.isIncomeCategory,
+		isExpenseCategory: req.body.isExpenseCategory,
+		isAssetGrowthCategory: req.body.isAssetGrowthCategory,
+		isMemoCategory: req.body.isMemoCategory,
 	};
 
 	saveCategory(user, categoryId, properties)

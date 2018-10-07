@@ -1,12 +1,17 @@
+import { ThinCategory } from "../../../../server/model-thins/ThinCategory";
 import { PayloadAction } from "../../PayloadAction";
 import { CategorySettingsActions } from "./actions";
 
 interface ICategorySettingsState {
 	lastUpdate: number;
+	categoryToEdit: ThinCategory;
+	editorBusy: boolean;
 }
 
 const initialState: ICategorySettingsState = {
 	lastUpdate: 0,
+	categoryToEdit: undefined,
+	editorBusy: false,
 };
 
 function categorySettingsReducer(state = initialState, action: PayloadAction): ICategorySettingsState {
@@ -15,6 +20,18 @@ function categorySettingsReducer(state = initialState, action: PayloadAction): I
 			return {
 				...state,
 				lastUpdate: action.payload.lastUpdate,
+			};
+
+		case CategorySettingsActions.SET_CATEGORY_TO_EDIT:
+			return {
+				...state,
+				categoryToEdit: action.payload.category,
+			};
+
+		case CategorySettingsActions.SET_EDITOR_BUSY:
+			return {
+				...state,
+				editorBusy: action.payload.editorBusy,
 			};
 
 		default:

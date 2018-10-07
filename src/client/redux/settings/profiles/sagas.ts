@@ -12,7 +12,6 @@ function*deleteProfileSaga() {
 		} catch (err) {
 			yield put(setError(err));
 		}
-
 	});
 }
 

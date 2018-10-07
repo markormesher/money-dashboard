@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import * as React from "react";
 import { Component } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
@@ -8,23 +8,25 @@ import * as bs from "../../bootstrap-aliases";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
-import { startDeleteCategory } from "../../redux/settings/categories/actions";
+import { setCategoryToEdit, startDeleteCategory } from "../../redux/settings/categories/actions";
 import { DataTable } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
+import EditCategoryModal from "./EditCategoryModal";
 
 interface ICategorySettingsProps {
 	lastUpdate: number;
 	actions?: {
 		deleteCategory: (id: string) => AnyAction,
+		setCategoryToEdit: (category: ThinCategory) => AnyAction,
 	};
 }
 
 function mapStateToProps(state: IRootState, props: ICategorySettingsProps): ICategorySettingsProps {
 	return {
 		...props,
-		lastUpdate: state.settings.accounts.lastUpdate,
+		lastUpdate: state.settings.categories.lastUpdate,
 	};
 }
 
@@ -33,6 +35,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: ICategorySettingsProps): 
 		...props,
 		actions: {
 			deleteCategory: (id) => dispatch(startDeleteCategory(id)),
+			setCategoryToEdit: (category) => dispatch(setCategoryToEdit(category)),
 		},
 	};
 }
@@ -43,6 +46,8 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 		const { lastUpdate } = this.props;
 		return (
 				<>
+					<EditCategoryModal/>
+
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Categories</h1>
 
@@ -51,6 +56,7 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 								text={"New Category"}
 								btnProps={{
 									className: combine(bs.floatRight, bs.btnSm, bs.btnSuccess),
+									onClick: () => this.props.actions.setCategoryToEdit(null),
 								}}
 						/>
 					</div>
@@ -83,6 +89,7 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 							text={"Edit"}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								onClick: () => this.props.actions.setCategoryToEdit(category),
 							}}
 					/>
 					<DeleteBtn

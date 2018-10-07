@@ -48,7 +48,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			.catch(next);
 });
 
-router.post("/edit/:accountId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/edit/:accountId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const accountId = req.params.accountId;
 	const properties: Partial<Account> = {
