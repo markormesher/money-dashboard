@@ -23,7 +23,6 @@ import ProfileSettings from "../ProfileSettings/ProfileSettings";
 import Transactions from "../Transactions/Transactions";
 import "./App.scss";
 
-// TODO: any way to avoid making these all optional?
 interface IAppProps {
 	waitingFor?: string[];
 	globalError?: Error;
