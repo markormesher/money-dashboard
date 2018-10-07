@@ -4,6 +4,7 @@ import { PayloadAction } from "../../PayloadAction";
 
 enum AccountSettingsActions {
 	START_DELETE_ACCOUNT = "AccountSettingsActions.START_DELETE_ACCOUNT",
+	START_SAVE_ACCOUNT = "AccountSettingsActions.START_SAVE_ACCOUNT",
 	SET_DISPLAY_ACTIVE_ONLY = "AccountSettingsActions.SET_DISPLAY_ACTIVE_ONLY",
 	SET_LAST_UPDATE = "AccountSettingsActions.SET_LAST_UPDATE",
 	SET_ACCOUNT_TO_EDIT = "AccountSettingsActions.SET_ACCOUNT_TO_EDIT",
@@ -11,9 +12,13 @@ enum AccountSettingsActions {
 
 const startDeleteAccount: ActionCreator<PayloadAction> = (accountId: string) => {
 	return {
-		type: AccountSettingsActions.START_DELETE_ACCOUNT, payload: {
-			accountId,
-		},
+		type: AccountSettingsActions.START_DELETE_ACCOUNT, payload: { accountId },
+	};
+};
+
+const startSaveAccount: ActionCreator<PayloadAction> = (account: Partial<ThinAccount>) => {
+	return {
+		type: AccountSettingsActions.START_SAVE_ACCOUNT, payload: { account },
 	};
 };
 
@@ -25,9 +30,7 @@ const setDisplayActiveOnly: ActionCreator<PayloadAction> = (activeOnly: boolean)
 
 const setLastUpdate: ActionCreator<PayloadAction> = () => {
 	return {
-		type: AccountSettingsActions.SET_LAST_UPDATE, payload: {
-			lastUpdate: new Date().getTime(),
-		},
+		type: AccountSettingsActions.SET_LAST_UPDATE, payload: { lastUpdate: new Date().getTime() },
 	};
 };
 
@@ -40,6 +43,7 @@ const setAccountToEdit: ActionCreator<PayloadAction> = (account: ThinAccount) =>
 export {
 	AccountSettingsActions,
 	startDeleteAccount,
+	startSaveAccount,
 	setDisplayActiveOnly,
 	setAccountToEdit,
 	setLastUpdate,

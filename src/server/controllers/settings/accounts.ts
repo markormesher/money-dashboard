@@ -3,21 +3,12 @@ import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 import { getData } from "../../helpers/datatable-helper";
-import { deleteAccount, getAccount, saveAccount, toggleAccountActive } from "../../managers/account-manager";
+import { deleteAccount, saveAccount, toggleAccountActive } from "../../managers/account-manager";
 import { requireUser } from "../../middleware/auth-middleware";
 import { Account } from "../../models/Account";
 import { User } from "../../models/User";
 
 const router = Express.Router();
-
-router.get("/old-index", requireUser, (req: Request, res: Response) => {
-	res.render("settings/accounts/index", {
-		_: {
-			title: "Accounts",
-			activePage: "settings/accounts",
-		},
-	});
-});
 
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
@@ -57,23 +48,6 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			.catch(next);
 });
 
-router.get("/edit/:accountId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
-	const accountId = req.params.accountId;
-
-	getAccount(user, accountId)
-			.then((account) => {
-				res.render("settings/accounts/edit", {
-					_: {
-						activePage: "settings/account",
-						title: accountId ? "Edit Account" : "New Account",
-					},
-					account: account || new Account(),
-				});
-			})
-			.catch(next);
-});
-
 router.post("/edit/:accountId", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const accountId = req.params.accountId;
@@ -83,10 +57,7 @@ router.post("/edit/:accountId", requireUser, (req: Request, res: Response, next:
 	};
 
 	saveAccount(user, accountId, properties)
-			.then(() => {
-				// TODO res.flash("success", "Account saved");
-				res.redirect("/settings/accounts");
-			})
+			.then(() => res.sendStatus(200))
 			.catch(next);
 });
 

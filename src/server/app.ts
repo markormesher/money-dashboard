@@ -42,7 +42,7 @@ app.use(Passport.initialize());
 app.use(Passport.session());
 
 // middleware
-app.use(BodyParser.urlencoded({ extended: false }));
+app.use(BodyParser.json());
 
 // routes
 setupApiRoutes(app);

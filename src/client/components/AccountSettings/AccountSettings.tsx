@@ -19,7 +19,6 @@ import EditAccountModal from "./EditAccountModal";
 interface IAccountSettingsProps {
 	lastUpdate: number;
 	displayActiveOnly: boolean;
-	accountToEdit: ThinAccount;
 
 	actions?: {
 		deleteAccount: (id: string) => AnyAction,
@@ -31,7 +30,8 @@ interface IAccountSettingsProps {
 function mapStateToProps(state: IRootState, props: IAccountSettingsProps): IAccountSettingsProps {
 	return {
 		...props,
-		...state.settings.accounts,
+		lastUpdate: state.settings.accounts.lastUpdate,
+		displayActiveOnly: state.settings.accounts.displayActiveOnly,
 	};
 }
 
@@ -49,14 +49,10 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAccountSettingsProps): I
 class AccountSettings extends Component<IAccountSettingsProps> {
 
 	public render() {
-		const { lastUpdate, displayActiveOnly, accountToEdit } = this.props;
+		const { lastUpdate, displayActiveOnly } = this.props;
 		return (
 				<>
-					<EditAccountModal
-							account={accountToEdit}
-							isOpen={accountToEdit !== undefined}
-							onCloseRequest={() => this.props.actions.setAccountToEdit(undefined)}
-					/>
+					<EditAccountModal/>
 
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Accounts</h1>
@@ -75,6 +71,7 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 									text={"New Account"}
 									btnProps={{
 										className: combine(bs.btnSm, bs.btnSuccess),
+										onClick: () => this.props.actions.setAccountToEdit(null),
 									}}
 							/>
 						</div>
