@@ -1,4 +1,4 @@
-import { faPencil, faShareAlt, faTrash } from "@fortawesome/pro-light-svg-icons";
+import { faPencil, faTrash, faUserPlus } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
@@ -20,7 +20,7 @@ class ProfileSettings extends Component {
 						<FontAwesomeIcon icon={faTrash} fixedWidth={true}/> Delete
 					</button>
 					<button className={combine(bs.btn, bs.btnOutlineDark, appStyles.btnMini)}>
-						<FontAwesomeIcon icon={faShareAlt} fixedWidth={true}/> Share
+						<FontAwesomeIcon icon={faUserPlus} fixedWidth={true}/> Share
 					</button>
 				</div>
 		);
