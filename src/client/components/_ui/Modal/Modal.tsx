@@ -20,8 +20,6 @@ interface IModalProps {
 
 class Modal extends Component<IModalProps> {
 
-	// TODO: show a spinner somewhere when the modal is busy
-
 	public render() {
 		const { title, buttons, modalBusy, isOpen, onCancel, onSave, onCloseRequest } = this.props;
 		return (

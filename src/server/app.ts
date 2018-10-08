@@ -14,7 +14,7 @@ import { setupDevAppRoutes, setupProdAppRoutes } from "./middleware/app-routes";
 
 const app = Express();
 
-// TODO: some API routes generate the following warning when called with POST but not GET
+// TODO: lots of API routes intermittently generate this warning; 95% sure it's from a lib, not this code
 // Warning: a promise was created in a handler at ... but was not returned from it, see http://goo.gl/rRqMUw
 
 // TODO: check whether Redis and Postgres are up
