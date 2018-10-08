@@ -8,6 +8,8 @@ import { IRootState } from "../../redux/root";
 import { setAccountToEdit, startSaveAccount } from "../../redux/settings/accounts/actions";
 import { Modal } from "../_ui/Modal/Modal";
 
+// TODO: validation
+
 interface IEditAccountModalProps {
 	accountToEdit?: ThinAccount;
 	editorBusy?: boolean;

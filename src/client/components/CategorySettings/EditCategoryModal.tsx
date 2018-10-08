@@ -9,6 +9,8 @@ import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startSaveCategory } from "../../redux/settings/categories/actions";
 import { Modal } from "../_ui/Modal/Modal";
 
+// TODO: validation
+
 interface IEditCategoryModalProps {
 	categoryToEdit?: ThinCategory;
 	editorBusy?: boolean;
