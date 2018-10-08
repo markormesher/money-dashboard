@@ -10,7 +10,7 @@ import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setAccountToEdit, setDisplayActiveOnly, startDeleteAccount } from "../../redux/settings/accounts/actions";
 import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
-import { DataTable } from "../_ui/DataTable/DataTable";
+import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
@@ -48,6 +48,18 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAccountSettingsProps): I
 
 class AccountSettings extends Component<IAccountSettingsProps> {
 
+	private tableColumns: IColumn[] = [
+		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
+		{ title: "Type", sortField: "type" },
+		{ title: "Actions", sortable: false },
+	];
+
+	constructor(props: IAccountSettingsProps) {
+		super(props);
+		this.tableRowRenderer = this.tableRowRenderer.bind(this);
+		this.generateActionButtons = this.generateActionButtons.bind(this);
+	}
+
 	public render() {
 		const { lastUpdate, displayActiveOnly } = this.props;
 		return (
@@ -79,24 +91,24 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 
 					<DataTable<ThinAccount>
 							api={"/settings/accounts/table-data"}
-							columns={[
-								{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
-								{ title: "Type", sortField: "type" },
-								{ title: "Actions", sortable: false },
-							]}
+							columns={this.tableColumns}
+							rowRenderer={this.tableRowRenderer}
 							apiExtraParams={{
 								activeOnly: displayActiveOnly,
 								lastUpdate,
 							}}
-							rowRenderer={(account: ThinAccount) => (
-									<tr key={account.id}>
-										<td>{account.name}</td>
-										<td>{generateAccountTypeBadge(account)}</td>
-										<td>{this.generateActionButtons(account)}</td>
-									</tr>
-							)}
 					/>
 				</>
+		);
+	}
+
+	private tableRowRenderer(account: ThinAccount) {
+		return (
+				<tr key={account.id}>
+					<td>{account.name}</td>
+					<td>{generateAccountTypeBadge(account)}</td>
+					<td>{this.generateActionButtons(account)}</td>
+				</tr>
 		);
 	}
 

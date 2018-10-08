@@ -8,7 +8,7 @@ import * as bs from "../../bootstrap-aliases";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { startDeleteProfile } from "../../redux/settings/profiles/actions";
-import { DataTable } from "../_ui/DataTable/DataTable";
+import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
@@ -40,6 +40,17 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfileSettingsProps): I
 
 class ProfileSettings extends Component<IProfileSettingsProps> {
 
+	private tableColumns: IColumn[] = [
+		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
+		{ title: "Actions", sortable: false },
+	];
+
+	constructor(props: IProfileSettingsProps) {
+		super(props);
+		this.tableRowRenderer = this.tableRowRenderer.bind(this);
+		this.generateActionButtons = this.generateActionButtons.bind(this);
+	}
+
 	public render() {
 		const { lastUpdate } = this.props;
 		return (
@@ -48,19 +59,20 @@ class ProfileSettings extends Component<IProfileSettingsProps> {
 
 					<DataTable<ThinProfile>
 							api={"/settings/profiles/table-data"}
-							columns={[
-								{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
-								{ title: "Actions", sortable: false },
-							]}
+							columns={this.tableColumns}
+							rowRenderer={this.tableRowRenderer}
 							apiExtraParams={{ lastUpdate }}
-							rowRenderer={(profile: ThinProfile) => (
-									<tr key={profile.id}>
-										<td>{profile.name}</td>
-										<td>{this.generateActionButtons(profile)}</td>
-									</tr>
-							)}
 					/>
 				</>
+		);
+	}
+
+	private tableRowRenderer(profile: ThinProfile) {
+		return (
+				<tr key={profile.id}>
+					<td>{profile.name}</td>
+					<td>{this.generateActionButtons(profile)}</td>
+				</tr>
 		);
 	}
 

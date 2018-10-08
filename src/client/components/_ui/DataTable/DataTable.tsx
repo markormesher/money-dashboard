@@ -37,7 +37,6 @@ interface IDataTableProps<Model> {
 	rowRenderer: (row: Model, index: number) => ReactNode;
 }
 
-// TODO: weird interactions with state here and Redux state: changing "active only" kills the sorting
 interface IDataTableState<Model> {
 	loading?: boolean;
 	failed: boolean;
@@ -169,6 +168,10 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 	}
 
 	private toggleColumnSortOrder(column: IColumn) {
+		/*
+		 TODO: compare columns by key not equality;
+		 this breaks when the table is re-rendered and columns are specified in-place
+		 */
 		const sortedColumns = this.state.sortedColumns.slice(0); // work on a copy
 		const currentSortEntry: ISortEntry = sortedColumns.find((sc) => sc.column === column);
 

@@ -10,7 +10,7 @@ import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setDisplayCurrentOnly, startDeleteBudget } from "../../redux/settings/budgets/actions";
 import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
-import { DataTable } from "../_ui/DataTable/DataTable";
+import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
@@ -43,6 +43,30 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetSettingsProps): IB
 
 class BudgetSettings extends Component<IBudgetSettingsProps> {
 
+	private tableColumns: IColumn[] = [
+		{
+			title: "Name",
+			sortField: ["category", "name"],
+			defaultSortDirection: "asc",
+			defaultSortPriority: 1,
+		},
+		{ title: "Type", sortField: "type" },
+		{
+			title: "Period",
+			sortField: "startDate",
+			defaultSortDirection: "desc",
+			defaultSortPriority: 0,
+		},
+		{ title: "Amount", sortField: "amount" },
+		{ title: "Actions", sortable: false },
+	];
+
+	constructor(props: IBudgetSettingsProps) {
+		super(props);
+		this.tableRowRenderer = this.tableRowRenderer.bind(this);
+		this.generateActionButtons = this.generateActionButtons.bind(this);
+	}
+
 	public render() {
 		const { lastUpdate, displayCurrentOnly } = this.props;
 		return (
@@ -71,38 +95,26 @@ class BudgetSettings extends Component<IBudgetSettingsProps> {
 
 					<DataTable<ThinBudget>
 							api={"/settings/budgets/table-data"}
-							columns={[
-								{
-									title: "Name",
-									sortField: ["category", "name"],
-									defaultSortDirection: "asc",
-									defaultSortPriority: 1,
-								},
-								{ title: "Type", sortField: "type" },
-								{
-									title: "Period",
-									sortField: "startDate",
-									defaultSortDirection: "desc",
-									defaultSortPriority: 0,
-								},
-								{ title: "Amount", sortField: "amount" },
-								{ title: "Actions", sortable: false },
-							]}
+							columns={this.tableColumns}
+							rowRenderer={this.tableRowRenderer}
 							apiExtraParams={{
 								currentOnly: displayCurrentOnly,
 								lastUpdate,
 							}}
-							rowRenderer={(budget: ThinBudget) => (
-									<tr key={budget.id}>
-										<td>{budget.category.name}</td>
-										<td>{generateBudgetTypeBadge(budget)}</td>
-										<td>{formatBudgetPeriod(budget.startDate, budget.endDate)}</td>
-										<td>{formatCurrencyStyled(budget.amount)}</td>
-										<td>{this.generateActionButtons(budget)}</td>
-									</tr>
-							)}
 					/>
 				</>
+		);
+	}
+
+	private tableRowRenderer(budget: ThinBudget) {
+		return (
+				<tr key={budget.id}>
+					<td>{budget.category.name}</td>
+					<td>{generateBudgetTypeBadge(budget)}</td>
+					<td>{formatBudgetPeriod(budget.startDate, budget.endDate)}</td>
+					<td>{formatCurrencyStyled(budget.amount)}</td>
+					<td>{this.generateActionButtons(budget)}</td>
+				</tr>
 		);
 	}
 

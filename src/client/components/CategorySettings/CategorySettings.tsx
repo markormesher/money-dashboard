@@ -9,7 +9,7 @@ import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startDeleteCategory } from "../../redux/settings/categories/actions";
-import { DataTable } from "../_ui/DataTable/DataTable";
+import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
@@ -42,6 +42,18 @@ function mapDispatchToProps(dispatch: Dispatch, props: ICategorySettingsProps): 
 
 class CategorySettings extends Component<ICategorySettingsProps> {
 
+	private tableColumns: IColumn[] = [
+		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
+		{ title: "Type", sortable: false },
+		{ title: "Actions", sortable: false },
+	];
+
+	constructor(props: ICategorySettingsProps) {
+		super(props);
+		this.tableRowRenderer = this.tableRowRenderer.bind(this);
+		this.generateActionButtons = this.generateActionButtons.bind(this);
+	}
+
 	public render() {
 		const { lastUpdate } = this.props;
 		return (
@@ -63,21 +75,21 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 
 					<DataTable<ThinCategory>
 							api={"/settings/categories/table-data"}
-							columns={[
-								{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
-								{ title: "Type", sortable: false },
-								{ title: "Actions", sortable: false },
-							]}
+							columns={this.tableColumns}
+							rowRenderer={this.tableRowRenderer}
 							apiExtraParams={{ lastUpdate }}
-							rowRenderer={(category: ThinCategory) => (
-									<tr key={category.id}>
-										<td>{category.name}</td>
-										<td>{generateCategoryTypeBadge(category)}</td>
-										<td>{this.generateActionButtons(category)}</td>
-									</tr>
-							)}
 					/>
 				</>
+		);
+	}
+
+	private tableRowRenderer(category: ThinCategory) {
+		return (
+				<tr key={category.id}>
+					<td>{category.name}</td>
+					<td>{generateCategoryTypeBadge(category)}</td>
+					<td>{this.generateActionButtons(category)}</td>
+				</tr>
 		);
 	}
 
