@@ -11,6 +11,8 @@ import { Modal } from "../_ui/Modal/Modal";
 
 // TODO: validation
 
+// TODO: using refs feels like a hack
+
 interface IEditCategoryModalProps {
 	categoryToEdit?: ThinCategory;
 	editorBusy?: boolean;
@@ -40,6 +42,26 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditCategoryModalProps):
 }
 
 class EditCategoryModal extends Component<IEditCategoryModalProps, Partial<ThinCategory>> {
+
+	private static renderTypeCheckbox(
+			id: string, label: string, badgeClass: string, ref: RefObject<HTMLInputElement>,
+			defaultChecked: boolean,
+	) {
+		return (
+				<div className={bs.formCheck}>
+					<input
+							id={id}
+							type="checkbox"
+							ref={ref}
+							className={bs.formCheckInput}
+							defaultChecked={defaultChecked}
+					/>
+					<label className={bs.formCheckLabel} htmlFor={id}>
+						{generateBadge(label, badgeClass)}
+					</label>
+				</div>
+		);
+	}
 
 	private readonly nameInputRef: RefObject<HTMLInputElement>;
 	private readonly incomeTypeRef: RefObject<HTMLInputElement>;
@@ -88,65 +110,32 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, Partial<ThinC
 						</div>
 						<div className={bs.formGroup}>
 							<label>Type</label>
-							{/* TODO: less duplication here in the checkboxes */}
 							<div className={bs.row}>
 								<div className={bs.col}>
-									<div className={bs.formCheck}>
-										<input
-												id="type-income"
-												type="checkbox"
-												ref={this.incomeTypeRef}
-												className={bs.formCheckInput}
-												defaultChecked={categoryToEdit && categoryToEdit.isIncomeCategory}
-										/>
-										<label className={bs.formCheckLabel} htmlFor={"type-income"}>
-											{generateBadge("Income", bs.badgeSuccess)}
-										</label>
-									</div>
+									{EditCategoryModal.renderTypeCheckbox(
+											"type-income", "Income", bs.badgeSuccess, this.incomeTypeRef,
+											categoryToEdit && categoryToEdit.isIncomeCategory,
+									)}
 								</div>
 								<div className={bs.col}>
-									<div className={bs.formCheck}>
-										<input
-												id="type-expense"
-												type="checkbox"
-												ref={this.expenseTypeRef}
-												className={bs.formCheckInput}
-												defaultChecked={categoryToEdit && categoryToEdit.isExpenseCategory}
-										/>
-										<label className={bs.formCheckLabel} htmlFor={"type-expense"}>
-											{generateBadge("Expense", bs.badgeDanger)}
-										</label>
-									</div>
+									{EditCategoryModal.renderTypeCheckbox(
+											"type-expense", "Expense", bs.badgeDanger, this.expenseTypeRef,
+											categoryToEdit && categoryToEdit.isExpenseCategory,
+									)}
 								</div>
 							</div>
 							<div className={bs.row}>
 								<div className={bs.col}>
-									<div className={bs.formCheck}>
-										<input
-												id="type-asset"
-												type="checkbox"
-												ref={this.assetGrowthTypeRef}
-												className={bs.formCheckInput}
-												defaultChecked={categoryToEdit && categoryToEdit.isAssetGrowthCategory}
-										/>
-										<label className={bs.formCheckLabel} htmlFor={"type-asset"}>
-											{generateBadge("Asset Growth", bs.badgeWarning)}
-										</label>
-									</div>
+									{EditCategoryModal.renderTypeCheckbox(
+											"type-asset", "Asset Growth", bs.badgeWarning, this.assetGrowthTypeRef,
+											categoryToEdit && categoryToEdit.isAssetGrowthCategory,
+									)}
 								</div>
 								<div className={bs.col}>
-									<div className={bs.formCheck}>
-										<input
-												id="type-memo"
-												type="checkbox"
-												ref={this.memoTypeRef}
-												className={bs.formCheckInput}
-												defaultChecked={categoryToEdit && categoryToEdit.isMemoCategory}
-										/>
-										<label className={bs.formCheckLabel} htmlFor={"type-memo"}>
-											{generateBadge("Memo", bs.badgeInfo)}
-										</label>
-									</div>
+									{EditCategoryModal.renderTypeCheckbox(
+											"type-memo", "Memo", bs.badgeInfo, this.memoTypeRef,
+											categoryToEdit && categoryToEdit.isMemoCategory,
+									)}
 								</div>
 							</div>
 						</div>
