@@ -1,11 +1,12 @@
 version: 2
+defaults: &defaults
+  working_directory: ~/money-dashboard
+  docker:
+    - image: circleci/node:9.11.2
 jobs:
   setup:
-    docker:
-      - image: circleci/node:9.11.2
     steps:
       - checkout
-      - working_directory: ~/money-dashboard
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
