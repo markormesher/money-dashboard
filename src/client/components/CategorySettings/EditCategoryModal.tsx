@@ -97,8 +97,6 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, ThinCategory>
 							</div>
 						</div>
 					</form>
-					<hr/>
-					<pre>{JSON.stringify(this.state)}</pre>
 				</Modal>
 		);
 	}
