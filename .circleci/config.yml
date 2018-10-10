@@ -5,11 +5,14 @@ jobs:
       - image: circleci/node:9.11.2
     steps:
       - checkout
+      - working_directory: ~/money-dashboard
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+          keys:
+            - dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+            - dependency-cache-
       - run:
           name: Install dependencies
-          command: yarn
+          command: yarn install
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           paths:
