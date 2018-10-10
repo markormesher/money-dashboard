@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component, FormEvent, RefObject } from "react";
+import { Component, FormEvent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
@@ -10,8 +10,6 @@ import { setCategoryToEdit, startSaveCategory } from "../../redux/settings/categ
 import { Modal } from "../_ui/Modal/Modal";
 
 // TODO: validation
-
-// TODO: using refs feels like a hack
 
 interface IEditCategoryModalProps {
 	categoryToEdit?: ThinCategory;
@@ -41,45 +39,16 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditCategoryModalProps):
 	};
 }
 
-class EditCategoryModal extends Component<IEditCategoryModalProps, Partial<ThinCategory>> {
-
-	private static renderTypeCheckbox(
-			id: string, label: string, badgeClass: string, ref: RefObject<HTMLInputElement>,
-			defaultChecked: boolean,
-	) {
-		return (
-				<div className={bs.formCheck}>
-					<input
-							id={id}
-							type="checkbox"
-							ref={ref}
-							className={bs.formCheckInput}
-							defaultChecked={defaultChecked}
-					/>
-					<label className={bs.formCheckLabel} htmlFor={id}>
-						{generateBadge(label, badgeClass)}
-					</label>
-				</div>
-		);
-	}
-
-	private readonly nameInputRef: RefObject<HTMLInputElement>;
-	private readonly incomeTypeRef: RefObject<HTMLInputElement>;
-	private readonly expenseTypeRef: RefObject<HTMLInputElement>;
-	private readonly assetGrowthTypeRef: RefObject<HTMLInputElement>;
-	private readonly memoTypeRef: RefObject<HTMLInputElement>;
+class EditCategoryModal extends Component<IEditCategoryModalProps, ThinCategory> {
 
 	constructor(props: IEditCategoryModalProps) {
 		super(props);
+		this.state = ThinCategory.DEFAULT;
 
+		this.handleCategoryNameInput = this.handleCategoryNameInput.bind(this);
+		this.handleCategoryTypeInput = this.handleCategoryTypeInput.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
-
-		this.nameInputRef = React.createRef();
-		this.incomeTypeRef = React.createRef();
-		this.expenseTypeRef = React.createRef();
-		this.assetGrowthTypeRef = React.createRef();
-		this.memoTypeRef = React.createRef();
 	}
 
 	public render() {
@@ -87,7 +56,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, Partial<ThinC
 		return (
 				<Modal
 						isOpen={categoryToEdit !== undefined}
-						title={categoryToEdit === null ? "Create Category" : "Edit Category"}
+						title={this.state.id ? "Edit Category" : "Create Category"}
 						buttons={["cancel", "save"]}
 						modalBusy={editorBusy}
 						onCancel={this.handleCancel}
@@ -101,47 +70,93 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, Partial<ThinC
 									id="name"
 									name="name"
 									type="text"
-									ref={this.nameInputRef}
+									value={this.state.name}
+									onChange={this.handleCategoryNameInput}
 									disabled={editorBusy}
 									className={bs.formControl}
 									placeholder="Category name"
-									defaultValue={categoryToEdit && categoryToEdit.name}
 							/>
 						</div>
 						<div className={bs.formGroup}>
 							<label>Type</label>
 							<div className={bs.row}>
 								<div className={bs.col}>
-									{EditCategoryModal.renderTypeCheckbox(
-											"type-income", "Income", bs.badgeSuccess, this.incomeTypeRef,
-											categoryToEdit && categoryToEdit.isIncomeCategory,
-									)}
+									{this.renderTypeCheckbox("income", "Income", bs.badgeSuccess, this.state.isIncomeCategory)}
 								</div>
 								<div className={bs.col}>
-									{EditCategoryModal.renderTypeCheckbox(
-											"type-expense", "Expense", bs.badgeDanger, this.expenseTypeRef,
-											categoryToEdit && categoryToEdit.isExpenseCategory,
-									)}
+									{this.renderTypeCheckbox("expense", "Expense", bs.badgeDanger, this.state.isExpenseCategory)}
 								</div>
 							</div>
 							<div className={bs.row}>
 								<div className={bs.col}>
-									{EditCategoryModal.renderTypeCheckbox(
-											"type-asset", "Asset Growth", bs.badgeWarning, this.assetGrowthTypeRef,
-											categoryToEdit && categoryToEdit.isAssetGrowthCategory,
-									)}
+									{this.renderTypeCheckbox("asset", "Asset Growth", bs.badgeWarning, this.state.isAssetGrowthCategory)}
 								</div>
 								<div className={bs.col}>
-									{EditCategoryModal.renderTypeCheckbox(
-											"type-memo", "Memo", bs.badgeInfo, this.memoTypeRef,
-											categoryToEdit && categoryToEdit.isMemoCategory,
-									)}
+									{this.renderTypeCheckbox("memo", "Memo", bs.badgeInfo, this.state.isMemoCategory)}
 								</div>
 							</div>
 						</div>
 					</form>
+					<hr/>
+					<pre>{JSON.stringify(this.state)}</pre>
 				</Modal>
 		);
+	}
+
+	public componentDidUpdate(
+			prevProps: Readonly<IEditCategoryModalProps>,
+			prevState: Readonly<Partial<ThinCategory>>,
+			snapshot?: any,
+	): void {
+		if (prevProps.categoryToEdit !== this.props.categoryToEdit) {
+			this.setState(this.props.categoryToEdit || ThinCategory.DEFAULT);
+			this.forceUpdate();
+		}
+	}
+
+	private renderTypeCheckbox(id: string, label: string, badgeClass: string, defaultChecked: boolean) {
+		return (
+				<div className={bs.formCheck}>
+					<input
+							id={`type-${id}`}
+							type="checkbox"
+							checked={defaultChecked}
+							onChange={this.handleCategoryTypeInput}
+							className={bs.formCheckInput}
+					/>
+					<label className={bs.formCheckLabel} htmlFor={`type-${id}`}>
+						{generateBadge(label, badgeClass)}
+					</label>
+				</div>
+		);
+	}
+
+	private handleCategoryNameInput(event: FormEvent<HTMLInputElement>) {
+		this.setState({
+			name: event.currentTarget.value,
+		});
+	}
+
+	private handleCategoryTypeInput(event: FormEvent<HTMLInputElement>) {
+		const id = event.currentTarget.id;
+		const checked = event.currentTarget.checked;
+		switch (id) {
+			case "type-income":
+				this.setState({ isIncomeCategory: checked });
+				break;
+
+			case "type-expense":
+				this.setState({ isExpenseCategory: checked });
+				break;
+
+			case "type-asset":
+				this.setState({ isAssetGrowthCategory: checked });
+				break;
+
+			case "type-memo":
+				this.setState({ isMemoCategory: checked });
+				break;
+		}
 	}
 
 	private handleSave(event?: FormEvent) {
@@ -149,22 +164,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, Partial<ThinC
 			event.preventDefault();
 		}
 
-		const { categoryToEdit } = this.props;
-		const id = categoryToEdit ? categoryToEdit.id : undefined;
-		const name = this.nameInputRef.current.value;
-		const isIncomeCategory = this.incomeTypeRef.current.checked;
-		const isExpenseCategory = this.expenseTypeRef.current.checked;
-		const isAssetGrowthCategory = this.assetGrowthTypeRef.current.checked;
-		const isMemoCategory = this.memoTypeRef.current.checked;
-
-		this.props.actions.startSaveCategory({
-			id,
-			name,
-			isIncomeCategory,
-			isExpenseCategory,
-			isAssetGrowthCategory,
-			isMemoCategory,
-		});
+		this.props.actions.startSaveCategory(this.state);
 	}
 
 	private handleCancel() {

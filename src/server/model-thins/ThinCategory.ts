@@ -1,6 +1,21 @@
 import { ThinProfile } from "./ThinProfile";
 
 export class ThinCategory {
+
+	public static DEFAULT: ThinCategory = {
+		id: null,
+		name: "",
+		isMemoCategory: false,
+		isIncomeCategory: false,
+		isExpenseCategory: false,
+		isAssetGrowthCategory: false,
+		profileId: null,
+		profile: null,
+		createdAt: null,
+		updatedAt: null,
+		deletedAt: null,
+	};
+
 	public id: string;
 	public name: string;
 	public isMemoCategory: boolean;
@@ -10,6 +25,6 @@ export class ThinCategory {
 	public profileId: string;
 	public profile: ThinProfile;
 	public createdAt: Date;
-	public updateedAt: Date;
+	public updatedAt: Date;
 	public deletedAt: Date;
 }

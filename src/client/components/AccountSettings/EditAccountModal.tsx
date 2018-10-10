@@ -3,6 +3,7 @@ import { Component, FormEvent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
+import { ThinCategory } from "../../../server/model-thins/ThinCategory";
 import * as bs from "../../bootstrap-aliases";
 import { IRootState } from "../../redux/root";
 import { setAccountToEdit, startSaveAccount } from "../../redux/settings/accounts/actions";
@@ -38,11 +39,11 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditAccountModalProps): 
 	};
 }
 
-class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAccount>> {
+class EditAccountModal extends Component<IEditAccountModalProps, ThinAccount> {
 
 	constructor(props: IEditAccountModalProps) {
 		super(props);
-		this.state = {};
+		this.state = ThinAccount.DEFAULT;
 
 		this.handleAccountNameInput = this.handleAccountNameInput.bind(this);
 		this.handleAccountTypeInput = this.handleAccountTypeInput.bind(this);
@@ -52,11 +53,10 @@ class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAcc
 
 	public render() {
 		const { accountToEdit, editorBusy } = this.props;
-		const defaultValues = accountToEdit || ThinAccount.DEFAULT;
 		return (
 				<Modal
 						isOpen={accountToEdit !== undefined}
-						title={accountToEdit === null ? "Create Account" : "Edit Account"}
+						title={this.state.id ? "Create Account" : "Edit Account"}
 						buttons={["cancel", "save"]}
 						modalBusy={editorBusy}
 						onCancel={this.handleCancel}
@@ -70,11 +70,11 @@ class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAcc
 									id="name"
 									name="name"
 									type="text"
-									onInput={this.handleAccountNameInput}
+									onChange={this.handleAccountNameInput}
 									disabled={editorBusy}
 									className={bs.formControl}
 									placeholder="Account name"
-									defaultValue={defaultValues.name}
+									value={this.state.name}
 							/>
 						</div>
 						<div className={bs.formGroup}>
@@ -82,10 +82,10 @@ class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAcc
 							<select
 									id="type"
 									name="type"
-									onInput={this.handleAccountTypeInput}
+									onChange={this.handleAccountTypeInput}
 									disabled={editorBusy}
 									className={bs.formControl}
-									defaultValue={defaultValues.type}
+									value={this.state.type}
 							>
 								<option value={"current"}>Current Account</option>
 								<option value={"savings"}>Savings Account</option>
@@ -96,6 +96,17 @@ class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAcc
 					</form>
 				</Modal>
 		);
+	}
+
+	public componentDidUpdate(
+			prevProps: Readonly<IEditAccountModalProps>,
+			prevState: Readonly<Partial<ThinCategory>>,
+			snapshot?: any,
+	): void {
+		if (prevProps.accountToEdit !== this.props.accountToEdit) {
+			this.setState(this.props.accountToEdit || ThinAccount.DEFAULT);
+			this.forceUpdate();
+		}
 	}
 
 	private handleAccountNameInput(event: FormEvent<HTMLInputElement>) {
@@ -115,12 +126,7 @@ class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAcc
 			event.preventDefault();
 		}
 
-		const editedAccount = {
-			...this.props.accountToEdit || ThinAccount.DEFAULT,
-			...this.state,
-		};
-
-		this.props.actions.startSaveAccount(editedAccount);
+		this.props.actions.startSaveAccount(this.state);
 	}
 
 	private handleCancel() {
