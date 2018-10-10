@@ -1,6 +1,12 @@
 import { ThinProfile } from "./ThinProfile";
 
 export class ThinAccount {
+
+	public static DEFAULT: Partial<ThinAccount> = {
+		type: "current",
+		active: true,
+	};
+
 	public id: string;
 	public name: string;
 	public type: string;

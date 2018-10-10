@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component, FormEvent, RefObject } from "react";
+import { Component, FormEvent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
@@ -40,21 +40,19 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditAccountModalProps): 
 
 class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAccount>> {
 
-	private readonly nameInputRef: RefObject<HTMLInputElement>;
-	private readonly typeInputRef: RefObject<HTMLSelectElement>;
-
 	constructor(props: IEditAccountModalProps) {
 		super(props);
+		this.state = {};
 
+		this.handleAccountNameInput = this.handleAccountNameInput.bind(this);
+		this.handleAccountTypeInput = this.handleAccountTypeInput.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
-
-		this.nameInputRef = React.createRef();
-		this.typeInputRef = React.createRef();
 	}
 
 	public render() {
 		const { accountToEdit, editorBusy } = this.props;
+		const defaultValues = accountToEdit || ThinAccount.DEFAULT;
 		return (
 				<Modal
 						isOpen={accountToEdit !== undefined}
@@ -72,11 +70,11 @@ class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAcc
 									id="name"
 									name="name"
 									type="text"
-									ref={this.nameInputRef}
+									onInput={this.handleAccountNameInput}
 									disabled={editorBusy}
 									className={bs.formControl}
 									placeholder="Account name"
-									defaultValue={accountToEdit && accountToEdit.name}
+									defaultValue={defaultValues.name}
 							/>
 						</div>
 						<div className={bs.formGroup}>
@@ -84,10 +82,10 @@ class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAcc
 							<select
 									id="type"
 									name="type"
-									ref={this.typeInputRef}
+									onInput={this.handleAccountTypeInput}
 									disabled={editorBusy}
 									className={bs.formControl}
-									defaultValue={accountToEdit && accountToEdit.type}
+									defaultValue={defaultValues.type}
 							>
 								<option value={"current"}>Current Account</option>
 								<option value={"savings"}>Savings Account</option>
@@ -100,17 +98,29 @@ class EditAccountModal extends Component<IEditAccountModalProps, Partial<ThinAcc
 		);
 	}
 
+	private handleAccountNameInput(event: FormEvent<HTMLInputElement>) {
+		this.setState({
+			name: event.currentTarget.value,
+		});
+	}
+
+	private handleAccountTypeInput(event: FormEvent<HTMLSelectElement>) {
+		this.setState({
+			type: event.currentTarget.value,
+		});
+	}
+
 	private handleSave(event?: FormEvent) {
 		if (event) {
 			event.preventDefault();
 		}
 
-		const { accountToEdit } = this.props;
-		const id = accountToEdit ? accountToEdit.id : undefined;
-		const name = this.nameInputRef.current.value;
-		const type = this.typeInputRef.current.value;
+		const editedAccount = {
+			...this.props.accountToEdit || ThinAccount.DEFAULT,
+			...this.state,
+		};
 
-		this.props.actions.startSaveAccount({ id, name, type });
+		this.props.actions.startSaveAccount(editedAccount);
 	}
 
 	private handleCancel() {
