@@ -18,7 +18,8 @@
     "build:dev:client": "cross-env NODE_ENV=development webpack -p --progress --config=./webpack.config.dev.js",
     "--NOTE--": "Server code is given a hallpass *for now*. When ready, add \"./src/server/**/*.ts\" to both below",
     "lint": "tslint -c ./tslint.json \"./src/client/**/*.{ts,tsx}\"",
-    "lint:fix": "tslint --fix -c ./tslint.json \"./src/client/**/*.{ts,tsx}\""
+    "lint:fix": "tslint --fix -c ./tslint.json \"./src/client/**/*.{ts,tsx}\"",
+    "test": "echo 'No tests yet'"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.4",
@@ -58,7 +59,8 @@
     "sequelize": "4.39.0",
     "sequelize-typescript": "0.6.6",
     "uuid": "^3.1.0",
-    "winston": "^3.0.0-rc2"
+    "winston": "^3.0.0-rc2",
+    "yarn": "^1.10.1"
   },
   "devDependencies": {
     "@types/async": "^2.0.47",

@@ -1,8 +1,10 @@
 version: 2
+
 defaults: &defaults
   working_directory: ~/money-dashboard
   docker:
-    - image: circleci/node:9.11.2
+  - image: circleci/node:9.11.2
+
 jobs:
   setup:
     <<: *defaults
@@ -19,8 +21,29 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
+
+  lint:
+    <<: *defaults
+    steps:
+      - run:
+        name: Run Linter
+        command: yarn lint
+
+  test:
+    <<: *defaults
+    steps:
+      - run:
+        name: Run Tests
+        command: yarn test
+
 workflows:
   version: 2
   build_and_test:
     jobs:
       - setup
+      - lint:
+          requires:
+            - setup
+      - test:
+          requires:
+            - setup
