@@ -21,6 +21,13 @@ interface IEditCategoryModalProps {
 	};
 }
 
+interface IEditCategoryModalState {
+	currentValues: ThinCategory;
+	currentErrors: {
+		name?: string[],
+	};
+}
+
 function mapStateToProps(state: IRootState, props: IEditCategoryModalProps): IEditCategoryModalProps {
 	return {
 		...props,
@@ -39,11 +46,14 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditCategoryModalProps):
 	};
 }
 
-class EditCategoryModal extends Component<IEditCategoryModalProps, ThinCategory> {
+class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategoryModalState> {
 
 	constructor(props: IEditCategoryModalProps) {
 		super(props);
-		this.state = ThinCategory.DEFAULT;
+		this.state = {
+			currentValues: props.categoryToEdit || ThinCategory.DEFAULT,
+			currentErrors: {},
+		};
 
 		this.handleCategoryNameInput = this.handleCategoryNameInput.bind(this);
 		this.handleCategoryTypeInput = this.handleCategoryTypeInput.bind(this);
@@ -52,11 +62,11 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, ThinCategory>
 	}
 
 	public render() {
-		const { categoryToEdit, editorBusy } = this.props;
+		const { editorBusy } = this.props;
+		const { currentValues } = this.state;
 		return (
 				<Modal
-						isOpen={categoryToEdit !== undefined}
-						title={this.state.id ? "Edit Category" : "Create Category"}
+						title={currentValues.id ? "Edit Category" : "Create Category"}
 						buttons={["cancel", "save"]}
 						modalBusy={editorBusy}
 						onCancel={this.handleCancel}
@@ -70,7 +80,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, ThinCategory>
 									id="name"
 									name="name"
 									type="text"
-									value={this.state.name}
+									value={currentValues.name}
 									onChange={this.handleCategoryNameInput}
 									disabled={editorBusy}
 									className={bs.formControl}
@@ -81,35 +91,24 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, ThinCategory>
 							<label>Type</label>
 							<div className={bs.row}>
 								<div className={bs.col}>
-									{this.renderTypeCheckbox("income", "Income", bs.badgeSuccess, this.state.isIncomeCategory)}
+									{this.renderTypeCheckbox("income", "Income", bs.badgeSuccess, currentValues.isIncomeCategory)}
 								</div>
 								<div className={bs.col}>
-									{this.renderTypeCheckbox("expense", "Expense", bs.badgeDanger, this.state.isExpenseCategory)}
+									{this.renderTypeCheckbox("expense", "Expense", bs.badgeDanger, currentValues.isExpenseCategory)}
 								</div>
 							</div>
 							<div className={bs.row}>
 								<div className={bs.col}>
-									{this.renderTypeCheckbox("asset", "Asset Growth", bs.badgeWarning, this.state.isAssetGrowthCategory)}
+									{this.renderTypeCheckbox("asset", "Asset Growth", bs.badgeWarning, currentValues.isAssetGrowthCategory)}
 								</div>
 								<div className={bs.col}>
-									{this.renderTypeCheckbox("memo", "Memo", bs.badgeInfo, this.state.isMemoCategory)}
+									{this.renderTypeCheckbox("memo", "Memo", bs.badgeInfo, currentValues.isMemoCategory)}
 								</div>
 							</div>
 						</div>
 					</form>
 				</Modal>
 		);
-	}
-
-	public componentDidUpdate(
-			prevProps: Readonly<IEditCategoryModalProps>,
-			prevState: Readonly<Partial<ThinCategory>>,
-			snapshot?: any,
-	): void {
-		if (prevProps.categoryToEdit !== this.props.categoryToEdit) {
-			this.setState(this.props.categoryToEdit || ThinCategory.DEFAULT);
-			this.forceUpdate();
-		}
 	}
 
 	private renderTypeCheckbox(id: string, label: string, badgeClass: string, defaultChecked: boolean) {
@@ -131,7 +130,10 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, ThinCategory>
 
 	private handleCategoryNameInput(event: FormEvent<HTMLInputElement>) {
 		this.setState({
-			name: event.currentTarget.value,
+			currentValues: {
+				...this.state.currentValues,
+				name: event.currentTarget.value,
+			},
 		});
 	}
 
@@ -140,19 +142,39 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, ThinCategory>
 		const checked = event.currentTarget.checked;
 		switch (id) {
 			case "type-income":
-				this.setState({ isIncomeCategory: checked });
+				this.setState({
+					currentValues: {
+						...this.state.currentValues,
+						isIncomeCategory: checked,
+					},
+				});
 				break;
 
 			case "type-expense":
-				this.setState({ isExpenseCategory: checked });
+				this.setState({
+					currentValues: {
+						...this.state.currentValues,
+						isExpenseCategory: checked,
+					},
+				});
 				break;
 
 			case "type-asset":
-				this.setState({ isAssetGrowthCategory: checked });
+				this.setState({
+					currentValues: {
+						...this.state.currentValues,
+						isAssetGrowthCategory: checked,
+					},
+				});
 				break;
 
 			case "type-memo":
-				this.setState({ isMemoCategory: checked });
+				this.setState({
+					currentValues: {
+						...this.state.currentValues,
+						isMemoCategory: checked,
+					},
+				});
 				break;
 		}
 	}
@@ -162,7 +184,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, ThinCategory>
 			event.preventDefault();
 		}
 
-		this.props.actions.startSaveCategory(this.state);
+		this.props.actions.startSaveCategory(this.state.currentValues);
 	}
 
 	private handleCancel() {

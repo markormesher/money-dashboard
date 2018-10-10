@@ -17,8 +17,9 @@ import * as appStyles from "../App/App.scss";
 import EditAccountModal from "./EditAccountModal";
 
 interface IAccountSettingsProps {
-	lastUpdate: number;
-	displayActiveOnly: boolean;
+	lastUpdate?: number;
+	displayActiveOnly?: boolean;
+	accountToEdit?: ThinAccount;
 
 	actions?: {
 		deleteAccount: (id: string) => AnyAction,
@@ -32,6 +33,7 @@ function mapStateToProps(state: IRootState, props: IAccountSettingsProps): IAcco
 		...props,
 		lastUpdate: state.settings.accounts.lastUpdate,
 		displayActiveOnly: state.settings.accounts.displayActiveOnly,
+		accountToEdit: state.settings.accounts.accountToEdit,
 	};
 }
 
@@ -61,10 +63,10 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 	}
 
 	public render() {
-		const { lastUpdate, displayActiveOnly } = this.props;
+		const { lastUpdate, displayActiveOnly, accountToEdit } = this.props;
 		return (
 				<>
-					<EditAccountModal/>
+					{accountToEdit !== undefined && <EditAccountModal/>}
 
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Accounts</h1>

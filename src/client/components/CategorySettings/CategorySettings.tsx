@@ -17,6 +17,7 @@ import EditCategoryModal from "./EditCategoryModal";
 
 interface ICategorySettingsProps {
 	lastUpdate: number;
+	categoryToEdit?: ThinCategory;
 	actions?: {
 		deleteCategory: (id: string) => AnyAction,
 		setCategoryToEdit: (category: ThinCategory) => AnyAction,
@@ -27,6 +28,7 @@ function mapStateToProps(state: IRootState, props: ICategorySettingsProps): ICat
 	return {
 		...props,
 		lastUpdate: state.settings.categories.lastUpdate,
+		categoryToEdit: state.settings.categories.categoryToEdit,
 	};
 }
 
@@ -55,10 +57,10 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 	}
 
 	public render() {
-		const { lastUpdate } = this.props;
+		const { lastUpdate, categoryToEdit } = this.props;
 		return (
 				<>
-					<EditCategoryModal/>
+					{categoryToEdit !== undefined && <EditCategoryModal/>}
 
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Categories</h1>
