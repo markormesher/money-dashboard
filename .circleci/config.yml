@@ -26,15 +26,15 @@ jobs:
     <<: *defaults
     steps:
       - run:
-        name: Run Linter
-        command: yarn lint
+          name: Run Linter
+          command: yarn lint
 
   test:
     <<: *defaults
     steps:
       - run:
-        name: Run Tests
-        command: yarn test
+          name: Run Tests
+          command: yarn test
 
 workflows:
   version: 2
