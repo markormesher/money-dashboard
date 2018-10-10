@@ -21,6 +21,8 @@ const app = Express();
 
 // TODO: major refactoring of server-side
 
+// TODO: update branch used for CI badge in README when merging to develop
+
 // db connection
 SequelizeDb
 		.sync({ force: false })
