@@ -9,11 +9,16 @@ import * as styles from "./Modal.scss";
 
 interface IModalProps {
 	title: string;
-	buttons?: Array<"cancel" | "save">;
 	modalBusy?: boolean;
-	onCancel?: () => void;
-	onSave?: () => void;
 	onCloseRequest?: () => void;
+
+	cancelBtnShown?: boolean;
+	cancelBtnDisabled?: boolean;
+	onCancel?: () => void;
+
+	saveBtnShown?: boolean;
+	saveBtnDisabled?: boolean;
+	onSave?: () => void;
 }
 
 // TODO: fade into the page by adding to the view, THEN adding .show
@@ -21,7 +26,9 @@ interface IModalProps {
 class Modal extends Component<IModalProps> {
 
 	public render() {
-		const { title, buttons, modalBusy, onCancel, onSave, onCloseRequest } = this.props;
+		const { title, modalBusy, onCloseRequest } = this.props;
+		const { cancelBtnShown, cancelBtnDisabled, onCancel } = this.props;
+		const { saveBtnShown, saveBtnDisabled, onSave } = this.props;
 		return (
 				<>
 					<div className={combine(bs.modal, bs.fade, bs.dBlock, bs.show)}>
@@ -40,25 +47,25 @@ class Modal extends Component<IModalProps> {
 									{modalBusy
 									&& <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
 
-									{!modalBusy && buttons.indexOf("cancel") >= 0
+									{!modalBusy && cancelBtnShown !== false
 									&& <IconBtn
 											icon={faTimes}
 											text={"Cancel"}
 											btnProps={{
 												className: bs.btnOutlineDark,
 												onClick: onCancel || onCloseRequest,
-												disabled: modalBusy === true,
+												disabled: cancelBtnDisabled || modalBusy === true,
 											}}
 									/>}
 
-									{!modalBusy && buttons.indexOf("save") >= 0
+									{!modalBusy && saveBtnShown !== false
 									&& <IconBtn
 											icon={faSave}
 											text={"Save"}
 											btnProps={{
 												className: bs.btnSuccess,
 												onClick: onSave,
-												disabled: modalBusy === true,
+												disabled: saveBtnDisabled || modalBusy === true,
 											}}
 									/>}
 								</div>

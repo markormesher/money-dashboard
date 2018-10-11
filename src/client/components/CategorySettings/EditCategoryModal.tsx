@@ -2,14 +2,15 @@ import * as React from "react";
 import { Component, FormEvent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
+import { IThinAccountValidationResult } from "../../../server/model-thins/ThinAccountValidator";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
+import { validateThinCategory } from "../../../server/model-thins/ThinCategoryValidator";
 import * as bs from "../../bootstrap-aliases";
 import { generateBadge } from "../../helpers/formatters";
+import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startSaveCategory } from "../../redux/settings/categories/actions";
 import { Modal } from "../_ui/Modal/Modal";
-
-// TODO: validation
 
 interface IEditCategoryModalProps {
 	categoryToEdit?: ThinCategory;
@@ -23,8 +24,9 @@ interface IEditCategoryModalProps {
 
 interface IEditCategoryModalState {
 	currentValues: ThinCategory;
-	currentErrors: {
-		name?: string[],
+	validationResult: IThinAccountValidationResult;
+	touchedFields: {
+		[key: string]: boolean,
 	};
 }
 
@@ -50,11 +52,15 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 
 	constructor(props: IEditCategoryModalProps) {
 		super(props);
+		const categoryToEdit = props.categoryToEdit || ThinCategory.DEFAULT;
 		this.state = {
-			currentValues: props.categoryToEdit || ThinCategory.DEFAULT,
-			currentErrors: {},
+			currentValues: categoryToEdit,
+			validationResult: validateThinCategory(categoryToEdit),
+			touchedFields: {},
 		};
 
+		this.handleTouch = this.handleTouch.bind(this);
+		this.wasTouched = this.wasTouched.bind(this);
 		this.handleCategoryNameInput = this.handleCategoryNameInput.bind(this);
 		this.handleCategoryTypeInput = this.handleCategoryTypeInput.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
@@ -63,15 +69,18 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 
 	public render() {
 		const { editorBusy } = this.props;
-		const { currentValues } = this.state;
+		const { currentValues, validationResult } = this.state;
+		const errors = validationResult.errors || {};
 		return (
 				<Modal
 						title={currentValues.id ? "Edit Category" : "Create Category"}
-						buttons={["cancel", "save"]}
 						modalBusy={editorBusy}
+						cancelBtnShown={true}
 						onCancel={this.handleCancel}
-						onSave={this.handleSave}
 						onCloseRequest={this.handleCancel}
+						saveBtnShown={true}
+						saveBtnDisabled={!validationResult.isValid}
+						onSave={this.handleSave}
 				>
 					<form onSubmit={this.handleSave}>
 						<div className={bs.formGroup}>
@@ -82,10 +91,16 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 									type="text"
 									value={currentValues.name}
 									onChange={this.handleCategoryNameInput}
+									onBlur={this.handleTouch}
 									disabled={editorBusy}
-									className={bs.formControl}
+									className={combine(bs.formControl, errors.name && this.wasTouched("name") && bs.isInvalid)}
 									placeholder="Category name"
 							/>
+							{
+								errors.name
+								&& this.wasTouched("name")
+								&& <div className={bs.invalidFeedback}>{errors.name}</div>
+							}
 						</div>
 						<div className={bs.formGroup}>
 							<label>Type</label>
@@ -111,6 +126,31 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 		);
 	}
 
+	private handleTouch(event: FormEvent<HTMLInputElement | HTMLSelectElement>) {
+		const id = event.currentTarget.id;
+		this.setState({
+			touchedFields: {
+				...this.state.touchedFields,
+				[id]: true,
+			},
+		});
+	}
+
+	private wasTouched(id: string): boolean {
+		return this.state.touchedFields[id] === true;
+	}
+
+	private updateModel(category: ThinCategory) {
+		this.setState({ currentValues: category });
+		this.validateModel(category);
+	}
+
+	private validateModel(category: ThinCategory) {
+		this.setState({
+			validationResult: validateThinCategory(category),
+		});
+	}
+
 	private renderTypeCheckbox(id: string, label: string, badgeClass: string, defaultChecked: boolean) {
 		return (
 				<div className={bs.formCheck}>
@@ -129,11 +169,9 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 	}
 
 	private handleCategoryNameInput(event: FormEvent<HTMLInputElement>) {
-		this.setState({
-			currentValues: {
-				...this.state.currentValues,
-				name: event.currentTarget.value,
-			},
+		this.updateModel({
+			...this.state.currentValues,
+			name: event.currentTarget.value,
 		});
 	}
 
@@ -142,38 +180,30 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 		const checked = event.currentTarget.checked;
 		switch (id) {
 			case "type-income":
-				this.setState({
-					currentValues: {
-						...this.state.currentValues,
-						isIncomeCategory: checked,
-					},
+				this.updateModel({
+					...this.state.currentValues,
+					isIncomeCategory: checked,
 				});
 				break;
 
 			case "type-expense":
-				this.setState({
-					currentValues: {
-						...this.state.currentValues,
-						isExpenseCategory: checked,
-					},
+				this.updateModel({
+					...this.state.currentValues,
+					isExpenseCategory: checked,
 				});
 				break;
 
 			case "type-asset":
-				this.setState({
-					currentValues: {
-						...this.state.currentValues,
-						isAssetGrowthCategory: checked,
-					},
+				this.updateModel({
+					...this.state.currentValues,
+					isAssetGrowthCategory: checked,
 				});
 				break;
 
 			case "type-memo":
-				this.setState({
-					currentValues: {
-						...this.state.currentValues,
-						isMemoCategory: checked,
-					},
+				this.updateModel({
+					...this.state.currentValues,
+					isMemoCategory: checked,
 				});
 				break;
 		}

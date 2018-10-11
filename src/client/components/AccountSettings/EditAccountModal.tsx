@@ -3,12 +3,15 @@ import { Component, FormEvent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
+import { IThinAccountValidationResult, validateThinAccount } from "../../../server/model-thins/ThinAccountValidator";
 import * as bs from "../../bootstrap-aliases";
+import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setAccountToEdit, startSaveAccount } from "../../redux/settings/accounts/actions";
 import { Modal } from "../_ui/Modal/Modal";
 
-// TODO: validation
+// TODO: dedupe efforts in validation
+// TODO: clean up error checs around inputs
 
 interface IEditAccountModalProps {
 	accountToEdit?: ThinAccount;
@@ -22,8 +25,9 @@ interface IEditAccountModalProps {
 
 interface IEditAccountModalState {
 	currentValues: ThinAccount;
-	currentErrors: {
-		name?: string[],
+	validationResult: IThinAccountValidationResult;
+	touchedFields: {
+		[key: string]: boolean,
 	};
 }
 
@@ -49,11 +53,15 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 
 	constructor(props: IEditAccountModalProps) {
 		super(props);
+		const accountToEdit = props.accountToEdit || ThinAccount.DEFAULT;
 		this.state = {
-			currentValues: props.accountToEdit || ThinAccount.DEFAULT,
-			currentErrors: {},
+			currentValues: accountToEdit,
+			validationResult: validateThinAccount(accountToEdit),
+			touchedFields: {},
 		};
 
+		this.handleTouch = this.handleTouch.bind(this);
+		this.wasTouched = this.wasTouched.bind(this);
 		this.handleAccountNameInput = this.handleAccountNameInput.bind(this);
 		this.handleAccountTypeInput = this.handleAccountTypeInput.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
@@ -62,15 +70,18 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 
 	public render() {
 		const { editorBusy } = this.props;
-		const { currentValues } = this.state;
+		const { currentValues, validationResult } = this.state;
+		const errors = validationResult.errors || {};
 		return (
 				<Modal
 						title={currentValues.id ? "Edit Account" : "Create Account"}
-						buttons={["cancel", "save"]}
 						modalBusy={editorBusy}
+						cancelBtnShown={true}
 						onCancel={this.handleCancel}
-						onSave={this.handleSave}
 						onCloseRequest={this.handleCancel}
+						saveBtnShown={true}
+						saveBtnDisabled={!validationResult.isValid}
+						onSave={this.handleSave}
 				>
 					<form onSubmit={this.handleSave}>
 						<div className={bs.formGroup}>
@@ -81,10 +92,16 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 									type="text"
 									onChange={this.handleAccountNameInput}
 									disabled={editorBusy}
-									className={bs.formControl}
+									className={combine(bs.formControl, errors.name && this.wasTouched("name") && bs.isInvalid)}
 									placeholder="Account name"
 									value={currentValues.name}
+									onBlur={this.handleTouch}
 							/>
+							{
+								errors.name
+								&& this.wasTouched("name")
+								&& <div className={bs.invalidFeedback}>{errors.name}</div>
+							}
 						</div>
 						<div className={bs.formGroup}>
 							<label htmlFor="type">Type</label>
@@ -93,7 +110,8 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 									name="type"
 									onChange={this.handleAccountTypeInput}
 									disabled={editorBusy}
-									className={bs.formControl}
+									className={combine(bs.formControl, errors.type && this.wasTouched("type") && bs.isInvalid)}
+									onBlur={this.handleTouch}
 									value={currentValues.type}
 							>
 								<option value={"current"}>Current Account</option>
@@ -101,33 +119,65 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 								<option value={"asset"}>Asset</option>
 								<option value={"other"}>Other</option>
 							</select>
+							{
+								errors.type
+								&& this.wasTouched("type")
+								&& <div className={bs.invalidFeedback}>{errors.type}</div>
+							}
 						</div>
 					</form>
+					<hr/>
+					<pre>{JSON.stringify(validationResult, null, 2)}</pre>
 				</Modal>
 		);
 	}
 
-	private handleAccountNameInput(event: FormEvent<HTMLInputElement>) {
+	private handleTouch(event: FormEvent<HTMLInputElement | HTMLSelectElement>) {
+		const id = event.currentTarget.id;
 		this.setState({
-			currentValues: {
-				...this.state.currentValues,
-				name: event.currentTarget.value,
+			touchedFields: {
+				...this.state.touchedFields,
+				[id]: true,
 			},
 		});
 	}
 
-	private handleAccountTypeInput(event: FormEvent<HTMLSelectElement>) {
+	private wasTouched(id: string): boolean {
+		return this.state.touchedFields[id] === true;
+	}
+
+	private updateModel(account: ThinAccount) {
+		this.setState({ currentValues: account });
+		this.validateModel(account);
+	}
+
+	private validateModel(account: ThinAccount) {
 		this.setState({
-			currentValues: {
-				...this.state.currentValues,
-				type: event.currentTarget.value,
-			},
+			validationResult: validateThinAccount(account),
+		});
+	}
+
+	private handleAccountNameInput(event: FormEvent<HTMLInputElement>) {
+		this.updateModel({
+			...this.state.currentValues,
+			name: event.currentTarget.value,
+		});
+	}
+
+	private handleAccountTypeInput(event: FormEvent<HTMLSelectElement>) {
+		this.updateModel({
+			...this.state.currentValues,
+			type: event.currentTarget.value,
 		});
 	}
 
 	private handleSave(event?: FormEvent) {
 		if (event) {
 			event.preventDefault();
+		}
+
+		if (!this.state.validationResult.isValid) {
+			return;
 		}
 
 		this.props.actions.startSaveAccount(this.state.currentValues);
