@@ -7,9 +7,10 @@ import { ThinCategory } from "../../../server/model-thins/ThinCategory";
 import { validateThinCategory } from "../../../server/model-thins/ThinCategoryValidator";
 import * as bs from "../../bootstrap-aliases";
 import { generateBadge } from "../../helpers/formatters";
-import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startSaveCategory } from "../../redux/settings/categories/actions";
+import ControlledCheckboxInput from "../_ui/FormComponents/ControlledCheckboxInput";
+import ControlledTextInput from "../_ui/FormComponents/ControlledTextInput";
 import { Modal } from "../_ui/Modal/Modal";
 
 interface IEditCategoryModalProps {
@@ -25,9 +26,6 @@ interface IEditCategoryModalProps {
 interface IEditCategoryModalState {
 	currentValues: ThinCategory;
 	validationResult: IThinAccountValidationResult;
-	touchedFields: {
-		[key: string]: boolean,
-	};
 }
 
 function mapStateToProps(state: IRootState, props: IEditCategoryModalProps): IEditCategoryModalProps {
@@ -56,13 +54,10 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 		this.state = {
 			currentValues: categoryToEdit,
 			validationResult: validateThinCategory(categoryToEdit),
-			touchedFields: {},
 		};
 
-		this.handleTouch = this.handleTouch.bind(this);
-		this.wasTouched = this.wasTouched.bind(this);
-		this.handleCategoryNameInput = this.handleCategoryNameInput.bind(this);
-		this.handleCategoryTypeInput = this.handleCategoryTypeInput.bind(this);
+		this.handleCategoryNameChange = this.handleCategoryNameChange.bind(this);
+		this.handleCategoryTypeCheckedChange = this.handleCategoryTypeCheckedChange.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
 	}
@@ -84,60 +79,58 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 				>
 					<form onSubmit={this.handleSave}>
 						<div className={bs.formGroup}>
-							<label htmlFor="name">Name</label>
-							<input
-									id="name"
-									name="name"
-									type="text"
+							<ControlledTextInput
+									id={"name"}
+									label={"Name"}
+									placeholder={"Category Name"}
 									value={currentValues.name}
-									onChange={this.handleCategoryNameInput}
-									onBlur={this.handleTouch}
+									onValueChange={this.handleCategoryNameChange}
 									disabled={editorBusy}
-									className={combine(bs.formControl, errors.name && this.wasTouched("name") && bs.isInvalid)}
-									placeholder="Category name"
+									error={errors.name}
 							/>
-							{
-								errors.name
-								&& this.wasTouched("name")
-								&& <div className={bs.invalidFeedback}>{errors.name}</div>
-							}
 						</div>
 						<div className={bs.formGroup}>
 							<label>Type</label>
 							<div className={bs.row}>
 								<div className={bs.col}>
-									{this.renderTypeCheckbox("income", "Income", bs.badgeSuccess, currentValues.isIncomeCategory)}
+									<ControlledCheckboxInput
+											id={"type-income"}
+											label={generateBadge("Income", bs.badgeSuccess)}
+											checked={currentValues.isIncomeCategory}
+											onCheckedChange={this.handleCategoryTypeCheckedChange}
+									/>
 								</div>
 								<div className={bs.col}>
-									{this.renderTypeCheckbox("expense", "Expense", bs.badgeDanger, currentValues.isExpenseCategory)}
+									<ControlledCheckboxInput
+											id={"type-expense"}
+											label={generateBadge("Expense", bs.badgeDanger)}
+											checked={currentValues.isExpenseCategory}
+											onCheckedChange={this.handleCategoryTypeCheckedChange}
+									/>
 								</div>
 							</div>
 							<div className={bs.row}>
 								<div className={bs.col}>
-									{this.renderTypeCheckbox("asset", "Asset Growth", bs.badgeWarning, currentValues.isAssetGrowthCategory)}
+									<ControlledCheckboxInput
+											id={"type-asset"}
+											label={generateBadge("Asset Growth", bs.badgeWarning)}
+											checked={currentValues.isAssetGrowthCategory}
+											onCheckedChange={this.handleCategoryTypeCheckedChange}
+									/>
 								</div>
 								<div className={bs.col}>
-									{this.renderTypeCheckbox("memo", "Memo", bs.badgeInfo, currentValues.isMemoCategory)}
+									<ControlledCheckboxInput
+											id={"type-memo"}
+											label={generateBadge("Memo", bs.badgeInfo)}
+											checked={currentValues.isMemoCategory}
+											onCheckedChange={this.handleCategoryTypeCheckedChange}
+									/>
 								</div>
 							</div>
 						</div>
 					</form>
 				</Modal>
 		);
-	}
-
-	private handleTouch(event: FormEvent<HTMLInputElement | HTMLSelectElement>) {
-		const id = event.currentTarget.id;
-		this.setState({
-			touchedFields: {
-				...this.state.touchedFields,
-				[id]: true,
-			},
-		});
-	}
-
-	private wasTouched(id: string): boolean {
-		return this.state.touchedFields[id] === true;
 	}
 
 	private updateModel(category: ThinCategory) {
@@ -151,33 +144,14 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 		});
 	}
 
-	private renderTypeCheckbox(id: string, label: string, badgeClass: string, defaultChecked: boolean) {
-		return (
-				<div className={bs.formCheck}>
-					<input
-							id={`type-${id}`}
-							type="checkbox"
-							checked={defaultChecked}
-							onChange={this.handleCategoryTypeInput}
-							className={bs.formCheckInput}
-					/>
-					<label className={bs.formCheckLabel} htmlFor={`type-${id}`}>
-						{generateBadge(label, badgeClass)}
-					</label>
-				</div>
-		);
-	}
-
-	private handleCategoryNameInput(event: FormEvent<HTMLInputElement>) {
+	private handleCategoryNameChange(newValue: string) {
 		this.updateModel({
 			...this.state.currentValues,
-			name: event.currentTarget.value,
+			name: newValue,
 		});
 	}
 
-	private handleCategoryTypeInput(event: FormEvent<HTMLInputElement>) {
-		const id = event.currentTarget.id;
-		const checked = event.currentTarget.checked;
+	private handleCategoryTypeCheckedChange(checked: boolean, id: string) {
 		switch (id) {
 			case "type-income":
 				this.updateModel({
@@ -212,6 +186,10 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 	private handleSave(event?: FormEvent) {
 		if (event) {
 			event.preventDefault();
+		}
+
+		if (!this.state.validationResult.isValid) {
+			return;
 		}
 
 		this.props.actions.startSaveCategory(this.state.currentValues);

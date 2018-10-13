@@ -5,13 +5,13 @@ import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
 import { IThinAccountValidationResult, validateThinAccount } from "../../../server/model-thins/ThinAccountValidator";
 import * as bs from "../../bootstrap-aliases";
-import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setAccountToEdit, startSaveAccount } from "../../redux/settings/accounts/actions";
+import ControlledSelectInput from "../_ui/FormComponents/ControlledSelectInput";
+import ControlledTextInput from "../_ui/FormComponents/ControlledTextInput";
 import { Modal } from "../_ui/Modal/Modal";
 
-// TODO: dedupe efforts in validation
-// TODO: clean up error checs around inputs
+// TODO: de-dupe updateModel/validateModel/onSave/onCancel code
 
 interface IEditAccountModalProps {
 	accountToEdit?: ThinAccount;
@@ -26,9 +26,6 @@ interface IEditAccountModalProps {
 interface IEditAccountModalState {
 	currentValues: ThinAccount;
 	validationResult: IThinAccountValidationResult;
-	touchedFields: {
-		[key: string]: boolean,
-	};
 }
 
 function mapStateToProps(state: IRootState, props: IEditAccountModalProps): IEditAccountModalProps {
@@ -57,13 +54,10 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 		this.state = {
 			currentValues: accountToEdit,
 			validationResult: validateThinAccount(accountToEdit),
-			touchedFields: {},
 		};
 
-		this.handleTouch = this.handleTouch.bind(this);
-		this.wasTouched = this.wasTouched.bind(this);
-		this.handleAccountNameInput = this.handleAccountNameInput.bind(this);
-		this.handleAccountTypeInput = this.handleAccountTypeInput.bind(this);
+		this.handleAccountNameChange = this.handleAccountNameChange.bind(this);
+		this.handleAccountTypeChange = this.handleAccountTypeChange.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
 	}
@@ -85,65 +79,34 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 				>
 					<form onSubmit={this.handleSave}>
 						<div className={bs.formGroup}>
-							<label htmlFor="name">Name</label>
-							<input
-									id="name"
-									name="name"
-									type="text"
-									onChange={this.handleAccountNameInput}
-									disabled={editorBusy}
-									className={combine(bs.formControl, errors.name && this.wasTouched("name") && bs.isInvalid)}
-									placeholder="Account name"
+							<ControlledTextInput
+									id={"name"}
+									label={"Name"}
+									placeholder={"Account Name"}
 									value={currentValues.name}
-									onBlur={this.handleTouch}
+									onValueChange={this.handleAccountNameChange}
+									disabled={editorBusy}
+									error={errors.name}
 							/>
-							{
-								errors.name
-								&& this.wasTouched("name")
-								&& <div className={bs.invalidFeedback}>{errors.name}</div>
-							}
 						</div>
 						<div className={bs.formGroup}>
-							<label htmlFor="type">Type</label>
-							<select
+							<ControlledSelectInput
 									id="type"
-									name="type"
-									onChange={this.handleAccountTypeInput}
-									disabled={editorBusy}
-									className={combine(bs.formControl, errors.type && this.wasTouched("type") && bs.isInvalid)}
-									onBlur={this.handleTouch}
+									label={"Type"}
 									value={currentValues.type}
+									onValueChange={this.handleAccountTypeChange}
+									disabled={editorBusy}
+									error={errors.type}
 							>
 								<option value={"current"}>Current Account</option>
 								<option value={"savings"}>Savings Account</option>
 								<option value={"asset"}>Asset</option>
 								<option value={"other"}>Other</option>
-							</select>
-							{
-								errors.type
-								&& this.wasTouched("type")
-								&& <div className={bs.invalidFeedback}>{errors.type}</div>
-							}
+							</ControlledSelectInput>
 						</div>
 					</form>
-					<hr/>
-					<pre>{JSON.stringify(validationResult, null, 2)}</pre>
 				</Modal>
 		);
-	}
-
-	private handleTouch(event: FormEvent<HTMLInputElement | HTMLSelectElement>) {
-		const id = event.currentTarget.id;
-		this.setState({
-			touchedFields: {
-				...this.state.touchedFields,
-				[id]: true,
-			},
-		});
-	}
-
-	private wasTouched(id: string): boolean {
-		return this.state.touchedFields[id] === true;
 	}
 
 	private updateModel(account: ThinAccount) {
@@ -157,17 +120,17 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 		});
 	}
 
-	private handleAccountNameInput(event: FormEvent<HTMLInputElement>) {
+	private handleAccountNameChange(newValue: string) {
 		this.updateModel({
 			...this.state.currentValues,
-			name: event.currentTarget.value,
+			name: newValue,
 		});
 	}
 
-	private handleAccountTypeInput(event: FormEvent<HTMLSelectElement>) {
+	private handleAccountTypeChange(newValue: string) {
 		this.updateModel({
 			...this.state.currentValues,
-			type: event.currentTarget.value,
+			type: newValue,
 		});
 	}
 
