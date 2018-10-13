@@ -23,6 +23,8 @@ const app = Express();
 
 // TODO: update branch used for CI badge in README when merging to develop
 
+// TODO: tree-shaking for font-awesome + BS aliases
+
 // db connection
 SequelizeDb
 		.sync({ force: false })
