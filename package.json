@@ -19,7 +19,7 @@
     "--NOTE--": "Server code is given a hallpass *for now*. When ready, add \"./src/server/**/*.ts\" to both below",
     "lint": "tslint -c ./tslint.json \"./src/client/**/*.{ts,tsx}\"",
     "lint:fix": "tslint --fix -c ./tslint.json \"./src/client/**/*.{ts,tsx}\"",
-    "test": "echo 'No tests yet'"
+    "unit-test": "echo 'No unit tests yet'"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.4",
