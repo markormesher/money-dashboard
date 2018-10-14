@@ -99,6 +99,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 											id={"type-income"}
 											label={generateBadge("Income", bs.badgeSuccess)}
 											checked={currentValues.isIncomeCategory}
+											disabled={editorBusy}
 											onCheckedChange={this.handleCategoryTypeCheckedChange}
 									/>
 								</div>
@@ -107,6 +108,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 											id={"type-expense"}
 											label={generateBadge("Expense", bs.badgeDanger)}
 											checked={currentValues.isExpenseCategory}
+											disabled={editorBusy}
 											onCheckedChange={this.handleCategoryTypeCheckedChange}
 									/>
 								</div>
@@ -117,6 +119,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 											id={"type-asset"}
 											label={generateBadge("Asset Growth", bs.badgeWarning)}
 											checked={currentValues.isAssetGrowthCategory}
+											disabled={editorBusy}
 											onCheckedChange={this.handleCategoryTypeCheckedChange}
 									/>
 								</div>
@@ -125,6 +128,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 											id={"type-memo"}
 											label={generateBadge("Memo", bs.badgeInfo)}
 											checked={currentValues.isMemoCategory}
+											disabled={editorBusy}
 											onCheckedChange={this.handleCategoryTypeCheckedChange}
 									/>
 								</div>

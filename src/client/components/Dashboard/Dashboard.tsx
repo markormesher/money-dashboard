@@ -30,7 +30,6 @@ class Dashboard extends Component<IDashboardProps> {
 		return (
 				<div>
 					<h1 className={bs.h2}>Dashboard</h1>
-					<pre>{JSON.stringify(this.props, null, 2)}</pre>
 				</div>
 		);
 	}
