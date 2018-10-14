@@ -1,6 +1,6 @@
 import { TransformableInfo } from "logform";
 import { format } from "logform";
-import Winston = require("winston");
+import * as Winston from "winston";
 
 const consoleLogFormat = format.combine(
 		format.timestamp(),

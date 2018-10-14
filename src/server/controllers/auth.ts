@@ -1,26 +1,28 @@
-import Express = require("express");
+import * as Express from "express";
 import { Request, Response } from "express";
-import Passport = require("passport");
+import * as Passport from "passport";
 import { loadUser } from "../middleware/auth-middleware";
 
-const router = Express.Router();
+const authRouter = Express.Router();
 
-router.get("/google/login", Passport.authenticate("google", {
+authRouter.get("/google/login", Passport.authenticate("google", {
 	scope: ["https://www.googleapis.com/auth/plus.login"],
 }));
 
-router.get("/google/callback", Passport.authenticate("google", {
+authRouter.get("/google/callback", Passport.authenticate("google", {
 	successRedirect: "/",
 	failureRedirect: "/auth/login",
 }));
 
-router.get("/current-user", loadUser, (req: Request, res: Response) => {
+authRouter.get("/current-user", loadUser, (req: Request, res: Response) => {
 	res.json(req.user); // may be undefined
 });
 
-router.post("/logout", (req: Request, res: Response) => {
+authRouter.post("/logout", (req: Request, res: Response) => {
 	req.logout();
 	res.sendStatus(200);
 });
 
-export = router;
+export {
+	authRouter,
+};

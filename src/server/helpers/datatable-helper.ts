@@ -1,4 +1,4 @@
-import Bluebird = require("bluebird");
+import * as Bluebird from "bluebird";
 import { Request } from "express";
 import { cloneDeep } from "lodash";
 import { IFindOptions } from "sequelize-typescript";

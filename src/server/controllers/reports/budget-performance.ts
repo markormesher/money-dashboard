@@ -1,12 +1,9 @@
-import Express = require("express");
-import _ = require("lodash");
+import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-
+import * as _ from "lodash";
 import { requireUser } from "../../middleware/auth-middleware";
-import { getAllBudgets } from "../../managers/budget-manager";
-import { Budget } from "../../models/Budget";
 import { User } from "../../models/User";
-import { IBudgetBalance, getBudgetBalances } from "../../statistics/budget-statistics";
+import { getBudgetBalances, IBudgetBalance } from "../../statistics/budget-statistics";
 
 const router = Express.Router();
 
@@ -15,7 +12,7 @@ router.get("/old-index", requireUser, (req: Request, res: Response) => {
 		_: {
 			title: "Budget Performance",
 			activePage: "reports/budget-performance",
-		}
+		},
 	});
 });
 
@@ -24,16 +21,16 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 
 	const startDate = req.query.startDate;
 	const endDate = req.query.endDate;
-	const rawOrder: { column: number, dir: string }[] = req.query.order;
+	const rawOrder: Array<{ column: number, dir: string }> = req.query.order;
 
 	getBudgetBalances(user, startDate, endDate)
 			.then((budgets) => {
-				const budgetBuckets: [string, IBudgetBalance[]][] = _(budgets)
+				const budgetBuckets: Array<[string, IBudgetBalance[]]> = _(budgets)
 						.groupBy((b: IBudgetBalance) => b.budget.category.name)
 						.toPairs()
 						.value();
 
-				if (rawOrder[0].dir == "asc") {
+				if (rawOrder[0].dir === "asc") {
 					budgetBuckets.sort((a, b) => a[0].localeCompare(b[0]));
 				} else {
 					budgetBuckets.sort((a, b) => b[0].localeCompare(a[0]));
@@ -42,10 +39,12 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 				res.json({
 					recordsTotal: budgetBuckets.length,
 					recordsFiltered: budgetBuckets.length,
-					data: budgetBuckets
+					data: budgetBuckets,
 				});
 			})
 			.catch(next);
 });
 
-export = router;
+export {
+	router,
+};

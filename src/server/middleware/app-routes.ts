@@ -1,9 +1,9 @@
-import Compression = require("compression");
+import * as Compression from "compression";
 import { Express, Request, Response, static as expressStatic } from "express";
 import { resolve } from "path";
-import Webpack = require("webpack");
-import webpackDevMiddleware = require("webpack-dev-middleware");
-import webpackHotMiddleware = require("webpack-hot-middleware");
+import * as Webpack from "webpack";
+import * as webpackDevMiddleware from "webpack-dev-middleware";
+import * as webpackHotMiddleware from "webpack-hot-middleware";
 import { getDevWebpackConfig } from "../helpers/config-loader";
 
 const webpackDevConfig = getDevWebpackConfig();

@@ -1,7 +1,28 @@
 const { resolve, join } = require("path");
 const webpack = require("webpack");
 
+const babelLoader = {
+	loader: 'babel-loader',
+	options: {
+		cacheDirectory: true,
+		presets: [
+			[
+				"@babel/preset-env",
+				{
+					targets: {
+						esmodules: true,
+					},
+					modules: false
+				}
+			],
+			["@babel/typescript"],
+			["@babel/react"]
+		]
+	}
+};
+
 module.exports = {
+	cache: true,
 	target: "web",
 	entry: resolve(__dirname, "src", "client", "index.tsx"),
 	output: {
@@ -13,18 +34,25 @@ module.exports = {
 		rules: [
 			{
 				test: /\.ts(x?)$/,
-				loader: "ts-loader",
+				use: [
+					babelLoader,
+					{
+						loader: "ts-loader",
+						options: {
+							compilerOptions: {
+								// these override the settings in tsconfig.json
+								module: "es6",
+								target: "es6",
+							}
+						}
+					}
+				],
 				exclude: /node_modules/
 			},
 			{
 				test: /\.js(x?)$/,
 				use: [
-					{
-						loader: "babel-loader",
-						options: {
-							presets: ["react", "env"]
-						}
-					}
+					babelLoader
 				],
 				exclude: /node_modules/
 			},
@@ -51,7 +79,7 @@ module.exports = {
 							modules: true,
 							namedExport: true,
 							camelCase: true,
-							localIdentName: "[name]__[local]___[hash:base64:5]"
+							localIdentName: "[name]_[local]_[hash:base64:5]"
 						}
 					},
 					{
@@ -69,10 +97,6 @@ module.exports = {
 		new webpack.WatchIgnorePlugin([
 			/css\.d\.ts$/
 		]),
-		new webpack.ProvidePlugin({
-			$: "jquery",
-			jQuery: "jquery"
-		}),
 		new webpack.EnvironmentPlugin(["NODE_ENV"])
 	],
 	resolve: {
@@ -82,11 +106,11 @@ module.exports = {
 	optimization: {
 		splitChunks: {
 			cacheGroups: {
-				commons: {
+				vendor: {
 					test: /[\\/]node_modules[\\/]/,
 					name: "vendor",
 					chunks: "all"
-				}
+				},
 			}
 		}
 	},

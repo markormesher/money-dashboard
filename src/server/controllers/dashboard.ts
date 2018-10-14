@@ -1,17 +1,16 @@
-import Bluebird = require("bluebird");
-import Express = require("express");
+import * as Bluebird from "bluebird";
+import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
-
 import { requireUser } from "../middleware/auth-middleware";
 import { User } from "../models/User";
 import { getAccountBalances } from "../statistics/account-statistics";
 import { getBudgetBalances } from "../statistics/budget-statistics";
 import { getMemoCategoryBalances } from "../statistics/category-statistics";
 
-const router = Express.Router();
+const dashboardRouter = Express.Router();
 
-router.get("/old-index", requireUser, (req: Request, res: Response, next: NextFunction) => {
+dashboardRouter.get("/old-index", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 
 	const now = Moment();
@@ -37,4 +36,6 @@ router.get("/old-index", requireUser, (req: Request, res: Response, next: NextFu
 			.catch(next);
 });
 
-export = router;
+export {
+	dashboardRouter,
+};

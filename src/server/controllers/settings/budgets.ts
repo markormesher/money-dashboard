@@ -1,18 +1,16 @@
-import Bluebird = require("bluebird");
-import Express = require("express");
+import * as Bluebird from "bluebird";
 import { NextFunction, Request, Response } from "express";
+import * as Express from "express";
 import * as Moment from "moment";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
-
-import { requireUser } from "../../middleware/auth-middleware";
 import { getData } from "../../helpers/datatable-helper";
+import { formatDate } from "../../helpers/formatters";
 import { cloneBudgets, deleteBudget, getBudget, saveBudget } from "../../managers/budget-manager";
-import { getAllCategories } from "../../managers/category-manager";
+import { requireUser } from "../../middleware/auth-middleware";
 import { Budget } from "../../models/Budget";
 import { Category } from "../../models/Category";
 import { User } from "../../models/User";
-import { formatDate } from "../../helpers/formatters";
 
 const router = Express.Router();
 
@@ -165,4 +163,6 @@ router.post("/clone/:budgetIds", requireUser, (req: Request, res: Response, next
 			.catch(next);
 });
 
-export = router;
+export {
+	router,
+};

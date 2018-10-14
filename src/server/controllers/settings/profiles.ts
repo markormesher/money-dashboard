@@ -1,4 +1,4 @@
-import Express = require("express");
+import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
@@ -66,8 +66,10 @@ router.get("/select/:profileId", requireUser, (req: Request, res: Response) => {
 	const user = req.user as User;
 	const profileId = req.params.profileId;
 
-	user.activeProfile = user.profiles.find((p: Profile) => p.id === profileId);
+	user.activeProfile = user.profiles.filter((p: Profile) => p.id === profileId)[0];
 	req.login(user, () => res.redirect(req.get("Referrer") || "/"));
 });
 
-export = router;
+export {
+	router,
+};

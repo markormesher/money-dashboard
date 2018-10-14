@@ -1,14 +1,14 @@
-import BodyParser = require("body-parser");
-import ConnectRedis = require("connect-redis");
-import Express = require("express");
+import * as BodyParser from "body-parser";
+import * as ConnectRedis from "connect-redis";
+import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import ExpressSession = require("express-session");
-import Passport = require("passport");
+import * as ExpressSession from "express-session";
+import * as Passport from "passport";
 import { StatusError } from "./extensions/StatusError";
 import { getSecret, runningInDocker } from "./helpers/config-loader";
-import SequelizeDb = require("./helpers/db");
+import { SequelizeDb } from "./helpers/db";
 import { logger } from "./helpers/logging";
-import PassportConfig = require("./helpers/passport-config");
+import * as PassportConfig from "./helpers/passport-config";
 import { setupApiRoutes } from "./middleware/api-routes";
 import { setupDevAppRoutes, setupProdAppRoutes } from "./middleware/app-routes";
 
@@ -22,8 +22,6 @@ const app = Express();
 // TODO: major refactoring of server-side
 
 // TODO: update branch used for CI badge in README when merging to develop
-
-// TODO: tree-shaking for font-awesome + BS aliases
 
 // db connection
 SequelizeDb

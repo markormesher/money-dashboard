@@ -1,4 +1,4 @@
-import Sequelize = require("sequelize");
+import * as Sequelize from "sequelize";
 import { BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table } from "sequelize-typescript";
 
 import { Category } from "./Category";

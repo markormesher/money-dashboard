@@ -1,4 +1,4 @@
-import Bluebird = require("bluebird");
+import * as Bluebird from "bluebird";
 
 import { User } from "../models/User";
 import { createProfileAndAddToUser } from "./profile-manager";

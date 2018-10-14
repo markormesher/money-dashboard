@@ -16,7 +16,7 @@ const conf = {
 		idle: 10000,
 	},
 	operatorsAliases: false,
-	modelPaths: [join(__dirname, "../models")],
+	modelPaths: [ join(__dirname, "../models") ],
 	define: {
 		freezeTableName: true,
 		timestamps: true,
@@ -26,4 +26,8 @@ const conf = {
 	logging: (query: string) => logger.verbose(query),
 };
 
-export = new Sequelize(conf);
+const SequelizeDb = new Sequelize(conf);
+
+export {
+	SequelizeDb,
+};

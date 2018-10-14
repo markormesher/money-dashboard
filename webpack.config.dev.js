@@ -12,10 +12,13 @@ module.exports = merge(commonConfig, {
 		hotUpdateMainFilename: "hot-update.[hash:6].json",
 		hotUpdateChunkFilename: "hot-update.[hash:6].js"
 	},
+	optimization: {
+		minimize: false,
+		namedModules: true
+	},
 	devtool: "cheap-module-eval-source-map",
 	plugins: [
 		new webpack.HotModuleReplacementPlugin(),
-		new webpack.NamedModulesPlugin(),
 		new HtmlWebpackPlugin({
 			inject: true,
 			template: resolve(__dirname, "src", "client", "index.html"),

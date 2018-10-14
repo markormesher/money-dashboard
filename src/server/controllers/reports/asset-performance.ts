@@ -1,27 +1,26 @@
-import Bluebird = require("bluebird");
-import Express = require("express");
+import * as Bluebird from "bluebird";
+import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
-
-import { requireUser } from "../../middleware/auth-middleware";
 import { getAllAccounts } from "../../managers/account-manager";
+import { requireUser } from "../../middleware/auth-middleware";
 import { Category } from "../../models/Category";
 import { Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
 
-const router = Express.Router();
+const assetPerformanceReportRouter = Express.Router();
 
-router.get("/old-index", requireUser, (req: Request, res: Response, next: NextFunction) => {
+assetPerformanceReportRouter.get("/old-index", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 
 	getAllAccounts(user, false)
 			.then((accounts) => {
-				const assets = accounts.filter(a => a.type == "asset");
+				const assets = accounts.filter((a) => a.type === "asset");
 
 				if (assets.length === 0) {
 					// TODO res.flash("info", "None of your accounts are assets.");
 					res.redirect("/");
-					return
+					return;
 				}
 
 				res.render("reports/asset-performance", {
@@ -29,30 +28,30 @@ router.get("/old-index", requireUser, (req: Request, res: Response, next: NextFu
 						title: "Asset Performance",
 						activePage: "reports/asset-performance",
 					},
-					assets
+					assets,
 				});
 			})
 			.catch(next);
 });
 
-router.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
+assetPerformanceReportRouter.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 
 	const startDate = req.query.startDate;
 	const endDate = req.query.endDate;
 	const dateField: "effectiveDate" | "transactionDate" = req.query.dateField;
-	const account: string = req.query.account || '';
+	const account: string = req.query.account || "";
 
 	const getTransactionsBeforeRange = Transaction.findAll({
 		where: {
 			profileId: user.activeProfile.id,
 			accountId: account,
 			[dateField]: {
-				[Op.lt]: startDate
-			}
+				[Op.lt]: startDate,
+			},
 		},
 		include: [{
-			model: Category
+			model: Category,
 		}],
 	});
 	const getTransactionsInRange = Transaction.findAll({
@@ -62,10 +61,10 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 			[dateField]: {
 				[Op.gte]: startDate,
 				[Op.lte]: endDate,
-			}
+			},
 		},
 		include: [{
-			model: Category
+			model: Category,
 		}],
 		order: [[dateField, "ASC"]],
 	});
@@ -73,18 +72,18 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 	Bluebird
 			.all([
 				getTransactionsBeforeRange,
-				getTransactionsInRange
+				getTransactionsInRange,
 			])
 			.spread((transactionsBeforeRange: Transaction[], transactionsInRange: Transaction[]) => {
-				const dataInclGrowth: { x: number, y: number }[] = [];
-				const dataExclGrowth: { x: number, y: number }[] = [];
+				const dataInclGrowth: Array<{ x: number, y: number }> = [];
+				const dataExclGrowth: Array<{ x: number, y: number }> = [];
 
 				let runningTotalInclGrowth = transactionsBeforeRange
-						.map(t => t.amount)
+						.map((t) => t.amount)
 						.reduce((a, b) => a + b, 0);
 				let runningTotalExclGrowth = transactionsBeforeRange
-						.filter(t => !t.category.isAssetGrowthCategory)
-						.map(t => t.amount)
+						.filter((t) => !t.category.isAssetGrowthCategory)
+						.map((t) => t.amount)
 						.reduce((a, b) => a + b, 0);
 
 				let lastDate = 0;
@@ -98,8 +97,8 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				};
 
 				transactionsInRange.forEach((transaction: Transaction) => {
-					const date = new Date(transaction[dateField]).getTime();
-					if (lastDate > 0 && lastDate != date) {
+					const date = transaction[dateField].getTime();
+					if (lastDate > 0 && lastDate !== date) {
 						takeValues();
 					}
 
@@ -120,11 +119,12 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 					dataInclGrowth,
 					dataExclGrowth,
 					totalChangeInclGrowth,
-					totalChangeExclGrowth
+					totalChangeExclGrowth,
 				});
 			})
 			.catch(next);
 });
 
-
-export = router;
+export {
+	assetPerformanceReportRouter,
+};

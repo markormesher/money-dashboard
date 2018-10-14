@@ -1,4 +1,4 @@
-import Express = require("express");
+import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
@@ -79,4 +79,6 @@ router.post("/delete/:accountId", requireUser, (req: Request, res: Response, nex
 			.catch(next);
 });
 
-export = router;
+export {
+	router,
+};

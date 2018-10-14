@@ -1,4 +1,4 @@
-import Bluebird = require("bluebird");
+import * as Bluebird from "bluebird";
 import { Category } from "../models/Category";
 import { Profile } from "../models/Profile";
 import { User } from "../models/User";

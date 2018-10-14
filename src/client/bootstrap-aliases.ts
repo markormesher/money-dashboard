@@ -1,4 +1,5 @@
-/* TODO: generate this automagically */
+// Generated from https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css
+// TODO: generate this automatically
 
 export const h1 = "h1";
 export const h2 = "h2";

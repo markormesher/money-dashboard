@@ -1,5 +1,5 @@
-import Bluebird = require("bluebird");
-import Express = require("express");
+import * as Bluebird from "bluebird";
+import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
@@ -137,4 +137,6 @@ router.post("/delete/:transactionId", requireUser, (req: Request, res: Response,
 			.catch(next);
 });
 
-export = router;
+export {
+	router,
+};

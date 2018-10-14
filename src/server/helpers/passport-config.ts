@@ -40,7 +40,7 @@ function init(passport: Passport) {
 						throw new Error("Could not find user");
 					}
 
-					user.activeProfile = user.profiles.find((p: Profile) => !profileId || p.id === profileId);
+					user.activeProfile = user.profiles.filter((p: Profile) => !profileId || p.id === profileId)[0];
 					if (!user.activeProfile) {
 						user.activeProfile = user.profiles[0];
 					}

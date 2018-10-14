@@ -1,4 +1,4 @@
-import Bluebird = require("bluebird");
+import * as Bluebird from "bluebird";
 
 import { Category } from "../models/Category";
 import { Profile } from "../models/Profile";
@@ -28,7 +28,7 @@ function getAllPayees(user: User): Bluebird<string[]> {
 				where: { profileId: user.activeProfile.id },
 			})
 			.then((transactions: Transaction[]) => {
-				return Array.from(new Set(transactions.map((t) => t.payee))).sort();
+				return transactions.map((t) => t.payee).filter((v, i, a) => a.indexOf(v) === i).sort();
 			});
 }
 

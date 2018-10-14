@@ -1,10 +1,6 @@
 import { faCircleNotch, faExclamationTriangle, faTrash } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component } from "react";
-import { run } from "tslint/lib/runner";
-import * as bs from "../../../bootstrap-aliases";
-import { combine } from "../../../helpers/style-helpers";
 import IconBtn from "../IconBtn/IconBtn";
 
 interface IDeleteBtnProps {

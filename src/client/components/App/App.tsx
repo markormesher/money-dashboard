@@ -1,12 +1,9 @@
-import "bootstrap/dist/css/bootstrap.css";
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
-import * as bs from "../../bootstrap-aliases";
 import Http404Error from "../../helpers/errors/Http404Error";
-import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import AppContentWrapper from "../_layout/AppContentWrapper/AppContentWrapper";
 import AppRootWrapper from "../_layout/AppRootWrapper/AppRootWrapper";

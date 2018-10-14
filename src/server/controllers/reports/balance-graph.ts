@@ -1,11 +1,10 @@
-import Bluebird = require("bluebird");
-import Express = require("express");
+import * as Bluebird from "bluebird";
+import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as sequelize from "sequelize";
 import { Op } from "sequelize";
-
-import { requireUser } from "../../middleware/auth-middleware";
 import { getAllAccounts } from "../../managers/account-manager";
+import { requireUser } from "../../middleware/auth-middleware";
 import { Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
 
@@ -21,7 +20,7 @@ router.get("/old-index", requireUser, (req: Request, res: Response, next: NextFu
 						title: "Balance Graph",
 						activePage: "reports/balance-graph",
 					},
-					accounts
+					accounts,
 				});
 			})
 			.catch(next);
@@ -40,11 +39,11 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 		where: {
 			profileId: user.activeProfile.id,
 			[dateField]: {
-				[Op.lt]: startDate
+				[Op.lt]: startDate,
 			},
 			accountId: {
-				[Op.in]: accounts
-			}
+				[Op.in]: accounts,
+			},
 		},
 	});
 	const getTransactionsInRange = Transaction.findAll({
@@ -55,19 +54,19 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				[Op.lte]: endDate,
 			},
 			accountId: {
-				[Op.in]: accounts
-			}
+				[Op.in]: accounts,
+			},
 		},
-		order: [[dateField, "ASC"]]
+		order: [[dateField, "ASC"]],
 	});
 
 	Bluebird
 			.all([
 				getSumBeforeRange,
-				getTransactionsInRange
+				getTransactionsInRange,
 			])
 			.spread((sumBeforeRange: Transaction, transactionsInRange: Transaction[]) => {
-				const data: { x: number, y: number }[] = [];
+				const data: Array<{ x: number, y: number }> = [];
 
 				let lastDate = 0;
 				let runningTotal = sumBeforeRange.getDataValue("balance") as number;
@@ -92,8 +91,8 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				};
 
 				transactionsInRange.forEach((transaction: Transaction) => {
-					const date = new Date(transaction[dateField]).getTime();
-					if (lastDate > 0 && lastDate != date) {
+					const date = transaction[dateField].getTime();
+					if (lastDate > 0 && lastDate !== date) {
 						takeValues();
 					}
 
@@ -105,13 +104,13 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				}
 
 				let changeAbsolute = 0;
-				if (data.length == 0) {
+				if (data.length === 0) {
 					minTotal = 0;
 					maxTotal = 0;
 					minDate = -1;
 					maxDate = -1;
 				} else {
-					changeAbsolute = data.length == 0 ? 0 : data[data.length - 1].y - data[0].y;
+					changeAbsolute = data[data.length - 1].y - data[0].y;
 				}
 
 				res.json({ data, minTotal, minDate, maxTotal, maxDate, changeAbsolute });
@@ -119,5 +118,6 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 			.catch(next);
 });
 
-
-export = router;
+export {
+	router,
+};

@@ -1,4 +1,4 @@
-import Bluebird = require("bluebird");
+import * as Bluebird from "bluebird";
 import { Op } from "sequelize";
 
 import { Account } from "../models/Account";

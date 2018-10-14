@@ -1,7 +1,6 @@
 import {
 	faAnalytics,
 	faChartLine,
-	faChartPie,
 	faHome,
 	faPiggyBank, faSignOut,
 	faSlidersH,
