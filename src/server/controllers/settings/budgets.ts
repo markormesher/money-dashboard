@@ -1,11 +1,10 @@
 import * as Bluebird from "bluebird";
-import { NextFunction, Request, Response } from "express";
 import * as Express from "express";
+import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 import { getData } from "../../helpers/datatable-helper";
-import { formatDate } from "../../helpers/formatters";
 import { cloneBudgets, deleteBudget, getBudget, saveBudget } from "../../managers/budget-manager";
 import { requireUser } from "../../middleware/auth-middleware";
 import { Budget } from "../../models/Budget";
@@ -20,7 +19,8 @@ function getQuickPeriodDates(): string[][][] {
 	if (thisTaxYearStart.isAfter(now)) {
 		thisTaxYearStart.subtract(1, "year");
 	}
-	return [
+	return [];
+	/*return [
 		[
 			[
 				"This Month",
@@ -55,7 +55,7 @@ function getQuickPeriodDates(): string[][][] {
 				formatDate(thisTaxYearStart.clone().add(2, "years").date(5), "system"),
 			],
 		],
-	];
+	];*/
 }
 
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
@@ -103,11 +103,11 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			.catch(next);
 });
 
-router.post("/edit/:budgetId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/edit/:budgetId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const budgetId = req.params.budgetId;
 	const properties: Partial<Budget> = {
-		categoryId: req.body.category,
+		categoryId: req.body.categoryId,
 		type: req.body.type,
 		amount: parseFloat(req.body.amount),
 		startDate: new Date(req.body.startDate),

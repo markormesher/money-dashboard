@@ -1,14 +1,19 @@
+import { ThinBudget } from "../../../../server/model-thins/ThinBudget";
 import { PayloadAction } from "../../PayloadAction";
 import { BudgetSettingsActions } from "./actions";
 
 interface IBudgetSettingsState {
 	lastUpdate: number;
 	displayCurrentOnly: boolean;
+	budgetToEdit: ThinBudget;
+	editorBusy: boolean;
 }
 
 const initialState: IBudgetSettingsState = {
 	lastUpdate: 0,
 	displayCurrentOnly: true,
+	budgetToEdit: undefined,
+	editorBusy: false,
 };
 
 function budgetSettingsReducer(state = initialState, action: PayloadAction): IBudgetSettingsState {
@@ -23,6 +28,18 @@ function budgetSettingsReducer(state = initialState, action: PayloadAction): IBu
 			return {
 				...state,
 				displayCurrentOnly: action.payload.currentOnly,
+			};
+
+		case BudgetSettingsActions.SET_BUDGET_TO_EDIT:
+			return {
+				...state,
+				budgetToEdit: action.payload.budget,
+			};
+
+		case BudgetSettingsActions.SET_EDITOR_BUSY:
+			return {
+				...state,
+				editorBusy: action.payload.editorBusy,
 			};
 
 		default:

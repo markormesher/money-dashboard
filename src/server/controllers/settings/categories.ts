@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 import { getData } from "../../helpers/datatable-helper";
-import { deleteCategory, saveCategory } from "../../managers/category-manager";
+import { deleteCategory, getAllCategories, saveCategory } from "../../managers/category-manager";
 import { requireUser } from "../../middleware/auth-middleware";
 import { Category } from "../../models/Category";
 import { User } from "../../models/User";
@@ -34,6 +34,13 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 
 	getData(Category, req, countQuery, dataQuery)
 			.then((response) => res.json(response))
+			.catch(next);
+});
+
+router.get("/list", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const user = req.user as User;
+	getAllCategories(user)
+			.then((categories: Category[]) => res.json(categories))
 			.catch(next);
 });
 

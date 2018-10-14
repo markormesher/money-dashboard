@@ -3,22 +3,22 @@ import { Component, FormEvent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
-interface IControlledCheckboxInputProps {
+interface IControlledDateInputProps {
 	id: string;
 	label: string | ReactNode;
-	checked: boolean;
-	onCheckedChange: (newValue: boolean, id: string) => void;
+	value: string | number;
+	onValueChange: (newValue: string, id: string) => void;
 	disabled?: boolean;
 	error?: string;
 }
 
-interface IControlledCheckboxInputState {
+interface IControlledDateInputState {
 	hasBeenTouched: boolean;
 }
 
-class ControlledCheckboxInput extends Component<IControlledCheckboxInputProps, IControlledCheckboxInputState> {
+class ControlledDateInput extends Component<IControlledDateInputProps, IControlledDateInputState> {
 
-	public constructor(props: IControlledCheckboxInputProps) {
+	public constructor(props: IControlledDateInputProps) {
 		super(props);
 		this.state = {
 			hasBeenTouched: false,
@@ -29,22 +29,23 @@ class ControlledCheckboxInput extends Component<IControlledCheckboxInputProps, I
 	}
 
 	public render() {
-		const { id, label, checked, disabled, error } = this.props;
+		const { id, label, value, disabled, error } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
-				<div className={bs.formCheck}>
+				<>
+					<label htmlFor={id}>{label}</label>
 					<input
 							id={id}
-							type="checkbox"
-							checked={checked}
-							className={combine(bs.formCheckInput, hasBeenTouched && error && bs.isInvalid)}
-							disabled={disabled !== false}
+							name={id}
+							type="date"
 							onChange={this.handleChange}
+							disabled={disabled !== false}
+							className={combine(bs.formControl, hasBeenTouched && error && bs.isInvalid)}
+							value={value}
 							onBlur={this.handleBlur}
 					/>
-					<label className={bs.formCheckLabel} htmlFor={id}>{label}</label>
 					{error && <div className={bs.invalidFeedback}>{error}</div>}
-				</div>
+				</>
 		);
 	}
 
@@ -55,10 +56,15 @@ class ControlledCheckboxInput extends Component<IControlledCheckboxInputProps, I
 	}
 
 	private handleChange(event: FormEvent<HTMLInputElement>) {
-		this.props.onCheckedChange(event.currentTarget.checked, this.props.id);
+		const newValue = event.currentTarget.value;
+		if (!newValue || newValue.trim() === "") {
+			this.props.onValueChange(undefined, this.props.id);
+		} else {
+			this.props.onValueChange(event.currentTarget.value, this.props.id);
+		}
 	}
 }
 
 export {
-	ControlledCheckboxInput,
+	ControlledDateInput,
 };

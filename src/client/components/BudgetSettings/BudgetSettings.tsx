@@ -8,26 +8,31 @@ import * as bs from "../../bootstrap-aliases";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
-import { setDisplayCurrentOnly, startDeleteBudget } from "../../redux/settings/budgets/actions";
+import { setBudgetToEdit, setDisplayCurrentOnly, startDeleteBudget } from "../../redux/settings/budgets/actions";
 import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
+import EditBudgetModal from "./EditBudgetModal";
 
 interface IBudgetSettingsProps {
 	lastUpdate: number;
 	displayCurrentOnly: boolean;
+	budgetToEdit?: ThinBudget;
 	actions?: {
 		deleteBudget: (id: string) => AnyAction,
 		setDisplayActiveOnly: (active: boolean) => AnyAction,
+		setBudgetToEdit: (budget: ThinBudget) => AnyAction,
 	};
 }
 
 function mapStateToProps(state: IRootState, props: IBudgetSettingsProps): IBudgetSettingsProps {
 	return {
 		...props,
-		...state.settings.budgets,
+		lastUpdate: state.settings.budgets.lastUpdate,
+		displayCurrentOnly: state.settings.budgets.displayCurrentOnly,
+		budgetToEdit: state.settings.budgets.budgetToEdit,
 	};
 }
 
@@ -37,6 +42,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetSettingsProps): IB
 		actions: {
 			deleteBudget: (id) => dispatch(startDeleteBudget(id)),
 			setDisplayActiveOnly: (active) => dispatch(setDisplayCurrentOnly(active)),
+			setBudgetToEdit: (budget) => dispatch(setBudgetToEdit(budget)),
 		},
 	};
 }
@@ -68,9 +74,11 @@ class BudgetSettings extends Component<IBudgetSettingsProps> {
 	}
 
 	public render() {
-		const { lastUpdate, displayCurrentOnly } = this.props;
+		const { lastUpdate, budgetToEdit, displayCurrentOnly } = this.props;
 		return (
 				<>
+					{budgetToEdit !== undefined && <EditBudgetModal/>}
+
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Budgets</h1>
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
@@ -88,6 +96,7 @@ class BudgetSettings extends Component<IBudgetSettingsProps> {
 									text={"New Budget"}
 									btnProps={{
 										className: combine(bs.btnSm, bs.btnSuccess),
+										onClick: () => this.props.actions.setBudgetToEdit(null),
 									}}
 							/>
 						</div>
@@ -126,6 +135,7 @@ class BudgetSettings extends Component<IBudgetSettingsProps> {
 							text={"Edit"}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								onClick: () => this.props.actions.setBudgetToEdit(budget),
 							}}
 					/>
 					<DeleteBtn

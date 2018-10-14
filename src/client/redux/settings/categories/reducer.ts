@@ -6,12 +6,14 @@ interface ICategorySettingsState {
 	lastUpdate: number;
 	categoryToEdit: ThinCategory;
 	editorBusy: boolean;
+	categoryList: ThinCategory[];
 }
 
 const initialState: ICategorySettingsState = {
 	lastUpdate: 0,
 	categoryToEdit: undefined,
 	editorBusy: false,
+	categoryList: undefined,
 };
 
 function categorySettingsReducer(state = initialState, action: PayloadAction): ICategorySettingsState {
@@ -32,6 +34,12 @@ function categorySettingsReducer(state = initialState, action: PayloadAction): I
 			return {
 				...state,
 				editorBusy: action.payload.editorBusy,
+			};
+
+		case CategorySettingsActions.SET_CATEGORY_LIST:
+			return {
+				...state,
+				categoryList: action.payload.categoryList,
 			};
 
 		default:

@@ -3,7 +3,7 @@ import { all, call, put, takeEvery } from "redux-saga/effects";
 import { ThinCategory } from "../../../../server/model-thins/ThinCategory";
 import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
-import { CategorySettingsActions, setCategoryToEdit, setEditorBusy, setLastUpdate } from "./actions";
+import { CategorySettingsActions, setCategoryList, setCategoryToEdit, setEditorBusy, setLastUpdate } from "./actions";
 
 function*deleteCategorySaga() {
 	yield takeEvery(CategorySettingsActions.START_DELETE_CATEGORY, function*(action: PayloadAction) {
@@ -36,10 +36,24 @@ function*saveCategorySaga() {
 	});
 }
 
+function*loadCategoryListSaga() {
+	yield takeEvery(CategorySettingsActions.START_LOAD_CATEGORY_LIST, function*() {
+		try {
+			const categoryList: ThinCategory[] = yield call(() => {
+				return axios.get("/settings/categories/list").then((res) => res.data);
+			});
+			yield put(setCategoryList(categoryList));
+		} catch (err) {
+			yield put(setError(err));
+		}
+	});
+}
+
 function*categorySettingsSagas() {
 	yield all([
 		deleteCategorySaga(),
 		saveCategorySaga(),
+		loadCategoryListSaga(),
 	]);
 }
 

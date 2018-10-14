@@ -26,6 +26,10 @@ function formatCurrencyStyled(amount: number): ReactNode {
 }
 
 function formatDate(date: Date | Moment.Moment | string, format: "user" | "system" = "user"): string {
+	if (!date) {
+		return undefined;
+	}
+
 	if (format === "user") {
 		return Moment(date).format("DD/MM/YYYY");
 	} else if (format === "system") {
@@ -138,6 +142,7 @@ function generateCategoryTypeBadge(category: ThinCategory): ReactNode | ReactNod
 export {
 	formatCurrency,
 	formatCurrencyStyled,
+	formatDate,
 	generateBadge,
 	generateAccountTypeBadge,
 	formatBudgetPeriod,

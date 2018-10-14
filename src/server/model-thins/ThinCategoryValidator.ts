@@ -4,7 +4,6 @@ interface IThinCategoryValidationResult {
 	isValid: boolean;
 	errors: {
 		name?: string,
-		type?: string,
 	};
 }
 

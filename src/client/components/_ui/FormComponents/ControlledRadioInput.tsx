@@ -3,22 +3,24 @@ import { Component, FormEvent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
-interface IControlledCheckboxInputProps {
+interface IControlledRadioInputProps {
 	id: string;
+	name: string;
+	value: string;
 	label: string | ReactNode;
 	checked: boolean;
-	onCheckedChange: (newValue: boolean, id: string) => void;
+	onValueChange: (newValue: string, id: string) => void;
 	disabled?: boolean;
 	error?: string;
 }
 
-interface IControlledCheckboxInputState {
+interface IControlledRadioInputState {
 	hasBeenTouched: boolean;
 }
 
-class ControlledCheckboxInput extends Component<IControlledCheckboxInputProps, IControlledCheckboxInputState> {
+class ControlledRadioInput extends Component<IControlledRadioInputProps, IControlledRadioInputState> {
 
-	public constructor(props: IControlledCheckboxInputProps) {
+	public constructor(props: IControlledRadioInputProps) {
 		super(props);
 		this.state = {
 			hasBeenTouched: false,
@@ -29,13 +31,15 @@ class ControlledCheckboxInput extends Component<IControlledCheckboxInputProps, I
 	}
 
 	public render() {
-		const { id, label, checked, disabled, error } = this.props;
+		const { id, name, value, label, checked, disabled, error } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
 				<div className={bs.formCheck}>
 					<input
 							id={id}
-							type="checkbox"
+							name={name}
+							value={value}
+							type="radio"
 							checked={checked}
 							className={combine(bs.formCheckInput, hasBeenTouched && error && bs.isInvalid)}
 							disabled={disabled !== false}
@@ -55,10 +59,12 @@ class ControlledCheckboxInput extends Component<IControlledCheckboxInputProps, I
 	}
 
 	private handleChange(event: FormEvent<HTMLInputElement>) {
-		this.props.onCheckedChange(event.currentTarget.checked, this.props.id);
+		if (event.currentTarget.checked) {
+			this.props.onValueChange(event.currentTarget.value, this.props.id);
+		}
 	}
 }
 
 export {
-	ControlledCheckboxInput,
+	ControlledRadioInput,
 };
