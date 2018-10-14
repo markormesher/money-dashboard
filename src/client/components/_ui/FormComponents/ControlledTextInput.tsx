@@ -62,4 +62,6 @@ class ControlledTextInput extends Component<IControlledTextInputProps, IControll
 	}
 }
 
-export default ControlledTextInput;
+export {
+	ControlledTextInput,
+};

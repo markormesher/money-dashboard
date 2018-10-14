@@ -11,9 +11,10 @@
 				"tabs"
 			]
 		},
-		"object-literal-sort-keys": false,
+		"no-default-export": false, // TODO: enable this
+		"object-literal-sort-keys": true, // TODO: enable this
 		"jsx-no-multiline-js": false,
-		"jsx-no-lambda": false
+		"jsx-no-lambda": false // TODO: enable this
 	},
 	"rulesDirectory": []
 }

@@ -61,4 +61,6 @@ class ControlledSelectInput extends Component<IControlledSelectInputProps, ICont
 	}
 }
 
-export default ControlledSelectInput;
+export {
+	ControlledSelectInput,
+};

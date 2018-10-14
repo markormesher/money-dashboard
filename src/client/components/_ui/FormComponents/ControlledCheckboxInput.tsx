@@ -60,4 +60,6 @@ class ControlledCheckboxInput extends Component<IControlledCheckboxInputProps, I
 	}
 }
 
-export default ControlledCheckboxInput;
+export {
+	ControlledCheckboxInput,
+};

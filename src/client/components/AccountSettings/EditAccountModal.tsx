@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component, FormEvent } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
@@ -7,8 +7,9 @@ import { IThinAccountValidationResult, validateThinAccount } from "../../../serv
 import * as bs from "../../bootstrap-aliases";
 import { IRootState } from "../../redux/root";
 import { setAccountToEdit, startSaveAccount } from "../../redux/settings/accounts/actions";
-import ControlledSelectInput from "../_ui/FormComponents/ControlledSelectInput";
-import ControlledTextInput from "../_ui/FormComponents/ControlledTextInput";
+import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
+import { ControlledSelectInput } from "../_ui/FormComponents/ControlledSelectInput";
+import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
 import { Modal } from "../_ui/Modal/Modal";
 
 // TODO: de-dupe updateModel/validateModel/onSave/onCancel code
@@ -77,7 +78,7 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 						saveBtnDisabled={!validationResult.isValid}
 						onSave={this.handleSave}
 				>
-					<form onSubmit={this.handleSave}>
+					<ControlledForm onSubmit={this.handleSave}>
 						<div className={bs.formGroup}>
 							<ControlledTextInput
 									id={"name"}
@@ -104,7 +105,7 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 								<option value={"other"}>Other</option>
 							</ControlledSelectInput>
 						</div>
-					</form>
+					</ControlledForm>
 				</Modal>
 		);
 	}
@@ -134,16 +135,10 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 		});
 	}
 
-	private handleSave(event?: FormEvent) {
-		if (event) {
-			event.preventDefault();
+	private handleSave() {
+		if (this.state.validationResult.isValid) {
+			this.props.actions.startSaveAccount(this.state.currentValues);
 		}
-
-		if (!this.state.validationResult.isValid) {
-			return;
-		}
-
-		this.props.actions.startSaveAccount(this.state.currentValues);
 	}
 
 	private handleCancel() {

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component, FormEvent } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { IThinAccountValidationResult } from "../../../server/model-thins/ThinAccountValidator";
@@ -9,8 +9,9 @@ import * as bs from "../../bootstrap-aliases";
 import { generateBadge } from "../../helpers/formatters";
 import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startSaveCategory } from "../../redux/settings/categories/actions";
-import ControlledCheckboxInput from "../_ui/FormComponents/ControlledCheckboxInput";
-import ControlledTextInput from "../_ui/FormComponents/ControlledTextInput";
+import { ControlledCheckboxInput } from "../_ui/FormComponents/ControlledCheckboxInput";
+import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
+import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
 import { Modal } from "../_ui/Modal/Modal";
 
 interface IEditCategoryModalProps {
@@ -77,7 +78,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 						saveBtnDisabled={!validationResult.isValid}
 						onSave={this.handleSave}
 				>
-					<form onSubmit={this.handleSave}>
+					<ControlledForm onSubmit={this.handleSave}>
 						<div className={bs.formGroup}>
 							<ControlledTextInput
 									id={"name"}
@@ -128,7 +129,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 								</div>
 							</div>
 						</div>
-					</form>
+					</ControlledForm>
 				</Modal>
 		);
 	}
@@ -183,16 +184,10 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 		}
 	}
 
-	private handleSave(event?: FormEvent) {
-		if (event) {
-			event.preventDefault();
+	private handleSave() {
+		if (this.state.validationResult.isValid) {
+			this.props.actions.startSaveCategory(this.state.currentValues);
 		}
-
-		if (!this.state.validationResult.isValid) {
-			return;
-		}
-
-		this.props.actions.startSaveCategory(this.state.currentValues);
 	}
 
 	private handleCancel() {
