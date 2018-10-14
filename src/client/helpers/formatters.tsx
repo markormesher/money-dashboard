@@ -42,7 +42,7 @@ function generateAccountTypeBadge(account: ThinAccount): ReactNode {
 		case "savings":
 			return generateBadge("Savings Account", bs.badgeSuccess);
 		case "asset":
-			return generateBadge("Asset", bs.badgeWarning);
+			return generateBadge("Asset Growth", bs.badgeWarning);
 		default:
 			return generateBadge("Other", bs.badgeDanger);
 	}
@@ -139,12 +139,9 @@ export {
 	formatCurrency,
 	formatCurrencyStyled,
 	generateBadge,
-
 	generateAccountTypeBadge,
-
 	formatBudgetPeriod,
 	getBudgetPeriodType,
 	generateBudgetTypeBadge,
-
 	generateCategoryTypeBadge,
 };

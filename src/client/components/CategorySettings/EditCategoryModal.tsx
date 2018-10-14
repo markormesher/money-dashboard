@@ -2,9 +2,8 @@ import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IThinAccountValidationResult } from "../../../server/model-thins/ThinAccountValidator";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
-import { validateThinCategory } from "../../../server/model-thins/ThinCategoryValidator";
+import { IThinCategoryValidationResult, validateThinCategory } from "../../../server/model-thins/ThinCategoryValidator";
 import * as bs from "../../bootstrap-aliases";
 import { generateBadge } from "../../helpers/formatters";
 import { IRootState } from "../../redux/root";
@@ -26,7 +25,7 @@ interface IEditCategoryModalProps {
 
 interface IEditCategoryModalState {
 	currentValues: ThinCategory;
-	validationResult: IThinAccountValidationResult;
+	validationResult: IThinCategoryValidationResult;
 }
 
 function mapStateToProps(state: IRootState, props: IEditCategoryModalProps): IEditCategoryModalProps {
@@ -59,8 +58,10 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 
 		this.handleCategoryNameChange = this.handleCategoryNameChange.bind(this);
 		this.handleCategoryTypeCheckedChange = this.handleCategoryTypeCheckedChange.bind(this);
-		this.handleCancel = this.handleCancel.bind(this);
+
+		this.updateModel = this.updateModel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
+		this.handleCancel = this.handleCancel.bind(this);
 	}
 
 	public render() {
@@ -134,54 +135,39 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 		);
 	}
 
-	private updateModel(category: ThinCategory) {
-		this.setState({ currentValues: category });
-		this.validateModel(category);
-	}
-
-	private validateModel(category: ThinCategory) {
-		this.setState({
-			validationResult: validateThinCategory(category),
-		});
-	}
-
 	private handleCategoryNameChange(newValue: string) {
-		this.updateModel({
-			...this.state.currentValues,
-			name: newValue,
-		});
+		this.updateModel({ name: newValue });
 	}
 
 	private handleCategoryTypeCheckedChange(checked: boolean, id: string) {
 		switch (id) {
 			case "type-income":
-				this.updateModel({
-					...this.state.currentValues,
-					isIncomeCategory: checked,
-				});
+				this.updateModel({ isIncomeCategory: checked });
 				break;
 
 			case "type-expense":
-				this.updateModel({
-					...this.state.currentValues,
-					isExpenseCategory: checked,
-				});
+				this.updateModel({ isExpenseCategory: checked });
 				break;
 
 			case "type-asset":
-				this.updateModel({
-					...this.state.currentValues,
-					isAssetGrowthCategory: checked,
-				});
+				this.updateModel({ isAssetGrowthCategory: checked });
 				break;
 
 			case "type-memo":
-				this.updateModel({
-					...this.state.currentValues,
-					isMemoCategory: checked,
-				});
+				this.updateModel({ isMemoCategory: checked });
 				break;
 		}
+	}
+
+	private updateModel(category: Partial<ThinCategory>) {
+		const updatedCategory = {
+			...this.state.currentValues,
+			...category,
+		};
+		this.setState({
+			currentValues: updatedCategory,
+			validationResult: validateThinCategory(updatedCategory),
+		});
 	}
 
 	private handleSave() {

@@ -12,8 +12,6 @@ import { ControlledSelectInput } from "../_ui/FormComponents/ControlledSelectInp
 import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
 import { Modal } from "../_ui/Modal/Modal";
 
-// TODO: de-dupe updateModel/validateModel/onSave/onCancel code
-
 interface IEditAccountModalProps {
 	accountToEdit?: ThinAccount;
 	editorBusy?: boolean;
@@ -59,8 +57,10 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 
 		this.handleAccountNameChange = this.handleAccountNameChange.bind(this);
 		this.handleAccountTypeChange = this.handleAccountTypeChange.bind(this);
-		this.handleCancel = this.handleCancel.bind(this);
+
+		this.updateModel = this.updateModel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
+		this.handleCancel = this.handleCancel.bind(this);
 	}
 
 	public render() {
@@ -110,28 +110,22 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 		);
 	}
 
-	private updateModel(account: ThinAccount) {
-		this.setState({ currentValues: account });
-		this.validateModel(account);
-	}
-
-	private validateModel(account: ThinAccount) {
-		this.setState({
-			validationResult: validateThinAccount(account),
-		});
-	}
-
 	private handleAccountNameChange(newValue: string) {
-		this.updateModel({
-			...this.state.currentValues,
-			name: newValue,
-		});
+		this.updateModel({ name: newValue });
 	}
 
 	private handleAccountTypeChange(newValue: string) {
-		this.updateModel({
+		this.updateModel({ type: newValue });
+	}
+
+	private updateModel(account: Partial<ThinAccount>) {
+		const updatedAccount = {
 			...this.state.currentValues,
-			type: newValue,
+			...account,
+		};
+		this.setState({
+			currentValues: updatedAccount,
+			validationResult: validateThinAccount(updatedAccount),
 		});
 	}
 
