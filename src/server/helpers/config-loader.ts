@@ -42,7 +42,7 @@ function getSecret(key: string): string {
 }
 
 function getDevWebpackConfig() {
-	return require(`${projectDir}/webpack.config.dev.js`);
+	return require(`${projectDir}/webpack.config.js`);
 }
 
 export {
