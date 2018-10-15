@@ -2,11 +2,18 @@ const {resolve, join} = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
+const VisualizerPlugin = require('webpack-visualizer-plugin');
+
+const IS_PROD = process.env.NODE_ENV === "production";
+const IS_DEV = !IS_PROD; // for better readability below
 
 const babelLoader = {
 	loader: 'babel-loader',
 	options: {
 		cacheDirectory: true,
+		plugins: [
+			"@babel/plugin-syntax-dynamic-import",
+		],
 		presets: [
 			[
 				"@babel/preset-env",
@@ -28,7 +35,7 @@ const tsLoader = {
 	options: {
 		// these override the settings in tsconfig.json
 		compilerOptions: {
-			module: "es6",
+			module: "esnext",
 			target: "es6",
 		},
 	},
@@ -53,9 +60,6 @@ const terserMinimiser = new TerserWebpackPlugin({
 	},
 });
 
-const IS_PROD = process.env.NODE_ENV === "production";
-const IS_DEV = !IS_PROD; // for better readability below
-
 module.exports = {
 	mode: IS_PROD ? "production" : "development",
 	cache: false,
@@ -64,7 +68,7 @@ module.exports = {
 	output: {
 		publicPath: "/",
 		path: resolve(__dirname, "build", "client"),
-		filename: "[name].js",
+		filename: "[name]~bundle.js",
 
 		// used for in development mode only
 		hotUpdateMainFilename: "hot-update.[hash:6].json",
@@ -122,6 +126,7 @@ module.exports = {
 	},
 	devtool: IS_PROD ? false : "cheap-module-eval-source-map",
 	plugins: [
+		new VisualizerPlugin(),
 		new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
 		new webpack.EnvironmentPlugin(["NODE_ENV"]),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),

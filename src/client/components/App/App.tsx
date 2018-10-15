@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Component } from "react";
+import * as Loadable from "react-loadable";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
@@ -17,10 +18,13 @@ import BudgetSettings from "../BudgetSettings/BudgetSettings";
 import CategorySettings from "../CategorySettings/CategorySettings";
 import Dashboard from "../Dashboard/Dashboard";
 import ErrorPage from "../ErrorPage/ErrorPage";
-import Login from "../Login/Login";
 import ProfileSettings from "../ProfileSettings/ProfileSettings";
 import Transactions from "../Transactions/Transactions";
 import "./App.scss";
+
+// TODO: remove lambdas in JSX (++perf)
+// TODO: rewire some components to be pure components
+// TODO: implement shouldComponentUpdate() where sensible
 
 interface IAppProps {
 	waitingFor?: string[];
@@ -39,9 +43,11 @@ function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
 	};
 }
 
-// TODO: remove lambdas in JSX (++perf)
-// TODO: rewire some components to be pure components
-// TODO: implement shouldComponentUpdate() where sensible
+// most sessions will never see this, so lazy load it
+const LoadableLogin = Loadable({
+	loader: () => import(/* webpackChunkName: "login" */ "../Login/Login"),
+	loading: () => (<FullPageSpinner/>),
+});
 
 class App extends Component<IAppProps> {
 
@@ -63,7 +69,7 @@ class App extends Component<IAppProps> {
 		if (!activeUser) {
 			return (
 					<Switch>
-						<Route exact={true} path="/auth/login" component={Login}/>
+						<Route exact={true} path="/auth/login" component={LoadableLogin}/>
 						<Redirect to="/auth/login"/>
 					</Switch>
 			);
@@ -99,7 +105,6 @@ class App extends Component<IAppProps> {
 							</Switch>
 						</AppContentWrapper>
 					</AppRootWrapper>
-
 				</div>
 		);
 	}
