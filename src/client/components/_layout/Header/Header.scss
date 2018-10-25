@@ -2,32 +2,32 @@
 @import "../../../../../node_modules/bootstrap/scss/variables";
 @import "../../../../../node_modules/bootstrap/scss/mixins/breakpoints";
 
-$headerHeight: 48px;
+$header-height: 48px;
+$navbar-background: rgba(0, 0, 0, .25);
+$navbar-toggle-icon: #fff;
 
 .navbar {
-	/* Bootstrap overrides */
-	height: $headerHeight;
+	height: $header-height; // Bootstrap override
 }
 
 .navbarBrand {
-	padding-top: .75rem;
-	padding-bottom: .75rem;
-	font-size: 1rem;
-	background-color: rgba(0, 0, 0, .25);
-	box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-
-	/* Bootstrap overrides */
-	margin-right: 0 !important;
-
-	/* Collapsed view */
+	// Collapsed view
+	// sass-lint:disable mixin-name-format
 	@include media-breakpoint-down(lg) {
 		text-align: center;
 	}
+
+	background-color: $navbar-background;
+	box-shadow: inset -1px 0 0 $navbar-background;
+	font-size: 1rem;
+	margin-right: 0 !important; // Bootstrap override
+	overflow: hidden;
+	padding-bottom: .75rem;
+	padding-top: .75rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .navToggleIcon {
-	color: white !important;
+	color: $navbar-toggle-icon !important;
 }

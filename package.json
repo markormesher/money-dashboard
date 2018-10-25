@@ -16,8 +16,10 @@
     "build:dev:server": "tsc --diagnostics",
     "build:client": "cross-env NODE_ENV=production webpack -p --progress",
     "build:dev:client": "cross-env NODE_ENV=development webpack -p --progress",
-    "lint": "tslint -c ./tslint.json \"./src/client/**/*.{ts,tsx}\" \"./src/server/**/*.ts\"",
-    "lint:fix": "tslint --fix -c ./tslint.json \"./src/client/**/*.{ts,tsx}\" \"./src/server/**/*.ts\"",
+    "lint": "yarn lint:ts && yarn lint:scss",
+    "lint:scss": "sass-lint -v -c ./sasslint.yml \"./src/client/**/*.scss\"",
+    "lint:ts": "tslint -c ./tslint.json \"./src/client/**/*.{ts,tsx}\" \"./src/server/**/*.ts\"",
+    "lint:ts-fix": "tslint --fix -c ./tslint.json \"./src/client/**/*.{ts,tsx}\" \"./src/server/**/*.ts\"",
     "unit-test": "echo 'No unit tests yet'"
   },
   "dependencies": {
@@ -104,6 +106,7 @@
     "npm-run-all": "^4.1.2",
     "redux-devtools-extension": "^2.13.5",
     "rimraf": "^2.6.2",
+    "sass-lint": "^1.12.1",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.0",
     "terser": "^3.10.0",

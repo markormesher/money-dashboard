@@ -1,14 +1,15 @@
 .tableWrapper {
 	&.loading {
-		.tableHeader, .tableFooter, .table {
-			opacity: 0.4;
+		.tableHeader,
+		.tableFooter,
+		.table {
+			opacity: .4;
 		}
 	}
 }
 
 .table {
-	/* Bootstrap override */
-	margin-bottom: 0.4rem !important;
+	margin-bottom: .4rem !important; // Bootstrap override
 }
 
 .tableBodyWrapper {
@@ -16,28 +17,30 @@
 	width: 100%;
 
 	.loadingIconWrapper {
-		width: 100%;
 		position: absolute;
-		top: 4em;
 		text-align: center;
+		top: 4em;
+		width: 100%;
 	}
 }
 
 .tableHeader {
-	width: 100%;
-	margin-bottom: 0.4rem;
+	margin-bottom: .4rem;
 	overflow: auto; // allows the div to have height even though it only contains floated elements
+	width: 100%;
 }
 
 .tableFooter {
-	width: 100%;
 	font-size: 60%;
+	width: 100%;
 }
 
 .sortInactive {
-	opacity: 0.3;
+	opacity: .3;
 }
 
-th.sortable {
-	cursor: pointer;
+th {
+	.sortable {
+		cursor: pointer;
+	}
 }

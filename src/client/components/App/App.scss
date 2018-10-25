@@ -1,29 +1,34 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+// sass-lint:disable no-url-domains,no-url-protocols
+@import url("//fonts.googleapis.com/css?family=Open+Sans");
 
 body {
-	font-family: 'Open Sans', sans-serif;
+	font-family: "Open Sans", sans-serif;
 }
 
-h1, h2, h3 {
-	/* Bootstrap override */
+h1,
+h2,
+h3 {
+	// Bootstrap override
 	margin-bottom: 1rem !important; // was 0.5rem
 }
 
-button:focus {
-	/* Bootstrap override */
-	box-shadow: none !important;
+button {
+	:focus {
+		// Bootstrap override
+		box-shadow: none !important;
+	}
 }
 
 .headerWrapper {
-	width: 100%;
 	overflow: auto; // allows the div to have height even though it only contains floated elements
+	width: 100%;
 }
 
 .btnMini {
-	/* Same as .badge in Bootstrap */
-	padding: 0.25em 0.4em !important;
+	// Same as .badge in Bootstrap
 	font-size: 75% !important;
 	line-height: 1 !important;
+	padding: .25em .4em !important;
 }
 
 .currency {
