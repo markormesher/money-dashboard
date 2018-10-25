@@ -1,3 +1,4 @@
+import { Moment } from "moment";
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
@@ -17,6 +18,8 @@ import { ControlledRadioInput } from "../_ui/FormComponents/ControlledRadioInput
 import { ControlledSelectInput } from "../_ui/FormComponents/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
 import { Modal } from "../_ui/Modal/Modal";
+import * as styles from "./EditBudgetModal.scss";
+import { QuickDateRangeLinks } from "./QuickDateRangeLinks";
 
 interface IEditBudgetModalProps {
 	budgetToEdit?: ThinBudget;
@@ -70,6 +73,7 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 		this.handleBudgetStartDateChange = this.handleBudgetStartDateChange.bind(this);
 		this.handleBudgetEndDateChange = this.handleBudgetEndDateChange.bind(this);
 		this.handleBudgetTypeChange = this.handleBudgetTypeChange.bind(this);
+		this.handleDateRangeSelection = this.handleDateRangeSelection.bind(this);
 
 		this.updateModel = this.updateModel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
@@ -148,7 +152,13 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 										onValueChange={this.handleBudgetEndDateChange}
 								/>
 							</div>
-							{/* TODO: quick dates */}
+						</div>
+						<div className={bs.row}>
+							<div className={bs.col}>
+								<p className={combine(styles.quickDateLinks, bs.textCenter)}>
+									<QuickDateRangeLinks handleSelection={this.handleDateRangeSelection}/>
+								</p>
+							</div>
 						</div>
 						<div className={bs.formGroup}>
 							<label>Type</label>
@@ -182,24 +192,17 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 		);
 	}
 
-	private handleBudgetCategoryChange(value: string) {
-		this.updateModel({ categoryId: value });
-	}
+	private readonly handleBudgetCategoryChange = (value: string) => this.updateModel({ categoryId: value });
+	private readonly handleBudgetAmountChange = (value: string) => this.updateModel({ amount: parseFloat(value) });
+	private readonly handleBudgetStartDateChange = (value: string) => this.updateModel({ startDate: value });
+	private readonly handleBudgetEndDateChange = (value: string) => this.updateModel({ endDate: value });
+	private readonly handleBudgetTypeChange = (value: string) => this.updateModel({ type: value });
 
-	private handleBudgetAmountChange(value: string) {
-		this.updateModel({ amount: parseFloat(value) });
-	}
-
-	private handleBudgetStartDateChange(value: string) {
-		this.updateModel({ startDate: value });
-	}
-
-	private handleBudgetEndDateChange(value: string) {
-		this.updateModel({ endDate: value });
-	}
-
-	private handleBudgetTypeChange(value: string) {
-		this.updateModel({ type: value });
+	private handleDateRangeSelection(start: Moment, end: Moment) {
+		this.updateModel({
+			startDate: formatDate(start, "system"),
+			endDate: formatDate(end, "system"),
+		});
 	}
 
 	private updateModel(budget: Partial<ThinBudget>) {
