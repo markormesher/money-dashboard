@@ -110,13 +110,8 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 		);
 	}
 
-	private handleAccountNameChange(newValue: string) {
-		this.updateModel({ name: newValue });
-	}
-
-	private handleAccountTypeChange(newValue: string) {
-		this.updateModel({ type: newValue });
-	}
+	private readonly handleAccountNameChange = (value: string) => this.updateModel({ name: value });
+	private readonly handleAccountTypeChange = (value: string) => this.updateModel({ type: value });
 
 	private updateModel(account: Partial<ThinAccount>) {
 		const updatedAccount = {

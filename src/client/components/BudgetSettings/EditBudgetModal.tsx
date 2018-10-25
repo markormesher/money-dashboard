@@ -197,13 +197,10 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 	private readonly handleBudgetStartDateChange = (value: string) => this.updateModel({ startDate: value });
 	private readonly handleBudgetEndDateChange = (value: string) => this.updateModel({ endDate: value });
 	private readonly handleBudgetTypeChange = (value: string) => this.updateModel({ type: value });
-
-	private handleDateRangeSelection(start: Moment, end: Moment) {
-		this.updateModel({
-			startDate: formatDate(start, "system"),
-			endDate: formatDate(end, "system"),
-		});
-	}
+	private readonly handleDateRangeSelection = (start: Moment, end: Moment) => this.updateModel({
+		startDate: formatDate(start, "system"),
+		endDate: formatDate(end, "system"),
+	})
 
 	private updateModel(budget: Partial<ThinBudget>) {
 		const updatedBudget = {

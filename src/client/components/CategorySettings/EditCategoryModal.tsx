@@ -139,11 +139,8 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 		);
 	}
 
-	private handleCategoryNameChange(newValue: string) {
-		this.updateModel({ name: newValue });
-	}
-
-	private handleCategoryTypeCheckedChange(checked: boolean, id: string) {
+	private readonly handleCategoryNameChange = (value: string) => this.updateModel({ name: value });
+	private readonly handleCategoryTypeCheckedChange = (checked: boolean, id: string) => {
 		switch (id) {
 			case "type-income":
 				this.updateModel({ isIncomeCategory: checked });
