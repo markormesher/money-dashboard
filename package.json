@@ -20,7 +20,7 @@
     "lint:scss": "sass-lint -v -c ./sasslint.yml \"./src/client/**/*.scss\"",
     "lint:ts": "tslint -c ./tslint.json \"./src/client/**/*.{ts,tsx}\" \"./src/server/**/*.ts\"",
     "lint:ts-fix": "tslint --fix -c ./tslint.json \"./src/client/**/*.{ts,tsx}\" \"./src/server/**/*.ts\"",
-    "unit-test": "echo 'No unit tests yet'"
+    "test": "echo \"No tests yet\""
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.6",
