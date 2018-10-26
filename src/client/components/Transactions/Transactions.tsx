@@ -123,7 +123,6 @@ class Transactions extends Component<ITransactionProps> {
 	private tableRowRenderer(transaction: ThinTransaction) {
 		// TODO: show info icon if alternate date is available
 		// TODO: show info icon if notes are available
-		// TODO: actions
 		const { dateMode } = this.props;
 		return (
 				<tr key={transaction.id}>
