@@ -1,4 +1,4 @@
-import { faPlus } from "@fortawesome/pro-light-svg-icons";
+import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
@@ -17,6 +17,7 @@ import {
 import { DateModeOption } from "../../redux/transactions/reducer";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import DateModeToggleBtn from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
+import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
 
@@ -72,6 +73,7 @@ class Transactions extends Component<ITransactionProps> {
 	constructor(props: ITransactionProps) {
 		super(props);
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
+		this.generateActionButtons = this.generateActionButtons.bind(this);
 	}
 
 	public render() {
@@ -130,8 +132,29 @@ class Transactions extends Component<ITransactionProps> {
 					<td>{transaction.payee}</td>
 					<td>{formatCurrencyStyled(transaction.amount)}</td>
 					<td>{transaction.category.name}</td>
-					<td>Actions</td>
+					<td>{this.generateActionButtons(transaction)}</td>
 				</tr>
+		);
+	}
+
+	private generateActionButtons(transaction: ThinTransaction) {
+		return (
+				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
+					<IconBtn
+							icon={faPencil}
+							text={"Edit"}
+							btnProps={{
+								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								onClick: () => this.props.actions.setTransactionToEdit(transaction),
+							}}
+					/>
+					<DeleteBtn
+							onConfirmedClick={() => this.props.actions.deleteTransaction(transaction.id)}
+							btnProps={{
+								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+							}}
+					/>
+				</div>
 		);
 	}
 }

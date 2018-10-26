@@ -9,7 +9,7 @@ function*deleteTransactionSaga() {
 	yield takeEvery(TransactionsActions.START_DELETE_TRANSACTION, function*(action: PayloadAction) {
 		try {
 			yield call(() => axios
-					.post(`/settings/transactions/delete/${action.payload.transactionId}`)
+					.post(`/transactions/delete/${action.payload.transactionId}`)
 					.then((res) => res.data));
 			yield put(setLastUpdate());
 		} catch (err) {
@@ -25,7 +25,7 @@ function*saveTransactionSaga() {
 			const transactionId = transaction.id || "";
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post(`/settings/transactions/edit/${transactionId}`, transaction)),
+				call(() => axios.post(`/transactions/edit/${transactionId}`, transaction)),
 			]);
 			yield all([
 				put(setLastUpdate()),
