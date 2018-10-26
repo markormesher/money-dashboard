@@ -1,13 +1,9 @@
-import * as Bluebird from "bluebird";
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
-
 import { getData } from "../helpers/datatable-helper";
-import { getAllAccounts } from "../managers/account-manager";
-import { getAllCategories } from "../managers/category-manager";
-import { deleteTransaction, getAllPayees, saveTransaction } from "../managers/transaction-manager";
+import { deleteTransaction, saveTransaction } from "../managers/transaction-manager";
 import { requireUser } from "../middleware/auth-middleware";
 import { Account } from "../models/Account";
 import { Category } from "../models/Category";
@@ -16,43 +12,11 @@ import { User } from "../models/User";
 
 const router = Express.Router();
 
-router.get("/old-index", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
-
-	Bluebird
-			.all([
-				getAllAccounts(user),
-				getAllCategories(user),
-				getAllPayees(user),
-			])
-			.spread((accounts: Account[], categories: Category[], payees: string[]) => {
-				const accountsForView: string[][] = accounts
-						.map((a) => [a.id, a.name])
-						.sort((a: string[], b: string[]) => a[1].localeCompare(b[1]));
-
-				const categoriesForView: string[][] = categories
-						.map((c) => [c.id, c.name])
-						.sort((a: string[], b: string[]) => a[1].localeCompare(b[1]));
-
-				return [accountsForView, categoriesForView, payees];
-			})
-			.spread((accounts: Account[], categories: Category[], payees: string[]) => {
-				res.render("transactions/index", {
-					_: {
-						title: "Transactions",
-						activePage: "transactions",
-					},
-					accounts,
-					categories,
-					payees,
-				});
-			})
-			.catch(next);
-});
-
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const searchTerm = req.query.searchTerm || "";
+	const dateMode = req.query.dateMode || "transaction";
+	const order: string[][] = req.query.order || [];
 
 	const countQuery: IFindOptions<Transaction> = {
 		where: {
@@ -90,6 +54,14 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			},
 		],
 	};
+
+	// fix "displayDate" to "effectiveDate" or "transactionDate"
+	for (const i in order) {
+		if (order[i][0] === "displayDate") {
+			order[i][0] = dateMode + "Date";
+		}
+	}
+	req.query.order = order;
 	const postOrder = [["createdAt", "desc"]];
 
 	getData(Transaction, req, countQuery, dataQuery, [], postOrder)

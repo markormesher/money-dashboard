@@ -168,18 +168,15 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 	}
 
 	private toggleColumnSortOrder(column: IColumn) {
-		/*
-		 TODO: compare columns by key not equality;
-		 this breaks when the table is re-rendered and columns are specified in-place
-		 */
+		// note: always compare columns by key not equality
 		const sortedColumns = this.state.sortedColumns.slice(0); // work on a copy
-		const currentSortEntry: ISortEntry = sortedColumns.find((sc) => sc.column === column);
+		const currentSortEntryIndex = sortedColumns.findIndex((sc) => sc.column.title === column.title);
 
-		if (currentSortEntry === undefined) {
+		if (currentSortEntryIndex < 0) {
+			// add at the beginning
 			sortedColumns.unshift({ column, dir: "asc" });
 		} else {
-			const currentSortEntryIndex = sortedColumns.indexOf(currentSortEntry);
-			const nextDir = DataTable.getNextSortDirection(currentSortEntry.dir);
+			const nextDir = DataTable.getNextSortDirection(sortedColumns[currentSortEntryIndex].dir);
 			// remove...
 			sortedColumns.splice(currentSortEntryIndex, 1);
 			if (nextDir !== undefined) {

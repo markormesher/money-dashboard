@@ -15,11 +15,12 @@ interface IDataTableInnerHeaderProps {
 
 class DataTableInnerHeader extends Component<IDataTableInnerHeaderProps> {
 	public render() {
+		// note: always compare columns by key not equality
 		const { columns, sortedColumns } = this.props;
 
 		const headers = columns.map((col) => {
 			const sortable = col.sortable !== false; // undefined implicitly means yes
-			const sortEntry: ISortEntry = sortedColumns.find((sc) => sc.column === col);
+			const sortEntry: ISortEntry = sortedColumns.find((sc) => sc.column.title === col.title);
 			const sorted = sortEntry !== undefined;
 
 			const sortIcon = sorted ? (sortEntry.dir === "asc" ? faSortAmountUp : faSortAmountDown) : faExchange;

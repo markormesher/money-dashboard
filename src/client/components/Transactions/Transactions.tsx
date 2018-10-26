@@ -8,18 +8,26 @@ import * as bs from "../../bootstrap-aliases";
 import { formatCurrencyStyled } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
-import { setDisplayCurrentOnly, setTransactionToEdit, startDeleteTransaction } from "../../redux/transactions/actions";
+import {
+	setDateMode,
+	setLastUpdate,
+	setTransactionToEdit,
+	startDeleteTransaction,
+} from "../../redux/transactions/actions";
+import { DateModeOption } from "../../redux/transactions/reducer";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
+import DateModeToggleBtn from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
 
 interface ITransactionProps {
 	lastUpdate: number;
-	displayCurrentOnly: boolean;
+	dateMode: DateModeOption;
 	transactionToEdit?: ThinTransaction;
 	actions?: {
 		deleteTransaction: (id: string) => AnyAction,
-		setDisplayActiveOnly: (active: boolean) => AnyAction,
+		setDateMode: (mode: DateModeOption) => AnyAction,
+		setLastUpdate: () => AnyAction,
 		setTransactionToEdit: (transaction: ThinTransaction) => AnyAction,
 	};
 }
@@ -28,7 +36,7 @@ function mapStateToProps(state: IRootState, props: ITransactionProps): ITransact
 	return {
 		...props,
 		lastUpdate: state.transactions.lastUpdate,
-		displayCurrentOnly: state.transactions.displayCurrentOnly,
+		dateMode: state.transactions.dateMode,
 		transactionToEdit: state.transactions.transactionToEdit,
 	};
 }
@@ -38,7 +46,8 @@ function mapDispatchToProps(dispatch: Dispatch, props: ITransactionProps): ITran
 		...props,
 		actions: {
 			deleteTransaction: (id) => dispatch(startDeleteTransaction(id)),
-			setDisplayActiveOnly: (active) => dispatch(setDisplayCurrentOnly(active)),
+			setDateMode: (active) => dispatch(setDateMode(active)),
+			setLastUpdate: () => dispatch(setLastUpdate()),
 			setTransactionToEdit: (transaction) => dispatch(setTransactionToEdit(transaction)),
 		},
 	};
@@ -49,7 +58,7 @@ class Transactions extends Component<ITransactionProps> {
 	private tableColumns: IColumn[] = [
 		{
 			title: "Date",
-			sortField: "transactionDate",
+			sortField: "displayDate", // this is swapped for effective/transaction date on the server side
 			defaultSortDirection: "desc",
 			defaultSortPriority: 0,
 		},
@@ -60,8 +69,13 @@ class Transactions extends Component<ITransactionProps> {
 		{ title: "Actions", sortable: false },
 	];
 
+	constructor(props: ITransactionProps) {
+		super(props);
+		this.tableRowRenderer = this.tableRowRenderer.bind(this);
+	}
+
 	public render() {
-		const { lastUpdate, transactionToEdit } = this.props;
+		const { lastUpdate, dateMode } = this.props;
 
 		// TODO: edit modal
 
@@ -71,17 +85,14 @@ class Transactions extends Component<ITransactionProps> {
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Transactions</h1>
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
-							{/*
-							TODO: date mode chooser
-							<CheckboxBtn
-									text={"Current Transactions Only"}
-									stateFilter={(state) => state.transactions.displayCurrentOnly}
-									stateModifier={this.props.actions.setDisplayActiveOnly}
+							<DateModeToggleBtn
+									stateFilter={(state) => state.transactions.dateMode}
+									stateModifier={this.props.actions.setDateMode}
+									onChange={this.props.actions.setLastUpdate}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
 									}}
 							/>
-							*/}
 
 							<IconBtn
 									icon={faPlus}
@@ -100,7 +111,7 @@ class Transactions extends Component<ITransactionProps> {
 							rowRenderer={this.tableRowRenderer}
 							apiExtraParams={{
 								lastUpdate,
-								dateField: "transactionDate",
+								dateMode,
 							}}
 					/>
 				</div>
@@ -108,13 +119,13 @@ class Transactions extends Component<ITransactionProps> {
 	}
 
 	private tableRowRenderer(transaction: ThinTransaction) {
-		// TODO: show selected date type
 		// TODO: show info icon if alternate date is available
 		// TODO: show info icon if notes are available
 		// TODO: actions
+		const { dateMode } = this.props;
 		return (
 				<tr key={transaction.id}>
-					<td>{transaction.effectiveDate}</td>
+					<td>{dateMode === "effective" ? transaction.effectiveDate : transaction.transactionDate}</td>
 					<td>{transaction.account.name}</td>
 					<td>{transaction.payee}</td>
 					<td>{formatCurrencyStyled(transaction.amount)}</td>

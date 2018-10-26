@@ -2,16 +2,18 @@ import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
 import { PayloadAction } from "../PayloadAction";
 import { TransactionsActions } from "./actions";
 
+type DateModeOption = "effective" | "transaction";
+
 interface ITransactionsState {
 	lastUpdate: number;
-	displayCurrentOnly: boolean;
+	dateMode: DateModeOption;
 	transactionToEdit: ThinTransaction;
 	editorBusy: boolean;
 }
 
 const initialState: ITransactionsState = {
 	lastUpdate: 0,
-	displayCurrentOnly: true,
+	dateMode: "transaction",
 	transactionToEdit: undefined,
 	editorBusy: false,
 };
@@ -24,10 +26,10 @@ function transactionsReducer(state = initialState, action: PayloadAction): ITran
 				lastUpdate: action.payload.lastUpdate,
 			};
 
-		case TransactionsActions.SET_DISPLAY_CURRENT_ONLY:
+		case TransactionsActions.SET_DATE_MODE:
 			return {
 				...state,
-				displayCurrentOnly: action.payload.currentOnly,
+				dateMode: action.payload.dateMode,
 			};
 
 		case TransactionsActions.SET_TRANSACTION_TO_EDIT:
@@ -48,6 +50,7 @@ function transactionsReducer(state = initialState, action: PayloadAction): ITran
 }
 
 export {
+	DateModeOption,
 	ITransactionsState,
 	transactionsReducer,
 };
