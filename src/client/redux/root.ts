@@ -12,24 +12,25 @@ import { categorySettingsReducer, ICategorySettingsState } from "./settings/cate
 import { categorySettingsSagas } from "./settings/categories/sagas";
 import { IProfileSettingsState, profileSettingsReducer } from "./settings/profiles/reducer";
 import { profileSettingsSagas } from "./settings/profiles/sagas";
+import { ITransactionsState, transactionsReducer } from "./transactions/reducer";
+import { transactionsSagas } from "./transactions/sagas";
 
 interface IRootState {
 	auth?: IAuthState;
 	global?: IGlobalState;
 	nav?: INavState;
+	router?: { // from connected-react-router
+		location?: {
+			pathname?: string;
+		};
+	};
 	settings?: {
 		accounts?: IAccountSettingsState;
 		budgets?: IBudgetSettingsState;
 		categories?: ICategorySettingsState;
 		profiles?: IProfileSettingsState;
 	};
-
-	// from connected-react-router
-	router?: {
-		location?: {
-			pathname?: string;
-		};
-	};
+	transactions?: ITransactionsState;
 }
 
 const rootReducer = combineReducers({
@@ -42,15 +43,17 @@ const rootReducer = combineReducers({
 		categories: categorySettingsReducer,
 		profiles: profileSettingsReducer,
 	}),
+	transactions: transactionsReducer,
 });
 
 function*rootSaga() {
 	yield all([
-		authSagas(),
 		accountSettingsSagas(),
+		authSagas(),
 		budgetSettingsSagas(),
 		categorySettingsSagas(),
 		profileSettingsSagas(),
+		transactionsSagas(),
 	]);
 }
 

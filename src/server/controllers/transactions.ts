@@ -52,7 +52,7 @@ router.get("/old-index", requireUser, (req: Request, res: Response, next: NextFu
 
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
-	const searchTerm = req.query.search.value;
+	const searchTerm = req.query.searchTerm || "";
 
 	const countQuery: IFindOptions<Transaction> = {
 		where: {
@@ -90,16 +90,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			},
 		],
 	};
-	const postOrder = [["createdAt", "DESC"]];
-
-	// "fix" displayDate column name
-	const dateField = req.query.dateField;
-	req.query.columns = req.query.columns.map((col: { name: string, data: string }) => {
-		return {
-			name: col.name.replace("displayDate", dateField),
-			data: col.data.replace("displayDate", dateField),
-		};
-	});
+	const postOrder = [["createdAt", "desc"]];
 
 	getData(Transaction, req, countQuery, dataQuery, [], postOrder)
 			.then((response) => res.json(response))
