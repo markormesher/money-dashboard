@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
 import * as bs from "../../bootstrap-aliases";
-import { formatCurrencyStyled } from "../../helpers/formatters";
+import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import {
@@ -19,6 +19,7 @@ import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import DateModeToggleBtn from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
+import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import * as appStyles from "../App/App.scss";
 import EditTransactionModal from "./EditTransactionModal";
 
@@ -80,8 +81,6 @@ class Transactions extends Component<ITransactionProps> {
 	public render() {
 		const { lastUpdate, dateMode, transactionToEdit } = this.props;
 
-		// TODO: edit modal
-
 		return (
 				<>
 					{transactionToEdit !== undefined && <EditTransactionModal/>}
@@ -123,14 +122,20 @@ class Transactions extends Component<ITransactionProps> {
 	}
 
 	private tableRowRenderer(transaction: ThinTransaction) {
-		// TODO: show info icon if alternate date is available
-		// TODO: show info icon if notes are available
 		const { dateMode } = this.props;
+		const mainDate = formatDate(dateMode === "effective" ? transaction.effectiveDate : transaction.transactionDate);
+		const altDate = formatDate(dateMode === "effective" ? transaction.transactionDate : transaction.effectiveDate);
 		return (
 				<tr key={transaction.id}>
-					<td>{dateMode === "effective" ? transaction.effectiveDate : transaction.transactionDate}</td>
+					<td>
+						{mainDate}
+						{mainDate !== altDate && <> <InfoIcon hoverText={altDate}/></>}
+					</td>
 					<td>{transaction.account.name}</td>
-					<td>{transaction.payee}</td>
+					<td>
+						{transaction.payee}
+						{transaction.note && <> <InfoIcon hoverText={transaction.note}/></>}
+					</td>
 					<td>{formatCurrencyStyled(transaction.amount)}</td>
 					<td>{transaction.category.name}</td>
 					<td>{this.generateActionButtons(transaction)}</td>

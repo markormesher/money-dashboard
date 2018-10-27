@@ -2542,6 +2542,11 @@ csstype@^2.2.0:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.5.7.tgz#bf9235d5872141eccfb2d16d82993c6b149179ff"
   integrity sha512-Nt5VDyOTIIV4/nRFswoCKps1R5CD1hkiyjBE9/thNaNZILLEviVw9yWQw15+O+CpNjQKB/uvdcxFFOrSflY3Yw==
 
+cuetip@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/cuetip/-/cuetip-1.1.3.tgz#64a4293d5545c45cd24da71487cd50d5b0c0c159"
+  integrity sha512-WCjc/nJADHURiU4KU7FMXi3xxchIFB9LPqvCSmkaq7LDjxHhkiPn2eCbIofYHrD4/zYxDdks2sNR/saGIsrB6Q==
+
 currently-unhandled@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/currently-unhandled/-/currently-unhandled-0.4.1.tgz#988df33feab191ef799a61369dd76c17adf957ea"

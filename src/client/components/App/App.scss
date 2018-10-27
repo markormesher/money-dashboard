@@ -1,6 +1,9 @@
 // sass-lint:disable no-url-domains,no-url-protocols
 @import url("//fonts.googleapis.com/css?family=Open+Sans");
 
+$cuetip-padding: .25em .6em;
+@import "~cuetip";
+
 body {
 	font-family: "Open Sans", sans-serif;
 }
@@ -8,14 +11,12 @@ body {
 h1,
 h2,
 h3 {
-	// Bootstrap override
-	margin-bottom: 1rem !important; // was 0.5rem
+	margin-bottom: 1rem !important; // Bootstrap override (was 0.5rem)
 }
 
 button {
 	:focus {
-		// Bootstrap override
-		box-shadow: none !important;
+		box-shadow: none !important; // Bootstrap override
 	}
 }
 
@@ -33,4 +34,9 @@ button {
 
 .currency {
 	font-family: monospace;
+}
+
+[data-tooltip]::after,
+[data-tooltip]::before {
+	font-size: 75%;
 }

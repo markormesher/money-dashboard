@@ -95,9 +95,9 @@ module.exports = {
 				loader: "html-loader",
 			},
 			{
-				test: /\.css$/,
+				test: /\.(s?)css$/,
 				include: /node_modules/,
-				use: ["style-loader", "css-loader"],
+				use: ["style-loader", "css-loader", "sass-loader"],
 			},
 			{
 				test: /\.(s?)css$/,
