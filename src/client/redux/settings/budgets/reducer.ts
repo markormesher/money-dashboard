@@ -6,6 +6,7 @@ interface IBudgetSettingsState {
 	readonly lastUpdate: number;
 	readonly displayCurrentOnly: boolean;
 	readonly budgetToEdit: ThinBudget;
+	readonly budgetIdsToClone: string[];
 	readonly editorBusy: boolean;
 }
 
@@ -13,6 +14,7 @@ const initialState: IBudgetSettingsState = {
 	lastUpdate: 0,
 	displayCurrentOnly: true,
 	budgetToEdit: undefined,
+	budgetIdsToClone: undefined,
 	editorBusy: false,
 };
 
@@ -34,6 +36,12 @@ function budgetSettingsReducer(state = initialState, action: PayloadAction): IBu
 			return {
 				...state,
 				budgetToEdit: action.payload.budget,
+			};
+
+		case BudgetSettingsActions.SET_BUDGETS_TO_CLONE:
+			return {
+				...state,
+				budgetIdsToClone: action.payload.budgets,
 			};
 
 		case BudgetSettingsActions.SET_EDITOR_BUSY:

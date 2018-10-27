@@ -1,4 +1,4 @@
-import * as moment from "moment";
+import { validateDateRange } from "./DateRangeValidator";
 import { ThinBudget } from "./ThinBudget";
 
 interface IThinBudgetValidationResult {
@@ -63,35 +63,26 @@ function validateThinBudget(budget: ThinBudget): IThinBudgetValidationResult {
 		};
 	}
 
-	if (!budget.startDate || !moment(budget.startDate, "YYYY-MM-DD", true).isValid()) {
+	const dateRangeValidationResult = validateDateRange({
+		startDate: budget.startDate,
+		endDate: budget.endDate,
+	});
+	if (dateRangeValidationResult.errors.startDate) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				startDate: "A valid start date must be selected",
+				startDate: dateRangeValidationResult.errors.startDate,
 			},
 		};
 	}
 
-	if (!budget.endDate || !moment(budget.endDate, "YYYY-MM-DD", true).isValid()) {
+	if (dateRangeValidationResult.errors.endDate) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				endDate: "A valid end date must be selected",
-			},
-		};
-	}
-
-	if ((budget.startDate && moment(budget.startDate, "YYYY-MM-DD", true).isValid())
-			&& (budget.endDate && moment(budget.endDate, "YYYY-MM-DD", true).isValid())
-			&& moment(budget.startDate).isSameOrAfter(moment(budget.endDate))) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				startDate: "The start date must be before the end date",
-				endDate: "The start date must be before the end date",
+				endDate: dateRangeValidationResult.errors.endDate,
 			},
 		};
 	}

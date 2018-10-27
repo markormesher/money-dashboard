@@ -1,4 +1,4 @@
-import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
+import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent } from "react";
 import { connect } from "react-redux";
@@ -8,23 +8,36 @@ import * as bs from "../../bootstrap-aliases";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
-import { setBudgetToEdit, setDisplayCurrentOnly, startDeleteBudget } from "../../redux/settings/budgets/actions";
+import {
+	setBudgetIdsToClone,
+	setBudgetToEdit,
+	setDisplayCurrentOnly,
+	startDeleteBudget,
+} from "../../redux/settings/budgets/actions";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
+import { ControlledCheckboxInput } from "../_ui/FormComponents/ControlledCheckboxInput";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
+import { CloneBudgetModal } from "./CloneBudgetModal";
 import { EditBudgetModal } from "./EditBudgetModal";
 
 interface IBudgetSettingsProps {
 	readonly lastUpdate: number;
 	readonly displayCurrentOnly: boolean;
 	readonly budgetToEdit?: ThinBudget;
+	readonly budgetIdsToClone?: string[];
 	readonly actions?: {
 		readonly deleteBudget: (id: string) => AnyAction,
 		readonly setDisplayActiveOnly: (active: boolean) => AnyAction,
 		readonly setBudgetToEdit: (budget: ThinBudget) => AnyAction,
+		readonly setBudgetIdsToClone: (budgetIds: string[]) => AnyAction,
 	};
+}
+
+interface IBudgetSettingsState {
+	readonly selectedBudgetIds: string[];
 }
 
 function mapStateToProps(state: IRootState, props: IBudgetSettingsProps): IBudgetSettingsProps {
@@ -33,6 +46,7 @@ function mapStateToProps(state: IRootState, props: IBudgetSettingsProps): IBudge
 		lastUpdate: state.settings.budgets.lastUpdate,
 		displayCurrentOnly: state.settings.budgets.displayCurrentOnly,
 		budgetToEdit: state.settings.budgets.budgetToEdit,
+		budgetIdsToClone: state.settings.budgets.budgetIdsToClone,
 	};
 }
 
@@ -43,17 +57,22 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetSettingsProps): IB
 			deleteBudget: (id) => dispatch(startDeleteBudget(id)),
 			setDisplayActiveOnly: (active) => dispatch(setDisplayCurrentOnly(active)),
 			setBudgetToEdit: (budget) => dispatch(setBudgetToEdit(budget)),
+			setBudgetIdsToClone: (budgetIds) => dispatch(setBudgetIdsToClone(budgetIds)),
 		},
 	};
 }
 
-class UCBudgetSettings extends PureComponent<IBudgetSettingsProps> {
+class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettingsState> {
 
 	private static currentOnlyStateFilter(state: IRootState) {
 		return state.settings.budgets.displayCurrentOnly;
 	}
 
 	private tableColumns: IColumn[] = [
+		{
+			title: "",
+			sortable: false,
+		},
 		{
 			title: "Name",
 			sortField: ["category", "name"],
@@ -73,16 +92,23 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps> {
 
 	constructor(props: IBudgetSettingsProps) {
 		super(props);
+		this.state = {
+			selectedBudgetIds: [],
+		};
 
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
+		this.handleCloneCheckedChange = this.handleCloneCheckedChange.bind(this);
+		this.startCloneOnSelectedBudgets = this.startCloneOnSelectedBudgets.bind(this);
 	}
 
 	public render() {
-		const { lastUpdate, budgetToEdit, displayCurrentOnly } = this.props;
+		const { lastUpdate, budgetToEdit, budgetIdsToClone, displayCurrentOnly } = this.props;
+		const { selectedBudgetIds } = this.state;
 		return (
 				<>
 					{budgetToEdit !== undefined && <EditBudgetModal/>}
+					{budgetIdsToClone && <CloneBudgetModal/>}
 
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Budgets</h1>
@@ -97,11 +123,21 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps> {
 							/>
 
 							<IconBtn
+									icon={faCopy}
+									text={"Clone Selected"}
+									onClick={this.startCloneOnSelectedBudgets}
+									btnProps={{
+										className: combine(bs.btnSm, bs.btnOutlineInfo),
+										disabled: selectedBudgetIds.length === 0,
+									}}
+							/>
+
+							<IconBtn
 									icon={faPlus}
 									text={"New Budget"}
 									btnProps={{
 										className: combine(bs.btnSm, bs.btnSuccess),
-										onClick: () => this.props.actions.setBudgetToEdit(null),
+										onClick: () => this.props.actions.setBudgetToEdit(null), // TODO: remove lambda
 									}}
 							/>
 						</div>
@@ -121,8 +157,19 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps> {
 	}
 
 	private tableRowRenderer(budget: ThinBudget) {
+		const { selectedBudgetIds } = this.state;
+		const cloneId = `clone-${budget.id}`;
 		return (
 				<tr key={budget.id}>
+					<td>
+						<ControlledCheckboxInput
+								id={cloneId}
+								label={undefined}
+								disabled={false}
+								checked={selectedBudgetIds.indexOf(cloneId) >= 0}
+								onCheckedChange={this.handleCloneCheckedChange}
+						/>
+					</td>
 					<td>{budget.category.name}</td>
 					<td>{generateBudgetTypeBadge(budget)}</td>
 					<td>{formatBudgetPeriod(budget.startDate, budget.endDate)}</td>
@@ -153,6 +200,23 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps> {
 					/>
 				</div>
 		);
+	}
+
+	private handleCloneCheckedChange(checked: boolean, id: string) {
+		const original = this.state.selectedBudgetIds;
+		if (checked) {
+			this.setState({
+				selectedBudgetIds: original.concat([id]),
+			});
+		} else {
+			this.setState({
+				selectedBudgetIds: original.filter((b) => b !== id),
+			});
+		}
+	}
+
+	private startCloneOnSelectedBudgets() {
+		this.props.actions.setBudgetIdsToClone(this.state.selectedBudgetIds.map((b) => b.replace("clone-", "")));
 	}
 }
 

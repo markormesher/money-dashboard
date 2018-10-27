@@ -136,7 +136,7 @@ module.exports = {
 			minify: IS_PROD,
 			alwaysWriteToDisk: IS_DEV,
 		}),
-		new BundleAnalyzerPlugin({
+		IS_PROD && new BundleAnalyzerPlugin({
 			analyzerMode: "static",
 			openAnalyzer: false,
 		}),
