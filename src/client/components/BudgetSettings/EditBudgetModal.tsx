@@ -68,11 +68,11 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 			validationResult: validateThinBudget(budgetToEdit),
 		};
 
-		this.handleBudgetCategoryChange = this.handleBudgetCategoryChange.bind(this);
-		this.handleBudgetAmountChange = this.handleBudgetAmountChange.bind(this);
-		this.handleBudgetStartDateChange = this.handleBudgetStartDateChange.bind(this);
-		this.handleBudgetEndDateChange = this.handleBudgetEndDateChange.bind(this);
-		this.handleBudgetTypeChange = this.handleBudgetTypeChange.bind(this);
+		this.handleCategoryChange = this.handleCategoryChange.bind(this);
+		this.handleAmountChange = this.handleAmountChange.bind(this);
+		this.handleStartDateChange = this.handleStartDateChange.bind(this);
+		this.handleEndDateChange = this.handleEndDateChange.bind(this);
+		this.handleTypeChange = this.handleTypeChange.bind(this);
 		this.handleDateRangeSelection = this.handleDateRangeSelection.bind(this);
 
 		this.updateModel = this.updateModel.bind(this);
@@ -107,7 +107,7 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 									value={currentValues.categoryId}
 									disabled={editorBusy || !categoryList}
 									error={errors.category}
-									onValueChange={this.handleBudgetCategoryChange}
+									onValueChange={this.handleCategoryChange}
 							>
 								{categoryList && (<option value={""}>-- Select --</option>)}
 								{categoryList && categoryList.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
@@ -123,7 +123,7 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 									value={!isNaN(currentValues.amount) ? currentValues.amount : ""}
 									disabled={editorBusy}
 									error={errors.amount}
-									onValueChange={this.handleBudgetAmountChange}
+									onValueChange={this.handleAmountChange}
 									inputProps={{
 										type: "number",
 										step: "0.01",
@@ -139,7 +139,7 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 										value={formatDate(currentValues.startDate, "system") || ""}
 										disabled={editorBusy}
 										error={errors.startDate}
-										onValueChange={this.handleBudgetStartDateChange}
+										onValueChange={this.handleStartDateChange}
 								/>
 							</div>
 							<div className={combine(bs.col, bs.formGroup)}>
@@ -149,7 +149,7 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 										value={formatDate(currentValues.endDate, "system") || ""}
 										disabled={editorBusy}
 										error={errors.endDate}
-										onValueChange={this.handleBudgetEndDateChange}
+										onValueChange={this.handleEndDateChange}
 								/>
 							</div>
 						</div>
@@ -171,7 +171,7 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 											label={generateBadge("Budget", bs.badgeInfo)}
 											checked={currentValues.type === "budget"}
 											disabled={editorBusy}
-											onValueChange={this.handleBudgetTypeChange}
+											onValueChange={this.handleTypeChange}
 									/>
 								</div>
 								<div className={bs.col}>
@@ -182,7 +182,7 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 											label={generateBadge("Bill", bs.badgeWarning)}
 											checked={currentValues.type === "bill"}
 											disabled={editorBusy}
-											onValueChange={this.handleBudgetTypeChange}
+											onValueChange={this.handleTypeChange}
 									/>
 								</div>
 							</div>
@@ -192,12 +192,11 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 		);
 	}
 
-	// TODO: remove "Budget" in names
-	private readonly handleBudgetCategoryChange = (value: string) => this.updateModel({ categoryId: value });
-	private readonly handleBudgetAmountChange = (value: string) => this.updateModel({ amount: parseFloat(value) });
-	private readonly handleBudgetStartDateChange = (value: string) => this.updateModel({ startDate: value });
-	private readonly handleBudgetEndDateChange = (value: string) => this.updateModel({ endDate: value });
-	private readonly handleBudgetTypeChange = (value: string) => this.updateModel({ type: value });
+	private readonly handleCategoryChange = (value: string) => this.updateModel({ categoryId: value });
+	private readonly handleAmountChange = (value: string) => this.updateModel({ amount: parseFloat(value) });
+	private readonly handleStartDateChange = (value: string) => this.updateModel({ startDate: value });
+	private readonly handleEndDateChange = (value: string) => this.updateModel({ endDate: value });
+	private readonly handleTypeChange = (value: string) => this.updateModel({ type: value });
 	private readonly handleDateRangeSelection = (start: Moment, end: Moment) => this.updateModel({
 		startDate: formatDate(start, "system"),
 		endDate: formatDate(end, "system"),

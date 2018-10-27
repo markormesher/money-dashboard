@@ -55,8 +55,8 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 			validationResult: validateThinAccount(accountToEdit),
 		};
 
-		this.handleAccountNameChange = this.handleAccountNameChange.bind(this);
-		this.handleAccountTypeChange = this.handleAccountTypeChange.bind(this);
+		this.handleNameChange = this.handleNameChange.bind(this);
+		this.handleTypeChange = this.handleTypeChange.bind(this);
 
 		this.updateModel = this.updateModel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
@@ -85,7 +85,7 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 									label={"Name"}
 									placeholder={"Account Name"}
 									value={currentValues.name}
-									onValueChange={this.handleAccountNameChange}
+									onValueChange={this.handleNameChange}
 									disabled={editorBusy}
 									error={errors.name}
 							/>
@@ -95,7 +95,7 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 									id="type"
 									label={"Type"}
 									value={currentValues.type}
-									onValueChange={this.handleAccountTypeChange}
+									onValueChange={this.handleTypeChange}
 									disabled={editorBusy}
 									error={errors.type}
 							>
@@ -110,8 +110,8 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 		);
 	}
 
-	private readonly handleAccountNameChange = (value: string) => this.updateModel({ name: value });
-	private readonly handleAccountTypeChange = (value: string) => this.updateModel({ type: value });
+	private readonly handleNameChange = (value: string) => this.updateModel({ name: value });
+	private readonly handleTypeChange = (value: string) => this.updateModel({ type: value });
 
 	private updateModel(account: Partial<ThinAccount>) {
 		const updatedAccount = {

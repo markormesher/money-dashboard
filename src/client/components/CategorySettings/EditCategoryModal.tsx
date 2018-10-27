@@ -56,8 +56,8 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 			validationResult: validateThinCategory(categoryToEdit),
 		};
 
-		this.handleCategoryNameChange = this.handleCategoryNameChange.bind(this);
-		this.handleCategoryTypeCheckedChange = this.handleCategoryTypeCheckedChange.bind(this);
+		this.handleNameChange = this.handleNameChange.bind(this);
+		this.handleTypeCheckedChange = this.handleTypeCheckedChange.bind(this);
 
 		this.updateModel = this.updateModel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
@@ -86,7 +86,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 									label={"Name"}
 									placeholder={"Category Name"}
 									value={currentValues.name}
-									onValueChange={this.handleCategoryNameChange}
+									onValueChange={this.handleNameChange}
 									disabled={editorBusy}
 									error={errors.name}
 							/>
@@ -100,7 +100,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 											label={generateBadge("Income", bs.badgeSuccess)}
 											checked={currentValues.isIncomeCategory}
 											disabled={editorBusy}
-											onCheckedChange={this.handleCategoryTypeCheckedChange}
+											onCheckedChange={this.handleTypeCheckedChange}
 									/>
 								</div>
 								<div className={bs.col}>
@@ -109,7 +109,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 											label={generateBadge("Expense", bs.badgeDanger)}
 											checked={currentValues.isExpenseCategory}
 											disabled={editorBusy}
-											onCheckedChange={this.handleCategoryTypeCheckedChange}
+											onCheckedChange={this.handleTypeCheckedChange}
 									/>
 								</div>
 							</div>
@@ -120,7 +120,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 											label={generateBadge("Asset Growth", bs.badgeWarning)}
 											checked={currentValues.isAssetGrowthCategory}
 											disabled={editorBusy}
-											onCheckedChange={this.handleCategoryTypeCheckedChange}
+											onCheckedChange={this.handleTypeCheckedChange}
 									/>
 								</div>
 								<div className={bs.col}>
@@ -129,7 +129,7 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 											label={generateBadge("Memo", bs.badgeInfo)}
 											checked={currentValues.isMemoCategory}
 											disabled={editorBusy}
-											onCheckedChange={this.handleCategoryTypeCheckedChange}
+											onCheckedChange={this.handleTypeCheckedChange}
 									/>
 								</div>
 							</div>
@@ -139,8 +139,8 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 		);
 	}
 
-	private readonly handleCategoryNameChange = (value: string) => this.updateModel({ name: value });
-	private readonly handleCategoryTypeCheckedChange = (checked: boolean, id: string) => {
+	private readonly handleNameChange = (value: string) => this.updateModel({ name: value });
+	private readonly handleTypeCheckedChange = (checked: boolean, id: string) => {
 		switch (id) {
 			case "type-income":
 				this.updateModel({ isIncomeCategory: checked });
