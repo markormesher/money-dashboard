@@ -10,7 +10,7 @@ $navbar-toggle-icon: #fff;
 	height: $header-height; // Bootstrap override
 }
 
-.navbarBrand {
+.navbar-brand {
 	// Collapsed view
 	// sass-lint:disable mixin-name-format
 	@include media-breakpoint-down(lg) {
@@ -28,6 +28,6 @@ $navbar-toggle-icon: #fff;
 	white-space: nowrap;
 }
 
-.navToggleIcon {
+.nav-toggle-icon {
 	color: $navbar-toggle-icon !important;
 }

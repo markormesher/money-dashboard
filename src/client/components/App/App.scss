@@ -19,12 +19,12 @@ button {
 	}
 }
 
-.headerWrapper {
+.header-wrapper {
 	overflow: auto; // allows the div to have height even though it only contains floated elements
 	width: 100%;
 }
 
-.btnMini {
+.btn-mini {
 	// Same as .badge in Bootstrap
 	font-size: 75% !important;
 	line-height: 1 !important;

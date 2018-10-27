@@ -21,7 +21,7 @@ $sidebar-shadow: rgba(0, 0, 0, .05);
 	z-index: 100; // Behind the navbar
 }
 
-.sidebarSticky {
+.sidebar-sticky {
 	// Collapsed view
 	@include media-breakpoint-down(lg) {
 		height: auto !important;
