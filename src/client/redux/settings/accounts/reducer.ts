@@ -3,12 +3,12 @@ import { PayloadAction } from "../../PayloadAction";
 import { AccountSettingsActions } from "./actions";
 
 interface IAccountSettingsState {
-	lastUpdate: number;
-	displayActiveOnly: boolean;
-	accountToEdit: ThinAccount;
-	editorBusy: boolean;
-	accountList: ThinAccount[];
-	accountListLastLoaded: number;
+	readonly lastUpdate: number;
+	readonly displayActiveOnly: boolean;
+	readonly accountToEdit: ThinAccount;
+	readonly editorBusy: boolean;
+	readonly accountList: ThinAccount[];
+	readonly accountListLastLoaded: number;
 }
 
 const initialState: IAccountSettingsState = {

@@ -1,17 +1,18 @@
 import { faCalendar } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
+import { capitaliseFirstLetter } from "../../../helpers/formatters";
 import { IRootState } from "../../../redux/root";
 import { DateModeOption } from "../../../redux/transactions/reducer";
 import { IconBtn } from "../IconBtn/IconBtn";
 
 interface IDateModeToggleBtnProps {
-	stateFilter: (state: IRootState) => DateModeOption;
-	stateModifier: (value: DateModeOption) => void;
-	value?: DateModeOption;
-	onChange?: (value: DateModeOption) => void;
-	btnProps?: React.HTMLProps<HTMLButtonElement>;
+	readonly stateFilter: (state: IRootState) => DateModeOption;
+	readonly stateModifier: (value: DateModeOption) => void;
+	readonly value?: DateModeOption;
+	readonly onChange?: (value: DateModeOption) => void;
+	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
 }
 
 function mapStateToProps(state: IRootState, props: IDateModeToggleBtnProps): IDateModeToggleBtnProps {
@@ -21,7 +22,7 @@ function mapStateToProps(state: IRootState, props: IDateModeToggleBtnProps): IDa
 	};
 }
 
-class UCDateModeToggleBtn extends Component<IDateModeToggleBtnProps> {
+class UCDateModeToggleBtn extends PureComponent<IDateModeToggleBtnProps> {
 
 	constructor(props: IDateModeToggleBtnProps) {
 		super(props);
@@ -31,7 +32,7 @@ class UCDateModeToggleBtn extends Component<IDateModeToggleBtnProps> {
 
 	public render() {
 		const { value, btnProps } = this.props;
-		const text = `Date Mode: ${this.capitaliseFirst(value)} Date`;
+		const text = `Date Mode: ${capitaliseFirstLetter(value)} Date`;
 
 		return (
 				<IconBtn
@@ -44,8 +45,6 @@ class UCDateModeToggleBtn extends Component<IDateModeToggleBtnProps> {
 				/>
 		);
 	}
-
-	private capitaliseFirst = (str: string) => str.slice(0, 1).toUpperCase() + str.slice(1);
 
 	private toggleValue() {
 		const { value, stateModifier, onChange } = this.props;

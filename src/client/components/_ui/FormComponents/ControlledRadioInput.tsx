@@ -1,24 +1,24 @@
 import * as React from "react";
-import { Component, FormEvent, ReactNode } from "react";
+import { FormEvent, PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledRadioInputProps {
-	id: string;
-	name: string;
-	value: string;
-	label: string | ReactNode;
-	checked: boolean;
-	onValueChange: (newValue: string, id: string) => void;
-	disabled?: boolean;
-	error?: string;
+	readonly id: string;
+	readonly name: string;
+	readonly value: string;
+	readonly label: string | ReactNode;
+	readonly checked: boolean;
+	readonly onValueChange: (newValue: string, id: string) => void;
+	readonly disabled?: boolean;
+	readonly error?: string;
 }
 
 interface IControlledRadioInputState {
-	hasBeenTouched: boolean;
+	readonly hasBeenTouched: boolean;
 }
 
-class ControlledRadioInput extends Component<IControlledRadioInputProps, IControlledRadioInputState> {
+class ControlledRadioInput extends PureComponent<IControlledRadioInputProps, IControlledRadioInputState> {
 
 	public constructor(props: IControlledRadioInputProps) {
 		super(props);

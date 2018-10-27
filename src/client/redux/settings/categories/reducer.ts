@@ -3,11 +3,11 @@ import { PayloadAction } from "../../PayloadAction";
 import { CategorySettingsActions } from "./actions";
 
 interface ICategorySettingsState {
-	lastUpdate: number;
-	categoryToEdit: ThinCategory;
-	editorBusy: boolean;
-	categoryList: ThinCategory[];
-	categoryListLoadedAt: number;
+	readonly lastUpdate: number;
+	readonly categoryToEdit: ThinCategory;
+	readonly editorBusy: boolean;
+	readonly categoryList: ThinCategory[];
+	readonly categoryListLoadedAt: number;
 }
 
 const initialState: ICategorySettingsState = {

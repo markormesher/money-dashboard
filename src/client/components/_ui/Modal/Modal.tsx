@@ -1,29 +1,29 @@
 import { faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 import { IconBtn } from "../IconBtn/IconBtn";
 import * as styles from "./Modal.scss";
 
 interface IModalProps {
-	title: string;
-	modalBusy?: boolean;
-	onCloseRequest?: () => void;
+	readonly title: string;
+	readonly modalBusy?: boolean;
+	readonly onCloseRequest?: () => void;
 
-	cancelBtnShown?: boolean;
-	cancelBtnDisabled?: boolean;
-	onCancel?: () => void;
+	readonly cancelBtnShown?: boolean;
+	readonly cancelBtnDisabled?: boolean;
+	readonly onCancel?: () => void;
 
-	saveBtnShown?: boolean;
-	saveBtnDisabled?: boolean;
-	onSave?: () => void;
+	readonly saveBtnShown?: boolean;
+	readonly saveBtnDisabled?: boolean;
+	readonly onSave?: () => void;
 }
 
 // TODO: fade into the page by adding to the view, THEN adding .show
 
-class Modal extends Component<IModalProps> {
+class Modal extends PureComponent<IModalProps> {
 
 	public render() {
 		const { title, modalBusy, onCloseRequest } = this.props;

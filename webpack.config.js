@@ -2,6 +2,7 @@ const {resolve, join} = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const IS_PROD = process.env.NODE_ENV === "production";
 const IS_DEV = !IS_PROD; // for better readability below
@@ -134,6 +135,10 @@ module.exports = {
 			hash: IS_DEV,
 			minify: IS_PROD,
 			alwaysWriteToDisk: IS_DEV,
+		}),
+		new BundleAnalyzerPlugin({
+			analyzerMode: "static",
+			openAnalyzer: false,
 		}),
 		IS_DEV && new webpack.HotModuleReplacementPlugin(),
 	].filter((p) => p !== false),

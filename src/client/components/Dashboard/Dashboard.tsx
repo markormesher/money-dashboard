@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
@@ -7,8 +7,8 @@ import * as bs from "../../bootstrap-aliases";
 import { IRootState } from "../../redux/root";
 
 interface IDashboardProps {
-	activeUser: ThinUser;
-	activeProfile?: ThinProfile;
+	readonly activeUser: ThinUser;
+	readonly activeProfile?: ThinProfile;
 }
 
 function mapStateToProps(state: IRootState, props: IDashboardProps): IDashboardProps {
@@ -20,16 +20,17 @@ function mapStateToProps(state: IRootState, props: IDashboardProps): IDashboardP
 }
 
 interface IDashboardProps {
-	activeUser: ThinUser;
-	activeProfile?: ThinProfile;
+	readonly activeUser: ThinUser;
+	readonly activeProfile?: ThinProfile;
 }
 
-class UCDashboard extends Component<IDashboardProps> {
+class UCDashboard extends PureComponent<IDashboardProps> {
 
 	public render() {
 		return (
 				<div>
 					<h1 className={bs.h2}>Dashboard</h1>
+					<p>Hello, {this.props.activeUser.displayName}.</p>
 				</div>
 		);
 	}

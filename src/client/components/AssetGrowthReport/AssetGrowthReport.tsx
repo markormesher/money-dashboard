@@ -1,8 +1,8 @@
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import * as bs from "../../bootstrap-aliases";
 
-class AssetGrowthReport extends Component {
+class AssetGrowthReport extends PureComponent {
 	public render() {
 		return (
 				<div>

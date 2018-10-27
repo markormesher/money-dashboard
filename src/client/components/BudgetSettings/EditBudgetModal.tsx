@@ -1,6 +1,6 @@
 import { Moment } from "moment";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinBudget } from "../../../server/model-thins/ThinBudget";
@@ -22,20 +22,20 @@ import * as styles from "./EditBudgetModal.scss";
 import { QuickDateRangeLinks } from "./QuickDateRangeLinks";
 
 interface IEditBudgetModalProps {
-	budgetToEdit?: ThinBudget;
-	editorBusy?: boolean;
-	categoryList?: ThinCategory[];
+	readonly budgetToEdit?: ThinBudget;
+	readonly editorBusy?: boolean;
+	readonly categoryList?: ThinCategory[];
 
-	actions?: {
-		setBudgetToEdit: (budget: ThinBudget) => AnyAction,
-		startSaveBudget: (budget: Partial<ThinBudget>) => AnyAction,
-		startLoadCategoryList: () => AnyAction,
+	readonly actions?: {
+		readonly setBudgetToEdit: (budget: ThinBudget) => AnyAction,
+		readonly startSaveBudget: (budget: Partial<ThinBudget>) => AnyAction,
+		readonly startLoadCategoryList: () => AnyAction,
 	};
 }
 
 interface IEditBudgetModalState {
-	currentValues: ThinBudget;
-	validationResult: IThinBudgetValidationResult;
+	readonly currentValues: ThinBudget;
+	readonly validationResult: IThinBudgetValidationResult;
 }
 
 function mapStateToProps(state: IRootState, props: IEditBudgetModalProps): IEditBudgetModalProps {
@@ -58,7 +58,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditBudgetModalProps): I
 	};
 }
 
-class UCEditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalState> {
+class UCEditBudgetModal extends PureComponent<IEditBudgetModalProps, IEditBudgetModalState> {
 
 	constructor(props: IEditBudgetModalProps) {
 		super(props);
@@ -74,10 +74,9 @@ class UCEditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModa
 		this.handleEndDateChange = this.handleEndDateChange.bind(this);
 		this.handleTypeChange = this.handleTypeChange.bind(this);
 		this.handleDateRangeSelection = this.handleDateRangeSelection.bind(this);
-
-		this.updateModel = this.updateModel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
+		this.updateModel = this.updateModel.bind(this);
 	}
 
 	public componentDidMount(): void {
@@ -192,24 +191,30 @@ class UCEditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModa
 		);
 	}
 
-	private readonly handleCategoryChange = (value: string) => this.updateModel({ categoryId: value });
-	private readonly handleAmountChange = (value: string) => this.updateModel({ amount: parseFloat(value) });
-	private readonly handleStartDateChange = (value: string) => this.updateModel({ startDate: value });
-	private readonly handleEndDateChange = (value: string) => this.updateModel({ endDate: value });
-	private readonly handleTypeChange = (value: string) => this.updateModel({ type: value });
-	private readonly handleDateRangeSelection = (start: Moment, end: Moment) => this.updateModel({
-		startDate: formatDate(start, "system"),
-		endDate: formatDate(end, "system"),
-	})
+	private handleCategoryChange(value: string) {
+		this.updateModel({ categoryId: value });
+	}
 
-	private updateModel(budget: Partial<ThinBudget>) {
-		const updatedBudget = {
-			...this.state.currentValues,
-			...budget,
-		};
-		this.setState({
-			currentValues: updatedBudget,
-			validationResult: validateThinBudget(updatedBudget),
+	private handleAmountChange(value: string) {
+		this.updateModel({ amount: parseFloat(value) });
+	}
+
+	private handleStartDateChange(value: string) {
+		this.updateModel({ startDate: value });
+	}
+
+	private handleEndDateChange(value: string) {
+		this.updateModel({ endDate: value });
+	}
+
+	private handleTypeChange(value: string) {
+		this.updateModel({ type: value });
+	}
+
+	private handleDateRangeSelection(start: Moment, end: Moment) {
+		this.updateModel({
+			startDate: formatDate(start, "system"),
+			endDate: formatDate(end, "system"),
 		});
 	}
 
@@ -221,6 +226,17 @@ class UCEditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModa
 
 	private handleCancel() {
 		this.props.actions.setBudgetToEdit(undefined);
+	}
+
+	private updateModel(budget: Partial<ThinBudget>) {
+		const updatedBudget = {
+			...this.state.currentValues,
+			...budget,
+		};
+		this.setState({
+			currentValues: updatedBudget,
+			validationResult: validateThinBudget(updatedBudget),
+		});
 	}
 }
 

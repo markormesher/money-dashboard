@@ -1,7 +1,7 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { Component, EventHandler } from "react";
+import { EventHandler, PureComponent } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { AnyAction, Dispatch } from "redux";
@@ -12,21 +12,21 @@ import { IRootState } from "../../../redux/root";
 import * as style from "./NavLink.scss";
 
 interface INavLinkProps {
-	to: string;
-	text: string;
-	icon: IconProp;
-	onClick?: EventHandler<any>;
+	readonly to: string;
+	readonly text: string;
+	readonly icon: IconProp;
+	readonly onClick?: EventHandler<any>;
 
-	nav?: {
-		isOpen: boolean;
+	readonly nav?: {
+		readonly isOpen: boolean;
 	};
 
-	router?: {
-		currentPath: string;
+	readonly router?: {
+		readonly currentPath: string;
 	};
 
-	actions?: {
-		closeNav: () => AnyAction,
+	readonly actions?: {
+		readonly closeNav: () => AnyAction,
 	};
 }
 
@@ -51,10 +51,10 @@ function mapDispatchToProps(dispatch: Dispatch, props: INavLinkProps): INavLinkP
 	};
 }
 
-class UCNavLink extends Component<INavLinkProps> {
+class UCNavLink extends PureComponent<INavLinkProps> {
 
-	private linkItemClasses = bs.navItem;
-	private iconClasses = combine(bs.mr2, bs.textMuted);
+	private static linkItemClasses = bs.navItem;
+	private static iconClasses = combine(bs.mr2, bs.textMuted);
 
 	constructor(props: INavLinkProps) {
 		super(props);
@@ -62,7 +62,30 @@ class UCNavLink extends Component<INavLinkProps> {
 		this.handleOnClick = this.handleOnClick.bind(this);
 	}
 
-	public handleOnClick() {
+	public render() {
+		const active = this.props.to === this.props.router.currentPath;
+		const linkClasses = combine(bs.navLink, style.navLink, (active && style.active));
+
+		return (
+				<li className={UCNavLink.linkItemClasses}>
+					<Link
+							to={this.props.to}
+							title={this.props.text}
+							className={linkClasses}
+							onClick={this.handleOnClick}
+					>
+						<FontAwesomeIcon
+								icon={this.props.icon}
+								fixedWidth={true}
+								className={UCNavLink.iconClasses}
+						/>
+						{this.props.text}
+					</Link>
+				</li>
+		);
+	}
+
+	private handleOnClick() {
 		if (this.props.nav.isOpen) {
 			this.props.actions.closeNav();
 		}
@@ -70,25 +93,6 @@ class UCNavLink extends Component<INavLinkProps> {
 		if (this.props.onClick) {
 			this.props.onClick.call(this);
 		}
-	}
-
-	public render() {
-		const active = this.props.to === this.props.router.currentPath;
-		const linkClasses = combine(bs.navLink, style.navLink, (active && style.active));
-
-		return (
-				<li className={this.linkItemClasses}>
-					<Link
-							to={this.props.to}
-							title={this.props.text}
-							className={linkClasses}
-							onClick={this.handleOnClick}
-					>
-						<FontAwesomeIcon icon={this.props.icon} fixedWidth={true} className={this.iconClasses}/>
-						{this.props.text}
-					</Link>
-				</li>
-		);
 	}
 }
 

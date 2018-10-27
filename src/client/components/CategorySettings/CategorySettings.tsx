@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { Component } from "react";
 import * as React from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
@@ -16,11 +16,11 @@ import * as appStyles from "../App/App.scss";
 import { EditCategoryModal } from "./EditCategoryModal";
 
 interface ICategorySettingsProps {
-	lastUpdate: number;
-	categoryToEdit?: ThinCategory;
-	actions?: {
-		deleteCategory: (id: string) => AnyAction,
-		setCategoryToEdit: (category: ThinCategory) => AnyAction,
+	readonly lastUpdate: number;
+	readonly categoryToEdit?: ThinCategory;
+	readonly actions?: {
+		readonly deleteCategory: (id: string) => AnyAction,
+		readonly setCategoryToEdit: (category: ThinCategory) => AnyAction,
 	};
 }
 
@@ -42,7 +42,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: ICategorySettingsProps): 
 	};
 }
 
-class UCCategorySettings extends Component<ICategorySettingsProps> {
+class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 
 	private tableColumns: IColumn[] = [
 		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
@@ -52,6 +52,7 @@ class UCCategorySettings extends Component<ICategorySettingsProps> {
 
 	constructor(props: ICategorySettingsProps) {
 		super(props);
+
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
 	}

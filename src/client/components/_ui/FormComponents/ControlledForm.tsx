@@ -1,15 +1,15 @@
-import { FormEvent } from "react";
 import * as React from "react";
-import { Component } from "react";
+import { FormEvent, PureComponent } from "react";
 
 interface IControlledFormProps {
-	onSubmit?: () => void;
+	readonly onSubmit?: () => void;
 }
 
-class ControlledForm extends Component<IControlledFormProps> {
+class ControlledForm extends PureComponent<IControlledFormProps> {
 
 	constructor(props: IControlledFormProps) {
 		super(props);
+
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 

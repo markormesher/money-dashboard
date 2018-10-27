@@ -1,12 +1,13 @@
 import { faGoogle } from "@fortawesome/free-brands-svg-icons/faGoogle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import * as bs from "../../bootstrap-aliases";
 import { combine } from "../../helpers/style-helpers";
 import * as style from "./Login.scss";
 
-class Login extends Component {
+class Login extends PureComponent {
+
 	public render() {
 		return (
 				<div className={style.loginWrapper}>

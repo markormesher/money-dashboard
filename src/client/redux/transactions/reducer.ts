@@ -5,10 +5,10 @@ import { TransactionsActions } from "./actions";
 type DateModeOption = "effective" | "transaction";
 
 interface ITransactionsState {
-	lastUpdate: number;
-	dateMode: DateModeOption;
-	transactionToEdit: ThinTransaction;
-	editorBusy: boolean;
+	readonly lastUpdate: number;
+	readonly dateMode: DateModeOption;
+	readonly transactionToEdit: ThinTransaction;
+	readonly editorBusy: boolean;
 }
 
 const initialState: ITransactionsState = {

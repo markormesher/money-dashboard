@@ -1,13 +1,13 @@
 import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { IRootState } from "../../../redux/root";
 import * as styles from "./FullPageSpinner.scss";
 
 interface IFullPageSpinnerProps {
-	waitingFor?: string[];
+	readonly waitingFor?: string[];
 }
 
 function mapStateToProps(state: IRootState, props: IFullPageSpinnerProps): IFullPageSpinnerProps {
@@ -17,7 +17,7 @@ function mapStateToProps(state: IRootState, props: IFullPageSpinnerProps): IFull
 	};
 }
 
-class UCFullPageSpinner extends Component<IFullPageSpinnerProps> {
+class UCFullPageSpinner extends PureComponent<IFullPageSpinnerProps> {
 
 	public render() {
 		return (

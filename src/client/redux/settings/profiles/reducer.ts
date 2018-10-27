@@ -2,7 +2,7 @@ import { PayloadAction } from "../../PayloadAction";
 import { ProfileSettingsActions } from "./actions";
 
 interface IProfileSettingsState {
-	lastUpdate: number;
+	readonly lastUpdate: number;
 }
 
 const initialState: IProfileSettingsState = {

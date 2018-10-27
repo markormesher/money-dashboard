@@ -1,24 +1,24 @@
 import * as React from "react";
-import { ChangeEvent, Component, FormEvent, InputHTMLAttributes, ReactNode } from "react";
+import { FormEvent, InputHTMLAttributes, PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledTextAreaProps {
-	id: string;
-	label: string | ReactNode;
-	placeholder?: string;
-	value: string | number;
-	onValueChange: (newValue: string, id: string) => void;
-	disabled?: boolean;
-	error?: string;
-	inputProps?: Partial<InputHTMLAttributes<HTMLTextAreaElement>>;
+	readonly id: string;
+	readonly label: string | ReactNode;
+	readonly placeholder?: string;
+	readonly value: string | number;
+	readonly onValueChange: (newValue: string, id: string) => void;
+	readonly disabled?: boolean;
+	readonly error?: string;
+	readonly inputProps?: Partial<InputHTMLAttributes<HTMLTextAreaElement>>;
 }
 
 interface IControlledTextAreaState {
-	hasBeenTouched: boolean;
+	readonly hasBeenTouched: boolean;
 }
 
-class ControlledTextArea extends Component<IControlledTextAreaProps, IControlledTextAreaState> {
+class ControlledTextArea extends PureComponent<IControlledTextAreaProps, IControlledTextAreaState> {
 
 	public constructor(props: IControlledTextAreaProps) {
 		super(props);

@@ -1,27 +1,28 @@
 import { faArrowLeft, faArrowRight } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 import * as styles from "./DataTable.scss";
 
 interface IDataTableOuterHeaderProps {
-	loading: boolean;
-	currentPage: number;
-	pageSize: number;
-	rowCount: number;
-	onPrevPageClick: () => void;
-	onNextPageClick: () => void;
-	onSearchTermSet: (term: string) => void;
+	readonly loading: boolean;
+	readonly currentPage: number;
+	readonly pageSize: number;
+	readonly rowCount: number;
+	readonly onPrevPageClick: () => void;
+	readonly onNextPageClick: () => void;
+	readonly onSearchTermSet: (term: string) => void;
 }
 
-class DataTableOuterHeader<Model> extends Component<IDataTableOuterHeaderProps> {
+class DataTableOuterHeader<Model> extends PureComponent<IDataTableOuterHeaderProps> {
 
 	private searchTermUpdateTimeout: NodeJS.Timer = undefined;
 
 	constructor(props: IDataTableOuterHeaderProps) {
 		super(props);
+
 		this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
 	}
 

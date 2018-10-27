@@ -6,12 +6,12 @@ import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IIconBtnProps<Payload> {
-	icon: IconProp;
-	text: string;
-	btnProps?: React.HTMLProps<HTMLButtonElement>;
-	iconProps?: Partial<FontAwesomeIconProps>;
-	onClick?: (payload: Payload) => void;
-	payload?: Payload;
+	readonly icon: IconProp;
+	readonly text: string;
+	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
+	readonly iconProps?: Partial<FontAwesomeIconProps>;
+	readonly onClick?: (payload: Payload) => void;
+	readonly payload?: Payload;
 }
 
 class IconBtn<Payload> extends PureComponent<IIconBtnProps<Payload>> {

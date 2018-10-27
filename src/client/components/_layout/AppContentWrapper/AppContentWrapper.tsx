@@ -1,21 +1,23 @@
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
-class AppContentWrapper extends Component {
-	private mainWrapperClasses = combine(
+class AppContentWrapper extends PureComponent {
+
+	private static innerWrapperClasses = combine(
+			bs.pb2, bs.mb3,
+	);
+
+	private static mainWrapperClasses = combine(
 			bs.colLg10, bs.mlSmAuto,
 			bs.pt3, bs.px4,
-	);
-	private innerWrapperClasses = combine(
-			bs.pb2, bs.mb3,
 	);
 
 	public render() {
 		return (
-				<main role="main" className={this.mainWrapperClasses}>
-					<div className={this.innerWrapperClasses}>
+				<main role="main" className={AppContentWrapper.mainWrapperClasses}>
+					<div className={AppContentWrapper.innerWrapperClasses}>
 						{this.props.children}
 					</div>
 				</main>

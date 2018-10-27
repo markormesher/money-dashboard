@@ -2,7 +2,7 @@ import { PayloadAction } from "../PayloadAction";
 import { NavActions } from "./actions";
 
 interface INavState {
-	isOpen: boolean; // only matters when nav is in mobile-view
+	readonly isOpen: boolean; // only matters when nav is in mobile-view
 }
 
 const initialState: INavState = {

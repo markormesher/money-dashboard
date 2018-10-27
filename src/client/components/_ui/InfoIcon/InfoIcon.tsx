@@ -5,7 +5,7 @@ import { PureComponent } from "react";
 import * as bs from "../../../bootstrap-aliases";
 
 interface IInfoIconPros {
-	hoverText: string;
+	readonly hoverText: string;
 }
 
 class InfoIcon extends PureComponent<IInfoIconPros> {

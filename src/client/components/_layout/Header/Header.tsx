@@ -1,7 +1,7 @@
 import { faBars, faPoundSign } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { AnyAction, Dispatch } from "redux";
@@ -12,13 +12,13 @@ import { IRootState } from "../../../redux/root";
 import * as style from "./Header.scss";
 
 interface IHeaderProps {
-	nav?: {
-		isOpen?: boolean;
+	readonly nav?: {
+		readonly isOpen?: boolean;
 	};
 
-	actions?: {
-		openNav: () => AnyAction,
-		closeNav: () => AnyAction,
+	readonly actions?: {
+		readonly openNav: () => AnyAction,
+		readonly closeNav: () => AnyAction,
 	};
 }
 
@@ -41,19 +41,12 @@ function mapDispatchToProps(dispatch: Dispatch, props: IHeaderProps): IHeaderPro
 	};
 }
 
-class UCHeader extends Component<IHeaderProps> {
+class UCHeader extends PureComponent<IHeaderProps> {
+
 	constructor(props: IHeaderProps) {
 		super(props);
 
 		this.toggleNav = this.toggleNav.bind(this);
-	}
-
-	public toggleNav() {
-		if (this.props.nav.isOpen) {
-			this.props.actions.closeNav();
-		} else {
-			this.props.actions.openNav();
-		}
 	}
 
 	public render() {
@@ -76,6 +69,14 @@ class UCHeader extends Component<IHeaderProps> {
 					</Link>
 				</nav>
 		);
+	}
+
+	private toggleNav() {
+		if (this.props.nav.isOpen) {
+			this.props.actions.closeNav();
+		} else {
+			this.props.actions.openNav();
+		}
 	}
 }
 

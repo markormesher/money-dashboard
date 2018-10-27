@@ -1,6 +1,6 @@
 import { faPencil, faUserPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
@@ -15,10 +15,10 @@ import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import * as appStyles from "../App/App.scss";
 
 interface IProfileSettingsProps {
-	lastUpdate: number;
-	activeProfile?: ThinProfile;
-	actions?: {
-		deleteProfile: (id: string) => AnyAction,
+	readonly lastUpdate: number;
+	readonly activeProfile?: ThinProfile;
+	readonly actions?: {
+		readonly deleteProfile: (id: string) => AnyAction,
 	};
 }
 
@@ -39,7 +39,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfileSettingsProps): I
 	};
 }
 
-class UCProfileSettings extends Component<IProfileSettingsProps> {
+class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 
 	private tableColumns: IColumn[] = [
 		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
@@ -48,6 +48,7 @@ class UCProfileSettings extends Component<IProfileSettingsProps> {
 
 	constructor(props: IProfileSettingsProps) {
 		super(props);
+
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
 	}

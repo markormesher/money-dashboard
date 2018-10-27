@@ -3,8 +3,8 @@ import { PayloadAction } from "../PayloadAction";
 import { GlobalActions } from "./actions";
 
 interface IGlobalState {
-	waitingFor: string[];
-	error?: DetailedError;
+	readonly waitingFor: string[];
+	readonly error?: DetailedError;
 }
 
 const initialState: IGlobalState = {

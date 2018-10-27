@@ -4,14 +4,14 @@ import { PureComponent } from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
 
 interface IDeleteBtnProps<Payload> {
-	payload?: Payload;
-	onConfirmedClick?: (payload: Payload) => void;
-	btnProps?: React.HTMLProps<HTMLButtonElement>;
+	readonly payload?: Payload;
+	readonly onConfirmedClick?: (payload: Payload) => void;
+	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
 }
 
 interface IDeleteBtnState {
-	triggered: boolean;
-	running: boolean;
+	readonly triggered: boolean;
+	readonly running: boolean;
 }
 
 class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDeleteBtnState> {

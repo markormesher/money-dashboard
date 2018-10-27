@@ -1,22 +1,22 @@
 import * as React from "react";
-import { Component, FormEvent, ReactNode } from "react";
+import { FormEvent, PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledSelectInputProps {
-	id: string;
-	label: string | ReactNode;
-	value: string;
-	onValueChange: (newValue: string, id: string) => void;
-	disabled?: boolean;
-	error?: string;
+	readonly id: string;
+	readonly label: string | ReactNode;
+	readonly value: string;
+	readonly onValueChange: (newValue: string, id: string) => void;
+	readonly disabled?: boolean;
+	readonly error?: string;
 }
 
 interface IControlledSelectInputState {
-	hasBeenTouched: boolean;
+	readonly hasBeenTouched: boolean;
 }
 
-class ControlledSelectInput extends Component<IControlledSelectInputProps, IControlledSelectInputState> {
+class ControlledSelectInput extends PureComponent<IControlledSelectInputProps, IControlledSelectInputState> {
 
 	public constructor(props: IControlledSelectInputProps) {
 		super(props);

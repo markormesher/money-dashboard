@@ -1,15 +1,15 @@
-import { Component } from "react";
 import * as React from "react";
+import { PureComponent } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { ISortEntry } from "./DataTable";
 import * as styles from "./DataTable.scss";
 
 interface IDataTableOuterFooterProps {
-	pageSize: number;
-	currentPage: number;
-	sortedColumns: ISortEntry[];
-	filteredRowCount: number;
-	totalRowCount: number;
+	readonly pageSize: number;
+	readonly currentPage: number;
+	readonly sortedColumns: ISortEntry[];
+	readonly filteredRowCount: number;
+	readonly totalRowCount: number;
 }
 
 const sortDirectionFull = {
@@ -17,7 +17,7 @@ const sortDirectionFull = {
 	desc: "descending",
 };
 
-class DataTableOuterFooter extends Component<IDataTableOuterFooterProps> {
+class DataTableOuterFooter extends PureComponent<IDataTableOuterFooterProps> {
 	public render() {
 		const { pageSize, currentPage, sortedColumns, filteredRowCount, totalRowCount } = this.props;
 

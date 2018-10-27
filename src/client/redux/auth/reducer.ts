@@ -3,8 +3,8 @@ import { PayloadAction } from "../PayloadAction";
 import { AuthActions } from "./actions";
 
 interface IAuthState {
-	activeUser?: ThinUser;
-	activeProfile?: number;
+	readonly activeUser?: ThinUser;
+	readonly activeProfile?: number;
 }
 
 const initialState: IAuthState = {

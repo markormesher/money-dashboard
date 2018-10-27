@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from "axios";
 import { string } from "prop-types";
 import { stringify } from "qs";
 import * as React from "react";
-import { Component, ReactNode } from "react";
+import { PureComponent, ReactNode } from "react";
 import { DatatableResponse } from "../../../../server/helpers/datatable-helper";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
@@ -16,41 +16,41 @@ import { DataTableOuterHeader } from "./DataTableOuterHeader";
 type SortDirection = "asc" | "desc";
 
 interface IColumn {
-	title: string;
-	lowercaseTitle?: string;
-	sortable?: boolean;
-	sortField?: string | string[];
-	defaultSortDirection?: SortDirection;
-	defaultSortPriority?: number;
+	readonly title: string;
+	readonly lowercaseTitle?: string;
+	readonly sortable?: boolean;
+	readonly sortField?: string | string[];
+	readonly defaultSortDirection?: SortDirection;
+	readonly defaultSortPriority?: number;
 }
 
 interface ISortEntry {
-	column: IColumn;
-	dir: SortDirection;
+	readonly column: IColumn;
+	readonly dir: SortDirection;
 }
 
 interface IDataTableProps<Model> {
-	api: string;
-	apiExtraParams?: { [key: string]: any };
-	pageSize?: number;
-	columns: IColumn[];
-	rowRenderer: (row: Model, index: number) => ReactNode;
+	readonly api: string;
+	readonly apiExtraParams?: { readonly [key: string]: any };
+	readonly pageSize?: number;
+	readonly columns: IColumn[];
+	readonly rowRenderer: (row: Model, index: number) => ReactNode;
 }
 
 interface IDataTableState<Model> {
-	loading?: boolean;
-	failed: boolean;
-	currentPage?: number;
-	searchTerm?: string;
-	sortedColumns: ISortEntry[];
-	data?: {
-		rows?: Model[],
-		filteredRowCount?: number,
-		totalRowCount?: number,
+	readonly loading?: boolean;
+	readonly failed: boolean;
+	readonly currentPage?: number;
+	readonly searchTerm?: string;
+	readonly sortedColumns: ISortEntry[];
+	readonly data?: {
+		readonly rows?: Model[],
+		readonly filteredRowCount?: number,
+		readonly totalRowCount?: number,
 	};
 }
 
-class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState<Model>> {
+class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableState<Model>> {
 
 	public static defaultProps: Partial<IDataTableProps<any>> = {
 		apiExtraParams: {},
@@ -72,7 +72,7 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 
 	// give each remote request an increasing "frame" number so that late arrivals will be dropped
 	private frameCounter = 0;
-	private lastFrameReceived = -1;
+	private lastFrameReceived = 0;
 
 	private fetchPending = false;
 
@@ -95,6 +95,8 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 		this.handleSearchTermSet = this.handleSearchTermSet.bind(this);
 		this.toggleColumnSortOrder = this.toggleColumnSortOrder.bind(this);
 		this.fetchData = this.fetchData.bind(this);
+		this.generateDefaultSortedColumns = this.generateDefaultSortedColumns.bind(this);
+		this.generateMsgRow = this.generateMsgRow.bind(this);
 		this.onDataLoaded = this.onDataLoaded.bind(this);
 		this.onDataLoadFailed = this.onDataLoadFailed.bind(this);
 	}
@@ -170,9 +172,17 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 		);
 	}
 
-	private handlePrevPageClick = () => this.setState({ currentPage: this.state.currentPage - 1 });
-	private handleNextPageClick = () => this.setState({ currentPage: this.state.currentPage + 1 });
-	private handleSearchTermSet = (searchTerm: string) => this.setState({ searchTerm });
+	private handlePrevPageClick() {
+		this.setState({ currentPage: this.state.currentPage - 1 });
+	}
+
+	private handleNextPageClick() {
+		this.setState({ currentPage: this.state.currentPage + 1 });
+	}
+
+	private handleSearchTermSet(searchTerm: string) {
+		this.setState({ searchTerm });
+	}
 
 	private toggleColumnSortOrder(column: IColumn) {
 		// note: always compare columns by key not equality
@@ -244,15 +254,12 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 		this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
 	}
 
-	private shouldDrawFrame(frame: number): boolean {
-		return frame >= this.lastFrameReceived;
-	}
-
 	private onDataLoaded(frame: number, rawData: DatatableResponse<Model>) {
-		this.onFrameReceived(frame);
-		if (!this.shouldDrawFrame(frame)) {
+		if (frame <= this.lastFrameReceived) {
 			return;
 		}
+
+		this.onFrameReceived(frame);
 
 		const { pageSize } = this.props;
 		const { currentPage } = this.state;
@@ -272,10 +279,11 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 	}
 
 	private onDataLoadFailed(frame: number) {
-		this.onFrameReceived(frame);
-		if (!this.shouldDrawFrame(frame)) {
+		if (frame <= this.lastFrameReceived) {
 			return;
 		}
+
+		this.onFrameReceived(frame);
 
 		this.setState({
 			loading: false,

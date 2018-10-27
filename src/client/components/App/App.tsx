@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import * as Loadable from "react-loadable";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
@@ -22,14 +22,11 @@ import { ProfileSettings } from "../ProfileSettings/ProfileSettings";
 import { Transactions } from "../Transactions/Transactions";
 import "./App.scss";
 
-// TODO: rewire some components to be pure components
-// TODO: implement shouldComponentUpdate() where sensible
-
 interface IAppProps {
-	waitingFor?: string[];
-	globalError?: Error;
-	activeUser?: ThinUser;
-	currentPath?: string;
+	readonly waitingFor?: string[];
+	readonly globalError?: Error;
+	readonly activeUser?: ThinUser;
+	readonly currentPath?: string;
 }
 
 function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
@@ -48,7 +45,7 @@ const LoadableLogin = Loadable({
 	loading: () => (<FullPageSpinner/>),
 });
 
-class UCApp extends Component<IAppProps> {
+class UCApp extends PureComponent<IAppProps> {
 
 	constructor(props: IAppProps) {
 		super(props);

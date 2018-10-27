@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
@@ -24,14 +24,14 @@ import * as appStyles from "../App/App.scss";
 import { EditTransactionModal } from "./EditTransactionModal";
 
 interface ITransactionProps {
-	lastUpdate: number;
-	dateMode: DateModeOption;
-	transactionToEdit?: ThinTransaction;
-	actions?: {
-		deleteTransaction: (id: string) => AnyAction,
-		setDateMode: (mode: DateModeOption) => AnyAction,
-		setLastUpdate: () => AnyAction,
-		setTransactionToEdit: (transaction: ThinTransaction) => AnyAction,
+	readonly lastUpdate: number;
+	readonly dateMode: DateModeOption;
+	readonly transactionToEdit?: ThinTransaction;
+	readonly actions?: {
+		readonly deleteTransaction: (id: string) => AnyAction,
+		readonly setDateMode: (mode: DateModeOption) => AnyAction,
+		readonly setLastUpdate: () => AnyAction,
+		readonly setTransactionToEdit: (transaction: ThinTransaction) => AnyAction,
 	};
 }
 
@@ -56,7 +56,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: ITransactionProps): ITran
 	};
 }
 
-class UCTransactions extends Component<ITransactionProps> {
+class UCTransactions extends PureComponent<ITransactionProps> {
 
 	private static dateModeStateFilter(state: IRootState) {
 		return state.transactions.dateMode;
@@ -78,6 +78,7 @@ class UCTransactions extends Component<ITransactionProps> {
 
 	constructor(props: ITransactionProps) {
 		super(props);
+
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
 	}

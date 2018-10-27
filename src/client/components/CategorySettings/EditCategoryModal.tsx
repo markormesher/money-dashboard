@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
@@ -14,18 +14,18 @@ import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
 import { Modal } from "../_ui/Modal/Modal";
 
 interface IEditCategoryModalProps {
-	categoryToEdit?: ThinCategory;
-	editorBusy?: boolean;
+	readonly categoryToEdit?: ThinCategory;
+	readonly editorBusy?: boolean;
 
-	actions?: {
-		setCategoryToEdit: (category: ThinCategory) => AnyAction,
-		startSaveCategory: (category: Partial<ThinCategory>) => AnyAction,
+	readonly actions?: {
+		readonly setCategoryToEdit: (category: ThinCategory) => AnyAction,
+		readonly startSaveCategory: (category: Partial<ThinCategory>) => AnyAction,
 	};
 }
 
 interface IEditCategoryModalState {
-	currentValues: ThinCategory;
-	validationResult: IThinCategoryValidationResult;
+	readonly currentValues: ThinCategory;
+	readonly validationResult: IThinCategoryValidationResult;
 }
 
 function mapStateToProps(state: IRootState, props: IEditCategoryModalProps): IEditCategoryModalProps {
@@ -46,7 +46,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditCategoryModalProps):
 	};
 }
 
-class UCEditCategoryModal extends Component<IEditCategoryModalProps, IEditCategoryModalState> {
+class UCEditCategoryModal extends PureComponent<IEditCategoryModalProps, IEditCategoryModalState> {
 
 	constructor(props: IEditCategoryModalProps) {
 		super(props);
@@ -58,10 +58,9 @@ class UCEditCategoryModal extends Component<IEditCategoryModalProps, IEditCatego
 
 		this.handleNameChange = this.handleNameChange.bind(this);
 		this.handleTypeCheckedChange = this.handleTypeCheckedChange.bind(this);
-
-		this.updateModel = this.updateModel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
+		this.updateModel = this.updateModel.bind(this);
 	}
 
 	public render() {
@@ -139,8 +138,11 @@ class UCEditCategoryModal extends Component<IEditCategoryModalProps, IEditCatego
 		);
 	}
 
-	private readonly handleNameChange = (value: string) => this.updateModel({ name: value });
-	private readonly handleTypeCheckedChange = (checked: boolean, id: string) => {
+	private handleNameChange(value: string) {
+		this.updateModel({ name: value });
+	}
+
+	private handleTypeCheckedChange(checked: boolean, id: string) {
 		switch (id) {
 			case "type-income":
 				this.updateModel({ isIncomeCategory: checked });
@@ -160,6 +162,16 @@ class UCEditCategoryModal extends Component<IEditCategoryModalProps, IEditCatego
 		}
 	}
 
+	private handleSave() {
+		if (this.state.validationResult.isValid) {
+			this.props.actions.startSaveCategory(this.state.currentValues);
+		}
+	}
+
+	private handleCancel() {
+		this.props.actions.setCategoryToEdit(undefined);
+	}
+
 	private updateModel(category: Partial<ThinCategory>) {
 		const updatedCategory = {
 			...this.state.currentValues,
@@ -169,16 +181,6 @@ class UCEditCategoryModal extends Component<IEditCategoryModalProps, IEditCatego
 			currentValues: updatedCategory,
 			validationResult: validateThinCategory(updatedCategory),
 		});
-	}
-
-	private handleSave() {
-		if (this.state.validationResult.isValid) {
-			this.props.actions.startSaveCategory(this.state.currentValues);
-		}
-	}
-
-	private handleCancel() {
-		this.props.actions.setCategoryToEdit(undefined);
 	}
 }
 

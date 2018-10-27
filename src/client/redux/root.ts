@@ -16,21 +16,21 @@ import { ITransactionsState, transactionsReducer } from "./transactions/reducer"
 import { transactionsSagas } from "./transactions/sagas";
 
 interface IRootState {
-	auth?: IAuthState;
-	global?: IGlobalState;
-	nav?: INavState;
-	router?: { // from connected-react-router
-		location?: {
-			pathname?: string;
+	readonly auth?: IAuthState;
+	readonly global?: IGlobalState;
+	readonly nav?: INavState;
+	readonly router?: { // from connected-react-router
+		readonly location?: {
+			readonly pathname?: string;
 		};
 	};
-	settings?: {
-		accounts?: IAccountSettingsState;
-		budgets?: IBudgetSettingsState;
-		categories?: ICategorySettingsState;
-		profiles?: IProfileSettingsState;
+	readonly settings?: {
+		readonly accounts?: IAccountSettingsState;
+		readonly budgets?: IBudgetSettingsState;
+		readonly categories?: ICategorySettingsState;
+		readonly profiles?: IProfileSettingsState;
 	};
-	transactions?: ITransactionsState;
+	readonly transactions?: ITransactionsState;
 }
 
 const rootReducer = combineReducers({

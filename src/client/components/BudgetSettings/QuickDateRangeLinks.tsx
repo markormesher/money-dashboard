@@ -9,12 +9,14 @@ enum QuickDates {
 }
 
 interface IQuickDateRangeLinks {
-	handleSelection: (start: Moment, end: Moment) => void;
+	readonly handleSelection: (start: Moment, end: Moment) => void;
 }
 
 class QuickDateRangeLinks extends PureComponent<IQuickDateRangeLinks> {
+
 	constructor(props: IQuickDateRangeLinks) {
 		super(props);
+
 		this.setQuickDateThisMonth = this.setQuickDateThisMonth.bind(this);
 		this.setQuickDateThisYear = this.setQuickDateThisYear.bind(this);
 		this.setQuickDateNextMonth = this.setQuickDateNextMonth.bind(this);
@@ -36,10 +38,21 @@ class QuickDateRangeLinks extends PureComponent<IQuickDateRangeLinks> {
 		);
 	}
 
-	private readonly setQuickDateThisMonth = (e: MouseEvent) => this.setQuickDate(QuickDates.THIS_MONTH, e);
-	private readonly setQuickDateThisYear = (e: MouseEvent) => this.setQuickDate(QuickDates.THIS_YEAR, e);
-	private readonly setQuickDateNextMonth = (e: MouseEvent) => this.setQuickDate(QuickDates.NEXT_MONTH, e);
-	private readonly setQuickDateNextYear = (e: MouseEvent) => this.setQuickDate(QuickDates.NEXT_YEAR, e);
+	private setQuickDateThisMonth(e: MouseEvent) {
+		this.setQuickDate(QuickDates.THIS_MONTH, e);
+	}
+
+	private setQuickDateThisYear(e: MouseEvent) {
+		this.setQuickDate(QuickDates.THIS_YEAR, e);
+	}
+
+	private setQuickDateNextMonth(e: MouseEvent) {
+		this.setQuickDate(QuickDates.NEXT_MONTH, e);
+	}
+
+	private setQuickDateNextYear(e: MouseEvent) {
+		this.setQuickDate(QuickDates.NEXT_YEAR, e);
+	}
 
 	private setQuickDate(which: QuickDates, evt?: MouseEvent) {
 		if (evt) {

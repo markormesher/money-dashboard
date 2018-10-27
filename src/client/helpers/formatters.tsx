@@ -37,6 +37,10 @@ function formatDate(date: Date | Moment.Moment | string, format: "user" | "syste
 	}
 }
 
+function capitaliseFirstLetter(str: string): string {
+	return str.slice(0, 1).toUpperCase() + str.slice(1);
+}
+
 // accounts
 
 function generateAccountTypeBadge(account: ThinAccount): ReactNode {
@@ -140,10 +144,11 @@ function generateCategoryTypeBadge(category: ThinCategory): ReactNode | ReactNod
 }
 
 export {
+	generateBadge,
 	formatCurrency,
 	formatCurrencyStyled,
 	formatDate,
-	generateBadge,
+	capitaliseFirstLetter,
 	generateAccountTypeBadge,
 	formatBudgetPeriod,
 	getBudgetPeriodType,

@@ -6,7 +6,7 @@ export class Constants {
 }
 
 let loadedConstants: Constants;
-const loadedSecrets: { [key: string]: string } = {};
+let loadedSecrets: { readonly [key: string]: string } = {};
 
 const projectDir = resolve(__dirname, "..", "..", "..");
 const configDir = resolve(__dirname, "..", "config");
@@ -33,9 +33,15 @@ function getConstants(): Constants {
 function getSecret(key: string): string {
 	if (loadedSecrets[key] === undefined) {
 		if (runningInDocker()) {
-			loadedSecrets[key] = readFileSync(`/run/secrets/${key}`).toString().trim();
+			loadedSecrets = {
+				...loadedSecrets,
+				[key]: readFileSync(`/run/secrets/${key}`).toString().trim(),
+			};
 		} else {
-			loadedSecrets[key] = readFileSync(`${configDir}/secrets/${key}`).toString().trim();
+			loadedSecrets = {
+				...loadedSecrets,
+				[key]: readFileSync(`${configDir}/secrets/${key}`).toString().trim(),
+			};
 		}
 	}
 	return loadedSecrets[key];

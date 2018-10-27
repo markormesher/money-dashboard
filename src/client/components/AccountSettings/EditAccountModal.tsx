@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
@@ -13,18 +13,18 @@ import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
 import { Modal } from "../_ui/Modal/Modal";
 
 interface IEditAccountModalProps {
-	accountToEdit?: ThinAccount;
-	editorBusy?: boolean;
+	readonly accountToEdit?: ThinAccount;
+	readonly editorBusy?: boolean;
 
-	actions?: {
-		setAccountToEdit: (account: ThinAccount) => AnyAction,
-		startSaveAccount: (account: Partial<ThinAccount>) => AnyAction,
+	readonly actions?: {
+		readonly setAccountToEdit: (account: ThinAccount) => AnyAction,
+		readonly startSaveAccount: (account: Partial<ThinAccount>) => AnyAction,
 	};
 }
 
 interface IEditAccountModalState {
-	currentValues: ThinAccount;
-	validationResult: IThinAccountValidationResult;
+	readonly currentValues: ThinAccount;
+	readonly validationResult: IThinAccountValidationResult;
 }
 
 function mapStateToProps(state: IRootState, props: IEditAccountModalProps): IEditAccountModalProps {
@@ -45,7 +45,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditAccountModalProps): 
 	};
 }
 
-class UCEditAccountModal extends Component<IEditAccountModalProps, IEditAccountModalState> {
+class UCEditAccountModal extends PureComponent<IEditAccountModalProps, IEditAccountModalState> {
 
 	constructor(props: IEditAccountModalProps) {
 		super(props);
@@ -57,10 +57,9 @@ class UCEditAccountModal extends Component<IEditAccountModalProps, IEditAccountM
 
 		this.handleNameChange = this.handleNameChange.bind(this);
 		this.handleTypeChange = this.handleTypeChange.bind(this);
-
-		this.updateModel = this.updateModel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
+		this.updateModel = this.updateModel.bind(this);
 	}
 
 	public render() {
@@ -110,18 +109,12 @@ class UCEditAccountModal extends Component<IEditAccountModalProps, IEditAccountM
 		);
 	}
 
-	private readonly handleNameChange = (value: string) => this.updateModel({ name: value });
-	private readonly handleTypeChange = (value: string) => this.updateModel({ type: value });
+	private handleNameChange(value: string) {
+		this.updateModel({ name: value });
+	}
 
-	private updateModel(account: Partial<ThinAccount>) {
-		const updatedAccount = {
-			...this.state.currentValues,
-			...account,
-		};
-		this.setState({
-			currentValues: updatedAccount,
-			validationResult: validateThinAccount(updatedAccount),
-		});
+	private handleTypeChange(value: string) {
+		this.updateModel({ type: value });
 	}
 
 	private handleSave() {
@@ -132,6 +125,17 @@ class UCEditAccountModal extends Component<IEditAccountModalProps, IEditAccountM
 
 	private handleCancel() {
 		this.props.actions.setAccountToEdit(undefined);
+	}
+
+	private updateModel(account: Partial<ThinAccount>) {
+		const updatedAccount = {
+			...this.state.currentValues,
+			...account,
+		};
+		this.setState({
+			currentValues: updatedAccount,
+			validationResult: validateThinAccount(updatedAccount),
+		});
 	}
 }
 

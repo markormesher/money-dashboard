@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinBudget } from "../../../server/model-thins/ThinBudget";
@@ -17,13 +17,13 @@ import * as appStyles from "../App/App.scss";
 import { EditBudgetModal } from "./EditBudgetModal";
 
 interface IBudgetSettingsProps {
-	lastUpdate: number;
-	displayCurrentOnly: boolean;
-	budgetToEdit?: ThinBudget;
-	actions?: {
-		deleteBudget: (id: string) => AnyAction,
-		setDisplayActiveOnly: (active: boolean) => AnyAction,
-		setBudgetToEdit: (budget: ThinBudget) => AnyAction,
+	readonly lastUpdate: number;
+	readonly displayCurrentOnly: boolean;
+	readonly budgetToEdit?: ThinBudget;
+	readonly actions?: {
+		readonly deleteBudget: (id: string) => AnyAction,
+		readonly setDisplayActiveOnly: (active: boolean) => AnyAction,
+		readonly setBudgetToEdit: (budget: ThinBudget) => AnyAction,
 	};
 }
 
@@ -47,7 +47,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetSettingsProps): IB
 	};
 }
 
-class UCBudgetSettings extends Component<IBudgetSettingsProps> {
+class UCBudgetSettings extends PureComponent<IBudgetSettingsProps> {
 
 	private static currentOnlyStateFilter(state: IRootState) {
 		return state.settings.budgets.displayCurrentOnly;
@@ -73,6 +73,7 @@ class UCBudgetSettings extends Component<IBudgetSettingsProps> {
 
 	constructor(props: IBudgetSettingsProps) {
 		super(props);
+
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
 	}

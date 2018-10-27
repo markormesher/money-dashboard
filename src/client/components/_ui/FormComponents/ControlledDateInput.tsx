@@ -1,22 +1,22 @@
 import * as React from "react";
-import { Component, FormEvent, ReactNode } from "react";
+import { FormEvent, PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledDateInputProps {
-	id: string;
-	label: string | ReactNode;
-	value: string | number;
-	onValueChange: (newValue: string, id: string) => void;
-	disabled?: boolean;
-	error?: string;
+	readonly id: string;
+	readonly label: string | ReactNode;
+	readonly value: string | number;
+	readonly onValueChange: (newValue: string, id: string) => void;
+	readonly disabled?: boolean;
+	readonly error?: string;
 }
 
 interface IControlledDateInputState {
-	hasBeenTouched: boolean;
+	readonly hasBeenTouched: boolean;
 }
 
-class ControlledDateInput extends Component<IControlledDateInputProps, IControlledDateInputState> {
+class ControlledDateInput extends PureComponent<IControlledDateInputProps, IControlledDateInputState> {
 
 	public constructor(props: IControlledDateInputProps) {
 		super(props);

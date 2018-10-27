@@ -3,10 +3,10 @@ import { PayloadAction } from "../../PayloadAction";
 import { BudgetSettingsActions } from "./actions";
 
 interface IBudgetSettingsState {
-	lastUpdate: number;
-	displayCurrentOnly: boolean;
-	budgetToEdit: ThinBudget;
-	editorBusy: boolean;
+	readonly lastUpdate: number;
+	readonly displayCurrentOnly: boolean;
+	readonly budgetToEdit: ThinBudget;
+	readonly editorBusy: boolean;
 }
 
 const initialState: IBudgetSettingsState = {

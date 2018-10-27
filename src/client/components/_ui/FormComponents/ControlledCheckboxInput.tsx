@@ -1,22 +1,22 @@
 import * as React from "react";
-import { Component, FormEvent, ReactNode } from "react";
+import { FormEvent, PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledCheckboxInputProps {
-	id: string;
-	label: string | ReactNode;
-	checked: boolean;
-	onCheckedChange: (newValue: boolean, id: string) => void;
-	disabled?: boolean;
-	error?: string;
+	readonly id: string;
+	readonly label: string | ReactNode;
+	readonly checked: boolean;
+	readonly onCheckedChange: (newValue: boolean, id: string) => void;
+	readonly disabled?: boolean;
+	readonly error?: string;
 }
 
 interface IControlledCheckboxInputState {
-	hasBeenTouched: boolean;
+	readonly hasBeenTouched: boolean;
 }
 
-class ControlledCheckboxInput extends Component<IControlledCheckboxInputProps, IControlledCheckboxInputState> {
+class ControlledCheckboxInput extends PureComponent<IControlledCheckboxInputProps, IControlledCheckboxInputState> {
 
 	public constructor(props: IControlledCheckboxInputProps) {
 		super(props);

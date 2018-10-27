@@ -2,18 +2,31 @@
 	"defaultSeverity": "error",
 	"extends": [
 		"tslint:recommended",
-		"tslint-react"
+		"tslint-react",
+		"tslint-immutable"
 	],
 	"jsRules": {},
 	"rules": {
+		// disabled rules
+		"object-literal-sort-keys": false,
+		"jsx-no-multiline-js": false,
+
+		// readability
 		"indent": {
 			"options": [
 				"tabs"
 			]
 		},
-		"jsx-no-multiline-js": false,
 		"no-default-export": true,
-		"object-literal-sort-keys": false // TODO: enable this
+
+		// immutability
+		"readonly-keyword": [
+			true,
+			{
+				"ignore-class": true,
+				"ignore-local": true
+			}
+		]
 	},
 	"rulesDirectory": []
 }

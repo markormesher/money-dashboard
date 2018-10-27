@@ -9,13 +9,13 @@ import { Transaction } from "../models/Transaction";
 import { User } from "../models/User";
 
 export interface IBudgetBalance {
-	budget: Budget;
-	balance: number;
+	readonly budget: Budget;
+	readonly balance: number;
 }
 
 export interface IThinBudgetBalance {
-	budget: ThinBudget;
-	balance: number;
+	readonly budget: ThinBudget;
+	readonly balance: number;
 }
 
 function getBudgetBalances(user: User, start: Date = null, end: Date = null): Bluebird<IBudgetBalance[]> {

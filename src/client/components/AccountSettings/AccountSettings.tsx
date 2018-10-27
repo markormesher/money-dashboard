@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
@@ -17,14 +17,14 @@ import * as appStyles from "../App/App.scss";
 import { EditAccountModal } from "./EditAccountModal";
 
 interface IAccountSettingsProps {
-	lastUpdate?: number;
-	displayActiveOnly?: boolean;
-	accountToEdit?: ThinAccount;
+	readonly lastUpdate?: number;
+	readonly displayActiveOnly?: boolean;
+	readonly accountToEdit?: ThinAccount;
 
-	actions?: {
-		deleteAccount: (id: string) => AnyAction,
-		setDisplayActiveOnly: (active: boolean) => AnyAction,
-		setAccountToEdit: (account: ThinAccount) => AnyAction,
+	readonly actions?: {
+		readonly deleteAccount: (id: string) => AnyAction,
+		readonly setDisplayActiveOnly: (active: boolean) => AnyAction,
+		readonly setAccountToEdit: (account: ThinAccount) => AnyAction,
 	};
 }
 
@@ -48,7 +48,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAccountSettingsProps): I
 	};
 }
 
-class UCAccountSettings extends Component<IAccountSettingsProps> {
+class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 
 	private static activeOnlyStateFilter(state: IRootState) {
 		return state.settings.accounts.displayActiveOnly;
@@ -62,6 +62,7 @@ class UCAccountSettings extends Component<IAccountSettingsProps> {
 
 	constructor(props: IAccountSettingsProps) {
 		super(props);
+
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
 	}
@@ -141,7 +142,6 @@ class UCAccountSettings extends Component<IAccountSettingsProps> {
 				</div>
 		);
 	}
-
 }
 
 export const AccountSettings = connect(mapStateToProps, mapDispatchToProps)(UCAccountSettings);

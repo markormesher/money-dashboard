@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
@@ -24,22 +24,22 @@ import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
 import { Modal } from "../_ui/Modal/Modal";
 
 interface IEditTransactionModalProps {
-	transactionToEdit?: ThinTransaction;
-	editorBusy?: boolean;
-	categoryList?: ThinCategory[];
-	accountList?: ThinAccount[];
+	readonly transactionToEdit?: ThinTransaction;
+	readonly editorBusy?: boolean;
+	readonly categoryList?: ThinCategory[];
+	readonly accountList?: ThinAccount[];
 
-	actions?: {
-		setTransactionToEdit: (transaction: ThinTransaction) => AnyAction,
-		startSaveTransaction: (transaction: Partial<ThinTransaction>) => AnyAction,
-		startLoadCategoryList: () => AnyAction,
-		startLoadAccountList: () => AnyAction,
+	readonly actions?: {
+		readonly setTransactionToEdit: (transaction: ThinTransaction) => AnyAction,
+		readonly startSaveTransaction: (transaction: Partial<ThinTransaction>) => AnyAction,
+		readonly startLoadCategoryList: () => AnyAction,
+		readonly startLoadAccountList: () => AnyAction,
 	};
 }
 
 interface IEditTransactionModalState {
-	currentValues: ThinTransaction;
-	validationResult: IThinTransactionValidationResult;
+	readonly currentValues: ThinTransaction;
+	readonly validationResult: IThinTransactionValidationResult;
 }
 
 function mapStateToProps(state: IRootState, props: IEditTransactionModalProps): IEditTransactionModalProps {
@@ -64,7 +64,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditTransactionModalProp
 	};
 }
 
-class UCEditTransactionModal extends Component<IEditTransactionModalProps, IEditTransactionModalState> {
+class UCEditTransactionModal extends PureComponent<IEditTransactionModalProps, IEditTransactionModalState> {
 
 	constructor(props: IEditTransactionModalProps) {
 		super(props);
@@ -81,10 +81,9 @@ class UCEditTransactionModal extends Component<IEditTransactionModalProps, IEdit
 		this.handleCategoryChange = this.handleCategoryChange.bind(this);
 		this.handleAmountChange = this.handleAmountChange.bind(this);
 		this.handleNoteChange = this.handleNoteChange.bind(this);
-
-		this.updateModel = this.updateModel.bind(this);
 		this.handleSave = this.handleSave.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
+		this.updateModel = this.updateModel.bind(this);
 	}
 
 	public componentDidMount(): void {
@@ -206,26 +205,35 @@ class UCEditTransactionModal extends Component<IEditTransactionModalProps, IEdit
 		);
 	}
 
-	private readonly handleTransactionDateChange = (value: string) => this.updateModel({
-		transactionDate: value,
-		effectiveDate: value,
-	})
-	private readonly handleEffectiveDateChange = (value: string) => this.updateModel({ effectiveDate: value });
-	private readonly handleAccountChange = (value: string) => this.updateModel({ accountId: value });
-	private readonly handlePayeeChange = (value: string) => this.updateModel({ payee: value });
-	private readonly handleCategoryChange = (value: string) => this.updateModel({ categoryId: value });
-	private readonly handleAmountChange = (value: string) => this.updateModel({ amount: parseFloat(value) });
-	private readonly handleNoteChange = (value: string) => this.updateModel({ note: value });
-
-	private updateModel(transaction: Partial<ThinTransaction>) {
-		const updatedTransaction = {
-			...this.state.currentValues,
-			...transaction,
-		};
-		this.setState({
-			currentValues: updatedTransaction,
-			validationResult: validateThinTransaction(updatedTransaction),
+	private handleTransactionDateChange(value: string) {
+		this.updateModel({
+			transactionDate: value,
+			effectiveDate: value,
 		});
+	}
+
+	private handleEffectiveDateChange(value: string) {
+		this.updateModel({ effectiveDate: value });
+	}
+
+	private handleAccountChange(value: string) {
+		this.updateModel({ accountId: value });
+	}
+
+	private handlePayeeChange(value: string) {
+		this.updateModel({ payee: value });
+	}
+
+	private handleCategoryChange(value: string) {
+		this.updateModel({ categoryId: value });
+	}
+
+	private handleAmountChange(value: string) {
+		this.updateModel({ amount: parseFloat(value) });
+	}
+
+	private handleNoteChange(value: string) {
+		this.updateModel({ note: value });
 	}
 
 	private handleSave() {
@@ -236,6 +244,17 @@ class UCEditTransactionModal extends Component<IEditTransactionModalProps, IEdit
 
 	private handleCancel() {
 		this.props.actions.setTransactionToEdit(undefined);
+	}
+
+	private updateModel(transaction: Partial<ThinTransaction>) {
+		const updatedTransaction = {
+			...this.state.currentValues,
+			...transaction,
+		};
+		this.setState({
+			currentValues: updatedTransaction,
+			validationResult: validateThinTransaction(updatedTransaction),
+		});
 	}
 }
 

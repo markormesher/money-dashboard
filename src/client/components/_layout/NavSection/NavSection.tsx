@@ -1,32 +1,34 @@
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 import * as style from "./NavSection.scss";
 
 interface INavSectionProps {
-	title?: string;
+	readonly title?: string;
 }
 
-export class NavSection extends Component<INavSectionProps> {
-	private sectionHeaderClasses = combine(
+export class NavSection extends PureComponent<INavSectionProps> {
+
+	private static sectionHeaderClasses = combine(
 			bs.alignItemsCenter, bs.justifyContentBetween,
 			bs.dFlex, bs.px3, bs.mt4, bs.mb1,
 			bs.textMuted, style.navSectionHeading,
 	);
-	private linkGroupClasses = combine(bs.nav, bs.flexColumn);
+
+	private static linkGroupClasses = combine(bs.nav, bs.flexColumn);
 
 	public render() {
 
 		return (
 				<div>
 					{this.props.title && (
-							<h6 className={this.sectionHeaderClasses}>
+							<h6 className={NavSection.sectionHeaderClasses}>
 								{this.props.title}
 							</h6>
 					)}
 
-					<ul className={this.linkGroupClasses}>
+					<ul className={NavSection.linkGroupClasses}>
 						{this.props.children}
 					</ul>
 				</div>

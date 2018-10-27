@@ -2,14 +2,15 @@ import {
 	faAnalytics,
 	faChartLine,
 	faHome,
-	faPiggyBank, faSignOut,
+	faPiggyBank,
+	faSignOut,
 	faSlidersH,
 	faTable,
 	faTags,
 	faUsers,
 } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import * as bs from "../../../bootstrap-aliases";
@@ -21,10 +22,10 @@ import { NavSection } from "../NavSection/NavSection";
 import * as style from "./Nav.scss";
 
 interface INavProps {
-	isOpen?: boolean;
+	readonly isOpen?: boolean;
 
-	actions?: {
-		logout: () => AnyAction,
+	readonly actions?: {
+		readonly logout: () => AnyAction,
 	};
 }
 
@@ -44,7 +45,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: INavProps): INavProps {
 	};
 }
 
-class UCNav extends Component<INavProps> {
+class UCNav extends PureComponent<INavProps> {
 
 	public render() {
 		const isOpen = this.props.isOpen;
