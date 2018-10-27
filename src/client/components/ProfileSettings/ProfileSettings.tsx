@@ -91,7 +91,8 @@ class ProfileSettings extends Component<IProfileSettingsProps> {
 						/>
 
 						<DeleteBtn
-								onConfirmedClick={() => this.props.actions.deleteProfile(profile.id)}
+								payload={profile.id}
+								onConfirmedClick={this.props.actions.deleteProfile}
 								btnProps={{
 									className: combine(bs.btnOutlineDark, appStyles.btnMini),
 									disabled: deleteDisabled,

@@ -101,13 +101,15 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 					<IconBtn
 							icon={faPencil}
 							text={"Edit"}
+							payload={category}
+							onClick={this.props.actions.setCategoryToEdit}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-								onClick: () => this.props.actions.setCategoryToEdit(category),
 							}}
 					/>
 					<DeleteBtn
-							onConfirmedClick={() => this.props.actions.deleteCategory(category.id)}
+							payload={category.id}
+							onConfirmedClick={this.props.actions.deleteCategory}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
 							}}

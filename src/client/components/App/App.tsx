@@ -22,7 +22,6 @@ import ProfileSettings from "../ProfileSettings/ProfileSettings";
 import Transactions from "../Transactions/Transactions";
 import "./App.scss";
 
-// TODO: remove lambdas in JSX (++perf)
 // TODO: rewire some components to be pure components
 // TODO: implement shouldComponentUpdate() where sensible
 
@@ -51,8 +50,13 @@ const LoadableLogin = Loadable({
 
 class App extends Component<IAppProps> {
 
+	constructor(props: IAppProps) {
+		super(props);
+		this.render404Error = this.render404Error.bind(this);
+	}
+
 	public render() {
-		const { waitingFor, globalError, activeUser, currentPath } = this.props;
+		const { waitingFor, globalError, activeUser } = this.props;
 
 		if (globalError) {
 			return (
@@ -94,18 +98,19 @@ class App extends Component<IAppProps> {
 								<Route path="/settings/profiles" component={ProfileSettings}/>
 
 								{/* Adding a new route? Keep it above this one! */}
-								<Route
-										render={() => {
-											const error = new Http404Error(currentPath);
-											return (
-													<ErrorPage error={error}/>
-											);
-										}}
-								/>
+								<Route render={this.render404Error}/>
 							</Switch>
 						</AppContentWrapper>
 					</AppRootWrapper>
 				</div>
+		);
+	}
+
+	private render404Error() {
+		const { currentPath } = this.props;
+		const error = new Http404Error(currentPath);
+		return (
+				<ErrorPage error={error}/>
 		);
 	}
 }

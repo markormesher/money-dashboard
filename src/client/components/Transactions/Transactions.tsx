@@ -58,6 +58,10 @@ function mapDispatchToProps(dispatch: Dispatch, props: ITransactionProps): ITran
 
 class Transactions extends Component<ITransactionProps> {
 
+	private static dateModeStateFilter(state: IRootState) {
+		return state.transactions.dateMode;
+	}
+
 	private tableColumns: IColumn[] = [
 		{
 			title: "Date",
@@ -89,7 +93,7 @@ class Transactions extends Component<ITransactionProps> {
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Transactions</h1>
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<DateModeToggleBtn
-									stateFilter={(state) => state.transactions.dateMode}
+									stateFilter={Transactions.dateModeStateFilter}
 									stateModifier={this.props.actions.setDateMode}
 									onChange={this.props.actions.setLastUpdate}
 									btnProps={{
@@ -149,13 +153,15 @@ class Transactions extends Component<ITransactionProps> {
 					<IconBtn
 							icon={faPencil}
 							text={"Edit"}
+							payload={transaction}
+							onClick={this.props.actions.setTransactionToEdit}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-								onClick: () => this.props.actions.setTransactionToEdit(transaction),
 							}}
 					/>
 					<DeleteBtn
-							onConfirmedClick={() => this.props.actions.deleteTransaction(transaction.id)}
+							payload={transaction.id}
+							onConfirmedClick={this.props.actions.deleteTransaction}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
 							}}

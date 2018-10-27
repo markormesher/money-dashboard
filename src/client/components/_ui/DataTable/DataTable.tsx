@@ -90,6 +90,9 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 			},
 		};
 
+		this.handlePrevPageClick = this.handlePrevPageClick.bind(this);
+		this.handleNextPageClick = this.handleNextPageClick.bind(this);
+		this.handleSearchTermSet = this.handleSearchTermSet.bind(this);
 		this.toggleColumnSortOrder = this.toggleColumnSortOrder.bind(this);
 		this.fetchData = this.fetchData.bind(this);
 		this.onDataLoaded = this.onDataLoaded.bind(this);
@@ -131,9 +134,9 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 							currentPage={currentPage}
 							pageSize={pageSize}
 							rowCount={data.filteredRowCount}
-							onPrevPageClick={() => this.setState({ currentPage: this.state.currentPage - 1 })}
-							onNextPageClick={() => this.setState({ currentPage: this.state.currentPage + 1 })}
-							onSearchTermSet={(searchTerm) => this.setState({ searchTerm })}
+							onPrevPageClick={this.handlePrevPageClick}
+							onNextPageClick={this.handleNextPageClick}
+							onSearchTermSet={this.handleSearchTermSet}
 					/>
 
 					<div className={styles.tableBodyWrapper}>
@@ -166,6 +169,10 @@ class DataTable<Model> extends Component<IDataTableProps<Model>, IDataTableState
 				</div>
 		);
 	}
+
+	private handlePrevPageClick = () => this.setState({ currentPage: this.state.currentPage - 1 });
+	private handleNextPageClick = () => this.setState({ currentPage: this.state.currentPage + 1 });
+	private handleSearchTermSet = (searchTerm: string) => this.setState({ searchTerm });
 
 	private toggleColumnSortOrder(column: IColumn) {
 		// note: always compare columns by key not equality

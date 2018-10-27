@@ -50,6 +50,10 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAccountSettingsProps): I
 
 class AccountSettings extends Component<IAccountSettingsProps> {
 
+	private static activeOnlyStateFilter(state: IRootState) {
+		return state.settings.accounts.displayActiveOnly;
+	}
+
 	private tableColumns: IColumn[] = [
 		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
 		{ title: "Type", sortField: "type" },
@@ -73,7 +77,7 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
 									text={"Active Accounts Only"}
-									stateFilter={(state) => state.settings.accounts.displayActiveOnly}
+									stateFilter={AccountSettings.activeOnlyStateFilter}
 									stateModifier={this.props.actions.setDisplayActiveOnly}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
@@ -120,14 +124,16 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 					<IconBtn
 							icon={faPencil}
 							text={"Edit"}
+							payload={account}
+							onClick={this.props.actions.setAccountToEdit}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-								onClick: () => this.props.actions.setAccountToEdit(account),
 							}}
 					/>
 
 					<DeleteBtn
-							onConfirmedClick={() => this.props.actions.deleteAccount(account.id)}
+							payload={account.id}
+							onConfirmedClick={this.props.actions.deleteAccount}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
 							}}

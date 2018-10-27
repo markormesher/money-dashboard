@@ -49,6 +49,10 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetSettingsProps): IB
 
 class BudgetSettings extends Component<IBudgetSettingsProps> {
 
+	private static currentOnlyStateFilter(state: IRootState) {
+		return state.settings.budgets.displayCurrentOnly;
+	}
+
 	private tableColumns: IColumn[] = [
 		{
 			title: "Name",
@@ -84,7 +88,7 @@ class BudgetSettings extends Component<IBudgetSettingsProps> {
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
 									text={"Current Budgets Only"}
-									stateFilter={(state) => state.settings.budgets.displayCurrentOnly}
+									stateFilter={BudgetSettings.currentOnlyStateFilter}
 									stateModifier={this.props.actions.setDisplayActiveOnly}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
@@ -133,13 +137,15 @@ class BudgetSettings extends Component<IBudgetSettingsProps> {
 					<IconBtn
 							icon={faPencil}
 							text={"Edit"}
+							payload={budget}
+							onClick={this.props.actions.setBudgetToEdit}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-								onClick: () => this.props.actions.setBudgetToEdit(budget),
 							}}
 					/>
 					<DeleteBtn
-							onConfirmedClick={() => this.props.actions.deleteBudget(budget.id)}
+							payload={budget.id}
+							onConfirmedClick={this.props.actions.deleteBudget}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, appStyles.btnMini),
 							}}

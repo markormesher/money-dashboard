@@ -13,8 +13,7 @@
 		},
 		"no-default-export": false, // TODO: enable this
 		"object-literal-sort-keys": false, // TODO: enable this
-		"jsx-no-multiline-js": false,
-		"jsx-no-lambda": false // TODO: enable this
+		"jsx-no-multiline-js": false
 	},
 	"rulesDirectory": []
 }

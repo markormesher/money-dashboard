@@ -3,8 +3,9 @@ import * as React from "react";
 import { Component } from "react";
 import IconBtn from "../IconBtn/IconBtn";
 
-interface IDeleteBtnProps {
-	onConfirmedClick?: () => void;
+interface IDeleteBtnProps<Payload> {
+	payload?: Payload;
+	onConfirmedClick?: (payload: Payload) => void;
 	btnProps?: React.HTMLProps<HTMLButtonElement>;
 }
 
@@ -13,11 +14,11 @@ interface IDeleteBtnState {
 	running: boolean;
 }
 
-class DeleteBtn extends Component<IDeleteBtnProps, IDeleteBtnState> {
+class DeleteBtn<Payload> extends Component<IDeleteBtnProps<Payload>, IDeleteBtnState> {
 
 	private triggerExpiryTimeout: NodeJS.Timer = undefined;
 
-	constructor(props: IDeleteBtnProps) {
+	constructor(props: IDeleteBtnProps<Payload>) {
 		super(props);
 		this.state = {
 			triggered: false,
@@ -28,19 +29,20 @@ class DeleteBtn extends Component<IDeleteBtnProps, IDeleteBtnState> {
 	}
 
 	public render() {
-		const { btnProps } = this.props;
+		const { btnProps, payload } = this.props;
 		const { triggered, running } = this.state;
 
 		const btnIcon = running ? faCircleNotch : (triggered ? faExclamationTriangle : faTrash);
 		const btnText = running ? undefined : (triggered ? "Sure?" : "Delete");
 
 		return (
-				<IconBtn
+				<IconBtn<Payload>
 						icon={btnIcon}
 						text={btnText}
+						payload={payload}
+						onClick={this.handleClick}
 						btnProps={{
 							...btnProps,
-							onClick: this.handleClick,
 							disabled: (btnProps && btnProps.disabled) || running,
 						}}
 						iconProps={{
@@ -50,7 +52,7 @@ class DeleteBtn extends Component<IDeleteBtnProps, IDeleteBtnState> {
 		);
 	}
 
-	private handleClick() {
+	private handleClick(payload: Payload) {
 		const { triggered, running } = this.state;
 
 		if (running) {
@@ -64,7 +66,7 @@ class DeleteBtn extends Component<IDeleteBtnProps, IDeleteBtnState> {
 			clearTimeout(this.triggerExpiryTimeout);
 			this.setState({ running: true });
 			if (this.props.onConfirmedClick) {
-				this.props.onConfirmedClick();
+				this.props.onConfirmedClick(payload);
 			}
 		}
 	}
