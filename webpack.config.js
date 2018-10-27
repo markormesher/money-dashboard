@@ -2,7 +2,6 @@ const {resolve, join} = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
-const VisualizerPlugin = require('webpack-visualizer-plugin');
 
 const IS_PROD = process.env.NODE_ENV === "production";
 const IS_DEV = !IS_PROD; // for better readability below
@@ -126,7 +125,6 @@ module.exports = {
 	},
 	devtool: IS_PROD ? false : "cheap-module-eval-source-map",
 	plugins: [
-		new VisualizerPlugin(),
 		new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
 		new webpack.EnvironmentPlugin(["NODE_ENV"]),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
