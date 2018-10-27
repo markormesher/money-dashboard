@@ -1,4 +1,4 @@
-import { faPencil, faPlus, faUserPlus } from "@fortawesome/pro-light-svg-icons";
+import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent } from "react";
 import { connect } from "react-redux";
@@ -118,14 +118,6 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 								btnProps={{
 									className: combine(bs.btnOutlineDark, appStyles.btnMini),
 									disabled: deleteDisabled,
-								}}
-						/>
-
-						<IconBtn
-								icon={faUserPlus}
-								text={"Share"}
-								btnProps={{
-									className: combine(bs.btnOutlineDark, appStyles.btnMini),
 								}}
 						/>
 					</div>
