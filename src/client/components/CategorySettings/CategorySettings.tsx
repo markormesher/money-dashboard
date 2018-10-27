@@ -81,7 +81,9 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 							api={"/settings/categories/table-data"}
 							columns={this.tableColumns}
 							rowRenderer={this.tableRowRenderer}
-							apiExtraParams={{ lastUpdate }}
+							apiExtraParams={{
+								lastUpdate,
+							}}
 					/>
 				</>
 		);

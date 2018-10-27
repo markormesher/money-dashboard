@@ -1,4 +1,4 @@
-import { faPencil, faUserPlus } from "@fortawesome/pro-light-svg-icons";
+import { faPencil, faPlus, faUserPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent } from "react";
 import { connect } from "react-redux";
@@ -7,25 +7,29 @@ import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import * as bs from "../../bootstrap-aliases";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
-import { startDeleteProfile } from "../../redux/settings/profiles/actions";
+import { setProfileToEdit, startDeleteProfile } from "../../redux/settings/profiles/actions";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import * as appStyles from "../App/App.scss";
+import { EditProfileModal } from "./EditProfileModal";
 
 interface IProfileSettingsProps {
 	readonly lastUpdate: number;
+	readonly profileToEdit?: ThinProfile;
 	readonly activeProfile?: ThinProfile;
 	readonly actions?: {
 		readonly deleteProfile: (id: string) => AnyAction,
+		readonly setProfileToEdit: (profile: ThinProfile) => AnyAction,
 	};
 }
 
 function mapStateToProps(state: IRootState, props: IProfileSettingsProps): IProfileSettingsProps {
 	return {
 		...props,
-		lastUpdate: state.settings.accounts.lastUpdate,
+		lastUpdate: state.settings.profiles.lastUpdate,
+		profileToEdit: state.settings.profiles.profileToEdit,
 		activeProfile: state.auth.activeUser.profiles[state.auth.activeProfile],
 	};
 }
@@ -35,6 +39,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfileSettingsProps): I
 		...props,
 		actions: {
 			deleteProfile: (id) => dispatch(startDeleteProfile(id)),
+			setProfileToEdit: (profile) => dispatch(setProfileToEdit(profile)),
 		},
 	};
 }
@@ -51,13 +56,27 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
+		this.startProfileCreation = this.startProfileCreation.bind(this);
 	}
 
 	public render() {
-		const { lastUpdate } = this.props;
+		const { lastUpdate, profileToEdit } = this.props;
 		return (
 				<>
-					<h1 className={bs.h2}>Profiles</h1>
+					{profileToEdit !== undefined && <EditProfileModal/>}
+
+					<div className={appStyles.headerWrapper}>
+						<h1 className={combine(bs.h2, bs.floatLeft)}>Profiles</h1>
+
+						<IconBtn
+								icon={faPlus}
+								text={"New Profile"}
+								onClick={this.startProfileCreation}
+								btnProps={{
+									className: combine(bs.floatRight, bs.btnSm, bs.btnSuccess),
+								}}
+						/>
+					</div>
 
 					<DataTable<ThinProfile>
 							api={"/settings/profiles/table-data"}
@@ -86,6 +105,8 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 						<IconBtn
 								icon={faPencil}
 								text={"Edit"}
+								payload={profile}
+								onClick={this.props.actions.setProfileToEdit}
 								btnProps={{
 									className: combine(bs.btnOutlineDark, appStyles.btnMini),
 								}}
@@ -111,6 +132,10 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 					{deleteDisabled && <> <InfoIcon hoverText={"Your active profile cannot be deleted"}/></>}
 				</>
 		);
+	}
+
+	private startProfileCreation() {
+		this.props.actions.setProfileToEdit(null);
 	}
 }
 
