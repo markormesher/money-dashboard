@@ -37,4 +37,6 @@ class ErrorPage extends Component<IErrorPageProps> {
 	}
 }
 
-export default ErrorPage;
+export {
+	ErrorPage,
+};

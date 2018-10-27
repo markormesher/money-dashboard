@@ -41,7 +41,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IHeaderProps): IHeaderPro
 	};
 }
 
-class Header extends Component<IHeaderProps> {
+class UCHeader extends Component<IHeaderProps> {
 	constructor(props: IHeaderProps) {
 		super(props);
 
@@ -79,4 +79,4 @@ class Header extends Component<IHeaderProps> {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export const Header = connect(mapStateToProps, mapDispatchToProps)(UCHeader);

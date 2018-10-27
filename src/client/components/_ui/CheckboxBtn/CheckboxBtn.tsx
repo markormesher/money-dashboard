@@ -3,7 +3,7 @@ import * as React from "react";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { IRootState } from "../../../redux/root";
-import IconBtn from "../IconBtn/IconBtn";
+import { IconBtn } from "../IconBtn/IconBtn";
 
 interface ICheckboxBtnProps {
 	text: string;
@@ -21,7 +21,7 @@ function mapStateToProps(state: IRootState, props: ICheckboxBtnProps): ICheckbox
 	};
 }
 
-class CheckboxBtn extends Component<ICheckboxBtnProps> {
+class UCCheckboxBtn extends Component<ICheckboxBtnProps> {
 
 	constructor(props: ICheckboxBtnProps) {
 		super(props);
@@ -53,4 +53,4 @@ class CheckboxBtn extends Component<ICheckboxBtnProps> {
 
 }
 
-export default connect(mapStateToProps)(CheckboxBtn);
+export const CheckboxBtn = connect(mapStateToProps)(UCCheckboxBtn);

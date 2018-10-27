@@ -14,4 +14,6 @@ class AppRootWrapper extends Component {
 	}
 }
 
-export default AppRootWrapper;
+export {
+	AppRootWrapper,
+};

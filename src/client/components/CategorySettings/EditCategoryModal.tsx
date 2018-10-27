@@ -46,7 +46,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditCategoryModalProps):
 	};
 }
 
-class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategoryModalState> {
+class UCEditCategoryModal extends Component<IEditCategoryModalProps, IEditCategoryModalState> {
 
 	constructor(props: IEditCategoryModalProps) {
 		super(props);
@@ -182,4 +182,4 @@ class EditCategoryModal extends Component<IEditCategoryModalProps, IEditCategory
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditCategoryModal);
+export const EditCategoryModal = connect(mapStateToProps, mapDispatchToProps)(UCEditCategoryModal);

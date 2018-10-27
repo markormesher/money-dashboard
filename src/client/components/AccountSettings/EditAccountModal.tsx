@@ -45,7 +45,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditAccountModalProps): 
 	};
 }
 
-class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountModalState> {
+class UCEditAccountModal extends Component<IEditAccountModalProps, IEditAccountModalState> {
 
 	constructor(props: IEditAccountModalProps) {
 		super(props);
@@ -135,4 +135,4 @@ class EditAccountModal extends Component<IEditAccountModalProps, IEditAccountMod
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditAccountModal);
+export const EditAccountModal = connect(mapStateToProps, mapDispatchToProps)(UCEditAccountModal);

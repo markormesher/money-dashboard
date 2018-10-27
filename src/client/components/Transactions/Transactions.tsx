@@ -16,12 +16,12 @@ import {
 } from "../../redux/transactions/actions";
 import { DateModeOption } from "../../redux/transactions/reducer";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
-import DateModeToggleBtn from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
-import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
-import IconBtn from "../_ui/IconBtn/IconBtn";
+import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
+import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
+import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import * as appStyles from "../App/App.scss";
-import EditTransactionModal from "./EditTransactionModal";
+import { EditTransactionModal } from "./EditTransactionModal";
 
 interface ITransactionProps {
 	lastUpdate: number;
@@ -56,7 +56,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: ITransactionProps): ITran
 	};
 }
 
-class Transactions extends Component<ITransactionProps> {
+class UCTransactions extends Component<ITransactionProps> {
 
 	private static dateModeStateFilter(state: IRootState) {
 		return state.transactions.dateMode;
@@ -93,7 +93,7 @@ class Transactions extends Component<ITransactionProps> {
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Transactions</h1>
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<DateModeToggleBtn
-									stateFilter={Transactions.dateModeStateFilter}
+									stateFilter={UCTransactions.dateModeStateFilter}
 									stateModifier={this.props.actions.setDateMode}
 									onChange={this.props.actions.setLastUpdate}
 									btnProps={{
@@ -171,4 +171,4 @@ class Transactions extends Component<ITransactionProps> {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Transactions);
+export const Transactions = connect(mapStateToProps, mapDispatchToProps)(UCTransactions);

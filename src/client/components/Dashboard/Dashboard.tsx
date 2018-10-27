@@ -24,7 +24,7 @@ interface IDashboardProps {
 	activeProfile?: ThinProfile;
 }
 
-class Dashboard extends Component<IDashboardProps> {
+class UCDashboard extends Component<IDashboardProps> {
 
 	public render() {
 		return (
@@ -35,4 +35,4 @@ class Dashboard extends Component<IDashboardProps> {
 	}
 }
 
-export default connect(mapStateToProps)(Dashboard);
+export const Dashboard = connect(mapStateToProps)(UCDashboard);

@@ -12,4 +12,6 @@ class BalanceGrowthReport extends Component {
 	}
 }
 
-export default BalanceGrowthReport;
+export {
+	BalanceGrowthReport,
+};

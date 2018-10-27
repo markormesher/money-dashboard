@@ -16,7 +16,7 @@ import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 import { startLogOutCurrentUser } from "../../../redux/auth/actions";
 import { IRootState } from "../../../redux/root";
-import NavLink from "../NavLink/NavLink";
+import { NavLink } from "../NavLink/NavLink";
 import { NavSection } from "../NavSection/NavSection";
 import * as style from "./Nav.scss";
 
@@ -44,7 +44,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: INavProps): INavProps {
 	};
 }
 
-class Nav extends Component<INavProps> {
+class UCNav extends Component<INavProps> {
 
 	public render() {
 		const isOpen = this.props.isOpen;
@@ -84,4 +84,4 @@ class Nav extends Component<INavProps> {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Nav);
+export const Nav = connect(mapStateToProps, mapDispatchToProps)(UCNav);

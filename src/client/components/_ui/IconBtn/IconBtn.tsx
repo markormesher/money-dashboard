@@ -44,4 +44,6 @@ class IconBtn<Payload> extends PureComponent<IIconBtnProps<Payload>> {
 	}
 }
 
-export default IconBtn;
+export {
+	IconBtn,
+};

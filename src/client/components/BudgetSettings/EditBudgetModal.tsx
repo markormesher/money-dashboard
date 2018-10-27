@@ -58,7 +58,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditBudgetModalProps): I
 	};
 }
 
-class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalState> {
+class UCEditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalState> {
 
 	constructor(props: IEditBudgetModalProps) {
 		super(props);
@@ -224,4 +224,4 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditBudgetModal);
+export const EditBudgetModal = connect(mapStateToProps, mapDispatchToProps)(UCEditBudgetModal);

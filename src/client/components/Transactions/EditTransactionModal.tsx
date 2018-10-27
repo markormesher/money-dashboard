@@ -64,7 +64,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditTransactionModalProp
 	};
 }
 
-class EditTransactionModal extends Component<IEditTransactionModalProps, IEditTransactionModalState> {
+class UCEditTransactionModal extends Component<IEditTransactionModalProps, IEditTransactionModalState> {
 
 	constructor(props: IEditTransactionModalProps) {
 		super(props);
@@ -239,4 +239,4 @@ class EditTransactionModal extends Component<IEditTransactionModalProps, IEditTr
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditTransactionModal);
+export const EditTransactionModal = connect(mapStateToProps, mapDispatchToProps)(UCEditTransactionModal);

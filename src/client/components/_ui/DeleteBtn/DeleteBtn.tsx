@@ -1,7 +1,7 @@
 import { faCircleNotch, faExclamationTriangle, faTrash } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent } from "react";
-import IconBtn from "../IconBtn/IconBtn";
+import { IconBtn } from "../IconBtn/IconBtn";
 
 interface IDeleteBtnProps<Payload> {
 	payload?: Payload;
@@ -73,4 +73,6 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 
 }
 
-export default DeleteBtn;
+export {
+	DeleteBtn,
+};

@@ -4,7 +4,7 @@ import { Component } from "react";
 import { connect } from "react-redux";
 import { IRootState } from "../../../redux/root";
 import { DateModeOption } from "../../../redux/transactions/reducer";
-import IconBtn from "../IconBtn/IconBtn";
+import { IconBtn } from "../IconBtn/IconBtn";
 
 interface IDateModeToggleBtnProps {
 	stateFilter: (state: IRootState) => DateModeOption;
@@ -21,7 +21,7 @@ function mapStateToProps(state: IRootState, props: IDateModeToggleBtnProps): IDa
 	};
 }
 
-class DateModeToggleBtn extends Component<IDateModeToggleBtnProps> {
+class UCDateModeToggleBtn extends Component<IDateModeToggleBtnProps> {
 
 	constructor(props: IDateModeToggleBtnProps) {
 		super(props);
@@ -58,4 +58,4 @@ class DateModeToggleBtn extends Component<IDateModeToggleBtnProps> {
 
 }
 
-export default connect(mapStateToProps)(DateModeToggleBtn);
+export const DateModeToggleBtn = connect(mapStateToProps)(UCDateModeToggleBtn);

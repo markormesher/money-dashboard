@@ -11,4 +11,6 @@ class Http404Error extends DetailedError {
 	}
 }
 
-export default Http404Error;
+export {
+	Http404Error,
+};

@@ -4,7 +4,7 @@ import * as React from "react";
 import { Component } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
-import IconBtn from "../IconBtn/IconBtn";
+import { IconBtn } from "../IconBtn/IconBtn";
 import * as styles from "./Modal.scss";
 
 interface IModalProps {

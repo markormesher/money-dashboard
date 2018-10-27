@@ -51,7 +51,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: INavLinkProps): INavLinkP
 	};
 }
 
-class NavLink extends Component<INavLinkProps> {
+class UCNavLink extends Component<INavLinkProps> {
 
 	private linkItemClasses = bs.navItem;
 	private iconClasses = combine(bs.mr2, bs.textMuted);
@@ -92,4 +92,4 @@ class NavLink extends Component<INavLinkProps> {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavLink);
+export const NavLink = connect(mapStateToProps, mapDispatchToProps)(UCNavLink);

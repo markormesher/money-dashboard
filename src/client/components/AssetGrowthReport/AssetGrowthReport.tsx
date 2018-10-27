@@ -12,4 +12,6 @@ class AssetGrowthReport extends Component {
 	}
 }
 
-export default AssetGrowthReport;
+export {
+	AssetGrowthReport,
+};

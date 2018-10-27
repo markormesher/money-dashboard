@@ -10,10 +10,10 @@ import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startDeleteCategory } from "../../redux/settings/categories/actions";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
-import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
-import IconBtn from "../_ui/IconBtn/IconBtn";
+import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
+import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
-import EditCategoryModal from "./EditCategoryModal";
+import { EditCategoryModal } from "./EditCategoryModal";
 
 interface ICategorySettingsProps {
 	lastUpdate: number;
@@ -42,7 +42,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: ICategorySettingsProps): 
 	};
 }
 
-class CategorySettings extends Component<ICategorySettingsProps> {
+class UCCategorySettings extends Component<ICategorySettingsProps> {
 
 	private tableColumns: IColumn[] = [
 		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
@@ -119,4 +119,4 @@ class CategorySettings extends Component<ICategorySettingsProps> {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CategorySettings);
+export const CategorySettings = connect(mapStateToProps, mapDispatchToProps)(UCCategorySettings);

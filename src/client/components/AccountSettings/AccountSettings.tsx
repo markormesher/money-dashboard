@@ -9,12 +9,12 @@ import { generateAccountTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setAccountToEdit, setDisplayActiveOnly, startDeleteAccount } from "../../redux/settings/accounts/actions";
-import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
+import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
-import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
-import IconBtn from "../_ui/IconBtn/IconBtn";
+import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
+import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
-import EditAccountModal from "./EditAccountModal";
+import { EditAccountModal } from "./EditAccountModal";
 
 interface IAccountSettingsProps {
 	lastUpdate?: number;
@@ -48,7 +48,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAccountSettingsProps): I
 	};
 }
 
-class AccountSettings extends Component<IAccountSettingsProps> {
+class UCAccountSettings extends Component<IAccountSettingsProps> {
 
 	private static activeOnlyStateFilter(state: IRootState) {
 		return state.settings.accounts.displayActiveOnly;
@@ -77,7 +77,7 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
 									text={"Active Accounts Only"}
-									stateFilter={AccountSettings.activeOnlyStateFilter}
+									stateFilter={UCAccountSettings.activeOnlyStateFilter}
 									stateModifier={this.props.actions.setDisplayActiveOnly}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
@@ -144,4 +144,4 @@ class AccountSettings extends Component<IAccountSettingsProps> {
 
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountSettings);
+export const AccountSettings = connect(mapStateToProps, mapDispatchToProps)(UCAccountSettings);

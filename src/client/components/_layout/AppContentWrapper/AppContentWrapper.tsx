@@ -23,4 +23,6 @@ class AppContentWrapper extends Component {
 	}
 }
 
-export default AppContentWrapper;
+export {
+	AppContentWrapper,
+};

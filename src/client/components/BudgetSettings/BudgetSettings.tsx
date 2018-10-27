@@ -9,12 +9,12 @@ import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } fro
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setBudgetToEdit, setDisplayCurrentOnly, startDeleteBudget } from "../../redux/settings/budgets/actions";
-import CheckboxBtn from "../_ui/CheckboxBtn/CheckboxBtn";
+import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
-import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
-import IconBtn from "../_ui/IconBtn/IconBtn";
+import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
+import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
-import EditBudgetModal from "./EditBudgetModal";
+import { EditBudgetModal } from "./EditBudgetModal";
 
 interface IBudgetSettingsProps {
 	lastUpdate: number;
@@ -47,7 +47,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetSettingsProps): IB
 	};
 }
 
-class BudgetSettings extends Component<IBudgetSettingsProps> {
+class UCBudgetSettings extends Component<IBudgetSettingsProps> {
 
 	private static currentOnlyStateFilter(state: IRootState) {
 		return state.settings.budgets.displayCurrentOnly;
@@ -88,7 +88,7 @@ class BudgetSettings extends Component<IBudgetSettingsProps> {
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
 									text={"Current Budgets Only"}
-									stateFilter={BudgetSettings.currentOnlyStateFilter}
+									stateFilter={UCBudgetSettings.currentOnlyStateFilter}
 									stateModifier={this.props.actions.setDisplayActiveOnly}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
@@ -155,4 +155,4 @@ class BudgetSettings extends Component<IBudgetSettingsProps> {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BudgetSettings);
+export const BudgetSettings = connect(mapStateToProps, mapDispatchToProps)(UCBudgetSettings);

@@ -17,7 +17,7 @@ function mapStateToProps(state: IRootState, props: IFullPageSpinnerProps): IFull
 	};
 }
 
-class FullPageSpinner extends Component<IFullPageSpinnerProps> {
+class UCFullPageSpinner extends Component<IFullPageSpinnerProps> {
 
 	public render() {
 		return (
@@ -32,4 +32,4 @@ class FullPageSpinner extends Component<IFullPageSpinnerProps> {
 	}
 }
 
-export default connect(mapStateToProps)(FullPageSpinner);
+export const FullPageSpinner = connect(mapStateToProps)(UCFullPageSpinner);

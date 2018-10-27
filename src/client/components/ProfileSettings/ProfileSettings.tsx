@@ -9,8 +9,8 @@ import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { startDeleteProfile } from "../../redux/settings/profiles/actions";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
-import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
-import IconBtn from "../_ui/IconBtn/IconBtn";
+import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
+import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import * as appStyles from "../App/App.scss";
 
@@ -39,7 +39,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfileSettingsProps): I
 	};
 }
 
-class ProfileSettings extends Component<IProfileSettingsProps> {
+class UCProfileSettings extends Component<IProfileSettingsProps> {
 
 	private tableColumns: IColumn[] = [
 		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
@@ -113,4 +113,4 @@ class ProfileSettings extends Component<IProfileSettingsProps> {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileSettings);
+export const ProfileSettings = connect(mapStateToProps, mapDispatchToProps)(UCProfileSettings);

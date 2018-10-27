@@ -4,22 +4,22 @@ import * as Loadable from "react-loadable";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
-import Http404Error from "../../helpers/errors/Http404Error";
+import { Http404Error } from "../../helpers/errors/Http404Error";
 import { IRootState } from "../../redux/root";
-import AppContentWrapper from "../_layout/AppContentWrapper/AppContentWrapper";
-import AppRootWrapper from "../_layout/AppRootWrapper/AppRootWrapper";
-import FullPageSpinner from "../_layout/FullPageSpinner/FullPageSpinner";
-import Header from "../_layout/Header/Header";
-import Nav from "../_layout/Nav/Nav";
-import AccountSettings from "../AccountSettings/AccountSettings";
-import AssetGrowthReport from "../AssetGrowthReport/AssetGrowthReport";
-import BalanceGrowthReport from "../BalanceGrowthReport/BalanceGrowthReport";
-import BudgetSettings from "../BudgetSettings/BudgetSettings";
-import CategorySettings from "../CategorySettings/CategorySettings";
-import Dashboard from "../Dashboard/Dashboard";
-import ErrorPage from "../ErrorPage/ErrorPage";
-import ProfileSettings from "../ProfileSettings/ProfileSettings";
-import Transactions from "../Transactions/Transactions";
+import { AppContentWrapper } from "../_layout/AppContentWrapper/AppContentWrapper";
+import { AppRootWrapper } from "../_layout/AppRootWrapper/AppRootWrapper";
+import { FullPageSpinner } from "../_layout/FullPageSpinner/FullPageSpinner";
+import { Header } from "../_layout/Header/Header";
+import { Nav } from "../_layout/Nav/Nav";
+import { AccountSettings } from "../AccountSettings/AccountSettings";
+import { AssetGrowthReport } from "../AssetGrowthReport/AssetGrowthReport";
+import { BalanceGrowthReport } from "../BalanceGrowthReport/BalanceGrowthReport";
+import { BudgetSettings } from "../BudgetSettings/BudgetSettings";
+import { CategorySettings } from "../CategorySettings/CategorySettings";
+import { Dashboard } from "../Dashboard/Dashboard";
+import { ErrorPage } from "../ErrorPage/ErrorPage";
+import { ProfileSettings } from "../ProfileSettings/ProfileSettings";
+import { Transactions } from "../Transactions/Transactions";
 import "./App.scss";
 
 // TODO: rewire some components to be pure components
@@ -44,11 +44,11 @@ function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
 
 // most sessions will never see this, so lazy load it
 const LoadableLogin = Loadable({
-	loader: () => import(/* webpackChunkName: "login" */ "../Login/Login"),
+	loader: () => import(/* webpackChunkName: "login" */ "../Login/Login").then((result) => result.Login),
 	loading: () => (<FullPageSpinner/>),
 });
 
-class App extends Component<IAppProps> {
+class UCApp extends Component<IAppProps> {
 
 	constructor(props: IAppProps) {
 		super(props);
@@ -115,4 +115,4 @@ class App extends Component<IAppProps> {
 	}
 }
 
-export default connect(mapStateToProps)(App);
+export const App = connect(mapStateToProps)(UCApp);
