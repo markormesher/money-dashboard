@@ -1,6 +1,6 @@
 import { faCircleNotch, faExclamationTriangle, faTrash } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { Component } from "react";
+import { PureComponent } from "react";
 import IconBtn from "../IconBtn/IconBtn";
 
 interface IDeleteBtnProps<Payload> {
@@ -14,7 +14,7 @@ interface IDeleteBtnState {
 	running: boolean;
 }
 
-class DeleteBtn<Payload> extends Component<IDeleteBtnProps<Payload>, IDeleteBtnState> {
+class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDeleteBtnState> {
 
 	private triggerExpiryTimeout: NodeJS.Timer = undefined;
 

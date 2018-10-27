@@ -1,7 +1,7 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon, Props as FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
-import { Component } from "react";
 import * as React from "react";
+import { PureComponent } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -14,7 +14,7 @@ interface IIconBtnProps<Payload> {
 	payload?: Payload;
 }
 
-class IconBtn<Payload> extends Component<IIconBtnProps<Payload>> {
+class IconBtn<Payload> extends PureComponent<IIconBtnProps<Payload>> {
 
 	constructor(props: IIconBtnProps<Payload>) {
 		super(props);
