@@ -98,6 +98,7 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
+		this.startBudgetCreation = this.startBudgetCreation.bind(this);
 		this.handleCloneCheckedChange = this.handleCloneCheckedChange.bind(this);
 		this.startCloneOnSelectedBudgets = this.startCloneOnSelectedBudgets.bind(this);
 	}
@@ -135,9 +136,9 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 							<IconBtn
 									icon={faPlus}
 									text={"New Budget"}
+									onClick={this.startBudgetCreation}
 									btnProps={{
 										className: combine(bs.btnSm, bs.btnSuccess),
-										onClick: () => this.props.actions.setBudgetToEdit(null), // TODO: remove lambda
 									}}
 							/>
 						</div>
@@ -200,6 +201,10 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 					/>
 				</div>
 		);
+	}
+
+	private startBudgetCreation() {
+		this.props.actions.setBudgetToEdit(null);
 	}
 
 	private handleCloneCheckedChange(checked: boolean, id: string) {

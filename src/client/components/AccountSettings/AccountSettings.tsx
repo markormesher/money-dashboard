@@ -65,6 +65,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
+		this.startAccountCreation = this.startAccountCreation.bind(this);
 	}
 
 	public render() {
@@ -88,9 +89,9 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 							<IconBtn
 									icon={faPlus}
 									text={"New Account"}
+									onClick={this.startAccountCreation}
 									btnProps={{
 										className: combine(bs.btnSm, bs.btnSuccess),
-										onClick: () => this.props.actions.setAccountToEdit(null),
 									}}
 							/>
 						</div>
@@ -141,6 +142,10 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 					/>
 				</div>
 		);
+	}
+
+	private startAccountCreation() {
+		this.props.actions.setAccountToEdit(null);
 	}
 }
 

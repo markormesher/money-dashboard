@@ -81,6 +81,7 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
+		this.startTransactionCreation = this.startTransactionCreation.bind(this);
 	}
 
 	public render() {
@@ -105,9 +106,9 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 							<IconBtn
 									icon={faPlus}
 									text={"New Transaction"}
+									onClick={this.startTransactionCreation}
 									btnProps={{
 										className: combine(bs.btnSm, bs.btnSuccess),
-										onClick: () => this.props.actions.setTransactionToEdit(null),
 									}}
 							/>
 						</div>
@@ -169,6 +170,10 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 					/>
 				</div>
 		);
+	}
+
+	private startTransactionCreation() {
+		this.props.actions.setTransactionToEdit(null);
 	}
 }
 

@@ -55,6 +55,7 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
+		this.startCategoryCreation = this.startCategoryCreation.bind(this);
 	}
 
 	public render() {
@@ -69,9 +70,9 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 						<IconBtn
 								icon={faPlus}
 								text={"New Category"}
+								onClick={this.startCategoryCreation}
 								btnProps={{
 									className: combine(bs.floatRight, bs.btnSm, bs.btnSuccess),
-									onClick: () => this.props.actions.setCategoryToEdit(null),
 								}}
 						/>
 					</div>
@@ -117,6 +118,10 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 					/>
 				</div>
 		);
+	}
+
+	private startCategoryCreation() {
+		this.props.actions.setCategoryToEdit(null);
 	}
 }
 
