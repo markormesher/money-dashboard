@@ -20,6 +20,7 @@ import DateModeToggleBtn from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
 import * as appStyles from "../App/App.scss";
+import EditTransactionModal from "./EditTransactionModal";
 
 interface ITransactionProps {
 	lastUpdate: number;
@@ -77,12 +78,13 @@ class Transactions extends Component<ITransactionProps> {
 	}
 
 	public render() {
-		const { lastUpdate, dateMode } = this.props;
+		const { lastUpdate, dateMode, transactionToEdit } = this.props;
 
 		// TODO: edit modal
 
 		return (
-				<div>
+				<>
+					{transactionToEdit !== undefined && <EditTransactionModal/>}
 
 					<div className={appStyles.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Transactions</h1>
@@ -116,7 +118,7 @@ class Transactions extends Component<ITransactionProps> {
 								dateMode,
 							}}
 					/>
-				</div>
+				</>
 		);
 	}
 

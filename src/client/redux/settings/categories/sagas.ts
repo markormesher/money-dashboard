@@ -37,6 +37,7 @@ function*saveCategorySaga() {
 }
 
 function*loadCategoryListSaga() {
+	// TODO: skip if categories haven't been updated since the last call
 	yield takeEvery(CategorySettingsActions.START_LOAD_CATEGORY_LIST, function*() {
 		try {
 			const categoryList: ThinCategory[] = yield call(() => {

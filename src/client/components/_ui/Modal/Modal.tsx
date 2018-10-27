@@ -32,7 +32,7 @@ class Modal extends Component<IModalProps> {
 		return (
 				<>
 					<div className={combine(bs.modal, bs.fade, bs.dBlock, bs.show)}>
-						<div className={bs.modalDialog}>
+						<div className={combine(bs.modalDialog, styles.modalDialog)}>
 							<div className={bs.modalContent}>
 								<div className={bs.modalHeader}>
 									<h5 className={bs.modalTitle}>{title}</h5>

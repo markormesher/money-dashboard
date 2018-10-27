@@ -69,15 +69,15 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			.catch(next);
 });
 
-router.post("/edit/:transactionId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/edit/:transactionId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
-	const transactionId = req.params.transactionId === "new" ? null : req.params.transactionId;
+	const transactionId = req.params.transactionId;
 	const properties: Partial<Transaction> = {
 		transactionDate: new Date(req.body.transactionDate),
 		effectiveDate: new Date(req.body.effectiveDate),
 		amount: parseFloat(req.body.amount),
 		payee: req.body.payee.trim(),
-		note: req.body.note.trim(),
+		note: (req.body.note || "").trim(),
 		accountId: req.body.accountId,
 		categoryId: req.body.categoryId,
 	};

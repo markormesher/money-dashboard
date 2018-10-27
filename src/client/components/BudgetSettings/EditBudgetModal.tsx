@@ -192,6 +192,7 @@ class EditBudgetModal extends Component<IEditBudgetModalProps, IEditBudgetModalS
 		);
 	}
 
+	// TODO: remove "Budget" in names
 	private readonly handleBudgetCategoryChange = (value: string) => this.updateModel({ categoryId: value });
 	private readonly handleBudgetAmountChange = (value: string) => this.updateModel({ amount: parseFloat(value) });
 	private readonly handleBudgetStartDateChange = (value: string) => this.updateModel({ startDate: value });

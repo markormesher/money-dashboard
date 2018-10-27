@@ -7,6 +7,7 @@ interface IAccountSettingsState {
 	displayActiveOnly: boolean;
 	accountToEdit: ThinAccount;
 	editorBusy: boolean;
+	accountList: ThinAccount[];
 }
 
 const initialState: IAccountSettingsState = {
@@ -14,6 +15,7 @@ const initialState: IAccountSettingsState = {
 	displayActiveOnly: true,
 	accountToEdit: undefined,
 	editorBusy: false,
+	accountList: undefined,
 };
 
 function accountSettingsReducer(state = initialState, action: PayloadAction): IAccountSettingsState {
@@ -40,6 +42,12 @@ function accountSettingsReducer(state = initialState, action: PayloadAction): IA
 			return {
 				...state,
 				editorBusy: action.payload.editorBusy,
+			};
+
+		case AccountSettingsActions.SET_ACCOUNT_LIST:
+			return {
+				...state,
+				accountList: action.payload.accountList,
 			};
 
 		default:

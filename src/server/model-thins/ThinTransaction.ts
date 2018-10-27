@@ -1,11 +1,32 @@
+import * as moment from "moment";
+import { formatDate } from "../../client/helpers/formatters";
 import { ThinAccount } from "./ThinAccount";
 import { ThinCategory } from "./ThinCategory";
 import { ThinProfile } from "./ThinProfile";
 
 export class ThinTransaction {
+
+	public static DEFAULT: ThinTransaction = {
+		id: null,
+		transactionDate: formatDate(moment(), "system"),
+		effectiveDate: formatDate(moment(), "system"),
+		amount: 0,
+		payee: "",
+		note: undefined,
+		accountId: undefined,
+		account: undefined,
+		categoryId: undefined,
+		category: undefined,
+		profileId: null,
+		profile: null,
+		createdAt: null,
+		updatedAt: null,
+		deletedAt: null,
+	};
+
 	public id: string;
-	public transactionDate: Date;
-	public effectiveDate: Date;
+	public transactionDate: string;
+	public effectiveDate: string;
 	public amount: number;
 	public payee: string;
 	public note: string;
@@ -16,6 +37,6 @@ export class ThinTransaction {
 	public profileId: string;
 	public profile: ThinProfile;
 	public createdAt: Date;
-	public updateedAt: Date;
+	public updatedAt: Date;
 	public deletedAt: Date;
 }

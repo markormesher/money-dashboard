@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 import { getData } from "../../helpers/datatable-helper";
-import { deleteAccount, saveAccount, toggleAccountActive } from "../../managers/account-manager";
+import { deleteAccount, getAllAccounts, saveAccount, toggleAccountActive } from "../../managers/account-manager";
 import { requireUser } from "../../middleware/auth-middleware";
 import { Account } from "../../models/Account";
 import { User } from "../../models/User";
@@ -45,6 +45,13 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 
 	getData(Account, req, countQuery, dataQuery)
 			.then((response) => res.json(response))
+			.catch(next);
+});
+
+router.get("/list", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const user = req.user as User;
+	getAllAccounts(user)
+			.then((accounts: Account[]) => res.json(accounts))
 			.catch(next);
 });
 
