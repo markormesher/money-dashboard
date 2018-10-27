@@ -36,7 +36,9 @@ button {
 	font-family: monospace;
 }
 
-[data-tooltip]::after,
-[data-tooltip]::before {
-	font-size: 75%;
+[data-tooltip] {
+	::after,
+	::before {
+		font-size: 75%;
+	}
 }
