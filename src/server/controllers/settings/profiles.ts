@@ -14,8 +14,6 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const user = req.user as User;
 	const searchTerm = req.query.searchTerm;
 
-	// TODO: this is generating the right data but the wrong count
-
 	const countQuery: IFindOptions<Profile> = {
 		include: [{
 			model: User,
