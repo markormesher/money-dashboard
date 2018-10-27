@@ -37,8 +37,8 @@ button {
 }
 
 [data-tooltip] {
-	::after,
-	::before {
+	&::after,
+	&::before {
 		font-size: 75%;
 	}
 }

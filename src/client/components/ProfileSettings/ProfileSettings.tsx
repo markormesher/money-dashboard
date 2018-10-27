@@ -11,6 +11,7 @@ import { startDeleteProfile } from "../../redux/settings/profiles/actions";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import DeleteBtn from "../_ui/DeleteBtn/DeleteBtn";
 import IconBtn from "../_ui/IconBtn/IconBtn";
+import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import * as appStyles from "../App/App.scss";
 
 interface IProfileSettingsProps {
@@ -79,32 +80,34 @@ class ProfileSettings extends Component<IProfileSettingsProps> {
 	private generateActionButtons(profile: ThinProfile) {
 		const deleteDisabled = profile.id === this.props.activeProfile.id;
 		return (
-				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
-					<IconBtn
-							icon={faPencil}
-							text={"Edit"}
-							btnProps={{
-								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-							}}
-					/>
+				<>
+					<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
+						<IconBtn
+								icon={faPencil}
+								text={"Edit"}
+								btnProps={{
+									className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								}}
+						/>
 
-					{/* TODO: tooltip showing that active account cannot be deleted */}
-					<DeleteBtn
-							onConfirmedClick={() => this.props.actions.deleteProfile(profile.id)}
-							btnProps={{
-								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-								disabled: deleteDisabled,
-							}}
-					/>
+						<DeleteBtn
+								onConfirmedClick={() => this.props.actions.deleteProfile(profile.id)}
+								btnProps={{
+									className: combine(bs.btnOutlineDark, appStyles.btnMini),
+									disabled: deleteDisabled,
+								}}
+						/>
 
-					<IconBtn
-							icon={faUserPlus}
-							text={"Share"}
-							btnProps={{
-								className: combine(bs.btnOutlineDark, appStyles.btnMini),
-							}}
-					/>
-				</div>
+						<IconBtn
+								icon={faUserPlus}
+								text={"Share"}
+								btnProps={{
+									className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								}}
+						/>
+					</div>
+					{deleteDisabled && <> <InfoIcon hoverText={"Your active profile cannot be deleted"}/></>}
+				</>
 		);
 	}
 }

@@ -41,7 +41,7 @@ class DeleteBtn extends Component<IDeleteBtnProps, IDeleteBtnState> {
 						btnProps={{
 							...btnProps,
 							onClick: this.handleClick,
-							disabled: running,
+							disabled: (btnProps && btnProps.disabled) || running,
 						}}
 						iconProps={{
 							spin: running,
