@@ -58,7 +58,10 @@ const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => {
 
 const setAccountList: ActionCreator<PayloadAction> = (accountList: ThinAccount[]) => {
 	return {
-		type: AccountSettingsActions.SET_ACCOUNT_LIST, payload: { accountList },
+		type: AccountSettingsActions.SET_ACCOUNT_LIST, payload: {
+			accountList,
+			accountListLoadedAt: new Date().getTime(),
+		},
 	};
 };
 

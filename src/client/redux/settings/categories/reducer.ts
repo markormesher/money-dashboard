@@ -7,6 +7,7 @@ interface ICategorySettingsState {
 	categoryToEdit: ThinCategory;
 	editorBusy: boolean;
 	categoryList: ThinCategory[];
+	categoryListLoadedAt: number;
 }
 
 const initialState: ICategorySettingsState = {
@@ -14,6 +15,7 @@ const initialState: ICategorySettingsState = {
 	categoryToEdit: undefined,
 	editorBusy: false,
 	categoryList: undefined,
+	categoryListLoadedAt: -1,
 };
 
 function categorySettingsReducer(state = initialState, action: PayloadAction): ICategorySettingsState {
@@ -40,6 +42,7 @@ function categorySettingsReducer(state = initialState, action: PayloadAction): I
 			return {
 				...state,
 				categoryList: action.payload.categoryList,
+				categoryListLoadedAt: action.payload.categoryListLoadedAt,
 			};
 
 		default:

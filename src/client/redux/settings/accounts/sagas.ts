@@ -1,9 +1,13 @@
 import axios from "axios";
-import { all, call, put, takeEvery } from "redux-saga/effects";
+import { all, call, put, select, takeEvery } from "redux-saga/effects";
 import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
 import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
+import { IRootState } from "../../root";
 import { AccountSettingsActions, setAccountList, setAccountToEdit, setEditorBusy, setLastUpdate } from "./actions";
+
+const lastUpdateSelector = (state: IRootState) => state.settings.accounts.lastUpdate;
+const lastLoadSelector = (state: IRootState) => state.settings.accounts.accountListLastLoaded;
 
 function*deleteAccountSaga() {
 	yield takeEvery(AccountSettingsActions.START_DELETE_ACCOUNT, function*(action: PayloadAction) {
@@ -38,8 +42,12 @@ function*saveAccountSaga() {
 }
 
 function*loadAccountListSaga() {
-	// TODO: skip if accounts haven't been updated since the last call
 	yield takeEvery(AccountSettingsActions.START_LOAD_ACCOUNT_LIST, function*() {
+		const lastUpdate = yield select(lastUpdateSelector);
+		const lastLoad = yield select(lastLoadSelector);
+		if (lastLoad >= lastUpdate) {
+			return;
+		}
 		try {
 			const accountList: ThinAccount[] = yield call(() => {
 				return axios.get("/settings/accounts/list").then((res) => res.data);

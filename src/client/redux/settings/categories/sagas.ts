@@ -1,9 +1,13 @@
 import axios from "axios";
-import { all, call, put, takeEvery } from "redux-saga/effects";
+import { all, call, put, select, takeEvery } from "redux-saga/effects";
 import { ThinCategory } from "../../../../server/model-thins/ThinCategory";
 import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
+import { IRootState } from "../../root";
 import { CategorySettingsActions, setCategoryList, setCategoryToEdit, setEditorBusy, setLastUpdate } from "./actions";
+
+const lastUpdateSelector = (state: IRootState) => state.settings.categories.lastUpdate;
+const lastLoadSelector = (state: IRootState) => state.settings.categories.categoryListLoadedAt;
 
 function*deleteCategorySaga() {
 	yield takeEvery(CategorySettingsActions.START_DELETE_CATEGORY, function*(action: PayloadAction) {
@@ -37,8 +41,12 @@ function*saveCategorySaga() {
 }
 
 function*loadCategoryListSaga() {
-	// TODO: skip if categories haven't been updated since the last call
 	yield takeEvery(CategorySettingsActions.START_LOAD_CATEGORY_LIST, function*() {
+		const lastUpdate = yield select(lastUpdateSelector);
+		const lastLoad = yield select(lastLoadSelector);
+		if (lastLoad >= lastUpdate) {
+			return;
+		}
 		try {
 			const categoryList: ThinCategory[] = yield call(() => {
 				return axios.get("/settings/categories/list").then((res) => res.data);

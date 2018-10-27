@@ -51,7 +51,10 @@ const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => {
 
 const setCategoryList: ActionCreator<PayloadAction> = (categoryList: ThinCategory[]) => {
 	return {
-		type: CategorySettingsActions.SET_CATEGORY_LIST, payload: { categoryList },
+		type: CategorySettingsActions.SET_CATEGORY_LIST, payload: {
+			categoryList,
+			categoryListLoadedAt: new Date().getTime(),
+		},
 	};
 };
 

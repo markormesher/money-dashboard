@@ -8,6 +8,7 @@ interface IAccountSettingsState {
 	accountToEdit: ThinAccount;
 	editorBusy: boolean;
 	accountList: ThinAccount[];
+	accountListLastLoaded: number;
 }
 
 const initialState: IAccountSettingsState = {
@@ -16,6 +17,7 @@ const initialState: IAccountSettingsState = {
 	accountToEdit: undefined,
 	editorBusy: false,
 	accountList: undefined,
+	accountListLastLoaded: -1,
 };
 
 function accountSettingsReducer(state = initialState, action: PayloadAction): IAccountSettingsState {
@@ -48,6 +50,7 @@ function accountSettingsReducer(state = initialState, action: PayloadAction): IA
 			return {
 				...state,
 				accountList: action.payload.accountList,
+				accountListLastLoaded: action.payload.accountListLoadedAt,
 			};
 
 		default:
