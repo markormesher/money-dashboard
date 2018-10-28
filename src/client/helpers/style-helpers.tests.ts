@@ -1,10 +1,10 @@
 import { should } from "chai";
 import { describe, it } from "mocha";
-import { combine } from "../../../src/client/helpers/style-helpers";
+import { combine } from "./style-helpers";
 
 should();
 
-describe("helpers/style-helpers", () => {
+describe(__filename, () => {
 
 	describe("combine()", () => {
 

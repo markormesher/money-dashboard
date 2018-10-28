@@ -8,6 +8,7 @@ import * as bs from "../bootstrap-aliases";
 import * as appStyles from "../components/App/App.scss";
 import { combine } from "./style-helpers";
 
+// TODO: refactor as component
 function generateBadge(content: string, badgeClass: string, marginRight: boolean = false): ReactElement<void> {
 	badgeClass = badgeClass || bs.badgeLight;
 	return (

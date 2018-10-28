@@ -14,7 +14,7 @@ const IS_PROD = !IS_TEST && process.env.NODE_ENV === "production";
 const IS_DEV = !IS_PROD; // for better readability below
 
 const outputDir = resolve(__dirname, "build", IS_TEST ? "client-test" : "client");
-const entryPoints = IS_TEST ? glob.sync("./test/**/*.{ts,tsx}") : resolve(__dirname, "src", "client", "index.tsx");
+const entryPoints = IS_TEST ? glob.sync("./src/client/**/*.tests.{ts,tsx}") : resolve(__dirname, "src", "client", "index.tsx");
 
 const babelLoader = {
 	loader: "babel-loader",
@@ -85,6 +85,8 @@ module.exports = {
 	},
 	node: {
 		fs: "empty",
+		__filename: true,
+		__dirname: true,
 	},
 	module: {
 		// in test mode, disable this warning

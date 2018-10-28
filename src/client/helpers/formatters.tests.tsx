@@ -6,24 +6,23 @@ import { shallow } from "enzyme";
 import * as Adapter from "enzyme-adapter-react-16";
 import { describe, it } from "mocha";
 import * as Moment from "moment";
-import { ReactElement } from "react";
 import * as React from "react";
-import * as bs from "../../../src/client/bootstrap-aliases";
+import { ThinAccount } from "../../server/model-thins/ThinAccount";
+import { ThinBudget } from "../../server/model-thins/ThinBudget";
+import { ThinCategory } from "../../server/model-thins/ThinCategory";
+import * as bs from "../bootstrap-aliases";
 import {
 	capitaliseFirstLetter,
 	formatCurrency,
 	formatCurrencyStyled, formatDate, generateAccountTypeBadge,
 	generateBadge, generateBudgetTypeBadge, generateCategoryTypeBadge, getBudgetPeriodType
-} from "../../../src/client/helpers/formatters";
-import { ThinAccount } from "../../../src/server/model-thins/ThinAccount";
-import { ThinBudget } from "../../../src/server/model-thins/ThinBudget";
-import { ThinCategory } from "../../../src/server/model-thins/ThinCategory";
+} from "./formatters";
 
 Enzyme.configure({ adapter: new Adapter() });
 chai.use(chaiString);
 should();
 
-describe("helpers/formatters", () => {
+describe(__filename, () => {
 
 	describe("generateBadge()", () => {
 
