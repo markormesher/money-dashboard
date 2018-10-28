@@ -14,7 +14,7 @@ import { setBudgetIdsToClone, startCloneBudgets } from "../../redux/settings/bud
 import { ControlledDateInput } from "../_ui/FormComponents/ControlledDateInput";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
 import { Modal } from "../_ui/Modal/Modal";
-import * as styles from "./EditBudgetModal.scss";
+import * as styles from "./BudgetModals.scss";
 import { QuickDateRangeLinks } from "./QuickDateRangeLinks";
 
 interface ICloneBudgetModalProps {

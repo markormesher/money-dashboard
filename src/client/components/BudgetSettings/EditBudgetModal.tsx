@@ -18,7 +18,7 @@ import { ControlledRadioInput } from "../_ui/FormComponents/ControlledRadioInput
 import { ControlledSelectInput } from "../_ui/FormComponents/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
 import { Modal } from "../_ui/Modal/Modal";
-import * as styles from "./EditBudgetModal.scss";
+import * as styles from "./BudgetModals.scss";
 import { QuickDateRangeLinks } from "./QuickDateRangeLinks";
 
 interface IEditBudgetModalProps {
