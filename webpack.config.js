@@ -1,19 +1,24 @@
 const {resolve, join} = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
-const ReplaceInFileWebpackPlugin = require('replace-in-file-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const md5 = require("md5");
+const glob = require("glob");
 
 const notFalse = (val) => val !== false;
-const IS_PROD = process.env.NODE_ENV === "production";
+const IS_TEST = process.env.TEST === "y";
+const IS_PROD = !IS_TEST && process.env.NODE_ENV === "production";
 const IS_DEV = !IS_PROD; // for better readability below
 
-const outputDir = resolve(__dirname, "build", "client");
+const outputRoot = resolve(__dirname, "build");
+const outputDir = resolve(outputRoot, IS_TEST ? "client-test" : "client");
+const entryPoints = IS_TEST ? glob.sync("./test/**/*.ts") : resolve(__dirname, "src", "client", "index.tsx");
 
 const babelLoader = {
-	loader: 'babel-loader',
+	loader: "babel-loader",
 	options: {
 		cacheDirectory: true,
 		plugins: [
@@ -69,7 +74,7 @@ module.exports = {
 	mode: IS_PROD ? "production" : "development",
 	cache: false,
 	target: "web",
-	entry: resolve(__dirname, "src", "client", "index.tsx"),
+	entry: entryPoints,
 	output: {
 		publicPath: "/",
 		path: outputDir,
@@ -79,7 +84,13 @@ module.exports = {
 		hotUpdateMainFilename: "hot-update.[hash:6].json",
 		hotUpdateChunkFilename: "hot-update.[hash:6].js",
 	},
+	node: {
+		fs: "empty",
+	},
 	module: {
+		// in test mode, disable this warning
+		exprContextCritical: !IS_TEST,
+
 		rules: [
 			{
 				test: /\.ts(x?)$/,
@@ -99,6 +110,10 @@ module.exports = {
 			{
 				test: /\.html$/,
 				loader: "html-loader",
+			},
+			IS_TEST && {
+				test: /\.(s?)css$/,
+				loader: "null-loader",
 			},
 			{
 				test: /\.(s?)css$/,
@@ -127,14 +142,17 @@ module.exports = {
 				test: /\.(eot|svg|ttf|woff|woff2)$/,
 				loader: "file-loader",
 			},
-		],
+		].filter(notFalse),
 	},
 	devtool: IS_PROD ? false : "cheap-module-eval-source-map",
 	plugins: [
+		new CleanWebpackPlugin([outputRoot], {
+			verbose: false,
+		}),
 		new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
 		new webpack.EnvironmentPlugin(["NODE_ENV"]),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-		new HtmlWebpackPlugin({
+		!IS_TEST && new HtmlWebpackPlugin({
 			template: resolve(__dirname, "src", "client", "index.html"),
 			inject: true,
 			hash: IS_DEV,
@@ -144,11 +162,6 @@ module.exports = {
 		new ReplaceInFileWebpackPlugin([{
 			dir: outputDir,
 			rules: [
-				{
-					// remove line breaks and spaces in Font Awesome pre-minified output
-					search: /(\\n+)( *)/g,
-					replace: "",
-				},
 				IS_PROD && {
 					// replace redux action strings with hashes
 					search: /"([A-Za-z]+)Actions\.([_A-Z]+)"/g,
@@ -160,7 +173,7 @@ module.exports = {
 			analyzerMode: "static",
 			openAnalyzer: false,
 		}),
-		IS_DEV && new webpack.HotModuleReplacementPlugin(),
+		IS_DEV && !IS_TEST && new webpack.HotModuleReplacementPlugin(),
 	].filter(notFalse),
 	resolve: {
 		extensions: [".js", ".jsx", ".ts", ".tsx"],
@@ -170,7 +183,7 @@ module.exports = {
 		minimize: IS_PROD,
 		minimizer: IS_PROD ? [terserMinimiser] : [],
 		namedModules: IS_DEV,
-		splitChunks: {
+		splitChunks: !IS_TEST && {
 			cacheGroups: {
 				vendor: {
 					test: /[\\/]node_modules[\\/]/,
@@ -180,7 +193,7 @@ module.exports = {
 			},
 		},
 	},
-	stats: {
+	stats: !IS_TEST && {
 		assetsSort: "!size",
 		children: false,
 		chunks: false,
