@@ -1,6 +1,6 @@
 import * as Moment from "moment";
 import * as React from "react";
-import { ReactNode } from "react";
+import { ReactElement } from "react";
 import { ThinAccount } from "../../server/model-thins/ThinAccount";
 import { ThinBudget } from "../../server/model-thins/ThinBudget";
 import { ThinCategory } from "../../server/model-thins/ThinCategory";
@@ -8,7 +8,7 @@ import * as bs from "../bootstrap-aliases";
 import * as appStyles from "../components/App/App.scss";
 import { combine } from "./style-helpers";
 
-function generateBadge(content: string, badgeClass: string, marginRight: boolean = false): ReactNode {
+function generateBadge(content: string, badgeClass: string, marginRight: boolean = false): ReactElement<void> {
 	badgeClass = badgeClass || bs.badgeLight;
 	return (
 			<span key={content + badgeClass} className={combine(bs.badge, badgeClass, marginRight && bs.mr1)}>
@@ -21,7 +21,7 @@ function formatCurrency(amount: number): string {
 	return amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
 }
 
-function formatCurrencyStyled(amount: number): ReactNode {
+function formatCurrencyStyled(amount: number): ReactElement<void> {
 	return (<span className={appStyles.currency}>{formatCurrency(amount)}</span>);
 }
 
@@ -43,7 +43,7 @@ function capitaliseFirstLetter(str: string): string {
 
 // accounts
 
-function generateAccountTypeBadge(account: ThinAccount): ReactNode {
+function generateAccountTypeBadge(account: ThinAccount): ReactElement<void> {
 	switch (account.type) {
 		case "current":
 			return generateBadge("Current Account", bs.badgeInfo);
@@ -58,7 +58,7 @@ function generateAccountTypeBadge(account: ThinAccount): ReactNode {
 
 // budgets
 
-function generateBudgetTypeBadge(budget: ThinBudget): ReactNode {
+function generateBudgetTypeBadge(budget: ThinBudget): ReactElement<void> {
 	if (budget.type === "budget") {
 		return generateBadge("Budget", bs.badgeInfo);
 	} else {
@@ -121,8 +121,8 @@ function formatBudgetPeriod(start: Date | string, end: Date | string): string {
 
 // categories
 
-function generateCategoryTypeBadge(category: ThinCategory): ReactNode | ReactNode[] {
-	const output = [] as ReactNode[];
+function generateCategoryTypeBadge(category: ThinCategory): Array<ReactElement<void>> {
+	const output = [] as Array<ReactElement<void>>;
 	if (category.isAssetGrowthCategory) {
 		output.push(generateBadge("Asset", bs.badgeWarning, true));
 	}
@@ -139,7 +139,7 @@ function generateCategoryTypeBadge(category: ThinCategory): ReactNode | ReactNod
 	if (output.length > 0) {
 		return output;
 	} else {
-		return (<span className={bs.textMuted}>None</span>);
+		return [(<span key={"category-badge-none"} className={bs.textMuted}>None</span>)];
 	}
 }
 

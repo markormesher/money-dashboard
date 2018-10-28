@@ -1,19 +1,19 @@
-import { expect } from "chai";
+import { should } from "chai";
 import { describe, it } from "mocha";
 import { combine } from "../../../src/client/helpers/style-helpers";
+
+should();
 
 describe("helpers/style-helpers", () => {
 
 	describe("combine()", () => {
 
 		it("should concatenate input", () => {
-			const result = combine("a", "b", "c");
-			expect(result).to.equal("a b c");
+			combine("a", "b", "c").should.equal("a b c");
 		});
 
 		it("should remove falsy values", () => {
-			const result = combine("a", false, undefined);
-			expect(result).to.equal("a");
+			combine("a", false, undefined).should.equal("a");
 		});
 	});
 });

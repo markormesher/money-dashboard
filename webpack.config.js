@@ -13,9 +13,8 @@ const IS_TEST = process.env.TEST === "y";
 const IS_PROD = !IS_TEST && process.env.NODE_ENV === "production";
 const IS_DEV = !IS_PROD; // for better readability below
 
-const outputRoot = resolve(__dirname, "build");
-const outputDir = resolve(outputRoot, IS_TEST ? "client-test" : "client");
-const entryPoints = IS_TEST ? glob.sync("./test/**/*.ts") : resolve(__dirname, "src", "client", "index.tsx");
+const outputDir = resolve(__dirname, "build", IS_TEST ? "client-test" : "client");
+const entryPoints = IS_TEST ? glob.sync("./test/**/*.{ts,tsx}") : resolve(__dirname, "src", "client", "index.tsx");
 
 const babelLoader = {
 	loader: "babel-loader",
@@ -111,10 +110,6 @@ module.exports = {
 				test: /\.html$/,
 				loader: "html-loader",
 			},
-			IS_TEST && {
-				test: /\.(s?)css$/,
-				loader: "null-loader",
-			},
 			{
 				test: /\.(s?)css$/,
 				include: /node_modules/,
@@ -146,7 +141,7 @@ module.exports = {
 	},
 	devtool: IS_PROD ? false : "cheap-module-eval-source-map",
 	plugins: [
-		new CleanWebpackPlugin([outputRoot], {
+		IS_TEST && new CleanWebpackPlugin([outputDir], {
 			verbose: false,
 		}),
 		new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
