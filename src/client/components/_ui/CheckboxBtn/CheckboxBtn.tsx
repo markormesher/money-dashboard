@@ -4,7 +4,7 @@ import { PureComponent, ReactNode } from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
 
 interface ICheckboxBtnProps {
-	readonly text: string;
+	readonly text?: string;
 	readonly checked?: boolean;
 	readonly onChange?: (checked: boolean) => void;
 	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
@@ -37,7 +37,9 @@ class CheckboxBtn extends PureComponent<ICheckboxBtnProps> {
 	private toggleChecked(): void {
 		const { checked, onChange } = this.props;
 		const newState = !checked;
-		onChange(newState);
+		if (onChange) {
+			onChange(newState);
+		}
 	}
 
 }

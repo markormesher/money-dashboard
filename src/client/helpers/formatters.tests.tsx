@@ -2,7 +2,7 @@ import * as chai from "chai";
 import { expect, should } from "chai";
 import * as chaiString from "chai-string";
 import * as Enzyme from "enzyme";
-import { render, shallow } from "enzyme";
+import { shallow } from "enzyme";
 import * as Adapter from "enzyme-adapter-react-16";
 import { describe, it } from "mocha";
 import * as Moment from "moment";
@@ -11,7 +11,6 @@ import { ThinAccount } from "../../server/model-thins/ThinAccount";
 import { ThinBudget } from "../../server/model-thins/ThinBudget";
 import { ThinCategory } from "../../server/model-thins/ThinCategory";
 import * as bs from "../bootstrap-aliases";
-import { Badge } from "../components/_ui/Badge/Badge";
 import {
 	capitaliseFirstLetter,
 	formatCurrency,
@@ -32,20 +31,20 @@ describe(__filename, () => {
 	describe("formatCurrency()", () => {
 
 		it("should force two decimal places", () => {
-			expect(formatCurrency(0)).to.endsWith(".00");
-			expect(formatCurrency(0.5)).to.endsWith(".50");
-			expect(formatCurrency(0.001)).to.endsWith(".00");
+			formatCurrency(0).should.endsWith(".00");
+			formatCurrency(0.5).should.endsWith(".50");
+			formatCurrency(0.001).should.endsWith(".00");
 		});
 
 		it("should group thousands", () => {
-			expect(formatCurrency(1)).to.equal("1.00");
-			expect(formatCurrency(1000)).to.equal("1,000.00");
-			expect(formatCurrency(1000000)).to.equal("1,000,000.00");
+			formatCurrency(1).should.equal("1.00");
+			formatCurrency(1000).should.equal("1,000.00");
+			formatCurrency(1000000).should.equal("1,000,000.00");
 		});
 
 		it("should preserve negatives", () => {
-			expect(formatCurrency(1)).to.equal("1.00");
-			expect(formatCurrency(-1)).to.equal("-1.00");
+			formatCurrency(1).should.equal("1.00");
+			formatCurrency(-1).should.equal("-1.00");
 		});
 	});
 
@@ -53,17 +52,17 @@ describe(__filename, () => {
 
 		it("should wrap the value", () => {
 			const formattedElement = shallow(formatCurrencyStyled(0));
-			expect(formattedElement.find("span")).to.have.lengthOf(1);
+			formattedElement.find("span").should.have.lengthOf(1);
 		});
 
 		it("should apply the currency style", () => {
 			const formattedElement = shallow(formatCurrencyStyled(0));
-			expect(formattedElement.html()).to.contain("_currency_");
+			formattedElement.html().should.contain("_currency_");
 		});
 
 		it("should preserve the un-styled value", () => {
 			const formattedElement = shallow(formatCurrencyStyled(1234.56));
-			expect(formattedElement.text()).to.equal("1,234.56");
+			formattedElement.text().should.equal("1,234.56");
 		});
 	});
 
@@ -94,6 +93,10 @@ describe(__filename, () => {
 	});
 
 	describe("capitaliseFirstLetter()", () => {
+
+		it("should handle empty strings", () => {
+			expect(capitaliseFirstLetter(undefined)).to.equal(undefined);
+		});
 
 		it("should handle empty strings", () => {
 			capitaliseFirstLetter("").should.equal("");

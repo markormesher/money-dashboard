@@ -28,7 +28,10 @@ function formatDate(date: Date | Moment.Moment | string, format: "user" | "syste
 	}
 }
 
-function capitaliseFirstLetter(str: string): string {
+function capitaliseFirstLetter(str?: string): string {
+	if (!str) {
+		return str;
+	}
 	return str.slice(0, 1).toUpperCase() + str.slice(1);
 }
 

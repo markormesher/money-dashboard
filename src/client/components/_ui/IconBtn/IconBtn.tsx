@@ -7,7 +7,7 @@ import { combine } from "../../../helpers/style-helpers";
 
 interface IIconBtnProps<Payload> {
 	readonly icon: IconProp;
-	readonly text: string;
+	readonly text?: string;
 	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
 	readonly iconProps?: Partial<FontAwesomeIconProps>;
 	readonly onClick?: (payload: Payload) => void;

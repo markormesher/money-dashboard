@@ -4,6 +4,7 @@ import { PureComponent, ReactNode } from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
 
 interface IDeleteBtnProps<Payload> {
+	readonly timeout?: number;
 	readonly payload?: Payload;
 	readonly onConfirmedClick?: (payload: Payload) => void;
 	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
@@ -26,6 +27,12 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 		};
 
 		this.handleClick = this.handleClick.bind(this);
+	}
+
+	public componentWillUnmount(): void {
+		if (this.triggerExpiryTimeout) {
+			clearTimeout(this.triggerExpiryTimeout);
+		}
 	}
 
 	public render(): ReactNode {
@@ -53,6 +60,7 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 	}
 
 	private handleClick(payload: Payload): void {
+		const { timeout } = this.props;
 		const { triggered, running } = this.state;
 
 		if (running) {
@@ -61,7 +69,7 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 
 		if (!triggered) {
 			this.setState({ triggered: true });
-			this.triggerExpiryTimeout = global.setTimeout(() => this.setState({ triggered: false }), 2000);
+			this.triggerExpiryTimeout = global.setTimeout(() => this.setState({ triggered: false }), timeout || 2000);
 		} else {
 			clearTimeout(this.triggerExpiryTimeout);
 			this.setState({ running: true });
