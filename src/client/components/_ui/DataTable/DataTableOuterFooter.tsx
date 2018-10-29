@@ -7,9 +7,9 @@ import * as styles from "./DataTable.scss";
 interface IDataTableOuterFooterProps {
 	readonly pageSize: number;
 	readonly currentPage: number;
-	readonly sortedColumns: ISortEntry[];
 	readonly filteredRowCount: number;
 	readonly totalRowCount: number;
+	readonly sortedColumns?: ISortEntry[];
 }
 
 const sortDirectionFull = {
@@ -27,22 +27,24 @@ class DataTableOuterFooter extends PureComponent<IDataTableOuterFooterProps> {
 		const showTotal = filteredRowCount !== totalRowCount;
 
 		let sortingOrder = "Sorted by";
-		sortedColumns.forEach((entry, i) => {
-			if (i === 0) {
-				sortingOrder += " ";
-			} else {
-				sortingOrder += ", then ";
-			}
-			sortingOrder += entry.column.lowercaseTitle || entry.column.title.toLocaleLowerCase();
-			sortingOrder += " " + sortDirectionFull[entry.dir];
-		});
+		if (sortedColumns) {
+			sortedColumns.forEach((entry, i) => {
+				if (i === 0) {
+					sortingOrder += " ";
+				} else {
+					sortingOrder += ", then ";
+				}
+				sortingOrder += entry.column.lowercaseTitle || entry.column.title.toLocaleLowerCase();
+				sortingOrder += " " + sortDirectionFull[entry.dir];
+			});
+		}
 
 		return (
 				<div className={styles.tableFooter}>
 					<p className={bs.floatRight}>
 						Showing rows {rowRangeFrom} to {rowRangeTo} of {filteredRowCount}
 						{showTotal && <> (filtered from {totalRowCount} total)</>}
-						{sortedColumns.length > 0 && <> &bull; {sortingOrder}</>}
+						{sortedColumns && sortedColumns.length > 0 && <> &bull; {sortingOrder}</>}
 					</p>
 				</div>
 		);

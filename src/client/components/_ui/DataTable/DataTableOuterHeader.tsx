@@ -16,6 +16,8 @@ interface IDataTableOuterHeaderProps {
 	readonly onSearchTermSet: (term: string) => void;
 }
 
+// TODO: break out the search box into a separate component
+
 class DataTableOuterHeader<Model> extends PureComponent<IDataTableOuterHeaderProps> {
 
 	private searchTermUpdateTimeout: NodeJS.Timer = undefined;
