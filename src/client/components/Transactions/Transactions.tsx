@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
@@ -80,7 +80,7 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 		this.startTransactionCreation = this.startTransactionCreation.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { lastUpdate, dateMode, transactionToEdit } = this.props;
 
 		return (
@@ -122,7 +122,7 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 		);
 	}
 
-	private tableRowRenderer(transaction: ThinTransaction) {
+	private tableRowRenderer(transaction: ThinTransaction): ReactElement<void> {
 		const { dateMode } = this.props;
 		const mainDate = formatDate(dateMode === "effective" ? transaction.effectiveDate : transaction.transactionDate);
 		const altDate = formatDate(dateMode === "effective" ? transaction.transactionDate : transaction.effectiveDate);
@@ -144,7 +144,7 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 		);
 	}
 
-	private generateActionButtons(transaction: ThinTransaction) {
+	private generateActionButtons(transaction: ThinTransaction): ReactElement<void> {
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<IconBtn
@@ -167,7 +167,7 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 		);
 	}
 
-	private startTransactionCreation() {
+	private startTransactionCreation(): void {
 		this.props.actions.setTransactionToEdit(null);
 	}
 }

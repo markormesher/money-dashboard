@@ -1,7 +1,7 @@
 import * as moment from "moment";
 import { Moment } from "moment";
 import * as React from "react";
-import { MouseEvent, PureComponent } from "react";
+import { MouseEvent, PureComponent, ReactNode } from "react";
 
 enum QuickDates {
 	THIS_MONTH, THIS_YEAR,
@@ -24,7 +24,7 @@ class QuickDateRangeLinks extends PureComponent<IQuickDateRangeLinks> {
 		this.setQuickDate = this.setQuickDate.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		return (
 				<>
 					<a href={"#"} onClick={this.setQuickDateThisMonth}>This month</a>
@@ -38,23 +38,23 @@ class QuickDateRangeLinks extends PureComponent<IQuickDateRangeLinks> {
 		);
 	}
 
-	private setQuickDateThisMonth(e: MouseEvent) {
+	private setQuickDateThisMonth(e: MouseEvent): void {
 		this.setQuickDate(QuickDates.THIS_MONTH, e);
 	}
 
-	private setQuickDateThisYear(e: MouseEvent) {
+	private setQuickDateThisYear(e: MouseEvent): void {
 		this.setQuickDate(QuickDates.THIS_YEAR, e);
 	}
 
-	private setQuickDateNextMonth(e: MouseEvent) {
+	private setQuickDateNextMonth(e: MouseEvent): void {
 		this.setQuickDate(QuickDates.NEXT_MONTH, e);
 	}
 
-	private setQuickDateNextYear(e: MouseEvent) {
+	private setQuickDateNextYear(e: MouseEvent): void {
 		this.setQuickDate(QuickDates.NEXT_YEAR, e);
 	}
 
-	private setQuickDate(which: QuickDates, evt?: MouseEvent) {
+	private setQuickDate(which: QuickDates, evt?: MouseEvent): void {
 		if (evt) {
 			evt.preventDefault();
 		}

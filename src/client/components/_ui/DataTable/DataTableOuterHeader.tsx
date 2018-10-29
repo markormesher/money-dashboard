@@ -1,7 +1,7 @@
 import { faArrowLeft, faArrowRight } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 import * as styles from "./DataTable.scss";
@@ -26,7 +26,7 @@ class DataTableOuterHeader<Model> extends PureComponent<IDataTableOuterHeaderPro
 		this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { pageSize, onPrevPageClick, onNextPageClick, loading, currentPage, rowCount } = this.props;
 
 		const displayCurrentPage = rowCount === 0 ? 0 : currentPage + 1;
@@ -60,7 +60,7 @@ class DataTableOuterHeader<Model> extends PureComponent<IDataTableOuterHeaderPro
 		);
 	}
 
-	private handleSearchTermChange(event: React.KeyboardEvent) {
+	private handleSearchTermChange(event: React.KeyboardEvent): void {
 		const { onSearchTermSet } = this.props;
 		clearTimeout(this.searchTermUpdateTimeout);
 		const searchTerm = (event.target as HTMLInputElement).value;

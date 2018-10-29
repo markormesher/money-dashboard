@@ -1,7 +1,7 @@
 import { faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 import { IconBtn } from "../IconBtn/IconBtn";
@@ -25,7 +25,7 @@ interface IModalProps {
 
 class Modal extends PureComponent<IModalProps> {
 
-	public render() {
+	public render(): ReactNode {
 		const { title, modalBusy, onCloseRequest } = this.props;
 		const { cancelBtnShown, cancelBtnDisabled, onCancel } = this.props;
 		const { saveBtnShown, saveBtnDisabled, onSave } = this.props;

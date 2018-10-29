@@ -1,6 +1,6 @@
 import { faCheckSquare, faSquare } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
 
 interface ICheckboxBtnProps {
@@ -18,7 +18,7 @@ class CheckboxBtn extends PureComponent<ICheckboxBtnProps> {
 		this.toggleChecked = this.toggleChecked.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { text, checked, btnProps } = this.props;
 		const icon = checked ? faCheckSquare : faSquare;
 
@@ -34,7 +34,7 @@ class CheckboxBtn extends PureComponent<ICheckboxBtnProps> {
 		);
 	}
 
-	private toggleChecked() {
+	private toggleChecked(): void {
 		const { checked, onChange } = this.props;
 		const newState = !checked;
 		onChange(newState);

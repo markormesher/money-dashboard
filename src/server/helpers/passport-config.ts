@@ -6,7 +6,7 @@ import { Profile } from "../models/Profile";
 import { User } from "../models/User";
 import { getConstants, getSecret } from "./config-loader";
 
-function init(passport: Passport) {
+function init(passport: Passport): void {
 
 	const googleConfig: StrategyOptionsWithRequest = {
 		clientID: getSecret("google.client.id"),

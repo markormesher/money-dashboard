@@ -15,7 +15,7 @@ import {
 	capitaliseFirstLetter,
 	formatCurrency,
 	formatCurrencyStyled, formatDate, generateAccountTypeBadge,
-	generateBadge, generateBudgetTypeBadge, generateCategoryTypeBadge, getBudgetPeriodType
+	generateBadge, generateBudgetTypeBadge, generateCategoryTypeBadge, getBudgetPeriodType,
 } from "./formatters";
 
 Enzyme.configure({ adapter: new Adapter() });

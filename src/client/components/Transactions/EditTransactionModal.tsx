@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
@@ -91,7 +91,7 @@ class UCEditTransactionModal extends PureComponent<IEditTransactionModalProps, I
 		this.props.actions.startLoadAccountList();
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { editorBusy, categoryList, accountList } = this.props;
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
@@ -205,48 +205,48 @@ class UCEditTransactionModal extends PureComponent<IEditTransactionModalProps, I
 		);
 	}
 
-	private handleTransactionDateChange(value: string) {
+	private handleTransactionDateChange(value: string): void {
 		this.updateModel({
 			transactionDate: value,
 			effectiveDate: value,
 		});
 	}
 
-	private handleEffectiveDateChange(value: string) {
+	private handleEffectiveDateChange(value: string): void {
 		this.updateModel({ effectiveDate: value });
 	}
 
-	private handleAccountChange(value: string) {
+	private handleAccountChange(value: string): void {
 		this.updateModel({ accountId: value });
 	}
 
-	private handlePayeeChange(value: string) {
+	private handlePayeeChange(value: string): void {
 		this.updateModel({ payee: value });
 	}
 
-	private handleCategoryChange(value: string) {
+	private handleCategoryChange(value: string): void {
 		this.updateModel({ categoryId: value });
 	}
 
-	private handleAmountChange(value: string) {
+	private handleAmountChange(value: string): void {
 		this.updateModel({ amount: parseFloat(value) });
 	}
 
-	private handleNoteChange(value: string) {
+	private handleNoteChange(value: string): void {
 		this.updateModel({ note: value });
 	}
 
-	private handleSave() {
+	private handleSave(): void {
 		if (this.state.validationResult.isValid) {
 			this.props.actions.startSaveTransaction(this.state.currentValues);
 		}
 	}
 
-	private handleCancel() {
+	private handleCancel(): void {
 		this.props.actions.setTransactionToEdit(undefined);
 	}
 
-	private updateModel(transaction: Partial<ThinTransaction>) {
+	private updateModel(transaction: Partial<ThinTransaction>): void {
 		const updatedTransaction = {
 			...this.state.currentValues,
 			...transaction,

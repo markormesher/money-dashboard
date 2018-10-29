@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
@@ -63,7 +63,7 @@ class UCEditCategoryModal extends PureComponent<IEditCategoryModalProps, IEditCa
 		this.updateModel = this.updateModel.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { editorBusy } = this.props;
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
@@ -138,11 +138,11 @@ class UCEditCategoryModal extends PureComponent<IEditCategoryModalProps, IEditCa
 		);
 	}
 
-	private handleNameChange(value: string) {
+	private handleNameChange(value: string): void {
 		this.updateModel({ name: value });
 	}
 
-	private handleTypeCheckedChange(checked: boolean, id: string) {
+	private handleTypeCheckedChange(checked: boolean, id: string): void {
 		switch (id) {
 			case "type-income":
 				this.updateModel({ isIncomeCategory: checked });
@@ -162,17 +162,17 @@ class UCEditCategoryModal extends PureComponent<IEditCategoryModalProps, IEditCa
 		}
 	}
 
-	private handleSave() {
+	private handleSave(): void {
 		if (this.state.validationResult.isValid) {
 			this.props.actions.startSaveCategory(this.state.currentValues);
 		}
 	}
 
-	private handleCancel() {
+	private handleCancel(): void {
 		this.props.actions.setCategoryToEdit(undefined);
 	}
 
-	private updateModel(category: Partial<ThinCategory>) {
+	private updateModel(category: Partial<ThinCategory>): void {
 		const updatedCategory = {
 			...this.state.currentValues,
 			...category,

@@ -1,7 +1,7 @@
 import * as moment from "moment";
 import { Moment } from "moment";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { IDateRange } from "../../../server/model-thins/DateRange";
@@ -71,7 +71,7 @@ class UCCloneBudgetModal extends PureComponent<ICloneBudgetModalProps, ICloneBud
 		this.updateModel = this.updateModel.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { editorBusy, budgetIdsToClone } = this.props;
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
@@ -121,22 +121,22 @@ class UCCloneBudgetModal extends PureComponent<ICloneBudgetModalProps, ICloneBud
 		);
 	}
 
-	private handleStartDateChange(value: string) {
+	private handleStartDateChange(value: string): void {
 		this.updateModel({ startDate: value });
 	}
 
-	private handleEndDateChange(value: string) {
+	private handleEndDateChange(value: string): void {
 		this.updateModel({ endDate: value });
 	}
 
-	private handleDateRangeSelection(start: Moment, end: Moment) {
+	private handleDateRangeSelection(start: Moment, end: Moment): void {
 		this.updateModel({
 			startDate: formatDate(start, "system"),
 			endDate: formatDate(end, "system"),
 		});
 	}
 
-	private handleSave() {
+	private handleSave(): void {
 		if (this.state.validationResult.isValid) {
 			this.props.actions.startCloneBudgets(
 					this.props.budgetIdsToClone,
@@ -146,11 +146,11 @@ class UCCloneBudgetModal extends PureComponent<ICloneBudgetModalProps, ICloneBud
 		}
 	}
 
-	private handleCancel() {
+	private handleCancel(): void {
 		this.props.actions.setBudgetIdsToClone(undefined);
 	}
 
-	private updateModel(range: Partial<IDateRange>) {
+	private updateModel(range: Partial<IDateRange>): void {
 		const updatedRange = {
 			...this.state.currentValues,
 			...range,

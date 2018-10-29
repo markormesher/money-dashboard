@@ -1,5 +1,6 @@
 import { readFileSync } from "fs";
 import { resolve } from "path";
+import * as webpack from "webpack";
 
 export class Constants {
 	public host: string;
@@ -47,7 +48,7 @@ function getSecret(key: string): string {
 	return loadedSecrets[key];
 }
 
-function getDevWebpackConfig() {
+function getDevWebpackConfig(): webpack.Configuration {
 	return require(`${projectDir}/webpack.config.js`);
 }
 

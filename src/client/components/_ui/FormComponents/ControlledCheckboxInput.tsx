@@ -1,11 +1,11 @@
 import * as React from "react";
-import { FormEvent, PureComponent, ReactNode } from "react";
+import { FormEvent, PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledCheckboxInputProps {
 	readonly id: string;
-	readonly label: string | ReactNode;
+	readonly label: string | ReactElement<void>;
 	readonly checked: boolean;
 	readonly onCheckedChange: (newValue: boolean, id: string) => void;
 	readonly disabled?: boolean;
@@ -28,7 +28,7 @@ class ControlledCheckboxInput extends PureComponent<IControlledCheckboxInputProp
 		this.handleChange = this.handleChange.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { id, label, checked, disabled, error } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
@@ -48,13 +48,13 @@ class ControlledCheckboxInput extends PureComponent<IControlledCheckboxInputProp
 		);
 	}
 
-	private handleBlur() {
+	private handleBlur(): void {
 		this.setState({
 			hasBeenTouched: true,
 		});
 	}
 
-	private handleChange(event: FormEvent<HTMLInputElement>) {
+	private handleChange(event: FormEvent<HTMLInputElement>): void {
 		this.props.onCheckedChange(event.currentTarget.checked, this.props.id);
 	}
 }

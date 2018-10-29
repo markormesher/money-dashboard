@@ -11,7 +11,7 @@ import { router as CategorySettingsController } from "../controllers/settings/ca
 import { router as ProfileSettingsController } from "../controllers/settings/profiles";
 import { router as TransactionsController } from "../controllers/transactions";
 
-function setupApiRoutes(app: Express) {
+function setupApiRoutes(app: Express): void {
 	app.use("/", dashboardRouter);
 	app.use("/auth", authRouter);
 	app.use("/reports/asset-performance", assetPerformanceReportRouter);

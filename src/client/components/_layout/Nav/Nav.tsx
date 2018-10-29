@@ -10,7 +10,7 @@ import {
 	faUsers,
 } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import * as bs from "../../../bootstrap-aliases";
@@ -47,7 +47,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: INavProps): INavProps {
 
 class UCNav extends PureComponent<INavProps> {
 
-	public render() {
+	public render(): ReactNode {
 		const isOpen = this.props.isOpen;
 		const wrapperClasses = combine(
 				(isOpen || bs.dNone), bs.dLgBlock,

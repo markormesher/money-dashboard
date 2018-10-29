@@ -1,7 +1,7 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon, Props as FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -21,7 +21,7 @@ class IconBtn<Payload> extends PureComponent<IIconBtnProps<Payload>> {
 		this.handleClick = this.handleClick.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { icon, text, btnProps, iconProps } = this.props;
 		const { className: btnClassName, ...otherBtnProps } = { ...btnProps };
 		return (
@@ -36,7 +36,7 @@ class IconBtn<Payload> extends PureComponent<IIconBtnProps<Payload>> {
 		);
 	}
 
-	private handleClick() {
+	private handleClick(): void {
 		const { onClick, payload } = this.props;
 		if (onClick) {
 			onClick(payload);

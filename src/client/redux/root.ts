@@ -46,7 +46,7 @@ const rootReducer = combineReducers({
 	transactions: transactionsReducer,
 });
 
-function*rootSaga() {
+function*rootSaga(): Generator {
 	yield all([
 		accountSettingsSagas(),
 		authSagas(),

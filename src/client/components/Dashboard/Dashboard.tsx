@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
@@ -26,7 +26,7 @@ interface IDashboardProps {
 
 class UCDashboard extends PureComponent<IDashboardProps> {
 
-	public render() {
+	public render(): ReactNode {
 		return (
 				<div>
 					<h1 className={bs.h2}>Dashboard</h1>

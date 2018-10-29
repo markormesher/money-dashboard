@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -14,7 +14,7 @@ class AppContentWrapper extends PureComponent {
 			bs.pt3, bs.px4,
 	);
 
-	public render() {
+	public render(): ReactNode {
 		return (
 				<main role="main" className={AppContentWrapper.mainWrapperClasses}>
 					<div className={AppContentWrapper.innerWrapperClasses}>

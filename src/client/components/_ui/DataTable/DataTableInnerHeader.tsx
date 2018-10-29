@@ -1,7 +1,7 @@
 import { faExchange, faSortAmountDown, faSortAmountUp } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 import { IColumn, ISortEntry } from "./DataTable";
@@ -15,7 +15,7 @@ interface IDataTableInnerHeaderProps {
 
 class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 
-	public render() {
+	public render(): ReactNode {
 		// note: always compare columns by key not equality
 		const { columns, sortedColumns } = this.props;
 		const headers = columns.map((col) => {

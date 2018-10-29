@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from "axios";
 import { string } from "prop-types";
 import { stringify } from "qs";
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { DatatableResponse } from "../../../../server/helpers/datatable-helper";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
@@ -101,11 +101,11 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		this.onDataLoadFailed = this.onDataLoadFailed.bind(this);
 	}
 
-	public componentDidMount() {
+	public componentDidMount(): void {
 		this.fetchData();
 	}
 
-	public componentWillUpdate(nextProps: IDataTableProps<Model>, nextState: IDataTableState<Model>) {
+	public componentWillUpdate(nextProps: IDataTableProps<Model>, nextState: IDataTableState<Model>): void {
 		// JSON.stringify(...) is a neat hack to do deep comparison of data-only structures
 		if (this.state.currentPage !== nextState.currentPage
 				|| this.state.searchTerm !== nextState.searchTerm
@@ -115,14 +115,14 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		}
 	}
 
-	public componentDidUpdate() {
+	public componentDidUpdate(): void {
 		if (this.fetchPending) {
 			this.fetchData();
 			this.fetchPending = false;
 		}
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { columns, rowRenderer, pageSize } = this.props;
 		const { loading, failed, data, currentPage, sortedColumns } = this.state;
 		const { filteredRowCount, totalRowCount } = data;
@@ -172,19 +172,19 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		);
 	}
 
-	private handlePrevPageClick() {
+	private handlePrevPageClick(): void {
 		this.setState({ currentPage: this.state.currentPage - 1 });
 	}
 
-	private handleNextPageClick() {
+	private handleNextPageClick(): void {
 		this.setState({ currentPage: this.state.currentPage + 1 });
 	}
 
-	private handleSearchTermSet(searchTerm: string) {
+	private handleSearchTermSet(searchTerm: string): void {
 		this.setState({ searchTerm });
 	}
 
-	private toggleColumnSortOrder(column: IColumn) {
+	private toggleColumnSortOrder(column: IColumn): void {
 		// note: always compare columns by key not equality
 		const sortedColumns = this.state.sortedColumns.slice(0); // work on a copy
 		const currentSortEntryIndex = sortedColumns.findIndex((sc) => sc.column.title === column.title);
@@ -212,7 +212,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 				.map((col) => ({ column: col, dir: col.defaultSortDirection }));
 	}
 
-	private generateMsgRow(msg: string) {
+	private generateMsgRow(msg: string): ReactElement<void> {
 		return (
 				<tr>
 					<td colSpan={this.props.columns.length} className={combine(bs.textCenter, bs.textMuted)}>
@@ -222,7 +222,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		);
 	}
 
-	private fetchData() {
+	private fetchData(): void {
 		const { pageSize, apiExtraParams } = this.props;
 		const { currentPage, searchTerm, sortedColumns } = this.state;
 
@@ -250,11 +250,11 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 				.catch(() => this.onDataLoadFailed(frame));
 	}
 
-	private onFrameReceived(frame: number) {
+	private onFrameReceived(frame: number): void {
 		this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
 	}
 
-	private onDataLoaded(frame: number, rawData: DatatableResponse<Model>) {
+	private onDataLoaded(frame: number, rawData: DatatableResponse<Model>): void {
 		if (frame <= this.lastFrameReceived) {
 			return;
 		}
@@ -278,7 +278,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		});
 	}
 
-	private onDataLoadFailed(frame: number) {
+	private onDataLoadFailed(frame: number): void {
 		if (frame <= this.lastFrameReceived) {
 			return;
 		}

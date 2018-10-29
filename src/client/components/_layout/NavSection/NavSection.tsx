@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 import * as style from "./NavSection.scss";
@@ -18,7 +18,7 @@ export class NavSection extends PureComponent<INavSectionProps> {
 
 	private static linkGroupClasses = combine(bs.nav, bs.flexColumn);
 
-	public render() {
+	public render(): ReactNode {
 
 		return (
 				<div>

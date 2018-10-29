@@ -1,7 +1,7 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { AnyAction, Dispatch } from "redux";
@@ -52,7 +52,7 @@ class UCNavLink extends PureComponent<INavLinkProps> {
 		this.handleOnClick = this.handleOnClick.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const active = this.props.to === this.props.currentPath;
 		const linkClasses = combine(bs.navLink, style.navLink, (active && style.active));
 
@@ -75,7 +75,7 @@ class UCNavLink extends PureComponent<INavLinkProps> {
 		);
 	}
 
-	private handleOnClick() {
+	private handleOnClick(): void {
 		if (this.props.navIsOpen) {
 			this.props.actions.closeNav();
 		}

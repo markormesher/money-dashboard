@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { ISortEntry } from "./DataTable";
 import * as styles from "./DataTable.scss";
@@ -18,7 +18,8 @@ const sortDirectionFull = {
 };
 
 class DataTableOuterFooter extends PureComponent<IDataTableOuterFooterProps> {
-	public render() {
+
+	public render(): ReactNode {
 		const { pageSize, currentPage, sortedColumns, filteredRowCount, totalRowCount } = this.props;
 
 		const rowRangeFrom = Math.min(filteredRowCount, (currentPage * pageSize) + 1);

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import * as Loadable from "react-loadable";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
@@ -52,7 +52,7 @@ class UCApp extends PureComponent<IAppProps> {
 		this.render404Error = this.render404Error.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { waitingFor, globalError, activeUser } = this.props;
 
 		if (globalError) {
@@ -103,7 +103,7 @@ class UCApp extends PureComponent<IAppProps> {
 		);
 	}
 
-	private render404Error() {
+	private render404Error(): ReactElement<void> {
 		const { currentPath } = this.props;
 		const error = new Http404Error(currentPath);
 		return (

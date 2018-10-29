@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
@@ -60,7 +60,7 @@ class UCEditProfileModal extends PureComponent<IEditProfileModalProps, IEditProf
 		this.updateModel = this.updateModel.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { editorBusy } = this.props;
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
@@ -92,21 +92,21 @@ class UCEditProfileModal extends PureComponent<IEditProfileModalProps, IEditProf
 		);
 	}
 
-	private handleNameChange(value: string) {
+	private handleNameChange(value: string): void {
 		this.updateModel({ name: value });
 	}
 
-	private handleSave() {
+	private handleSave(): void {
 		if (this.state.validationResult.isValid) {
 			this.props.actions.startSaveProfile(this.state.currentValues);
 		}
 	}
 
-	private handleCancel() {
+	private handleCancel(): void {
 		this.props.actions.setProfileToEdit(undefined);
 	}
 
-	private updateModel(profile: Partial<ThinProfile>) {
+	private updateModel(profile: Partial<ThinProfile>): void {
 		const updatedProfile = {
 			...this.state.currentValues,
 			...profile,

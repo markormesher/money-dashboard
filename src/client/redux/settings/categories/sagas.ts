@@ -9,8 +9,8 @@ import { CategorySettingsActions, setCategoryList, setCategoryToEdit, setEditorB
 const lastUpdateSelector = (state: IRootState) => state.settings.categories.lastUpdate;
 const lastLoadSelector = (state: IRootState) => state.settings.categories.categoryListLoadedAt;
 
-function*deleteCategorySaga() {
-	yield takeEvery(CategorySettingsActions.START_DELETE_CATEGORY, function*(action: PayloadAction) {
+function*deleteCategorySaga(): Generator {
+	yield takeEvery(CategorySettingsActions.START_DELETE_CATEGORY, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios.post(`/settings/categories/delete/${action.payload.categoryId}`).then((res) => res.data));
 			yield put(setLastUpdate());
@@ -20,8 +20,8 @@ function*deleteCategorySaga() {
 	});
 }
 
-function*saveCategorySaga() {
-	yield takeEvery(CategorySettingsActions.START_SAVE_CATEGORY, function*(action: PayloadAction) {
+function*saveCategorySaga(): Generator {
+	yield takeEvery(CategorySettingsActions.START_SAVE_CATEGORY, function*(action: PayloadAction): Generator {
 		try {
 			const category: Partial<ThinCategory> = action.payload.category;
 			const categoryId = category.id || "";
@@ -40,8 +40,8 @@ function*saveCategorySaga() {
 	});
 }
 
-function*loadCategoryListSaga() {
-	yield takeEvery(CategorySettingsActions.START_LOAD_CATEGORY_LIST, function*() {
+function*loadCategoryListSaga(): Generator {
+	yield takeEvery(CategorySettingsActions.START_LOAD_CATEGORY_LIST, function*(): Generator {
 		const lastUpdate = yield select(lastUpdateSelector);
 		const lastLoad = yield select(lastLoadSelector);
 		if (lastLoad >= lastUpdate) {
@@ -58,7 +58,7 @@ function*loadCategoryListSaga() {
 	});
 }
 
-function*categorySettingsSagas() {
+function*categorySettingsSagas(): Generator {
 	yield all([
 		deleteCategorySaga(),
 		saveCategorySaga(),

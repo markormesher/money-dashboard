@@ -5,8 +5,8 @@ import { setError } from "../global/actions";
 import { PayloadAction } from "../PayloadAction";
 import { setEditorBusy, setLastUpdate, setTransactionToEdit, TransactionsActions } from "./actions";
 
-function*deleteTransactionSaga() {
-	yield takeEvery(TransactionsActions.START_DELETE_TRANSACTION, function*(action: PayloadAction) {
+function*deleteTransactionSaga(): Generator {
+	yield takeEvery(TransactionsActions.START_DELETE_TRANSACTION, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios
 					.post(`/transactions/delete/${action.payload.transactionId}`)
@@ -18,8 +18,8 @@ function*deleteTransactionSaga() {
 	});
 }
 
-function*saveTransactionSaga() {
-	yield takeEvery(TransactionsActions.START_SAVE_TRANSACTION, function*(action: PayloadAction) {
+function*saveTransactionSaga(): Generator {
+	yield takeEvery(TransactionsActions.START_SAVE_TRANSACTION, function*(action: PayloadAction): Generator {
 		try {
 			const transaction: Partial<ThinTransaction> = action.payload.transaction;
 			const transactionId = transaction.id || "";
@@ -38,7 +38,7 @@ function*saveTransactionSaga() {
 	});
 }
 
-function*transactionsSagas() {
+function*transactionsSagas(): Generator {
 	yield all([
 		deleteTransactionSaga(),
 		saveTransactionSaga(),

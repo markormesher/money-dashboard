@@ -1,11 +1,11 @@
 import * as React from "react";
-import { FormEvent, PureComponent, ReactNode } from "react";
+import { FormEvent, PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledDateInputProps {
 	readonly id: string;
-	readonly label: string | ReactNode;
+	readonly label: string | ReactElement<void>;
 	readonly value: string | number;
 	readonly onValueChange: (newValue: string, id: string) => void;
 	readonly disabled?: boolean;
@@ -28,7 +28,7 @@ class ControlledDateInput extends PureComponent<IControlledDateInputProps, ICont
 		this.handleChange = this.handleChange.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { id, label, value, disabled, error } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
@@ -49,13 +49,13 @@ class ControlledDateInput extends PureComponent<IControlledDateInputProps, ICont
 		);
 	}
 
-	private handleBlur() {
+	private handleBlur(): void {
 		this.setState({
 			hasBeenTouched: true,
 		});
 	}
 
-	private handleChange(event: FormEvent<HTMLInputElement>) {
+	private handleChange(event: FormEvent<HTMLInputElement>): void {
 		const newValue = event.currentTarget.value;
 		if (!newValue || newValue.trim() === "") {
 			this.props.onValueChange(undefined, this.props.id);

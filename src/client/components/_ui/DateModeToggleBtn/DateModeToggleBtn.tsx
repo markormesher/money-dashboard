@@ -1,6 +1,6 @@
 import { faCalendar } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { capitaliseFirstLetter } from "../../../helpers/formatters";
 import { DateModeOption } from "../../../redux/transactions/reducer";
 import { IconBtn } from "../IconBtn/IconBtn";
@@ -19,7 +19,7 @@ class DateModeToggleBtn extends PureComponent<IDateModeToggleBtnProps> {
 		this.toggleValue = this.toggleValue.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { value, btnProps } = this.props;
 		const text = `Date Mode: ${capitaliseFirstLetter(value)} Date`;
 
@@ -35,7 +35,7 @@ class DateModeToggleBtn extends PureComponent<IDateModeToggleBtnProps> {
 		);
 	}
 
-	private toggleValue() {
+	private toggleValue(): void {
 		const { value, onChange } = this.props;
 		const newValue = value === "effective" ? "transaction" : "effective";
 		if (onChange) {

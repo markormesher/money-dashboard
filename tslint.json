@@ -17,6 +17,11 @@
 				"tabs"
 			]
 		},
+		"typedef": [
+			true,
+			"call-signature",
+			"property-declaration"
+		],
 		"no-default-export": true,
 
 		// immutability

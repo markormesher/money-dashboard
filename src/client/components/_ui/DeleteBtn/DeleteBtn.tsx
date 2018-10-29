@@ -1,6 +1,6 @@
 import { faCircleNotch, faExclamationTriangle, faTrash } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
 
 interface IDeleteBtnProps<Payload> {
@@ -28,7 +28,7 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 		this.handleClick = this.handleClick.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { btnProps, payload } = this.props;
 		const { triggered, running } = this.state;
 
@@ -52,7 +52,7 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 		);
 	}
 
-	private handleClick(payload: Payload) {
+	private handleClick(payload: Payload): void {
 		const { triggered, running } = this.state;
 
 		if (running) {

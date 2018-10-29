@@ -1,11 +1,11 @@
 import * as React from "react";
-import { FormEvent, InputHTMLAttributes, PureComponent, ReactNode } from "react";
+import { FormEvent, InputHTMLAttributes, PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledTextInputProps {
 	readonly id: string;
-	readonly label: string | ReactNode;
+	readonly label: string | ReactElement<void>;
 	readonly placeholder?: string;
 	readonly value: string | number;
 	readonly onValueChange: (newValue: string, id: string) => void;
@@ -30,7 +30,7 @@ class ControlledTextInput extends PureComponent<IControlledTextInputProps, ICont
 		this.handleChange = this.handleChange.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { id, label, placeholder, value, disabled, error, inputProps } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
@@ -53,13 +53,13 @@ class ControlledTextInput extends PureComponent<IControlledTextInputProps, ICont
 		);
 	}
 
-	private handleBlur() {
+	private handleBlur(): void {
 		this.setState({
 			hasBeenTouched: true,
 		});
 	}
 
-	private handleChange(event: FormEvent<HTMLInputElement>) {
+	private handleChange(event: FormEvent<HTMLInputElement>): void {
 		this.props.onValueChange(event.currentTarget.value, this.props.id);
 	}
 }

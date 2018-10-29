@@ -1,7 +1,7 @@
 import { faBars, faPoundSign } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { AnyAction, Dispatch } from "redux";
@@ -49,7 +49,7 @@ class UCHeader extends PureComponent<IHeaderProps> {
 		this.toggleNav = this.toggleNav.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		return (
 				<nav className={combine(bs.navbar, style.navbar, bs.navbarDark, bs.stickyTop, bs.bgDark, bs.flexMdNowrap, bs.p0)}>
 					<Link to="#" onClick={this.toggleNav} className={combine(bs.dInlineBlock, bs.dLgNone, bs.mx2)}>
@@ -71,7 +71,7 @@ class UCHeader extends PureComponent<IHeaderProps> {
 		);
 	}
 
-	private toggleNav() {
+	private toggleNav(): void {
 		if (this.props.nav.isOpen) {
 			this.props.actions.closeNav();
 		} else {

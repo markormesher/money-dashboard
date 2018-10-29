@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FormEvent, PureComponent, ReactNode } from "react";
+import { FormEvent, PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -7,7 +7,7 @@ interface IControlledRadioInputProps {
 	readonly id: string;
 	readonly name: string;
 	readonly value: string;
-	readonly label: string | ReactNode;
+	readonly label: string | ReactElement<void>;
 	readonly checked: boolean;
 	readonly onValueChange: (newValue: string, id: string) => void;
 	readonly disabled?: boolean;
@@ -30,7 +30,7 @@ class ControlledRadioInput extends PureComponent<IControlledRadioInputProps, ICo
 		this.handleChange = this.handleChange.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { id, name, value, label, checked, disabled, error } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
@@ -52,13 +52,13 @@ class ControlledRadioInput extends PureComponent<IControlledRadioInputProps, ICo
 		);
 	}
 
-	private handleBlur() {
+	private handleBlur(): void {
 		this.setState({
 			hasBeenTouched: true,
 		});
 	}
 
-	private handleChange(event: FormEvent<HTMLInputElement>) {
+	private handleChange(event: FormEvent<HTMLInputElement>): void {
 		if (event.currentTarget.checked) {
 			this.props.onValueChange(event.currentTarget.value, this.props.id);
 		}

@@ -1,6 +1,6 @@
 import { Moment } from "moment";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinBudget } from "../../../server/model-thins/ThinBudget";
@@ -83,7 +83,7 @@ class UCEditBudgetModal extends PureComponent<IEditBudgetModalProps, IEditBudget
 		this.props.actions.startLoadCategoryList();
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { editorBusy, categoryList } = this.props;
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
@@ -191,44 +191,44 @@ class UCEditBudgetModal extends PureComponent<IEditBudgetModalProps, IEditBudget
 		);
 	}
 
-	private handleCategoryChange(value: string) {
+	private handleCategoryChange(value: string): void {
 		this.updateModel({ categoryId: value });
 	}
 
-	private handleAmountChange(value: string) {
+	private handleAmountChange(value: string): void {
 		this.updateModel({ amount: parseFloat(value) });
 	}
 
-	private handleStartDateChange(value: string) {
+	private handleStartDateChange(value: string): void {
 		this.updateModel({ startDate: value });
 	}
 
-	private handleEndDateChange(value: string) {
+	private handleEndDateChange(value: string): void {
 		this.updateModel({ endDate: value });
 	}
 
-	private handleTypeChange(value: string) {
+	private handleTypeChange(value: string): void {
 		this.updateModel({ type: value });
 	}
 
-	private handleDateRangeSelection(start: Moment, end: Moment) {
+	private handleDateRangeSelection(start: Moment, end: Moment): void {
 		this.updateModel({
 			startDate: formatDate(start, "system"),
 			endDate: formatDate(end, "system"),
 		});
 	}
 
-	private handleSave() {
+	private handleSave(): void {
 		if (this.state.validationResult.isValid) {
 			this.props.actions.startSaveBudget(this.state.currentValues);
 		}
 	}
 
-	private handleCancel() {
+	private handleCancel(): void {
 		this.props.actions.setBudgetToEdit(undefined);
 	}
 
-	private updateModel(budget: Partial<ThinBudget>) {
+	private updateModel(budget: Partial<ThinBudget>): void {
 		const updatedBudget = {
 			...this.state.currentValues,
 			...budget,

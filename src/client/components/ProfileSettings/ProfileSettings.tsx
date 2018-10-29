@@ -1,4 +1,5 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
+import { ReactElement, ReactNode } from "react";
 import * as React from "react";
 import { PureComponent } from "react";
 import { connect } from "react-redux";
@@ -59,7 +60,7 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 		this.startProfileCreation = this.startProfileCreation.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { lastUpdate, profileToEdit } = this.props;
 		return (
 				<>
@@ -88,7 +89,7 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 		);
 	}
 
-	private tableRowRenderer(profile: ThinProfile) {
+	private tableRowRenderer(profile: ThinProfile): ReactElement<void> {
 		return (
 				<tr key={profile.id}>
 					<td>{profile.name}</td>
@@ -97,7 +98,7 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 		);
 	}
 
-	private generateActionButtons(profile: ThinProfile) {
+	private generateActionButtons(profile: ThinProfile): ReactElement<void> {
 		const deleteDisabled = profile.id === this.props.activeProfile.id;
 		return (
 				<>
@@ -126,7 +127,7 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 		);
 	}
 
-	private startProfileCreation() {
+	private startProfileCreation(): void {
 		this.props.actions.setProfileToEdit(null);
 	}
 }

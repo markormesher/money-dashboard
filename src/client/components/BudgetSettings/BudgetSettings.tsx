@@ -1,4 +1,5 @@
 import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
+import { ReactElement, ReactNode } from "react";
 import * as React from "react";
 import { PureComponent } from "react";
 import { connect } from "react-redux";
@@ -99,7 +100,7 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 		this.startCloneOnSelectedBudgets = this.startCloneOnSelectedBudgets.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { lastUpdate, budgetToEdit, budgetIdsToClone, displayCurrentOnly } = this.props;
 		const { selectedBudgetIds } = this.state;
 		return (
@@ -153,7 +154,7 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 		);
 	}
 
-	private tableRowRenderer(budget: ThinBudget) {
+	private tableRowRenderer(budget: ThinBudget): ReactElement<void> {
 		const { selectedBudgetIds } = this.state;
 		const cloneId = `clone-${budget.id}`;
 		return (
@@ -176,7 +177,7 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 		);
 	}
 
-	private generateActionButtons(budget: ThinBudget) {
+	private generateActionButtons(budget: ThinBudget): ReactElement<void> {
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<IconBtn
@@ -199,11 +200,11 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 		);
 	}
 
-	private startBudgetCreation() {
+	private startBudgetCreation(): void {
 		this.props.actions.setBudgetToEdit(null);
 	}
 
-	private handleCloneCheckedChange(checked: boolean, id: string) {
+	private handleCloneCheckedChange(checked: boolean, id: string): void {
 		const original = this.state.selectedBudgetIds;
 		if (checked) {
 			this.setState({
@@ -216,7 +217,7 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 		}
 	}
 
-	private startCloneOnSelectedBudgets() {
+	private startCloneOnSelectedBudgets(): void {
 		this.props.actions.setBudgetIdsToClone(this.state.selectedBudgetIds.map((b) => b.replace("clone-", "")));
 	}
 }

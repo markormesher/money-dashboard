@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
@@ -62,7 +62,7 @@ class UCEditAccountModal extends PureComponent<IEditAccountModalProps, IEditAcco
 		this.updateModel = this.updateModel.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { editorBusy } = this.props;
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
@@ -109,25 +109,25 @@ class UCEditAccountModal extends PureComponent<IEditAccountModalProps, IEditAcco
 		);
 	}
 
-	private handleNameChange(value: string) {
+	private handleNameChange(value: string): void {
 		this.updateModel({ name: value });
 	}
 
-	private handleTypeChange(value: string) {
+	private handleTypeChange(value: string): void {
 		this.updateModel({ type: value });
 	}
 
-	private handleSave() {
+	private handleSave(): void {
 		if (this.state.validationResult.isValid) {
 			this.props.actions.startSaveAccount(this.state.currentValues);
 		}
 	}
 
-	private handleCancel() {
+	private handleCancel(): void {
 		this.props.actions.setAccountToEdit(undefined);
 	}
 
-	private updateModel(account: Partial<ThinAccount>) {
+	private updateModel(account: Partial<ThinAccount>): void {
 		const updatedAccount = {
 			...this.state.currentValues,
 			...account,

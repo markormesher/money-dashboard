@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FormEvent, PureComponent } from "react";
+import { FormEvent, PureComponent, ReactNode } from "react";
 
 interface IControlledFormProps {
 	readonly onSubmit?: () => void;
@@ -13,7 +13,7 @@ class ControlledForm extends PureComponent<IControlledFormProps> {
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		return (
 				<form onSubmit={this.handleSubmit}>
 					{this.props.children}
@@ -21,7 +21,7 @@ class ControlledForm extends PureComponent<IControlledFormProps> {
 		);
 	}
 
-	private handleSubmit(event?: FormEvent) {
+	private handleSubmit(event?: FormEvent): void {
 		if (event) {
 			event.preventDefault();
 		}

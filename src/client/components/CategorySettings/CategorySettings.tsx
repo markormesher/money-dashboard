@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
@@ -58,7 +58,7 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 		this.startCategoryCreation = this.startCategoryCreation.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { lastUpdate, categoryToEdit } = this.props;
 		return (
 				<>
@@ -89,7 +89,7 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 		);
 	}
 
-	private tableRowRenderer(category: ThinCategory) {
+	private tableRowRenderer(category: ThinCategory): ReactElement<void> {
 		return (
 				<tr key={category.id}>
 					<td>{category.name}</td>
@@ -99,7 +99,7 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 		);
 	}
 
-	private generateActionButtons(category: ThinCategory) {
+	private generateActionButtons(category: ThinCategory): ReactElement<void> {
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<IconBtn
@@ -122,7 +122,7 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 		);
 	}
 
-	private startCategoryCreation() {
+	private startCategoryCreation(): void {
 		this.props.actions.setCategoryToEdit(null);
 	}
 }

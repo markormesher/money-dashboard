@@ -9,8 +9,8 @@ import { AccountSettingsActions, setAccountList, setAccountToEdit, setEditorBusy
 const lastUpdateSelector = (state: IRootState) => state.settings.accounts.lastUpdate;
 const lastLoadSelector = (state: IRootState) => state.settings.accounts.accountListLastLoaded;
 
-function*deleteAccountSaga() {
-	yield takeEvery(AccountSettingsActions.START_DELETE_ACCOUNT, function*(action: PayloadAction) {
+function*deleteAccountSaga(): Generator {
+	yield takeEvery(AccountSettingsActions.START_DELETE_ACCOUNT, function*(action: PayloadAction): Generator {
 		try {
 			const accountId: string = action.payload.accountId;
 			yield call(() => axios.post(`/settings/accounts/delete/${accountId}`));
@@ -21,8 +21,8 @@ function*deleteAccountSaga() {
 	});
 }
 
-function*saveAccountSaga() {
-	yield takeEvery(AccountSettingsActions.START_SAVE_ACCOUNT, function*(action: PayloadAction) {
+function*saveAccountSaga(): Generator {
+	yield takeEvery(AccountSettingsActions.START_SAVE_ACCOUNT, function*(action: PayloadAction): Generator {
 		try {
 			const account: Partial<ThinAccount> = action.payload.account;
 			const accountId = account.id || "";
@@ -41,8 +41,8 @@ function*saveAccountSaga() {
 	});
 }
 
-function*loadAccountListSaga() {
-	yield takeEvery(AccountSettingsActions.START_LOAD_ACCOUNT_LIST, function*() {
+function*loadAccountListSaga(): Generator {
+	yield takeEvery(AccountSettingsActions.START_LOAD_ACCOUNT_LIST, function*(): Generator {
 		const lastUpdate = yield select(lastUpdateSelector);
 		const lastLoad = yield select(lastLoadSelector);
 		if (lastLoad >= lastUpdate) {
@@ -59,7 +59,7 @@ function*loadAccountListSaga() {
 	});
 }
 
-function*accountSettingsSagas() {
+function*accountSettingsSagas(): Generator {
 	yield all([
 		deleteAccountSaga(),
 		saveAccountSaga(),

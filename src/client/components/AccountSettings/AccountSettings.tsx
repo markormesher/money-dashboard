@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
@@ -64,7 +64,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 		this.startAccountCreation = this.startAccountCreation.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { lastUpdate, displayActiveOnly, accountToEdit } = this.props;
 		return (
 				<>
@@ -106,7 +106,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 		);
 	}
 
-	private tableRowRenderer(account: ThinAccount) {
+	private tableRowRenderer(account: ThinAccount): ReactElement<void> {
 		return (
 				<tr key={account.id}>
 					<td>{account.name}</td>
@@ -116,7 +116,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 		);
 	}
 
-	private generateActionButtons(account: ThinAccount) {
+	private generateActionButtons(account: ThinAccount): ReactElement<void> {
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<IconBtn
@@ -140,7 +140,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 		);
 	}
 
-	private startAccountCreation() {
+	private startAccountCreation(): void {
 		this.props.actions.setAccountToEdit(null);
 	}
 }

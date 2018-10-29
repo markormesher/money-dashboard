@@ -1,7 +1,7 @@
 import { faExclamationTriangle } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactNode } from "react";
 import * as bs from "../../bootstrap-aliases";
 import { DetailedError } from "../../helpers/errors/DetailedError";
 import { combine } from "../../helpers/style-helpers";
@@ -13,7 +13,7 @@ interface IErrorPageProps {
 
 class ErrorPage extends PureComponent<IErrorPageProps> {
 
-	public render() {
+	public render(): ReactNode {
 		const errorMessage = this.props.error.message || "Something went wrong";
 		const errorDisplay = this.props.error.display;
 

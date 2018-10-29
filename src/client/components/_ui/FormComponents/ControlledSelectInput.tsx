@@ -1,11 +1,11 @@
 import * as React from "react";
-import { FormEvent, PureComponent, ReactNode } from "react";
+import { FormEvent, PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledSelectInputProps {
 	readonly id: string;
-	readonly label: string | ReactNode;
+	readonly label: string | ReactElement<void>;
 	readonly value: string;
 	readonly onValueChange: (newValue: string, id: string) => void;
 	readonly disabled?: boolean;
@@ -28,7 +28,7 @@ class ControlledSelectInput extends PureComponent<IControlledSelectInputProps, I
 		this.handleChange = this.handleChange.bind(this);
 	}
 
-	public render() {
+	public render(): ReactNode {
 		const { id, label, value, disabled, error } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
@@ -50,13 +50,13 @@ class ControlledSelectInput extends PureComponent<IControlledSelectInputProps, I
 		);
 	}
 
-	private handleBlur() {
+	private handleBlur(): void {
 		this.setState({
 			hasBeenTouched: true,
 		});
 	}
 
-	private handleChange(event: FormEvent<HTMLSelectElement>) {
+	private handleChange(event: FormEvent<HTMLSelectElement>): void {
 		this.props.onValueChange(event.currentTarget.value, this.props.id);
 	}
 }

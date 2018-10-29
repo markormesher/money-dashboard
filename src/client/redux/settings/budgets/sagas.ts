@@ -5,8 +5,8 @@ import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
 import { BudgetSettingsActions, setBudgetIdsToClone, setBudgetToEdit, setEditorBusy, setLastUpdate } from "./actions";
 
-function*deleteBudgetSaga() {
-	yield takeEvery(BudgetSettingsActions.START_DELETE_BUDGET, function*(action: PayloadAction) {
+function*deleteBudgetSaga(): Generator {
+	yield takeEvery(BudgetSettingsActions.START_DELETE_BUDGET, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios.post(`/settings/budgets/delete/${action.payload.budgetId}`).then((res) => res.data));
 			yield put(setLastUpdate());
@@ -16,8 +16,8 @@ function*deleteBudgetSaga() {
 	});
 }
 
-function*saveBudgetSaga() {
-	yield takeEvery(BudgetSettingsActions.START_SAVE_BUDGET, function*(action: PayloadAction) {
+function*saveBudgetSaga(): Generator {
+	yield takeEvery(BudgetSettingsActions.START_SAVE_BUDGET, function*(action: PayloadAction): Generator {
 		try {
 			const budget: Partial<ThinBudget> = action.payload.budget;
 			const budgetId = budget.id || "";
@@ -36,8 +36,8 @@ function*saveBudgetSaga() {
 	});
 }
 
-function*cloneBudgetsSaga() {
-	yield takeEvery(BudgetSettingsActions.START_CLONE_BUDGETS, function*(action: PayloadAction) {
+function*cloneBudgetsSaga(): Generator {
+	yield takeEvery(BudgetSettingsActions.START_CLONE_BUDGETS, function*(action: PayloadAction): Generator {
 		try {
 			const budgetIds: string[] = action.payload.budgetIds;
 			const startDate: string = action.payload.startDate;
@@ -61,7 +61,7 @@ function*cloneBudgetsSaga() {
 	});
 }
 
-function*budgetSettingsSagas() {
+function*budgetSettingsSagas(): Generator {
 	yield all([
 		deleteBudgetSaga(),
 		saveBudgetSaga(),

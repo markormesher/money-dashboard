@@ -5,8 +5,8 @@ import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
 import { ProfileSettingsActions, setEditorBusy, setLastUpdate, setProfileToEdit } from "./actions";
 
-function*deleteProfileSaga() {
-	yield takeEvery(ProfileSettingsActions.START_DELETE_PROFILE, function*(action: PayloadAction) {
+function*deleteProfileSaga(): Generator {
+	yield takeEvery(ProfileSettingsActions.START_DELETE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios.post(`/settings/profiles/delete/${action.payload.profileId}`).then((res) => res.data));
 			yield put(setLastUpdate());
@@ -16,8 +16,8 @@ function*deleteProfileSaga() {
 	});
 }
 
-function*saveProfileSaga() {
-	yield takeEvery(ProfileSettingsActions.START_SAVE_PROFILE, function*(action: PayloadAction) {
+function*saveProfileSaga(): Generator {
+	yield takeEvery(ProfileSettingsActions.START_SAVE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
 			const profile: Partial<ThinProfile> = action.payload.profile;
 			const profileId = profile.id || "";
@@ -36,7 +36,7 @@ function*saveProfileSaga() {
 	});
 }
 
-function*profileSettingsSagas() {
+function*profileSettingsSagas(): Generator {
 	yield all([
 		deleteProfileSaga(),
 		saveProfileSaga(),

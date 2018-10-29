@@ -10,7 +10,7 @@ const webpackDevConfig = getDevWebpackConfig();
 const compiler = Webpack(webpackDevConfig);
 const clientBuildPath = resolve(__dirname, "..", "..", "client");
 
-function setupDevAppRoutes(app: Express) {
+function setupDevAppRoutes(app: Express): void {
 	app.use(webpackDevMiddleware(compiler, {
 		publicPath: webpackDevConfig.output.publicPath,
 		stats: {
@@ -23,7 +23,7 @@ function setupDevAppRoutes(app: Express) {
 	app.get("*", (req: Request, res: Response) => res.sendFile(resolve(clientBuildPath, "index.html")));
 }
 
-function setupProdAppRoutes(app: Express) {
+function setupProdAppRoutes(app: Express): void {
 	app.use(Compression());
 	app.use("/", expressStatic(clientBuildPath));
 
