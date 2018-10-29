@@ -77,7 +77,7 @@ module.exports = {
 	output: {
 		publicPath: "/",
 		path: outputDir,
-		filename: "[name]~bundle.js",
+		filename: "[name]~[contenthash].js",
 
 		// used in development mode only
 		hotUpdateMainFilename: "hot-update.[hash:6].json",
@@ -181,11 +181,16 @@ module.exports = {
 		minimizer: IS_PROD ? [terserMinimiser] : [],
 		namedModules: IS_DEV,
 		splitChunks: !IS_TEST && {
+			chunks: 'all',
+			maxInitialRequests: Infinity,
+			minSize: 0,
 			cacheGroups: {
 				vendor: {
 					test: /[\\/]node_modules[\\/]/,
-					name: "vendor",
-					chunks: "all",
+					name: (module) => {
+						const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+						return `npm.${packageName.replace('@', '-')}`;
+					},
 				},
 			},
 		},
