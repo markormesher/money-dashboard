@@ -77,7 +77,7 @@ module.exports = {
 	output: {
 		publicPath: "/",
 		path: outputDir,
-		filename: "[name]~[contenthash].js",
+		filename: IS_PROD ? "[name]~[hash].js" : "[name]~[contenthash].js",
 
 		// used in development mode only
 		hotUpdateMainFilename: "hot-update.[hash:6].json",
@@ -189,7 +189,7 @@ module.exports = {
 					test: /[\\/]node_modules[\\/]/,
 					name: (module) => {
 						const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-						return `npm.${packageName.replace('@', '-')}`;
+						return `npm.${packageName.replace('@', '')}`;
 					},
 				},
 			},
