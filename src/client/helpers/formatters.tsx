@@ -41,7 +41,7 @@ function generateAccountTypeBadge(account: ThinAccount): ReactElement<void> {
 		case "savings":
 			return (<Badge className={bs.badgeSuccess}>Savings Account</Badge>);
 		case "asset":
-			return (<Badge className={bs.badgeWarning}>Asset Growth</Badge>);
+			return (<Badge className={bs.badgeWarning}>Asset</Badge>);
 		default:
 			return (<Badge className={bs.badgeDanger}>Other</Badge>);
 	}

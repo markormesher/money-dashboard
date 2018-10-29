@@ -2,7 +2,7 @@ import * as chai from "chai";
 import { expect, should } from "chai";
 import * as chaiString from "chai-string";
 import * as Enzyme from "enzyme";
-import { shallow } from "enzyme";
+import { render, shallow } from "enzyme";
 import * as Adapter from "enzyme-adapter-react-16";
 import { describe, it } from "mocha";
 import * as Moment from "moment";
@@ -11,6 +11,7 @@ import { ThinAccount } from "../../server/model-thins/ThinAccount";
 import { ThinBudget } from "../../server/model-thins/ThinBudget";
 import { ThinCategory } from "../../server/model-thins/ThinCategory";
 import * as bs from "../bootstrap-aliases";
+import { Badge } from "../components/_ui/Badge/Badge";
 import {
 	capitaliseFirstLetter,
 	formatCurrency,
@@ -62,7 +63,7 @@ describe(__filename, () => {
 
 		it("should preserve the un-styled value", () => {
 			const formattedElement = shallow(formatCurrencyStyled(1234.56));
-			expect(formattedElement.html()).to.contain("1,234.56");
+			expect(formattedElement.text()).to.equal("1,234.56");
 		});
 	});
 
@@ -138,19 +139,19 @@ describe(__filename, () => {
 
 			account = { ...account, type: "current" };
 			let badge = generateAccountTypeBadge(account);
-			shallow(badge).html().should.contain("Current Account");
+			shallow(badge).text().should.equal("Current Account");
 
 			account = { ...account, type: "savings" };
 			badge = generateAccountTypeBadge(account);
-			shallow(badge).html().should.contain("Savings Account");
+			shallow(badge).text().should.equal("Savings Account");
 
 			account = { ...account, type: "asset" };
 			badge = generateAccountTypeBadge(account);
-			shallow(badge).html().should.contain("Asset");
+			shallow(badge).text().should.equal("Asset");
 
 			account = { ...account, type: "other" };
 			badge = generateAccountTypeBadge(account);
-			shallow(badge).html().should.contain("Other");
+			shallow(badge).text().should.equal("Other");
 		});
 	});
 
@@ -173,11 +174,11 @@ describe(__filename, () => {
 
 			budget = { ...budget, type: "budget" };
 			let badge = generateBudgetTypeBadge(budget);
-			shallow(badge).html().should.contain("Budget");
+			shallow(badge).text().should.equal("Budget");
 
 			budget = { ...budget, type: "bill" };
 			badge = generateBudgetTypeBadge(budget);
-			shallow(badge).html().should.contain("Bill");
+			shallow(badge).text().should.equal("Bill");
 		});
 	});
 
@@ -252,6 +253,7 @@ describe(__filename, () => {
 			const category = ThinCategory.DEFAULT; // all types are false
 			const badges = generateCategoryTypeBadge(category);
 			badges.length.should.equal(1);
+			shallow(badges[0]).filter("span").should.have.lengthOf(1);
 		});
 
 		it("should return a styled 'none' message when category has no types", () => {
