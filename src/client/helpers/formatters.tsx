@@ -5,18 +5,8 @@ import { ThinAccount } from "../../server/model-thins/ThinAccount";
 import { ThinBudget } from "../../server/model-thins/ThinBudget";
 import { ThinCategory } from "../../server/model-thins/ThinCategory";
 import * as bs from "../bootstrap-aliases";
+import { Badge } from "../components/_ui/Badge/Badge";
 import * as appStyles from "../components/App/App.scss";
-import { combine } from "./style-helpers";
-
-// TODO: refactor as component
-function generateBadge(content: string, badgeClass: string, marginRight: boolean = false): ReactElement<void> {
-	badgeClass = badgeClass || bs.badgeLight;
-	return (
-			<span key={content + badgeClass} className={combine(bs.badge, badgeClass, marginRight && bs.mr1)}>
-				{content}
-			</span>
-	);
-}
 
 function formatCurrency(amount: number): string {
 	return amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
@@ -47,13 +37,13 @@ function capitaliseFirstLetter(str: string): string {
 function generateAccountTypeBadge(account: ThinAccount): ReactElement<void> {
 	switch (account.type) {
 		case "current":
-			return generateBadge("Current Account", bs.badgeInfo);
+			return (<Badge className={bs.badgeInfo}>Current Account</Badge>);
 		case "savings":
-			return generateBadge("Savings Account", bs.badgeSuccess);
+			return (<Badge className={bs.badgeSuccess}>Savings Account</Badge>);
 		case "asset":
-			return generateBadge("Asset Growth", bs.badgeWarning);
+			return (<Badge className={bs.badgeWarning}>Asset Growth</Badge>);
 		default:
-			return generateBadge("Other", bs.badgeDanger);
+			return (<Badge className={bs.badgeDanger}>Other</Badge>);
 	}
 }
 
@@ -61,9 +51,9 @@ function generateAccountTypeBadge(account: ThinAccount): ReactElement<void> {
 
 function generateBudgetTypeBadge(budget: ThinBudget): ReactElement<void> {
 	if (budget.type === "budget") {
-		return generateBadge("Budget", bs.badgeInfo);
+		return (<Badge className={bs.badgeInfo}>Budget</Badge>);
 	} else {
-		return generateBadge("Bill", bs.badgeWarning);
+		return (<Badge className={bs.badgeWarning}>Bill</Badge>);
 	}
 }
 
@@ -125,16 +115,16 @@ function formatBudgetPeriod(start: Date | string, end: Date | string): string {
 function generateCategoryTypeBadge(category: ThinCategory): Array<ReactElement<void>> {
 	const output = [] as Array<ReactElement<void>>;
 	if (category.isAssetGrowthCategory) {
-		output.push(generateBadge("Asset", bs.badgeWarning, true));
+		output.push((<Badge className={bs.badgeWarning} marginRight={true}>Asset</Badge>));
 	}
 	if (category.isExpenseCategory) {
-		output.push(generateBadge("Expense", bs.badgeDanger, true));
+		output.push((<Badge className={bs.badgeDanger} marginRight={true}>Expense</Badge>));
 	}
 	if (category.isIncomeCategory) {
-		output.push(generateBadge("Income", bs.badgeSuccess, true));
+		output.push((<Badge className={bs.badgeSuccess} marginRight={true}>Income</Badge>));
 	}
 	if (category.isMemoCategory) {
-		output.push(generateBadge("Memo", bs.badgeInfo, true));
+		output.push((<Badge className={bs.badgeInfo} marginRight={true}>Memo</Badge>));
 	}
 
 	if (output.length > 0) {
@@ -145,7 +135,6 @@ function generateCategoryTypeBadge(category: ThinCategory): Array<ReactElement<v
 }
 
 export {
-	generateBadge,
 	formatCurrency,
 	formatCurrencyStyled,
 	formatDate,

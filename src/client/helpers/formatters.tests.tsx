@@ -14,8 +14,12 @@ import * as bs from "../bootstrap-aliases";
 import {
 	capitaliseFirstLetter,
 	formatCurrency,
-	formatCurrencyStyled, formatDate, generateAccountTypeBadge,
-	generateBadge, generateBudgetTypeBadge, generateCategoryTypeBadge, getBudgetPeriodType,
+	formatCurrencyStyled,
+	formatDate,
+	generateAccountTypeBadge,
+	generateBudgetTypeBadge,
+	generateCategoryTypeBadge,
+	getBudgetPeriodType,
 } from "./formatters";
 
 Enzyme.configure({ adapter: new Adapter() });
@@ -23,32 +27,6 @@ chai.use(chaiString);
 should();
 
 describe(__filename, () => {
-
-	describe("generateBadge()", () => {
-
-		it("should render the contents", () => {
-			const badge = generateBadge("test contents", "");
-			shallow(badge).html().should.contain("test contents");
-		});
-
-		it("should apply the class", () => {
-			const badge = generateBadge("", "test-class");
-			shallow(badge).find(".test-class").should.have.lengthOf(1);
-		});
-
-		it("should apply the default class if called without class", () => {
-			const badge = generateBadge("", undefined);
-			shallow(badge).find(`.${bs.badgeLight}`).should.have.lengthOf(1);
-		});
-
-		it("should apply a margin only when specified", () => {
-			const badgeWithoutMargin = generateBadge("", "");
-			shallow(badgeWithoutMargin).find(`.${bs.mr1}`).should.have.lengthOf(0);
-
-			const badgeWithMargin = generateBadge("", "", true);
-			shallow(badgeWithMargin).find(`.${bs.mr1}`).should.have.lengthOf(1);
-		});
-	});
 
 	describe("formatCurrency()", () => {
 

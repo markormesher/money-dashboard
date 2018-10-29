@@ -7,11 +7,12 @@ import { ThinBudget } from "../../../server/model-thins/ThinBudget";
 import { IThinBudgetValidationResult, validateThinBudget } from "../../../server/model-thins/ThinBudgetValidator";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
 import * as bs from "../../bootstrap-aliases";
-import { formatDate, generateBadge } from "../../helpers/formatters";
+import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setBudgetToEdit, startSaveBudget } from "../../redux/settings/budgets/actions";
 import { startLoadCategoryList } from "../../redux/settings/categories/actions";
+import { Badge } from "../_ui/Badge/Badge";
 import { ControlledDateInput } from "../_ui/FormComponents/ControlledDateInput";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
 import { ControlledRadioInput } from "../_ui/FormComponents/ControlledRadioInput";
@@ -167,7 +168,7 @@ class UCEditBudgetModal extends PureComponent<IEditBudgetModalProps, IEditBudget
 											id={"type-budget"}
 											name={"type"}
 											value={"budget"}
-											label={generateBadge("Budget", bs.badgeInfo)}
+											label={<Badge className={bs.badgeInfo}>Budget</Badge>}
 											checked={currentValues.type === "budget"}
 											disabled={editorBusy}
 											onValueChange={this.handleTypeChange}
@@ -178,7 +179,7 @@ class UCEditBudgetModal extends PureComponent<IEditBudgetModalProps, IEditBudget
 											id={"type-bill"}
 											name={"type"}
 											value={"bill"}
-											label={generateBadge("Bill", bs.badgeWarning)}
+											label={<Badge className={bs.badgeWarning}>Bill</Badge>}
 											checked={currentValues.type === "bill"}
 											disabled={editorBusy}
 											onValueChange={this.handleTypeChange}

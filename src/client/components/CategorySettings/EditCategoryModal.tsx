@@ -5,9 +5,9 @@ import { AnyAction, Dispatch } from "redux";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
 import { IThinCategoryValidationResult, validateThinCategory } from "../../../server/model-thins/ThinCategoryValidator";
 import * as bs from "../../bootstrap-aliases";
-import { generateBadge } from "../../helpers/formatters";
 import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startSaveCategory } from "../../redux/settings/categories/actions";
+import { Badge } from "../_ui/Badge/Badge";
 import { ControlledCheckboxInput } from "../_ui/FormComponents/ControlledCheckboxInput";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
 import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
@@ -96,7 +96,7 @@ class UCEditCategoryModal extends PureComponent<IEditCategoryModalProps, IEditCa
 								<div className={bs.col}>
 									<ControlledCheckboxInput
 											id={"type-income"}
-											label={generateBadge("Income", bs.badgeSuccess)}
+											label={<Badge className={bs.badgeSuccess}>Income</Badge>}
 											checked={currentValues.isIncomeCategory}
 											disabled={editorBusy}
 											onCheckedChange={this.handleTypeCheckedChange}
@@ -105,7 +105,7 @@ class UCEditCategoryModal extends PureComponent<IEditCategoryModalProps, IEditCa
 								<div className={bs.col}>
 									<ControlledCheckboxInput
 											id={"type-expense"}
-											label={generateBadge("Expense", bs.badgeDanger)}
+											label={<Badge className={bs.badgeDanger}>Expense</Badge>}
 											checked={currentValues.isExpenseCategory}
 											disabled={editorBusy}
 											onCheckedChange={this.handleTypeCheckedChange}
@@ -116,7 +116,7 @@ class UCEditCategoryModal extends PureComponent<IEditCategoryModalProps, IEditCa
 								<div className={bs.col}>
 									<ControlledCheckboxInput
 											id={"type-asset"}
-											label={generateBadge("Asset Growth", bs.badgeWarning)}
+											label={<Badge className={bs.badgeWarning}>Asset Growth</Badge>}
 											checked={currentValues.isAssetGrowthCategory}
 											disabled={editorBusy}
 											onCheckedChange={this.handleTypeCheckedChange}
@@ -125,7 +125,7 @@ class UCEditCategoryModal extends PureComponent<IEditCategoryModalProps, IEditCa
 								<div className={bs.col}>
 									<ControlledCheckboxInput
 											id={"type-memo"}
-											label={generateBadge("Memo", bs.badgeInfo)}
+											label={<Badge className={bs.badgeInfo}>Memo</Badge>}
 											checked={currentValues.isMemoCategory}
 											disabled={editorBusy}
 											onCheckedChange={this.handleTypeCheckedChange}
