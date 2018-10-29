@@ -77,7 +77,7 @@ module.exports = {
 	output: {
 		publicPath: "/",
 		path: outputDir,
-		filename: IS_PROD ? "[name]~[hash].js" : "[name]~[contenthash].js",
+		filename: IS_PROD ? "[name]~[contenthash].js" : "[name]~[hash].js",
 
 		// used in development mode only
 		hotUpdateMainFilename: "hot-update.[hash:6].json",
