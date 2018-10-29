@@ -58,10 +58,6 @@ function mapDispatchToProps(dispatch: Dispatch, props: ITransactionProps): ITran
 
 class UCTransactions extends PureComponent<ITransactionProps> {
 
-	private static dateModeStateFilter(state: IRootState) {
-		return state.transactions.dateMode;
-	}
-
 	private tableColumns: IColumn[] = [
 		{
 			title: "Date",
@@ -95,9 +91,8 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Transactions</h1>
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<DateModeToggleBtn
-									stateFilter={UCTransactions.dateModeStateFilter}
-									stateModifier={this.props.actions.setDateMode}
-									onChange={this.props.actions.setLastUpdate}
+									value={this.props.dateMode}
+									onChange={this.props.actions.setDateMode}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
 									}}

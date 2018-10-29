@@ -1,7 +1,7 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { EventHandler, PureComponent } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { AnyAction, Dispatch } from "redux";
@@ -15,15 +15,9 @@ interface INavLinkProps {
 	readonly to: string;
 	readonly text: string;
 	readonly icon: IconProp;
-	readonly onClick?: EventHandler<any>;
-
-	readonly nav?: {
-		readonly isOpen: boolean;
-	};
-
-	readonly router?: {
-		readonly currentPath: string;
-	};
+	readonly onClick?: () => void;
+	readonly navIsOpen?: boolean;
+	readonly currentPath?: string;
 
 	readonly actions?: {
 		readonly closeNav: () => AnyAction,
@@ -33,12 +27,8 @@ interface INavLinkProps {
 function mapStateToProps(state: IRootState, props: INavLinkProps): INavLinkProps {
 	return {
 		...props,
-		nav: {
-			isOpen: state.nav.isOpen,
-		},
-		router: {
-			currentPath: state.router.location.pathname,
-		},
+		navIsOpen: state.nav.isOpen,
+		currentPath: state.router.location.pathname,
 	};
 }
 
@@ -63,7 +53,7 @@ class UCNavLink extends PureComponent<INavLinkProps> {
 	}
 
 	public render() {
-		const active = this.props.to === this.props.router.currentPath;
+		const active = this.props.to === this.props.currentPath;
 		const linkClasses = combine(bs.navLink, style.navLink, (active && style.active));
 
 		return (
@@ -86,12 +76,12 @@ class UCNavLink extends PureComponent<INavLinkProps> {
 	}
 
 	private handleOnClick() {
-		if (this.props.nav.isOpen) {
+		if (this.props.navIsOpen) {
 			this.props.actions.closeNav();
 		}
 
 		if (this.props.onClick) {
-			this.props.onClick.call(this);
+			this.props.onClick();
 		}
 	}
 }

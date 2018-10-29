@@ -1,27 +1,16 @@
 import { faCheckSquare, faSquare } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent } from "react";
-import { connect } from "react-redux";
-import { IRootState } from "../../../redux/root";
 import { IconBtn } from "../IconBtn/IconBtn";
 
 interface ICheckboxBtnProps {
 	readonly text: string;
-	readonly stateFilter: (state: IRootState) => boolean;
-	readonly stateModifier: (checked: boolean) => void;
 	readonly checked?: boolean;
 	readonly onChange?: (checked: boolean) => void;
 	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
 }
 
-function mapStateToProps(state: IRootState, props: ICheckboxBtnProps): ICheckboxBtnProps {
-	return {
-		...props,
-		checked: props.stateFilter(state),
-	};
-}
-
-class UCCheckboxBtn extends PureComponent<ICheckboxBtnProps> {
+class CheckboxBtn extends PureComponent<ICheckboxBtnProps> {
 
 	constructor(props: ICheckboxBtnProps) {
 		super(props);
@@ -46,11 +35,13 @@ class UCCheckboxBtn extends PureComponent<ICheckboxBtnProps> {
 	}
 
 	private toggleChecked() {
-		const { checked, stateModifier } = this.props;
+		const { checked, onChange } = this.props;
 		const newState = !checked;
-		stateModifier(newState);
+		onChange(newState);
 	}
 
 }
 
-export const CheckboxBtn = connect(mapStateToProps)(UCCheckboxBtn);
+export {
+	CheckboxBtn,
+};

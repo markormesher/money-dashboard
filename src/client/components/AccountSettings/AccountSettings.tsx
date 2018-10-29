@@ -50,10 +50,6 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAccountSettingsProps): I
 
 class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 
-	private static activeOnlyStateFilter(state: IRootState) {
-		return state.settings.accounts.displayActiveOnly;
-	}
-
 	private tableColumns: IColumn[] = [
 		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
 		{ title: "Type", sortField: "type" },
@@ -79,8 +75,8 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
 									text={"Active Accounts Only"}
-									stateFilter={UCAccountSettings.activeOnlyStateFilter}
-									stateModifier={this.props.actions.setDisplayActiveOnly}
+									checked={this.props.displayActiveOnly}
+									onChange={this.props.actions.setDisplayActiveOnly}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
 									}}

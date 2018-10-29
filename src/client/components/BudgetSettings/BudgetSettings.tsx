@@ -30,7 +30,7 @@ interface IBudgetSettingsProps {
 	readonly budgetIdsToClone?: string[];
 	readonly actions?: {
 		readonly deleteBudget: (id: string) => AnyAction,
-		readonly setDisplayActiveOnly: (active: boolean) => AnyAction,
+		readonly setDisplayCurrentOnly: (active: boolean) => AnyAction,
 		readonly setBudgetToEdit: (budget: ThinBudget) => AnyAction,
 		readonly setBudgetIdsToClone: (budgetIds: string[]) => AnyAction,
 	};
@@ -55,7 +55,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetSettingsProps): IB
 		...props,
 		actions: {
 			deleteBudget: (id) => dispatch(startDeleteBudget(id)),
-			setDisplayActiveOnly: (active) => dispatch(setDisplayCurrentOnly(active)),
+			setDisplayCurrentOnly: (active) => dispatch(setDisplayCurrentOnly(active)),
 			setBudgetToEdit: (budget) => dispatch(setBudgetToEdit(budget)),
 			setBudgetIdsToClone: (budgetIds) => dispatch(setBudgetIdsToClone(budgetIds)),
 		},
@@ -63,10 +63,6 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetSettingsProps): IB
 }
 
 class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettingsState> {
-
-	private static currentOnlyStateFilter(state: IRootState) {
-		return state.settings.budgets.displayCurrentOnly;
-	}
 
 	private tableColumns: IColumn[] = [
 		{
@@ -116,8 +112,8 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
 									text={"Current Budgets Only"}
-									stateFilter={UCBudgetSettings.currentOnlyStateFilter}
-									stateModifier={this.props.actions.setDisplayActiveOnly}
+									checked={this.props.displayCurrentOnly}
+									onChange={this.props.actions.setDisplayCurrentOnly}
 									btnProps={{
 										className: combine(bs.btnOutlineInfo, bs.btnSm),
 									}}
