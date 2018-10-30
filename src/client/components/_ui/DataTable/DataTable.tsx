@@ -90,9 +90,8 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 			},
 		};
 
-		this.handlePrevPageClick = this.handlePrevPageClick.bind(this);
-		this.handleNextPageClick = this.handleNextPageClick.bind(this);
-		this.handleSearchTermSet = this.handleSearchTermSet.bind(this);
+		this.handlePageChange = this.handlePageChange.bind(this);
+		this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
 		this.toggleColumnSortOrder = this.toggleColumnSortOrder.bind(this);
 		this.fetchData = this.fetchData.bind(this);
 		this.generateDefaultSortedColumns = this.generateDefaultSortedColumns.bind(this);
@@ -127,7 +126,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		const { loading, failed, data, currentPage, sortedColumns } = this.state;
 		const { filteredRowCount, totalRowCount } = data;
 
-		const rows = data.rows.map(rowRenderer);
+		const rows = data && data.rows.map(rowRenderer);
 
 		return (
 				<div className={combine(styles.tableWrapper, loading && styles.loading)}>
@@ -135,10 +134,9 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 							loading={loading}
 							currentPage={currentPage}
 							pageSize={pageSize}
-							rowCount={data.filteredRowCount}
-							onPrevPageClick={this.handlePrevPageClick}
-							onNextPageClick={this.handleNextPageClick}
-							onSearchTermSet={this.handleSearchTermSet}
+							rowCount={filteredRowCount}
+							onPageChange={this.handlePageChange}
+							onSearchTermChange={this.handleSearchTermChange}
 					/>
 
 					<div className={styles.tableBodyWrapper}>
@@ -154,7 +152,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 							/>
 
 							<tbody>
-							{!failed && (!data || data.rows.length === 0) && this.generateMsgRow("No rows to display")}
+							{!failed && (!rows || rows.length === 0) && this.generateMsgRow("No rows to display")}
 							{failed && this.generateMsgRow("Failed to load data")}
 							{rows}
 							</tbody>
@@ -172,15 +170,11 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		);
 	}
 
-	private handlePrevPageClick(): void {
-		this.setState({ currentPage: this.state.currentPage - 1 });
+	private handlePageChange(page: number): void {
+		this.setState({ currentPage: page });
 	}
 
-	private handleNextPageClick(): void {
-		this.setState({ currentPage: this.state.currentPage + 1 });
-	}
-
-	private handleSearchTermSet(searchTerm: string): void {
+	private handleSearchTermChange(searchTerm: string): void {
 		this.setState({ searchTerm });
 	}
 
