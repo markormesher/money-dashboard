@@ -33,7 +33,9 @@ class DataTableOuterHeader<Model> extends PureComponent<IDataTableOuterHeaderPro
 					</div>
 					<div className={bs.floatRight}>
 						<BufferedTextInput
-								placeholder={"Search"}
+								inputProps={{
+									placeholder: "Search",
+								}}
 								onValueChange={this.props.onSearchTermChange}
 						/>
 					</div>

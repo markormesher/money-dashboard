@@ -4,10 +4,9 @@ import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IBufferedTextInputProps {
-	readonly placeholder?: string;
-	readonly disabled?: boolean;
 	readonly delay?: number;
 	readonly onValueChange?: (value: string) => void;
+	readonly inputProps?: React.HTMLProps<HTMLInputElement>;
 }
 
 class BufferedTextInput extends Component<IBufferedTextInputProps> {
@@ -21,13 +20,12 @@ class BufferedTextInput extends Component<IBufferedTextInputProps> {
 	}
 
 	public render(): ReactElement<void> {
-		const { placeholder, disabled } = this.props;
+		const { inputProps } = this.props;
 		return (
 				<input
-						placeholder={placeholder}
-						disabled={disabled}
 						className={combine(bs.formControl, bs.formControlSm)}
 						onKeyUp={this.handleValueChange}
+						{...inputProps}
 				/>
 		);
 	}
