@@ -6,9 +6,10 @@ import { combine } from "../../../helpers/style-helpers";
 import { IconBtn } from "../IconBtn/IconBtn";
 
 interface IPagerBtnsProps {
-	readonly disabled: boolean;
+	// NB: currentPage is 0-indexed
 	readonly currentPage: number;
 	readonly totalPages: number;
+	readonly disabled?: boolean;
 	readonly onPageChange?: (page: number) => void;
 }
 
@@ -40,7 +41,7 @@ class PagerBtns extends Component<IPagerBtnsProps> {
 							}}
 					/>
 					<button className={btnStyles} disabled={true}>
-						Page {currentPage + 1} of {totalPages}
+						Page {totalPages === 0 ? 0 : currentPage + 1} of {totalPages}
 					</button>
 					<IconBtn
 							icon={faArrowRight}
