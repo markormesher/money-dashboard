@@ -10,7 +10,7 @@ import { setAccountToEdit, startSaveAccount } from "../../redux/settings/account
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
 import { ControlledSelectInput } from "../_ui/FormComponents/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
-import { Modal } from "../_ui/Modal/Modal";
+import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 
 interface IEditAccountModalProps {
 	readonly accountToEdit?: ThinAccount;
@@ -66,16 +66,25 @@ class UCEditAccountModal extends PureComponent<IEditAccountModalProps, IEditAcco
 		const { editorBusy } = this.props;
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
+
+		const modalBtns: IModalBtn[] = [
+			{
+				type: ModalBtnType.CANCEL,
+				onClick: this.handleCancel,
+			},
+			{
+				type: ModalBtnType.SAVE,
+				disabled: !validationResult.isValid,
+				onClick: this.handleSave,
+			},
+		];
+
 		return (
 				<Modal
 						title={currentValues.id ? "Edit Account" : "Create Account"}
+						buttons={modalBtns}
 						modalBusy={editorBusy}
-						cancelBtnShown={true}
-						onCancel={this.handleCancel}
 						onCloseRequest={this.handleCancel}
-						saveBtnShown={true}
-						saveBtnDisabled={!validationResult.isValid}
-						onSave={this.handleSave}
 				>
 					<ControlledForm onSubmit={this.handleSave}>
 						<div className={bs.formGroup}>

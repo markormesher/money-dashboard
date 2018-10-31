@@ -13,7 +13,7 @@ import { IRootState } from "../../redux/root";
 import { setBudgetIdsToClone, startCloneBudgets } from "../../redux/settings/budgets/actions";
 import { ControlledDateInput } from "../_ui/FormComponents/ControlledDateInput";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
-import { Modal } from "../_ui/Modal/Modal";
+import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import * as styles from "./BudgetModals.scss";
 import { QuickDateRangeLinks } from "./QuickDateRangeLinks";
 
@@ -75,16 +75,25 @@ class UCCloneBudgetModal extends PureComponent<ICloneBudgetModalProps, ICloneBud
 		const { editorBusy, budgetIdsToClone } = this.props;
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
+
+		const modalBtns: IModalBtn[] = [
+			{
+				type: ModalBtnType.CANCEL,
+				onClick: this.handleCancel,
+			},
+			{
+				type: ModalBtnType.SAVE,
+				disabled: !validationResult.isValid,
+				onClick: this.handleSave,
+			},
+		];
+
 		return (
 				<Modal
 						title={`Clone ${budgetIdsToClone.length} Budget${(budgetIdsToClone.length !== 1 ? "s" : "")}`}
+						buttons={modalBtns}
 						modalBusy={editorBusy}
-						cancelBtnShown={true}
-						onCancel={this.handleCancel}
 						onCloseRequest={this.handleCancel}
-						saveBtnShown={true}
-						saveBtnDisabled={!validationResult.isValid}
-						onSave={this.handleSave}
 				>
 					<ControlledForm onSubmit={this.handleSave}>
 						<div className={bs.row}>

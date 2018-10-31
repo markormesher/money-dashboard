@@ -1,24 +1,29 @@
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 import { IconBtn } from "../IconBtn/IconBtn";
 import * as styles from "./Modal.scss";
 
+enum ModalBtnType {
+	SAVE = "save",
+	CANCEL = "cancel",
+}
+
+interface IModalBtn {
+	readonly type: ModalBtnType;
+	readonly disabled?: boolean;
+	readonly onClick?: () => void;
+}
+
 interface IModalProps {
 	readonly title: string;
+	readonly buttons?: IModalBtn[];
 	readonly modalBusy?: boolean;
 	readonly onCloseRequest?: () => void;
-
-	readonly cancelBtnShown?: boolean;
-	readonly cancelBtnDisabled?: boolean;
-	readonly onCancel?: () => void;
-
-	readonly saveBtnShown?: boolean;
-	readonly saveBtnDisabled?: boolean;
-	readonly onSave?: () => void;
 }
 
 // TODO: fade into the page by adding to the view, THEN adding .show
@@ -26,9 +31,7 @@ interface IModalProps {
 class Modal extends PureComponent<IModalProps> {
 
 	public render(): ReactNode {
-		const { title, modalBusy, onCloseRequest } = this.props;
-		const { cancelBtnShown, cancelBtnDisabled, onCancel } = this.props;
-		const { saveBtnShown, saveBtnDisabled, onSave } = this.props;
+		const { title, buttons, modalBusy, onCloseRequest } = this.props;
 		return (
 				<>
 					<div className={combine(bs.modal, bs.fade, bs.dBlock, bs.show)}>
@@ -44,30 +47,8 @@ class Modal extends PureComponent<IModalProps> {
 									{this.props.children}
 								</div>
 								<div className={combine(bs.modalFooter, styles.modalFooter)}>
-									{modalBusy
-									&& <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
-
-									{!modalBusy && cancelBtnShown !== false
-									&& <IconBtn
-											icon={faTimes}
-											text={"Cancel"}
-											btnProps={{
-												className: bs.btnOutlineDark,
-												onClick: onCancel || onCloseRequest,
-												disabled: cancelBtnDisabled || modalBusy === true,
-											}}
-									/>}
-
-									{!modalBusy && saveBtnShown !== false
-									&& <IconBtn
-											icon={faSave}
-											text={"Save"}
-											btnProps={{
-												className: bs.btnSuccess,
-												onClick: onSave,
-												disabled: saveBtnDisabled || modalBusy === true,
-											}}
-									/>}
+									{modalBusy && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
+									{!modalBusy && buttons.map(this.renderBtn)}
 								</div>
 							</div>
 						</div>
@@ -77,9 +58,41 @@ class Modal extends PureComponent<IModalProps> {
 				</>
 		);
 	}
+
+	private renderBtn(btn: IModalBtn): ReactElement<void> {
+		let icon: IconProp;
+		let label: string;
+		let className: string;
+		switch (btn.type) {
+			case ModalBtnType.SAVE:
+				icon = faSave;
+				label = "Save";
+				className = bs.btnSuccess;
+				break;
+
+			case ModalBtnType.CANCEL:
+				icon = faTimes;
+				label = "Cancel";
+				className = bs.btnOutlineDark;
+				break;
+		}
+		return (
+				<IconBtn
+						icon={icon}
+						text={label}
+						btnProps={{
+							className,
+							onClick: btn.onClick,
+							disabled: btn.disabled,
+						}}
+				/>
+		);
+	}
 }
 
 export {
 	IModalProps,
+	IModalBtn,
 	Modal,
+	ModalBtnType,
 };

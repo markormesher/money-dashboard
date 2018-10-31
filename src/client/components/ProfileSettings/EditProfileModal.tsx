@@ -9,7 +9,7 @@ import { IRootState } from "../../redux/root";
 import { setProfileToEdit, startSaveProfile } from "../../redux/settings/profiles/actions";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
 import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
-import { Modal } from "../_ui/Modal/Modal";
+import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 
 interface IEditProfileModalProps {
 	readonly profileToEdit?: ThinProfile;
@@ -64,16 +64,25 @@ class UCEditProfileModal extends PureComponent<IEditProfileModalProps, IEditProf
 		const { editorBusy } = this.props;
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
+
+		const modalBtns: IModalBtn[] = [
+			{
+				type: ModalBtnType.CANCEL,
+				onClick: this.handleCancel,
+			},
+			{
+				type: ModalBtnType.SAVE,
+				disabled: !validationResult.isValid,
+				onClick: this.handleSave,
+			},
+		];
+
 		return (
 				<Modal
 						title={currentValues.id ? "Edit Profile" : "Create Profile"}
+						buttons={modalBtns}
 						modalBusy={editorBusy}
-						cancelBtnShown={true}
-						onCancel={this.handleCancel}
 						onCloseRequest={this.handleCancel}
-						saveBtnShown={true}
-						saveBtnDisabled={!validationResult.isValid}
-						onSave={this.handleSave}
 				>
 					<ControlledForm onSubmit={this.handleSave}>
 						<div className={bs.formGroup}>
