@@ -86,7 +86,6 @@ describe(__filename, () => {
 		mountWrapper = mount(<DeleteBtn payload={payload} onConfirmedClick={spy}/>);
 		mountWrapper.find("button").simulate("click");
 		mountWrapper.find("button").simulate("click");
-		spy.firstCall.args.should.have.lengthOf(1);
-		spy.firstCall.args[0].should.equal(payload);
+		spy.calledOnceWithExactly(payload).should.equal(true);
 	});
 });

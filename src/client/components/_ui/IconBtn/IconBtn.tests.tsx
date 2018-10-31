@@ -45,7 +45,6 @@ describe(__filename, () => {
 		const payload = { hello: 42 };
 		mountWrapper = mount(<IconBtn icon={faRocket} payload={payload} onClick={spy}/>);
 		mountWrapper.find("button").simulate("click");
-		spy.firstCall.args.should.have.lengthOf(1);
-		spy.firstCall.args[0].should.equal(payload);
+		spy.calledOnceWithExactly(payload).should.equal(true);
 	});
 });

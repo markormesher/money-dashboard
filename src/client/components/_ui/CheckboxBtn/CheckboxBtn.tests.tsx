@@ -48,15 +48,13 @@ describe(__filename, () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<CheckboxBtn checked={true} onChange={spy}/>);
 		mountWrapper.find("button").simulate("click");
-		spy.firstCall.args.should.have.lengthOf(1);
-		spy.firstCall.args[0].should.equal(false);
+		spy.calledOnceWithExactly(false).should.equal(true);
 	});
 
 	it("should call the click listener with the new value (false -> true)", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<CheckboxBtn checked={false} onChange={spy}/>);
 		mountWrapper.find("button").simulate("click");
-		spy.firstCall.args.should.have.lengthOf(1);
-		spy.firstCall.args[0].should.equal(true);
+		spy.calledOnceWithExactly(true).should.equal(true);
 	});
 });

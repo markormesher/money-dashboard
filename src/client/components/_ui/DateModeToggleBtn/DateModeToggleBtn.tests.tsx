@@ -39,15 +39,13 @@ describe(__filename, () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<DateModeToggleBtn value={"effective"} onChange={spy}/>);
 		mountWrapper.find("button").simulate("click");
-		spy.firstCall.args.should.have.lengthOf(1);
-		spy.firstCall.args[0].should.equal("transaction");
+		spy.calledOnceWithExactly("transaction").should.equal(true);
 	});
 
 	it("should call the click listener with the new value (T -> E)", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<DateModeToggleBtn value={"transaction"} onChange={spy}/>);
 		mountWrapper.find("button").simulate("click");
-		spy.firstCall.args.should.have.lengthOf(1);
-		spy.firstCall.args[0].should.equal("effective");
+		spy.calledOnceWithExactly("effective").should.equal(true);
 	});
 });

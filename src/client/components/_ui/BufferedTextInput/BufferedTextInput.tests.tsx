@@ -28,9 +28,7 @@ describe(__filename, () => {
 		mountWrapper = mount(<BufferedTextInput onValueChange={spy} delay={20}/>);
 		mountWrapper.find("input").simulate("keyup", { target: { value: "hello" } });
 		setTimeout(() => {
-			spy.calledOnce.should.equal(true);
-			spy.firstCall.args.should.have.lengthOf(1);
-			spy.firstCall.args[0].should.equal("hello");
+			spy.calledOnceWithExactly("hello").should.equal(true);
 			done();
 		}, 30);
 	});
