@@ -4,7 +4,6 @@ import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IBadgeProps {
-	readonly key?: string;
 	readonly className?: string;
 	readonly marginRight?: boolean;
 }
@@ -12,9 +11,9 @@ interface IBadgeProps {
 class Badge extends Component<IBadgeProps> {
 
 	public render(): ReactNode {
-		const { key, className, marginRight } = this.props;
+		const { className, marginRight } = this.props;
 		return (
-				<span key={key} className={combine(bs.badge, className || bs.badgeLight, marginRight && bs.mr1)}>
+				<span className={combine(bs.badge, className || bs.badgeLight, marginRight && bs.mr1)}>
 					{this.props.children}
 				</span>
 		);

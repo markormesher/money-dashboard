@@ -20,7 +20,7 @@ interface IModalBtn {
 }
 
 interface IModalProps {
-	readonly title: string;
+	readonly title?: string;
 	readonly buttons?: IModalBtn[];
 	readonly modalBusy?: boolean;
 	readonly onCloseRequest?: () => void;
@@ -37,19 +37,29 @@ class Modal extends PureComponent<IModalProps> {
 					<div className={combine(bs.modal, bs.fade, bs.dBlock, bs.show)}>
 						<div className={combine(bs.modalDialog, styles.modalDialog)}>
 							<div className={bs.modalContent}>
-								<div className={bs.modalHeader}>
-									<h5 className={bs.modalTitle}>{title}</h5>
-									<button className={bs.close} onClick={onCloseRequest}>
-										<span aria-hidden="true">&times;</span>
-									</button>
-								</div>
-								<div className={bs.modalBody}>
-									{this.props.children}
-								</div>
-								<div className={combine(bs.modalFooter, styles.modalFooter)}>
-									{modalBusy && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
-									{!modalBusy && buttons.map(this.renderBtn)}
-								</div>
+								{
+									title
+									&& <div className={bs.modalHeader}>
+										<h5 className={bs.modalTitle}>{title}</h5>
+										<button className={bs.close} onClick={onCloseRequest}>
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								}
+								{
+									this.props.children
+									&& <div className={bs.modalBody}>
+										{this.props.children}
+									</div>
+								}
+								{
+									buttons
+									&& buttons.length > 0
+									&& <div className={combine(bs.modalFooter, styles.modalFooter)}>
+										{modalBusy && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
+										{!modalBusy && buttons.map(this.renderBtn)}
+									</div>
+								}
 							</div>
 						</div>
 					</div>
@@ -78,6 +88,7 @@ class Modal extends PureComponent<IModalProps> {
 		}
 		return (
 				<IconBtn
+						key={btn.type.toString()}
 						icon={icon}
 						text={label}
 						btnProps={{

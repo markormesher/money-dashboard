@@ -118,16 +118,16 @@ function formatBudgetPeriod(start: Date | string, end: Date | string): string {
 function generateCategoryTypeBadge(category: ThinCategory): Array<ReactElement<void>> {
 	const output = [] as Array<ReactElement<void>>;
 	if (category.isAssetGrowthCategory) {
-		output.push((<Badge className={bs.badgeWarning} marginRight={true}>Asset</Badge>));
+		output.push((<Badge key={"category-asset"} className={bs.badgeWarning} marginRight={true}>Asset</Badge>));
 	}
 	if (category.isExpenseCategory) {
-		output.push((<Badge className={bs.badgeDanger} marginRight={true}>Expense</Badge>));
+		output.push((<Badge key={"category-expense"} className={bs.badgeDanger} marginRight={true}>Expense</Badge>));
 	}
 	if (category.isIncomeCategory) {
-		output.push((<Badge className={bs.badgeSuccess} marginRight={true}>Income</Badge>));
+		output.push((<Badge key={"category-income"} className={bs.badgeSuccess} marginRight={true}>Income</Badge>));
 	}
 	if (category.isMemoCategory) {
-		output.push((<Badge className={bs.badgeInfo} marginRight={true}>Memo</Badge>));
+		output.push((<Badge key={"category-memo"} className={bs.badgeInfo} marginRight={true}>Memo</Badge>));
 	}
 
 	if (output.length > 0) {
