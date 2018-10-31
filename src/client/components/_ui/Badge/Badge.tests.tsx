@@ -1,5 +1,5 @@
 import { should } from "chai";
-import { mount, render } from "enzyme";
+import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
 import { testGlobals } from "../../../../../test/global.tests";
@@ -10,12 +10,7 @@ describe(__filename, () => {
 
 	let { mountWrapper } = testGlobals;
 
-	it("should render a single child", () => {
-		const wrapper = render(<Badge>hello</Badge>);
-		wrapper.text().should.equal("hello");
-	});
-
-	it("should render a single child", () => {
+	it("should render children", () => {
 		mountWrapper = mount(<Badge><span>he</span><span>llo</span></Badge>);
 		mountWrapper.text().should.equal("hello");
 	});
