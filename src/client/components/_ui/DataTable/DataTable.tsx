@@ -13,6 +13,8 @@ import { DataTableInnerHeader } from "./DataTableInnerHeader";
 import { DataTableOuterFooter } from "./DataTableOuterFooter";
 import { DataTableOuterHeader } from "./DataTableOuterHeader";
 
+// TODO: tests
+
 type SortDirection = "asc" | "desc";
 
 interface IColumn {
@@ -178,6 +180,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		this.setState({ searchTerm });
 	}
 
+	// TODO: delegate to header
 	private toggleColumnSortOrder(column: IColumn): void {
 		// note: always compare columns by key not equality
 		const sortedColumns = this.state.sortedColumns.slice(0); // work on a copy

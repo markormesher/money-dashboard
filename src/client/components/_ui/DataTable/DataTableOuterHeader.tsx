@@ -12,8 +12,10 @@ interface IDataTableOuterHeaderProps {
 	readonly pageSize: number;
 	readonly rowCount: number;
 	readonly onPageChange?: (page: number) => void;
-	readonly onSearchTermChange: (term: string) => void;
+	readonly onSearchTermChange?: (term: string) => void;
 }
+
+// TODO: tests
 
 class DataTableOuterHeader<Model> extends PureComponent<IDataTableOuterHeaderProps> {
 

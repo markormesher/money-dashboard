@@ -13,6 +13,8 @@ interface IDataTableInnerHeaderProps {
 	readonly onToggleSortOrder: (column: IColumn) => void;
 }
 
+// TODO: tests
+
 class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 
 	public render(): ReactNode {
