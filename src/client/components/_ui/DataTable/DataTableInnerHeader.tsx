@@ -4,22 +4,48 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
-import { IColumn, ISortEntry } from "./DataTable";
+import { IColumn, ISortEntry, SortDirection } from "./DataTable";
 import * as styles from "./DataTable.scss";
 
 interface IDataTableInnerHeaderProps {
 	readonly columns: IColumn[];
-	readonly sortedColumns: ISortEntry[];
-	readonly onToggleSortOrder: (column: IColumn) => void;
+	readonly sortedColumns?: ISortEntry[];
+	readonly onSortOrderUpdate?: (sortedColumns: ISortEntry[]) => void;
 }
 
 // TODO: tests
 
 class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 
+	private static getNextSortDirection(dir: SortDirection): SortDirection {
+		switch (dir) {
+			case "asc":
+				return "desc";
+
+			case "desc":
+				return undefined;
+
+			default:
+				return "asc";
+		}
+	}
+
+	constructor(props: IDataTableInnerHeaderProps, context: any) {
+		super(props, context);
+
+		this.generateDefaultSortedColumns = this.generateDefaultSortedColumns.bind(this);
+		this.toggleColumnSortOrder = this.toggleColumnSortOrder.bind(this);
+
+		if (this.props.sortedColumns === undefined) {
+			if (this.props.onSortOrderUpdate) {
+				this.props.onSortOrderUpdate(this.generateDefaultSortedColumns());
+			}
+		}
+	}
+
 	public render(): ReactNode {
-		// note: always compare columns by key not equality
-		const { columns, sortedColumns } = this.props;
+		const { columns } = this.props;
+		const sortedColumns = this.props.sortedColumns || [];
 		const headers = columns.map((col) => {
 			const sortable = col.sortable !== false; // undefined implicitly means yes
 			const sortEntry: ISortEntry = sortedColumns.find((sc) => sc.column.title === col.title);
@@ -30,10 +56,11 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 			const sortIconRotate = sortIcon === faExchange ? 90 : undefined;
 			const sortIconClasses = combine(bs.mr1, !sorted && styles.sortInactive);
 
-			const clickHandler = sortable ? () => this.props.onToggleSortOrder(col) : undefined;
+			const clickHandler = sortable ? () => this.toggleColumnSortOrder(col) : undefined;
+			const className = sortable ? styles.sortable : undefined;
 
 			return (
-					<th key={col.title} className={sortable ? styles.sortable : undefined} onClick={clickHandler}>
+					<th key={col.title} className={className} onClick={clickHandler}>
 						{sortable && <FontAwesomeIcon
 								icon={sortIcon}
 								fixedWidth={true}
@@ -53,6 +80,36 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 				</tr>
 				</thead>
 		);
+	}
+
+	private generateDefaultSortedColumns(): ISortEntry[] {
+		return this.props.columns
+				.filter((col) => col.defaultSortDirection !== undefined)
+				.sort((a, b) => (a.defaultSortPriority || 0) - (b.defaultSortPriority || 0))
+				.map((col) => ({ column: col, dir: col.defaultSortDirection }));
+	}
+
+	private toggleColumnSortOrder(column: IColumn): void {
+		// note: always compare columns by key not equality
+		const sortedColumns = this.props.sortedColumns.slice(0); // work on a copy
+		const currentSortEntryIndex = sortedColumns.findIndex((sc) => sc.column.title === column.title);
+
+		if (currentSortEntryIndex < 0) {
+			// add at the beginning
+			sortedColumns.unshift({ column, dir: "asc" });
+		} else {
+			const nextDir = DataTableInnerHeader.getNextSortDirection(sortedColumns[currentSortEntryIndex].dir);
+			// remove...
+			sortedColumns.splice(currentSortEntryIndex, 1);
+			if (nextDir !== undefined) {
+				// ...and re-add at the beginning
+				sortedColumns.unshift({ column, dir: nextDir });
+			}
+		}
+
+		if (this.props.onSortOrderUpdate) {
+			this.props.onSortOrderUpdate(sortedColumns);
+		}
 	}
 }
 

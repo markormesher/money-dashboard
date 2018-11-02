@@ -44,7 +44,7 @@ interface IDataTableState<Model> {
 	readonly failed: boolean;
 	readonly currentPage?: number;
 	readonly searchTerm?: string;
-	readonly sortedColumns: ISortEntry[];
+	readonly sortedColumns?: ISortEntry[];
 	readonly data?: {
 		readonly rows?: Model[],
 		readonly filteredRowCount?: number,
@@ -59,19 +59,6 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		pageSize: 15,
 	};
 
-	private static getNextSortDirection(dir: SortDirection): SortDirection {
-		switch (dir) {
-			case "asc":
-				return "desc";
-
-			case "desc":
-				return undefined;
-
-			default:
-				return "asc";
-		}
-	}
-
 	// give each remote request an increasing "frame" number so that late arrivals will be dropped
 	private frameCounter = 0;
 	private lastFrameReceived = 0;
@@ -84,7 +71,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 			loading: true,
 			failed: false,
 			currentPage: 0,
-			sortedColumns: this.generateDefaultSortedColumns(),
+			sortedColumns: undefined,
 			data: {
 				rows: [] as Model[],
 				filteredRowCount: 0,
@@ -94,9 +81,9 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 
 		this.handlePageChange = this.handlePageChange.bind(this);
 		this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
-		this.toggleColumnSortOrder = this.toggleColumnSortOrder.bind(this);
+		this.handleSortOrderChange = this.handleSortOrderChange.bind(this);
+
 		this.fetchData = this.fetchData.bind(this);
-		this.generateDefaultSortedColumns = this.generateDefaultSortedColumns.bind(this);
 		this.generateMsgRow = this.generateMsgRow.bind(this);
 		this.onDataLoaded = this.onDataLoaded.bind(this);
 		this.onDataLoadFailed = this.onDataLoadFailed.bind(this);
@@ -150,7 +137,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 							<DataTableInnerHeader
 									columns={columns}
 									sortedColumns={sortedColumns}
-									onToggleSortOrder={this.toggleColumnSortOrder}
+									onSortOrderUpdate={this.handleSortOrderChange}
 							/>
 
 							<tbody>
@@ -180,33 +167,8 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		this.setState({ searchTerm });
 	}
 
-	// TODO: delegate to header
-	private toggleColumnSortOrder(column: IColumn): void {
-		// note: always compare columns by key not equality
-		const sortedColumns = this.state.sortedColumns.slice(0); // work on a copy
-		const currentSortEntryIndex = sortedColumns.findIndex((sc) => sc.column.title === column.title);
-
-		if (currentSortEntryIndex < 0) {
-			// add at the beginning
-			sortedColumns.unshift({ column, dir: "asc" });
-		} else {
-			const nextDir = DataTable.getNextSortDirection(sortedColumns[currentSortEntryIndex].dir);
-			// remove...
-			sortedColumns.splice(currentSortEntryIndex, 1);
-			if (nextDir !== undefined) {
-				// ...and re-add at the beginning
-				sortedColumns.unshift({ column, dir: nextDir });
-			}
-		}
-
+	private handleSortOrderChange(sortedColumns: ISortEntry[]): void {
 		this.setState({ sortedColumns });
-	}
-
-	private generateDefaultSortedColumns(): ISortEntry[] {
-		return this.props.columns
-				.filter((col) => col.defaultSortDirection !== undefined)
-				.sort((a, b) => (a.defaultSortPriority || 0) - (b.defaultSortPriority || 0))
-				.map((col) => ({ column: col, dir: col.defaultSortDirection }));
 	}
 
 	private generateMsgRow(msg: string): ReactElement<void> {
@@ -227,7 +189,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		const frame = ++this.frameCounter;
 
 		const ensureArray = (val: string | string[]) => val instanceof string ? [val] : val;
-		const order = sortedColumns.map((sortEntry) => []
+		const order = (sortedColumns || []).map((sortEntry) => []
 				.concat(ensureArray(sortEntry.column.sortField))
 				.concat(sortEntry.dir),
 		);
