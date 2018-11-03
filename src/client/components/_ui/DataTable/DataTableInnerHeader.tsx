@@ -13,8 +13,6 @@ interface IDataTableInnerHeaderProps {
 	readonly onSortOrderUpdate?: (sortedColumns: ISortEntry[]) => void;
 }
 
-// TODO: tests
-
 class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 
 	private static getNextSortDirection(dir: SortDirection): SortDirection {
