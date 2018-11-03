@@ -4,13 +4,13 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
-import { IColumn, ISortEntry, SortDirection } from "./DataTable";
+import { IColumn, IColumnSortEntry, SortDirection } from "./DataTable";
 import * as styles from "./DataTable.scss";
 
 interface IDataTableInnerHeaderProps {
 	readonly columns: IColumn[];
-	readonly sortedColumns?: ISortEntry[];
-	readonly onSortOrderUpdate?: (sortedColumns: ISortEntry[]) => void;
+	readonly sortedColumns?: IColumnSortEntry[];
+	readonly onSortOrderUpdate?: (sortedColumns: IColumnSortEntry[]) => void;
 }
 
 class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
@@ -46,7 +46,7 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 		const sortedColumns = this.props.sortedColumns || [];
 		const headers = columns.map((col) => {
 			const sortable = col.sortable !== false; // undefined implicitly means yes
-			const sortEntry: ISortEntry = sortedColumns.find((sc) => sc.column.title === col.title);
+			const sortEntry: IColumnSortEntry = sortedColumns.find((sc) => sc.column.title === col.title);
 			const sorted = sortEntry !== undefined;
 
 			const sortIcon = sorted ? (sortEntry.dir === "asc" ? faSortAmountUp : faSortAmountDown) : faExchange;
@@ -80,7 +80,7 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 		);
 	}
 
-	private generateDefaultSortedColumns(): ISortEntry[] {
+	private generateDefaultSortedColumns(): IColumnSortEntry[] {
 		return this.props.columns
 				.filter((col) => col.defaultSortDirection !== undefined)
 				.sort((a, b) => (a.defaultSortPriority || 0) - (b.defaultSortPriority || 0))

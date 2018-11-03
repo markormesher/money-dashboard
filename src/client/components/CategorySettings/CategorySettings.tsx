@@ -9,6 +9,7 @@ import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startDeleteCategory } from "../../redux/settings/categories/actions";
+import { ApiDataTableDataProvider } from "../_ui/DataTable/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
@@ -60,6 +61,11 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 
 	public render(): ReactNode {
 		const { lastUpdate, categoryToEdit } = this.props;
+
+		const dataProvider = new ApiDataTableDataProvider<ThinCategory>("/settings/accounts/table-data", {
+			lastUpdate,
+		});
+
 		return (
 				<>
 					{categoryToEdit !== undefined && <EditCategoryModal/>}
@@ -78,12 +84,10 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 					</div>
 
 					<DataTable<ThinCategory>
-							api={"/settings/categories/table-data"}
 							columns={this.tableColumns}
+							dataProvider={dataProvider}
 							rowRenderer={this.tableRowRenderer}
-							apiExtraParams={{
-								lastUpdate,
-							}}
+							watchedProps={{ lastUpdate }}
 					/>
 				</>
 		);

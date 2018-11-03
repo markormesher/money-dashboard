@@ -1,11 +1,7 @@
 import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios, { AxiosResponse } from "axios";
-import { string } from "prop-types";
-import { stringify } from "qs";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
-import { DatatableResponse } from "../../../../server/helpers/datatable-helper";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 import * as styles from "./DataTable.scss";
@@ -26,14 +22,30 @@ interface IColumn {
 	readonly defaultSortPriority?: number;
 }
 
-interface ISortEntry {
+interface IColumnSortEntry {
 	readonly column: IColumn;
 	readonly dir: SortDirection;
 }
 
+interface IDataTableDataProvider<Model> {
+	readonly getData: (
+			start: number,
+			length: number,
+			searchTerm?: string,
+			sortedColumns?: IColumnSortEntry[],
+	) => Promise<IDataTableResponse<Model>>;
+}
+
+// TODO: don't duplicate this interface in client/server folders
+interface IDataTableResponse<Model> {
+	readonly filteredRowCount: number;
+	readonly totalRowCount: number;
+	readonly data: Model[];
+}
+
 interface IDataTableProps<Model> {
-	readonly api: string;
-	readonly apiExtraParams?: { readonly [key: string]: any };
+	readonly dataProvider?: IDataTableDataProvider<Model>;
+	readonly watchedProps?: any;
 	readonly pageSize?: number;
 	readonly columns: IColumn[];
 	readonly rowRenderer: (row: Model, index: number) => ReactNode;
@@ -44,7 +56,7 @@ interface IDataTableState<Model> {
 	readonly failed: boolean;
 	readonly currentPage?: number;
 	readonly searchTerm?: string;
-	readonly sortedColumns?: ISortEntry[];
+	readonly sortedColumns?: IColumnSortEntry[];
 	readonly data?: {
 		readonly rows?: Model[],
 		readonly filteredRowCount?: number,
@@ -55,7 +67,6 @@ interface IDataTableState<Model> {
 class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableState<Model>> {
 
 	public static defaultProps: Partial<IDataTableProps<any>> = {
-		apiExtraParams: {},
 		pageSize: 15,
 	};
 
@@ -98,7 +109,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		if (this.state.currentPage !== nextState.currentPage
 				|| this.state.searchTerm !== nextState.searchTerm
 				|| JSON.stringify(this.state.sortedColumns) !== JSON.stringify(nextState.sortedColumns)
-				|| JSON.stringify(this.props.apiExtraParams) !== JSON.stringify(nextProps.apiExtraParams)) {
+				|| JSON.stringify(this.props.watchedProps) !== JSON.stringify(nextProps.watchedProps)) {
 			this.fetchPending = true;
 		}
 	}
@@ -167,7 +178,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 		this.setState({ searchTerm });
 	}
 
-	private handleSortOrderChange(sortedColumns: ISortEntry[]): void {
+	private handleSortOrderChange(sortedColumns: IColumnSortEntry[]): void {
 		this.setState({ sortedColumns });
 	}
 
@@ -182,38 +193,25 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 	}
 
 	private fetchData(): void {
-		const { pageSize, apiExtraParams } = this.props;
+		const { pageSize, dataProvider } = this.props;
 		const { currentPage, searchTerm, sortedColumns } = this.state;
 
 		this.setState({ loading: true });
 		const frame = ++this.frameCounter;
 
-		const ensureArray = (val: string | string[]) => val instanceof string ? [val] : val;
-		const order = (sortedColumns || []).map((sortEntry) => []
-				.concat(ensureArray(sortEntry.column.sortField))
-				.concat(sortEntry.dir),
-		);
-
-		axios
-				.get(this.props.api, {
-					params: {
-						...apiExtraParams,
-						start: currentPage * pageSize,
-						length: pageSize,
-						searchTerm: searchTerm || "",
-						order,
-					},
-					paramsSerializer: (params) => stringify(params, { arrayFormat: "indices" }),
-				})
-				.then((res: AxiosResponse<DatatableResponse<Model>>) => this.onDataLoaded(frame, res.data))
-				.catch(() => this.onDataLoadFailed(frame));
+		if (dataProvider) {
+			dataProvider
+					.getData(currentPage * pageSize, pageSize, searchTerm, sortedColumns)
+					.then((res) => this.onDataLoaded(frame, res))
+					.catch(() => this.onDataLoadFailed(frame));
+		}
 	}
 
 	private onFrameReceived(frame: number): void {
 		this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
 	}
 
-	private onDataLoaded(frame: number, rawData: DatatableResponse<Model>): void {
+	private onDataLoaded(frame: number, rawData: IDataTableResponse<Model>): void {
 		if (frame <= this.lastFrameReceived) {
 			return;
 		}
@@ -259,9 +257,11 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 
 export {
 	IColumn,
+	IColumnSortEntry,
+	IDataTableDataProvider,
+	IDataTableResponse,
 	IDataTableProps,
 	IDataTableState,
-	ISortEntry,
 	SortDirection,
 	DataTable,
 };

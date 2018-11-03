@@ -6,7 +6,7 @@ import { describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
 import { testGlobals } from "../../../../../test/global.tests";
-import { IColumn, ISortEntry } from "./DataTable";
+import { IColumn, IColumnSortEntry } from "./DataTable";
 import { DataTableInnerHeader } from "./DataTableInnerHeader";
 
 describe(__filename, () => {
@@ -84,7 +84,7 @@ describe(__filename, () => {
 
 	it("should call the listener with a different sort order when a sortable column is clicked", () => {
 		const spy = sinon.spy();
-		const originalSortOrder: ISortEntry[] = [{ column: col1, dir: "asc" }];
+		const originalSortOrder: IColumnSortEntry[] = [{ column: col1, dir: "asc" }];
 		mountWrapper = mount((
 				<table>
 					<DataTableInnerHeader

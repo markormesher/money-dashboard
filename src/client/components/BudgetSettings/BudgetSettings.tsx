@@ -1,7 +1,6 @@
 import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { ReactElement, ReactNode } from "react";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinBudget } from "../../../server/model-thins/ThinBudget";
@@ -16,6 +15,7 @@ import {
 	startDeleteBudget,
 } from "../../redux/settings/budgets/actions";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
+import { ApiDataTableDataProvider } from "../_ui/DataTable/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { ControlledCheckboxInput } from "../_ui/FormComponents/ControlledCheckboxInput";
@@ -103,6 +103,12 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 	public render(): ReactNode {
 		const { lastUpdate, budgetToEdit, budgetIdsToClone, displayCurrentOnly } = this.props;
 		const { selectedBudgetIds } = this.state;
+
+		const dataProvider = new ApiDataTableDataProvider<ThinBudget>("/settings/budgets/table-data", {
+			lastUpdate,
+			currentOnly: displayCurrentOnly,
+		});
+
 		return (
 				<>
 					{budgetToEdit !== undefined && <EditBudgetModal/>}
@@ -142,13 +148,10 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 					</div>
 
 					<DataTable<ThinBudget>
-							api={"/settings/budgets/table-data"}
 							columns={this.tableColumns}
+							dataProvider={dataProvider}
 							rowRenderer={this.tableRowRenderer}
-							apiExtraParams={{
-								currentOnly: displayCurrentOnly,
-								lastUpdate,
-							}}
+							watchedProps={{ displayCurrentOnly, lastUpdate }}
 					/>
 				</>
 		);

@@ -1,7 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { ReactElement, ReactNode } from "react";
 import * as React from "react";
-import { PureComponent } from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
@@ -9,6 +8,7 @@ import * as bs from "../../bootstrap-aliases";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setProfileToEdit, startDeleteProfile } from "../../redux/settings/profiles/actions";
+import { ApiDataTableDataProvider } from "../_ui/DataTable/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
@@ -62,6 +62,11 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 
 	public render(): ReactNode {
 		const { lastUpdate, profileToEdit } = this.props;
+
+		const dataProvider = new ApiDataTableDataProvider<ThinProfile>("/settings/profiles/table-data", {
+			lastUpdate,
+		});
+
 		return (
 				<>
 					{profileToEdit !== undefined && <EditProfileModal/>}
@@ -80,10 +85,10 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 					</div>
 
 					<DataTable<ThinProfile>
-							api={"/settings/profiles/table-data"}
 							columns={this.tableColumns}
+							dataProvider={dataProvider}
 							rowRenderer={this.tableRowRenderer}
-							apiExtraParams={{ lastUpdate }}
+							watchedProps={{ lastUpdate }}
 					/>
 				</>
 		);

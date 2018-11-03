@@ -1,7 +1,7 @@
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
-import { ISortEntry } from "./DataTable";
+import { IColumnSortEntry } from "./DataTable";
 import * as styles from "./DataTable.scss";
 
 interface IDataTableOuterFooterProps {
@@ -9,7 +9,7 @@ interface IDataTableOuterFooterProps {
 	readonly currentPage: number;
 	readonly filteredRowCount: number;
 	readonly totalRowCount: number;
-	readonly sortedColumns?: ISortEntry[];
+	readonly sortedColumns?: IColumnSortEntry[];
 }
 
 const sortDirectionFull = {

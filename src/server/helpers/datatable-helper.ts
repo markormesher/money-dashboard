@@ -2,10 +2,11 @@ import * as Bluebird from "bluebird";
 import { Request } from "express";
 import { IFindOptions } from "sequelize-typescript";
 
-class DatatableResponse<T> {
-	public filteredRowCount: number;
-	public totalRowCount: number;
-	public data: T[];
+// TODO: don't duplicate this interface in client/server folders
+interface IDataTableResponse<T> {
+	readonly filteredRowCount: number;
+	readonly totalRowCount: number;
+	readonly data: T[];
 }
 
 // TODO: figure out what type "model" is meant to be
@@ -17,7 +18,7 @@ function getData<T>(
 		dataFilter: IFindOptions<T>,
 		preOrder: string[][] = [],
 		postOrder: string[][] = [],
-): Bluebird<DatatableResponse<T>> {
+): Bluebird<IDataTableResponse<T>> {
 	const rawOrder: string[][] = req.query.order || [];
 	const finalOrdering: string[][] = [];
 	preOrder.forEach((o) => finalOrdering.push(o));
@@ -48,5 +49,4 @@ function getData<T>(
 
 export {
 	getData,
-	DatatableResponse,
 };
