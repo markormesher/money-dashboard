@@ -91,7 +91,8 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 
 	private toggleColumnSortOrder(column: IColumn): void {
 		// note: always compare columns by key not equality
-		const sortedColumns = this.props.sortedColumns.slice(0); // work on a copy
+		const oldSortedColumns = this.props.sortedColumns || [];
+		const sortedColumns = oldSortedColumns.slice(0); // work on a copy
 		const currentSortEntryIndex = sortedColumns.findIndex((sc) => sc.column.title === column.title);
 
 		if (currentSortEntryIndex < 0) {
@@ -107,7 +108,8 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 			}
 		}
 
-		if (this.props.onSortOrderUpdate) {
+		// using JSON as a cheap deep-compare to check whether the value changed
+		if (this.props.onSortOrderUpdate && JSON.stringify(this.props.sortedColumns) !== JSON.stringify(sortedColumns)) {
 			this.props.onSortOrderUpdate(sortedColumns);
 		}
 	}
