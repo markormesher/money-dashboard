@@ -8,7 +8,7 @@ import * as bs from "../../bootstrap-aliases";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setProfileToEdit, startDeleteProfile } from "../../redux/settings/profiles/actions";
-import { ApiDataTableDataProvider } from "../_ui/DataTable/ApiDataTableDataProvider";
+import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
@@ -52,6 +52,12 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 		{ title: "Actions", sortable: false },
 	];
 
+	private dataProvider = new ApiDataTableDataProvider<ThinProfile>("/settings/profiles/table-data", () => {
+		return {
+			lastUpdate: this.props.lastUpdate,
+		};
+	});
+
 	constructor(props: IProfileSettingsProps) {
 		super(props);
 
@@ -62,10 +68,6 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 
 	public render(): ReactNode {
 		const { lastUpdate, profileToEdit } = this.props;
-
-		const dataProvider = new ApiDataTableDataProvider<ThinProfile>("/settings/profiles/table-data", {
-			lastUpdate,
-		});
 
 		return (
 				<>
@@ -86,7 +88,7 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 
 					<DataTable<ThinProfile>
 							columns={this.tableColumns}
-							dataProvider={dataProvider}
+							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
 							watchedProps={{ lastUpdate }}
 					/>

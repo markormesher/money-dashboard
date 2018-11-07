@@ -9,7 +9,7 @@ import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startDeleteCategory } from "../../redux/settings/categories/actions";
-import { ApiDataTableDataProvider } from "../_ui/DataTable/ApiDataTableDataProvider";
+import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
@@ -51,6 +51,12 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 		{ title: "Actions", sortable: false },
 	];
 
+	private dataProvider = new ApiDataTableDataProvider<ThinCategory>("/settings/accounts/table-data", () => {
+		return {
+			lastUpdate: this.props.lastUpdate,
+		};
+	});
+
 	constructor(props: ICategorySettingsProps) {
 		super(props);
 
@@ -61,10 +67,6 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 
 	public render(): ReactNode {
 		const { lastUpdate, categoryToEdit } = this.props;
-
-		const dataProvider = new ApiDataTableDataProvider<ThinCategory>("/settings/accounts/table-data", {
-			lastUpdate,
-		});
 
 		return (
 				<>
@@ -85,7 +87,7 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 
 					<DataTable<ThinCategory>
 							columns={this.tableColumns}
-							dataProvider={dataProvider}
+							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
 							watchedProps={{ lastUpdate }}
 					/>

@@ -10,7 +10,7 @@ import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setAccountToEdit, setDisplayActiveOnly, startDeleteAccount } from "../../redux/settings/accounts/actions";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
-import { ApiDataTableDataProvider } from "../_ui/DataTable/ApiDataTableDataProvider";
+import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
@@ -57,6 +57,13 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 		{ title: "Actions", sortable: false },
 	];
 
+	private dataProvider = new ApiDataTableDataProvider<ThinAccount>("/settings/accounts/table-data", () => {
+		return {
+			lastUpdate: this.props.lastUpdate,
+			activeOnly: this.props.displayActiveOnly,
+		};
+	});
+
 	constructor(props: IAccountSettingsProps) {
 		super(props);
 
@@ -67,11 +74,6 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 
 	public render(): ReactNode {
 		const { lastUpdate, displayActiveOnly, accountToEdit } = this.props;
-
-		const dataProvider = new ApiDataTableDataProvider<ThinAccount>("/settings/accounts/table-data", {
-			lastUpdate,
-			activeOnly: displayActiveOnly,
-		});
 
 		return (
 				<>
@@ -102,7 +104,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 
 					<DataTable<ThinAccount>
 							columns={this.tableColumns}
-							dataProvider={dataProvider}
+							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
 							watchedProps={{ displayActiveOnly, lastUpdate }}
 					/>

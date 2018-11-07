@@ -4,6 +4,7 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
+import { IDataTableDataProvider, IDataTableResponse } from "./DataProvider/IDataTableDataProvider";
 import * as styles from "./DataTable.scss";
 import { DataTableInnerHeader } from "./DataTableInnerHeader";
 import { DataTableOuterFooter } from "./DataTableOuterFooter";
@@ -25,22 +26,6 @@ interface IColumn {
 interface IColumnSortEntry {
 	readonly column: IColumn;
 	readonly dir: SortDirection;
-}
-
-interface IDataTableDataProvider<Model> {
-	readonly getData: (
-			start: number,
-			length: number,
-			searchTerm?: string,
-			sortedColumns?: IColumnSortEntry[],
-	) => Promise<IDataTableResponse<Model>>;
-}
-
-// TODO: don't duplicate this interface in client/server folders
-interface IDataTableResponse<Model> {
-	readonly filteredRowCount: number;
-	readonly totalRowCount: number;
-	readonly data: Model[];
 }
 
 interface IDataTableProps<Model> {
@@ -258,8 +243,6 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 export {
 	IColumn,
 	IColumnSortEntry,
-	IDataTableDataProvider,
-	IDataTableResponse,
 	IDataTableProps,
 	IDataTableState,
 	SortDirection,

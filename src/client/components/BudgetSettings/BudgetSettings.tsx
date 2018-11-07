@@ -15,7 +15,7 @@ import {
 	startDeleteBudget,
 } from "../../redux/settings/budgets/actions";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
-import { ApiDataTableDataProvider } from "../_ui/DataTable/ApiDataTableDataProvider";
+import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { ControlledCheckboxInput } from "../_ui/FormComponents/ControlledCheckboxInput";
@@ -87,6 +87,13 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 		{ title: "Actions", sortable: false },
 	];
 
+	private dataProvider = new ApiDataTableDataProvider<ThinBudget>("/settings/budgets/table-data", () => {
+		return {
+			lastUpdate: this.props.lastUpdate,
+			currentOnly: this.props.displayCurrentOnly,
+		};
+	});
+
 	constructor(props: IBudgetSettingsProps) {
 		super(props);
 		this.state = {
@@ -103,11 +110,6 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 	public render(): ReactNode {
 		const { lastUpdate, budgetToEdit, budgetIdsToClone, displayCurrentOnly } = this.props;
 		const { selectedBudgetIds } = this.state;
-
-		const dataProvider = new ApiDataTableDataProvider<ThinBudget>("/settings/budgets/table-data", {
-			lastUpdate,
-			currentOnly: displayCurrentOnly,
-		});
 
 		return (
 				<>
@@ -149,7 +151,7 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 
 					<DataTable<ThinBudget>
 							columns={this.tableColumns}
-							dataProvider={dataProvider}
+							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
 							watchedProps={{ displayCurrentOnly, lastUpdate }}
 					/>

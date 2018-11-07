@@ -15,7 +15,7 @@ import {
 	startDeleteTransaction,
 } from "../../redux/transactions/actions";
 import { DateModeOption } from "../../redux/transactions/reducer";
-import { ApiDataTableDataProvider } from "../_ui/DataTable/ApiDataTableDataProvider";
+import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
@@ -73,6 +73,13 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 		{ title: "Actions", sortable: false },
 	];
 
+	private dataProvider = new ApiDataTableDataProvider<ThinTransaction>("/transactions/table-data", () => {
+		return {
+			lastUpdate: this.props.lastUpdate,
+			dateMode: this.props.dateMode,
+		};
+	});
+
 	constructor(props: ITransactionProps) {
 		super(props);
 
@@ -83,11 +90,6 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 
 	public render(): ReactNode {
 		const { lastUpdate, dateMode, transactionToEdit } = this.props;
-
-		const dataProvider = new ApiDataTableDataProvider<ThinTransaction>("/transactions/table-data", {
-			lastUpdate,
-			dateMode,
-		});
 
 		return (
 				<>
@@ -117,7 +119,7 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 
 					<DataTable<ThinTransaction>
 							columns={this.tableColumns}
-							dataProvider={dataProvider}
+							dataProvider={this.dataProvider}
 							watchedProps={{ lastUpdate, dateMode }}
 							rowRenderer={this.tableRowRenderer}
 					/>
