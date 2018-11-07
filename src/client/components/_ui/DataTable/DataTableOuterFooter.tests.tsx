@@ -5,13 +5,13 @@ import { testGlobals } from "../../../../../test/global.tests";
 import { IColumn } from "./DataTable";
 import { DataTableOuterFooter } from "./DataTableOuterFooter";
 
+const col1: IColumn = { title: "col1" };
+const col2: IColumn = { title: "col2" };
+const col3: IColumn = { title: "col3" };
+
 describe(__filename, () => {
 
 	let { mountWrapper } = testGlobals;
-
-	const col1: IColumn = { title: "col1" };
-	const col2: IColumn = { title: "col2" };
-	const col3: IColumn = { title: "col3" };
 
 	it("should show record range on page 1", () => {
 		mountWrapper = mount((

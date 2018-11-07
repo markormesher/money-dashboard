@@ -9,13 +9,13 @@ import { testGlobals } from "../../../../../test/global.tests";
 import { IColumn, IColumnSortEntry } from "./DataTable";
 import { DataTableInnerHeader } from "./DataTableInnerHeader";
 
+const col1: IColumn = { title: "col1", sortable: true };
+const col2: IColumn = { title: "col2", sortable: true };
+const col3: IColumn = { title: "col3", sortable: false };
+
 describe(__filename, () => {
 
 	let { mountWrapper } = testGlobals;
-
-	const col1: IColumn = { title: "col1", sortable: true };
-	const col2: IColumn = { title: "col2", sortable: true };
-	const col3: IColumn = { title: "col3", sortable: false };
 
 	it("should render a header for each column", () => {
 		mountWrapper = mount((

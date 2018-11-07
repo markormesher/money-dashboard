@@ -46,67 +46,55 @@ class MockDataProvider implements IDataTableDataProvider<IMockData> {
 		this.lastSearchTerm = searchTerm;
 		this.lastSortedColumns = sortedColumns;
 
+		const shouldDelay = this.shouldDelayFirstCall && this.callCount === 1;
+
 		if (this.shouldFail) {
 			return Promise.reject("error");
 		} else {
-			if (this.shouldDelayFirstCall && this.callCount === 1) {
-				return Promise
-						.resolve({
-							filteredRowCount: 80,
-							totalRowCount: 100,
-							data: [
-								{ field1: "delayed", field2: "b1", field3: "c1" },
-								{ field1: "delayed", field2: "b2", field3: "c2" },
-							],
-						})
-						.then((val) => {
-							return new Promise((resolve) => {
-								setTimeout(() => {
-									resolve();
-								}, 20);
-							}).then(() => {
-								return val;
-							});
-						});
-			} else {
-				return Promise
-						.resolve({
-							filteredRowCount: 80,
-							totalRowCount: 100,
-							data: [
-								{ field1: "a1", field2: "b1", field3: "c1" },
-								{ field1: "a2", field2: "b2", field3: "c2" },
-							],
-						});
-			}
+			return Promise
+					.resolve({
+						filteredRowCount: 80,
+						totalRowCount: 100,
+						data: [
+							{ field1: shouldDelay ? "delayed1" : "a1", field2: "b1", field3: "c1" },
+							{ field1: shouldDelay ? "delayed2" : "a2", field2: "b2", field3: "c2" },
+						],
+					})
+					.then((val) => {
+						if (shouldDelay) {
+							return new Promise((resolve) => setTimeout(resolve, 20)).then(() => val);
+						} else {
+							return val;
+						}
+					});
 		}
 	}
+}
+
+const mockCol1: IColumn = { title: "col1", sortable: true };
+const mockCol2: IColumn = { title: "col2", sortable: true };
+const mockCol3: IColumn = { title: "col3", sortable: false };
+const mockColumns = [mockCol1, mockCol2, mockCol3];
+
+function mockRowRenderer(data: IMockData): ReactElement<void> {
+	return (
+			<tr key={data.field1}>
+				<td>{data.field1}</td>
+				<td>{data.field2}</td>
+				<td>{data.field3}</td>
+			</tr>
+	);
 }
 
 describe(__filename, () => {
 
 	let { mountWrapper } = testGlobals;
 
-	const col1: IColumn = { title: "col1", sortable: true };
-	const col2: IColumn = { title: "col2", sortable: true };
-	const col3: IColumn = { title: "col3", sortable: false };
-	const columns = [col1, col2, col3];
-
-	function tableRowRenderer(data: IMockData): ReactElement<void> {
-		return (
-				<tr key={data.field1}>
-					<td>{data.field1}</td>
-					<td>{data.field2}</td>
-					<td>{data.field3}</td>
-				</tr>
-		);
-	}
-
 	it("should render headers and footers", () => {
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
 				/>
 		));
 		mountWrapper.find(DataTableInnerHeader).should.have.lengthOf(1);
@@ -117,13 +105,13 @@ describe(__filename, () => {
 	it("should pass simple props to headers and footers", () => {
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
 						pageSize={20}
 				/>
 		));
 		const innerHeader = mountWrapper.find(DataTableInnerHeader);
-		innerHeader.props().columns.should.deep.equal(columns);
+		innerHeader.props().columns.should.deep.equal(mockColumns);
 		const outerHeader = mountWrapper.find(DataTableOuterHeader);
 		outerHeader.props().pageSize.should.equal(20);
 		const outerFooter = mountWrapper.find(DataTableOuterFooter);
@@ -131,12 +119,12 @@ describe(__filename, () => {
 	});
 
 	it("should pass row counts to headers and footers", (done) => {
-		const provider = new MockDataProvider();
+		const mockProvider = new MockDataProvider();
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
-						dataProvider={provider}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
+						dataProvider={mockProvider}
 						pageSize={20}
 				/>
 		));
@@ -154,12 +142,12 @@ describe(__filename, () => {
 	}).timeout(60);
 
 	it("should render each row", (done) => {
-		const provider = new MockDataProvider();
+		const mockProvider = new MockDataProvider();
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
-						dataProvider={provider}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
+						dataProvider={mockProvider}
 				/>
 		));
 
@@ -173,159 +161,159 @@ describe(__filename, () => {
 	it("should render a only message when there is no data", (done) => {
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
 				/>
 		));
 
 		setTimeout(() => {
 			mountWrapper.html().should.contain("No rows");
 			mountWrapper.find("td").length.should.equal(1);
-			mountWrapper.find("td").props().colSpan.should.equal(columns.length);
+			mountWrapper.find("td").props().colSpan.should.equal(mockColumns.length);
 			done();
 		}, 30);
 	}).timeout(60);
 
 	it("should render a only message when loading fails", (done) => {
-		const provider = new MockDataProvider(true);
+		const mockProvider = new MockDataProvider(true);
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
-						dataProvider={provider}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
+						dataProvider={mockProvider}
 				/>
 		));
 
 		setTimeout(() => {
 			mountWrapper.html().should.contain("Failed");
 			mountWrapper.find("td").length.should.equal(1);
-			mountWrapper.find("td").props().colSpan.should.equal(columns.length);
+			mountWrapper.find("td").props().colSpan.should.equal(mockColumns.length);
 			done();
 		}, 30);
 	}).timeout(60);
 
 	it("should call the data provider when it renders", () => {
-		const provider = new MockDataProvider();
+		const mockProvider = new MockDataProvider();
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
-						dataProvider={provider}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
+						dataProvider={mockProvider}
 				/>
 		));
-		provider.callCount.should.be.greaterThan(0); // may be called more than once
+		mockProvider.callCount.should.be.greaterThan(0); // may be called more than once
 	});
 
 	it("should call the data provider when the page changes", () => {
-		const provider = new MockDataProvider();
+		const mockProvider = new MockDataProvider();
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
-						dataProvider={provider}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
+						dataProvider={mockProvider}
 				/>
 		));
-		const callCountBefore = provider.callCount;
+		const callCountBefore = mockProvider.callCount;
 		mountWrapper.find(PagerBtns).props().onPageChange(1);
-		provider.callCount.should.be.greaterThan(callCountBefore);
+		mockProvider.callCount.should.be.greaterThan(callCountBefore);
 	});
 
 	it("should call the data provider when the search term changes", () => {
-		const provider = new MockDataProvider();
+		const mockProvider = new MockDataProvider();
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
-						dataProvider={provider}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
+						dataProvider={mockProvider}
 				/>
 		));
-		const callCountBefore = provider.callCount;
+		const callCountBefore = mockProvider.callCount;
 		mountWrapper.find(BufferedTextInput).props().onValueChange("test");
-		provider.callCount.should.be.greaterThan(callCountBefore);
+		mockProvider.callCount.should.be.greaterThan(callCountBefore);
 	});
 
 	it("should call the data provider when the sort order changes", () => {
-		const provider = new MockDataProvider();
+		const mockProvider = new MockDataProvider();
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
-						dataProvider={provider}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
+						dataProvider={mockProvider}
 				/>
 		));
-		const callCountBefore = provider.callCount;
-		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: col1, dir: "asc" }]);
-		provider.callCount.should.be.greaterThan(callCountBefore);
+		const callCountBefore = mockProvider.callCount;
+		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: mockCol1, dir: "asc" }]);
+		mockProvider.callCount.should.be.greaterThan(callCountBefore);
 	});
 
 	it("should call the data provider when watched props change", () => {
-		const provider = new MockDataProvider();
+		const mockProvider = new MockDataProvider();
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
-						dataProvider={provider}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
+						dataProvider={mockProvider}
 						watchedProps={{
 							key: "old",
 						}}
 				/>
 		));
-		const callCountBefore = provider.callCount;
+		const callCountBefore = mockProvider.callCount;
 		mountWrapper.setProps({ watchedProps: { key: "new" } });
-		provider.callCount.should.be.greaterThan(callCountBefore);
+		mockProvider.callCount.should.be.greaterThan(callCountBefore);
 	});
 
 	it("should not call the data provider when watched props are updated without changing", () => {
-		const provider = new MockDataProvider();
+		const mockProvider = new MockDataProvider();
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
-						dataProvider={provider}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
+						dataProvider={mockProvider}
 						watchedProps={{
 							key: "old",
 						}}
 				/>
 		));
-		const callCountBefore = provider.callCount;
+		const callCountBefore = mockProvider.callCount;
 		mountWrapper.setProps({ watchedProps: { key: "old" } });
-		provider.callCount.should.equal(callCountBefore);
+		mockProvider.callCount.should.equal(callCountBefore);
 	});
 
 	it("should call the data provider with all details", () => {
-		const provider = new MockDataProvider();
+		const mockProvider = new MockDataProvider();
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
-						rowRenderer={tableRowRenderer}
-						dataProvider={provider}
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
+						dataProvider={mockProvider}
 						pageSize={2}
 				/>
 		));
 		mountWrapper.find(PagerBtns).props().onPageChange(2);
 		mountWrapper.find(BufferedTextInput).props().onValueChange("test");
-		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: col1, dir: "asc" }]);
+		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: mockCol1, dir: "asc" }]);
 
-		provider.lastStart.should.equal(4);
-		provider.lastLength.should.equal(2);
-		provider.lastSearchTerm.should.equal("test");
-		provider.lastSortedColumns.should.deep.equal([{ column: col1, dir: "asc" }]);
+		mockProvider.lastStart.should.equal(4);
+		mockProvider.lastLength.should.equal(2);
+		mockProvider.lastSearchTerm.should.equal("test");
+		mockProvider.lastSortedColumns.should.deep.equal([{ column: mockCol1, dir: "asc" }]);
 	});
 
 	it("should not render frames that arrived late", (done) => {
 		let didRenderDelayedFrame = false;
-		const provider = new MockDataProvider(false, true);
+		const mockProvider = new MockDataProvider(false, true);
 		const delayRejectingRowRenderer: (data: IMockData) => ReactElement<void> = (data: IMockData) => {
-			if (data.field1 === "delayed") {
+			if (data.field1.startsWith("delayed")) {
 				didRenderDelayedFrame = true;
 			}
 			return (<tr key={data.field2}/>);
 		};
 		mountWrapper = mount((
 				<DataTable<IMockData>
-						columns={columns}
+						columns={mockColumns}
 						rowRenderer={delayRejectingRowRenderer}
-						dataProvider={provider}
+						dataProvider={mockProvider}
 						pageSize={2}
 				/>
 		));
@@ -333,7 +321,7 @@ describe(__filename, () => {
 		// make sure we trigger several requests
 		mountWrapper.find(PagerBtns).props().onPageChange(2);
 		mountWrapper.find(BufferedTextInput).props().onValueChange("test");
-		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: col1, dir: "asc" }]);
+		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: mockCol1, dir: "asc" }]);
 
 		setTimeout(() => {
 			didRenderDelayedFrame.should.equal(false);
