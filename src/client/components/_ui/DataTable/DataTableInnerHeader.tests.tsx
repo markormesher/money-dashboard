@@ -55,7 +55,7 @@ describe(__filename, () => {
 		expect(mountWrapper.find(FontAwesomeIcon).props().rotation).to.be.oneOf([undefined, null]);
 	});
 
-	it("should render an 'big to small' icon for desc sorted", () => {
+	it("should render a 'big to small' icon for desc sorted", () => {
 		mountWrapper = mount((
 				<table>
 					<DataTableInnerHeader
@@ -69,7 +69,7 @@ describe(__filename, () => {
 		expect(mountWrapper.find(FontAwesomeIcon).props().rotation).to.be.oneOf([undefined, null]);
 	});
 
-	it("should render an 'swap' icon for non-sorted", () => {
+	it("should render a 'swap' icon for non-sorted", () => {
 		mountWrapper = mount((
 				<table>
 					<DataTableInnerHeader
@@ -113,6 +113,24 @@ describe(__filename, () => {
 		));
 		mountWrapper.find("th").simulate("click");
 		spy.notCalled.should.equal(true);
+	});
+
+	it("should determine the correct default sort order", () => {
+		const col1WithSort: IColumn = { ...col1, defaultSortDirection: "asc", defaultSortPriority: 1 };
+		const col2WithSort: IColumn = { ...col2, defaultSortDirection: "desc", defaultSortPriority: 0 };
+		const spy = sinon.spy();
+		mountWrapper = mount((
+				<table>
+					<DataTableInnerHeader
+							columns={[col1WithSort, col2WithSort, col3]}
+							onSortOrderUpdate={spy}
+					/>
+				</table>
+		));
+		spy.lastCall.args[0].should.deep.equal([
+			{ column: col2WithSort, dir: "desc" },
+			{ column: col1WithSort, dir: "asc" },
+		]);
 	});
 
 	it("should determine the correct next sort order for a single column (none -> asc)", () => {

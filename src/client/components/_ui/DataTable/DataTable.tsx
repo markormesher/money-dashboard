@@ -10,8 +10,6 @@ import { DataTableInnerHeader } from "./DataTableInnerHeader";
 import { DataTableOuterFooter } from "./DataTableOuterFooter";
 import { DataTableOuterHeader } from "./DataTableOuterHeader";
 
-// TODO: tests
-
 type SortDirection = "asc" | "desc";
 
 interface IColumn {
