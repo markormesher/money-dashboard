@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FormEvent, PureComponent, ReactElement, ReactNode } from "react";
+import { FormEvent, InputHTMLAttributes, PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -12,6 +12,7 @@ interface IControlledRadioInputProps {
 	readonly onValueChange: (newValue: string, id: string) => void;
 	readonly disabled?: boolean;
 	readonly error?: string;
+	readonly inputProps?: Partial<InputHTMLAttributes<HTMLInputElement>>;
 }
 
 interface IControlledRadioInputState {
@@ -31,7 +32,7 @@ class ControlledRadioInput extends PureComponent<IControlledRadioInputProps, ICo
 	}
 
 	public render(): ReactNode {
-		const { id, name, value, label, checked, disabled, error } = this.props;
+		const { id, name, value, label, checked, disabled, error, inputProps } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
 				<div className={bs.formCheck}>
@@ -45,9 +46,10 @@ class ControlledRadioInput extends PureComponent<IControlledRadioInputProps, ICo
 							disabled={disabled !== false}
 							onChange={this.handleChange}
 							onBlur={this.handleBlur}
+							{...inputProps}
 					/>
 					<label className={bs.formCheckLabel} htmlFor={id}>{label}</label>
-					{error && <div className={bs.invalidFeedback}>{error}</div>}
+					{error && hasBeenTouched && <div className={bs.invalidFeedback}>{error}</div>}
 				</div>
 		);
 	}
@@ -59,8 +61,8 @@ class ControlledRadioInput extends PureComponent<IControlledRadioInputProps, ICo
 	}
 
 	private handleChange(event: FormEvent<HTMLInputElement>): void {
-		if (event.currentTarget.checked) {
-			this.props.onValueChange(event.currentTarget.value, this.props.id);
+		if ((event.target as HTMLInputElement).checked) {
+			this.props.onValueChange((event.target as HTMLInputElement).value, this.props.id);
 		}
 	}
 }

@@ -47,7 +47,7 @@ class ControlledTextArea extends PureComponent<IControlledTextAreaProps, IContro
 							onBlur={this.handleBlur}
 							{...inputProps}
 					/>
-					{error && <div className={bs.invalidFeedback}>{error}</div>}
+					{error && hasBeenTouched && <div className={bs.invalidFeedback}>{error}</div>}
 				</>
 		);
 	}
@@ -59,7 +59,7 @@ class ControlledTextArea extends PureComponent<IControlledTextAreaProps, IContro
 	}
 
 	private handleChange(event: FormEvent<HTMLTextAreaElement>): void {
-		this.props.onValueChange(event.currentTarget.value, this.props.id);
+		this.props.onValueChange((event.target as HTMLTextAreaElement).value, this.props.id);
 	}
 }
 

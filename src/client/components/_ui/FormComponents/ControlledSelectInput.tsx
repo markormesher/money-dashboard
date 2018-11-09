@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FormEvent, PureComponent, ReactElement, ReactNode } from "react";
+import { FormEvent, PureComponent, ReactElement, ReactNode, SelectHTMLAttributes } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -10,6 +10,7 @@ interface IControlledSelectInputProps {
 	readonly onValueChange: (newValue: string, id: string) => void;
 	readonly disabled?: boolean;
 	readonly error?: string;
+	readonly selectProps?: Partial<SelectHTMLAttributes<HTMLSelectElement>>;
 }
 
 interface IControlledSelectInputState {
@@ -29,7 +30,7 @@ class ControlledSelectInput extends PureComponent<IControlledSelectInputProps, I
 	}
 
 	public render(): ReactNode {
-		const { id, label, value, disabled, error } = this.props;
+		const { id, label, value, disabled, error, selectProps } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
 				<>
@@ -42,10 +43,11 @@ class ControlledSelectInput extends PureComponent<IControlledSelectInputProps, I
 							className={combine(bs.formControl, hasBeenTouched && error && bs.isInvalid)}
 							value={value}
 							onBlur={this.handleBlur}
+							{...selectProps}
 					>
 						{this.props.children}
 					</select>
-					{error && <div className={bs.invalidFeedback}>{error}</div>}
+					{error && hasBeenTouched && <div className={bs.invalidFeedback}>{error}</div>}
 				</>
 		);
 	}
@@ -57,7 +59,7 @@ class ControlledSelectInput extends PureComponent<IControlledSelectInputProps, I
 	}
 
 	private handleChange(event: FormEvent<HTMLSelectElement>): void {
-		this.props.onValueChange(event.currentTarget.value, this.props.id);
+		this.props.onValueChange((event.target as HTMLSelectElement).value, this.props.id);
 	}
 }
 

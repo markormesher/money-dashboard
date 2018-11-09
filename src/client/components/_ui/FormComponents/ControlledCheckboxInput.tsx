@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FormEvent, PureComponent, ReactElement, ReactNode } from "react";
+import { FormEvent, InputHTMLAttributes, PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -10,6 +10,7 @@ interface IControlledCheckboxInputProps {
 	readonly onCheckedChange: (newValue: boolean, id: string) => void;
 	readonly disabled?: boolean;
 	readonly error?: string;
+	readonly inputProps?: Partial<InputHTMLAttributes<HTMLInputElement>>;
 }
 
 interface IControlledCheckboxInputState {
@@ -29,7 +30,7 @@ class ControlledCheckboxInput extends PureComponent<IControlledCheckboxInputProp
 	}
 
 	public render(): ReactNode {
-		const { id, label, checked, disabled, error } = this.props;
+		const { id, label, checked, disabled, error, inputProps } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
 				<div className={bs.formCheck}>
@@ -41,9 +42,10 @@ class ControlledCheckboxInput extends PureComponent<IControlledCheckboxInputProp
 							disabled={disabled !== false}
 							onChange={this.handleChange}
 							onBlur={this.handleBlur}
+							{...inputProps}
 					/>
 					<label className={bs.formCheckLabel} htmlFor={id}>{label}</label>
-					{error && <div className={bs.invalidFeedback}>{error}</div>}
+					{error && hasBeenTouched && <div className={bs.invalidFeedback}>{error}</div>}
 				</div>
 		);
 	}
@@ -55,7 +57,7 @@ class ControlledCheckboxInput extends PureComponent<IControlledCheckboxInputProp
 	}
 
 	private handleChange(event: FormEvent<HTMLInputElement>): void {
-		this.props.onCheckedChange(event.currentTarget.checked, this.props.id);
+		this.props.onCheckedChange((event.target as HTMLInputElement).checked, this.props.id);
 	}
 }
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FormEvent, PureComponent, ReactElement, ReactNode } from "react";
+import { FormEvent, InputHTMLAttributes, PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../bootstrap-aliases";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -10,6 +10,7 @@ interface IControlledDateInputProps {
 	readonly onValueChange: (newValue: string, id: string) => void;
 	readonly disabled?: boolean;
 	readonly error?: string;
+	readonly inputProps?: Partial<InputHTMLAttributes<HTMLInputElement>>;
 }
 
 interface IControlledDateInputState {
@@ -29,7 +30,7 @@ class ControlledDateInput extends PureComponent<IControlledDateInputProps, ICont
 	}
 
 	public render(): ReactNode {
-		const { id, label, value, disabled, error } = this.props;
+		const { id, label, value, disabled, error, inputProps } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
 				<>
@@ -43,8 +44,9 @@ class ControlledDateInput extends PureComponent<IControlledDateInputProps, ICont
 							className={combine(bs.formControl, hasBeenTouched && error && bs.isInvalid)}
 							value={value}
 							onBlur={this.handleBlur}
+							{...inputProps}
 					/>
-					{error && <div className={bs.invalidFeedback}>{error}</div>}
+					{error && hasBeenTouched && <div className={bs.invalidFeedback}>{error}</div>}
 				</>
 		);
 	}
@@ -56,11 +58,11 @@ class ControlledDateInput extends PureComponent<IControlledDateInputProps, ICont
 	}
 
 	private handleChange(event: FormEvent<HTMLInputElement>): void {
-		const newValue = event.currentTarget.value;
+		const newValue = (event.target as HTMLInputElement).value;
 		if (!newValue || newValue.trim() === "") {
 			this.props.onValueChange(undefined, this.props.id);
 		} else {
-			this.props.onValueChange(event.currentTarget.value, this.props.id);
+			this.props.onValueChange(newValue, this.props.id);
 		}
 	}
 }

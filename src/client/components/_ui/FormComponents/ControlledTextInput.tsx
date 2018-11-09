@@ -48,7 +48,7 @@ class ControlledTextInput extends PureComponent<IControlledTextInputProps, ICont
 							onBlur={this.handleBlur}
 							{...inputProps}
 					/>
-					{error && <div className={bs.invalidFeedback}>{error}</div>}
+					{error && hasBeenTouched && <div className={bs.invalidFeedback}>{error}</div>}
 				</>
 		);
 	}
@@ -60,7 +60,7 @@ class ControlledTextInput extends PureComponent<IControlledTextInputProps, ICont
 	}
 
 	private handleChange(event: FormEvent<HTMLInputElement>): void {
-		this.props.onValueChange(event.currentTarget.value, this.props.id);
+		this.props.onValueChange((event.target as HTMLInputElement).value, this.props.id);
 	}
 }
 
