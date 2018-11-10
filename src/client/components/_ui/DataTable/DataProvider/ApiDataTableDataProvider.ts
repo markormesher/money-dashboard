@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from "axios";
-import { string } from "prop-types";
 import { stringify } from "qs";
 import { IColumnSortEntry } from "../DataTable";
 import { IDataTableDataProvider, IDataTableResponse } from "./IDataTableDataProvider";
@@ -25,11 +24,13 @@ class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
 			sortedColumns?: IColumnSortEntry[],
 	): Promise<IDataTableResponse<Model>> {
 		const apiParams = this.apiParamProvider ? this.apiParamProvider() : {};
-		const wrapSingleValuesInArray = (val: string | string[]) => val instanceof string ? [val] : val;
-		const order = (sortedColumns || []).map((sortEntry) => [
-			wrapSingleValuesInArray(sortEntry.column.sortField),
-			sortEntry.dir,
-		]);
+		// TODO: make sortField an array to get rid of this nonsense
+		const wrapSingleValuesInArray = (val: string | string[]) => (typeof val === typeof "" ? [val] : val) as string[];
+		const order = (sortedColumns || []).map((sortEntry) => {
+			const output: string[] = wrapSingleValuesInArray(sortEntry.column.sortField);
+			output.push(sortEntry.dir);
+			return output;
+		});
 		return axios
 				.get(this.api, {
 					paramsSerializer: (params) => stringify(params, { arrayFormat: "indices" }),
