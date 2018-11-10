@@ -63,7 +63,7 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
 				.filter((a) => a.balance !== 0);
 
 		if (summaries.length === 0) {
-			return undefined;
+			return null;
 		}
 
 		return (

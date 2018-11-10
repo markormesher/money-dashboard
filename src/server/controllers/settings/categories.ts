@@ -7,6 +7,8 @@ import { deleteCategory, getAllCategories, saveCategory } from "../../managers/c
 import { requireUser } from "../../middleware/auth-middleware";
 import { Category } from "../../models/Category";
 import { User } from "../../models/User";
+import { getBudgetBalances, IBudgetBalance } from "../../statistics/budget-statistics";
+import { getMemoCategoryBalances, ICategoryBalance } from "../../statistics/category-statistics";
 
 const router = Express.Router();
 
@@ -66,6 +68,12 @@ router.post("/delete/:categoryId", requireUser, (req: Request, res: Response, ne
 
 	deleteCategory(user, categoryId)
 			.then(() => res.status(200).end())
+			.catch(next);
+});
+
+router.get("/memo-balances", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	getMemoCategoryBalances(req.user as User)
+			.then((balances: ICategoryBalance[]) => res.json(balances))
 			.catch(next);
 });
 

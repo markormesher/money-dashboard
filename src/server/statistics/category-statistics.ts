@@ -2,16 +2,17 @@ import * as Bluebird from "bluebird";
 import * as sequelize from "sequelize";
 
 import { getAllCategories } from "../managers/category-manager";
+import { ThinCategory } from "../model-thins/ThinCategory";
 import { Category } from "../models/Category";
 import { Transaction } from "../models/Transaction";
 import { User } from "../models/User";
 
-export class CategoryBalance {
-	public category: Category;
-	public balance: number;
+interface ICategoryBalance {
+	readonly category: Category | ThinCategory;
+	readonly balance: number;
 }
 
-function getMemoCategoryBalances(user: User): Bluebird<CategoryBalance[]> {
+function getMemoCategoryBalances(user: User): Bluebird<ICategoryBalance[]> {
 	const categoryBalanceQuery = Transaction.findAll({
 		attributes: [
 			"categoryId",
@@ -40,12 +41,13 @@ function getMemoCategoryBalances(user: User): Bluebird<CategoryBalance[]> {
 							return {
 								category,
 								balance: balanceMap[category.id] || 0,
-							} as CategoryBalance;
+							};
 						})
 						.sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance));
 			});
 }
 
 export {
+	ICategoryBalance,
 	getMemoCategoryBalances,
 };

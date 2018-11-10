@@ -18,7 +18,7 @@ class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
 
 	private static renderGroup(budgetBalances: IBudgetBalance[], title?: string): ReactNode {
 		if (budgetBalances.length === 0) {
-			return undefined;
+			return null;
 		}
 
 		const firstBudget = budgetBalances[0].budget;
