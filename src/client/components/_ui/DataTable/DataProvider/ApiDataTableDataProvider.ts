@@ -24,13 +24,6 @@ class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
 			sortedColumns?: IColumnSortEntry[],
 	): Promise<IDataTableResponse<Model>> {
 		const apiParams = this.apiParamProvider ? this.apiParamProvider() : {};
-		// TODO: make sortField an array to get rid of this nonsense
-		const wrapSingleValuesInArray = (val: string | string[]) => (typeof val === typeof "" ? [val] : val) as string[];
-		const order = (sortedColumns || []).map((sortEntry) => {
-			const output: string[] = wrapSingleValuesInArray(sortEntry.column.sortField);
-			output.push(sortEntry.dir);
-			return output;
-		});
 		return axios
 				.get(this.api, {
 					paramsSerializer: (params) => stringify(params, { arrayFormat: "indices" }),
@@ -39,10 +32,24 @@ class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
 						start,
 						length,
 						searchTerm: searchTerm || "",
-						order,
+						order: this.formatOrdering(sortedColumns),
 					},
 				})
 				.then((res: AxiosResponse<IDataTableResponse<Model>>) => res.data);
+	}
+
+	private formatOrdering(sortedColumns: IColumnSortEntry[]): string[][] {
+		return sortedColumns.map((sortEntry) => {
+			const sortField = sortEntry.column.sortField;
+			const output: string[] = [];
+			if (typeof sortField === typeof "") {
+				output.push(sortField as string);
+			} else {
+				(sortField as string[]).forEach((f) => output.push(f));
+			}
+			output.push(sortEntry.dir);
+			return output;
+		});
 	}
 }
 
