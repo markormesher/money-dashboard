@@ -15,8 +15,6 @@ interface IDataTableOuterHeaderProps {
 	readonly onSearchTermChange?: (term: string) => void;
 }
 
-// TODO: tests
-
 class DataTableOuterHeader<Model> extends PureComponent<IDataTableOuterHeaderProps> {
 
 	public render(): ReactNode {
