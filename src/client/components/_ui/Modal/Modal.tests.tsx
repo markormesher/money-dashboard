@@ -6,7 +6,7 @@ import { describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
 import { testGlobals } from "../../../../../test/global.tests";
-import * as bs from "../../../bootstrap-aliases";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { IModalBtn, Modal, ModalBtnType } from "./Modal";
 
 describe(__filename, () => {

@@ -3,7 +3,7 @@ import { faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-svg-icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
-import * as bs from "../../../bootstrap-aliases";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import { IconBtn } from "../IconBtn/IconBtn";
 import * as styles from "./Modal.scss";

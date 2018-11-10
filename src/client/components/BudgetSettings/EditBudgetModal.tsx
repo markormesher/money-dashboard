@@ -6,7 +6,7 @@ import { AnyAction, Dispatch } from "redux";
 import { ThinBudget } from "../../../server/model-thins/ThinBudget";
 import { IThinBudgetValidationResult, validateThinBudget } from "../../../server/model-thins/ThinBudgetValidator";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";

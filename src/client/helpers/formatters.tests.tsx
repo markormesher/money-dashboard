@@ -10,7 +10,7 @@ import * as React from "react";
 import { ThinAccount } from "../../server/model-thins/ThinAccount";
 import { ThinBudget } from "../../server/model-thins/ThinBudget";
 import { ThinCategory } from "../../server/model-thins/ThinCategory";
-import * as bs from "../bootstrap-aliases";
+import * as bs from "../global-styles/Bootstrap.scss";
 import {
 	capitaliseFirstLetter,
 	formatCurrency,

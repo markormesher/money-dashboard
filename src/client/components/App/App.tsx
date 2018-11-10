@@ -20,7 +20,6 @@ import { Dashboard } from "../Dashboard/Dashboard";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { ProfileSettings } from "../ProfileSettings/ProfileSettings";
 import { Transactions } from "../Transactions/Transactions";
-import "./App.scss";
 
 interface IAppProps {
 	readonly waitingFor?: string[];

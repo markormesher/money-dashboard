@@ -1,10 +1,11 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../global-styles/Bootstrap.scss";
+import * as gs from "../../global-styles/Global.scss";
 import { generateAccountTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
@@ -14,7 +15,6 @@ import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataT
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
-import * as appStyles from "../App/App.scss";
 import { EditAccountModal } from "./EditAccountModal";
 
 interface IAccountSettingsProps {
@@ -79,7 +79,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 				<>
 					{accountToEdit !== undefined && <EditAccountModal/>}
 
-					<div className={appStyles.headerWrapper}>
+					<div className={gs.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Accounts</h1>
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
@@ -131,7 +131,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 							payload={account}
 							onClick={this.props.actions.setAccountToEdit}
 							btnProps={{
-								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								className: combine(bs.btnOutlineDark, gs.btnMini),
 							}}
 					/>
 
@@ -139,7 +139,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 							payload={account.id}
 							onConfirmedClick={this.props.actions.deleteAccount}
 							btnProps={{
-								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								className: combine(bs.btnOutlineDark, gs.btnMini),
 							}}
 					/>
 				</div>

@@ -1,0 +1,6 @@
+$font-size-base: .95rem;
+$line-height-base: 1.1;
+
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+
+// TODO: find a way to remove the unused bootstrap styles in the output

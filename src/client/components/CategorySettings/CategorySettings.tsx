@@ -1,10 +1,11 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../global-styles/Bootstrap.scss";
+import * as gs from "../../global-styles/Global.scss";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
@@ -13,7 +14,6 @@ import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataT
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
-import * as appStyles from "../App/App.scss";
 import { EditCategoryModal } from "./EditCategoryModal";
 
 interface ICategorySettingsProps {
@@ -72,7 +72,7 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 				<>
 					{categoryToEdit !== undefined && <EditCategoryModal/>}
 
-					<div className={appStyles.headerWrapper}>
+					<div className={gs.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Categories</h1>
 
 						<IconBtn
@@ -114,14 +114,14 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 							payload={category}
 							onClick={this.props.actions.setCategoryToEdit}
 							btnProps={{
-								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								className: combine(bs.btnOutlineDark, gs.btnMini),
 							}}
 					/>
 					<DeleteBtn
 							payload={category.id}
 							onConfirmedClick={this.props.actions.deleteCategory}
 							btnProps={{
-								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								className: combine(bs.btnOutlineDark, gs.btnMini),
 							}}
 					/>
 				</div>

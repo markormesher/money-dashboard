@@ -9,7 +9,7 @@ import {
 	IThinTransactionValidationResult,
 	validateThinTransaction,
 } from "../../../server/model-thins/ThinTransactionValidator";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";

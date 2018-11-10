@@ -2,7 +2,7 @@ import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
-import * as bs from "../../../bootstrap-aliases";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import { IDataTableDataProvider, IDataTableResponse } from "./DataProvider/IDataTableDataProvider";
 import * as styles from "./DataTable.scss";

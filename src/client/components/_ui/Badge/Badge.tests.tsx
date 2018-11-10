@@ -3,7 +3,7 @@ import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
 import { testGlobals } from "../../../../../test/global.tests";
-import * as bs from "../../../bootstrap-aliases";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { Badge } from "./Badge";
 
 describe(__filename, () => {

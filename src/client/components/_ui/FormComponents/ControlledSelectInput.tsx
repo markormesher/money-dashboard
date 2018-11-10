@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FormEvent, PureComponent, ReactElement, ReactNode, SelectHTMLAttributes } from "react";
-import * as bs from "../../../bootstrap-aliases";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledSelectInputProps {

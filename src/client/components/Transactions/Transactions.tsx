@@ -1,10 +1,11 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../global-styles/Bootstrap.scss";
+import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
@@ -21,7 +22,6 @@ import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
-import * as appStyles from "../App/App.scss";
 import { EditTransactionModal } from "./EditTransactionModal";
 
 interface ITransactionProps {
@@ -95,7 +95,7 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 				<>
 					{transactionToEdit !== undefined && <EditTransactionModal/>}
 
-					<div className={appStyles.headerWrapper}>
+					<div className={gs.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Transactions</h1>
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<DateModeToggleBtn
@@ -158,14 +158,14 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 							payload={transaction}
 							onClick={this.props.actions.setTransactionToEdit}
 							btnProps={{
-								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								className: combine(bs.btnOutlineDark, gs.btnMini),
 							}}
 					/>
 					<DeleteBtn
 							payload={transaction.id}
 							onConfirmedClick={this.props.actions.deleteTransaction}
 							btnProps={{
-								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								className: combine(bs.btnOutlineDark, gs.btnMini),
 							}}
 					/>
 				</div>

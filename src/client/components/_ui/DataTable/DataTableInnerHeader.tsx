@@ -2,7 +2,7 @@ import { faExchange, faSortAmountDown, faSortAmountUp } from "@fortawesome/pro-l
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
-import * as bs from "../../../bootstrap-aliases";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import { IColumn, IColumnSortEntry, SortDirection } from "./DataTable";
 import * as styles from "./DataTable.scss";

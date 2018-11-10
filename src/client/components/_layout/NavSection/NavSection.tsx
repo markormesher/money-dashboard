@@ -1,6 +1,6 @@
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
-import * as bs from "../../../bootstrap-aliases";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import * as style from "./NavSection.scss";
 

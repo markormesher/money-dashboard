@@ -1,10 +1,11 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../global-styles/Bootstrap.scss";
+import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { setProfileToEdit, startDeleteProfile } from "../../redux/settings/profiles/actions";
@@ -13,7 +14,6 @@ import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
-import * as appStyles from "../App/App.scss";
 import { EditProfileModal } from "./EditProfileModal";
 
 interface IProfileSettingsProps {
@@ -73,7 +73,7 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 				<>
 					{profileToEdit !== undefined && <EditProfileModal/>}
 
-					<div className={appStyles.headerWrapper}>
+					<div className={gs.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Profiles</h1>
 
 						<IconBtn
@@ -116,7 +116,7 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 								payload={profile}
 								onClick={this.props.actions.setProfileToEdit}
 								btnProps={{
-									className: combine(bs.btnOutlineDark, appStyles.btnMini),
+									className: combine(bs.btnOutlineDark, gs.btnMini),
 								}}
 						/>
 
@@ -124,7 +124,7 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 								payload={profile.id}
 								onConfirmedClick={this.props.actions.deleteProfile}
 								btnProps={{
-									className: combine(bs.btnOutlineDark, appStyles.btnMini),
+									className: combine(bs.btnOutlineDark, gs.btnMini),
 									disabled: deleteDisabled,
 								}}
 						/>

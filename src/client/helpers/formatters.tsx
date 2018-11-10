@@ -4,16 +4,16 @@ import { ReactElement } from "react";
 import { ThinAccount } from "../../server/model-thins/ThinAccount";
 import { ThinBudget } from "../../server/model-thins/ThinBudget";
 import { ThinCategory } from "../../server/model-thins/ThinCategory";
-import * as bs from "../bootstrap-aliases";
 import { Badge } from "../components/_ui/Badge/Badge";
-import * as appStyles from "../components/App/App.scss";
+import * as bs from "../global-styles/Bootstrap.scss";
+import * as gs from "../global-styles/Global.scss";
 
 function formatCurrency(amount: number): string {
 	return amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
 }
 
 function formatCurrencyStyled(amount: number): ReactElement<void> {
-	return (<span className={appStyles.currency}>{formatCurrency(amount)}</span>);
+	return (<span className={gs.currency}>{formatCurrency(amount)}</span>);
 }
 
 function formatDate(date: Date | Moment.Moment | string, format: "user" | "system" = "user"): string {

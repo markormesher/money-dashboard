@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import { IThinProfileValidationResult, validateThinProfile } from "../../../server/model-thins/ThinProfileValidator";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { IRootState } from "../../redux/root";
 import { setProfileToEdit, startSaveProfile } from "../../redux/settings/profiles/actions";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";

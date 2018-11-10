@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FormEvent, InputHTMLAttributes, PureComponent, ReactElement, ReactNode } from "react";
-import * as bs from "../../../bootstrap-aliases";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledTextAreaProps {
@@ -43,7 +43,7 @@ class ControlledTextArea extends PureComponent<IControlledTextAreaProps, IContro
 							disabled={disabled !== false}
 							className={combine(bs.formControl, hasBeenTouched && error && bs.isInvalid)}
 							placeholder={placeholder || ""}
-							value={value}
+							value={value || ""}
 							onBlur={this.handleBlur}
 							{...inputProps}
 					/>

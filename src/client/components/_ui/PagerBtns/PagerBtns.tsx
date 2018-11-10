@@ -1,7 +1,7 @@
 import { faArrowLeft, faArrowRight } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { Component, ReactElement } from "react";
-import * as bs from "../../../bootstrap-aliases";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import { IconBtn } from "../IconBtn/IconBtn";
 

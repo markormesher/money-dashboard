@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
 import { IThinCategoryValidationResult, validateThinCategory } from "../../../server/model-thins/ThinCategoryValidator";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startSaveCategory } from "../../redux/settings/categories/actions";
 import { Badge } from "../_ui/Badge/Badge";

@@ -1,12 +1,12 @@
-const {resolve, join} = require("path");
-const webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
-const TerserWebpackPlugin = require("terser-webpack-plugin");
-const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
-const md5 = require("md5");
 const glob = require("glob");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const md5 = require("md5");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
+const TerserWebpackPlugin = require("terser-webpack-plugin");
+const webpack = require("webpack");
+const {resolve, join} = require("path");
 
 const notFalse = (val) => val !== false;
 const IS_TEST = process.env.TEST === "y";
@@ -115,17 +115,21 @@ module.exports = {
 			{
 				test: /\.(s?)css$/,
 				include: /node_modules/,
-				use: ["style-loader", "css-loader", "sass-loader"],
+				use: [
+					"style-loader",
+					"css-loader",
+					"sass-loader",
+				],
 			},
 			{
 				test: /\.(s?)css$/,
 				exclude: /node_modules/,
 				use: [
-					"style-loader",
+					IS_PROD ? MiniCssExtractPlugin.loader : "style-loader",
 					{
 						loader: "typings-for-css-modules-loader",
 						options: {
-							camelCase: true,
+							camelCase: "only",
 							modules: true,
 							namedExport: true,
 							sourceMap: IS_DEV,
@@ -139,13 +143,10 @@ module.exports = {
 				test: /\.(eot|svg|ttf|woff|woff2)$/,
 				loader: "file-loader",
 			},
-		].filter(notFalse),
+		],
 	},
 	devtool: IS_PROD ? false : "cheap-module-eval-source-map",
 	plugins: [
-		IS_TEST && new CleanWebpackPlugin([outputDir], {
-			verbose: false,
-		}),
 		new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
 		new webpack.EnvironmentPlugin(["NODE_ENV"]),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
@@ -156,16 +157,20 @@ module.exports = {
 			minify: IS_PROD,
 			alwaysWriteToDisk: IS_DEV,
 		}),
-		new ReplaceInFileWebpackPlugin([{
+		IS_PROD && new ReplaceInFileWebpackPlugin([{
 			dir: outputDir,
 			rules: [
-				IS_PROD && {
+				{
 					// replace redux action strings with hashes
 					search: /"([A-Za-z]+)Actions\.([_A-Z]+)"/g,
 					replace: (str) => "\"" + md5(str).substring(0, 6) + "\"",
 				},
-			].filter(notFalse),
+			],
 		}]),
+		IS_PROD && new MiniCssExtractPlugin({
+			minimize: true,
+			filename: "[name]~[contenthash].css",
+		}),
 		IS_PROD && new BundleAnalyzerPlugin({
 			analyzerMode: "static",
 			openAnalyzer: false,
@@ -181,15 +186,19 @@ module.exports = {
 		minimizer: IS_PROD ? [terserMinimiser] : [],
 		namedModules: IS_DEV,
 		splitChunks: !IS_TEST && {
-			chunks: 'all',
+			chunks: "all",
 			maxInitialRequests: Infinity,
 			minSize: 0,
 			cacheGroups: {
 				vendor: {
 					test: /[\\/]node_modules[\\/]/,
-					name: (module) => {
-						const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-						return `npm.${packageName.replace('@', '')}`;
+					name: (m) => "npm." + m.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1].replace("@", ""),
+				},
+				globalStyles: {
+					test: /[\\/]global-styles[\\/]/,
+					name: (m) => {
+						const res = m.resource || m.issuer.resource;
+						return "styles." + res.match(/[\\/]global-styles[\\/](.*?)\.(s?)css/)[1].toLowerCase();
 					},
 				},
 			},

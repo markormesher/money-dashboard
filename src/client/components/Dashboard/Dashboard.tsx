@@ -8,7 +8,7 @@ import { AnyAction, Dispatch } from "redux";
 import { IAccountSummary } from "../../../server/model-thins/IAccountSummary";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { startLoadAccountSummaries } from "../../redux/dashboard/actions";
 import { IRootState } from "../../redux/root";

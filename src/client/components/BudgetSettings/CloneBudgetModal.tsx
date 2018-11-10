@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { IDateRange } from "../../../server/model-thins/IDateRange";
 import { IDateRangeValidationResult, validateDateRange } from "../../../server/model-thins/IDateRangeValidator";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";

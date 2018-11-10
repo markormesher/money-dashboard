@@ -1,10 +1,11 @@
 import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinBudget } from "../../../server/model-thins/ThinBudget";
-import * as bs from "../../bootstrap-aliases";
+import * as bs from "../../global-styles/Bootstrap.scss";
+import * as gs from "../../global-styles/Global.scss";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
@@ -20,7 +21,6 @@ import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { ControlledCheckboxInput } from "../_ui/FormComponents/ControlledCheckboxInput";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
-import * as appStyles from "../App/App.scss";
 import { CloneBudgetModal } from "./CloneBudgetModal";
 import { EditBudgetModal } from "./EditBudgetModal";
 
@@ -116,7 +116,7 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 					{budgetToEdit !== undefined && <EditBudgetModal/>}
 					{budgetIdsToClone && <CloneBudgetModal/>}
 
-					<div className={appStyles.headerWrapper}>
+					<div className={gs.headerWrapper}>
 						<h1 className={combine(bs.h2, bs.floatLeft)}>Budgets</h1>
 						<div className={combine(bs.btnGroup, bs.floatRight)}>
 							<CheckboxBtn
@@ -191,14 +191,14 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 							payload={budget}
 							onClick={this.props.actions.setBudgetToEdit}
 							btnProps={{
-								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								className: combine(bs.btnOutlineDark, gs.btnMini),
 							}}
 					/>
 					<DeleteBtn
 							payload={budget.id}
 							onConfirmedClick={this.props.actions.deleteBudget}
 							btnProps={{
-								className: combine(bs.btnOutlineDark, appStyles.btnMini),
+								className: combine(bs.btnOutlineDark, gs.btnMini),
 							}}
 					/>
 				</div>
