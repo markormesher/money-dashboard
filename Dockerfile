@@ -1,12 +1,10 @@
 FROM node:carbon
-
 ARG NPM_FONT_AWESOME_TOKEN
-ENV NPM_FONT_AWESOME_TOKEN=$NPM_FONT_AWESOME_TOKEN
 
 WORKDIR /usr/src/app
 
 # dependencies
-COPY package.json .yarnrc yarn.lock ./
+COPY package.json .yarnrc yarn.lock .npmrc ./
 RUN yarn
 
 # source code
