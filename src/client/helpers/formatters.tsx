@@ -4,6 +4,7 @@ import { ReactElement } from "react";
 import { ThinAccount } from "../../server/model-thins/ThinAccount";
 import { ThinBudget } from "../../server/model-thins/ThinBudget";
 import { ThinCategory } from "../../server/model-thins/ThinCategory";
+import { BudgetPeriod } from "../../server/models/Budget";
 import { Badge } from "../components/_ui/Badge/Badge";
 import * as bs from "../global-styles/Bootstrap.scss";
 import * as gs from "../global-styles/Global.scss";
@@ -60,7 +61,7 @@ function generateBudgetTypeBadge(budget: ThinBudget): ReactElement<void> {
 	}
 }
 
-function getBudgetPeriodType(start: Date | string, end: Date | string): string {
+function getBudgetPeriodType(start: Date | string, end: Date | string): BudgetPeriod {
 	if (typeof start === "string") {
 		start = new Date(start);
 	}
@@ -72,7 +73,7 @@ function getBudgetPeriodType(start: Date | string, end: Date | string): string {
 	return getBudgetPeriodTypeInternal(start as Date, end as Date);
 }
 
-function getBudgetPeriodTypeInternal(start: Date, end: Date): string {
+function getBudgetPeriodTypeInternal(start: Date, end: Date): BudgetPeriod {
 	const oneDay = 24 * 60 * 60 * 1000;
 
 	if (start.getDate() === 1

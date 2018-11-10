@@ -1,7 +1,6 @@
 import * as Bluebird from "bluebird";
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import * as Moment from "moment";
 import { requireUser } from "../middleware/auth-middleware";
 import { User } from "../models/User";
 import { getAccountBalances } from "../statistics/account-statistics";
@@ -13,14 +12,10 @@ const dashboardRouter = Express.Router();
 dashboardRouter.get("/old-index", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 
-	const now = Moment();
-	const dashboardRangeStart = now.clone().startOf("month").toDate();
-	const dashboardRangeEnd = now.clone().endOf("month").toDate();
-
 	Bluebird
 			.all([
 				getAccountBalances(user),
-				getBudgetBalances(user, dashboardRangeStart, dashboardRangeEnd),
+				getBudgetBalances(user),
 				getMemoCategoryBalances(user),
 			])
 			.spread((accountBalances, budgetBalances, memoCategoryBalances) => {

@@ -8,6 +8,7 @@ import { requireUser } from "../../middleware/auth-middleware";
 import { Budget } from "../../models/Budget";
 import { Category } from "../../models/Category";
 import { User } from "../../models/User";
+import { getBudgetBalances, IBudgetBalance } from "../../statistics/budget-statistics";
 
 const router = Express.Router();
 
@@ -89,6 +90,12 @@ router.post("/clone", requireUser, (req: Request, res: Response, next: NextFunct
 
 	cloneBudgets(user, budgetIds, startDate, endDate)
 			.then(() => res.status(200).end())
+			.catch(next);
+});
+
+router.get("/balances", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	getBudgetBalances(req.user as User)
+			.then((balances: IBudgetBalance[]) => res.json(balances))
 			.catch(next);
 });
 

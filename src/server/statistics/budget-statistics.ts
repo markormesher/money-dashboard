@@ -1,4 +1,5 @@
 import * as Bluebird from "bluebird";
+import * as Moment from "moment";
 import * as sequelize from "sequelize";
 import { Op } from "sequelize";
 
@@ -9,17 +10,15 @@ import { Transaction } from "../models/Transaction";
 import { User } from "../models/User";
 
 export interface IBudgetBalance {
-	readonly budget: Budget;
-	readonly balance: number;
-}
-
-export interface IThinBudgetBalance {
-	readonly budget: ThinBudget;
+	readonly budget: Budget | ThinBudget;
 	readonly balance: number;
 }
 
 function getBudgetBalances(user: User, start: Date = null, end: Date = null): Bluebird<IBudgetBalance[]> {
-	return getAllBudgets(user, start, end)
+	const now = Moment();
+	const defaultStart = now.clone().startOf("month").toDate();
+	const defaultEnd = now.clone().endOf("month").toDate();
+	return getAllBudgets(user, start || defaultStart, end || defaultEnd)
 			.then((budgets: Budget[]) => {
 				const getBalanceTasks = budgets.map((budget) => {
 					return Transaction.findOne({

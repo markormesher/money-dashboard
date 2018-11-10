@@ -5,7 +5,7 @@
 	h6 {
 		border-bottom: 1px solid $gray-200;
 		clear: both;
-		margin-top: 1rem;
+		margin-top: $spacer;
 
 		&:first-of-type {
 			margin-top: inherit !important;
@@ -14,7 +14,7 @@
 
 	p {
 		clear: both;
-		margin-bottom: .3rem;
+		margin-bottom: $spacer * .75;
 
 		&:last-of-type {
 			margin-bottom: 0 !important;

@@ -4,8 +4,10 @@ import { BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table } from "s
 import { Category } from "./Category";
 import { Profile } from "./Profile";
 
+type BudgetPeriod = "month" | "calendar year" | "tax year" | "other";
+
 @Table({ tableName: "budget" })
-export class Budget extends Model<Budget> {
+class Budget extends Model<Budget> {
 
 	@IsUUID(4)
 	@Column({
@@ -61,3 +63,8 @@ export class Budget extends Model<Budget> {
 	}
 
 }
+
+export {
+	Budget,
+	BudgetPeriod,
+};

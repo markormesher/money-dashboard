@@ -39,6 +39,9 @@ class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
 	}
 
 	private formatOrdering(sortedColumns: IColumnSortEntry[]): string[][] {
+		if (!sortedColumns) {
+			return [];
+		}
 		return sortedColumns.map((sortEntry) => {
 			const sortField = sortEntry.column.sortField;
 			const output: string[] = [];
