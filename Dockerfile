@@ -15,4 +15,4 @@ RUN yarn build
 
 # run
 EXPOSE 3000
-CMD ["yarn", "prod"]
+CMD ["yarn", "run"]
