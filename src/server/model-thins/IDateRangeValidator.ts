@@ -1,5 +1,5 @@
 import * as moment from "moment";
-import { IDateRange } from "./DateRange";
+import { IDateRange } from "./IDateRange";
 
 interface IDateRangeValidationResult {
 	readonly isValid: boolean;

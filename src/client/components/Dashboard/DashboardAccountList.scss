@@ -1,0 +1,19 @@
+.account-list {
+	h6 {
+		clear: both;
+		margin-top: 1rem;
+
+		&:first-of-type {
+			margin-top: inherit !important;
+		}
+	}
+
+	p {
+		clear: both;
+		margin-bottom: .3rem;
+
+		&:last-of-type {
+			margin-bottom: 0 !important;
+		}
+	}
+}

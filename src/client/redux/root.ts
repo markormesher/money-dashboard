@@ -2,6 +2,8 @@ import { combineReducers } from "redux";
 import { all } from "redux-saga/effects";
 import { authReducer, IAuthState } from "./auth/reducer";
 import { authSagas } from "./auth/sagas";
+import { dashboardReducer, IDashboardState } from "./dashboard/reducer";
+import { dashboardSagas } from "./dashboard/sagas";
 import { globalReducer, IGlobalState } from "./global/reducer";
 import { INavState, navReducer } from "./nav/reducer";
 import { accountSettingsReducer, IAccountSettingsState } from "./settings/accounts/reducer";
@@ -17,6 +19,7 @@ import { transactionsSagas } from "./transactions/sagas";
 
 interface IRootState {
 	readonly auth?: IAuthState;
+	readonly dashboard?: IDashboardState;
 	readonly global?: IGlobalState;
 	readonly nav?: INavState;
 	readonly router?: { // from connected-react-router
@@ -35,6 +38,7 @@ interface IRootState {
 
 const rootReducer = combineReducers({
 	auth: authReducer,
+	dashboard: dashboardReducer,
 	global: globalReducer,
 	nav: navReducer,
 	settings: combineReducers({
@@ -49,6 +53,7 @@ const rootReducer = combineReducers({
 function*rootSaga(): Generator {
 	yield all([
 		accountSettingsSagas(),
+		dashboardSagas(),
 		authSagas(),
 		budgetSettingsSagas(),
 		categorySettingsSagas(),

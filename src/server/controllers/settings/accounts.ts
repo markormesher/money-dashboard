@@ -5,8 +5,10 @@ import { IFindOptions } from "sequelize-typescript";
 import { getData } from "../../helpers/datatable-helper";
 import { deleteAccount, getAllAccounts, saveAccount, toggleAccountActive } from "../../managers/account-manager";
 import { requireUser } from "../../middleware/auth-middleware";
+import { IAccountSummary } from "../../model-thins/IAccountSummary";
 import { Account } from "../../models/Account";
 import { User } from "../../models/User";
+import { getAccountBalances } from "../../statistics/account-statistics";
 
 const router = Express.Router();
 
@@ -52,6 +54,12 @@ router.get("/list", requireUser, (req: Request, res: Response, next: NextFunctio
 	const user = req.user as User;
 	getAllAccounts(user)
 			.then((accounts: Account[]) => res.json(accounts))
+			.catch(next);
+});
+
+router.get("/summaries", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	getAccountBalances(req.user as User)
+			.then((summaries: IAccountSummary[]) => res.json(summaries))
 			.catch(next);
 });
 

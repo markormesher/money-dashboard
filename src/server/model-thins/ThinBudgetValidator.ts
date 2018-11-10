@@ -1,4 +1,4 @@
-import { validateDateRange } from "./DateRangeValidator";
+import { validateDateRange } from "./IDateRangeValidator";
 import { ThinBudget } from "./ThinBudget";
 
 interface IThinBudgetValidationResult {

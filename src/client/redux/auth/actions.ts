@@ -4,9 +4,9 @@ import { PayloadAction } from "../PayloadAction";
 
 enum AuthActions {
 	START_LOAD_CURRENT_USER = "AuthActions.START_LOAD_CURRENT_USER",
+	START_LOGOUT_CURRENT_USER = "AuthActions.START_LOGOUT_CURRENT_USER",
 	SET_CURRENT_USER = "AuthActions.SET_CURRENT_USER",
 	UNSET_CURRENT_USER = "AuthActions.UNSET_CURRENT_USER",
-	START_LOGOUT_CURRENT_USER = "AuthActions.START_LOGOUT_CURRENT_USER",
 }
 
 const startLoadCurrentUser: ActionCreator<PayloadAction> = () => {
