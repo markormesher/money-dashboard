@@ -47,6 +47,8 @@ interface IDataTableState<Model> {
 	};
 }
 
+// TODO: fix horizontal scroll on small screens
+
 class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableState<Model>> {
 
 	public static defaultProps: Partial<IDataTableProps<any>> = {
