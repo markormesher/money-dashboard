@@ -22,7 +22,7 @@ h6 {
 }
 
 button {
-	:focus {
+	&:focus {
 		box-shadow: none !important; // Bootstrap override
 	}
 }

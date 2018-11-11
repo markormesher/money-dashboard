@@ -20,7 +20,7 @@ function validateDateRange(range: IDateRange): IDateRangeValidationResult {
 			isValid: false,
 			errors: {
 				...result.errors,
-				startDate: "A valid start date must be selected",
+				startDate: "A valid startDate date must be selected",
 			},
 		};
 	}
@@ -30,7 +30,7 @@ function validateDateRange(range: IDateRange): IDateRangeValidationResult {
 			isValid: false,
 			errors: {
 				...result.errors,
-				endDate: "A valid end date must be selected",
+				endDate: "A valid endDate date must be selected",
 			},
 		};
 	}
@@ -42,8 +42,8 @@ function validateDateRange(range: IDateRange): IDateRangeValidationResult {
 			isValid: false,
 			errors: {
 				...result.errors,
-				startDate: "The start date must be before the end date",
-				endDate: "The start date must be before the end date",
+				startDate: "The startDate date must be before the endDate date",
+				endDate: "The startDate date must be before the endDate date",
 			},
 		};
 	}

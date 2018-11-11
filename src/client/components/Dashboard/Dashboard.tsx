@@ -65,17 +65,15 @@ class UCDashboard extends PureComponent<IDashboardProps> {
 
 	public render(): ReactNode {
 		return (
-				<div>
-					<div className={bs.row}>
-						<div className={combine(bs.colSm12, bs.colMd8)}>
-							<DashboardBudgetList budgetBalances={this.props.budgetBalances}/>
-						</div>
-						<div className={combine(bs.colSm12, bs.colMd4)}>
-							<DashboardAlertList
-									memoCategoryBalances={this.props.memoCategoryBalances}
-							/>
-							<DashboardAccountList accountSummaries={this.props.accountSummaries}/>
-						</div>
+				<div className={bs.row}>
+					<div className={combine(bs.colSm12, bs.colMd8)}>
+						<DashboardBudgetList budgetBalances={this.props.budgetBalances}/>
+					</div>
+					<div className={combine(bs.colSm12, bs.colMd4)}>
+						<DashboardAlertList
+								memoCategoryBalances={this.props.memoCategoryBalances}
+						/>
+						<DashboardAccountList accountSummaries={this.props.accountSummaries}/>
 					</div>
 				</div>
 		);

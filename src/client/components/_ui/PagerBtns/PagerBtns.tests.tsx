@@ -44,7 +44,7 @@ describe(__filename, () => {
 		});
 	});
 
-	it("should disable the prev button when at the start", () => {
+	it("should disable the prev button when at the startDate", () => {
 		mountWrapper = mount(<PagerBtns currentPage={0} totalPages={10}/>);
 		mountWrapper.find(IconBtn).forEach((btn) => {
 			if (btn.props().icon === faArrowLeft) {
@@ -53,7 +53,7 @@ describe(__filename, () => {
 		});
 	});
 
-	it("should disable the next button when at the end", () => {
+	it("should disable the next button when at the endDate", () => {
 		mountWrapper = mount(<PagerBtns currentPage={9} totalPages={10}/>);
 		mountWrapper.find(IconBtn).forEach((btn) => {
 			if (btn.props().icon === faArrowRight) {
@@ -102,7 +102,7 @@ describe(__filename, () => {
 		spy.calledOnceWithExactly(6).should.equal(true);
 	});
 
-	it("should not call the listener when the prev button is clicked at the start", () => {
+	it("should not call the listener when the prev button is clicked at the startDate", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<PagerBtns currentPage={0} totalPages={10} onPageChange={spy}/>);
 		mountWrapper.find(IconBtn).forEach((btn) => {
@@ -113,7 +113,7 @@ describe(__filename, () => {
 		spy.notCalled.should.equal(true);
 	});
 
-	it("should not call the listener when the next button is clicked at the end", () => {
+	it("should not call the listener when the next button is clicked at the endDate", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<PagerBtns currentPage={9} totalPages={10} onPageChange={spy}/>);
 		mountWrapper.find(IconBtn).forEach((btn) => {

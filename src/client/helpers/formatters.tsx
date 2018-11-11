@@ -23,7 +23,7 @@ function formatDate(date: Date | Moment.Moment | string, format: "user" | "syste
 	}
 
 	if (format === "user") {
-		return Moment(date).format("DD/MM/YYYY");
+		return Moment(date).format("DD MMM YYYY");
 	} else if (format === "system") {
 		return Moment(date).format("YYYY-MM-DD");
 	}

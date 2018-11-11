@@ -1,30 +1,23 @@
 import * as Bluebird from "bluebird";
+import { ChartDataSets } from "chart.js";
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as sequelize from "sequelize";
 import { Op } from "sequelize";
-import { getAllAccounts } from "../../managers/account-manager";
 import { requireUser } from "../../middleware/auth-middleware";
 import { Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
 
+interface IBalanceGraphData {
+	readonly datasets: ChartDataSets[];
+	readonly minTotal: number;
+	readonly maxTotal: number;
+	readonly minDate: number;
+	readonly maxDate: number;
+	readonly changeAbsolute: number;
+}
+
 const router = Express.Router();
-
-router.get("/old-index", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
-
-	getAllAccounts(user, false)
-			.then((accounts) => {
-				res.render("reports/balance-graph", {
-					_: {
-						title: "Balance Graph",
-						activePage: "reports/balance-graph",
-					},
-					accounts,
-				});
-			})
-			.catch(next);
-});
 
 router.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
@@ -32,7 +25,6 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 	const startDate = req.query.startDate;
 	const endDate = req.query.endDate;
 	const dateField: "effectiveDate" | "transactionDate" = req.query.dateField;
-	const accounts: string[] = req.query.accounts || [];
 
 	const getSumBeforeRange = Transaction.findOne({
 		attributes: [[sequelize.fn("SUM", sequelize.col("amount")), "balance"]],
@@ -40,9 +32,6 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 			profileId: user.activeProfile.id,
 			[dateField]: {
 				[Op.lt]: startDate,
-			},
-			accountId: {
-				[Op.in]: accounts,
 			},
 		},
 	});
@@ -52,9 +41,6 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 			[dateField]: {
 				[Op.gte]: startDate,
 				[Op.lte]: endDate,
-			},
-			accountId: {
-				[Op.in]: accounts,
 			},
 		},
 		order: [[dateField, "ASC"]],
@@ -91,7 +77,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				};
 
 				transactionsInRange.forEach((transaction: Transaction) => {
-					const date = transaction[dateField].getTime();
+					const date = new Date(transaction[dateField]).getTime();
 					if (lastDate > 0 && lastDate !== date) {
 						takeValues();
 					}
@@ -113,11 +99,19 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 					changeAbsolute = data[data.length - 1].y - data[0].y;
 				}
 
-				res.json({ data, minTotal, minDate, maxTotal, maxDate, changeAbsolute });
+				res.json({
+					datasets: [{ data }],
+					minTotal,
+					minDate,
+					maxTotal,
+					maxDate,
+					changeAbsolute,
+				});
 			})
 			.catch(next);
 });
 
 export {
 	router,
+	IBalanceGraphData,
 };

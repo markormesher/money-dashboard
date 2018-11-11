@@ -1,0 +1,10 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+.chooser {
+	background-color: $white;
+	border: 1px solid $gray-500;
+	padding: $spacer * .5;
+	position: fixed;
+	z-index: 9000;
+}
