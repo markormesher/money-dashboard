@@ -88,7 +88,7 @@ describe(__filename, () => {
 		});
 
 		it("should be able to format for users", () => {
-			formatDate("2015-04-01", "user").should.equal("01/04/2015");
+			formatDate("2015-04-01", "user").should.equal("01 Apr 2015");
 		});
 	});
 
