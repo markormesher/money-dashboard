@@ -8,17 +8,17 @@ echo "Checking environment..."
 
 current_host=$(hostname)
 if [[ "$current_host" = "$prod_branch" ]]; then
-    echo " - OK: Running on $prod_host"
+    echo " - OK: Host is '$prod_host'"
 else
-    echo " - ERROR: Running on $current_host, not $prod_host"
+    echo " - ERROR: Host is '$current_host', not '$prod_host'"
     exit 1
 fi
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
-if [[ "$current_branch" = "$prod_branch" ]]; then
+if [[ "$current_branch" == "$prod_branch" ]]; then
     echo " - OK: Checked out branch is $prod_branch"
 else
-    echo " - ERROR: Checked out branch is $current_branch, not $prod_branch"
+    echo " - ERROR: Checked out branch is '$current_branch', not '$prod_branch'"
     exit 1
 fi
 

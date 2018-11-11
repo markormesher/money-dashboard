@@ -66,7 +66,7 @@ jobs:
           name: Deploy
           command: |
             ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
-            ssh -v $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_DIR && git pull && ./.scripts/deploy-remote.sh"
+            ssh $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_DIR && git pull && ./.scripts/deploy-remote.sh"
 
 workflows:
   version: 2
