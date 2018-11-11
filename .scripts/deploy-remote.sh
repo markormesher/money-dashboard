@@ -4,6 +4,7 @@ set -euo pipefail
 prod_host="chuck"
 prod_branch="react-front-end" # TODO: change to "master"
 
+echo
 echo "Checking environment..."
 
 current_host=$(hostname)
@@ -28,3 +29,15 @@ else
     echo " - ERROR: Git environment is not clean"
     exit 1
 fi
+
+echo
+echo "Updating repo..."
+git pull
+
+echo
+echo "Rebuilding images..."
+docker-compose build
+
+echo
+echo "Starting containers..."
+docker-compose up -d
