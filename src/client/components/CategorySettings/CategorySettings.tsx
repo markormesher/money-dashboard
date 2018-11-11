@@ -51,7 +51,7 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinCategory>("/settings/accounts/table-data", () => {
+	private dataProvider = new ApiDataTableDataProvider<ThinCategory>("/settings/categories/table-data", () => {
 		return {
 			lastUpdate: this.props.lastUpdate,
 		};
