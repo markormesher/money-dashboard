@@ -60,12 +60,13 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "98:46:b4:aa:3e:3f:5a:09:66:f0:97:cc:60:e0:4d:e9"
-            - "f1:e9:65:5a:37:8d:d8:39:27:9e:d9:cf:54:53:6c:f8"
       - attach_workspace:
           at: .
       - run:
           name: Deploy
-          command: ssh -v $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_DIR && ./.scripts/deploy-remote.sh"
+          command: |
+            ssh-keyscan $DEPLOY_HOST >> ~/.ssh/config
+            ssh -v $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_DIR && ./.scripts/deploy-remote.sh"
 
 workflows:
   version: 2
