@@ -2,7 +2,7 @@
 set -euo pipefail
 
 prod_host="chuck"
-prod_branch="react-front-end" # TODO: change to "master"
+prod_branch="master"
 
 echo
 echo "Checking environment..."

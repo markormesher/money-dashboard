@@ -72,4 +72,20 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - deploy
+      - setup
+      - lint:
+          requires:
+          - setup
+      - test:
+          requires:
+          - setup
+      - build:
+          requires:
+          - lint
+          - test
+      - deploy:
+          requires:
+          - build
+          filters:
+            branches:
+              only: master
