@@ -54,6 +54,15 @@ jobs:
           name: Build
           command: yarn build
 
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Deploy
+          command: ssh -v $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_DIR && ./.scripts/deploy-remote.sh"
+
 workflows:
   version: 2
   build_and_test:
@@ -69,3 +78,6 @@ workflows:
           requires:
             - lint
             - test
+      - deploy:
+          requires:
+            - build

@@ -7,8 +7,7 @@ yarn-error.log*
 logs/**
 !logs/.gitkeep
 
-pull-data-from-prod.sh
-push-data-to-prod.sh
+.scripts/pull-data-from-prod.sh
 
 # IntelliJ
 *.iml
