@@ -16,7 +16,7 @@ fi
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 if [[ "$current_branch" == "$prod_branch" ]]; then
-    echo " - OK: Checked out branch is $prod_branch"
+    echo " - OK: Checked out branch is '$prod_branch'"
 else
     echo " - ERROR: Checked out branch is '$current_branch', not '$prod_branch'"
     exit 1
