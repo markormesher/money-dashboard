@@ -7,7 +7,7 @@ prod_branch="react-front-end" # TODO: change to "master"
 echo "Checking environment..."
 
 current_host=$(hostname)
-if [[ "$current_host" = "$prod_branch" ]]; then
+if [[ "$current_host" = "$prod_host" ]]; then
     echo " - OK: Host is '$prod_host'"
 else
     echo " - ERROR: Host is '$current_host', not '$prod_host'"
