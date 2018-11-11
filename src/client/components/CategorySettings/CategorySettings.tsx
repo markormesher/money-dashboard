@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { PureComponent, ReactElement, ReactNode } from "react";
 import * as React from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
@@ -73,16 +73,17 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 					{categoryToEdit !== undefined && <EditCategoryModal/>}
 
 					<div className={gs.headerWrapper}>
-						<h1 className={combine(bs.h2, bs.floatLeft)}>Categories</h1>
-
-						<IconBtn
-								icon={faPlus}
-								text={"New Category"}
-								onClick={this.startCategoryCreation}
-								btnProps={{
-									className: combine(bs.floatRight, bs.btnSm, bs.btnSuccess),
-								}}
-						/>
+						<h1 className={bs.h2}>Categories</h1>
+						<div className={gs.headerExtras}>
+							<IconBtn
+									icon={faPlus}
+									text={"New Category"}
+									onClick={this.startCategoryCreation}
+									btnProps={{
+										className: combine(bs.btnSm, bs.btnSuccess),
+									}}
+							/>
+						</div>
 					</div>
 
 					<DataTable<ThinCategory>

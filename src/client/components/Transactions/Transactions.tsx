@@ -96,8 +96,8 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 					{transactionToEdit !== undefined && <EditTransactionModal/>}
 
 					<div className={gs.headerWrapper}>
-						<h1 className={combine(bs.h2, bs.floatLeft)}>Transactions</h1>
-						<div className={combine(bs.btnGroup, bs.floatRight)}>
+						<h1 className={bs.h2}>Transactions</h1>
+						<div className={combine(bs.btnGroup, gs.headerExtras)}>
 							<DateModeToggleBtn
 									value={this.props.dateMode}
 									onChange={this.props.actions.setDateMode}

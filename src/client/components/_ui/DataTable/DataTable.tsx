@@ -47,8 +47,6 @@ interface IDataTableState<Model> {
 	};
 }
 
-// TODO: fix horizontal scroll on small screens
-
 class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableState<Model>> {
 
 	public static defaultProps: Partial<IDataTableProps<any>> = {
@@ -129,19 +127,21 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 							{loading && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
 						</div>
 
-						<table className={combine(bs.table, styles.table, bs.tableStriped, bs.tableSm)}>
-							<DataTableInnerHeader
-									columns={columns}
-									sortedColumns={sortedColumns}
-									onSortOrderUpdate={this.handleSortOrderChange}
-							/>
+						<div className={bs.tableResponsive}>
+							<table className={combine(bs.table, styles.table, bs.tableStriped, bs.tableSm)}>
+								<DataTableInnerHeader
+										columns={columns}
+										sortedColumns={sortedColumns}
+										onSortOrderUpdate={this.handleSortOrderChange}
+								/>
 
-							<tbody>
-							{!failed && (!rows || rows.length === 0) && this.generateMsgRow("No rows to display")}
-							{failed && this.generateMsgRow("Failed to load data")}
-							{rows}
-							</tbody>
-						</table>
+								<tbody>
+								{!failed && (!rows || rows.length === 0) && this.generateMsgRow("No rows to display")}
+								{failed && this.generateMsgRow("Failed to load data")}
+								{rows}
+								</tbody>
+							</table>
+						</div>
 					</div>
 
 					<DataTableOuterFooter

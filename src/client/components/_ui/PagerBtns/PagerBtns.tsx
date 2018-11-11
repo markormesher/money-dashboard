@@ -31,7 +31,7 @@ class PagerBtns extends Component<IPagerBtnsProps> {
 		const nextBtnDisabled = disabled || currentPage >= totalPages - 1;
 
 		return (
-				<div className={combine(bs.floatLeft, bs.btnGroup, bs.btnGroupSm)}>
+				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<IconBtn
 							icon={faArrowLeft}
 							onClick={this.handlePrevClick}

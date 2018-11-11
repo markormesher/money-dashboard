@@ -1,3 +1,6 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
 .table-wrapper {
 	&.loading {
 		.table-header,
@@ -25,9 +28,12 @@
 }
 
 .table-header {
-	margin-bottom: .4rem;
 	overflow: auto; // allows the div to have height even though it only contains floated elements
 	width: 100%;
+
+	> div {
+		margin-bottom: $spacer * .5;
+	}
 }
 
 .table-footer {
@@ -40,7 +46,9 @@
 }
 
 th {
-	.sortable {
+	white-space: nowrap;
+
+	&.sortable {
 		cursor: pointer;
 	}
 }

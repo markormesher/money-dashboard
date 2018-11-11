@@ -80,8 +80,8 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 					{accountToEdit !== undefined && <EditAccountModal/>}
 
 					<div className={gs.headerWrapper}>
-						<h1 className={combine(bs.h2, bs.floatLeft)}>Accounts</h1>
-						<div className={combine(bs.btnGroup, bs.floatRight)}>
+						<h1 className={bs.h2}>Accounts</h1>
+						<div className={combine(bs.btnGroup, gs.headerExtras)}>
 							<CheckboxBtn
 									text={"Active Accounts Only"}
 									checked={this.props.displayActiveOnly}

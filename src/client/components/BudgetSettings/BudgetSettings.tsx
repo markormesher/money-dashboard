@@ -1,6 +1,6 @@
 import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { PureComponent, ReactElement, ReactNode } from "react";
 import * as React from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinBudget } from "../../../server/model-thins/ThinBudget";
@@ -117,8 +117,8 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 					{budgetIdsToClone && <CloneBudgetModal/>}
 
 					<div className={gs.headerWrapper}>
-						<h1 className={combine(bs.h2, bs.floatLeft)}>Budgets</h1>
-						<div className={combine(bs.btnGroup, bs.floatRight)}>
+						<h1 className={bs.h2}>Budgets</h1>
+						<div className={combine(bs.btnGroup, gs.headerExtras)}>
 							<CheckboxBtn
 									text={"Current Budgets Only"}
 									checked={this.props.displayCurrentOnly}

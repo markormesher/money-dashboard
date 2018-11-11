@@ -74,16 +74,17 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 					{profileToEdit !== undefined && <EditProfileModal/>}
 
 					<div className={gs.headerWrapper}>
-						<h1 className={combine(bs.h2, bs.floatLeft)}>Profiles</h1>
-
-						<IconBtn
-								icon={faPlus}
-								text={"New Profile"}
-								onClick={this.startProfileCreation}
-								btnProps={{
-									className: combine(bs.floatRight, bs.btnSm, bs.btnSuccess),
-								}}
-						/>
+						<h1 className={bs.h2}>Profiles</h1>
+						<div className={gs.headerExtras}>
+							<IconBtn
+									icon={faPlus}
+									text={"New Profile"}
+									onClick={this.startProfileCreation}
+									btnProps={{
+										className: combine(bs.btnSm, bs.btnSuccess),
+									}}
+							/>
+						</div>
 					</div>
 
 					<DataTable<ThinProfile>

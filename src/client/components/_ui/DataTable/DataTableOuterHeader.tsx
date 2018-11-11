@@ -23,7 +23,7 @@ class DataTableOuterHeader<Model> extends PureComponent<IDataTableOuterHeaderPro
 
 		return (
 				<div className={styles.tableHeader}>
-					<div className={combine(bs.floatLeft, bs.btnGroup, bs.btnGroupSm)}>
+					<div className={bs.floatLeft}>
 						<PagerBtns
 								disabled={loading}
 								currentPage={currentPage}
