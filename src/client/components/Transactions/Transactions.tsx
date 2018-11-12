@@ -22,6 +22,7 @@ import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
+import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { EditTransactionModal } from "./EditTransactionModal";
 
 interface ITransactionProps {
@@ -106,14 +107,19 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 									}}
 							/>
 
-							<IconBtn
-									icon={faPlus}
-									text={"New Transaction"}
-									onClick={this.startTransactionCreation}
-									btnProps={{
-										className: combine(bs.btnSm, bs.btnSuccess),
-									}}
-							/>
+							<KeyShortcut
+									keyStr={"c"}
+									onTrigger={this.startTransactionCreation}
+							>
+								<IconBtn
+										icon={faPlus}
+										text={"New Transaction"}
+										onClick={this.startTransactionCreation}
+										btnProps={{
+											className: combine(bs.btnSm, bs.btnSuccess),
+										}}
+								/>
+							</KeyShortcut>
 						</div>
 					</div>
 

@@ -15,6 +15,7 @@ import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataT
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
+import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { EditAccountModal } from "./EditAccountModal";
 
 interface IAccountSettingsProps {
@@ -91,14 +92,19 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 									}}
 							/>
 
-							<IconBtn
-									icon={faPlus}
-									text={"New Account"}
-									onClick={this.startAccountCreation}
-									btnProps={{
-										className: combine(bs.btnSm, bs.btnSuccess),
-									}}
-							/>
+							<KeyShortcut
+									keyStr={"c"}
+									onTrigger={this.startAccountCreation}
+							>
+								<IconBtn
+										icon={faPlus}
+										text={"New Account"}
+										onClick={this.startAccountCreation}
+										btnProps={{
+											className: combine(bs.btnSm, bs.btnSuccess),
+										}}
+								/>
+							</KeyShortcut>
 						</div>
 					</div>
 

@@ -14,6 +14,7 @@ import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
+import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { EditProfileModal } from "./EditProfileModal";
 
 interface IProfileSettingsProps {
@@ -76,14 +77,19 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 					<div className={gs.headerWrapper}>
 						<h1 className={bs.h2}>Profiles</h1>
 						<div className={gs.headerExtras}>
-							<IconBtn
-									icon={faPlus}
-									text={"New Profile"}
-									onClick={this.startProfileCreation}
-									btnProps={{
-										className: combine(bs.btnSm, bs.btnSuccess),
-									}}
-							/>
+							<KeyShortcut
+									keyStr={"c"}
+									onTrigger={this.startProfileCreation}
+							>
+								<IconBtn
+										icon={faPlus}
+										text={"New Profile"}
+										onClick={this.startProfileCreation}
+										btnProps={{
+											className: combine(bs.btnSm, bs.btnSuccess),
+										}}
+								/>
+							</KeyShortcut>
 						</div>
 					</div>
 

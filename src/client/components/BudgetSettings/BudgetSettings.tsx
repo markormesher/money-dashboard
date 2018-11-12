@@ -21,6 +21,7 @@ import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { ControlledCheckboxInput } from "../_ui/FormComponents/ControlledCheckboxInput";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
+import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { CloneBudgetModal } from "./CloneBudgetModal";
 import { EditBudgetModal } from "./EditBudgetModal";
 
@@ -138,14 +139,19 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 									}}
 							/>
 
-							<IconBtn
-									icon={faPlus}
-									text={"New Budget"}
-									onClick={this.startBudgetCreation}
-									btnProps={{
-										className: combine(bs.btnSm, bs.btnSuccess),
-									}}
-							/>
+							<KeyShortcut
+									keyStr={"c"}
+									onTrigger={this.startBudgetCreation}
+							>
+								<IconBtn
+										icon={faPlus}
+										text={"New Budget"}
+										onClick={this.startBudgetCreation}
+										btnProps={{
+											className: combine(bs.btnSm, bs.btnSuccess),
+										}}
+								/>
+							</KeyShortcut>
 						</div>
 					</div>
 

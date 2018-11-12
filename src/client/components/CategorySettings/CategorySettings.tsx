@@ -14,6 +14,7 @@ import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataT
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
+import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { EditCategoryModal } from "./EditCategoryModal";
 
 interface ICategorySettingsProps {
@@ -75,14 +76,19 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 					<div className={gs.headerWrapper}>
 						<h1 className={bs.h2}>Categories</h1>
 						<div className={gs.headerExtras}>
-							<IconBtn
-									icon={faPlus}
-									text={"New Category"}
-									onClick={this.startCategoryCreation}
-									btnProps={{
-										className: combine(bs.btnSm, bs.btnSuccess),
-									}}
-							/>
+							<KeyShortcut
+									keyStr={"c"}
+									onTrigger={this.startCategoryCreation}
+							>
+								<IconBtn
+										icon={faPlus}
+										text={"New Category"}
+										onClick={this.startCategoryCreation}
+										btnProps={{
+											className: combine(bs.btnSm, bs.btnSuccess),
+										}}
+								/>
+							</KeyShortcut>
 						</div>
 					</div>
 

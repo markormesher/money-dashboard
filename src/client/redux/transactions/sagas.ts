@@ -31,6 +31,9 @@ function*saveTransactionSaga(): Generator {
 				put(setLastUpdate()),
 				put(setEditorBusy(false)),
 				put(setTransactionToEdit(undefined)),
+
+				// if they were editing a new transaction, keep the editor open with some fields pre-filled
+				transactionId === "" && put(setTransactionToEdit(ThinTransaction.getNextForContinuousCreation(transaction))),
 			]);
 		} catch (err) {
 			yield put(setError(err));

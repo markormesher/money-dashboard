@@ -96,6 +96,8 @@ class UCEditTransactionModal extends PureComponent<IEditTransactionModalProps, I
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
 
+		const continuousEditing = currentValues.createdAt === null && currentValues.accountId !== undefined;
+
 		const modalBtns: IModalBtn[] = [
 			{
 				type: ModalBtnType.CANCEL,
@@ -126,7 +128,7 @@ class UCEditTransactionModal extends PureComponent<IEditTransactionModalProps, I
 										error={errors.transactionDate}
 										onValueChange={this.handleTransactionDateChange}
 										inputProps={{
-											autoFocus: true,
+											autoFocus: !continuousEditing,
 										}}
 								/>
 							</div>
@@ -138,6 +140,9 @@ class UCEditTransactionModal extends PureComponent<IEditTransactionModalProps, I
 										disabled={editorBusy}
 										error={errors.effectiveDate}
 										onValueChange={this.handleEffectiveDateChange}
+										inputProps={{
+											tabIndex: -1,
+										}}
 								/>
 							</div>
 						</div>
@@ -150,6 +155,9 @@ class UCEditTransactionModal extends PureComponent<IEditTransactionModalProps, I
 										disabled={editorBusy || !accountList}
 										error={errors.account}
 										onValueChange={this.handleAccountChange}
+										selectProps={{
+											autoFocus: continuousEditing,
+										}}
 								>
 									{accountList && (<option value={""}>-- Select --</option>)}
 									{accountList && accountList.sort((a, b) => a.name.localeCompare(b.name)).map((a) => (

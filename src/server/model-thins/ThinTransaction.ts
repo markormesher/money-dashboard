@@ -24,6 +24,16 @@ export class ThinTransaction {
 		deletedAt: null,
 	};
 
+	public static getNextForContinuousCreation(prev: Partial<ThinTransaction>): ThinTransaction {
+		return {
+			...this.DEFAULT,
+			transactionDate: prev.transactionDate || this.DEFAULT.transactionDate,
+			effectiveDate: prev.effectiveDate || this.DEFAULT.effectiveDate,
+			accountId: prev.accountId || this.DEFAULT.accountId,
+			account: prev.account || this.DEFAULT.account,
+		};
+	}
+
 	public id: string;
 	public transactionDate: string;
 	public effectiveDate: string;
