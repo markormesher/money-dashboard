@@ -22,6 +22,8 @@ import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import * as styles from "./BudgetModals.scss";
 import { QuickDateRangeLinks } from "./QuickDateRangeLinks";
 
+// TODO: replace with DateRangeChooser
+
 interface IEditBudgetModalProps {
 	readonly budgetToEdit?: ThinBudget;
 	readonly editorBusy?: boolean;

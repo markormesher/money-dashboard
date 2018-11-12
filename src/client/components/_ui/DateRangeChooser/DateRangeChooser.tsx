@@ -8,9 +8,14 @@ import { combine } from "../../../helpers/style-helpers";
 import { IconBtn } from "../IconBtn/IconBtn";
 import * as styles from "./DateRangeChooser.scss";
 
+// TODO: tests
+
 interface IDateRangeChooserProps {
 	readonly startDate: Moment.Moment;
 	readonly endDate: Moment.Moment;
+	readonly includeFuturePresets?: boolean;
+	readonly includeYearToDate?: boolean;
+	readonly includeAllTime?: boolean;
 	readonly onValueChange?: (start: Moment.Moment, end: Moment.Moment) => void;
 	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
 }
@@ -59,16 +64,44 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 	}
 
 	private renderChooser(): ReactNode {
+		const { includeFuturePresets, includeYearToDate, includeAllTime } = this.props;
+
 		return (
 				<div
 						className={styles.chooser}
 						style={this.getChooserPosition()}
 				>
 					<div className={bs.btnGroupVertical}>
-						{this.renderPresetBtn("This Month", Moment().startOf("month"), Moment().endOf("month"))}
-						{this.renderPresetBtn("This Year", Moment().startOf("year"), Moment().endOf("year"))}
-						{this.renderPresetBtn("Year to Date", Moment().subtract(1, "year"), Moment())}
-						{this.renderPresetBtn("All Time", Moment(new Date(1970, 0, 1)), Moment())}
+						{this.renderPresetBtn(
+								"This Month",
+								Moment().startOf("month"),
+								Moment().endOf("month"),
+						)}
+						{includeFuturePresets && this.renderPresetBtn(
+								"Next Month",
+								Moment().add(1, "month").startOf("month"),
+								Moment().add(1, "month").endOf("month"),
+						)}
+						{this.renderPresetBtn(
+								"This Year",
+								Moment().startOf("year"),
+								Moment().endOf("year"),
+						)}
+						{includeFuturePresets && this.renderPresetBtn(
+								"Next Year",
+								Moment().add(1, "year").startOf("year"),
+								Moment().add(1, "year").endOf("year"),
+						)}
+						{includeYearToDate && this.renderPresetBtn(
+								"Year to Date",
+								Moment().subtract(1, "year"),
+								Moment(),
+						)}
+						{includeAllTime && this.renderPresetBtn(
+								"All Time",
+								Moment(new Date(1970, 0, 1)),
+								Moment(),
+						)}
 						{/* TODO: custom ranges */}
 						{/*<button className={combine(bs.btn, bs.btnOutlineDark)}>*/}
 						{/*Custom*/}

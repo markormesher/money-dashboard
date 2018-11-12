@@ -1,3 +1,4 @@
+import * as Moment from "moment";
 import { ThinCategory } from "./ThinCategory";
 import { ThinProfile } from "./ThinProfile";
 
@@ -7,8 +8,8 @@ export class ThinBudget {
 		id: undefined,
 		type: "budget",
 		amount: 0,
-		startDate: "",
-		endDate: "",
+		startDate: Moment().startOf("month").toISOString(),
+		endDate: Moment().endOf("month").toISOString(),
 		categoryId: undefined,
 		category: undefined,
 		profileId: undefined,
