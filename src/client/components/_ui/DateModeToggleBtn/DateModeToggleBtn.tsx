@@ -1,8 +1,8 @@
 import { faCalendar } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
+import { DateModeOption } from "../../../../server/models/Transaction";
 import { capitaliseFirstLetter } from "../../../helpers/formatters";
-import { DateModeOption } from "../../../redux/transactions/reducer";
 import { IconBtn } from "../IconBtn/IconBtn";
 
 interface IDateModeToggleBtnProps {

@@ -1,8 +1,7 @@
 import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
+import { DateModeOption } from "../../../server/models/Transaction";
 import { PayloadAction } from "../PayloadAction";
 import { TransactionsActions } from "./actions";
-
-type DateModeOption = "effective" | "transaction";
 
 interface ITransactionsState {
 	readonly lastUpdate: number;
@@ -50,7 +49,6 @@ function transactionsReducer(state = initialState, action: PayloadAction): ITran
 }
 
 export {
-	DateModeOption,
 	ITransactionsState,
 	transactionsReducer,
 };

@@ -1,9 +1,10 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { PureComponent, ReactElement, ReactNode } from "react";
 import * as React from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
+import { DateModeOption } from "../../../server/models/Transaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
@@ -15,7 +16,6 @@ import {
 	setTransactionToEdit,
 	startDeleteTransaction,
 } from "../../redux/transactions/actions";
-import { DateModeOption } from "../../redux/transactions/reducer";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";

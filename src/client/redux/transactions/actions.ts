@@ -1,7 +1,7 @@
 import { ActionCreator } from "redux";
 import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
+import { DateModeOption } from "../../../server/models/Transaction";
 import { PayloadAction } from "../PayloadAction";
-import { DateModeOption } from "./reducer";
 
 enum TransactionsActions {
 	START_DELETE_TRANSACTION = "TransactionSettingsActions.START_DELETE_TRANSACTION",

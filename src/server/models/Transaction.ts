@@ -5,6 +5,8 @@ import { Account } from "./Account";
 import { Category } from "./Category";
 import { Profile } from "./Profile";
 
+type DateModeOption = "effective" | "transaction";
+
 @Table({ tableName: "transaction" })
 export class Transaction extends Model<Transaction> {
 
@@ -59,3 +61,7 @@ export class Transaction extends Model<Transaction> {
 	public profile: Profile;
 
 }
+
+export {
+	DateModeOption,
+};

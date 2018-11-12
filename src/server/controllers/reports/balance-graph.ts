@@ -5,6 +5,7 @@ import { NextFunction, Request, Response } from "express";
 import * as sequelize from "sequelize";
 import { Op } from "sequelize";
 import { requireUser } from "../../middleware/auth-middleware";
+import { DateModeOption } from "../../models/Transaction";
 import { Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
 
@@ -24,7 +25,9 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 
 	const startDate = req.query.startDate;
 	const endDate = req.query.endDate;
-	const dateField: "effectiveDate" | "transactionDate" = req.query.dateField;
+	const dateMode: DateModeOption = req.query.dateMode;
+
+	const dateField = `${dateMode}Date`;
 
 	const getSumBeforeRange = Transaction.findOne({
 		attributes: [[sequelize.fn("SUM", sequelize.col("amount")), "balance"]],
@@ -77,7 +80,8 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				};
 
 				transactionsInRange.forEach((transaction: Transaction) => {
-					const date = new Date(transaction[dateField]).getTime();
+					const rawDate = dateMode === "effective" ? transaction.effectiveDate : transaction.transactionDate;
+					const date = new Date(rawDate).getTime();
 					if (lastDate > 0 && lastDate !== date) {
 						takeValues();
 					}

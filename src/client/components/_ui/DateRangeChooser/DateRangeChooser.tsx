@@ -1,11 +1,11 @@
 import { faCalendar } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as Moment from "moment";
 import * as React from "react";
 import { Component, CSSProperties, MouseEvent, ReactNode, RefObject } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
+import { IconBtn } from "../IconBtn/IconBtn";
 import * as styles from "./DateRangeChooser.scss";
 
 interface IDateRangeChooserProps {
@@ -44,15 +44,15 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 
 		return (
 				<>
-					<button
-							className={combine(bs.btn, bs.btnOutlineDark)}
-							ref={this.btnRef}
-							onClick={this.toggleChooser}
-							{...btnProps}
-					>
-						<FontAwesomeIcon icon={faCalendar} className={bs.mr2}/>
-						{formatDate(startDate)} to {formatDate(endDate)}
-					</button>
+					<IconBtn
+							icon={faCalendar}
+							text={`${formatDate(startDate)} to ${formatDate(endDate)}`}
+							btnProps={{
+								...btnProps,
+								ref: this.btnRef,
+								onClick: this.toggleChooser,
+							}}
+					/>
 					{chooserOpen && this.renderChooser()}
 				</>
 		);
