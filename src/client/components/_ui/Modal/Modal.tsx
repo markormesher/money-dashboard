@@ -30,46 +30,7 @@ interface IModalProps {
 
 class Modal extends PureComponent<IModalProps> {
 
-	public render(): ReactNode {
-		const { title, buttons, modalBusy, onCloseRequest } = this.props;
-		return (
-				<>
-					<div className={combine(bs.modal, bs.fade, bs.dBlock, bs.show)}>
-						<div className={combine(bs.modalDialog, styles.modalDialog)}>
-							<div className={bs.modalContent}>
-								{
-									title
-									&& <div className={bs.modalHeader}>
-										<h5 className={bs.modalTitle}>{title}</h5>
-										<button className={bs.close} onClick={onCloseRequest}>
-											<span aria-hidden="true">&times;</span>
-										</button>
-									</div>
-								}
-								{
-									this.props.children
-									&& <div className={bs.modalBody}>
-										{this.props.children}
-									</div>
-								}
-								{
-									buttons
-									&& buttons.length > 0
-									&& <div className={combine(bs.modalFooter, styles.modalFooter)}>
-										{modalBusy && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
-										{!modalBusy && buttons.map(this.renderBtn)}
-									</div>
-								}
-							</div>
-						</div>
-					</div>
-
-					<div className={combine(bs.modalBackdrop, bs.fade, bs.show)}/>
-				</>
-		);
-	}
-
-	private renderBtn(btn: IModalBtn): ReactElement<void> {
+	private static renderBtn(btn: IModalBtn): ReactElement<void> {
 		let icon: IconProp;
 		let label: string;
 		let className: string;
@@ -98,6 +59,66 @@ class Modal extends PureComponent<IModalProps> {
 						}}
 				/>
 		);
+	}
+
+	constructor(props: IModalProps) {
+		super(props);
+		this.handleKeyPress = this.handleKeyPress.bind(this);
+	}
+
+	public componentDidMount(): void {
+		document.addEventListener("keydown", this.handleKeyPress);
+	}
+
+	public componentWillUnmount(): void {
+		document.removeEventListener("keydown", this.handleKeyPress);
+	}
+
+	public render(): ReactNode {
+		const { title, buttons, modalBusy, onCloseRequest } = this.props;
+		return (
+				<>
+					<div className={combine(bs.modal, bs.fade, bs.dBlock, bs.show)}>
+						<div className={combine(bs.modalDialog, styles.modalDialog)}>
+							<div className={bs.modalContent}>
+								{
+									title
+									&& <div className={bs.modalHeader}>
+										<h5 className={bs.modalTitle}>{title}</h5>
+										<button className={bs.close} onClick={onCloseRequest}>
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								}
+								{
+									this.props.children
+									&& <div className={bs.modalBody}>
+										{this.props.children}
+									</div>
+								}
+								{
+									buttons
+									&& buttons.length > 0
+									&& <div className={combine(bs.modalFooter, styles.modalFooter)}>
+										{modalBusy && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
+										{!modalBusy && buttons.map(Modal.renderBtn)}
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+
+					<div className={combine(bs.modalBackdrop, bs.fade, bs.show)}/>
+				</>
+		);
+	}
+
+	private handleKeyPress(evt: KeyboardEvent): void {
+		if (evt.key === "Esc" || evt.key === "Escape") {
+			if (this.props.onCloseRequest) {
+				this.props.onCloseRequest();
+			}
+		}
 	}
 }
 

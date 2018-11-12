@@ -125,6 +125,9 @@ class UCEditTransactionModal extends PureComponent<IEditTransactionModalProps, I
 										disabled={editorBusy}
 										error={errors.transactionDate}
 										onValueChange={this.handleTransactionDateChange}
+										inputProps={{
+											autoFocus: true,
+										}}
 								/>
 							</div>
 							<div className={combine(bs.col, bs.formGroup)}>

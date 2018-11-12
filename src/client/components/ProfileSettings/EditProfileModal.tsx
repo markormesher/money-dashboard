@@ -94,6 +94,9 @@ class UCEditProfileModal extends PureComponent<IEditProfileModalProps, IEditProf
 									onValueChange={this.handleNameChange}
 									disabled={editorBusy}
 									error={errors.name}
+									inputProps={{
+										autoFocus: true,
+									}}
 							/>
 						</div>
 					</ControlledForm>

@@ -7,6 +7,7 @@ import { IThinAccountValidationResult, validateThinAccount } from "../../../serv
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { IRootState } from "../../redux/root";
 import { setAccountToEdit, startSaveAccount } from "../../redux/settings/accounts/actions";
+import { ControlledDateInput } from "../_ui/FormComponents/ControlledDateInput";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
 import { ControlledSelectInput } from "../_ui/FormComponents/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
@@ -96,6 +97,9 @@ class UCEditAccountModal extends PureComponent<IEditAccountModalProps, IEditAcco
 									onValueChange={this.handleNameChange}
 									disabled={editorBusy}
 									error={errors.name}
+									inputProps={{
+										autoFocus: true,
+									}}
 							/>
 						</div>
 						<div className={bs.formGroup}>

@@ -9,6 +9,7 @@ import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startSaveCategory } from "../../redux/settings/categories/actions";
 import { Badge } from "../_ui/Badge/Badge";
 import { ControlledCheckboxInput } from "../_ui/FormComponents/ControlledCheckboxInput";
+import { ControlledDateInput } from "../_ui/FormComponents/ControlledDateInput";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
 import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
@@ -97,6 +98,9 @@ class UCEditCategoryModal extends PureComponent<IEditCategoryModalProps, IEditCa
 									onValueChange={this.handleNameChange}
 									disabled={editorBusy}
 									error={errors.name}
+									inputProps={{
+										autoFocus: true,
+									}}
 							/>
 						</div>
 						<div className={bs.formGroup}>

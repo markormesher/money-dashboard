@@ -12,7 +12,6 @@ import { formatCurrency, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
-import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 import * as styles from "./BalanceHistoryReport.scss";
 
@@ -164,18 +163,19 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
 	}
 
 	private renderChart(): ReactNode {
-		const { loading, failed, data } = this.state;
+		const { loading, failed, data, startDate, endDate } = this.state;
 
 		if (failed) {
 			return <p>Chart failed to load. Please try again.</p>;
 		}
 
-		if (!data) {
-			// this is the first load
-			return <LoadingSpinner centre={true}/>;
-		}
-
-		let datasets: ChartDataSets[] = [];
+		let datasets: ChartDataSets[] = [{
+			data: [
+				// dummy values to show a blank chart
+				{ x: startDate.toDate(), y: 0 },
+				{ x: endDate.toDate(), y: 0 },
+			],
+		}];
 		if (data) {
 			datasets = data.datasets.map((ds) => {
 				return {
@@ -198,13 +198,8 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
 	private renderInfoPanel(): ReactNode {
 		const { loading, failed, data } = this.state;
 
-		if (failed) {
+		if (failed || !data) {
 			return null;
-		}
-
-		if (!data) {
-			// this is the first load
-			return <LoadingSpinner centre={true}/>;
 		}
 
 		const { minTotal, minDate, maxTotal, maxDate, changeAbsolute } = data;

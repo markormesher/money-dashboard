@@ -11,6 +11,15 @@ class ControlledForm extends PureComponent<IControlledFormProps> {
 		super(props);
 
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleKeyPress = this.handleKeyPress.bind(this);
+	}
+
+	public componentDidMount(): void {
+		document.addEventListener("keydown", this.handleKeyPress);
+	}
+
+	public componentWillUnmount(): void {
+		document.removeEventListener("keydown", this.handleKeyPress);
 	}
 
 	public render(): ReactNode {
@@ -28,6 +37,12 @@ class ControlledForm extends PureComponent<IControlledFormProps> {
 
 		if (this.props.onSubmit) {
 			this.props.onSubmit();
+		}
+	}
+
+	private handleKeyPress(evt: KeyboardEvent): void {
+		if ((evt.ctrlKey || evt.metaKey) && evt.key === "Enter") {
+			this.handleSubmit();
 		}
 	}
 }

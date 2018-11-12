@@ -119,6 +119,9 @@ class UCEditBudgetModal extends PureComponent<IEditBudgetModalProps, IEditBudget
 									disabled={editorBusy || !categoryList}
 									error={errors.category}
 									onValueChange={this.handleCategoryChange}
+									selectProps={{
+										autoFocus: true,
+									}}
 							>
 								{categoryList && (<option value={""}>-- Select --</option>)}
 								{categoryList && categoryList.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
