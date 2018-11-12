@@ -53,5 +53,5 @@ button {
 
 .card-body {
 	// contents always have margin-bottom: $spacer
-	padding: $spacer $spacer 0; // Bootstrap override; was $spacer on all sides
+	padding: $spacer $spacer 0 !important; // Bootstrap override; was $spacer on all sides
 }
