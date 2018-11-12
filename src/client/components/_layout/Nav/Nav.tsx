@@ -64,8 +64,8 @@ class UCNav extends PureComponent<INavProps> {
 						</NavSection>
 
 						<NavSection title="Reports">
-							<NavLink to="/reports/balance-growth" text="Balance Growth" icon={faChartLine}/>
-							<NavLink to="/reports/asset-growth" text="Asset Growth" icon={faAnalytics}/>
+							<NavLink to="/reports/balance-history" text="Balance History" icon={faChartLine}/>
+							<NavLink to="/reports/asset-performance" text="Asset Performance" icon={faAnalytics}/>
 						</NavSection>
 
 						<NavSection title="Settings">

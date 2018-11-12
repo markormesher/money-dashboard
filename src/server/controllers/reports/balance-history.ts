@@ -9,7 +9,7 @@ import { DateModeOption } from "../../models/Transaction";
 import { Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
 
-interface IBalanceGraphData {
+interface IBalanceHistoryData {
 	readonly datasets: ChartDataSets[];
 	readonly minTotal: number;
 	readonly maxTotal: number;
@@ -104,18 +104,18 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				}
 
 				res.json({
-					datasets: [{ data }],
+					datasets: [{ label: "Balance", data }],
 					minTotal,
 					minDate,
 					maxTotal,
 					maxDate,
 					changeAbsolute,
-				});
+				} as IBalanceHistoryData);
 			})
 			.catch(next);
 });
 
 export {
 	router,
-	IBalanceGraphData,
+	IBalanceHistoryData,
 };

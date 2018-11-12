@@ -35,7 +35,7 @@ class ControlledRadioInput extends PureComponent<IControlledRadioInputProps, ICo
 		const { id, name, value, label, checked, disabled, error, inputProps } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
-				<div className={bs.formCheck}>
+				<div className={combine(bs.formCheck, bs.formCheckInline)}>
 					<input
 							id={id}
 							name={name}
@@ -43,7 +43,7 @@ class ControlledRadioInput extends PureComponent<IControlledRadioInputProps, ICo
 							type="radio"
 							checked={checked}
 							className={combine(bs.formCheckInput, hasBeenTouched && error && bs.isInvalid)}
-							disabled={disabled !== false}
+							disabled={disabled === true}
 							onChange={this.handleChange}
 							onBlur={this.handleBlur}
 							{...inputProps}

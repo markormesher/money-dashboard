@@ -1,51 +1,35 @@
 import * as Bluebird from "bluebird";
+import { ChartDataSets } from "chart.js";
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
-import { getAllAccounts } from "../../managers/account-manager";
 import { requireUser } from "../../middleware/auth-middleware";
 import { Category } from "../../models/Category";
-import { Transaction } from "../../models/Transaction";
+import { DateModeOption, Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
 
-const assetPerformanceReportRouter = Express.Router();
+interface IAssetPerformanceData {
+	readonly datasets: ChartDataSets[];
+	readonly totalChangeInclGrowth: number;
+	readonly totalChangeExclGrowth: number;
+}
 
-assetPerformanceReportRouter.get("/old-index", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+const router = Express.Router();
 
-	getAllAccounts(user, false)
-			.then((accounts) => {
-				const assets = accounts.filter((a) => a.type === "asset");
-
-				if (assets.length === 0) {
-					// TODO res.flash("info", "None of your accounts are assets.");
-					res.redirect("/");
-					return;
-				}
-
-				res.render("reports/asset-performance", {
-					_: {
-						title: "Asset Performance",
-						activePage: "reports/asset-performance",
-					},
-					assets,
-				});
-			})
-			.catch(next);
-});
-
-assetPerformanceReportRouter.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 
 	const startDate = req.query.startDate;
 	const endDate = req.query.endDate;
-	const dateField: "effectiveDate" | "transactionDate" = req.query.dateField;
-	const account: string = req.query.account || "";
+	const dateMode: DateModeOption = req.query.dateMode;
+	const accountId: string = req.query.accountId || "";
+
+	const dateField = `${dateMode}Date`;
 
 	const getTransactionsBeforeRange = Transaction.findAll({
 		where: {
 			profileId: user.activeProfile.id,
-			accountId: account,
+			accountId,
 			[dateField]: {
 				[Op.lt]: startDate,
 			},
@@ -57,7 +41,7 @@ assetPerformanceReportRouter.get("/data", requireUser, (req: Request, res: Respo
 	const getTransactionsInRange = Transaction.findAll({
 		where: {
 			profileId: user.activeProfile.id,
-			accountId: account,
+			accountId,
 			[dateField]: {
 				[Op.gte]: startDate,
 				[Op.lte]: endDate,
@@ -97,7 +81,8 @@ assetPerformanceReportRouter.get("/data", requireUser, (req: Request, res: Respo
 				};
 
 				transactionsInRange.forEach((transaction: Transaction) => {
-					const date = transaction[dateField].getTime();
+					const rawDate = dateMode === "effective" ? transaction.effectiveDate : transaction.transactionDate;
+					const date = new Date(rawDate).getTime();
 					if (lastDate > 0 && lastDate !== date) {
 						takeValues();
 					}
@@ -116,15 +101,18 @@ assetPerformanceReportRouter.get("/data", requireUser, (req: Request, res: Respo
 				}
 
 				res.json({
-					dataInclGrowth,
-					dataExclGrowth,
+					datasets: [
+						{ label: "Including Growth", data: dataInclGrowth },
+						{ label: "Excluding Growth", data: dataExclGrowth },
+					],
 					totalChangeInclGrowth,
 					totalChangeExclGrowth,
-				});
+				} as IAssetPerformanceData);
 			})
 			.catch(next);
 });
 
 export {
-	assetPerformanceReportRouter,
+	IAssetPerformanceData,
+	router,
 };

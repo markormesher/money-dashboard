@@ -4,6 +4,7 @@ import * as React from "react";
 import { Component, ReactNode } from "react";
 import { IAccountSummary } from "../../../server/model-thins/IAccountSummary";
 import * as bs from "../../global-styles/Bootstrap.scss";
+import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
@@ -27,7 +28,7 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
 						<FontAwesomeIcon icon={faPiggyBank} className={bs.mr3}/>
 						Account Balances
 					</h5>
-					<div className={bs.cardBody}>
+					<div className={combine(bs.cardBody, gs.cardBody)}>
 						{
 							!accountSummaries
 							&& <LoadingSpinner centre={true}/>

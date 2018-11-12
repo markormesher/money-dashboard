@@ -17,7 +17,7 @@
 		margin-bottom: $spacer * .75;
 
 		&:last-of-type {
-			margin-bottom: 0 !important;
+			margin-bottom: $spacer !important;
 		}
 	}
 }

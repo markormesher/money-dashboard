@@ -1,5 +1,4 @@
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faCaretDown, faCaretUp } from "@fortawesome/pro-light-svg-icons";
+import { faPiggyBank } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosResponse } from "axios";
 import { ChartDataSets } from "chart.js";
@@ -7,29 +6,67 @@ import * as Moment from "moment";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
-import { IBalanceGraphData } from "../../../server/controllers/reports/balance-graph";
+import { connect } from "react-redux";
+import { AnyAction, Dispatch } from "redux";
+import { IAssetPerformanceData } from "../../../server/controllers/reports/asset-performance";
+import { ThinAccount } from "../../../server/model-thins/ThinAccount";
 import { DateModeOption } from "../../../server/models/Transaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
+import { IRootState } from "../../redux/root";
+import { startLoadAccountList } from "../../redux/settings/accounts/actions";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
+import { ControlledRadioInput } from "../_ui/FormComponents/ControlledRadioInput";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
-import * as styles from "./BalanceGrowthReport.scss";
+import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
+import * as styles from "./AssetPerformanceReport.scss";
 
 // TODO: a lot of this can be pulled out for generic charts
+// TODO: zero basis
 
-interface IBalanceReportState {
+interface IAssetPerformanceReportProps {
+	readonly accountList?: ThinAccount[];
+
+	readonly actions?: {
+		readonly startLoadAccountList: () => AnyAction,
+	};
+}
+
+interface IAssetPerformanceReportState {
 	readonly startDate: Moment.Moment;
 	readonly endDate: Moment.Moment;
 	readonly dateMode: DateModeOption;
-	readonly data: IBalanceGraphData;
+	readonly accountId: string;
+	readonly data: IAssetPerformanceData;
 	readonly loading: boolean;
 	readonly failed: boolean;
 }
 
-class BalanceGrowthReport extends Component<{}, IBalanceReportState> {
+function mapStateToProps(state: IRootState, props: IAssetPerformanceReportProps): IAssetPerformanceReportProps {
+	return {
+		...props,
+		accountList: state.settings.accounts.accountList,
+	};
+}
+
+function mapDispatchToProps(dispatch: Dispatch, props: IAssetPerformanceReportProps): IAssetPerformanceReportProps {
+	return {
+		...props,
+		actions: {
+			startLoadAccountList: () => dispatch(startLoadAccountList()),
+		},
+	};
+}
+
+class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, IAssetPerformanceReportState> {
+
+	private static seriesColours = [
+		"rgba(183, 28, 28, 1)",
+		"rgba(13, 71, 161, 1)",
+	];
 
 	private static datasetProps: Partial<ChartDataSets> = {
 		pointRadius: 0,
@@ -45,9 +82,8 @@ class BalanceGrowthReport extends Component<{}, IBalanceReportState> {
 			elements: {
 				line: {
 					borderWidth: 2,
-					borderColor: "rgba(13, 71, 161, 1)",
-					backgroundColor: "rgba(13, 71, 161, .3)",
-					fill: "zero",
+					fill: false,
+					tension: 0,
 				},
 			},
 			tooltips: {
@@ -86,12 +122,13 @@ class BalanceGrowthReport extends Component<{}, IBalanceReportState> {
 
 	private fetchPending = false;
 
-	constructor(props: {}, context: any) {
+	constructor(props: IAssetPerformanceReportProps, context: any) {
 		super(props, context);
 		this.state = {
 			startDate: Moment().subtract(1, "year"),
 			endDate: Moment(),
 			dateMode: "transaction",
+			accountId: undefined,
 			data: undefined,
 			loading: true,
 			failed: false,
@@ -99,18 +136,23 @@ class BalanceGrowthReport extends Component<{}, IBalanceReportState> {
 
 		this.renderChart = this.renderChart.bind(this);
 		this.renderInfoPanel = this.renderInfoPanel.bind(this);
+		this.renderAccountChooser = this.renderAccountChooser.bind(this);
+		this.renderAccountForm = this.renderAccountForm.bind(this);
 		this.handleDateModeChange = this.handleDateModeChange.bind(this);
 		this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
+		this.handleAccountChange = this.handleAccountChange.bind(this);
 	}
 
 	public componentDidMount(): void {
+		this.props.actions.startLoadAccountList();
 		this.fetchData();
 	}
 
-	public componentWillUpdate(nextProps: {}, nextState: IBalanceReportState): void {
+	public componentWillUpdate(nextProps: {}, nextState: IAssetPerformanceReportState): void {
 		if (this.state.startDate !== nextState.startDate
 				|| this.state.endDate !== nextState.endDate
-				|| this.state.dateMode !== nextState.dateMode) {
+				|| this.state.dateMode !== nextState.dateMode
+				|| this.state.accountId !== nextState.accountId) {
 			this.fetchPending = true;
 		}
 	}
@@ -123,12 +165,12 @@ class BalanceGrowthReport extends Component<{}, IBalanceReportState> {
 	}
 
 	public render(): ReactNode {
-		const { startDate, endDate } = this.state;
+		const { startDate, endDate, accountId } = this.state;
 
 		return (
 				<>
 					<div className={gs.headerWrapper}>
-						<h1 className={bs.h2}>Balance Growth</h1>
+						<h1 className={bs.h2}>Asset Performance</h1>
 						<div className={combine(bs.btnGroup, gs.headerExtras)}>
 							<DateModeToggleBtn
 									value={this.state.dateMode}
@@ -154,30 +196,38 @@ class BalanceGrowthReport extends Component<{}, IBalanceReportState> {
 							{this.renderChart()}
 						</div>
 						<div className={combine(bs.col12, bs.colLg6, bs.mb3)}>
-							{this.renderInfoPanel()}
+							{this.renderAccountChooser()}
 						</div>
+						{
+							accountId
+							&& <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>
+								{this.renderInfoPanel()}
+							</div>
+						}
 					</div>
 				</>
 		);
 	}
 
 	private renderChart(): ReactNode {
-		const { loading, failed, data } = this.state;
+		const { loading, failed, data, startDate, endDate } = this.state;
 
 		if (failed) {
 			return <p>Chart failed to load. Please try again.</p>;
 		}
 
-		if (!data) {
-			// this is the first load
-			return <LoadingSpinner centre={true}/>;
-		}
-
-		let datasets: ChartDataSets[] = [];
+		let datasets: ChartDataSets[] = [{
+			data: [
+				// dummy values to show a blank chart
+				{ x: startDate.toDate(), y: 0 },
+				{ x: endDate.toDate(), y: 0 },
+			],
+		}];
 		if (data) {
-			datasets = data.datasets.map((ds) => {
+			datasets = data.datasets.map((ds, i) => {
 				return {
-					...BalanceGrowthReport.datasetProps,
+					borderColor: UCAssetPerformanceReport.seriesColours[i],
+					...UCAssetPerformanceReport.datasetProps,
 					...ds,
 				};
 			});
@@ -186,7 +236,7 @@ class BalanceGrowthReport extends Component<{}, IBalanceReportState> {
 		return (
 				<div className={combine(styles.chartContainer, loading && styles.loading)}>
 					<Line
-							{...BalanceGrowthReport.chartProps}
+							{...UCAssetPerformanceReport.chartProps}
 							data={{ datasets }}
 					/>
 				</div>
@@ -196,60 +246,111 @@ class BalanceGrowthReport extends Component<{}, IBalanceReportState> {
 	private renderInfoPanel(): ReactNode {
 		const { loading, failed, data } = this.state;
 
-		if (failed) {
+		if (failed || !data) {
 			return null;
 		}
 
-		if (!data) {
-			// this is the first load
-			return <LoadingSpinner centre={true}/>;
-		}
-
-		const { minTotal, minDate, maxTotal, maxDate, changeAbsolute } = data;
-		let changeIcon: IconProp;
-		let changeClass: string;
-		if (changeAbsolute < 0) {
-			changeIcon = faCaretDown;
-			changeClass = bs.textDanger;
-		}
-		if (changeAbsolute > 0) {
-			changeIcon = faCaretUp;
-			changeClass = bs.textSuccess;
-		}
+		const { totalChangeInclGrowth, totalChangeExclGrowth } = data;
+		const growthOnlyChange = totalChangeInclGrowth - totalChangeExclGrowth;
 
 		return (
 				<div className={bs.card}>
-					<div className={bs.cardBody}>
+					<div className={combine(bs.cardBody, gs.cardBody)}>
 						<div className={combine(bs.row, loading && styles.loading)}>
 							<div className={combine(bs.col6, bs.colMd4)}>
-								<h6>Minimum:</h6>
+								<h6>Change Excl. Growth:</h6>
 								<p>
-									{formatCurrency(minTotal)}
-									<br/>
-									<span className={bs.textMuted}>{formatDate(new Date(minDate))}</span>
+									<RelativeChangeIcon
+											change={totalChangeExclGrowth}
+											iconProps={{
+												className: bs.mr2,
+											}}
+									/>
+									{formatCurrency(totalChangeExclGrowth)}
 								</p>
 							</div>
 							<div className={combine(bs.col6, bs.colMd4)}>
-								<h6>Maximum:</h6>
+								<h6>Change Incl. Growth:</h6>
 								<p>
-									{formatCurrency(maxTotal)}
-									<br/>
-									<span className={bs.textMuted}>{formatDate(new Date(maxDate))}</span>
+									<RelativeChangeIcon
+											change={totalChangeInclGrowth}
+											iconProps={{
+												className: bs.mr2,
+											}}
+									/>
+									{formatCurrency(totalChangeInclGrowth)}
 								</p>
 							</div>
 							<div className={combine(bs.col6, bs.colMd4)}>
-								<h6>Change:</h6>
+								<h6>Net Growth:</h6>
 								<p>
-									{
-										changeAbsolute !== 0
-										&& <FontAwesomeIcon icon={changeIcon} className={combine(changeClass, bs.mr2)}/>
-									}
-									{formatCurrency(changeAbsolute)}
+									<RelativeChangeIcon
+											change={growthOnlyChange}
+											iconProps={{
+												className: bs.mr2,
+											}}
+									/>
+									{formatCurrency(growthOnlyChange)}
 								</p>
 							</div>
 						</div>
 					</div>
 				</div>
+		);
+	}
+
+	private renderAccountChooser(): ReactNode {
+		const { accountList } = this.props;
+		return (
+				<div className={bs.card}>
+					<h5 className={combine(bs.cardHeader, bs.h5)}>
+						<FontAwesomeIcon icon={faPiggyBank} className={bs.mr3}/>
+						Select Account
+					</h5>
+					<div className={combine(bs.cardBody, gs.cardBody)}>
+
+						{!accountList && <LoadingSpinner centre={true}/>}
+						{accountList && this.renderAccountForm()}
+					</div>
+				</div>
+		);
+	}
+
+	private renderAccountForm(): ReactNode {
+		const { accountList } = this.props;
+		const { accountId } = this.state;
+		const accounts = accountList
+				.filter((ac) => ac.type === "asset")
+				.sort((a, b) => a.name.localeCompare(b.name));
+
+		if (accounts.length === 0) {
+			return <p>You don't have any asset-type accounts.</p>;
+		}
+
+		return (
+				<form>
+					<div className={bs.formGroup}>
+						<div className={bs.row}>
+							{
+								accounts.map((ac) => (
+										<div
+												key={`account-chooser-${ac.id}`}
+												className={combine(bs.col12, bs.colMd6)}
+										>
+											<ControlledRadioInput
+													name={"account"}
+													id={ac.id}
+													value={ac.id}
+													label={ac.name}
+													checked={accountId === ac.id}
+													onValueChange={this.handleAccountChange}
+											/>
+										</div>
+								))
+							}
+						</div>
+					</div>
+				</form>
 		);
 	}
 
@@ -261,18 +362,27 @@ class BalanceGrowthReport extends Component<{}, IBalanceReportState> {
 		this.setState({ startDate, endDate });
 	}
 
+	private handleAccountChange(accountId: string): void {
+		this.setState({ accountId });
+	}
+
 	private fetchData(): void {
-		const { startDate, endDate, dateMode } = this.state;
+		const { startDate, endDate, dateMode, accountId } = this.state;
+
+		if (!accountId) {
+			return;
+		}
 
 		this.setState({ loading: true });
 		const frame = ++this.frameCounter;
 
 		axios
-				.get("/reports/balance-graph/data", {
+				.get("/reports/asset-performance/data", {
 					params: {
 						startDate: startDate.toISOString(),
 						endDate: endDate.toISOString(),
 						dateMode,
+						accountId,
 					},
 				})
 				.then((res: AxiosResponse<ChartDataSets[]>) => res.data)
@@ -313,6 +423,4 @@ class BalanceGrowthReport extends Component<{}, IBalanceReportState> {
 	}
 }
 
-export {
-	BalanceGrowthReport,
-};
+export const AssetPerformanceReport = connect(mapStateToProps, mapDispatchToProps)(UCAssetPerformanceReport);

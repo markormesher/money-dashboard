@@ -33,7 +33,7 @@ class ControlledCheckboxInput extends PureComponent<IControlledCheckboxInputProp
 		const { id, label, checked, disabled, error, inputProps } = this.props;
 		const { hasBeenTouched } = this.state;
 		return (
-				<div className={bs.formCheck}>
+				<div className={combine(bs.formCheck, bs.formCheckInline)}>
 					<input
 							id={id}
 							type="checkbox"

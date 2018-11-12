@@ -12,8 +12,8 @@ import { FullPageSpinner } from "../_layout/FullPageSpinner/FullPageSpinner";
 import { Header } from "../_layout/Header/Header";
 import { Nav } from "../_layout/Nav/Nav";
 import { AccountSettings } from "../AccountSettings/AccountSettings";
-import { AssetGrowthReport } from "../AssetGrowthReport/AssetGrowthReport";
-import { BalanceGrowthReport } from "../BalanceGrowthReport/BalanceGrowthReport";
+import { AssetPerformanceReport } from "../AssetPerformanceReport/AssetPerformanceReport";
+import { BalanceHistoryReport } from "../BalanceHistoryReport/BalanceHistoryReport";
 import { BudgetSettings } from "../BudgetSettings/BudgetSettings";
 import { CategorySettings } from "../CategorySettings/CategorySettings";
 import { Dashboard } from "../Dashboard/Dashboard";
@@ -85,8 +85,8 @@ class UCApp extends PureComponent<IAppProps> {
 								<Route exact={true} path="/" component={Dashboard}/>
 								<Route path="/transactions" component={Transactions}/>
 
-								<Route path="/reports/balance-growth" component={BalanceGrowthReport}/>
-								<Route path="/reports/asset-growth" component={AssetGrowthReport}/>
+								<Route path="/reports/balance-history" component={BalanceHistoryReport}/>
+								<Route path="/reports/asset-performance" component={AssetPerformanceReport}/>
 
 								<Route path="/settings/accounts" component={AccountSettings}/>
 								<Route path="/settings/budgets" component={BudgetSettings}/>

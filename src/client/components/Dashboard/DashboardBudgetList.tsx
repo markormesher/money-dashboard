@@ -5,6 +5,7 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { IBudgetBalance } from "../../../server/statistics/budget-statistics";
 import * as bs from "../../global-styles/Bootstrap.scss";
+import * as gs from "../../global-styles/Global.scss";
 import { formatBudgetPeriod, formatCurrency, getBudgetPeriodType } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
@@ -37,17 +38,17 @@ class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
 						<FontAwesomeIcon icon={faChartPie} className={bs.mr3}/>
 						{displayTitle}
 					</h5>
-					<div className={bs.cardBody}>
+					<div className={combine(bs.cardBody, gs.cardBody)}>
 						{
 							budgets.length > 0
-							&& <div className={combine(bs.row, styles.budgetBalanceGroup)}>
+							&& <div className={bs.row}>
 								{budgets.map(DashboardBudgetList.renderSingleBudgetBalance)}
 							</div>
 						}
-						{budgets.length > 0 && bills.length > 0 && <hr/>}
+						{budgets.length > 0 && bills.length > 0 && <hr className={combine(bs.mt0, bs.mb3)}/>}
 						{
 							bills.length > 0
-							&& <div className={combine(bs.row, styles.budgetBalanceGroup)}>
+							&& <div className={bs.row}>
 								{bills.map(DashboardBudgetList.renderSingleBudgetBalance)}
 							</div>
 						}
