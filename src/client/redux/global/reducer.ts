@@ -5,11 +5,13 @@ import { GlobalActions } from "./actions";
 interface IGlobalState {
 	readonly waitingFor: string[];
 	readonly error?: DetailedError;
+	readonly keyShortcutModalVisible?: boolean;
 }
 
 const initialState: IGlobalState = {
 	waitingFor: [],
 	error: undefined,
+	keyShortcutModalVisible: false,
 };
 
 function globalReducer(state = initialState, action: PayloadAction): IGlobalState {
@@ -36,6 +38,12 @@ function globalReducer(state = initialState, action: PayloadAction): IGlobalStat
 			return {
 				...state,
 				error: action.payload.error,
+			};
+
+		case GlobalActions.SET_KEY_SHORTCUT_MODAL_VISIBLE:
+			return {
+				...state,
+				keyShortcutModalVisible: action.payload.keyShortcutModalVisible,
 			};
 
 		default:

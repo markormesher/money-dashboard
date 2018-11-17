@@ -2,7 +2,7 @@ import { PureComponent, ReactNode } from "react";
 
 interface IKeyShortcutProps {
 	readonly targetStr: string;
-	readonly onTrigger?: () => void;
+	readonly onTrigger: () => void;
 }
 
 class KeyShortcut extends PureComponent<IKeyShortcutProps> {
@@ -24,7 +24,7 @@ class KeyShortcut extends PureComponent<IKeyShortcutProps> {
 	}
 
 	public render(): ReactNode {
-		return this.props.children;
+		return this.props.children || null;
 	}
 
 	private handleKeyPress(evt: KeyboardEvent): void {
@@ -40,12 +40,7 @@ class KeyShortcut extends PureComponent<IKeyShortcutProps> {
 
 		if (this.latestStr === targetStr) {
 			evt.preventDefault();
-
-			if (this.props.onTrigger) {
-				this.props.onTrigger();
-			} else {
-				// TODO: trigger click on child
-			}
+			this.props.onTrigger();
 		}
 	}
 }

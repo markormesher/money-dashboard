@@ -18,6 +18,7 @@ import { BudgetSettings } from "../BudgetSettings/BudgetSettings";
 import { CategorySettings } from "../CategorySettings/CategorySettings";
 import { Dashboard } from "../Dashboard/Dashboard";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
+import { KeyShortcutModal } from "../KeyShortcutModal/KeyShortcutModal";
 import { ProfileSettings } from "../ProfileSettings/ProfileSettings";
 import { Transactions } from "../Transactions/Transactions";
 
@@ -79,6 +80,7 @@ class UCApp extends PureComponent<IAppProps> {
 				<div>
 					<Header/>
 					<AppRootWrapper>
+						<KeyShortcutModal />
 						<Nav/>
 						<AppContentWrapper>
 							<Switch>

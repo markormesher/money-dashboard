@@ -1,5 +1,5 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-svg-icons";
+import { faCheck, faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
@@ -11,6 +11,7 @@ import * as styles from "./Modal.scss";
 enum ModalBtnType {
 	SAVE = "save",
 	CANCEL = "cancel",
+	OK = "ok",
 }
 
 interface IModalBtn {
@@ -45,6 +46,12 @@ class Modal extends PureComponent<IModalProps> {
 				icon = faTimes;
 				label = "Cancel";
 				className = bs.btnOutlineDark;
+				break;
+
+			case ModalBtnType.OK:
+				icon = faCheck;
+				label = "OK";
+				className = bs.btnPrimary;
 				break;
 		}
 		return (
