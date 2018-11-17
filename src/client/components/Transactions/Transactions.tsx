@@ -108,7 +108,7 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 							/>
 
 							<KeyShortcut
-									keyStr={"c"}
+									targetStr={"c"}
 									onTrigger={this.startTransactionCreation}
 							>
 								<IconBtn

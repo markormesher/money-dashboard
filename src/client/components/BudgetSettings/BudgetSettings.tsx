@@ -140,7 +140,7 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 							/>
 
 							<KeyShortcut
-									keyStr={"c"}
+									targetStr={"c"}
 									onTrigger={this.startBudgetCreation}
 							>
 								<IconBtn

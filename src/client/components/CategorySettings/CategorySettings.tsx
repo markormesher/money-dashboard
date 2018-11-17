@@ -77,7 +77,7 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 						<h1 className={bs.h2}>Categories</h1>
 						<div className={gs.headerExtras}>
 							<KeyShortcut
-									keyStr={"c"}
+									targetStr={"c"}
 									onTrigger={this.startCategoryCreation}
 							>
 								<IconBtn

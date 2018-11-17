@@ -1,11 +1,13 @@
 import { PureComponent, ReactNode } from "react";
 
 interface IKeyShortcutProps {
-	readonly keyStr: string;
-	readonly onTrigger: () => void;
+	readonly targetStr: string;
+	readonly onTrigger?: () => void;
 }
 
 class KeyShortcut extends PureComponent<IKeyShortcutProps> {
+
+	private latestStr = "";
 
 	constructor(props: IKeyShortcutProps) {
 		super(props);
@@ -14,11 +16,11 @@ class KeyShortcut extends PureComponent<IKeyShortcutProps> {
 	}
 
 	public componentDidMount(): void {
-		document.addEventListener("keydown", this.handleKeyPress);
+		document.addEventListener("keypress", this.handleKeyPress);
 	}
 
 	public componentWillUnmount(): void {
-		document.removeEventListener("keydown", this.handleKeyPress);
+		document.removeEventListener("keypress", this.handleKeyPress);
 	}
 
 	public render(): ReactNode {
@@ -26,9 +28,24 @@ class KeyShortcut extends PureComponent<IKeyShortcutProps> {
 	}
 
 	private handleKeyPress(evt: KeyboardEvent): void {
-		if (evt.key === this.props.keyStr) {
+		const target = evt.target;
+		const disallowed = [HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement];
+		if (disallowed.some((t) => target instanceof t)) {
+			return;
+		}
+
+		const { targetStr } = this.props;
+		const key = evt.key;
+		this.latestStr = (this.latestStr + key).slice(-1 * targetStr.length);
+
+		if (this.latestStr === targetStr) {
 			evt.preventDefault();
-			this.props.onTrigger();
+
+			if (this.props.onTrigger) {
+				this.props.onTrigger();
+			} else {
+				// TODO: trigger click on child
+			}
 		}
 	}
 }

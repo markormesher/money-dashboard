@@ -93,7 +93,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 							/>
 
 							<KeyShortcut
-									keyStr={"c"}
+									targetStr={"c"}
 									onTrigger={this.startAccountCreation}
 							>
 								<IconBtn

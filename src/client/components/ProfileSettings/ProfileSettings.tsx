@@ -78,7 +78,7 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 						<h1 className={bs.h2}>Profiles</h1>
 						<div className={gs.headerExtras}>
 							<KeyShortcut
-									keyStr={"c"}
+									targetStr={"c"}
 									onTrigger={this.startProfileCreation}
 							>
 								<IconBtn
