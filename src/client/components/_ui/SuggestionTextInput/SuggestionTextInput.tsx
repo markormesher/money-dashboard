@@ -17,6 +17,7 @@ interface ISuggestionTextInputState {
 
 // TODO: tests
 // TODO: sort by relevance (maybe Levenshtein distance?)
+// TODO: punctuation (e.g. "N/A") - might be solved by the above
 
 class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISuggestionTextInputState> {
 

@@ -23,6 +23,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 	const endDate = req.query.endDate;
 	const dateMode: DateModeOption = req.query.dateMode;
 	const accountId: string = req.query.accountId || "";
+	const zeroBasis: boolean = req.query.zeroBasis === "true";
 
 	const dateField = `${dateMode}Date`;
 
@@ -76,8 +77,13 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				let totalChangeExclGrowth = 0;
 
 				const takeValues = () => {
-					dataInclGrowth.push({ x: lastDate, y: runningTotalInclGrowth });
-					dataExclGrowth.push({ x: lastDate, y: runningTotalExclGrowth });
+					if (zeroBasis) {
+						dataInclGrowth.push({ x: lastDate, y: runningTotalInclGrowth - runningTotalExclGrowth });
+						dataExclGrowth.push({ x: lastDate, y: 0 });
+					} else {
+						dataInclGrowth.push({ x: lastDate, y: runningTotalInclGrowth });
+						dataExclGrowth.push({ x: lastDate, y: runningTotalExclGrowth });
+					}
 				};
 
 				transactionsInRange.forEach((transaction: Transaction) => {

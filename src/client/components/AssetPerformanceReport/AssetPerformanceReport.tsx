@@ -20,13 +20,12 @@ import { IRootState } from "../../redux/root";
 import { startLoadAccountList } from "../../redux/settings/accounts/actions";
 import { chartColours, defaultDatasetProps, defaultLinearChartOverTimeProps } from "../_commons/reports/ReportDefaults";
 import * as styles from "../_commons/reports/Reports.scss";
+import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { ControlledRadioInput } from "../_ui/FormComponents/ControlledRadioInput";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
-
-// TODO: zero basis
 
 interface IAssetPerformanceReportProps {
 	readonly accountList?: ThinAccount[];
@@ -40,6 +39,7 @@ interface IAssetPerformanceReportState {
 	readonly startDate: Moment.Moment;
 	readonly endDate: Moment.Moment;
 	readonly dateMode: DateModeOption;
+	readonly zeroBasis: boolean;
 	readonly accountId: string;
 	readonly data: IAssetPerformanceData;
 	readonly loading: boolean;
@@ -64,7 +64,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAssetPerformanceReportPr
 
 class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, IAssetPerformanceReportState> {
 
-	private static seriesColours = [chartColours.blue, chartColours.red];
+	private static seriesColours = [chartColours.red, chartColours.blue];
 
 	private static chartProps: Partial<LinearComponentProps> = merge({}, defaultLinearChartOverTimeProps, {
 		options: {
@@ -88,6 +88,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 			startDate: Moment().subtract(1, "year"),
 			endDate: Moment(),
 			dateMode: "transaction",
+			zeroBasis: false,
 			accountId: undefined,
 			data: undefined,
 			loading: true,
@@ -101,6 +102,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 		this.handleDateModeChange = this.handleDateModeChange.bind(this);
 		this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
 		this.handleAccountChange = this.handleAccountChange.bind(this);
+		this.handleZeroBasisChange = this.handleZeroBasisChange.bind(this);
 	}
 
 	public componentDidMount(): void {
@@ -112,7 +114,8 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 		if (this.state.startDate !== nextState.startDate
 				|| this.state.endDate !== nextState.endDate
 				|| this.state.dateMode !== nextState.dateMode
-				|| this.state.accountId !== nextState.accountId) {
+				|| this.state.accountId !== nextState.accountId
+				|| this.state.zeroBasis !== nextState.zeroBasis) {
 			this.fetchPending = true;
 		}
 	}
@@ -132,6 +135,15 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 					<div className={gs.headerWrapper}>
 						<h1 className={bs.h2}>Asset Performance</h1>
 						<div className={combine(bs.btnGroup, gs.headerExtras)}>
+							<CheckboxBtn
+									text={"Zero Basis"}
+									checked={this.state.zeroBasis}
+									onChange={this.handleZeroBasisChange}
+									btnProps={{
+										className: combine(bs.btnOutlineInfo, bs.btnSm),
+									}}
+							/>
+
 							<DateModeToggleBtn
 									value={this.state.dateMode}
 									onChange={this.handleDateModeChange}
@@ -329,8 +341,12 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 		this.setState({ accountId });
 	}
 
+	private handleZeroBasisChange(zeroBasis: boolean): void {
+		this.setState({ zeroBasis });
+	}
+
 	private fetchData(): void {
-		const { startDate, endDate, dateMode, accountId } = this.state;
+		const { startDate, endDate, dateMode, accountId, zeroBasis } = this.state;
 
 		if (!accountId) {
 			return;
@@ -346,6 +362,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 						endDate: endDate.toISOString(),
 						dateMode,
 						accountId,
+						zeroBasis,
 					},
 				})
 				.then((res: AxiosResponse<ChartDataSets[]>) => res.data)
