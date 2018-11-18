@@ -27,9 +27,11 @@ interface IModalProps {
 	readonly onCloseRequest?: () => void;
 }
 
-// TODO: fade into the page by adding to the view, THEN adding .show
+interface IModalState {
+	readonly shown?: boolean;
+}
 
-class Modal extends PureComponent<IModalProps> {
+class Modal extends PureComponent<IModalProps, IModalState> {
 
 	private static renderBtn(btn: IModalBtn): ReactElement<void> {
 		let icon: IconProp;
@@ -70,11 +72,17 @@ class Modal extends PureComponent<IModalProps> {
 
 	constructor(props: IModalProps) {
 		super(props);
+		this.state = {
+			shown: false,
+		};
 		this.handleKeyDown = this.handleKeyDown.bind(this);
 	}
 
 	public componentDidMount(): void {
 		document.addEventListener("keydown", this.handleKeyDown);
+		setTimeout(() => this.setState({
+			shown: true,
+		}), 10);
 	}
 
 	public componentWillUnmount(): void {
@@ -83,9 +91,10 @@ class Modal extends PureComponent<IModalProps> {
 
 	public render(): ReactNode {
 		const { title, buttons, modalBusy, onCloseRequest } = this.props;
+		const { shown } = this.state;
 		return (
 				<>
-					<div className={combine(bs.modal, bs.fade, bs.dBlock, bs.show)}>
+					<div className={combine(bs.modal, bs.fade, bs.dBlock, shown && bs.show)}>
 						<div className={combine(bs.modalDialog, styles.modalDialog)}>
 							<div className={bs.modalContent}>
 								{
@@ -115,7 +124,7 @@ class Modal extends PureComponent<IModalProps> {
 						</div>
 					</div>
 
-					<div className={combine(bs.modalBackdrop, bs.fade, bs.show)}/>
+					<div className={combine(bs.modalBackdrop, bs.fade, shown && bs.show)}/>
 				</>
 		);
 	}
