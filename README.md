@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/markormesher/money-dashboard/tree/react-front-end.svg?style=svg)](https://circleci.com/gh/markormesher/money-dashboard/tree/react-front-end)
+[![CircleCI](https://circleci.com/gh/markormesher/money-dashboard/tree/master.svg?style=svg)](https://circleci.com/gh/markormesher/money-dashboard/tree/master)
 
 # Money Dashboard
 
