@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { ChartDataSets } from "chart.js";
+import { merge } from "lodash";
 import * as Moment from "moment";
 import * as React from "react";
 import { Component, ReactNode } from "react";
@@ -10,12 +11,11 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
+import { chartColours, defaultDatasetProps, defaultLinearChartOverTimeProps } from "../_commons/reports/ReportDefaults";
+import * as styles from "../_commons/reports/Reports.scss";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
-import * as styles from "./BalanceHistoryReport.scss";
-
-// TODO: a lot of this can be pulled out for generic charts
 
 interface IBalanceHistoryReportState {
 	readonly startDate: Moment.Moment;
@@ -28,55 +28,17 @@ interface IBalanceHistoryReportState {
 
 class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
 
-	private static datasetProps: Partial<ChartDataSets> = {
-		pointRadius: 0,
-	};
-
-	private static chartProps: Partial<LinearComponentProps> = {
-		legend: {
-			display: false,
-		},
+	private static chartProps: Partial<LinearComponentProps> = merge({}, defaultLinearChartOverTimeProps, {
 		options: {
-			responsive: true,
-			maintainAspectRatio: false,
 			elements: {
 				line: {
-					borderWidth: 2,
-					borderColor: "rgba(13, 71, 161, 1)",
-					backgroundColor: "rgba(13, 71, 161, .3)",
+					borderColor: chartColours.blue,
+					backgroundColor: chartColours.blueFaded,
 					fill: "zero",
-					tension: 0,
 				},
 			},
-			tooltips: {
-				enabled: false,
-			},
-			scales: {
-				display: true,
-				xAxes: [
-					{
-						display: true,
-						type: "time",
-						ticks: {
-							callback: (_: any, idx: number, values: Array<{ value: number }>) => {
-								const date = values[idx];
-								return date ? formatDate(new Date(date.value)) : undefined;
-							},
-						},
-					},
-				],
-				yAxes: [
-					{
-						display: true,
-						ticks: {
-							beginAtZero: true,
-							callback: (val: number) => formatCurrency(val),
-						},
-					},
-				],
-			},
 		},
-	};
+	});
 
 	// give each remote request an increasing "frame" number so that late arrivals will be dropped
 	private frameCounter = 0;
@@ -179,14 +141,14 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
 		if (data) {
 			datasets = data.datasets.map((ds) => {
 				return {
-					...BalanceHistoryReport.datasetProps,
+					...defaultDatasetProps,
 					...ds,
 				};
 			});
 		}
 
 		return (
-				<div className={combine(styles.chartContainer, loading && styles.loading)}>
+				<div className={combine(styles.chartContainer, loading && gs.loading)}>
 					<Line
 							{...BalanceHistoryReport.chartProps}
 							data={{ datasets }}
@@ -207,7 +169,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
 		return (
 				<div className={bs.card}>
 					<div className={combine(bs.cardBody, gs.cardBody)}>
-						<div className={combine(bs.row, loading && styles.loading)}>
+						<div className={combine(bs.row, loading && gs.loading)}>
 							<div className={combine(bs.col6, bs.colMd4)}>
 								<h6>Minimum:</h6>
 								<p>
