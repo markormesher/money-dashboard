@@ -4,6 +4,14 @@ services:
   app:
     environment:
       - ENV=dev
+      - NODE_ENV=development
     volumes:
-      - ./app/views:/usr/src/app/views
       - ./logs:/usr/src/app/logs
+
+  postgres:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"

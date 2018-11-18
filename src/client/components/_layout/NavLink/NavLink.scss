@@ -1,0 +1,14 @@
+$link-colour: #333;
+$active-link-colour: #007bff;
+
+.nav-link {
+	color: $link-colour;
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	&.active {
+		color: $active-link-colour;
+	}
+}

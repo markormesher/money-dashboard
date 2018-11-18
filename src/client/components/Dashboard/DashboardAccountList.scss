@@ -1,0 +1,23 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+.account-list {
+	h6 {
+		border-bottom: 1px solid $gray-200;
+		clear: both;
+		margin-top: $spacer;
+
+		&:first-of-type {
+			margin-top: inherit !important;
+		}
+	}
+
+	p {
+		clear: both;
+		margin-bottom: $spacer * .75;
+
+		&:last-of-type {
+			margin-bottom: $spacer !important;
+		}
+	}
+}

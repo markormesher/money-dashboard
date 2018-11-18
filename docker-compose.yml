@@ -2,7 +2,10 @@ version: '3.3'
 
 services:
   app:
-    build: ./app
+    build:
+      context: .
+      args:
+        - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     depends_on:
       - postgres
       - redis
@@ -14,11 +17,13 @@ services:
       - session.secret
     environment:
       - ENV=prod
-    volumes:
-      - ./logs:/usr/src/app/logs
+      - NODE_ENV=production
+      - NPM_EXECPATH=yarn
+      - npm_execpath=yarn
+      - RUNNING_IN=docker
+      - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     ports:
       - "3006:3000"
-    command: ["./entry-point.sh"]
 
   postgres:
     image: postgres:10.1-alpine
@@ -41,10 +46,10 @@ volumes:
 
 secrets:
   google.client.id:
-    file: ./secrets/google.client.id
+    file: ./src/server/config/secrets/google.client.id
   google.client.secret:
-    file: ./secrets/google.client.secret
+    file: ./src/server/config/secrets/google.client.secret
   postgres.password:
-    file: ./secrets/postgres.password
+    file: ./src/server/config/secrets/postgres.password
   session.secret:
-    file: ./secrets/session.secret
+    file: ./src/server/config/secrets/session.secret

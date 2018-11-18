@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/markormesher/money-dashboard/tree/react-front-end.svg?style=svg)](https://circleci.com/gh/markormesher/money-dashboard/tree/react-front-end)
+
 # Money Dashboard
 
 A web-based record keeper for current accounts, budgets, savings and investments.
