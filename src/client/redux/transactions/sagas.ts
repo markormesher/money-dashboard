@@ -1,9 +1,13 @@
 import axios from "axios";
-import { all, call, put, takeEvery } from "redux-saga/effects";
+import { all, call, put, select, takeEvery } from "redux-saga/effects";
 import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
 import { setError } from "../global/actions";
 import { PayloadAction } from "../PayloadAction";
-import { setEditorBusy, setLastUpdate, setTransactionToEdit, TransactionsActions } from "./actions";
+import { IRootState } from "../root";
+import { setEditorBusy, setLastUpdate, setPayeeList, setTransactionToEdit, TransactionsActions } from "./actions";
+
+const lastUpdateSelector = (state: IRootState) => state.transactions.lastUpdate;
+const lastLoadSelector = (state: IRootState) => state.transactions.payeeListLastLoaded;
 
 function*deleteTransactionSaga(): Generator {
 	yield takeEvery(TransactionsActions.START_DELETE_TRANSACTION, function*(action: PayloadAction): Generator {
@@ -41,10 +45,29 @@ function*saveTransactionSaga(): Generator {
 	});
 }
 
+function*loadPayeeListSaga(): Generator {
+	yield takeEvery(TransactionsActions.START_LOAD_PAYEE_LIST, function*(): Generator {
+		const lastUpdate = yield select(lastUpdateSelector);
+		const lastLoad = yield select(lastLoadSelector);
+		if (lastLoad >= lastUpdate) {
+			return;
+		}
+		try {
+			const payeeList: string[] = yield call(() => {
+				return axios.get("/transactions/payees").then((res) => res.data);
+			});
+			yield put(setPayeeList(payeeList));
+		} catch (err) {
+			yield put(setError(err));
+		}
+	});
+}
+
 function*transactionsSagas(): Generator {
 	yield all([
 		deleteTransactionSaga(),
 		saveTransactionSaga(),
+		loadPayeeListSaga(),
 	]);
 }
 

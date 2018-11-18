@@ -70,15 +70,15 @@ class Modal extends PureComponent<IModalProps> {
 
 	constructor(props: IModalProps) {
 		super(props);
-		this.handleKeyPress = this.handleKeyPress.bind(this);
+		this.handleKeyDown = this.handleKeyDown.bind(this);
 	}
 
 	public componentDidMount(): void {
-		document.addEventListener("keydown", this.handleKeyPress);
+		document.addEventListener("keydown", this.handleKeyDown);
 	}
 
 	public componentWillUnmount(): void {
-		document.removeEventListener("keydown", this.handleKeyPress);
+		document.removeEventListener("keydown", this.handleKeyDown);
 	}
 
 	public render(): ReactNode {
@@ -120,7 +120,12 @@ class Modal extends PureComponent<IModalProps> {
 		);
 	}
 
-	private handleKeyPress(evt: KeyboardEvent): void {
+	private handleKeyDown(evt: KeyboardEvent): void {
+		// abort if this event was already cancelled before it reached us
+		if (!evt.returnValue) {
+			return;
+		}
+
 		if (evt.key === "Esc" || evt.key === "Escape") {
 			if (this.props.onCloseRequest) {
 				this.props.onCloseRequest();

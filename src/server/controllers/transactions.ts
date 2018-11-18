@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 import { getData } from "../helpers/datatable-helper";
-import { deleteTransaction, saveTransaction } from "../managers/transaction-manager";
+import { deleteTransaction, getAllPayees, saveTransaction } from "../managers/transaction-manager";
 import { requireUser } from "../middleware/auth-middleware";
 import { Account } from "../models/Account";
 import { Category } from "../models/Category";
@@ -97,6 +97,13 @@ router.post("/delete/:transactionId", requireUser, (req: Request, res: Response,
 
 	deleteTransaction(user, transactionId)
 			.then(() => res.status(200).end())
+			.catch(next);
+});
+
+router.get("/payees", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const user = req.user as User;
+	getAllPayees(user)
+			.then((payees: string[]) => res.json(payees))
 			.catch(next);
 });
 

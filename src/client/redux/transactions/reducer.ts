@@ -8,6 +8,8 @@ interface ITransactionsState {
 	readonly dateMode: DateModeOption;
 	readonly transactionToEdit: ThinTransaction;
 	readonly editorBusy: boolean;
+	readonly payeeList: string[];
+	readonly payeeListLastLoaded: number;
 }
 
 const initialState: ITransactionsState = {
@@ -15,6 +17,8 @@ const initialState: ITransactionsState = {
 	dateMode: "transaction",
 	transactionToEdit: undefined,
 	editorBusy: false,
+	payeeList: undefined,
+	payeeListLastLoaded: -1,
 };
 
 function transactionsReducer(state = initialState, action: PayloadAction): ITransactionsState {
@@ -41,6 +45,13 @@ function transactionsReducer(state = initialState, action: PayloadAction): ITran
 			return {
 				...state,
 				editorBusy: action.payload.editorBusy,
+			};
+
+		case TransactionsActions.SET_PAYEE_LIST:
+			return {
+				...state,
+				payeeList: action.payload.payeeList,
+				payeeListLastLoaded: new Date().getTime(),
 			};
 
 		default:

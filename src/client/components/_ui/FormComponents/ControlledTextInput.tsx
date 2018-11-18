@@ -65,5 +65,6 @@ class ControlledTextInput extends PureComponent<IControlledTextInputProps, ICont
 }
 
 export {
+	IControlledTextInputProps,
 	ControlledTextInput,
 };

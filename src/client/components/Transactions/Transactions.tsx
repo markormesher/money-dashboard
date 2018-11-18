@@ -10,12 +10,7 @@ import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
-import {
-	setDateMode,
-	setLastUpdate,
-	setTransactionToEdit,
-	startDeleteTransaction,
-} from "../../redux/transactions/actions";
+import { setDateMode, setTransactionToEdit, startDeleteTransaction } from "../../redux/transactions/actions";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
@@ -32,7 +27,6 @@ interface ITransactionProps {
 	readonly actions?: {
 		readonly deleteTransaction: (id: string) => AnyAction,
 		readonly setDateMode: (mode: DateModeOption) => AnyAction,
-		readonly setLastUpdate: () => AnyAction,
 		readonly setTransactionToEdit: (transaction: ThinTransaction) => AnyAction,
 	};
 }
@@ -52,7 +46,6 @@ function mapDispatchToProps(dispatch: Dispatch, props: ITransactionProps): ITran
 		actions: {
 			deleteTransaction: (id) => dispatch(startDeleteTransaction(id)),
 			setDateMode: (active) => dispatch(setDateMode(active)),
-			setLastUpdate: () => dispatch(setLastUpdate()),
 			setTransactionToEdit: (transaction) => dispatch(setTransactionToEdit(transaction)),
 		},
 	};

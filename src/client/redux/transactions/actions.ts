@@ -6,11 +6,13 @@ import { PayloadAction } from "../PayloadAction";
 enum TransactionsActions {
 	START_DELETE_TRANSACTION = "TransactionSettingsActions.START_DELETE_TRANSACTION",
 	START_SAVE_TRANSACTION = "TransactionSettingsActions.START_SAVE_TRANSACTION",
+	START_LOAD_PAYEE_LIST = "TransactionSettingsActions.START_LOAD_PAYEE_LIST",
 
 	SET_DATE_MODE = "TransactionSettingsActions.SET_DATE_MODE",
 	SET_LAST_UPDATE = "TransactionSettingsActions.SET_LAST_UPDATE",
 	SET_TRANSACTION_TO_EDIT = "TransactionSettingsActions.SET_TRANSACTION_TO_EDIT",
 	SET_EDITOR_BUSY = "TransactionSettingsActions.SET_EDITOR_BUSY",
+	SET_PAYEE_LIST = "TransactionSettingsActions.SET_PAYEE_LIST",
 }
 
 const startDeleteTransaction: ActionCreator<PayloadAction> = (transactionId: string) => {
@@ -23,6 +25,10 @@ const startSaveTransaction: ActionCreator<PayloadAction> = (transaction: Partial
 	return {
 		type: TransactionsActions.START_SAVE_TRANSACTION, payload: { transaction },
 	};
+};
+
+const startLoadPayeeList: ActionCreator<PayloadAction> = () => {
+	return { type: TransactionsActions.START_LOAD_PAYEE_LIST };
 };
 
 const setDateMode: ActionCreator<PayloadAction> = (dateMode: DateModeOption) => {
@@ -49,12 +55,20 @@ const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => {
 	};
 };
 
+const setPayeeList: ActionCreator<PayloadAction> = (payeeList: string[]) => {
+	return {
+		type: TransactionsActions.SET_PAYEE_LIST, payload: { payeeList },
+	};
+};
+
 export {
 	TransactionsActions,
 	startDeleteTransaction,
 	startSaveTransaction,
+	startLoadPayeeList,
 	setDateMode,
 	setLastUpdate,
 	setTransactionToEdit,
 	setEditorBusy,
+	setPayeeList,
 };

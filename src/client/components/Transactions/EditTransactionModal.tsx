@@ -15,25 +15,28 @@ import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { startLoadAccountList } from "../../redux/settings/accounts/actions";
 import { startLoadCategoryList } from "../../redux/settings/categories/actions";
-import { setTransactionToEdit, startSaveTransaction } from "../../redux/transactions/actions";
+import { setTransactionToEdit, startLoadPayeeList, startSaveTransaction } from "../../redux/transactions/actions";
 import { ControlledDateInput } from "../_ui/FormComponents/ControlledDateInput";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
 import { ControlledSelectInput } from "../_ui/FormComponents/ControlledSelectInput";
 import { ControlledTextArea } from "../_ui/FormComponents/ControlledTextArea";
 import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { SuggestionTextInput } from "../_ui/SuggestionTextInput/SuggestionTextInput";
 
 interface IEditTransactionModalProps {
 	readonly transactionToEdit?: ThinTransaction;
 	readonly editorBusy?: boolean;
 	readonly categoryList?: ThinCategory[];
 	readonly accountList?: ThinAccount[];
+	readonly payeeList?: string[];
 
 	readonly actions?: {
 		readonly setTransactionToEdit: (transaction: ThinTransaction) => AnyAction,
 		readonly startSaveTransaction: (transaction: Partial<ThinTransaction>) => AnyAction,
 		readonly startLoadCategoryList: () => AnyAction,
 		readonly startLoadAccountList: () => AnyAction,
+		readonly startLoadPayeeList: () => AnyAction,
 	};
 }
 
@@ -49,6 +52,7 @@ function mapStateToProps(state: IRootState, props: IEditTransactionModalProps): 
 		editorBusy: state.transactions.editorBusy,
 		categoryList: state.settings.categories.categoryList,
 		accountList: state.settings.accounts.accountList,
+		payeeList: state.transactions.payeeList,
 	};
 }
 
@@ -60,6 +64,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditTransactionModalProp
 			startSaveTransaction: (transaction) => dispatch(startSaveTransaction(transaction)),
 			startLoadCategoryList: () => dispatch(startLoadCategoryList()),
 			startLoadAccountList: () => dispatch(startLoadAccountList()),
+			startLoadPayeeList: () => dispatch(startLoadPayeeList()),
 		},
 	};
 }
@@ -89,10 +94,11 @@ class UCEditTransactionModal extends PureComponent<IEditTransactionModalProps, I
 	public componentDidMount(): void {
 		this.props.actions.startLoadCategoryList();
 		this.props.actions.startLoadAccountList();
+		this.props.actions.startLoadPayeeList();
 	}
 
 	public render(): ReactNode {
-		const { editorBusy, categoryList, accountList } = this.props;
+		const { editorBusy, categoryList, accountList, payeeList } = this.props;
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
 
@@ -167,13 +173,14 @@ class UCEditTransactionModal extends PureComponent<IEditTransactionModalProps, I
 								</ControlledSelectInput>
 							</div>
 							<div className={combine(bs.col, bs.formGroup)}>
-								<ControlledTextInput
+								<SuggestionTextInput
 										id={"payee"}
 										label={"Payee"}
 										value={currentValues.payee}
 										disabled={editorBusy}
 										error={errors.payee}
 										onValueChange={this.handlePayeeChange}
+										suggestionOptions={payeeList}
 								/>
 							</div>
 						</div>
