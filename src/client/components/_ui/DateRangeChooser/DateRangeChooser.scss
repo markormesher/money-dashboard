@@ -4,6 +4,8 @@
 .chooser {
 	background-color: $white;
 	border: 1px solid $gray-500;
+	border-bottom-left-radius: $spacer * .25;
+	border-bottom-right-radius: $spacer * .25;
 	padding: $spacer * .5;
 	position: fixed;
 	z-index: 9000;

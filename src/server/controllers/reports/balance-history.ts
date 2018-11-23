@@ -2,11 +2,11 @@ import * as Bluebird from "bluebird";
 import { ChartDataSets } from "chart.js";
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
+import * as Moment from "moment";
 import * as sequelize from "sequelize";
 import { Op } from "sequelize";
 import { requireUser } from "../../middleware/auth-middleware";
-import { DateModeOption } from "../../models/Transaction";
-import { Transaction } from "../../models/Transaction";
+import { DateModeOption, Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
 
 interface IBalanceHistoryData {
@@ -23,8 +23,8 @@ const router = Express.Router();
 router.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 
-	const startDate = req.query.startDate;
-	const endDate = req.query.endDate;
+	const startDate = Moment(req.query.startDate).startOf("day").toISOString();
+	const endDate = Moment(req.query.endDate).endOf("day").toISOString();
 	const dateMode: DateModeOption = req.query.dateMode;
 
 	const dateField = `${dateMode}Date`;
