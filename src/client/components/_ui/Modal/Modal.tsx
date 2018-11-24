@@ -33,6 +33,13 @@ interface IModalState {
 
 class Modal extends PureComponent<IModalProps, IModalState> {
 
+	private static lastClose = 0;
+
+	private static shouldAnimateEntrance(): boolean {
+		// only animate the entrance if this modal isn't immediately reappearing
+		return new Date().getTime() - Modal.lastClose > 10;
+	}
+
 	private static renderBtn(btn: IModalBtn): ReactElement<void> {
 		let icon: IconProp;
 		let label: string;
@@ -73,25 +80,27 @@ class Modal extends PureComponent<IModalProps, IModalState> {
 	constructor(props: IModalProps) {
 		super(props);
 		this.state = {
-			shown: false,
+			shown: !Modal.shouldAnimateEntrance(),
 		};
 		this.handleKeyDown = this.handleKeyDown.bind(this);
 	}
 
 	public componentDidMount(): void {
 		document.addEventListener("keydown", this.handleKeyDown);
-		setTimeout(() => this.setState({
-			shown: true,
-		}), 10);
+		if (Modal.shouldAnimateEntrance()) {
+			setTimeout(() => this.setState({ shown: true }), 10);
+		}
 	}
 
 	public componentWillUnmount(): void {
 		document.removeEventListener("keydown", this.handleKeyDown);
+		Modal.lastClose = new Date().getTime();
 	}
 
 	public render(): ReactNode {
 		const { title, buttons, modalBusy, onCloseRequest } = this.props;
 		const { shown } = this.state;
+
 		return (
 				<>
 					<div className={combine(bs.modal, bs.fade, bs.dBlock, shown && bs.show)}>
