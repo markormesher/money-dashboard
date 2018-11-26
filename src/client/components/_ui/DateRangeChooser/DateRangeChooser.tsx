@@ -9,11 +9,9 @@ import { ControlledDateInput } from "../FormComponents/ControlledDateInput";
 import { IconBtn } from "../IconBtn/IconBtn";
 import * as styles from "./DateRangeChooser.scss";
 
-// TODO: tests
-
 interface IDateRangeChooserProps {
-	readonly startDate: Moment.Moment;
-	readonly endDate: Moment.Moment;
+	readonly startDate?: Moment.Moment;
+	readonly endDate?: Moment.Moment;
 	readonly includeFuturePresets?: boolean;
 	readonly includeYearToDate?: boolean;
 	readonly includeAllTime?: boolean;
@@ -45,7 +43,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 				startDate: Moment().startOf("month"),
 				endDate: Moment().endOf("month"),
 			},
-			includeFuturePresets && {
+			includeFuturePresets !== false && {
 				label: "Next Month",
 				startDate: Moment().add(1, "month").startOf("month"),
 				endDate: Moment().add(1, "month").endOf("month"),
@@ -55,17 +53,17 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 				startDate: Moment().startOf("year"),
 				endDate: Moment().endOf("year"),
 			},
-			includeFuturePresets && {
+			includeFuturePresets !== false && {
 				label: "Next Year",
 				startDate: Moment().add(1, "year").startOf("year"),
 				endDate: Moment().add(1, "year").endOf("year"),
 			},
-			includeYearToDate && {
+			includeYearToDate !== false && {
 				label: "Year to Date",
 				startDate: Moment().subtract(1, "year"),
 				endDate: Moment(),
 			},
-			includeAllTime && {
+			includeAllTime !== false && {
 				label: "All Time",
 				startDate: Moment(new Date(1970, 0, 1)),
 				endDate: Moment(),
