@@ -15,11 +15,11 @@ else
     exit 1
 fi
 
-current_name=$(git name-rev HEAD)
-if [[ "$current_name" == *"tags/"* ]]; then
-    echo " - OK: A tagged version is checked out"
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$current_branch" == "$prod_branch" ]]; then
+    echo " - OK: Checked out branch is '$prod_branch'"
 else
-    echo " - ERROR: Current checked out name is '$current_name', not 'HEAD tags/x.y.z'"
+    echo " - ERROR: Checked out branch is '$current_branch', not '$prod_branch'"
     exit 1
 fi
 
@@ -34,10 +34,6 @@ echo
 echo "Updating repo..."
 git checkout "$prod_branch"
 git pull
-
-echo
-echo "Checking out latest tag..."
-git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
 
 echo
 echo "Rebuilding images..."
