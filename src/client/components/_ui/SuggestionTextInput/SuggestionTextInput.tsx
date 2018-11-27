@@ -1,5 +1,6 @@
 import * as React from "react";
 import { KeyboardEvent, MouseEvent, PureComponent, ReactNode } from "react";
+import { levenshteinDistance } from "../../../helpers/levenshtein-distance";
 import { combine } from "../../../helpers/style-helpers";
 import { UIConstants } from "../../_commons/ui-constants";
 import { ControlledTextInput, IControlledTextInputProps } from "../FormComponents/ControlledTextInput";
@@ -10,35 +11,31 @@ interface ISuggestionTextInputProps extends IControlledTextInputProps {
 }
 
 interface ISuggestionTextInputState {
-	readonly cleanUserInput?: string;
+	readonly userInput?: string;
 	readonly suggestions?: string[];
 	readonly selectedSuggestion?: string;
 	readonly selectedSuggestionIndex?: number;
 }
 
-// TODO: sort by relevance (maybe Levenshtein distance?)
-// TODO: punctuation (e.g. "N/A") - might be solved by the above
-
 class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISuggestionTextInputState> {
 
 	private static MAX_SUGGESTIONS_SHOWN = 10;
 
-	private static cleanString(str: string): string {
+	private static removeRegexChars(str: string): string {
 		if (!str) {
 			return undefined;
 		}
 
-		return str.toLocaleLowerCase().replace(/\W/g, "");
+		return str.replace(/[\^$\\+*?.(){}\[\]]/g, "");
 	}
 
-	private static formatSuggestion(suggestion: string, cleanInput: string): ReactNode {
+	private static formatSuggestion(suggestion: string, input: string): ReactNode {
 		const output: ReactNode[] = [];
 		const suggestionChars = suggestion.split("");
 		let consumedInputIndex = 0;
 		for (const c of suggestionChars) {
-			const cleanC = this.cleanString(c);
-			if (cleanC.length && cleanC === cleanInput.charAt(consumedInputIndex)) {
-				output.push(<span className={styles.highlight} key={`${consumedInputIndex}-${cleanC}`}>{c}</span>);
+			if (c.length && c.toLowerCase() === input.charAt(consumedInputIndex).toLowerCase()) {
+				output.push(<span className={styles.highlight} key={`${consumedInputIndex}-${c}`}>{c}</span>);
 				++consumedInputIndex;
 			} else {
 				output.push(c);
@@ -50,7 +47,7 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 	constructor(props: ISuggestionTextInputProps, context: any) {
 		super(props, context);
 		this.state = {
-			cleanUserInput: undefined,
+			userInput: undefined,
 			suggestions: [],
 			selectedSuggestion: undefined,
 			selectedSuggestionIndex: -1,
@@ -87,7 +84,7 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 	}
 
 	private renderSuggestions(): ReactNode {
-		const { cleanUserInput, suggestions, selectedSuggestionIndex } = this.state;
+		const { userInput, suggestions, selectedSuggestionIndex } = this.state;
 		const hasOverflow = suggestions.length > SuggestionTextInput.MAX_SUGGESTIONS_SHOWN;
 		return (
 				<div className={styles.suggestionWrapper}>
@@ -99,7 +96,7 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 										className={combine(selectedSuggestionIndex === i && styles.active)}
 										onMouseDown={this.handleSuggestionClick}
 								>
-									{SuggestionTextInput.formatSuggestion(s, cleanUserInput)}
+									{SuggestionTextInput.formatSuggestion(s, userInput)}
 								</li>
 						))}
 						{hasOverflow && <li key={"..."} className={styles.overflow}>...</li>}
@@ -184,9 +181,7 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 	}
 
 	private generateSuggestions(value: string): void {
-		const cleanValue = SuggestionTextInput.cleanString(value);
-
-		if (!cleanValue || cleanValue === "") {
+		if (!value || value === "") {
 			this.clearSuggestions();
 			return;
 		}
@@ -194,15 +189,22 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 		const { suggestionOptions } = this.props;
 		const { selectedSuggestion } = this.state;
 
-		const regex = new RegExp(".*" + cleanValue.split("").join(".*") + ".*");
-		const suggestions = suggestionOptions.filter((s) => regex.test(SuggestionTextInput.cleanString(s)));
+		const regex = new RegExp(".*" + SuggestionTextInput.removeRegexChars(value).split("").join(".*") + ".*", "i");
+		const scores: { [key: string]: number } = {};
+		const suggestions = suggestionOptions
+				.filter((s) => regex.test(s))
+				.sort((a, b) => {
+					scores[a] = scores[a] || levenshteinDistance(value, a);
+					scores[b] = scores[b] || levenshteinDistance(value, b);
+					return scores[a] - scores[b];
+				});
 
 		// if the previously-selected suggestion is still in the list, keep it selected
 		const newSelectedSuggestionIndex = suggestions.indexOf(selectedSuggestion);
 		const newSelectedSuggestion = newSelectedSuggestionIndex >= 0 ? suggestions[newSelectedSuggestionIndex] : undefined;
 
 		this.setState({
-			cleanUserInput: cleanValue,
+			userInput: value,
 			suggestions,
 			selectedSuggestion: newSelectedSuggestion,
 			selectedSuggestionIndex: newSelectedSuggestionIndex,

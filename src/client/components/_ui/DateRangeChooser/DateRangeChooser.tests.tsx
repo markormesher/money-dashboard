@@ -20,11 +20,11 @@ describe(__filename, () => {
 	const endOfMonth = Moment().endOf("month");
 
 	function findChooser(): ReactWrapper {
-		return mountWrapper.find("div").findWhere((w) => w.props().className === styles.chooser);
+		return mountWrapper.find("div").filterWhere((w) => w.props().className === styles.chooser);
 	}
 
 	function findCustomRangeSubmit(): ReactWrapper<IIconBtnProps> {
-		return mountWrapper.findWhere((w) => w.text() === "OK").find(IconBtn);
+		return mountWrapper.find(IconBtn).filterWhere((w) => w.text() === "OK");
 	}
 
 	it("should render as a button", () => {
@@ -57,7 +57,7 @@ describe(__filename, () => {
 		mountWrapper = mount(<DateRangeChooser/>);
 		mountWrapper.simulate("click");
 		findChooser().length.should.equal(1);
-		findChooser().find("button").findWhere((w) => w.text() === "Cancel").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "Cancel").simulate("click");
 		findChooser().length.should.equal(0);
 	});
 
@@ -92,7 +92,7 @@ describe(__filename, () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<DateRangeChooser onValueChange={spy}/>);
 		mountWrapper.simulate("click");
-		findChooser().find("button").findWhere((w) => w.text() === "This Month").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "This Month").simulate("click");
 		spy.calledOnce.should.equal(true);
 		(spy.firstCall.args[0] as Moment.Moment).isSame(startOfMonth, "day").should.equal(true);
 		(spy.firstCall.args[1] as Moment.Moment).isSame(endOfMonth, "day").should.equal(true);
@@ -102,7 +102,7 @@ describe(__filename, () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<DateRangeChooser onValueChange={spy}/>);
 		mountWrapper.simulate("click");
-		findChooser().find("button").findWhere((w) => w.text() === "This Month").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "This Month").simulate("click");
 		findChooser().length.should.equal(0);
 	});
 
@@ -115,21 +115,21 @@ describe(__filename, () => {
 	it("should show the custom range input when in custom mode", () => {
 		mountWrapper = mount(<DateRangeChooser/>);
 		mountWrapper.simulate("click");
-		findChooser().find("button").findWhere((w) => w.text() === "Custom").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "Custom").simulate("click");
 		findChooser().find(ControlledDateInput).length.should.equal(2);
 	});
 
 	it("should disable the custom range submit if no dates are given", () => {
 		mountWrapper = mount(<DateRangeChooser/>);
 		mountWrapper.simulate("click");
-		findChooser().find("button").findWhere((w) => w.text() === "Custom").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "Custom").simulate("click");
 		findCustomRangeSubmit().props().btnProps.disabled.should.equal(true);
 	});
 
 	it("should disable the custom range submit if only a start date is given", () => {
 		mountWrapper = mount(<DateRangeChooser/>);
 		mountWrapper.simulate("click");
-		findChooser().find("button").findWhere((w) => w.text() === "Custom").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "Custom").simulate("click");
 		findChooser().find(ControlledDateInput).at(0).find("input").simulate("change", { target: { value: "2015-04-01" } });
 		findCustomRangeSubmit().props().btnProps.disabled.should.equal(true);
 	});
@@ -137,7 +137,7 @@ describe(__filename, () => {
 	it("should disable the custom range submit if only an end date is given", () => {
 		mountWrapper = mount(<DateRangeChooser/>);
 		mountWrapper.simulate("click");
-		findChooser().find("button").findWhere((w) => w.text() === "Custom").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "Custom").simulate("click");
 		findChooser().find(ControlledDateInput).at(1).find("input").simulate("change", { target: { value: "2015-04-01" } });
 		findCustomRangeSubmit().props().btnProps.disabled.should.equal(true);
 	});
@@ -145,7 +145,7 @@ describe(__filename, () => {
 	it("should disable the custom range submit if an invalid date range is given", () => {
 		mountWrapper = mount(<DateRangeChooser/>);
 		mountWrapper.simulate("click");
-		findChooser().find("button").findWhere((w) => w.text() === "Custom").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "Custom").simulate("click");
 		findChooser().find(ControlledDateInput).at(0).find("input").simulate("change", { target: { value: "2015-04-02" } });
 		findChooser().find(ControlledDateInput).at(1).find("input").simulate("change", { target: { value: "2015-04-01" } });
 		findCustomRangeSubmit().props().btnProps.disabled.should.equal(true);
@@ -155,7 +155,7 @@ describe(__filename, () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<DateRangeChooser onValueChange={spy}/>);
 		mountWrapper.simulate("click");
-		findChooser().find("button").findWhere((w) => w.text() === "Custom").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "Custom").simulate("click");
 		findChooser().find(ControlledDateInput).at(0).find("input").simulate("change", { target: { value: "2015-04-01" } });
 		findChooser().find(ControlledDateInput).at(1).find("input").simulate("change", { target: { value: "2015-04-02" } });
 		findCustomRangeSubmit().props().btnProps.disabled.should.equal(false);
@@ -169,7 +169,7 @@ describe(__filename, () => {
 		mountWrapper = mount(<DateRangeChooser/>);
 		// open the chooser and set a custom range
 		mountWrapper.simulate("click");
-		findChooser().find("button").findWhere((w) => w.text() === "Custom").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "Custom").simulate("click");
 		findChooser().find(ControlledDateInput).at(0).find("input").simulate("change", { target: { value: "2015-04-01" } });
 		findChooser().find(ControlledDateInput).at(1).find("input").simulate("change", { target: { value: "2015-04-02" } });
 		findCustomRangeSubmit().simulate("click");
@@ -184,14 +184,14 @@ describe(__filename, () => {
 		mountWrapper = mount(<DateRangeChooser/>);
 		// open the chooser and set a custom range
 		mountWrapper.simulate("click");
-		findChooser().find("button").findWhere((w) => w.text() === "Custom").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "Custom").simulate("click");
 		findChooser().find(ControlledDateInput).at(0).find("input").simulate("change", { target: { value: "2015-04-01" } });
 		findChooser().find(ControlledDateInput).at(1).find("input").simulate("change", { target: { value: "2015-04-02" } });
 		findCustomRangeSubmit().simulate("click");
 
 		// open the chooser and set a preset range
 		mountWrapper.simulate("click");
-		findChooser().find("button").findWhere((w) => w.text() === "This Month").simulate("click");
+		findChooser().find("button").filterWhere((w) => w.text() === "This Month").simulate("click");
 
 		// re-open the chooser
 		mountWrapper.simulate("click");
