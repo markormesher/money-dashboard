@@ -144,7 +144,6 @@ class Modal extends PureComponent<IModalProps, IModalState> {
 			return;
 		}
 
-		// TODO: replace with constants
 		if (evt.key === "Esc" || evt.key === "Escape") {
 			if (this.props.onCloseRequest) {
 				this.props.onCloseRequest();

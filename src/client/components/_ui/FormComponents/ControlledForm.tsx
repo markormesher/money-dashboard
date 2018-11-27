@@ -41,7 +41,6 @@ class ControlledForm extends PureComponent<IControlledFormProps> {
 	}
 
 	private handleKeyPress(evt: KeyboardEvent): void {
-		// TODO: replace with constants
 		if ((evt.ctrlKey || evt.metaKey) && evt.key === "Enter") {
 			this.handleSubmit();
 		}
