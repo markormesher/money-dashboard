@@ -1,6 +1,7 @@
 import * as React from "react";
 import { KeyboardEvent, MouseEvent, PureComponent, ReactNode } from "react";
 import { combine } from "../../../helpers/style-helpers";
+import { UIConstants } from "../../_commons/ui-constants";
 import { ControlledTextInput, IControlledTextInputProps } from "../FormComponents/ControlledTextInput";
 import * as styles from "./SuggestionTextInput.scss";
 
@@ -15,7 +16,6 @@ interface ISuggestionTextInputState {
 	readonly selectedSuggestionIndex?: number;
 }
 
-// TODO: tests
 // TODO: sort by relevance (maybe Levenshtein distance?)
 // TODO: punctuation (e.g. "N/A") - might be solved by the above
 
@@ -117,17 +117,12 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 	}
 
 	private handleKeyDown(evt: KeyboardEvent<HTMLInputElement>): void {
-		const UP_KEY = 38;
-		const DOWN_KEY = 40;
-		const ENTER_KEY = 13;
-		const ESC_KEY = 27;
-
 		const { id } = this.props;
 		const { suggestions, selectedSuggestion } = this.state;
 		let { selectedSuggestionIndex } = this.state;
 
 		switch (evt.keyCode) {
-			case UP_KEY:
+			case UIConstants.keys.UP:
 				selectedSuggestionIndex = Math.max(0, selectedSuggestionIndex - 1);
 				this.setState({
 					selectedSuggestionIndex,
@@ -136,7 +131,7 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 				evt.preventDefault();
 				break;
 
-			case DOWN_KEY:
+			case UIConstants.keys.DOWN:
 				selectedSuggestionIndex = Math.min(
 						SuggestionTextInput.MAX_SUGGESTIONS_SHOWN - 1,
 						Math.min(suggestions.length - 1, selectedSuggestionIndex + 1),
@@ -148,7 +143,7 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 				evt.preventDefault();
 				break;
 
-			case ENTER_KEY:
+			case UIConstants.keys.ENTER:
 				if (suggestions && suggestions.length) {
 					if (this.props.onValueChange) {
 						this.props.onValueChange(selectedSuggestion, id);
@@ -158,7 +153,7 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 				}
 				break;
 
-			case ESC_KEY:
+			case UIConstants.keys.ESC:
 				if (suggestions && suggestions.length) {
 					this.clearSuggestions();
 					evt.preventDefault();
@@ -216,5 +211,6 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 }
 
 export {
+	ISuggestionTextInputProps,
 	SuggestionTextInput,
 };
