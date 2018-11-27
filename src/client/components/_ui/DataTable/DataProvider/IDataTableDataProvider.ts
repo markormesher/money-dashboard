@@ -1,3 +1,4 @@
+import { IDataTableResponse } from "../../../../../server/helpers/IDataTableResponse";
 import { IColumnSortEntry } from "../DataTable";
 
 interface IDataTableDataProvider<Model> {
@@ -9,14 +10,6 @@ interface IDataTableDataProvider<Model> {
 	) => Promise<IDataTableResponse<Model>>;
 }
 
-// TODO: don't duplicate this interface in client/server folders
-interface IDataTableResponse<Model> {
-	readonly filteredRowCount: number;
-	readonly totalRowCount: number;
-	readonly data: Model[];
-}
-
 export {
 	IDataTableDataProvider,
-	IDataTableResponse,
 };

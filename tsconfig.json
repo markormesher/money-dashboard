@@ -11,7 +11,8 @@
 		"alwaysStrict": true,
 		"baseUrl": "./",
 		"allowJs": true,
-		"sourceMap": true
+		"sourceMap": true,
+		"removeComments": true
 	},
 	"include": [
 		"./src/server/app.ts"

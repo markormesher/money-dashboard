@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import { stringify } from "qs";
+import { IDataTableResponse } from "../../../../../server/helpers/IDataTableResponse";
 import { IColumnSortEntry } from "../DataTable";
-import { IDataTableDataProvider, IDataTableResponse } from "./IDataTableDataProvider";
+import { IDataTableDataProvider } from "./IDataTableDataProvider";
 
 interface IApiParams {
 	readonly [key: string]: any;

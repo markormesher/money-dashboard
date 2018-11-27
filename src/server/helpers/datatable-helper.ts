@@ -1,13 +1,7 @@
 import * as Bluebird from "bluebird";
 import { Request } from "express";
 import { IFindOptions } from "sequelize-typescript";
-
-// TODO: don't duplicate this interface in client/server folders
-interface IDataTableResponse<T> {
-	readonly filteredRowCount: number;
-	readonly totalRowCount: number;
-	readonly data: T[];
-}
+import { IDataTableResponse } from "./IDataTableResponse";
 
 // TODO: figure out what type "model" is meant to be
 
