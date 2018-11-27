@@ -86,8 +86,10 @@ workflows:
       - deploy:
           requires:
           - build
+          # filters are OR'd, branches are included by default and tags are excluded by default,
+          # so this excludes all branches and runs only if there is a tagged commit
           filters:
             branches:
               ignore: /.*/
             tags:
-              only: /^v.*/
+              only: /^v[0-9]+(\.[0-9]+)*$/
