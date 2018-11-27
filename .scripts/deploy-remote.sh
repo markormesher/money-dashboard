@@ -36,6 +36,15 @@ git checkout "$prod_branch"
 git pull
 
 echo
+echo "Checking we are on a tagged commit..."
+if git describe --exact-match HEAD > /dev/null 2&>1; then
+    echo " - OK: We're on tag $(git describe --exact-match HEAD)"
+else
+    echo " - ERROR: The HEAD of master is not a tagged commit"
+    exit 1
+fi
+
+echo
 echo "Rebuilding images..."
 docker-compose build
 
