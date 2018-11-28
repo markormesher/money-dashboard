@@ -80,7 +80,10 @@ workflows:
   version: 2
   build_test_deploy:
     jobs:
-      - setup
+      - setup:
+          filters:
+            tags:
+              only: /.*/
       - lint:
           requires:
             - setup
@@ -103,8 +106,6 @@ workflows:
       - deploy:
           requires:
             - build
-          # filters are OR'd, branches are included by default and tags are excluded by default,
-          # so this excludes all branches and runs only if there is a tagged commit
           filters:
             branches:
               ignore: /.*/
