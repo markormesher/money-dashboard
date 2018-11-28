@@ -63,6 +63,7 @@ jobs:
           command: yarn build
 
   maybe_deploy:
+    # Tag filtering in CircleCI is unreliable - this is hacky, but it works
     <<: *defaults
     steps:
       - add_ssh_keys:
@@ -73,7 +74,7 @@ jobs:
       - run:
           name: Maybe Deploy
           command: |
-            git describe --exact-match HEAD > /dev/null 2>&1 || (echo "Not on tagged commit - nothing to do"; exit 0)
+            if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
             ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
             ssh $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_DIR && git pull && ./.scripts/deploy-remote.sh"
 
