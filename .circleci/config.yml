@@ -62,7 +62,7 @@ jobs:
           name: Build
           command: yarn build
 
-  deploy:
+  maybe_deploy:
     <<: *defaults
     steps:
       - add_ssh_keys:
@@ -71,8 +71,9 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Deploy
+          name: Maybe Deploy
           command: |
+            git describe --exact-match HEAD > /dev/null 2>&1 || (echo "Not on tagged commit - nothing to do"; exit 0)
             ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
             ssh $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_DIR && git pull && ./.scripts/deploy-remote.sh"
 
@@ -80,34 +81,17 @@ workflows:
   version: 2
   build_test_deploy:
     jobs:
-      - setup:
-          filters:
-            tags:
-              only: /.*/
+      - setup
       - lint:
           requires:
             - setup
-          filters:
-            tags:
-              only: /.*/
       - test:
           requires:
             - setup
-          filters:
-            tags:
-              only: /.*/
       - build:
           requires:
             - lint
             - test
-          filters:
-            tags:
-              only: /.*/
-      - deploy:
+      - maybe_deploy:
           requires:
             - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
