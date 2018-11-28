@@ -75,17 +75,26 @@ workflows:
       - setup
       - lint:
           requires:
-          - setup
+            - setup
+          filters:
+            tags:
+              only: /.*/
       - test:
           requires:
-          - setup
+            - setup
+          filters:
+            tags:
+              only: /.*/
       - build:
           requires:
-          - lint
-          - test
+            - lint
+            - test
+          filters:
+            tags:
+              only: /.*/
       - deploy:
           requires:
-          - build
+            - build
           # filters are OR'd, branches are included by default and tags are excluded by default,
           # so this excludes all branches and runs only if there is a tagged commit
           filters:
