@@ -25,7 +25,7 @@
     "test-client": "run-s test-client-clean test-client-build test-client-run",
     "test-client-clean": "rimraf ./build/client-test",
     "test-client-build": "cross-env NODE_ENV=development TEST=y webpack",
-    "test-client-run": "mocha -r ./test/jsdom-setup.js \"./build/client-test/*.js\"",
+    "test-client-run": "mocha --reporter mocha-circleci-reporter -r ./test/jsdom-setup.js \"./build/client-test/*.js\"",
     "test-server": "echo No server tests yet"
   },
   "dependencies": {
@@ -128,6 +128,7 @@
     "md5": "^2.2.1",
     "mini-css-extract-plugin": "^0.4.4",
     "mocha": "^5.2.0",
+    "mocha-circleci-reporter": "^0.0.3",
     "node-sass": "^4.9.2",
     "npm-run-all": "^4.1.5",
     "redux-devtools-extension": "^2.13.5",
