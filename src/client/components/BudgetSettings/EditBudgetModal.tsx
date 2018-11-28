@@ -1,4 +1,4 @@
-import { Moment } from "moment";
+import * as Moment from "moment";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -13,16 +13,12 @@ import { IRootState } from "../../redux/root";
 import { setBudgetToEdit, startSaveBudget } from "../../redux/settings/budgets/actions";
 import { startLoadCategoryList } from "../../redux/settings/categories/actions";
 import { Badge } from "../_ui/Badge/Badge";
-import { ControlledDateInput } from "../_ui/FormComponents/ControlledDateInput";
+import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
 import { ControlledRadioInput } from "../_ui/FormComponents/ControlledRadioInput";
 import { ControlledSelectInput } from "../_ui/FormComponents/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/FormComponents/ControlledTextInput";
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
-import * as styles from "./BudgetModals.scss";
-import { QuickDateRangeLinks } from "./QuickDateRangeLinks";
-
-// TODO: replace with DateRangeChooser
 
 interface IEditBudgetModalProps {
 	readonly budgetToEdit?: ThinBudget;
@@ -73,10 +69,8 @@ class UCEditBudgetModal extends PureComponent<IEditBudgetModalProps, IEditBudget
 
 		this.handleCategoryChange = this.handleCategoryChange.bind(this);
 		this.handleAmountChange = this.handleAmountChange.bind(this);
-		this.handleStartDateChange = this.handleStartDateChange.bind(this);
-		this.handleEndDateChange = this.handleEndDateChange.bind(this);
-		this.handleTypeChange = this.handleTypeChange.bind(this);
 		this.handleDateRangeSelection = this.handleDateRangeSelection.bind(this);
+		this.handleTypeChange = this.handleTypeChange.bind(this);
 		this.handleSave = this.handleSave.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
 		this.updateModel = this.updateModel.bind(this);
@@ -130,48 +124,34 @@ class UCEditBudgetModal extends PureComponent<IEditBudgetModalProps, IEditBudget
 								{!categoryList && (<option>Loading...</option>)}
 							</ControlledSelectInput>
 						</div>
-						<div className={bs.formGroup}>
-							<ControlledTextInput
-									id={"amount"}
-									label={"Amount"}
-									value={!isNaN(currentValues.amount) ? currentValues.amount : ""}
-									disabled={editorBusy}
-									error={errors.amount}
-									onValueChange={this.handleAmountChange}
-									inputProps={{
-										type: "number",
-										step: "0.01",
-										min: "0",
-									}}
-							/>
-						</div>
 						<div className={bs.row}>
 							<div className={combine(bs.col, bs.formGroup)}>
-								<ControlledDateInput
-										id={"startDate"}
-										label={"Start Date"}
-										value={formatDate(currentValues.startDate, "system") || ""}
+								<ControlledTextInput
+										id={"amount"}
+										label={"Amount"}
+										value={!isNaN(currentValues.amount) ? currentValues.amount : ""}
 										disabled={editorBusy}
-										error={errors.startDate}
-										onValueChange={this.handleStartDateChange}
+										error={errors.amount}
+										onValueChange={this.handleAmountChange}
+										inputProps={{
+											type: "number",
+											step: "0.01",
+											min: "0",
+										}}
 								/>
 							</div>
 							<div className={combine(bs.col, bs.formGroup)}>
-								<ControlledDateInput
-										id={"endDate"}
-										label={"End Date"}
-										value={formatDate(currentValues.endDate, "system") || ""}
-										disabled={editorBusy}
-										error={errors.endDate}
-										onValueChange={this.handleEndDateChange}
+								<label>Date Range</label>
+								<DateRangeChooser
+										startDate={currentValues.startDate ? Moment(currentValues.startDate) : undefined}
+										endDate={currentValues.endDate ? Moment(currentValues.endDate) : undefined}
+										includeYearToDate={false}
+										includeAllTime={false}
+										onValueChange={this.handleDateRangeSelection}
+										btnProps={{
+											className: combine(bs.btnOutlineDark, bs.btnSm, bs.formControl),
+										}}
 								/>
-							</div>
-						</div>
-						<div className={bs.row}>
-							<div className={bs.col}>
-								<p className={combine(styles.quickDateLinks, bs.textCenter)}>
-									<QuickDateRangeLinks handleSelection={this.handleDateRangeSelection}/>
-								</p>
 							</div>
 						</div>
 						<div className={bs.formGroup}>
@@ -214,23 +194,15 @@ class UCEditBudgetModal extends PureComponent<IEditBudgetModalProps, IEditBudget
 		this.updateModel({ amount: parseFloat(value) });
 	}
 
-	private handleStartDateChange(value: string): void {
-		this.updateModel({ startDate: value });
-	}
-
-	private handleEndDateChange(value: string): void {
-		this.updateModel({ endDate: value });
-	}
-
-	private handleTypeChange(value: string): void {
-		this.updateModel({ type: value });
-	}
-
-	private handleDateRangeSelection(start: Moment, end: Moment): void {
+	private handleDateRangeSelection(start: Moment.Moment, end: Moment.Moment): void {
 		this.updateModel({
 			startDate: formatDate(start, "system"),
 			endDate: formatDate(end, "system"),
 		});
+	}
+
+	private handleTypeChange(value: string): void {
+		this.updateModel({ type: value });
 	}
 
 	private handleSave(): void {

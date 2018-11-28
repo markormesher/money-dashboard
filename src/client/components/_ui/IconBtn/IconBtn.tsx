@@ -28,6 +28,7 @@ class IconBtn<Payload = {}> extends PureComponent<IIconBtnProps<Payload>> {
 				<button
 						className={combine(bs.btn, btnClassName)}
 						onClick={this.handleClick}
+						type={"button"}
 						{...otherBtnProps}
 				>
 					<FontAwesomeIcon icon={icon} fixedWidth={true} className={bs.mr1} {...iconProps}/>

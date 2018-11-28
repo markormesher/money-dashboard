@@ -105,6 +105,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
 									includeAllTime={true}
 									includeYearToDate={true}
 									includeFuturePresets={false}
+									setPosition={true}
 									btnProps={{
 										className: combine(bs.btnOutlineDark, bs.btnSm),
 									}}

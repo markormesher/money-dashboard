@@ -159,6 +159,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 									includeAllTime={true}
 									includeYearToDate={true}
 									includeFuturePresets={false}
+									setPosition={true}
 									btnProps={{
 										className: combine(bs.btnOutlineDark, bs.btnSm),
 									}}

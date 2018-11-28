@@ -17,6 +17,7 @@ interface IDateRangeChooserProps {
 	readonly includeAllTime?: boolean;
 	readonly onValueChange?: (start: Moment.Moment, end: Moment.Moment) => void;
 	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
+	readonly setPosition?: boolean;
 }
 
 interface IDateRangeChooserState {
@@ -126,12 +127,13 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 	}
 
 	private renderChooser(): ReactNode {
+		const { setPosition } = this.props;
 		const dateRanges = DateRangeChooser.getDateRanges(this.props);
 
 		return (
 				<div
 						className={styles.chooser}
-						style={this.getChooserPosition()}
+						style={setPosition && this.getChooserPosition()}
 				>
 					<div className={bs.row}>
 						{
