@@ -44,7 +44,7 @@ jobs:
       - run:
           name: Run Tests
           command: yarn test
-      - copy_results:
+      - run:
           name: Copy Results
           command: "[[ -e test-results.xml ]] && cp test-results.xml $CIRCLE_TEST_REPORTS/test-results.xml"
 
