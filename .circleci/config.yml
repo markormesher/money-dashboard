@@ -47,10 +47,11 @@ jobs:
       - run:
           name: Copy Results
           command: |
-            mkdir -p /test-results/mocha
-            [[ -e test-results.xml ]] && cp test-results.xml /test-results/mocha/test-results.xml
+            pwd
+            mkdir -p ./test-results/mocha
+            [[ -e test-results.xml ]] && cp test-results.xml ./test-results/mocha/test-results.xml
       - store_test_results:
-          path: /test-results
+          path: test-results
 
   build:
     <<: *defaults
