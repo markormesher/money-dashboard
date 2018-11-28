@@ -46,7 +46,11 @@ jobs:
           command: yarn test
       - run:
           name: Copy Results
-          command: "[[ -e test-results.xml ]] && cp test-results.xml $CIRCLE_TEST_REPORTS/test-results.xml"
+          command: |
+            mkdir -p /test-results/mocha
+            [[ -e test-results.xml ]] && cp test-results.xml /test-results/mocha/test-results.xml
+      - store_test_results:
+          path: /test-results
 
   build:
     <<: *defaults
