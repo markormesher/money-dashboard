@@ -3,7 +3,7 @@ import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { setKeyShortcutModalVisible } from "../../redux/global/actions";
+import { setKeyShortcutModalVisible } from "../../redux/global";
 import { IRootState } from "../../redux/root";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { Modal, ModalBtnType } from "../_ui/Modal/Modal";

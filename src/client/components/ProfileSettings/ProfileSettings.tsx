@@ -1,15 +1,15 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
-import { KeyCache } from "../../redux/caching/KeyCache";
+import { KeyCache } from "../../redux/helpers/KeyCache";
+import { setProfileToEdit, startDeleteProfile } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
-import { setProfileToEdit, startDeleteProfile } from "../../redux/settings/profiles/actions";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";

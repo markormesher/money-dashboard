@@ -1,6 +1,6 @@
 import * as Moment from "moment";
-import * as React from "react";
 import { PureComponent, ReactNode } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { IDateRange } from "../../../server/model-thins/IDateRange";
@@ -8,8 +8,8 @@ import { IDateRangeValidationResult, validateDateRange } from "../../../server/m
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
+import { setBudgetIdsToClone, startCloneBudgets } from "../../redux/budgets";
 import { IRootState } from "../../redux/root";
-import { setBudgetIdsToClone, startCloneBudgets } from "../../redux/settings/budgets/actions";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";

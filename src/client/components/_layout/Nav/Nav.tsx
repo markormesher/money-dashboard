@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
-import { startLogOutCurrentUser } from "../../../redux/auth/actions";
+import { startLogOutCurrentUser } from "../../../redux/auth";
 import { IRootState } from "../../../redux/root";
 import { KeyShortcut } from "../../_ui/KeyShortcut/KeyShortcut";
 import { NavLink } from "../NavLink/NavLink";

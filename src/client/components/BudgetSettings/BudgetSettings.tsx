@@ -1,6 +1,6 @@
 import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinBudget } from "../../../server/model-thins/ThinBudget";
@@ -8,14 +8,14 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { KeyCache } from "../../redux/caching/KeyCache";
-import { IRootState } from "../../redux/root";
 import {
 	setBudgetIdsToClone,
 	setBudgetToEdit,
 	setDisplayCurrentOnly,
 	startDeleteBudget,
-} from "../../redux/settings/budgets/actions";
+} from "../../redux/budgets";
+import { KeyCache } from "../../redux/helpers/KeyCache";
+import { IRootState } from "../../redux/root";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";

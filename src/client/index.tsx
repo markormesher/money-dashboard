@@ -7,8 +7,8 @@ import { applyMiddleware, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import createSagaMiddleware from "redux-saga";
 import { App } from "./components/App/App";
-import { startLoadCurrentUser } from "./redux/auth/actions";
-import { KeyCache } from "./redux/caching/KeyCache";
+import { startLoadCurrentUser } from "./redux/auth";
+import { KeyCache } from "./redux/helpers/KeyCache";
 import { rootReducer, rootSaga } from "./redux/root";
 
 // "require" forces webpack to include entire stylesheets; "import" only works for named exports

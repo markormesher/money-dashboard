@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { AnyAction, Dispatch } from "redux";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
-import { closeNav, openNav } from "../../../redux/nav/actions";
+import { closeNav, openNav } from "../../../redux/nav";
 import { IRootState } from "../../../redux/root";
 import * as style from "./Header.scss";
 

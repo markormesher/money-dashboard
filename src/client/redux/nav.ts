@@ -1,5 +1,5 @@
-import { PayloadAction } from "../PayloadAction";
-import { NavActions } from "./actions";
+import { ActionCreator } from "redux";
+import { PayloadAction } from "./helpers/PayloadAction";
 
 interface INavState {
 	readonly isOpen: boolean; // only matters when nav is in mobile-view
@@ -8,6 +8,19 @@ interface INavState {
 const initialState: INavState = {
 	isOpen: false,
 };
+
+enum NavActions {
+	OPEN_NAV = "NavActions.OPEN_NAV",
+	CLOSE_NAV = "NavActions.CLOSE_NAV",
+}
+
+const openNav: ActionCreator<PayloadAction> = () => ({
+	type: NavActions.OPEN_NAV,
+});
+
+const closeNav: ActionCreator<PayloadAction> = () => ({
+	type: NavActions.CLOSE_NAV,
+});
 
 function navReducer(state = initialState, action: PayloadAction): INavState {
 	switch (action.type) {
@@ -31,4 +44,6 @@ function navReducer(state = initialState, action: PayloadAction): INavState {
 export {
 	INavState,
 	navReducer,
+	openNav,
+	closeNav,
 };

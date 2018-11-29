@@ -12,10 +12,10 @@ import {
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
+import { startLoadAccountList } from "../../redux/accounts";
+import { startLoadCategoryList } from "../../redux/categories";
 import { IRootState } from "../../redux/root";
-import { startLoadAccountList } from "../../redux/settings/accounts/actions";
-import { startLoadCategoryList } from "../../redux/settings/categories/actions";
-import { setTransactionToEdit, startLoadPayeeList, startSaveTransaction } from "../../redux/transactions/actions";
+import { setTransactionToEdit, startLoadPayeeList, startSaveTransaction } from "../../redux/transactions";
 import { ControlledDateInput } from "../_ui/FormComponents/ControlledDateInput";
 import { ControlledForm } from "../_ui/FormComponents/ControlledForm";
 import { ControlledSelectInput } from "../_ui/FormComponents/ControlledSelectInput";

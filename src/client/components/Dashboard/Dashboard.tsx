@@ -13,7 +13,7 @@ import {
 	startLoadAccountSummaries,
 	startLoadBudgetBalances,
 	startLoadMemoCategoryBalances,
-} from "../../redux/dashboard/actions";
+} from "../../redux/dashboard";
 import { IRootState } from "../../redux/root";
 import { DashboardAccountList } from "./DashboardAccountList";
 import { DashboardAlertList } from "./DashboardAlertList";

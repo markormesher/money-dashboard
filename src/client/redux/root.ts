@@ -1,22 +1,15 @@
 import { combineReducers } from "redux";
 import { all } from "redux-saga/effects";
-import { authReducer, IAuthState } from "./auth/reducer";
-import { authSagas } from "./auth/sagas";
-import { KeyCache } from "./caching/KeyCache";
-import { dashboardReducer, IDashboardState } from "./dashboard/reducer";
-import { dashboardSagas } from "./dashboard/sagas";
-import { globalReducer, IGlobalState } from "./global/reducer";
-import { INavState, navReducer } from "./nav/reducer";
-import { accountSettingsReducer, IAccountSettingsState } from "./settings/accounts/reducer";
-import { accountSettingsSagas } from "./settings/accounts/sagas";
-import { budgetSettingsReducer, IBudgetSettingsState } from "./settings/budgets/reducer";
-import { budgetSettingsSagas } from "./settings/budgets/sagas";
-import { categorySettingsReducer, ICategorySettingsState } from "./settings/categories/reducer";
-import { categorySettingsSagas } from "./settings/categories/sagas";
-import { IProfileSettingsState, profileSettingsReducer } from "./settings/profiles/reducer";
-import { profileSettingsSagas } from "./settings/profiles/sagas";
-import { ITransactionsState, transactionsReducer } from "./transactions/reducer";
-import { transactionsSagas } from "./transactions/sagas";
+import { accountSettingsReducer, accountSettingsSagas, IAccountSettingsState } from "./accounts";
+import { authReducer, authSagas, IAuthState } from "./auth";
+import { budgetSettingsReducer, budgetSettingsSagas, IBudgetSettingsState } from "./budgets";
+import { categorySettingsReducer, categorySettingsSagas, ICategorySettingsState } from "./categories";
+import { dashboardReducer, dashboardSagas, IDashboardState } from "./dashboard";
+import { globalReducer, IGlobalState } from "./global";
+import { KeyCache } from "./helpers/KeyCache";
+import { INavState, navReducer } from "./nav";
+import { IProfileSettingsState, profileSettingsReducer, profileSettingsSagas } from "./profiles";
+import { ITransactionsState, transactionsReducer, transactionsSagas } from "./transactions";
 
 interface IRootState {
 	readonly auth?: IAuthState;
