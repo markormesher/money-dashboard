@@ -15,7 +15,7 @@ import {
 	setDateMode,
 	setTransactionToEdit,
 	startDeleteTransaction,
-	TransactionCacheKeys
+	TransactionCacheKeys,
 } from "../../redux/transactions";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
