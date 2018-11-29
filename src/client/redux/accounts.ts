@@ -30,6 +30,11 @@ enum AccountActions {
 	SET_ACCOUNT_LIST = "AccountActions.SET_ACCOUNT_LIST",
 }
 
+enum AccountCacheKeys {
+	ACCOUNT_DATA = "AccountCacheKeys.ACCOUNT_DATA",
+	ACCOUNT_LIST = "AccountCacheKeys.ACCOUNT_LIST",
+}
+
 const startDeleteAccount: ActionCreator<PayloadAction> = (accountId: string) => ({
 	type: AccountActions.START_DELETE_ACCOUNT,
 	payload: { accountId },
@@ -72,7 +77,7 @@ function*deleteAccountSaga(): Generator {
 		try {
 			const accountId: string = action.payload.accountId;
 			yield call(() => axios.post(`/settings/accounts/delete/${accountId}`));
-			yield put(KeyCache.touchKey("accounts"));
+			yield put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA));
 		} catch (err) {
 			yield put(setError(err));
 		}
@@ -89,7 +94,7 @@ function*saveAccountSaga(): Generator {
 				call(() => axios.post(`/settings/accounts/edit/${accountId}`, account)),
 			]);
 			yield all([
-				put(KeyCache.touchKey("accounts")),
+				put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA)),
 				put(setEditorBusy(false)),
 				put(setAccountToEdit(undefined)),
 			]);
@@ -101,7 +106,7 @@ function*saveAccountSaga(): Generator {
 
 function*loadAccountListSaga(): Generator {
 	yield takeEvery(AccountActions.START_LOAD_ACCOUNT_LIST, function*(): Generator {
-		if (KeyCache.keyIsValid("account-list", ["accounts"])) {
+		if (KeyCache.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [AccountCacheKeys.ACCOUNT_DATA])) {
 			return;
 		}
 		try {
@@ -110,7 +115,7 @@ function*loadAccountListSaga(): Generator {
 			});
 			yield all([
 				put(setAccountList(accountList)),
-				put(KeyCache.touchKey("account-list")),
+				put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_LIST)),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -159,6 +164,7 @@ function accountsReducer(state = initialState, action: PayloadAction): IAccounts
 
 export {
 	IAccountsState,
+	AccountCacheKeys,
 	accountsReducer,
 	accountsSagas,
 	startDeleteAccount,

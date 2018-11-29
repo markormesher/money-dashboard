@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { PureComponent, ReactElement, ReactNode } from "react";
 import * as React from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
@@ -8,7 +8,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { KeyCache } from "../../redux/helpers/KeyCache";
-import { setProfileToEdit, startDeleteProfile } from "../../redux/profiles";
+import { ProfileCacheKeys, setProfileToEdit, startDeleteProfile } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
@@ -31,7 +31,7 @@ interface IProfileSettingsProps {
 function mapStateToProps(state: IRootState, props: IProfileSettingsProps): IProfileSettingsProps {
 	return {
 		...props,
-		cacheTime: KeyCache.getKeyTime("profiles"),
+		cacheTime: KeyCache.getKeyTime(ProfileCacheKeys.PROFILE_DATA),
 		profileToEdit: state.profiles.profileToEdit,
 		activeProfile: state.auth.activeUser.profiles[state.auth.activeProfile],
 	};

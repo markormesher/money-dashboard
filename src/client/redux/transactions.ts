@@ -21,7 +21,7 @@ const initialState: ITransactionsState = {
 	payeeList: undefined,
 };
 
-enum TransactionsActions {
+enum TransactionActions {
 	START_DELETE_TRANSACTION = "TransactionSettingsActions.START_DELETE_TRANSACTION",
 	START_SAVE_TRANSACTION = "TransactionSettingsActions.START_SAVE_TRANSACTION",
 	START_LOAD_PAYEE_LIST = "TransactionSettingsActions.START_LOAD_PAYEE_LIST",
@@ -32,47 +32,52 @@ enum TransactionsActions {
 	SET_PAYEE_LIST = "TransactionSettingsActions.SET_PAYEE_LIST",
 }
 
+enum TransactionCacheKeys {
+	PAYEE_LIST = "TransactionsCacheKeys.PAYEE_LIST",
+	TRANSACTION_DATA = "TransactionsCacheKeys.TRANSACTION_DATA",
+}
+
 const startDeleteTransaction: ActionCreator<PayloadAction> = (transactionId: string) => ({
-	type: TransactionsActions.START_DELETE_TRANSACTION,
+	type: TransactionActions.START_DELETE_TRANSACTION,
 	payload: { transactionId },
 });
 
 const startSaveTransaction: ActionCreator<PayloadAction> = (transaction: Partial<ThinTransaction>) => ({
-	type: TransactionsActions.START_SAVE_TRANSACTION,
+	type: TransactionActions.START_SAVE_TRANSACTION,
 	payload: { transaction },
 });
 
 const startLoadPayeeList: ActionCreator<PayloadAction> = () => ({
-	type: TransactionsActions.START_LOAD_PAYEE_LIST,
+	type: TransactionActions.START_LOAD_PAYEE_LIST,
 });
 
 const setDateMode: ActionCreator<PayloadAction> = (dateMode: DateModeOption) => ({
-	type: TransactionsActions.SET_DATE_MODE,
+	type: TransactionActions.SET_DATE_MODE,
 	payload: { dateMode },
 });
 
 const setTransactionToEdit: ActionCreator<PayloadAction> = (transaction: ThinTransaction) => ({
-	type: TransactionsActions.SET_TRANSACTION_TO_EDIT,
+	type: TransactionActions.SET_TRANSACTION_TO_EDIT,
 	payload: { transaction },
 });
 
 const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
-	type: TransactionsActions.SET_EDITOR_BUSY,
+	type: TransactionActions.SET_EDITOR_BUSY,
 	payload: { editorBusy },
 });
 
 const setPayeeList: ActionCreator<PayloadAction> = (payeeList: string[]) => ({
-	type: TransactionsActions.SET_PAYEE_LIST,
+	type: TransactionActions.SET_PAYEE_LIST,
 	payload: { payeeList },
 });
 
 function*deleteTransactionSaga(): Generator {
-	yield takeEvery(TransactionsActions.START_DELETE_TRANSACTION, function*(action: PayloadAction): Generator {
+	yield takeEvery(TransactionActions.START_DELETE_TRANSACTION, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios
 					.post(`/transactions/delete/${action.payload.transactionId}`)
 					.then((res) => res.data));
-			yield put(KeyCache.touchKey("transactions"));
+			yield put(KeyCache.touchKey(TransactionCacheKeys.TRANSACTION_DATA));
 		} catch (err) {
 			yield put(setError(err));
 		}
@@ -80,7 +85,7 @@ function*deleteTransactionSaga(): Generator {
 }
 
 function*saveTransactionSaga(): Generator {
-	yield takeEvery(TransactionsActions.START_SAVE_TRANSACTION, function*(action: PayloadAction): Generator {
+	yield takeEvery(TransactionActions.START_SAVE_TRANSACTION, function*(action: PayloadAction): Generator {
 		try {
 			const transaction: Partial<ThinTransaction> = action.payload.transaction;
 			const transactionId = transaction.id || "";
@@ -89,7 +94,7 @@ function*saveTransactionSaga(): Generator {
 				call(() => axios.post(`/transactions/edit/${transactionId}`, transaction)),
 			]);
 			yield all([
-				put(KeyCache.touchKey("transactions")),
+				put(KeyCache.touchKey(TransactionCacheKeys.TRANSACTION_DATA)),
 				put(setEditorBusy(false)),
 
 				// always close the editor to reset it...
@@ -105,8 +110,8 @@ function*saveTransactionSaga(): Generator {
 }
 
 function*loadPayeeListSaga(): Generator {
-	yield takeEvery(TransactionsActions.START_LOAD_PAYEE_LIST, function*(): Generator {
-		if (KeyCache.keyIsValid("transaction-payee-list", ["transactions"])) {
+	yield takeEvery(TransactionActions.START_LOAD_PAYEE_LIST, function*(): Generator {
+		if (KeyCache.keyIsValid(TransactionCacheKeys.PAYEE_LIST, [TransactionCacheKeys.TRANSACTION_DATA])) {
 			return;
 		}
 		try {
@@ -115,7 +120,7 @@ function*loadPayeeListSaga(): Generator {
 			});
 			yield all([
 				put(setPayeeList(payeeList)),
-				put(KeyCache.touchKey("transaction-payee-list")),
+				put(KeyCache.touchKey(TransactionCacheKeys.PAYEE_LIST)),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -133,25 +138,25 @@ function*transactionsSagas(): Generator {
 
 function transactionsReducer(state = initialState, action: PayloadAction): ITransactionsState {
 	switch (action.type) {
-		case TransactionsActions.SET_DATE_MODE:
+		case TransactionActions.SET_DATE_MODE:
 			return {
 				...state,
 				dateMode: action.payload.dateMode,
 			};
 
-		case TransactionsActions.SET_TRANSACTION_TO_EDIT:
+		case TransactionActions.SET_TRANSACTION_TO_EDIT:
 			return {
 				...state,
 				transactionToEdit: action.payload.transaction,
 			};
 
-		case TransactionsActions.SET_EDITOR_BUSY:
+		case TransactionActions.SET_EDITOR_BUSY:
 			return {
 				...state,
 				editorBusy: action.payload.editorBusy,
 			};
 
-		case TransactionsActions.SET_PAYEE_LIST:
+		case TransactionActions.SET_PAYEE_LIST:
 			return {
 				...state,
 				payeeList: action.payload.payeeList,
@@ -164,6 +169,7 @@ function transactionsReducer(state = initialState, action: PayloadAction): ITran
 
 export {
 	ITransactionsState,
+	TransactionCacheKeys,
 	transactionsReducer,
 	transactionsSagas,
 	startDeleteTransaction,

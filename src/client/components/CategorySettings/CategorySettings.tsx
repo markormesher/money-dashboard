@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { PureComponent, ReactElement, ReactNode } from "react";
 import * as React from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinCategory } from "../../../server/model-thins/ThinCategory";
@@ -8,7 +8,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { setCategoryToEdit, startDeleteCategory } from "../../redux/categories";
+import { CategoryCacheKeys, setCategoryToEdit, startDeleteCategory } from "../../redux/categories";
 import { KeyCache } from "../../redux/helpers/KeyCache";
 import { IRootState } from "../../redux/root";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
@@ -30,7 +30,7 @@ interface ICategorySettingsProps {
 function mapStateToProps(state: IRootState, props: ICategorySettingsProps): ICategorySettingsProps {
 	return {
 		...props,
-		cacheTime: KeyCache.getKeyTime("categories"),
+		cacheTime: KeyCache.getKeyTime(CategoryCacheKeys.CATEGORY_DATA),
 		categoryToEdit: state.categories.categoryToEdit,
 	};
 }

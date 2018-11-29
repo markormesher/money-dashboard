@@ -11,7 +11,12 @@ import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { KeyCache } from "../../redux/helpers/KeyCache";
 import { IRootState } from "../../redux/root";
-import { setDateMode, setTransactionToEdit, startDeleteTransaction } from "../../redux/transactions";
+import {
+	setDateMode,
+	setTransactionToEdit,
+	startDeleteTransaction,
+	TransactionCacheKeys
+} from "../../redux/transactions";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
@@ -35,7 +40,7 @@ interface ITransactionProps {
 function mapStateToProps(state: IRootState, props: ITransactionProps): ITransactionProps {
 	return {
 		...props,
-		cacheTime: KeyCache.getKeyTime("transactions"),
+		cacheTime: KeyCache.getKeyTime(TransactionCacheKeys.TRANSACTION_DATA),
 		dateMode: state.transactions.dateMode,
 		transactionToEdit: state.transactions.transactionToEdit,
 	};

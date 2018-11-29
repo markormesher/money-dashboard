@@ -31,6 +31,10 @@ enum BudgetActions {
 	SET_EDITOR_BUSY = "BudgetActions.SET_EDITOR_BUSY",
 }
 
+enum BudgetCacheKeys {
+	BUDGET_DATA = "BudgetCacheKeys.BUDGET_DATA",
+}
+
 const startDeleteBudget: ActionCreator<PayloadAction> = (budgetId: string) => ({
 	type: BudgetActions.START_DELETE_BUDGET,
 	payload: { budgetId },
@@ -74,7 +78,7 @@ function*deleteBudgetSaga(): Generator {
 	yield takeEvery(BudgetActions.START_DELETE_BUDGET, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios.post(`/settings/budgets/delete/${action.payload.budgetId}`).then((res) => res.data));
-			yield put(KeyCache.touchKey("budgets"));
+			yield put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA));
 		} catch (err) {
 			yield put(setError(err));
 		}
@@ -91,7 +95,7 @@ function*saveBudgetSaga(): Generator {
 				call(() => axios.post(`/settings/budgets/edit/${budgetId}`, budget)),
 			]);
 			yield all([
-				put(KeyCache.touchKey("budgets")),
+				put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA)),
 				put(setEditorBusy(false)),
 				put(setBudgetToEdit(undefined)),
 			]);
@@ -116,7 +120,7 @@ function*cloneBudgetsSaga(): Generator {
 				})),
 			]);
 			yield all([
-				put(KeyCache.touchKey("budgets")),
+				put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA)),
 				put(setEditorBusy(false)),
 				put(setBudgetIdsToClone(undefined)),
 			]);
@@ -167,6 +171,7 @@ function budgetsReducer(state = initialState, action: PayloadAction): IBudgetsSt
 
 export {
 	IBudgetsState,
+	BudgetCacheKeys,
 	budgetsReducer,
 	budgetsSagas,
 	startDeleteBudget,

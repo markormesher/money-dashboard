@@ -8,7 +8,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateAccountTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { setAccountToEdit, setDisplayActiveOnly, startDeleteAccount } from "../../redux/accounts";
+import { AccountCacheKeys, setAccountToEdit, setDisplayActiveOnly, startDeleteAccount } from "../../redux/accounts";
 import { KeyCache } from "../../redux/helpers/KeyCache";
 import { IRootState } from "../../redux/root";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
@@ -34,7 +34,7 @@ interface IAccountSettingsProps {
 function mapStateToProps(state: IRootState, props: IAccountSettingsProps): IAccountSettingsProps {
 	return {
 		...props,
-		cacheTime: KeyCache.getKeyTime("accounts"),
+		cacheTime: KeyCache.getKeyTime(AccountCacheKeys.ACCOUNT_DATA),
 		displayActiveOnly: state.accounts.displayActiveOnly,
 		accountToEdit: state.accounts.accountToEdit,
 	};

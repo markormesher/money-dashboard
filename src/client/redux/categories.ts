@@ -28,6 +28,11 @@ enum CategoryActions {
 	SET_CATEGORY_LIST = "CategoryActions.SET_CATEGORY_LIST",
 }
 
+enum CategoryCacheKeys {
+	CATEGORY_DATA = "CategoryCacheKeys.CATEGORY_DATA",
+	CATEGORY_LIST = "CategoryCacheKeys.CATEGORY_LIST",
+}
+
 const startDeleteCategory: ActionCreator<PayloadAction> = (categoryId: string) => ({
 	type: CategoryActions.START_DELETE_CATEGORY,
 	payload: { categoryId },
@@ -64,7 +69,7 @@ function*deleteCategorySaga(): Generator {
 	yield takeEvery(CategoryActions.START_DELETE_CATEGORY, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios.post(`/settings/categories/delete/${action.payload.categoryId}`).then((res) => res.data));
-			yield put(KeyCache.touchKey("categories"));
+			yield put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_DATA));
 		} catch (err) {
 			yield put(setError(err));
 		}
@@ -81,7 +86,7 @@ function*saveCategorySaga(): Generator {
 				call(() => axios.post(`/settings/categories/edit/${categoryId}`, category)),
 			]);
 			yield all([
-				put(KeyCache.touchKey("categories")),
+				put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_DATA)),
 				put(setEditorBusy(false)),
 				put(setCategoryToEdit(undefined)),
 			]);
@@ -93,7 +98,7 @@ function*saveCategorySaga(): Generator {
 
 function*loadCategoryListSaga(): Generator {
 	yield takeEvery(CategoryActions.START_LOAD_CATEGORY_LIST, function*(): Generator {
-		if (KeyCache.keyIsValid("category-list", ["categories"])) {
+		if (KeyCache.keyIsValid(CategoryCacheKeys.CATEGORY_LIST, [CategoryCacheKeys.CATEGORY_DATA])) {
 			return;
 		}
 		try {
@@ -102,7 +107,7 @@ function*loadCategoryListSaga(): Generator {
 			});
 			yield all([
 				put(setCategoryList(categoryList)),
-				put(KeyCache.touchKey("category-list")),
+				put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_LIST)),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -145,6 +150,7 @@ function categoriesReducer(state = initialState, action: PayloadAction): ICatego
 
 export {
 	ICategoriesState,
+	CategoryCacheKeys,
 	categoriesReducer,
 	categoriesSagas,
 	startDeleteCategory,

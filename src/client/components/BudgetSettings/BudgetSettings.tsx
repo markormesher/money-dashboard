@@ -1,6 +1,6 @@
 import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { PureComponent, ReactElement, ReactNode } from "react";
 import * as React from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinBudget } from "../../../server/model-thins/ThinBudget";
@@ -9,6 +9,7 @@ import * as gs from "../../global-styles/Global.scss";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import {
+	BudgetCacheKeys,
 	setBudgetIdsToClone,
 	setBudgetToEdit,
 	setDisplayCurrentOnly,
@@ -46,7 +47,7 @@ interface IBudgetSettingsState {
 function mapStateToProps(state: IRootState, props: IBudgetSettingsProps): IBudgetSettingsProps {
 	return {
 		...props,
-		cacheTime: KeyCache.getKeyTime("budgets"),
+		cacheTime: KeyCache.getKeyTime(BudgetCacheKeys.BUDGET_DATA),
 		displayCurrentOnly: state.budgets.displayCurrentOnly,
 		budgetToEdit: state.budgets.budgetToEdit,
 		budgetIdsToClone: state.budgets.budgetIdsToClone,

@@ -24,6 +24,10 @@ enum ProfileActions {
 	SET_EDITOR_BUSY = "ProfileActions.SET_EDITOR_BUSY",
 }
 
+enum ProfileCacheKeys {
+	PROFILE_DATA = "ProfileCacheKeys.PROFILE_DATA",
+}
+
 const startDeleteProfile: ActionCreator<PayloadAction> = (profileId: string) => ({
 	type: ProfileActions.START_DELETE_PROFILE,
 	payload: { profileId },
@@ -48,7 +52,7 @@ function*deleteProfileSaga(): Generator {
 	yield takeEvery(ProfileActions.START_DELETE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios.post(`/settings/profiles/delete/${action.payload.profileId}`).then((res) => res.data));
-			yield put(KeyCache.touchKey("profiles"));
+			yield put(KeyCache.touchKey(ProfileCacheKeys.PROFILE_DATA));
 		} catch (err) {
 			yield put(setError(err));
 		}
@@ -65,7 +69,7 @@ function*saveProfileSaga(): Generator {
 				call(() => axios.post(`/settings/profiles/edit/${profileId}`, profile)),
 			]);
 			yield all([
-				put(KeyCache.touchKey("profiles")),
+				put(KeyCache.touchKey(ProfileCacheKeys.PROFILE_DATA)),
 				put(setEditorBusy(false)),
 				put(setProfileToEdit(undefined)),
 			]);
@@ -103,6 +107,7 @@ function profilesReducer(state = initialState, action: PayloadAction): IProfiles
 
 export {
 	IProfilesState,
+	ProfileCacheKeys,
 	profilesReducer,
 	profilesSagas,
 	startDeleteProfile,

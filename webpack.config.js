@@ -46,6 +46,7 @@ const tsLoader = {
 		compilerOptions: {
 			module: "esnext",
 			target: "es6",
+			removeComments: false, // keep for webpackChunkName and similar
 		},
 	},
 };
@@ -63,7 +64,7 @@ const terserMinimiser = new TerserWebpackPlugin({
 		},
 		mangle: {
 			properties: {
-				regex: /^[A-Z]+_[A-Z_]+$/, // should only match redux actions
+				regex: /^[A-Z]+_[A-Z_]+$/, // should only match redux actions and cache keys
 			},
 		},
 	},
@@ -163,6 +164,11 @@ module.exports = {
 				{
 					// replace redux action strings with hashes
 					search: /"([A-Za-z]+)Actions\.([_A-Z]+)"/g,
+					replace: (str) => "\"" + md5(str).substring(0, 6) + "\"",
+				},
+				{
+					// replace redux cache keys with hashes
+					search: /"([A-Za-z]+)CacheKeys\.([_A-Z]+)"/g,
 					replace: (str) => "\"" + md5(str).substring(0, 6) + "\"",
 				},
 			],
