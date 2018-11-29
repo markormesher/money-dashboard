@@ -1,12 +1,12 @@
 import * as Bluebird from "bluebird";
 import * as sequelize from "sequelize";
 import { getAllAccounts } from "../managers/account-manager";
-import { IAccountSummary } from "../model-thins/IAccountSummary";
+import { IAccountBalance } from "../model-thins/IAccountBalance";
 import { Account } from "../models/Account";
 import { Transaction } from "../models/Transaction";
 import { User } from "../models/User";
 
-function getAccountBalances(user: User): Bluebird<IAccountSummary[]> {
+function getAccountBalances(user: User): Bluebird<IAccountBalance[]> {
 	const accountBalanceQuery = Transaction.findAll({
 		attributes: [
 			"accountId",

@@ -1,11 +1,11 @@
 import { Account } from "../models/Account";
 import { ThinAccount } from "./ThinAccount";
 
-interface IAccountSummary {
+interface IAccountBalance {
 	readonly account: Account | ThinAccount;
 	readonly balance: number;
 }
 
 export {
-	IAccountSummary,
+	IAccountBalance,
 };

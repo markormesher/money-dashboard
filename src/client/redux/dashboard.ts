@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IAccountSummary } from "../../server/model-thins/IAccountSummary";
+import { IAccountBalance } from "../../server/model-thins/IAccountBalance";
 import { IBudgetBalance } from "../../server/statistics/budget-statistics";
 import { ICategoryBalance } from "../../server/statistics/category-statistics";
 import { AccountCacheKeys } from "./accounts";
@@ -12,21 +12,21 @@ import { PayloadAction } from "./helpers/PayloadAction";
 import { TransactionCacheKeys } from "./transactions";
 
 interface IDashboardState {
-	readonly accountSummaries?: IAccountSummary[];
+	readonly accountBalances?: IAccountBalance[];
 	readonly budgetBalances?: IBudgetBalance[];
 	readonly memoCategoryBalances?: ICategoryBalance[];
 }
 
 const initialState: IDashboardState = {
-	accountSummaries: undefined,
+	accountBalances: undefined,
 	budgetBalances: undefined,
 };
 
 enum DashboardActions {
-	START_LOAD_ACCOUNT_SUMMARIES = "DashboardActions.START_LOAD_ACCOUNT_SUMMARIES",
+	START_LOAD_ACCOUNT_BALANCES = "DashboardActions.START_LOAD_ACCOUNT_BALANCES",
 	START_LOAD_BUDGET_BALANCES = "DashboardActions.START_LOAD_BUDGET_BALANCES",
 	START_LOAD_MEMO_CATEGORY_BALANCES = "DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES",
-	SET_ACCOUNT_SUMMARIES = "DashboardActions.SET_ACCOUNT_SUMMARIES",
+	SET_ACCOUNT_BALANCES = "DashboardActions.SET_ACCOUNT_BALANCES",
 	SET_BUDGET_BALANCES = "DashboardActions.SET_BUDGET_BALANCES",
 	SET_MEMO_CATEGORY_BALANCES = "DashboardActions.SET_MEMO_CATEGORY_BALANCES",
 }
@@ -37,8 +37,8 @@ enum DashboardCacheKeys {
 	MEMO_CATEGORY_BALANCE = "DashboardCacheKeys.MEMO_CATEGORY_BALANCE",
 }
 
-const startLoadAccountSummaries: ActionCreator<PayloadAction> = () => ({
-	type: DashboardActions.START_LOAD_ACCOUNT_SUMMARIES,
+const startLoadAccountBalances: ActionCreator<PayloadAction> = () => ({
+	type: DashboardActions.START_LOAD_ACCOUNT_BALANCES,
 });
 
 const startLoadBudgetBalances: ActionCreator<PayloadAction> = () => ({
@@ -49,9 +49,9 @@ const startLoadMemoCategoryBalances: ActionCreator<PayloadAction> = () => ({
 	type: DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES,
 });
 
-const setAccountSummaries: ActionCreator<PayloadAction> = (accountSummaries: IAccountSummary[]) => ({
-	type: DashboardActions.SET_ACCOUNT_SUMMARIES,
-	payload: { accountSummaries },
+const setAccountBalances: ActionCreator<PayloadAction> = (accountBalances: IAccountBalance[]) => ({
+	type: DashboardActions.SET_ACCOUNT_BALANCES,
+	payload: { accountBalances },
 });
 
 const setBudgetBalances: ActionCreator<PayloadAction> = (budgetBalances: IBudgetBalance[]) => ({
@@ -64,19 +64,19 @@ const setMemoCategoryBalances: ActionCreator<PayloadAction> = (memoCategoryBalan
 	payload: { memoCategoryBalances },
 });
 
-function*loadAccountSummariesSaga(): Generator {
-	yield takeEvery(DashboardActions.START_LOAD_ACCOUNT_SUMMARIES, function*(): Generator {
+function*loadAccountBalancesSaga(): Generator {
+	yield takeEvery(DashboardActions.START_LOAD_ACCOUNT_BALANCES, function*(): Generator {
 		if (KeyCache.keyIsValid(DashboardCacheKeys.ACCOUNT_BALANCES, [
 			TransactionCacheKeys.TRANSACTION_DATA, AccountCacheKeys.ACCOUNT_DATA,
 		])) {
 			return;
 		}
 		try {
-			const summaries: IAccountSummary[] = yield call(() => {
-				return axios.get("/settings/accounts/summaries").then((res) => res.data);
+			const balances: IAccountBalance[] = yield call(() => {
+				return axios.get("/settings/accounts/balances").then((res) => res.data);
 			});
 			yield all([
-				put(setAccountSummaries(summaries)),
+				put(setAccountBalances(balances)),
 				put(KeyCache.touchKey(DashboardCacheKeys.ACCOUNT_BALANCES)),
 			]);
 		} catch (err) {
@@ -133,7 +133,7 @@ function*loadMemoCategoryBalancesSaga(): Generator {
 
 function*dashboardSagas(): Generator {
 	yield all([
-		loadAccountSummariesSaga(),
+		loadAccountBalancesSaga(),
 		loadBudgetBalancesSaga(),
 		loadMemoCategoryBalancesSaga(),
 	]);
@@ -141,10 +141,10 @@ function*dashboardSagas(): Generator {
 
 function dashboardReducer(state: IDashboardState = initialState, action: PayloadAction): IDashboardState {
 	switch (action.type) {
-		case DashboardActions.SET_ACCOUNT_SUMMARIES:
+		case DashboardActions.SET_ACCOUNT_BALANCES:
 			return {
 				...state,
-				accountSummaries: action.payload.accountSummaries,
+				accountBalances: action.payload.accountBalances,
 			};
 
 		case DashboardActions.SET_BUDGET_BALANCES:
@@ -168,10 +168,10 @@ export {
 	IDashboardState,
 	dashboardReducer,
 	dashboardSagas,
-	startLoadAccountSummaries,
+	startLoadAccountBalances,
 	startLoadBudgetBalances,
 	startLoadMemoCategoryBalances,
-	setAccountSummaries,
+	setAccountBalances,
 	setBudgetBalances,
 	setMemoCategoryBalances,
 };

@@ -2,7 +2,7 @@ import { faPiggyBank } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component, ReactNode } from "react";
-import { IAccountSummary } from "../../../server/model-thins/IAccountSummary";
+import { IAccountBalance } from "../../../server/model-thins/IAccountBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled } from "../../helpers/formatters";
@@ -11,17 +11,17 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import * as styles from "./DashboardAccountList.scss";
 
 interface IDashboardAccountListProps {
-	readonly accountSummaries: IAccountSummary[];
+	readonly accountBalances: IAccountBalance[];
 }
 
 class DashboardAccountList extends Component<IDashboardAccountListProps> {
 
-	private static sortByAbsoluteBalanceComparator(a: IAccountSummary, b: IAccountSummary): number {
+	private static sortByAbsoluteBalanceComparator(a: IAccountBalance, b: IAccountBalance): number {
 		return Math.abs(b.balance) - Math.abs(a.balance);
 	}
 
 	public render(): ReactNode {
-		const { accountSummaries } = this.props;
+		const { accountBalances } = this.props;
 		return (
 				<div className={bs.card}>
 					<h5 className={combine(bs.cardHeader, bs.h5)}>
@@ -30,7 +30,7 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
 					</h5>
 					<div className={combine(bs.cardBody, gs.cardBody)}>
 						{
-							!accountSummaries
+							!accountBalances
 							&& <LoadingSpinner centre={true}/>
 							|| this.renderInner()
 						}
@@ -40,13 +40,13 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
 	}
 
 	private renderInner(): ReactNode {
-		const total = this.props.accountSummaries.map((a) => a.balance).reduce((a, b) => a + b);
+		const total = this.props.accountBalances.map((a) => a.balance).reduce((a, b) => a + b);
 		return (
 				<div className={styles.accountList}>
-					{this.renderAccountSummaryList("current", "Current Accounts")}
-					{this.renderAccountSummaryList("savings", "Savings Accounts")}
-					{this.renderAccountSummaryList("asset", "Assets")}
-					{this.renderAccountSummaryList("other", "Other")}
+					{this.renderAccountBalanceList("current", "Current Accounts")}
+					{this.renderAccountBalanceList("savings", "Savings Accounts")}
+					{this.renderAccountBalanceList("asset", "Assets")}
+					{this.renderAccountBalanceList("other", "Other")}
 					<hr/>
 					<p>
 						Total
@@ -58,12 +58,12 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
 		);
 	}
 
-	private renderAccountSummaryList(type: string, title: string): ReactNode {
-		const summaries = this.props.accountSummaries
+	private renderAccountBalanceList(type: string, title: string): ReactNode {
+		const balances = this.props.accountBalances
 				.filter((a) => a.account.type === type)
 				.filter((a) => a.balance !== 0);
 
-		if (summaries.length === 0) {
+		if (balances.length === 0) {
 			return null;
 		}
 
@@ -71,20 +71,20 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
 				<>
 					<h6>{title}</h6>
 					{
-						summaries
+						balances
 								.sort(DashboardAccountList.sortByAbsoluteBalanceComparator)
-								.map(this.renderSingleAccountSummary)
+								.map(this.renderSingleAccountBalance)
 					}
 				</>
 		);
 	}
 
-	private renderSingleAccountSummary(summary: IAccountSummary): ReactNode {
+	private renderSingleAccountBalance(balance: IAccountBalance): ReactNode {
 		return (
-				<p key={summary.account.id}>
-					{summary.account.name}
+				<p key={balance.account.id}>
+					{balance.account.name}
 					<span className={bs.floatRight}>
-						{formatCurrencyStyled(summary.balance)}
+						{formatCurrencyStyled(balance.balance)}
 					</span>
 				</p>
 		);

@@ -5,7 +5,7 @@ import { IFindOptions } from "sequelize-typescript";
 import { getData } from "../../helpers/datatable-helper";
 import { deleteAccount, getAllAccounts, saveAccount, toggleAccountActive } from "../../managers/account-manager";
 import { requireUser } from "../../middleware/auth-middleware";
-import { IAccountSummary } from "../../model-thins/IAccountSummary";
+import { IAccountBalance } from "../../model-thins/IAccountBalance";
 import { Account } from "../../models/Account";
 import { User } from "../../models/User";
 import { getAccountBalances } from "../../statistics/account-statistics";
@@ -57,9 +57,9 @@ router.get("/list", requireUser, (req: Request, res: Response, next: NextFunctio
 			.catch(next);
 });
 
-router.get("/summaries", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/balances", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	getAccountBalances(req.user as User)
-			.then((summaries: IAccountSummary[]) => res.json(summaries))
+			.then((balances: IAccountBalance[]) => res.json(balances))
 			.catch(next);
 });
 

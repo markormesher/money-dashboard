@@ -2,7 +2,7 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IAccountSummary } from "../../../server/model-thins/IAccountSummary";
+import { IAccountBalance } from "../../../server/model-thins/IAccountBalance";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
 import { IBudgetBalance } from "../../../server/statistics/budget-statistics";
@@ -10,7 +10,7 @@ import { ICategoryBalance } from "../../../server/statistics/category-statistics
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import {
-	startLoadAccountSummaries,
+	startLoadAccountBalances,
 	startLoadBudgetBalances,
 	startLoadMemoCategoryBalances,
 } from "../../redux/dashboard";
@@ -22,12 +22,12 @@ import { DashboardBudgetList } from "./DashboardBudgetList";
 interface IDashboardProps {
 	readonly activeUser: ThinUser;
 	readonly activeProfile?: ThinProfile;
-	readonly accountSummaries?: IAccountSummary[];
+	readonly accountBalances?: IAccountBalance[];
 	readonly budgetBalances?: IBudgetBalance[];
 	readonly memoCategoryBalances?: ICategoryBalance[];
 
 	readonly actions?: {
-		readonly startLoadAccountSummaries: () => AnyAction,
+		readonly startLoadaccountBalances: () => AnyAction,
 		readonly startLoadBudgetBalances: () => AnyAction,
 		readonly startLoadMemoCategoryBalances: () => AnyAction,
 	};
@@ -38,7 +38,7 @@ function mapStateToProps(state: IRootState, props: IDashboardProps): IDashboardP
 		...props,
 		activeUser: state.auth.activeUser,
 		activeProfile: state.auth.activeUser.profiles[state.auth.activeProfile],
-		accountSummaries: state.dashboard.accountSummaries,
+		accountBalances: state.dashboard.accountBalances,
 		budgetBalances: state.dashboard.budgetBalances,
 		memoCategoryBalances: state.dashboard.memoCategoryBalances,
 	};
@@ -48,7 +48,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDashboardProps): IDashbo
 	return {
 		...props,
 		actions: {
-			startLoadAccountSummaries: () => dispatch(startLoadAccountSummaries()),
+			startLoadaccountBalances: () => dispatch(startLoadAccountBalances()),
 			startLoadBudgetBalances: () => dispatch(startLoadBudgetBalances()),
 			startLoadMemoCategoryBalances: () => dispatch(startLoadMemoCategoryBalances()),
 		},
@@ -58,7 +58,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDashboardProps): IDashbo
 class UCDashboard extends PureComponent<IDashboardProps> {
 
 	public componentDidMount(): void {
-		this.props.actions.startLoadAccountSummaries();
+		this.props.actions.startLoadaccountBalances();
 		this.props.actions.startLoadBudgetBalances();
 		this.props.actions.startLoadMemoCategoryBalances();
 	}
@@ -73,7 +73,7 @@ class UCDashboard extends PureComponent<IDashboardProps> {
 						<DashboardAlertList
 								memoCategoryBalances={this.props.memoCategoryBalances}
 						/>
-						<DashboardAccountList accountSummaries={this.props.accountSummaries}/>
+						<DashboardAccountList accountBalances={this.props.accountBalances}/>
 					</div>
 				</div>
 		);
