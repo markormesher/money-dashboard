@@ -45,6 +45,8 @@ const LoadableLogin = Loadable({
 	loading: () => (<FullPageSpinner/>),
 });
 
+// TODO: use an error boundary component
+
 class UCApp extends PureComponent<IAppProps> {
 
 	constructor(props: IAppProps) {
