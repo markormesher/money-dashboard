@@ -8,7 +8,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { KeyCache } from "../../redux/caching/key-cache";
+import { KeyCache } from "../../redux/caching/KeyCache";
 import { IRootState } from "../../redux/root";
 import {
 	setBudgetIdsToClone,

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { ThinProfile } from "../../../../server/model-thins/ThinProfile";
-import { KeyCache } from "../../caching/key-cache";
+import { KeyCache } from "../../caching/KeyCache";
 import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
 import { ProfileSettingsActions, setEditorBusy, setProfileToEdit } from "./actions";

@@ -9,7 +9,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { KeyCache } from "../../redux/caching/key-cache";
+import { KeyCache } from "../../redux/caching/KeyCache";
 import { IRootState } from "../../redux/root";
 import { setDateMode, setTransactionToEdit, startDeleteTransaction } from "../../redux/transactions/actions";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";

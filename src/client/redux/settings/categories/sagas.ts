@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { ThinCategory } from "../../../../server/model-thins/ThinCategory";
-import { KeyCache } from "../../caching/key-cache";
+import { KeyCache } from "../../caching/KeyCache";
 import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
 import { CategorySettingsActions, setCategoryList, setCategoryToEdit, setEditorBusy } from "./actions";

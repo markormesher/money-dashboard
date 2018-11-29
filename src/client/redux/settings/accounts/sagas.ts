@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
-import { KeyCache } from "../../caching/key-cache";
+import { KeyCache } from "../../caching/KeyCache";
 import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
 import { AccountSettingsActions, setAccountList, setAccountToEdit, setEditorBusy } from "./actions";

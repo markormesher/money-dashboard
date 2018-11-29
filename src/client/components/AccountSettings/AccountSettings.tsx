@@ -8,7 +8,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateAccountTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { KeyCache } from "../../redux/caching/key-cache";
+import { KeyCache } from "../../redux/caching/KeyCache";
 import { IRootState } from "../../redux/root";
 import { setAccountToEdit, setDisplayActiveOnly, startDeleteAccount } from "../../redux/settings/accounts/actions";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";

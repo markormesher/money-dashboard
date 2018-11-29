@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import { all } from "redux-saga/effects";
 import { authReducer, IAuthState } from "./auth/reducer";
 import { authSagas } from "./auth/sagas";
-import { KeyCache } from "./caching/key-cache";
+import { KeyCache } from "./caching/KeyCache";
 import { dashboardReducer, IDashboardState } from "./dashboard/reducer";
 import { dashboardSagas } from "./dashboard/sagas";
 import { globalReducer, IGlobalState } from "./global/reducer";
