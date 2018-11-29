@@ -31,7 +31,7 @@ function mapStateToProps(state: IRootState, props: ICategorySettingsProps): ICat
 	return {
 		...props,
 		cacheTime: KeyCache.getKeyTime("categories"),
-		categoryToEdit: state.settings.categories.categoryToEdit,
+		categoryToEdit: state.categories.categoryToEdit,
 	};
 }
 

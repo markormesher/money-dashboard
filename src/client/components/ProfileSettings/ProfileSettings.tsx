@@ -32,7 +32,7 @@ function mapStateToProps(state: IRootState, props: IProfileSettingsProps): IProf
 	return {
 		...props,
 		cacheTime: KeyCache.getKeyTime("profiles"),
-		profileToEdit: state.settings.profiles.profileToEdit,
+		profileToEdit: state.profiles.profileToEdit,
 		activeProfile: state.auth.activeUser.profiles[state.auth.activeProfile],
 	};
 }

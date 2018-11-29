@@ -32,8 +32,8 @@ interface IEditCategoryModalState {
 function mapStateToProps(state: IRootState, props: IEditCategoryModalProps): IEditCategoryModalProps {
 	return {
 		...props,
-		categoryToEdit: state.settings.categories.categoryToEdit,
-		editorBusy: state.settings.categories.editorBusy,
+		categoryToEdit: state.categories.categoryToEdit,
+		editorBusy: state.categories.editorBusy,
 	};
 }
 

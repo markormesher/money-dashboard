@@ -49,7 +49,7 @@ interface IAssetPerformanceReportState {
 function mapStateToProps(state: IRootState, props: IAssetPerformanceReportProps): IAssetPerformanceReportProps {
 	return {
 		...props,
-		accountList: state.settings.accounts.accountList,
+		accountList: state.accounts.accountList,
 	};
 }
 

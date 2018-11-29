@@ -35,8 +35,8 @@ function mapStateToProps(state: IRootState, props: IAccountSettingsProps): IAcco
 	return {
 		...props,
 		cacheTime: KeyCache.getKeyTime("accounts"),
-		displayActiveOnly: state.settings.accounts.displayActiveOnly,
-		accountToEdit: state.settings.accounts.accountToEdit,
+		displayActiveOnly: state.accounts.displayActiveOnly,
+		accountToEdit: state.accounts.accountToEdit,
 	};
 }
 

@@ -6,46 +6,46 @@ import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 
-interface IProfileSettingsState {
+interface IProfilesState {
 	readonly profileToEdit: ThinProfile;
 	readonly editorBusy: boolean;
 }
 
-const initialState: IProfileSettingsState = {
+const initialState: IProfilesState = {
 	profileToEdit: undefined,
 	editorBusy: false,
 };
 
-enum ProfileSettingsActions {
-	START_DELETE_PROFILE = "ProfileSettingsActions.START_DELETE_PROFILE",
-	START_SAVE_PROFILE = "ProfileSettingsActions.START_SAVE_PROFILE",
+enum ProfileActions {
+	START_DELETE_PROFILE = "ProfileActions.START_DELETE_PROFILE",
+	START_SAVE_PROFILE = "ProfileActions.START_SAVE_PROFILE",
 
-	SET_PROFILE_TO_EDIT = "ProfileSettingsActions.SET_PROFILE_TO_EDIT",
-	SET_EDITOR_BUSY = "ProfileSettingsActions.SET_EDITOR_BUSY",
+	SET_PROFILE_TO_EDIT = "ProfileActions.SET_PROFILE_TO_EDIT",
+	SET_EDITOR_BUSY = "ProfileActions.SET_EDITOR_BUSY",
 }
 
 const startDeleteProfile: ActionCreator<PayloadAction> = (profileId: string) => ({
-	type: ProfileSettingsActions.START_DELETE_PROFILE,
+	type: ProfileActions.START_DELETE_PROFILE,
 	payload: { profileId },
 });
 
 const startSaveProfile: ActionCreator<PayloadAction> = (profile: Partial<ThinProfile>) => ({
-	type: ProfileSettingsActions.START_SAVE_PROFILE,
+	type: ProfileActions.START_SAVE_PROFILE,
 	payload: { profile },
 });
 
 const setProfileToEdit: ActionCreator<PayloadAction> = (profile: ThinProfile) => ({
-	type: ProfileSettingsActions.SET_PROFILE_TO_EDIT,
+	type: ProfileActions.SET_PROFILE_TO_EDIT,
 	payload: { profile },
 });
 
 const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
-	type: ProfileSettingsActions.SET_EDITOR_BUSY,
+	type: ProfileActions.SET_EDITOR_BUSY,
 	payload: { editorBusy },
 });
 
 function*deleteProfileSaga(): Generator {
-	yield takeEvery(ProfileSettingsActions.START_DELETE_PROFILE, function*(action: PayloadAction): Generator {
+	yield takeEvery(ProfileActions.START_DELETE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios.post(`/settings/profiles/delete/${action.payload.profileId}`).then((res) => res.data));
 			yield put(KeyCache.touchKey("profiles"));
@@ -56,7 +56,7 @@ function*deleteProfileSaga(): Generator {
 }
 
 function*saveProfileSaga(): Generator {
-	yield takeEvery(ProfileSettingsActions.START_SAVE_PROFILE, function*(action: PayloadAction): Generator {
+	yield takeEvery(ProfileActions.START_SAVE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
 			const profile: Partial<ThinProfile> = action.payload.profile;
 			const profileId = profile.id || "";
@@ -75,22 +75,22 @@ function*saveProfileSaga(): Generator {
 	});
 }
 
-function*profileSettingsSagas(): Generator {
+function*profilesSagas(): Generator {
 	yield all([
 		deleteProfileSaga(),
 		saveProfileSaga(),
 	]);
 }
 
-function profileSettingsReducer(state = initialState, action: PayloadAction): IProfileSettingsState {
+function profilesReducer(state = initialState, action: PayloadAction): IProfilesState {
 	switch (action.type) {
-		case ProfileSettingsActions.SET_PROFILE_TO_EDIT:
+		case ProfileActions.SET_PROFILE_TO_EDIT:
 			return {
 				...state,
 				profileToEdit: action.payload.profile,
 			};
 
-		case ProfileSettingsActions.SET_EDITOR_BUSY:
+		case ProfileActions.SET_EDITOR_BUSY:
 			return {
 				...state,
 				editorBusy: action.payload.editorBusy,
@@ -102,9 +102,9 @@ function profileSettingsReducer(state = initialState, action: PayloadAction): IP
 }
 
 export {
-	IProfileSettingsState,
-	profileSettingsReducer,
-	profileSettingsSagas,
+	IProfilesState,
+	profilesReducer,
+	profilesSagas,
 	startDeleteProfile,
 	startSaveProfile,
 	setProfileToEdit,

@@ -40,9 +40,9 @@ interface IEditBudgetModalState {
 function mapStateToProps(state: IRootState, props: IEditBudgetModalProps): IEditBudgetModalProps {
 	return {
 		...props,
-		budgetToEdit: state.settings.budgets.budgetToEdit,
-		editorBusy: state.settings.budgets.editorBusy,
-		categoryList: state.settings.categories.categoryList,
+		budgetToEdit: state.budgets.budgetToEdit,
+		editorBusy: state.budgets.editorBusy,
+		categoryList: state.categories.categoryList,
 	};
 }
 

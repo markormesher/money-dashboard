@@ -50,8 +50,8 @@ function mapStateToProps(state: IRootState, props: IEditTransactionModalProps): 
 		...props,
 		transactionToEdit: state.transactions.transactionToEdit,
 		editorBusy: state.transactions.editorBusy,
-		categoryList: state.settings.categories.categoryList,
-		accountList: state.settings.accounts.accountList,
+		categoryList: state.categories.categoryList,
+		accountList: state.accounts.accountList,
 		payeeList: state.transactions.payeeList,
 	};
 }

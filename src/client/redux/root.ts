@@ -1,58 +1,55 @@
 import { combineReducers } from "redux";
 import { all } from "redux-saga/effects";
-import { accountSettingsReducer, accountSettingsSagas, IAccountSettingsState } from "./accounts";
+import { accountsReducer, accountsSagas, IAccountsState } from "./accounts";
 import { authReducer, authSagas, IAuthState } from "./auth";
-import { budgetSettingsReducer, budgetSettingsSagas, IBudgetSettingsState } from "./budgets";
-import { categorySettingsReducer, categorySettingsSagas, ICategorySettingsState } from "./categories";
+import { budgetsReducer, budgetsSagas, IBudgetsState } from "./budgets";
+import { categoriesReducer, categoriesSagas, ICategoriesState } from "./categories";
 import { dashboardReducer, dashboardSagas, IDashboardState } from "./dashboard";
 import { globalReducer, IGlobalState } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { INavState, navReducer } from "./nav";
-import { IProfileSettingsState, profileSettingsReducer, profileSettingsSagas } from "./profiles";
+import { IProfilesState, profilesReducer, profilesSagas } from "./profiles";
 import { ITransactionsState, transactionsReducer, transactionsSagas } from "./transactions";
 
 interface IRootState {
+	readonly accounts?: IAccountsState;
 	readonly auth?: IAuthState;
+	readonly budgets?: IBudgetsState;
+	readonly categories?: ICategoriesState;
 	readonly dashboard?: IDashboardState;
 	readonly global?: IGlobalState;
 	readonly nav?: INavState;
+	readonly profiles?: IProfilesState;
+	readonly transactions?: ITransactionsState;
+
 	readonly router?: { // from connected-react-router
 		readonly location?: {
 			readonly pathname?: string;
 		};
 	};
-	readonly settings?: {
-		readonly accounts?: IAccountSettingsState;
-		readonly budgets?: IBudgetSettingsState;
-		readonly categories?: ICategorySettingsState;
-		readonly profiles?: IProfileSettingsState;
-	};
-	readonly transactions?: ITransactionsState;
 }
 
 const rootReducer = combineReducers({
 	[KeyCache.STATE_KEY]: KeyCache.reducer,
+	accounts: accountsReducer,
 	auth: authReducer,
+	budgets: budgetsReducer,
+	categories: categoriesReducer,
 	dashboard: dashboardReducer,
 	global: globalReducer,
 	nav: navReducer,
-	settings: combineReducers({
-		accounts: accountSettingsReducer,
-		budgets: budgetSettingsReducer,
-		categories: categorySettingsReducer,
-		profiles: profileSettingsReducer,
-	}),
+	profiles: profilesReducer,
 	transactions: transactionsReducer,
 });
 
 function*rootSaga(): Generator {
 	yield all([
-		accountSettingsSagas(),
-		dashboardSagas(),
+		accountsSagas(),
 		authSagas(),
-		budgetSettingsSagas(),
-		categorySettingsSagas(),
-		profileSettingsSagas(),
+		budgetsSagas(),
+		categoriesSagas(),
+		dashboardSagas(),
+		profilesSagas(),
 		transactionsSagas(),
 	]);
 }

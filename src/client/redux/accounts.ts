@@ -6,61 +6,61 @@ import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 
-interface IAccountSettingsState {
+interface IAccountsState {
 	readonly displayActiveOnly: boolean;
 	readonly accountToEdit: ThinAccount;
 	readonly editorBusy: boolean;
 	readonly accountList: ThinAccount[];
 }
 
-const initialState: IAccountSettingsState = {
+const initialState: IAccountsState = {
 	displayActiveOnly: true,
 	accountToEdit: undefined,
 	editorBusy: false,
 	accountList: undefined,
 };
 
-enum AccountSettingsActions {
-	START_DELETE_ACCOUNT = "AccountSettingsActions.START_DELETE_ACCOUNT",
-	START_SAVE_ACCOUNT = "AccountSettingsActions.START_SAVE_ACCOUNT",
-	START_LOAD_ACCOUNT_LIST = "AccountSettingsActions.START_LOAD_ACCOUNT_LIST",
-	SET_DISPLAY_ACTIVE_ONLY = "AccountSettingsActions.SET_DISPLAY_ACTIVE_ONLY",
-	SET_ACCOUNT_TO_EDIT = "AccountSettingsActions.SET_ACCOUNT_TO_EDIT",
-	SET_EDITOR_BUSY = "AccountSettingsActions.SET_EDITOR_BUSY",
-	SET_ACCOUNT_LIST = "AccountSettingsActions.SET_ACCOUNT_LIST",
+enum AccountActions {
+	START_DELETE_ACCOUNT = "AccountActions.START_DELETE_ACCOUNT",
+	START_SAVE_ACCOUNT = "AccountActions.START_SAVE_ACCOUNT",
+	START_LOAD_ACCOUNT_LIST = "AccountActions.START_LOAD_ACCOUNT_LIST",
+	SET_DISPLAY_ACTIVE_ONLY = "AccountActions.SET_DISPLAY_ACTIVE_ONLY",
+	SET_ACCOUNT_TO_EDIT = "AccountActions.SET_ACCOUNT_TO_EDIT",
+	SET_EDITOR_BUSY = "AccountActions.SET_EDITOR_BUSY",
+	SET_ACCOUNT_LIST = "AccountActions.SET_ACCOUNT_LIST",
 }
 
 const startDeleteAccount: ActionCreator<PayloadAction> = (accountId: string) => ({
-	type: AccountSettingsActions.START_DELETE_ACCOUNT,
+	type: AccountActions.START_DELETE_ACCOUNT,
 	payload: { accountId },
 });
 
 const startSaveAccount: ActionCreator<PayloadAction> = (account: Partial<ThinAccount>) => ({
-	type: AccountSettingsActions.START_SAVE_ACCOUNT,
+	type: AccountActions.START_SAVE_ACCOUNT,
 	payload: { account },
 });
 
 const startLoadAccountList: ActionCreator<PayloadAction> = () => ({
-	type: AccountSettingsActions.START_LOAD_ACCOUNT_LIST,
+	type: AccountActions.START_LOAD_ACCOUNT_LIST,
 });
 
 const setDisplayActiveOnly: ActionCreator<PayloadAction> = (activeOnly: boolean) => ({
-	type: AccountSettingsActions.SET_DISPLAY_ACTIVE_ONLY,
+	type: AccountActions.SET_DISPLAY_ACTIVE_ONLY,
 	payload: { activeOnly },
 });
 
 const setAccountToEdit: ActionCreator<PayloadAction> = (account: ThinAccount) => ({
-	type: AccountSettingsActions.SET_ACCOUNT_TO_EDIT,
+	type: AccountActions.SET_ACCOUNT_TO_EDIT,
 	payload: { account },
 });
 
 const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
-	type: AccountSettingsActions.SET_EDITOR_BUSY,
+	type: AccountActions.SET_EDITOR_BUSY,
 	payload: { editorBusy },
 });
 
 const setAccountList: ActionCreator<PayloadAction> = (accountList: ThinAccount[]) => ({
-	type: AccountSettingsActions.SET_ACCOUNT_LIST,
+	type: AccountActions.SET_ACCOUNT_LIST,
 	payload: {
 		accountList,
 		accountListLoadedAt: new Date().getTime(),
@@ -68,7 +68,7 @@ const setAccountList: ActionCreator<PayloadAction> = (accountList: ThinAccount[]
 });
 
 function*deleteAccountSaga(): Generator {
-	yield takeEvery(AccountSettingsActions.START_DELETE_ACCOUNT, function*(action: PayloadAction): Generator {
+	yield takeEvery(AccountActions.START_DELETE_ACCOUNT, function*(action: PayloadAction): Generator {
 		try {
 			const accountId: string = action.payload.accountId;
 			yield call(() => axios.post(`/settings/accounts/delete/${accountId}`));
@@ -80,7 +80,7 @@ function*deleteAccountSaga(): Generator {
 }
 
 function*saveAccountSaga(): Generator {
-	yield takeEvery(AccountSettingsActions.START_SAVE_ACCOUNT, function*(action: PayloadAction): Generator {
+	yield takeEvery(AccountActions.START_SAVE_ACCOUNT, function*(action: PayloadAction): Generator {
 		try {
 			const account: Partial<ThinAccount> = action.payload.account;
 			const accountId = account.id || "";
@@ -100,7 +100,7 @@ function*saveAccountSaga(): Generator {
 }
 
 function*loadAccountListSaga(): Generator {
-	yield takeEvery(AccountSettingsActions.START_LOAD_ACCOUNT_LIST, function*(): Generator {
+	yield takeEvery(AccountActions.START_LOAD_ACCOUNT_LIST, function*(): Generator {
 		if (KeyCache.keyIsValid("account-list", ["accounts"])) {
 			return;
 		}
@@ -118,7 +118,7 @@ function*loadAccountListSaga(): Generator {
 	});
 }
 
-function*accountSettingsSagas(): Generator {
+function*accountsSagas(): Generator {
 	yield all([
 		deleteAccountSaga(),
 		saveAccountSaga(),
@@ -126,27 +126,27 @@ function*accountSettingsSagas(): Generator {
 	]);
 }
 
-function accountSettingsReducer(state = initialState, action: PayloadAction): IAccountSettingsState {
+function accountsReducer(state = initialState, action: PayloadAction): IAccountsState {
 	switch (action.type) {
-		case AccountSettingsActions.SET_DISPLAY_ACTIVE_ONLY:
+		case AccountActions.SET_DISPLAY_ACTIVE_ONLY:
 			return {
 				...state,
 				displayActiveOnly: action.payload.activeOnly,
 			};
 
-		case AccountSettingsActions.SET_ACCOUNT_TO_EDIT:
+		case AccountActions.SET_ACCOUNT_TO_EDIT:
 			return {
 				...state,
 				accountToEdit: action.payload.account,
 			};
 
-		case AccountSettingsActions.SET_EDITOR_BUSY:
+		case AccountActions.SET_EDITOR_BUSY:
 			return {
 				...state,
 				editorBusy: action.payload.editorBusy,
 			};
 
-		case AccountSettingsActions.SET_ACCOUNT_LIST:
+		case AccountActions.SET_ACCOUNT_LIST:
 			return {
 				...state,
 				accountList: action.payload.accountList,
@@ -158,9 +158,9 @@ function accountSettingsReducer(state = initialState, action: PayloadAction): IA
 }
 
 export {
-	IAccountSettingsState,
-	accountSettingsReducer,
-	accountSettingsSagas,
+	IAccountsState,
+	accountsReducer,
+	accountsSagas,
 	startDeleteAccount,
 	startSaveAccount,
 	startLoadAccountList,

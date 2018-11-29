@@ -32,8 +32,8 @@ interface ICloneBudgetModalState {
 function mapStateToProps(state: IRootState, props: ICloneBudgetModalProps): ICloneBudgetModalProps {
 	return {
 		...props,
-		budgetIdsToClone: state.settings.budgets.budgetIdsToClone,
-		editorBusy: state.settings.budgets.editorBusy,
+		budgetIdsToClone: state.budgets.budgetIdsToClone,
+		editorBusy: state.budgets.editorBusy,
 	};
 }
 

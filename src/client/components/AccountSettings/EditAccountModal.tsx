@@ -31,8 +31,8 @@ interface IEditAccountModalState {
 function mapStateToProps(state: IRootState, props: IEditAccountModalProps): IEditAccountModalProps {
 	return {
 		...props,
-		accountToEdit: state.settings.accounts.accountToEdit,
-		editorBusy: state.settings.accounts.editorBusy,
+		accountToEdit: state.accounts.accountToEdit,
+		editorBusy: state.accounts.editorBusy,
 	};
 }
 

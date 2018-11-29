@@ -47,9 +47,9 @@ function mapStateToProps(state: IRootState, props: IBudgetSettingsProps): IBudge
 	return {
 		...props,
 		cacheTime: KeyCache.getKeyTime("budgets"),
-		displayCurrentOnly: state.settings.budgets.displayCurrentOnly,
-		budgetToEdit: state.settings.budgets.budgetToEdit,
-		budgetIdsToClone: state.settings.budgets.budgetIdsToClone,
+		displayCurrentOnly: state.budgets.displayCurrentOnly,
+		budgetToEdit: state.budgets.budgetToEdit,
+		budgetIdsToClone: state.budgets.budgetIdsToClone,
 	};
 }
 

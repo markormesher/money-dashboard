@@ -29,8 +29,8 @@ interface IEditProfileModalState {
 function mapStateToProps(state: IRootState, props: IEditProfileModalProps): IEditProfileModalProps {
 	return {
 		...props,
-		profileToEdit: state.settings.profiles.profileToEdit,
-		editorBusy: state.settings.categories.editorBusy,
+		profileToEdit: state.profiles.profileToEdit,
+		editorBusy: state.categories.editorBusy,
 	};
 }
 

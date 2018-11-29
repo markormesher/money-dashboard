@@ -6,43 +6,43 @@ import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 
-interface IBudgetSettingsState {
+interface IBudgetsState {
 	readonly displayCurrentOnly: boolean;
 	readonly budgetToEdit: ThinBudget;
 	readonly budgetIdsToClone: string[];
 	readonly editorBusy: boolean;
 }
 
-const initialState: IBudgetSettingsState = {
+const initialState: IBudgetsState = {
 	displayCurrentOnly: true,
 	budgetToEdit: undefined,
 	budgetIdsToClone: undefined,
 	editorBusy: false,
 };
 
-enum BudgetSettingsActions {
-	START_DELETE_BUDGET = "BudgetSettingsActions.START_DELETE_BUDGET",
-	START_SAVE_BUDGET = "BudgetSettingsActions.START_SAVE_BUDGET",
-	START_CLONE_BUDGETS = "BudgetSettingsActions.START_CLONE_BUDGETS",
+enum BudgetActions {
+	START_DELETE_BUDGET = "BudgetActions.START_DELETE_BUDGET",
+	START_SAVE_BUDGET = "BudgetActions.START_SAVE_BUDGET",
+	START_CLONE_BUDGETS = "BudgetActions.START_CLONE_BUDGETS",
 
-	SET_DISPLAY_CURRENT_ONLY = "BudgetSettingsActions.SET_DISPLAY_CURRENT_ONLY",
-	SET_BUDGET_TO_EDIT = "BudgetSettingsActions.SET_BUDGET_TO_EDIT",
-	SET_BUDGETS_TO_CLONE = "BudgetSettingsActions.SET_BUDGETS_TO_CLONE",
-	SET_EDITOR_BUSY = "BudgetSettingsActions.SET_EDITOR_BUSY",
+	SET_DISPLAY_CURRENT_ONLY = "BudgetActions.SET_DISPLAY_CURRENT_ONLY",
+	SET_BUDGET_TO_EDIT = "BudgetActions.SET_BUDGET_TO_EDIT",
+	SET_BUDGETS_TO_CLONE = "BudgetActions.SET_BUDGETS_TO_CLONE",
+	SET_EDITOR_BUSY = "BudgetActions.SET_EDITOR_BUSY",
 }
 
 const startDeleteBudget: ActionCreator<PayloadAction> = (budgetId: string) => ({
-	type: BudgetSettingsActions.START_DELETE_BUDGET,
+	type: BudgetActions.START_DELETE_BUDGET,
 	payload: { budgetId },
 });
 
 const startSaveBudget: ActionCreator<PayloadAction> = (budget: Partial<ThinBudget>) => ({
-	type: BudgetSettingsActions.START_SAVE_BUDGET,
+	type: BudgetActions.START_SAVE_BUDGET,
 	payload: { budget },
 });
 
 const startCloneBudgets: ActionCreator<PayloadAction> = (budgetIds: string[], startDate: string, endDate: string) => ({
-	type: BudgetSettingsActions.START_CLONE_BUDGETS,
+	type: BudgetActions.START_CLONE_BUDGETS,
 	payload: {
 		budgetIds,
 		startDate,
@@ -51,27 +51,27 @@ const startCloneBudgets: ActionCreator<PayloadAction> = (budgetIds: string[], st
 });
 
 const setDisplayCurrentOnly: ActionCreator<PayloadAction> = (currentOnly: boolean) => ({
-	type: BudgetSettingsActions.SET_DISPLAY_CURRENT_ONLY,
+	type: BudgetActions.SET_DISPLAY_CURRENT_ONLY,
 	payload: { currentOnly },
 });
 
 const setBudgetToEdit: ActionCreator<PayloadAction> = (budget: ThinBudget) => ({
-	type: BudgetSettingsActions.SET_BUDGET_TO_EDIT,
+	type: BudgetActions.SET_BUDGET_TO_EDIT,
 	payload: { budget },
 });
 
 const setBudgetIdsToClone: ActionCreator<PayloadAction> = (budgets: string[]) => ({
-	type: BudgetSettingsActions.SET_BUDGETS_TO_CLONE,
+	type: BudgetActions.SET_BUDGETS_TO_CLONE,
 	payload: { budgets },
 });
 
 const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
-	type: BudgetSettingsActions.SET_EDITOR_BUSY,
+	type: BudgetActions.SET_EDITOR_BUSY,
 	payload: { editorBusy },
 });
 
 function*deleteBudgetSaga(): Generator {
-	yield takeEvery(BudgetSettingsActions.START_DELETE_BUDGET, function*(action: PayloadAction): Generator {
+	yield takeEvery(BudgetActions.START_DELETE_BUDGET, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios.post(`/settings/budgets/delete/${action.payload.budgetId}`).then((res) => res.data));
 			yield put(KeyCache.touchKey("budgets"));
@@ -82,7 +82,7 @@ function*deleteBudgetSaga(): Generator {
 }
 
 function*saveBudgetSaga(): Generator {
-	yield takeEvery(BudgetSettingsActions.START_SAVE_BUDGET, function*(action: PayloadAction): Generator {
+	yield takeEvery(BudgetActions.START_SAVE_BUDGET, function*(action: PayloadAction): Generator {
 		try {
 			const budget: Partial<ThinBudget> = action.payload.budget;
 			const budgetId = budget.id || "";
@@ -102,7 +102,7 @@ function*saveBudgetSaga(): Generator {
 }
 
 function*cloneBudgetsSaga(): Generator {
-	yield takeEvery(BudgetSettingsActions.START_CLONE_BUDGETS, function*(action: PayloadAction): Generator {
+	yield takeEvery(BudgetActions.START_CLONE_BUDGETS, function*(action: PayloadAction): Generator {
 		try {
 			const budgetIds: string[] = action.payload.budgetIds;
 			const startDate: string = action.payload.startDate;
@@ -126,7 +126,7 @@ function*cloneBudgetsSaga(): Generator {
 	});
 }
 
-function*budgetSettingsSagas(): Generator {
+function*budgetsSagas(): Generator {
 	yield all([
 		deleteBudgetSaga(),
 		saveBudgetSaga(),
@@ -134,27 +134,27 @@ function*budgetSettingsSagas(): Generator {
 	]);
 }
 
-function budgetSettingsReducer(state = initialState, action: PayloadAction): IBudgetSettingsState {
+function budgetsReducer(state = initialState, action: PayloadAction): IBudgetsState {
 	switch (action.type) {
-		case BudgetSettingsActions.SET_DISPLAY_CURRENT_ONLY:
+		case BudgetActions.SET_DISPLAY_CURRENT_ONLY:
 			return {
 				...state,
 				displayCurrentOnly: action.payload.currentOnly,
 			};
 
-		case BudgetSettingsActions.SET_BUDGET_TO_EDIT:
+		case BudgetActions.SET_BUDGET_TO_EDIT:
 			return {
 				...state,
 				budgetToEdit: action.payload.budget,
 			};
 
-		case BudgetSettingsActions.SET_BUDGETS_TO_CLONE:
+		case BudgetActions.SET_BUDGETS_TO_CLONE:
 			return {
 				...state,
 				budgetIdsToClone: action.payload.budgets,
 			};
 
-		case BudgetSettingsActions.SET_EDITOR_BUSY:
+		case BudgetActions.SET_EDITOR_BUSY:
 			return {
 				...state,
 				editorBusy: action.payload.editorBusy,
@@ -166,9 +166,9 @@ function budgetSettingsReducer(state = initialState, action: PayloadAction): IBu
 }
 
 export {
-	IBudgetSettingsState,
-	budgetSettingsReducer,
-	budgetSettingsSagas,
+	IBudgetsState,
+	budgetsReducer,
+	budgetsSagas,
 	startDeleteBudget,
 	startSaveBudget,
 	startCloneBudgets,
