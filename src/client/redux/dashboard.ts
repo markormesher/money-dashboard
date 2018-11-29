@@ -4,8 +4,12 @@ import { all, call, put, takeEvery } from "redux-saga/effects";
 import { IAccountSummary } from "../../server/model-thins/IAccountSummary";
 import { IBudgetBalance } from "../../server/statistics/budget-statistics";
 import { ICategoryBalance } from "../../server/statistics/category-statistics";
+import { AccountCacheKeys } from "./accounts";
+import { BudgetCacheKeys } from "./budgets";
 import { setError } from "./global";
+import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
+import { TransactionCacheKeys } from "./transactions";
 
 interface IDashboardState {
 	readonly accountSummaries?: IAccountSummary[];
@@ -25,6 +29,12 @@ enum DashboardActions {
 	SET_ACCOUNT_SUMMARIES = "DashboardActions.SET_ACCOUNT_SUMMARIES",
 	SET_BUDGET_BALANCES = "DashboardActions.SET_BUDGET_BALANCES",
 	SET_MEMO_CATEGORY_BALANCES = "DashboardActions.SET_MEMO_CATEGORY_BALANCES",
+}
+
+enum DashboardCacheKeys {
+	ACCOUNT_BALANCES = "DashboardCacheKeys.ACCOUNT_BALANCES",
+	BUDGET_BALANCES = "DashboardCacheKeys.BUDGET_BALANCES",
+	MEMO_CATEGORY_BALANCE = "DashboardCacheKeys.MEMO_CATEGORY_BALANCE",
 }
 
 const startLoadAccountSummaries: ActionCreator<PayloadAction> = () => ({
@@ -55,13 +65,20 @@ const setMemoCategoryBalances: ActionCreator<PayloadAction> = (memoCategoryBalan
 });
 
 function*loadAccountSummariesSaga(): Generator {
-	// TODO: caching
 	yield takeEvery(DashboardActions.START_LOAD_ACCOUNT_SUMMARIES, function*(): Generator {
+		if (KeyCache.keyIsValid(DashboardCacheKeys.ACCOUNT_BALANCES, [
+			TransactionCacheKeys.TRANSACTION_DATA, AccountCacheKeys.ACCOUNT_DATA,
+		])) {
+			return;
+		}
 		try {
 			const summaries: IAccountSummary[] = yield call(() => {
 				return axios.get("/settings/accounts/summaries").then((res) => res.data);
 			});
-			yield put(setAccountSummaries(summaries));
+			yield all([
+				put(setAccountSummaries(summaries)),
+				put(KeyCache.touchKey(DashboardCacheKeys.ACCOUNT_BALANCES)),
+			]);
 		} catch (err) {
 			yield all([
 				put(setError(err)),
@@ -71,13 +88,20 @@ function*loadAccountSummariesSaga(): Generator {
 }
 
 function*loadBudgetBalancesSaga(): Generator {
-	// TODO: caching
 	yield takeEvery(DashboardActions.START_LOAD_BUDGET_BALANCES, function*(): Generator {
+		if (KeyCache.keyIsValid(DashboardCacheKeys.BUDGET_BALANCES, [
+			TransactionCacheKeys.TRANSACTION_DATA, BudgetCacheKeys.BUDGET_DATA,
+		])) {
+			return;
+		}
 		try {
 			const balances: IBudgetBalance[] = yield call(() => {
 				return axios.get("/settings/budgets/balances").then((res) => res.data);
 			});
-			yield put(setBudgetBalances(balances));
+			yield all([
+				put(setBudgetBalances(balances)),
+				put(KeyCache.touchKey(DashboardCacheKeys.BUDGET_BALANCES)),
+			]);
 		} catch (err) {
 			yield all([
 				put(setError(err)),
@@ -87,13 +111,18 @@ function*loadBudgetBalancesSaga(): Generator {
 }
 
 function*loadMemoCategoryBalancesSaga(): Generator {
-	// TODO: caching
 	yield takeEvery(DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES, function*(): Generator {
+		if (KeyCache.keyIsValid(DashboardCacheKeys.MEMO_CATEGORY_BALANCE, [TransactionCacheKeys.TRANSACTION_DATA])) {
+			return;
+		}
 		try {
 			const balances: IBudgetBalance[] = yield call(() => {
 				return axios.get("/settings/categories/memo-balances").then((res) => res.data);
 			});
-			yield put(setMemoCategoryBalances(balances));
+			yield all([
+				put(setMemoCategoryBalances(balances)),
+				put(KeyCache.touchKey(DashboardCacheKeys.MEMO_CATEGORY_BALANCE)),
+			]);
 		} catch (err) {
 			yield all([
 				put(setError(err)),
