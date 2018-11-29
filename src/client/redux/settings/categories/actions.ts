@@ -7,7 +7,6 @@ enum CategorySettingsActions {
 	START_SAVE_CATEGORY = "CategorySettingsActions.START_SAVE_CATEGORY",
 	START_LOAD_CATEGORY_LIST = "CategorySettingsActions.START_LOAD_CATEGORY_LIST",
 
-	SET_LAST_UPDATE = "CategorySettingsActions.SET_LAST_UPDATE",
 	SET_CATEGORY_TO_EDIT = "CategorySettingsActions.SET_CATEGORY_TO_EDIT",
 	SET_EDITOR_BUSY = "CategorySettingsActions.SET_EDITOR_BUSY",
 	SET_CATEGORY_LIST = "CategorySettingsActions.SET_CATEGORY_LIST",
@@ -28,12 +27,6 @@ const startSaveCategory: ActionCreator<PayloadAction> = (category: Partial<ThinC
 const startLoadCategoryList: ActionCreator<PayloadAction> = () => {
 	return {
 		type: CategorySettingsActions.START_LOAD_CATEGORY_LIST,
-	};
-};
-
-const setLastUpdate: ActionCreator<PayloadAction> = () => {
-	return {
-		type: CategorySettingsActions.SET_LAST_UPDATE, payload: { lastUpdate: new Date().getTime() },
 	};
 };
 
@@ -63,7 +56,6 @@ export {
 	startDeleteCategory,
 	startSaveCategory,
 	startLoadCategoryList,
-	setLastUpdate,
 	setCategoryToEdit,
 	setEditorBusy,
 	setCategoryList,

@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 import { all } from "redux-saga/effects";
 import { authReducer, IAuthState } from "./auth/reducer";
 import { authSagas } from "./auth/sagas";
+import { KeyCache } from "./caching/key-cache";
 import { dashboardReducer, IDashboardState } from "./dashboard/reducer";
 import { dashboardSagas } from "./dashboard/sagas";
 import { globalReducer, IGlobalState } from "./global/reducer";
@@ -37,6 +38,7 @@ interface IRootState {
 }
 
 const rootReducer = combineReducers({
+	[KeyCache.STATE_KEY]: KeyCache.reducer,
 	auth: authReducer,
 	dashboard: dashboardReducer,
 	global: globalReducer,

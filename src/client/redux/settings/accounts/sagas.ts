@@ -1,20 +1,17 @@
 import axios from "axios";
-import { all, call, put, select, takeEvery } from "redux-saga/effects";
+import { all, call, put, takeEvery } from "redux-saga/effects";
 import { ThinAccount } from "../../../../server/model-thins/ThinAccount";
+import { KeyCache } from "../../caching/key-cache";
 import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
-import { IRootState } from "../../root";
-import { AccountSettingsActions, setAccountList, setAccountToEdit, setEditorBusy, setLastUpdate } from "./actions";
-
-const lastUpdateSelector = (state: IRootState) => state.settings.accounts.lastUpdate;
-const lastLoadSelector = (state: IRootState) => state.settings.accounts.accountListLastLoaded;
+import { AccountSettingsActions, setAccountList, setAccountToEdit, setEditorBusy } from "./actions";
 
 function*deleteAccountSaga(): Generator {
 	yield takeEvery(AccountSettingsActions.START_DELETE_ACCOUNT, function*(action: PayloadAction): Generator {
 		try {
 			const accountId: string = action.payload.accountId;
 			yield call(() => axios.post(`/settings/accounts/delete/${accountId}`));
-			yield put(setLastUpdate());
+			yield put(KeyCache.touchKey("accounts"));
 		} catch (err) {
 			yield put(setError(err));
 		}
@@ -31,7 +28,7 @@ function*saveAccountSaga(): Generator {
 				call(() => axios.post(`/settings/accounts/edit/${accountId}`, account)),
 			]);
 			yield all([
-				put(setLastUpdate()),
+				put(KeyCache.touchKey("accounts")),
 				put(setEditorBusy(false)),
 				put(setAccountToEdit(undefined)),
 			]);
@@ -43,16 +40,17 @@ function*saveAccountSaga(): Generator {
 
 function*loadAccountListSaga(): Generator {
 	yield takeEvery(AccountSettingsActions.START_LOAD_ACCOUNT_LIST, function*(): Generator {
-		const lastUpdate = yield select(lastUpdateSelector);
-		const lastLoad = yield select(lastLoadSelector);
-		if (lastLoad >= lastUpdate) {
+		if (KeyCache.keyIsValid("account-list", ["accounts"])) {
 			return;
 		}
 		try {
 			const accountList: ThinAccount[] = yield call(() => {
 				return axios.get("/settings/accounts/list").then((res) => res.data);
 			});
-			yield put(setAccountList(accountList));
+			yield all([
+				put(setAccountList(accountList)),
+				put(KeyCache.touchKey("account-list")),
+			]);
 		} catch (err) {
 			yield put(setError(err));
 		}

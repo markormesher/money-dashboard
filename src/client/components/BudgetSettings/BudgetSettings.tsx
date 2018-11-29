@@ -8,6 +8,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
+import { KeyCache } from "../../redux/caching/key-cache";
 import { IRootState } from "../../redux/root";
 import {
 	setBudgetIdsToClone,
@@ -26,7 +27,7 @@ import { CloneBudgetModal } from "./CloneBudgetModal";
 import { EditBudgetModal } from "./EditBudgetModal";
 
 interface IBudgetSettingsProps {
-	readonly lastUpdate: number;
+	readonly cacheTime: number;
 	readonly displayCurrentOnly: boolean;
 	readonly budgetToEdit?: ThinBudget;
 	readonly budgetIdsToClone?: string[];
@@ -45,7 +46,7 @@ interface IBudgetSettingsState {
 function mapStateToProps(state: IRootState, props: IBudgetSettingsProps): IBudgetSettingsProps {
 	return {
 		...props,
-		lastUpdate: state.settings.budgets.lastUpdate,
+		cacheTime: KeyCache.getKeyTime("budgets"),
 		displayCurrentOnly: state.settings.budgets.displayCurrentOnly,
 		budgetToEdit: state.settings.budgets.budgetToEdit,
 		budgetIdsToClone: state.settings.budgets.budgetIdsToClone,
@@ -88,12 +89,10 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinBudget>("/settings/budgets/table-data", () => {
-		return {
-			lastUpdate: this.props.lastUpdate,
-			currentOnly: this.props.displayCurrentOnly,
-		};
-	});
+	private dataProvider = new ApiDataTableDataProvider<ThinBudget>("/settings/budgets/table-data", () => ({
+		cacheTime: this.props.cacheTime,
+		currentOnly: this.props.displayCurrentOnly,
+	}));
 
 	constructor(props: IBudgetSettingsProps) {
 		super(props);
@@ -109,7 +108,7 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 	}
 
 	public render(): ReactNode {
-		const { lastUpdate, budgetToEdit, budgetIdsToClone, displayCurrentOnly } = this.props;
+		const { cacheTime, budgetToEdit, budgetIdsToClone, displayCurrentOnly } = this.props;
 		const { selectedBudgetIds } = this.state;
 
 		return (
@@ -159,7 +158,7 @@ class UCBudgetSettings extends PureComponent<IBudgetSettingsProps, IBudgetSettin
 							columns={this.tableColumns}
 							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
-							watchedProps={{ displayCurrentOnly, lastUpdate }}
+							watchedProps={{ cacheTime, displayCurrentOnly }}
 					/>
 				</>
 		);

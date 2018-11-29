@@ -3,7 +3,6 @@ import { PayloadAction } from "../../PayloadAction";
 import { AccountSettingsActions } from "./actions";
 
 interface IAccountSettingsState {
-	readonly lastUpdate: number;
 	readonly displayActiveOnly: boolean;
 	readonly accountToEdit: ThinAccount;
 	readonly editorBusy: boolean;
@@ -12,7 +11,6 @@ interface IAccountSettingsState {
 }
 
 const initialState: IAccountSettingsState = {
-	lastUpdate: 0,
 	displayActiveOnly: true,
 	accountToEdit: undefined,
 	editorBusy: false,
@@ -26,12 +24,6 @@ function accountSettingsReducer(state = initialState, action: PayloadAction): IA
 			return {
 				...state,
 				displayActiveOnly: action.payload.activeOnly,
-			};
-
-		case AccountSettingsActions.SET_LAST_UPDATE:
-			return {
-				...state,
-				lastUpdate: action.payload.lastUpdate,
 			};
 
 		case AccountSettingsActions.SET_ACCOUNT_TO_EDIT:

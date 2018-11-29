@@ -3,7 +3,6 @@ import { PayloadAction } from "../../PayloadAction";
 import { BudgetSettingsActions } from "./actions";
 
 interface IBudgetSettingsState {
-	readonly lastUpdate: number;
 	readonly displayCurrentOnly: boolean;
 	readonly budgetToEdit: ThinBudget;
 	readonly budgetIdsToClone: string[];
@@ -11,7 +10,6 @@ interface IBudgetSettingsState {
 }
 
 const initialState: IBudgetSettingsState = {
-	lastUpdate: 0,
 	displayCurrentOnly: true,
 	budgetToEdit: undefined,
 	budgetIdsToClone: undefined,
@@ -20,12 +18,6 @@ const initialState: IBudgetSettingsState = {
 
 function budgetSettingsReducer(state = initialState, action: PayloadAction): IBudgetSettingsState {
 	switch (action.type) {
-		case BudgetSettingsActions.SET_LAST_UPDATE:
-			return {
-				...state,
-				lastUpdate: action.payload.lastUpdate,
-			};
-
 		case BudgetSettingsActions.SET_DISPLAY_CURRENT_ONLY:
 			return {
 				...state,

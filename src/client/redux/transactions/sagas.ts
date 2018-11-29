@@ -1,13 +1,10 @@
 import axios from "axios";
-import { all, call, put, select, takeEvery } from "redux-saga/effects";
+import { all, call, put, takeEvery } from "redux-saga/effects";
 import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
+import { KeyCache } from "../caching/key-cache";
 import { setError } from "../global/actions";
 import { PayloadAction } from "../PayloadAction";
-import { IRootState } from "../root";
-import { setEditorBusy, setLastUpdate, setPayeeList, setTransactionToEdit, TransactionsActions } from "./actions";
-
-const lastUpdateSelector = (state: IRootState) => state.transactions.lastUpdate;
-const lastLoadSelector = (state: IRootState) => state.transactions.payeeListLastLoaded;
+import { setEditorBusy, setPayeeList, setTransactionToEdit, TransactionsActions } from "./actions";
 
 function*deleteTransactionSaga(): Generator {
 	yield takeEvery(TransactionsActions.START_DELETE_TRANSACTION, function*(action: PayloadAction): Generator {
@@ -15,7 +12,7 @@ function*deleteTransactionSaga(): Generator {
 			yield call(() => axios
 					.post(`/transactions/delete/${action.payload.transactionId}`)
 					.then((res) => res.data));
-			yield put(setLastUpdate());
+			yield put(KeyCache.touchKey("transactions"));
 		} catch (err) {
 			yield put(setError(err));
 		}
@@ -32,7 +29,7 @@ function*saveTransactionSaga(): Generator {
 				call(() => axios.post(`/transactions/edit/${transactionId}`, transaction)),
 			]);
 			yield all([
-				put(setLastUpdate()),
+				put(KeyCache.touchKey("transactions")),
 				put(setEditorBusy(false)),
 
 				// always close the editor to reset it...
@@ -49,16 +46,17 @@ function*saveTransactionSaga(): Generator {
 
 function*loadPayeeListSaga(): Generator {
 	yield takeEvery(TransactionsActions.START_LOAD_PAYEE_LIST, function*(): Generator {
-		const lastUpdate = yield select(lastUpdateSelector);
-		const lastLoad = yield select(lastLoadSelector);
-		if (lastLoad >= lastUpdate) {
+		if (KeyCache.keyIsValid("transaction-payee-list", ["transactions"])) {
 			return;
 		}
 		try {
 			const payeeList: string[] = yield call(() => {
 				return axios.get("/transactions/payees").then((res) => res.data);
 			});
-			yield put(setPayeeList(payeeList));
+			yield all([
+				put(setPayeeList(payeeList)),
+				put(KeyCache.touchKey("transaction-payee-list")),
+			]);
 		} catch (err) {
 			yield put(setError(err));
 		}

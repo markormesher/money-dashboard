@@ -1,15 +1,16 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { ThinProfile } from "../../../../server/model-thins/ThinProfile";
+import { KeyCache } from "../../caching/key-cache";
 import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
-import { ProfileSettingsActions, setEditorBusy, setLastUpdate, setProfileToEdit } from "./actions";
+import { ProfileSettingsActions, setEditorBusy, setProfileToEdit } from "./actions";
 
 function*deleteProfileSaga(): Generator {
 	yield takeEvery(ProfileSettingsActions.START_DELETE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios.post(`/settings/profiles/delete/${action.payload.profileId}`).then((res) => res.data));
-			yield put(setLastUpdate());
+			yield put(KeyCache.touchKey("profiles"));
 		} catch (err) {
 			yield put(setError(err));
 		}
@@ -26,7 +27,7 @@ function*saveProfileSaga(): Generator {
 				call(() => axios.post(`/settings/profiles/edit/${profileId}`, profile)),
 			]);
 			yield all([
-				put(setLastUpdate()),
+				put(KeyCache.touchKey("profiles")),
 				put(setEditorBusy(false)),
 				put(setProfileToEdit(undefined)),
 			]);

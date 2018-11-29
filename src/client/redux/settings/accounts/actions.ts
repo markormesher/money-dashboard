@@ -8,7 +8,6 @@ enum AccountSettingsActions {
 	START_LOAD_ACCOUNT_LIST = "AccountSettingsActions.START_LOAD_ACCOUNT_LIST",
 
 	SET_DISPLAY_ACTIVE_ONLY = "AccountSettingsActions.SET_DISPLAY_ACTIVE_ONLY",
-	SET_LAST_UPDATE = "AccountSettingsActions.SET_LAST_UPDATE",
 	SET_ACCOUNT_TO_EDIT = "AccountSettingsActions.SET_ACCOUNT_TO_EDIT",
 	SET_EDITOR_BUSY = "AccountSettingsActions.SET_EDITOR_BUSY",
 	SET_ACCOUNT_LIST = "AccountSettingsActions.SET_ACCOUNT_LIST",
@@ -35,12 +34,6 @@ const startLoadAccountList: ActionCreator<PayloadAction> = () => {
 const setDisplayActiveOnly: ActionCreator<PayloadAction> = (activeOnly: boolean) => {
 	return {
 		type: AccountSettingsActions.SET_DISPLAY_ACTIVE_ONLY, payload: { activeOnly },
-	};
-};
-
-const setLastUpdate: ActionCreator<PayloadAction> = () => {
-	return {
-		type: AccountSettingsActions.SET_LAST_UPDATE, payload: { lastUpdate: new Date().getTime() },
 	};
 };
 
@@ -71,7 +64,6 @@ export {
 	startSaveAccount,
 	startLoadAccountList,
 	setDisplayActiveOnly,
-	setLastUpdate,
 	setAccountToEdit,
 	setEditorBusy,
 	setAccountList,

@@ -1,12 +1,13 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { PureComponent, ReactElement, ReactNode } from "react";
 import * as React from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
+import { KeyCache } from "../../redux/caching/key-cache";
 import { IRootState } from "../../redux/root";
 import { setProfileToEdit, startDeleteProfile } from "../../redux/settings/profiles/actions";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
@@ -18,7 +19,7 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { EditProfileModal } from "./EditProfileModal";
 
 interface IProfileSettingsProps {
-	readonly lastUpdate: number;
+	readonly cacheTime: number;
 	readonly profileToEdit?: ThinProfile;
 	readonly activeProfile?: ThinProfile;
 	readonly actions?: {
@@ -30,7 +31,7 @@ interface IProfileSettingsProps {
 function mapStateToProps(state: IRootState, props: IProfileSettingsProps): IProfileSettingsProps {
 	return {
 		...props,
-		lastUpdate: state.settings.profiles.lastUpdate,
+		cacheTime: KeyCache.getKeyTime("profiles"),
 		profileToEdit: state.settings.profiles.profileToEdit,
 		activeProfile: state.auth.activeUser.profiles[state.auth.activeProfile],
 	};
@@ -53,11 +54,9 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinProfile>("/settings/profiles/table-data", () => {
-		return {
-			lastUpdate: this.props.lastUpdate,
-		};
-	});
+	private dataProvider = new ApiDataTableDataProvider<ThinProfile>("/settings/profiles/table-data", () => ({
+		cacheTime: this.props.cacheTime,
+	}));
 
 	constructor(props: IProfileSettingsProps) {
 		super(props);
@@ -68,7 +67,7 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 	}
 
 	public render(): ReactNode {
-		const { lastUpdate, profileToEdit } = this.props;
+		const { cacheTime, profileToEdit } = this.props;
 
 		return (
 				<>
@@ -97,7 +96,7 @@ class UCProfileSettings extends PureComponent<IProfileSettingsProps> {
 							columns={this.tableColumns}
 							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
-							watchedProps={{ lastUpdate }}
+							watchedProps={{ cacheTime }}
 					/>
 				</>
 		);

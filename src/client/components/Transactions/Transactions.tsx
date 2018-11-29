@@ -9,6 +9,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
+import { KeyCache } from "../../redux/caching/key-cache";
 import { IRootState } from "../../redux/root";
 import { setDateMode, setTransactionToEdit, startDeleteTransaction } from "../../redux/transactions/actions";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
@@ -21,7 +22,7 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { EditTransactionModal } from "./EditTransactionModal";
 
 interface ITransactionProps {
-	readonly lastUpdate: number;
+	readonly cacheTime: number;
 	readonly dateMode: DateModeOption;
 	readonly transactionToEdit?: ThinTransaction;
 	readonly actions?: {
@@ -34,7 +35,7 @@ interface ITransactionProps {
 function mapStateToProps(state: IRootState, props: ITransactionProps): ITransactionProps {
 	return {
 		...props,
-		lastUpdate: state.transactions.lastUpdate,
+		cacheTime: KeyCache.getKeyTime("transactions"),
 		dateMode: state.transactions.dateMode,
 		transactionToEdit: state.transactions.transactionToEdit,
 	};
@@ -67,12 +68,10 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinTransaction>("/transactions/table-data", () => {
-		return {
-			lastUpdate: this.props.lastUpdate,
-			dateMode: this.props.dateMode,
-		};
-	});
+	private dataProvider = new ApiDataTableDataProvider<ThinTransaction>("/transactions/table-data", () => ({
+		cacheTime: this.props.cacheTime,
+		dateMode: this.props.dateMode,
+	}));
 
 	constructor(props: ITransactionProps) {
 		super(props);
@@ -83,7 +82,7 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 	}
 
 	public render(): ReactNode {
-		const { lastUpdate, dateMode, transactionToEdit } = this.props;
+		const { cacheTime, dateMode, transactionToEdit } = this.props;
 
 		return (
 				<>
@@ -119,7 +118,7 @@ class UCTransactions extends PureComponent<ITransactionProps> {
 					<DataTable<ThinTransaction>
 							columns={this.tableColumns}
 							dataProvider={this.dataProvider}
-							watchedProps={{ lastUpdate, dateMode }}
+							watchedProps={{ cacheTime, dateMode }}
 							rowRenderer={this.tableRowRenderer}
 					/>
 				</>

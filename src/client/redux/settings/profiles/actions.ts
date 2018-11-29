@@ -6,7 +6,6 @@ enum ProfileSettingsActions {
 	START_DELETE_PROFILE = "ProfileSettingsActions.START_DELETE_PROFILE",
 	START_SAVE_PROFILE = "ProfileSettingsActions.START_SAVE_PROFILE",
 
-	SET_LAST_UPDATE = "ProfileSettingsActions.SET_LAST_UPDATE",
 	SET_PROFILE_TO_EDIT = "ProfileSettingsActions.SET_PROFILE_TO_EDIT",
 	SET_EDITOR_BUSY = "ProfileSettingsActions.SET_EDITOR_BUSY",
 }
@@ -22,14 +21,6 @@ const startDeleteProfile: ActionCreator<PayloadAction> = (profileId: string) => 
 const startSaveProfile: ActionCreator<PayloadAction> = (profile: Partial<ThinProfile>) => {
 	return {
 		type: ProfileSettingsActions.START_SAVE_PROFILE, payload: { profile },
-	};
-};
-
-const setLastUpdate: ActionCreator<PayloadAction> = () => {
-	return {
-		type: ProfileSettingsActions.SET_LAST_UPDATE, payload: {
-			lastUpdate: new Date().getTime(),
-		},
 	};
 };
 
@@ -49,7 +40,6 @@ export {
 	ProfileSettingsActions,
 	startDeleteProfile,
 	startSaveProfile,
-	setLastUpdate,
 	setProfileToEdit,
 	setEditorBusy,
 };

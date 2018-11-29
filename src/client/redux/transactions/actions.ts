@@ -9,7 +9,6 @@ enum TransactionsActions {
 	START_LOAD_PAYEE_LIST = "TransactionSettingsActions.START_LOAD_PAYEE_LIST",
 
 	SET_DATE_MODE = "TransactionSettingsActions.SET_DATE_MODE",
-	SET_LAST_UPDATE = "TransactionSettingsActions.SET_LAST_UPDATE",
 	SET_TRANSACTION_TO_EDIT = "TransactionSettingsActions.SET_TRANSACTION_TO_EDIT",
 	SET_EDITOR_BUSY = "TransactionSettingsActions.SET_EDITOR_BUSY",
 	SET_PAYEE_LIST = "TransactionSettingsActions.SET_PAYEE_LIST",
@@ -37,12 +36,6 @@ const setDateMode: ActionCreator<PayloadAction> = (dateMode: DateModeOption) => 
 	};
 };
 
-const setLastUpdate: ActionCreator<PayloadAction> = () => {
-	return {
-		type: TransactionsActions.SET_LAST_UPDATE, payload: { lastUpdate: new Date().getTime() },
-	};
-};
-
 const setTransactionToEdit: ActionCreator<PayloadAction> = (transaction: ThinTransaction) => {
 	return {
 		type: TransactionsActions.SET_TRANSACTION_TO_EDIT, payload: { transaction },
@@ -67,7 +60,6 @@ export {
 	startSaveTransaction,
 	startLoadPayeeList,
 	setDateMode,
-	setLastUpdate,
 	setTransactionToEdit,
 	setEditorBusy,
 	setPayeeList,

@@ -8,6 +8,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
+import { KeyCache } from "../../redux/caching/key-cache";
 import { IRootState } from "../../redux/root";
 import { setCategoryToEdit, startDeleteCategory } from "../../redux/settings/categories/actions";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
@@ -18,7 +19,7 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { EditCategoryModal } from "./EditCategoryModal";
 
 interface ICategorySettingsProps {
-	readonly lastUpdate: number;
+	readonly cacheTime: number;
 	readonly categoryToEdit?: ThinCategory;
 	readonly actions?: {
 		readonly deleteCategory: (id: string) => AnyAction,
@@ -29,7 +30,7 @@ interface ICategorySettingsProps {
 function mapStateToProps(state: IRootState, props: ICategorySettingsProps): ICategorySettingsProps {
 	return {
 		...props,
-		lastUpdate: state.settings.categories.lastUpdate,
+		cacheTime: KeyCache.getKeyTime("categories"),
 		categoryToEdit: state.settings.categories.categoryToEdit,
 	};
 }
@@ -52,11 +53,9 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinCategory>("/settings/categories/table-data", () => {
-		return {
-			lastUpdate: this.props.lastUpdate,
-		};
-	});
+	private dataProvider = new ApiDataTableDataProvider<ThinCategory>("/settings/categories/table-data", () => ({
+		cacheTime: this.props.cacheTime,
+	}));
 
 	constructor(props: ICategorySettingsProps) {
 		super(props);
@@ -67,7 +66,7 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 	}
 
 	public render(): ReactNode {
-		const { lastUpdate, categoryToEdit } = this.props;
+		const { cacheTime, categoryToEdit } = this.props;
 
 		return (
 				<>
@@ -96,7 +95,7 @@ class UCCategorySettings extends PureComponent<ICategorySettingsProps> {
 							columns={this.tableColumns}
 							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
-							watchedProps={{ lastUpdate }}
+							watchedProps={{ cacheTime }}
 					/>
 				</>
 		);

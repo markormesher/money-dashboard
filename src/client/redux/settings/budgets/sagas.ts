@@ -1,15 +1,16 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { ThinBudget } from "../../../../server/model-thins/ThinBudget";
+import { KeyCache } from "../../caching/key-cache";
 import { setError } from "../../global/actions";
 import { PayloadAction } from "../../PayloadAction";
-import { BudgetSettingsActions, setBudgetIdsToClone, setBudgetToEdit, setEditorBusy, setLastUpdate } from "./actions";
+import { BudgetSettingsActions, setBudgetIdsToClone, setBudgetToEdit, setEditorBusy } from "./actions";
 
 function*deleteBudgetSaga(): Generator {
 	yield takeEvery(BudgetSettingsActions.START_DELETE_BUDGET, function*(action: PayloadAction): Generator {
 		try {
 			yield call(() => axios.post(`/settings/budgets/delete/${action.payload.budgetId}`).then((res) => res.data));
-			yield put(setLastUpdate());
+			yield put(KeyCache.touchKey("budgets"));
 		} catch (err) {
 			yield put(setError(err));
 		}
@@ -26,7 +27,7 @@ function*saveBudgetSaga(): Generator {
 				call(() => axios.post(`/settings/budgets/edit/${budgetId}`, budget)),
 			]);
 			yield all([
-				put(setLastUpdate()),
+				put(KeyCache.touchKey("budgets")),
 				put(setEditorBusy(false)),
 				put(setBudgetToEdit(undefined)),
 			]);
@@ -51,7 +52,7 @@ function*cloneBudgetsSaga(): Generator {
 				})),
 			]);
 			yield all([
-				put(setLastUpdate()),
+				put(KeyCache.touchKey("budgets")),
 				put(setEditorBusy(false)),
 				put(setBudgetIdsToClone(undefined)),
 			]);

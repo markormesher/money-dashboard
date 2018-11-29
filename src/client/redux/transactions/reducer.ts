@@ -4,31 +4,21 @@ import { PayloadAction } from "../PayloadAction";
 import { TransactionsActions } from "./actions";
 
 interface ITransactionsState {
-	readonly lastUpdate: number;
 	readonly dateMode: DateModeOption;
 	readonly transactionToEdit: ThinTransaction;
 	readonly editorBusy: boolean;
 	readonly payeeList: string[];
-	readonly payeeListLastLoaded: number;
 }
 
 const initialState: ITransactionsState = {
-	lastUpdate: 0,
 	dateMode: "transaction",
 	transactionToEdit: undefined,
 	editorBusy: false,
 	payeeList: undefined,
-	payeeListLastLoaded: -1,
 };
 
 function transactionsReducer(state = initialState, action: PayloadAction): ITransactionsState {
 	switch (action.type) {
-		case TransactionsActions.SET_LAST_UPDATE:
-			return {
-				...state,
-				lastUpdate: action.payload.lastUpdate,
-			};
-
 		case TransactionsActions.SET_DATE_MODE:
 			return {
 				...state,
@@ -51,7 +41,6 @@ function transactionsReducer(state = initialState, action: PayloadAction): ITran
 			return {
 				...state,
 				payeeList: action.payload.payeeList,
-				payeeListLastLoaded: new Date().getTime(),
 			};
 
 		default:

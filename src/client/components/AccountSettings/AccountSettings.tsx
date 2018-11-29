@@ -1,6 +1,6 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { PureComponent, ReactElement, ReactNode } from "react";
 import * as React from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
@@ -8,6 +8,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateAccountTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
+import { KeyCache } from "../../redux/caching/key-cache";
 import { IRootState } from "../../redux/root";
 import { setAccountToEdit, setDisplayActiveOnly, startDeleteAccount } from "../../redux/settings/accounts/actions";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
@@ -19,7 +20,7 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { EditAccountModal } from "./EditAccountModal";
 
 interface IAccountSettingsProps {
-	readonly lastUpdate?: number;
+	readonly cacheTime: number;
 	readonly displayActiveOnly?: boolean;
 	readonly accountToEdit?: ThinAccount;
 
@@ -33,7 +34,7 @@ interface IAccountSettingsProps {
 function mapStateToProps(state: IRootState, props: IAccountSettingsProps): IAccountSettingsProps {
 	return {
 		...props,
-		lastUpdate: state.settings.accounts.lastUpdate,
+		cacheTime: KeyCache.getKeyTime("accounts"),
 		displayActiveOnly: state.settings.accounts.displayActiveOnly,
 		accountToEdit: state.settings.accounts.accountToEdit,
 	};
@@ -58,12 +59,10 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinAccount>("/settings/accounts/table-data", () => {
-		return {
-			lastUpdate: this.props.lastUpdate,
-			activeOnly: this.props.displayActiveOnly,
-		};
-	});
+	private dataProvider = new ApiDataTableDataProvider<ThinAccount>("/settings/accounts/table-data", () => ({
+		cacheTime: this.props.cacheTime,
+		activeOnly: this.props.displayActiveOnly,
+	}));
 
 	constructor(props: IAccountSettingsProps) {
 		super(props);
@@ -74,7 +73,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 	}
 
 	public render(): ReactNode {
-		const { lastUpdate, displayActiveOnly, accountToEdit } = this.props;
+		const { cacheTime, displayActiveOnly, accountToEdit } = this.props;
 
 		return (
 				<>
@@ -112,7 +111,7 @@ class UCAccountSettings extends PureComponent<IAccountSettingsProps> {
 							columns={this.tableColumns}
 							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
-							watchedProps={{ displayActiveOnly, lastUpdate }}
+							watchedProps={{ cacheTime, displayActiveOnly }}
 					/>
 				</>
 		);
