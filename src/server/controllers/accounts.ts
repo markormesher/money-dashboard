@@ -8,7 +8,7 @@ import { requireUser } from "../middleware/auth-middleware";
 import { IAccountBalance } from "../model-thins/IAccountBalance";
 import { Account } from "../models/Account";
 import { User } from "../models/User";
-import { getAccountBalances } from "../statistics/account-statistics";
+import { getAccountBalances } from "../managers/account-manager";
 
 const router = Express.Router();
 

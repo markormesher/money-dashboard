@@ -5,7 +5,7 @@ import * as Moment from "moment";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
-import { IBalanceHistoryData } from "../../../server/controllers/reports/balance-history";
+import { IBalanceHistoryData } from "../../../server/model-thins/IBalanceHistoryData";
 import { DateModeOption } from "../../../server/models/Transaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";

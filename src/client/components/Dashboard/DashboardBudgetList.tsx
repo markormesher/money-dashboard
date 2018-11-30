@@ -3,7 +3,7 @@ import { faChartPie, faCheckCircle, faExclamationTriangle } from "@fortawesome/p
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
-import { IBudgetBalance } from "../../../server/statistics/budget-statistics";
+import { IBudgetBalance } from "../../../server/model-thins/IBudgetBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatBudgetPeriod, formatCurrency, getBudgetPeriodType } from "../../helpers/formatters";

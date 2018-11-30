@@ -9,7 +9,7 @@ import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IAssetPerformanceData } from "../../../server/controllers/reports/asset-performance";
+import { IAssetPerformanceData } from "../../../server/model-thins/IAssetPerformanceData";
 import { ThinAccount } from "../../../server/model-thins/ThinAccount";
 import { DateModeOption } from "../../../server/models/Transaction";
 import * as bs from "../../global-styles/Bootstrap.scss";

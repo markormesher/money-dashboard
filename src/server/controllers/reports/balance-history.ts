@@ -1,22 +1,13 @@
 import * as Bluebird from "bluebird";
-import { ChartDataSets } from "chart.js";
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
 import * as sequelize from "sequelize";
 import { Op } from "sequelize";
 import { requireUser } from "../../middleware/auth-middleware";
+import { IBalanceHistoryData } from "../../model-thins/IBalanceHistoryData";
 import { DateModeOption, Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
-
-interface IBalanceHistoryData {
-	readonly datasets: ChartDataSets[];
-	readonly minTotal: number;
-	readonly maxTotal: number;
-	readonly minDate: number;
-	readonly maxDate: number;
-	readonly changeAbsolute: number;
-}
 
 const router = Express.Router();
 
@@ -117,5 +108,4 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 
 export {
 	router,
-	IBalanceHistoryData,
 };

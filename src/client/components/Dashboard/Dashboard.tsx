@@ -5,8 +5,8 @@ import { AnyAction, Dispatch } from "redux";
 import { IAccountBalance } from "../../../server/model-thins/IAccountBalance";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
-import { IBudgetBalance } from "../../../server/statistics/budget-statistics";
-import { ICategoryBalance } from "../../../server/statistics/category-statistics";
+import { IBudgetBalance } from "../../../server/model-thins/IBudgetBalance";
+import { ICategoryBalance } from "../../../server/model-thins/ICategoryBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import {
