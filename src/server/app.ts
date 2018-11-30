@@ -23,6 +23,10 @@ const app = Express();
 
 // TODO: tidy up models and model-thins (combine if possible)
 
+// TODO: convert all dates to moment where possible (string dates are a PITA)
+
+// TODO: de-dupe the date range class
+
 // db connection
 SequelizeDb
 		.sync({ force: false })
