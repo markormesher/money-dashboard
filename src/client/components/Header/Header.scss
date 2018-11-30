@@ -1,0 +1,33 @@
+@import "../../../../node_modules/bootstrap/scss/functions";
+@import "../../../../node_modules/bootstrap/scss/variables";
+@import "../../../../node_modules/bootstrap/scss/mixins/breakpoints";
+
+$header-height: 48px;
+$navbar-background: rgba(0, 0, 0, .25);
+$navbar-toggle-icon: #fff;
+
+.navbar {
+	height: $header-height; // Bootstrap override
+}
+
+.navbar-brand {
+	// Collapsed view
+	// sass-lint:disable mixin-name-format
+	@include media-breakpoint-down(lg) {
+		text-align: center;
+	}
+
+	background-color: $navbar-background;
+	box-shadow: inset -1px 0 0 $navbar-background;
+	font-size: 1rem;
+	margin-right: 0 !important; // Bootstrap override
+	overflow: hidden;
+	padding-bottom: .75rem;
+	padding-top: .75rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.nav-toggle-icon {
+	color: $navbar-toggle-icon !important;
+}

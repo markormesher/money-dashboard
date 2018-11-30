@@ -6,7 +6,7 @@ import * as React from "react";
 import * as sinon from "sinon";
 import { testGlobals } from "../../../../../test/global.tests";
 import { formatDate } from "../../../helpers/formatters";
-import { ControlledDateInput } from "../FormComponents/ControlledDateInput";
+import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";
 import { IconBtn, IIconBtnProps } from "../IconBtn/IconBtn";
 import { DateRangeChooser } from "./DateRangeChooser";
 import * as styles from "./DateRangeChooser.scss";

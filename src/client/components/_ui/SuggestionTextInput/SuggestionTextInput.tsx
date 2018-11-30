@@ -3,7 +3,7 @@ import { KeyboardEvent, MouseEvent, PureComponent, ReactNode } from "react";
 import { levenshteinDistance } from "../../../helpers/levenshtein-distance";
 import { combine } from "../../../helpers/style-helpers";
 import { UIConstants } from "../../_commons/ui-constants";
-import { ControlledTextInput, IControlledTextInputProps } from "../FormComponents/ControlledTextInput";
+import { ControlledTextInput, IControlledTextInputProps } from "../ControlledInputs/ControlledTextInput";
 import * as styles from "./SuggestionTextInput.scss";
 
 interface ISuggestionTextInputProps extends IControlledTextInputProps {

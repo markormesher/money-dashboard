@@ -5,7 +5,7 @@ import { Component, CSSProperties, MouseEvent, ReactNode, RefObject } from "reac
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
-import { ControlledDateInput } from "../FormComponents/ControlledDateInput";
+import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";
 import { IconBtn } from "../IconBtn/IconBtn";
 import * as styles from "./DateRangeChooser.scss";
 

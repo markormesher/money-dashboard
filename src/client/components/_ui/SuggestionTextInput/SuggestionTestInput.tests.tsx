@@ -5,7 +5,7 @@ import * as React from "react";
 import * as sinon from "sinon";
 import { testGlobals } from "../../../../../test/global.tests";
 import { UIConstants } from "../../_commons/ui-constants";
-import { ControlledTextInput } from "../FormComponents/ControlledTextInput";
+import { ControlledTextInput } from "../ControlledInputs/ControlledTextInput";
 import { ISuggestionTextInputProps, SuggestionTextInput } from "./SuggestionTextInput";
 import * as styles from "./SuggestionTextInput.scss";
 

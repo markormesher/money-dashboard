@@ -21,9 +21,9 @@ import { IRootState } from "../../redux/root";
 import { chartColours, defaultDatasetProps, defaultLinearChartOverTimeProps } from "../_commons/reports/ReportDefaults";
 import * as styles from "../_commons/reports/Reports.scss";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
+import { ControlledRadioInput } from "../_ui/ControlledInputs/ControlledRadioInput";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
-import { ControlledRadioInput } from "../_ui/FormComponents/ControlledRadioInput";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 

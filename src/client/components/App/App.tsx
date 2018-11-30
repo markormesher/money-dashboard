@@ -6,21 +6,21 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
 import { Http404Error } from "../../helpers/errors/Http404Error";
 import { IRootState } from "../../redux/root";
-import { AppContentWrapper } from "../_layout/AppContentWrapper/AppContentWrapper";
-import { AppRootWrapper } from "../_layout/AppRootWrapper/AppRootWrapper";
-import { FullPageSpinner } from "../_layout/FullPageSpinner/FullPageSpinner";
-import { Header } from "../_layout/Header/Header";
-import { Nav } from "../_layout/Nav/Nav";
-import { AccountSettings } from "../AccountSettings/AccountSettings";
+import { FullPageSpinner } from "../_ui/FullPageSpinner/FullPageSpinner";
+import { AccountsPage } from "../AccountsPage/AccountsPage";
 import { AssetPerformanceReport } from "../AssetPerformanceReport/AssetPerformanceReport";
 import { BalanceHistoryReport } from "../BalanceHistoryReport/BalanceHistoryReport";
-import { BudgetSettings } from "../BudgetSettings/BudgetSettings";
-import { CategorySettings } from "../CategorySettings/CategorySettings";
+import { BudgetsPage } from "../BudgetsPage/BudgetsPage";
+import { CategoriesPage } from "../CategoriesPage/CategoriesPage";
 import { Dashboard } from "../Dashboard/Dashboard";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
+import { Header } from "../Header/Header";
 import { KeyShortcutModal } from "../KeyShortcutModal/KeyShortcutModal";
-import { ProfileSettings } from "../ProfileSettings/ProfileSettings";
-import { Transactions } from "../Transactions/Transactions";
+import { Nav } from "../Nav/Nav";
+import { ProfilesPage } from "../ProfilesPage/ProfilesPage";
+import { TransactionsPage } from "../TransactionsPage/TransactionsPage";
+import { AppContentWrapper } from "./AppContentWrapper";
+import { AppRootWrapper } from "./AppRootWrapper";
 
 interface IAppProps {
 	readonly waitingFor?: string[];
@@ -41,7 +41,7 @@ function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
 
 // most sessions will never see this, so lazy load it
 const LoadableLogin = Loadable({
-	loader: () => import(/* webpackChunkName: "login" */ "../Login/Login").then((result) => result.Login),
+	loader: () => import(/* webpackChunkName: "login" */ "../LoginPage/LoginPage").then((result) => result.LoginPage),
 	loading: () => (<FullPageSpinner/>),
 });
 
@@ -82,20 +82,19 @@ class UCApp extends PureComponent<IAppProps> {
 				<div>
 					<Header/>
 					<AppRootWrapper>
-						<KeyShortcutModal />
+						<KeyShortcutModal/>
 						<Nav/>
 						<AppContentWrapper>
 							<Switch>
 								<Route exact={true} path="/" component={Dashboard}/>
-								<Route path="/transactions" component={Transactions}/>
+								<Route path="/accounts" component={AccountsPage}/>
+								<Route path="/budgets" component={BudgetsPage}/>
+								<Route path="/categories" component={CategoriesPage}/>
+								<Route path="/profiles" component={ProfilesPage}/>
+								<Route path="/transactions" component={TransactionsPage}/>
 
 								<Route path="/reports/balance-history" component={BalanceHistoryReport}/>
 								<Route path="/reports/asset-performance" component={AssetPerformanceReport}/>
-
-								<Route path="/settings/accounts" component={AccountSettings}/>
-								<Route path="/settings/budgets" component={BudgetSettings}/>
-								<Route path="/settings/categories" component={CategorySettings}/>
-								<Route path="/settings/profiles" component={ProfileSettings}/>
 
 								{/* Adding a new route? Keep it above this one! */}
 								<Route render={this.render404Error}/>
