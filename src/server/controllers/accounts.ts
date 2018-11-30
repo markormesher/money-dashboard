@@ -3,12 +3,12 @@ import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 import { getData } from "../helpers/datatable-helper";
+import { getAccountBalances } from "../managers/account-manager";
 import { deleteAccount, getAllAccounts, saveAccount, toggleAccountActive } from "../managers/account-manager";
 import { requireUser } from "../middleware/auth-middleware";
 import { IAccountBalance } from "../model-thins/IAccountBalance";
 import { Account } from "../models/Account";
 import { User } from "../models/User";
-import { getAccountBalances } from "../managers/account-manager";
 
 const router = Express.Router();
 

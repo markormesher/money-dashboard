@@ -3,12 +3,12 @@ import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 import { getData } from "../helpers/datatable-helper";
+import { getMemoCategoryBalances} from "../managers/category-manager";
 import { deleteCategory, getAllCategories, saveCategory } from "../managers/category-manager";
 import { requireUser } from "../middleware/auth-middleware";
 import { ICategoryBalance } from "../model-thins/ICategoryBalance";
 import { Category } from "../models/Category";
 import { User } from "../models/User";
-import { getMemoCategoryBalances} from "../managers/category-manager";
 
 const router = Express.Router();
 
