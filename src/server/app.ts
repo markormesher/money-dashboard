@@ -21,6 +21,8 @@ const app = Express();
 
 // TODO: major refactoring of server-side
 
+// TODO: tidy up models and model-thins (combine if possible)
+
 // db connection
 SequelizeDb
 		.sync({ force: false })
