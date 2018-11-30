@@ -73,7 +73,7 @@ function*loadAccountBalancesSaga(): Generator {
 		}
 		try {
 			const balances: IAccountBalance[] = yield call(() => {
-				return axios.get("/settings/accounts/balances").then((res) => res.data);
+				return axios.get("/accounts/balances").then((res) => res.data);
 			});
 			yield all([
 				put(setAccountBalances(balances)),
@@ -96,7 +96,7 @@ function*loadBudgetBalancesSaga(): Generator {
 		}
 		try {
 			const balances: IBudgetBalance[] = yield call(() => {
-				return axios.get("/settings/budgets/balances").then((res) => res.data);
+				return axios.get("/budgets/balances").then((res) => res.data);
 			});
 			yield all([
 				put(setBudgetBalances(balances)),
@@ -117,7 +117,7 @@ function*loadMemoCategoryBalancesSaga(): Generator {
 		}
 		try {
 			const balances: IBudgetBalance[] = yield call(() => {
-				return axios.get("/settings/categories/memo-balances").then((res) => res.data);
+				return axios.get("/categories/memo-balances").then((res) => res.data);
 			});
 			yield all([
 				put(setMemoCategoryBalances(balances)),

@@ -2,13 +2,13 @@ import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
-import { getData } from "../../helpers/datatable-helper";
-import { deleteAccount, getAllAccounts, saveAccount, toggleAccountActive } from "../../managers/account-manager";
-import { requireUser } from "../../middleware/auth-middleware";
-import { IAccountBalance } from "../../model-thins/IAccountBalance";
-import { Account } from "../../models/Account";
-import { User } from "../../models/User";
-import { getAccountBalances } from "../../statistics/account-statistics";
+import { getData } from "../helpers/datatable-helper";
+import { deleteAccount, getAllAccounts, saveAccount, toggleAccountActive } from "../managers/account-manager";
+import { requireUser } from "../middleware/auth-middleware";
+import { IAccountBalance } from "../model-thins/IAccountBalance";
+import { Account } from "../models/Account";
+import { User } from "../models/User";
+import { getAccountBalances } from "../statistics/account-statistics";
 
 const router = Express.Router();
 

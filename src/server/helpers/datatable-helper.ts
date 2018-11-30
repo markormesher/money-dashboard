@@ -1,10 +1,14 @@
 import * as Bluebird from "bluebird";
 import { Request } from "express";
 import { IFindOptions } from "sequelize-typescript";
-import { IDataTableResponse } from "./IDataTableResponse";
+
+interface IDataTableResponse<Model> {
+	readonly filteredRowCount: number;
+	readonly totalRowCount: number;
+	readonly data: Model[];
+}
 
 // TODO: figure out what type "model" is meant to be
-
 function getData<T>(
 		model: any,
 		req: Request,
@@ -43,4 +47,5 @@ function getData<T>(
 
 export {
 	getData,
+		IDataTableResponse,
 };

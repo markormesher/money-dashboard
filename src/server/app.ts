@@ -4,7 +4,7 @@ import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as ExpressSession from "express-session";
 import * as Passport from "passport";
-import { StatusError } from "./extensions/StatusError";
+import { StatusError } from "./helpers/StatusError";
 import { getSecret, runningInDocker } from "./helpers/config-loader";
 import { SequelizeDb } from "./helpers/db";
 import { logger } from "./helpers/logging";

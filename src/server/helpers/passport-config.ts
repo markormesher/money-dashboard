@@ -1,6 +1,5 @@
 import { PassportStatic as Passport } from "passport";
 import { Strategy as GoogleStrategy, StrategyOptionsWithRequest } from "passport-google-oauth2";
-
 import { getOrRegisterUserWithGoogleProfile, getUser } from "../managers/user-manager";
 import { Profile } from "../models/Profile";
 import { User } from "../models/User";

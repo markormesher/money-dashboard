@@ -68,7 +68,7 @@ const setCategoryList: ActionCreator<PayloadAction> = (categoryList: ThinCategor
 function*deleteCategorySaga(): Generator {
 	yield takeEvery(CategoryActions.START_DELETE_CATEGORY, function*(action: PayloadAction): Generator {
 		try {
-			yield call(() => axios.post(`/settings/categories/delete/${action.payload.categoryId}`).then((res) => res.data));
+			yield call(() => axios.post(`/categories/delete/${action.payload.categoryId}`).then((res) => res.data));
 			yield put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -83,7 +83,7 @@ function*saveCategorySaga(): Generator {
 			const categoryId = category.id || "";
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post(`/settings/categories/edit/${categoryId}`, category)),
+				call(() => axios.post(`/categories/edit/${categoryId}`, category)),
 			]);
 			yield all([
 				put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_DATA)),
@@ -103,7 +103,7 @@ function*loadCategoryListSaga(): Generator {
 		}
 		try {
 			const categoryList: ThinCategory[] = yield call(() => {
-				return axios.get("/settings/categories/list").then((res) => res.data);
+				return axios.get("/categories/list").then((res) => res.data);
 			});
 			yield all([
 				put(setCategoryList(categoryList)),

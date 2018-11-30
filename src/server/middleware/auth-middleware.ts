@@ -1,5 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { StatusError } from "../extensions/StatusError";
+import { StatusError } from "../helpers/StatusError";
 
 import { User } from "../models/User";
 

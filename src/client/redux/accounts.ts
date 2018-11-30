@@ -76,7 +76,7 @@ function*deleteAccountSaga(): Generator {
 	yield takeEvery(AccountActions.START_DELETE_ACCOUNT, function*(action: PayloadAction): Generator {
 		try {
 			const accountId: string = action.payload.accountId;
-			yield call(() => axios.post(`/settings/accounts/delete/${accountId}`));
+			yield call(() => axios.post(`/accounts/delete/${accountId}`));
 			yield put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -91,7 +91,7 @@ function*saveAccountSaga(): Generator {
 			const accountId = account.id || "";
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post(`/settings/accounts/edit/${accountId}`, account)),
+				call(() => axios.post(`/accounts/edit/${accountId}`, account)),
 			]);
 			yield all([
 				put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA)),
@@ -111,7 +111,7 @@ function*loadAccountListSaga(): Generator {
 		}
 		try {
 			const accountList: ThinAccount[] = yield call(() => {
-				return axios.get("/settings/accounts/list").then((res) => res.data);
+				return axios.get("/accounts/list").then((res) => res.data);
 			});
 			yield all([
 				put(setAccountList(accountList)),

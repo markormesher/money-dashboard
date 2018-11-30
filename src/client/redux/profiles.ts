@@ -51,7 +51,7 @@ const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
 function*deleteProfileSaga(): Generator {
 	yield takeEvery(ProfileActions.START_DELETE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
-			yield call(() => axios.post(`/settings/profiles/delete/${action.payload.profileId}`).then((res) => res.data));
+			yield call(() => axios.post(`/profiles/delete/${action.payload.profileId}`).then((res) => res.data));
 			yield put(KeyCache.touchKey(ProfileCacheKeys.PROFILE_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -66,7 +66,7 @@ function*saveProfileSaga(): Generator {
 			const profileId = profile.id || "";
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post(`/settings/profiles/edit/${profileId}`, profile)),
+				call(() => axios.post(`/profiles/edit/${profileId}`, profile)),
 			]);
 			yield all([
 				put(KeyCache.touchKey(ProfileCacheKeys.PROFILE_DATA)),

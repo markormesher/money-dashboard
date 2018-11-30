@@ -2,11 +2,11 @@ import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
-import { getData } from "../../helpers/datatable-helper";
-import { deleteProfile, saveProfile } from "../../managers/profile-manager";
-import { requireUser } from "../../middleware/auth-middleware";
-import { Profile } from "../../models/Profile";
-import { User } from "../../models/User";
+import { getData } from "../helpers/datatable-helper";
+import { deleteProfile, saveProfile } from "../managers/profile-manager";
+import { requireUser } from "../middleware/auth-middleware";
+import { Profile } from "../models/Profile";
+import { User } from "../models/User";
 
 const router = Express.Router();
 

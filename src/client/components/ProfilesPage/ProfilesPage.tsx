@@ -54,7 +54,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinProfile>("/settings/profiles/table-data", () => ({
+	private dataProvider = new ApiDataTableDataProvider<ThinProfile>("/profiles/table-data", () => ({
 		cacheTime: this.props.cacheTime,
 	}));
 

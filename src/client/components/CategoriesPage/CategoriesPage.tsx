@@ -53,7 +53,7 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinCategory>("/settings/categories/table-data", () => ({
+	private dataProvider = new ApiDataTableDataProvider<ThinCategory>("/categories/table-data", () => ({
 		cacheTime: this.props.cacheTime,
 	}));
 

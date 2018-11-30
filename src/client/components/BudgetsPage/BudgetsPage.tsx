@@ -90,7 +90,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinBudget>("/settings/budgets/table-data", () => ({
+	private dataProvider = new ApiDataTableDataProvider<ThinBudget>("/budgets/table-data", () => ({
 		cacheTime: this.props.cacheTime,
 		currentOnly: this.props.displayCurrentOnly,
 	}));

@@ -4,7 +4,7 @@ import { describe, it } from "mocha";
 import * as React from "react";
 import { ReactElement } from "react";
 import { testGlobals } from "../../../../../test/global.tests";
-import { IDataTableResponse } from "../../../../server/helpers/IDataTableResponse";
+import { IDataTableResponse } from "../../../../server/helpers/datatable-helper";
 import { BufferedTextInput } from "../BufferedTextInput/BufferedTextInput";
 import { PagerBtns } from "../PagerBtns/PagerBtns";
 import { IDataTableDataProvider } from "./DataProvider/IDataTableDataProvider";

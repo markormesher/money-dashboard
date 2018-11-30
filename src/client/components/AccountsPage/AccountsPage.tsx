@@ -59,7 +59,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinAccount>("/settings/accounts/table-data", () => ({
+	private dataProvider = new ApiDataTableDataProvider<ThinAccount>("/accounts/table-data", () => ({
 		cacheTime: this.props.cacheTime,
 		activeOnly: this.props.displayActiveOnly,
 	}));

@@ -77,7 +77,7 @@ const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
 function*deleteBudgetSaga(): Generator {
 	yield takeEvery(BudgetActions.START_DELETE_BUDGET, function*(action: PayloadAction): Generator {
 		try {
-			yield call(() => axios.post(`/settings/budgets/delete/${action.payload.budgetId}`).then((res) => res.data));
+			yield call(() => axios.post(`/budgets/delete/${action.payload.budgetId}`).then((res) => res.data));
 			yield put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -92,7 +92,7 @@ function*saveBudgetSaga(): Generator {
 			const budgetId = budget.id || "";
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post(`/settings/budgets/edit/${budgetId}`, budget)),
+				call(() => axios.post(`/budgets/edit/${budgetId}`, budget)),
 			]);
 			yield all([
 				put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA)),
@@ -113,7 +113,7 @@ function*cloneBudgetsSaga(): Generator {
 			const endDate: string = action.payload.endDate;
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post("/settings/budgets/clone", {
+				call(() => axios.post("/budgets/clone", {
 					budgetIds,
 					startDate,
 					endDate,
