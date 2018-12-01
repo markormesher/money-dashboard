@@ -12,7 +12,6 @@ interface IAuthState {
 
 const initialState: IAuthState = {
 	activeUser: undefined,
-	activeProfile: undefined,
 };
 
 enum AuthActions {
@@ -94,14 +93,12 @@ function authReducer(state = initialState, action: PayloadAction): IAuthState {
 			return {
 				...state,
 				activeUser: action.payload.user,
-				activeProfile: 0,
 			};
 
 		case AuthActions.UNSET_CURRENT_USER:
 			return {
 				...state,
 				activeUser: undefined,
-				activeProfile: undefined,
 			};
 
 		default:

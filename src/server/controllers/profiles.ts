@@ -60,12 +60,12 @@ router.post("/delete/:profileId", requireUser, (req: Request, res: Response, nex
 			.catch(next);
 });
 
-router.get("/select/:profileId", requireUser, (req: Request, res: Response) => {
+router.post("/select/:profileId", requireUser, (req: Request, res: Response) => {
 	const user = req.user as User;
 	const profileId = req.params.profileId;
 
 	user.activeProfile = user.profiles.filter((p: Profile) => p.id === profileId)[0];
-	req.login(user, () => res.redirect(req.get("Referrer") || "/"));
+	req.login(user, () => res.status(200).end());
 });
 
 export {

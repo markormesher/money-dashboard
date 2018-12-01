@@ -21,13 +21,12 @@ import { DashboardBudgetList } from "./DashboardBudgetList";
 
 interface IDashboardProps {
 	readonly activeUser: ThinUser;
-	readonly activeProfile?: ThinProfile;
 	readonly accountBalances?: IAccountBalance[];
 	readonly budgetBalances?: IBudgetBalance[];
 	readonly memoCategoryBalances?: ICategoryBalance[];
 
 	readonly actions?: {
-		readonly startLoadaccountBalances: () => AnyAction,
+		readonly startLoadaccountBalances: () => AnyAction, // TODO: typo
 		readonly startLoadBudgetBalances: () => AnyAction,
 		readonly startLoadMemoCategoryBalances: () => AnyAction,
 	};
@@ -37,7 +36,6 @@ function mapStateToProps(state: IRootState, props: IDashboardProps): IDashboardP
 	return {
 		...props,
 		activeUser: state.auth.activeUser,
-		activeProfile: state.auth.activeUser.profiles[state.auth.activeProfile],
 		accountBalances: state.dashboard.accountBalances,
 		budgetBalances: state.dashboard.budgetBalances,
 		memoCategoryBalances: state.dashboard.memoCategoryBalances,

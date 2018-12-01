@@ -27,6 +27,8 @@ const app = Express();
 
 // TODO: de-dupe the date range class
 
+// TODO: "activeProfile" logic is weird - it should be stored in the DB and delivered as part of /auth/current-user
+
 // db connection
 SequelizeDb
 		.sync({ force: false }) // true will DROP all tables/keys before creating them

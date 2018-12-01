@@ -5,15 +5,17 @@ import { combine } from "../../../helpers/style-helpers";
 
 interface IBadgeProps {
 	readonly className?: string;
+	readonly marginLeft?: boolean;
 	readonly marginRight?: boolean;
 }
 
 class Badge extends Component<IBadgeProps> {
 
 	public render(): ReactNode {
-		const { className, marginRight } = this.props;
+		const { className, marginRight, marginLeft } = this.props;
+		const classes = combine(bs.badge, className || bs.badgeLight, marginRight && bs.mr1, marginLeft && bs.ml1);
 		return (
-				<span className={combine(bs.badge, className || bs.badgeLight, marginRight && bs.mr1)}>
+				<span className={classes}>
 					{this.props.children}
 				</span>
 		);

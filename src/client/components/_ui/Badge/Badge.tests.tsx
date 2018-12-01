@@ -20,8 +20,13 @@ describe(__filename, () => {
 		mountWrapper.find("span").hasClass(bs.badgeInfo).should.equal(true);
 	});
 
-	it("should apply a margin if requested", () => {
+	it("should apply a right margin if requested", () => {
 		mountWrapper = mount(<Badge marginRight={true}>hello</Badge>);
 		mountWrapper.find("span").hasClass(bs.mr1).should.equal(true);
+	});
+
+	it("should apply a left margin if requested", () => {
+		mountWrapper = mount(<Badge marginLeft={true}>hello</Badge>);
+		mountWrapper.find("span").hasClass(bs.ml1).should.equal(true);
 	});
 });

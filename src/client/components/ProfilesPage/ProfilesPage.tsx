@@ -1,4 +1,4 @@
-import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
+import { faHandPointer, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -8,13 +8,13 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { KeyCache } from "../../redux/helpers/KeyCache";
-import { ProfileCacheKeys, setProfileToEdit, startDeleteProfile } from "../../redux/profiles";
+import { ProfileCacheKeys, setProfileToEdit, startDeleteProfile, startSetCurrentProfile } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
+import { Badge } from "../_ui/Badge/Badge";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
-import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { ProfileEditModal } from "../ProfileEditModal/ProfileEditModal";
 
@@ -25,6 +25,7 @@ interface IProfilesPageProps {
 	readonly actions?: {
 		readonly deleteProfile: (id: string) => AnyAction,
 		readonly setProfileToEdit: (profile: ThinProfile) => AnyAction,
+		readonly setCurrentProfile: (profile: ThinProfile) => AnyAction,
 	};
 }
 
@@ -33,7 +34,7 @@ function mapStateToProps(state: IRootState, props: IProfilesPageProps): IProfile
 		...props,
 		cacheTime: KeyCache.getKeyTime(ProfileCacheKeys.PROFILE_DATA),
 		profileToEdit: state.profiles.profileToEdit,
-		activeProfile: state.auth.activeUser.profiles[state.auth.activeProfile],
+		activeProfile: state.profiles.activeProfile,
 	};
 }
 
@@ -43,6 +44,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfilesPageProps): IPro
 		actions: {
 			deleteProfile: (id) => dispatch(startDeleteProfile(id)),
 			setProfileToEdit: (profile) => dispatch(setProfileToEdit(profile)),
+			setCurrentProfile: (profile) => dispatch(startSetCurrentProfile(profile)),
 		},
 	};
 }
@@ -103,40 +105,50 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 	}
 
 	private tableRowRenderer(profile: ThinProfile): ReactElement<void> {
+		const activeProfile = profile.id === this.props.activeProfile.id;
 		return (
 				<tr key={profile.id}>
-					<td>{profile.name}</td>
+					<td>
+						{profile.name}
+						{activeProfile && <Badge className={bs.badgeInfo} marginLeft={true}>Active</Badge>}
+					</td>
 					<td>{this.generateActionButtons(profile)}</td>
 				</tr>
 		);
 	}
 
 	private generateActionButtons(profile: ThinProfile): ReactElement<void> {
-		const deleteDisabled = profile.id === this.props.activeProfile.id;
+		const activeProfile = profile.id === this.props.activeProfile.id;
 		return (
-				<>
-					<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
-						<IconBtn
-								icon={faPencil}
-								text={"Edit"}
-								payload={profile}
-								onClick={this.props.actions.setProfileToEdit}
-								btnProps={{
-									className: combine(bs.btnOutlineDark, gs.btnMini),
-								}}
-						/>
+				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
+					<IconBtn
+							icon={faPencil}
+							text={"Edit"}
+							payload={profile}
+							onClick={this.props.actions.setProfileToEdit}
+							btnProps={{
+								className: combine(bs.btnOutlineDark, gs.btnMini),
+							}}
+					/>
 
-						<DeleteBtn
-								payload={profile.id}
-								onConfirmedClick={this.props.actions.deleteProfile}
-								btnProps={{
-									className: combine(bs.btnOutlineDark, gs.btnMini),
-									disabled: deleteDisabled,
-								}}
-						/>
-					</div>
-					{deleteDisabled && <> <InfoIcon hoverText={"Your active profile cannot be deleted"}/></>}
-				</>
+					{!activeProfile && <IconBtn
+							icon={faHandPointer}
+							text={"Select"}
+							payload={profile}
+							onClick={this.props.actions.setCurrentProfile}
+							btnProps={{
+								className: combine(bs.btnOutlineDark, gs.btnMini),
+							}}
+					/>}
+
+					{!activeProfile && <DeleteBtn
+							payload={profile.id}
+							onConfirmedClick={this.props.actions.deleteProfile}
+							btnProps={{
+								className: combine(bs.btnOutlineDark, gs.btnMini),
+							}}
+					/>}
+				</div>
 		);
 	}
 
