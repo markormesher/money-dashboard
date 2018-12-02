@@ -29,7 +29,7 @@ const app = Express();
 
 // db connection
 SequelizeDb
-		.sync({ force: false })
+		.sync({ force: false }) // true will DROP all tables/keys before creating them
 		.then(() => logger.info("Database models synced successfully"))
 		.catch((err) => logger.error("Failed to sync database models", err));
 

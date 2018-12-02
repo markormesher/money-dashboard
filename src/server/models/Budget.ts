@@ -1,6 +1,5 @@
 import * as Sequelize from "sequelize";
-import { BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table } from "sequelize-typescript";
-
+import { BelongsTo, Column, DataType, IsUUID, Model, Table } from "sequelize-typescript";
 import { Category } from "./Category";
 import { Profile } from "./Profile";
 
@@ -17,39 +16,25 @@ class Budget extends Model<Budget> {
 	})
 	public id: string;
 
-	@Column({
-		defaultValue: "budget",
-	})
+	@Column({ defaultValue: "budget" })
 	public type: string;
 
-	@Column({
-		type: DataType.FLOAT,
-	})
+	@Column({ type: DataType.FLOAT })
 	public amount: number;
 
-	@Column({
-		type: DataType.DATEONLY,
-	})
+	@Column({ type: DataType.DATEONLY })
 	public startDate: Date;
 
-	@Column({
-		type: DataType.DATEONLY,
-	})
+	@Column({ type: DataType.DATEONLY })
 	public endDate: Date;
 
-	@ForeignKey(() => Category)
-	@Column({ type: DataType.UUID })
+	@BelongsTo(() => Category, "categoryId")
+	public category: Category;
 	public categoryId: string;
 
-	@BelongsTo(() => Category)
-	public category: Category;
-
-	@ForeignKey(() => Profile)
-	@Column({ type: DataType.UUID })
-	public profileId: string;
-
-	@BelongsTo(() => Profile)
+	@BelongsTo(() => Profile, "profileId")
 	public profile: Profile;
+	public profileId: string;
 
 	public buildClone = (): Budget => {
 		return Budget.build({

@@ -1,6 +1,5 @@
 import * as Sequelize from "sequelize";
-import { BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table } from "sequelize-typescript";
-
+import { BelongsTo, Column, DataType, IsUUID, Model, Table } from "sequelize-typescript";
 import { Account } from "./Account";
 import { Category } from "./Category";
 import { Profile } from "./Profile";
@@ -18,19 +17,13 @@ export class Transaction extends Model<Transaction> {
 	})
 	public id: string;
 
-	@Column({
-		type: DataType.DATEONLY,
-	})
+	@Column({ type: DataType.DATEONLY })
 	public transactionDate: Date;
 
-	@Column({
-		type: DataType.DATEONLY,
-	})
+	@Column({ type: DataType.DATEONLY })
 	public effectiveDate: Date;
 
-	@Column({
-		type: DataType.FLOAT,
-	})
+	@Column({ type: DataType.FLOAT })
 	public amount: number;
 
 	@Column
@@ -39,26 +32,17 @@ export class Transaction extends Model<Transaction> {
 	@Column
 	public note: string;
 
-	@ForeignKey(() => Account)
-	@Column({ type: DataType.UUID })
+	@BelongsTo(() => Account, "accountId")
+	public account: Account;
 	public accountId: string;
 
-	@BelongsTo(() => Account)
-	public account: Account;
-
-	@ForeignKey(() => Category)
-	@Column({ type: DataType.UUID })
+	@BelongsTo(() => Category, "categoryId")
+	public category: Category;
 	public categoryId: string;
 
-	@BelongsTo(() => Category)
-	public category: Category;
-
-	@ForeignKey(() => Profile)
-	@Column({ type: DataType.UUID })
-	public profileId: string;
-
-	@BelongsTo(() => Profile)
+	@BelongsTo(() => Profile, "profileId")
 	public profile: Profile;
+	public profileId: string;
 
 }
 

@@ -1,11 +1,13 @@
 import * as Sequelize from "sequelize";
-import { BelongsToMany, Column, DataType, DefaultScope, IsUUID, Model, Table } from "sequelize-typescript";
-
+import { BelongsTo, BelongsToMany, Column, DataType, DefaultScope, IsUUID, Model, Table } from "sequelize-typescript";
 import { Profile } from "./Profile";
 import { UserProfile } from "./UserProfile";
 
 @DefaultScope({
-	include: [() => Profile],
+	include: [
+		{ model: () => Profile, as: "profiles" },
+		{ model: () => Profile, as: "activeProfile" },
+	],
 })
 @Table({ tableName: "user" })
 export class User extends Model<User> {
@@ -30,7 +32,9 @@ export class User extends Model<User> {
 	@BelongsToMany(() => Profile, () => UserProfile)
 	public profiles: Profile[];
 
-	// set in session, not stored in DB
+	// TODO: unused for now
+	@BelongsTo(() => Profile, "activeProfileId")
 	public activeProfile: Profile;
+	public activeProfileId: string;
 
 }

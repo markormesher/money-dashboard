@@ -1,6 +1,5 @@
 import * as Sequelize from "sequelize";
-import { BelongsTo, Column, DataType, ForeignKey, IsUUID, Model, Table } from "sequelize-typescript";
-
+import { BelongsTo, Column, DataType, IsUUID, Model, Table } from "sequelize-typescript";
 import { Profile } from "./Profile";
 
 @Table({ tableName: "category" })
@@ -29,11 +28,8 @@ export class Category extends Model<Category> {
 	@Column({ defaultValue: false })
 	public isAssetGrowthCategory: boolean;
 
-	@ForeignKey(() => Profile)
-	@Column({ type: DataType.UUID })
-	public profileId: string;
-
-	@BelongsTo(() => Profile)
+	@BelongsTo(() => Profile, "profileId")
 	public profile: Profile;
+	public profileId: string;
 
 }
