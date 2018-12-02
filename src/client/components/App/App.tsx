@@ -1,9 +1,10 @@
 import * as React from "react";
-import { PureComponent, ReactElement, ReactNode } from "react";
+import { ErrorInfo, PureComponent, ReactElement, ReactNode } from "react";
 import * as Loadable from "react-loadable";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { ThinUser } from "../../../server/model-thins/ThinUser";
+import { DetailedError } from "../../helpers/errors/DetailedError";
 import { Http404Error } from "../../helpers/errors/Http404Error";
 import { IRootState } from "../../redux/root";
 import { FullPageSpinner } from "../_ui/FullPageSpinner/FullPageSpinner";
@@ -29,6 +30,11 @@ interface IAppProps {
 	readonly currentPath?: string;
 }
 
+interface IAppState {
+	readonly caughtError?: Error;
+	readonly caughtErrorInfo?: ErrorInfo;
+}
+
 function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
 	return {
 		...props,
@@ -45,21 +51,41 @@ const LoadableLogin = Loadable({
 	loading: () => (<FullPageSpinner/>),
 });
 
-// TODO: use an error boundary component
-
-class UCApp extends PureComponent<IAppProps> {
+class UCApp extends PureComponent<IAppProps, IAppState> {
 
 	constructor(props: IAppProps) {
 		super(props);
+		this.state = {};
 		this.render404Error = this.render404Error.bind(this);
+	}
+
+	public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+		this.setState({
+			caughtError: error,
+			caughtErrorInfo: errorInfo,
+		});
 	}
 
 	public render(): ReactNode {
 		const { waitingFor, globalError, activeUser } = this.props;
+		const { caughtError, caughtErrorInfo } = this.state;
 
 		if (globalError) {
 			return (
 					<ErrorPage error={globalError} fullPage={true}/>
+			);
+		}
+
+		if (caughtError) {
+			return (
+					<ErrorPage
+							error={new DetailedError(caughtError.name, caughtError.message)}
+							fullPage={true}
+							stacks={[
+									caughtError.stack,
+									`Component stack:${caughtErrorInfo.componentStack}`,
+							]}
+					/>
 			);
 		}
 
