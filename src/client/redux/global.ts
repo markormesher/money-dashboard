@@ -14,6 +14,8 @@ const initialState: IGlobalState = {
 	keyShortcutModalVisible: false,
 };
 
+// TODO: avoid flicker by enforcing minimum global wait time? might not be worth it
+
 enum GlobalActions {
 	ADD_WAIT = "GlobalActions.ADD_WAIT",
 	REMOVE_WAIT = "GlobalActions.REMOVE_WAIT",
