@@ -25,7 +25,7 @@ interface IDashboardProps {
 	readonly memoCategoryBalances?: ICategoryBalance[];
 
 	readonly actions?: {
-		readonly startLoadaccountBalances: () => AnyAction, // TODO: typo
+		readonly startLoadAccountBalances: () => AnyAction,
 		readonly startLoadBudgetBalances: () => AnyAction,
 		readonly startLoadMemoCategoryBalances: () => AnyAction,
 	};
@@ -45,7 +45,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDashboardProps): IDashbo
 	return {
 		...props,
 		actions: {
-			startLoadaccountBalances: () => dispatch(startLoadAccountBalances()),
+			startLoadAccountBalances: () => dispatch(startLoadAccountBalances()),
 			startLoadBudgetBalances: () => dispatch(startLoadBudgetBalances()),
 			startLoadMemoCategoryBalances: () => dispatch(startLoadMemoCategoryBalances()),
 		},
@@ -55,7 +55,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDashboardProps): IDashbo
 class UCDashboard extends PureComponent<IDashboardProps> {
 
 	public componentDidMount(): void {
-		this.props.actions.startLoadaccountBalances();
+		this.props.actions.startLoadAccountBalances();
 		this.props.actions.startLoadBudgetBalances();
 		this.props.actions.startLoadMemoCategoryBalances();
 	}
