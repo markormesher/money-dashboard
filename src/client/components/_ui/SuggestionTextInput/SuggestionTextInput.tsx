@@ -17,6 +17,8 @@ interface ISuggestionTextInputState {
 	readonly selectedSuggestionIndex?: number;
 }
 
+// TODO: bug - hitting ENTER calls the listener even if no suggestion is highlighted
+
 class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISuggestionTextInputState> {
 
 	private static MAX_SUGGESTIONS_SHOWN = 10;
