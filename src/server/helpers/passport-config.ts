@@ -1,7 +1,6 @@
 import { PassportStatic as Passport } from "passport";
 import { Strategy as GoogleStrategy, StrategyOptionsWithRequest } from "passport-google-oauth2";
 import { getOrRegisterUserWithGoogleProfile, getUser } from "../managers/user-manager";
-import { Profile } from "../models/Profile";
 import { User } from "../models/User";
 import { getConstants, getSecret } from "./config-loader";
 
@@ -15,35 +14,21 @@ function init(passport: Passport): void {
 	};
 
 	passport.serializeUser((user: User, callback) => {
-		const userId = user.id;
-		const profileId = user.activeProfile ? user.activeProfile.id : null;
-		callback(null, JSON.stringify([userId, profileId]));
+		callback(null, user.id);
 	});
 
-	passport.deserializeUser((serialised: string, callback) => {
-		if (!serialised) {
+	passport.deserializeUser((userId: string, callback: (error: any, user?: User) => void) => {
+		if (!userId) {
 			return callback(null, null);
 		}
-
-		const userAndProfileId = JSON.parse(serialised) as string[];
-		if (userAndProfileId.length !== 2) {
-			return callback(new Error("Invalid user serialisation"));
-		}
-
-		const userId = userAndProfileId[0];
-		const profileId = userAndProfileId[1];
 
 		getUser(userId)
 				.then((user) => {
 					if (!user) {
 						throw new Error("Could not find user");
+					} else {
+						callback(null, user);
 					}
-
-					user.activeProfile = user.profiles.filter((p: Profile) => !profileId || p.id === profileId)[0];
-					if (!user.activeProfile) {
-						user.activeProfile = user.profiles[0];
-					}
-					callback(null, user);
 				})
 				.catch(callback);
 	});
@@ -55,4 +40,6 @@ function init(passport: Passport): void {
 	}));
 }
 
-export { init };
+export {
+	init,
+};

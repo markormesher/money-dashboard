@@ -5,6 +5,7 @@ import { ThinCategory } from "../../server/model-thins/ThinCategory";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
+import { ProfileCacheKeys } from "./profiles";
 
 interface ICategoriesState {
 	readonly categoryToEdit: ThinCategory;
@@ -98,7 +99,10 @@ function*saveCategorySaga(): Generator {
 
 function*loadCategoryListSaga(): Generator {
 	yield takeEvery(CategoryActions.START_LOAD_CATEGORY_LIST, function*(): Generator {
-		if (KeyCache.keyIsValid(CategoryCacheKeys.CATEGORY_LIST, [CategoryCacheKeys.CATEGORY_DATA])) {
+		if (KeyCache.keyIsValid(CategoryCacheKeys.CATEGORY_LIST, [
+			CategoryCacheKeys.CATEGORY_DATA,
+			ProfileCacheKeys.CURRENT_PROFILE,
+		])) {
 			return;
 		}
 		try {

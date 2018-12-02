@@ -5,6 +5,7 @@ import { ThinAccount } from "../../server/model-thins/ThinAccount";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
+import { ProfileCacheKeys } from "./profiles";
 
 interface IAccountsState {
 	readonly displayActiveOnly: boolean;
@@ -106,7 +107,10 @@ function*saveAccountSaga(): Generator {
 
 function*loadAccountListSaga(): Generator {
 	yield takeEvery(AccountActions.START_LOAD_ACCOUNT_LIST, function*(): Generator {
-		if (KeyCache.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [AccountCacheKeys.ACCOUNT_DATA])) {
+		if (KeyCache.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [
+			AccountCacheKeys.ACCOUNT_DATA,
+			ProfileCacheKeys.CURRENT_PROFILE,
+		])) {
 			return;
 		}
 		try {

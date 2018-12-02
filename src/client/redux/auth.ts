@@ -7,7 +7,6 @@ import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IAuthState {
 	readonly activeUser?: ThinUser;
-	readonly activeProfile?: number;
 }
 
 const initialState: IAuthState = {

@@ -1,6 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { StatusError } from "../helpers/StatusError";
-
 import { User } from "../models/User";
 
 const loadUser: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
@@ -21,4 +20,7 @@ const requireUser: RequestHandler = (req: Request, res: Response, next: NextFunc
 	}
 };
 
-export {loadUser, requireUser};
+export {
+	loadUser,
+	requireUser,
+};

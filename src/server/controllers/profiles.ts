@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { Op } from "sequelize";
 import { IFindOptions } from "sequelize-typescript";
 import { getData } from "../helpers/datatable-helper";
-import { deleteProfile, saveProfile } from "../managers/profile-manager";
+import { deleteProfile, saveProfile, setActiveProfileForUser } from "../managers/profile-manager";
 import { requireUser } from "../middleware/auth-middleware";
 import { Profile } from "../models/Profile";
 import { User } from "../models/User";
@@ -60,12 +60,13 @@ router.post("/delete/:profileId", requireUser, (req: Request, res: Response, nex
 			.catch(next);
 });
 
-router.post("/select/:profileId", requireUser, (req: Request, res: Response) => {
+router.post("/select/:profileId", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as User;
 	const profileId = req.params.profileId;
 
-	user.activeProfile = user.profiles.filter((p: Profile) => p.id === profileId)[0];
-	req.login(user, () => res.status(200).end());
+	setActiveProfileForUser(user, profileId)
+			.then(() => res.status(200).end())
+			.catch(next);
 });
 
 export {

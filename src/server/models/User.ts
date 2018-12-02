@@ -32,7 +32,6 @@ export class User extends Model<User> {
 	@BelongsToMany(() => Profile, () => UserProfile)
 	public profiles: Profile[];
 
-	// TODO: unused for now
 	@BelongsTo(() => Profile, "activeProfileId")
 	public activeProfile: Profile;
 	public activeProfileId: string;

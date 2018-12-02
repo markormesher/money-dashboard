@@ -4,6 +4,7 @@ import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { ThinProfile } from "../../../server/model-thins/ThinProfile";
+import { ThinUser } from "../../../server/model-thins/ThinUser";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
@@ -21,7 +22,7 @@ import { ProfileEditModal } from "../ProfileEditModal/ProfileEditModal";
 interface IProfilesPageProps {
 	readonly cacheTime: number;
 	readonly profileToEdit?: ThinProfile;
-	readonly activeProfile?: ThinProfile;
+	readonly activeUser?: ThinUser;
 	readonly actions?: {
 		readonly deleteProfile: (id: string) => AnyAction,
 		readonly setProfileToEdit: (profile: ThinProfile) => AnyAction,
@@ -32,9 +33,12 @@ interface IProfilesPageProps {
 function mapStateToProps(state: IRootState, props: IProfilesPageProps): IProfilesPageProps {
 	return {
 		...props,
-		cacheTime: KeyCache.getKeyTime(ProfileCacheKeys.PROFILE_DATA),
+		cacheTime: Math.max(
+				KeyCache.getKeyTime(ProfileCacheKeys.PROFILE_DATA),
+				KeyCache.getKeyTime(ProfileCacheKeys.CURRENT_PROFILE),
+		),
 		profileToEdit: state.profiles.profileToEdit,
-		activeProfile: state.profiles.activeProfile,
+		activeUser: state.auth.activeUser,
 	};
 }
 
@@ -105,7 +109,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 	}
 
 	private tableRowRenderer(profile: ThinProfile): ReactElement<void> {
-		const activeProfile = profile.id === this.props.activeProfile.id;
+		const activeProfile = profile.id === this.props.activeUser.activeProfile.id;
 		return (
 				<tr key={profile.id}>
 					<td>
@@ -118,7 +122,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 	}
 
 	private generateActionButtons(profile: ThinProfile): ReactElement<void> {
-		const activeProfile = profile.id === this.props.activeProfile.id;
+		const activeProfile = profile.id === this.props.activeUser.activeProfile.id;
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<IconBtn

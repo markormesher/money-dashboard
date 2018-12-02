@@ -1,7 +1,7 @@
 import * as Bluebird from "bluebird";
-
 import { Profile } from "../models/Profile";
 import { User } from "../models/User";
+import { getUser } from "./user-manager";
 
 function getProfile(user: User, profileId: string): Bluebird<Profile> {
 	return Profile
@@ -20,14 +20,12 @@ function getProfile(user: User, profileId: string): Bluebird<Profile> {
 
 function createProfileAndAddToUser(user: User, profileName: string): Bluebird<User> {
 	return Profile
-			.create({
-				name: profileName,
-			})
+			.create({ name: profileName })
 			.then((profile) => {
 				return user.$add("profile", profile);
 			})
 			.then(() => {
-				return user.reload({ include: [Profile] });
+				return user.reload();
 			});
 }
 
@@ -48,7 +46,7 @@ function deleteProfile(user: User, profileId: string): Bluebird<void> {
 				if (!profile) {
 					throw new Error("That profile does not exist");
 				} else if (user.profiles.length <= 1) {
-					throw new Error("Cannot delete a user\"s last profile");
+					throw new Error("Cannot delete a user's last profile");
 				} else {
 					return profile;
 				}
@@ -56,9 +54,18 @@ function deleteProfile(user: User, profileId: string): Bluebird<void> {
 			.then((profile) => profile.destroy());
 }
 
+function setActiveProfileForUser(user: User, profileId: string): Bluebird<User> {
+	return getUser(user.id)
+			.then((u: User) => {
+				const activeProfile = user.profiles.find((p) => p.id === profileId) || user.profiles[0];
+				return u.$set("activeProfile", activeProfile.id);
+			});
+}
+
 export {
 	getProfile,
 	createProfileAndAddToUser,
 	saveProfile,
 	deleteProfile,
+	setActiveProfileForUser,
 };

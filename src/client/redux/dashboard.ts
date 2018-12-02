@@ -9,6 +9,7 @@ import { BudgetCacheKeys } from "./budgets";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
+import { ProfileCacheKeys } from "./profiles";
 import { TransactionCacheKeys } from "./transactions";
 
 interface IDashboardState {
@@ -67,7 +68,9 @@ const setMemoCategoryBalances: ActionCreator<PayloadAction> = (memoCategoryBalan
 function*loadAccountBalancesSaga(): Generator {
 	yield takeEvery(DashboardActions.START_LOAD_ACCOUNT_BALANCES, function*(): Generator {
 		if (KeyCache.keyIsValid(DashboardCacheKeys.ACCOUNT_BALANCES, [
-			TransactionCacheKeys.TRANSACTION_DATA, AccountCacheKeys.ACCOUNT_DATA,
+			TransactionCacheKeys.TRANSACTION_DATA,
+			AccountCacheKeys.ACCOUNT_DATA,
+			ProfileCacheKeys.CURRENT_PROFILE,
 		])) {
 			return;
 		}
@@ -90,7 +93,9 @@ function*loadAccountBalancesSaga(): Generator {
 function*loadBudgetBalancesSaga(): Generator {
 	yield takeEvery(DashboardActions.START_LOAD_BUDGET_BALANCES, function*(): Generator {
 		if (KeyCache.keyIsValid(DashboardCacheKeys.BUDGET_BALANCES, [
-			TransactionCacheKeys.TRANSACTION_DATA, BudgetCacheKeys.BUDGET_DATA,
+			TransactionCacheKeys.TRANSACTION_DATA,
+			BudgetCacheKeys.BUDGET_DATA,
+			ProfileCacheKeys.CURRENT_PROFILE,
 		])) {
 			return;
 		}
@@ -112,7 +117,10 @@ function*loadBudgetBalancesSaga(): Generator {
 
 function*loadMemoCategoryBalancesSaga(): Generator {
 	yield takeEvery(DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES, function*(): Generator {
-		if (KeyCache.keyIsValid(DashboardCacheKeys.MEMO_CATEGORY_BALANCE, [TransactionCacheKeys.TRANSACTION_DATA])) {
+		if (KeyCache.keyIsValid(DashboardCacheKeys.MEMO_CATEGORY_BALANCE, [
+			TransactionCacheKeys.TRANSACTION_DATA,
+			ProfileCacheKeys.CURRENT_PROFILE,
+		])) {
 			return;
 		}
 		try {

@@ -2,6 +2,7 @@ import axios from "axios";
 import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { ThinProfile } from "../../server/model-thins/ThinProfile";
+import { startLoadCurrentUser } from "./auth";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -98,9 +99,10 @@ function*setCurrentProfileSaga(): Generator {
 	yield takeEvery(ProfileActions.START_SET_CURRENT_PROFILE, function*(action: PayloadAction): Generator {
 		try {
 			const profile: ThinProfile = action.payload.profile;
-			yield call(() => axios.post(`/settings/profiles/select/${profile.id}`));
+			yield call(() => axios.post(`/profiles/select/${profile.id}`));
 			yield all([
 				put(setCurrentProfile(profile)),
+				put(startLoadCurrentUser()),
 				put(KeyCache.touchKey(ProfileCacheKeys.CURRENT_PROFILE)),
 			]);
 		} catch (err) {
