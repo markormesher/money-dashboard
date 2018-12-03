@@ -4,13 +4,22 @@ import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as ExpressSession from "express-session";
 import * as Passport from "passport";
+import "reflect-metadata";
+import { createConnection } from "typeorm";
 import { getSecret, runningInDocker } from "./helpers/config-loader";
-import { SequelizeDb } from "./helpers/db";
+import { SequelizeDb, typeormConf } from "./helpers/db";
 import { logger } from "./helpers/logging";
 import * as PassportConfig from "./helpers/passport-config";
 import { StatusError } from "./helpers/StatusError";
 import { setupApiRoutes } from "./middleware/api-routes";
 import { setupDevAppRoutes, setupProdAppRoutes } from "./middleware/app-routes";
+
+import { NewAccount } from "./new-models/NewAccount";
+import { NewBudget } from "./new-models/NewBudget";
+import { NewCategory } from "./new-models/NewCategory";
+import { NewProfile } from "./new-models/NewProfile";
+import { NewTransaction } from "./new-models/NewTransaction";
+import { NewUser } from "./new-models/NewUser";
 
 const app = Express();
 
@@ -27,11 +36,18 @@ const app = Express();
 
 // TODO: de-dupe the date range class
 
+// TODO: remove sequelize, pg-hstore, related types and bluebird pin after migration
+
 // db connection
 SequelizeDb
 		.sync({ force: false }) // true will DROP all tables/keys before creating them
 		.then(() => logger.info("Database models synced successfully"))
 		.catch((err) => logger.error("Failed to sync database models", err));
+
+// new db connection
+createConnection({ ...typeormConf, synchronize: false }) // true will DROP all tables/keys before creating them
+		.then(() => logger.info("Database connection created successfully"))
+		.catch((err) => logger.error("Failed to connect to database", err));
 
 // cookies and sessions
 const RedisSessionStore = ConnectRedis(ExpressSession);

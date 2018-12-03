@@ -1,9 +1,10 @@
 import { join } from "path";
 import { Sequelize } from "sequelize-typescript";
+import { ConnectionOptions } from "typeorm";
 import { getSecret, runningInDocker } from "./config-loader";
 import { logger } from "./logging";
 
-const conf = {
+const sequelizeConf = {
 	host: runningInDocker() ? "postgres" : "localhost",
 	username: "money_dashboard",
 	password: getSecret("postgres.password"),
@@ -16,7 +17,7 @@ const conf = {
 		idle: 10000,
 	},
 	operatorsAliases: false,
-	modelPaths: [ join(__dirname, "../models") ],
+	modelPaths: [join(__dirname, "../models")],
 	define: {
 		freezeTableName: true,
 		timestamps: true,
@@ -26,8 +27,18 @@ const conf = {
 	logging: (query: string) => logger.verbose(query),
 };
 
-const SequelizeDb = new Sequelize(conf);
+const typeormConf: ConnectionOptions = {
+	type: "postgres",
+	host: runningInDocker() ? "postgres" : "localhost",
+	username: "money_dashboard",
+	password: getSecret("postgres.password"),
+	database: "money_dashboard",
+	entities: [join(__dirname, "../new-models/*.js")],
+};
+
+const SequelizeDb = new Sequelize(sequelizeConf);
 
 export {
 	SequelizeDb,
+	typeormConf,
 };

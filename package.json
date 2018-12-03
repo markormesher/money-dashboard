@@ -7,8 +7,8 @@
     "clean": "rimraf ./build",
     "prod": "run-s clean build start",
     "dev": "run-s clean build-dev start-dev",
-    "postbuild": "copyfiles -u 2 \"./src/server/config/**\" ./build/server/.",
-    "postbuild-dev": "copyfiles -u 2 \"./src/server/config/**\" ./build/server/.",
+    "postbuild-server": "copyfiles -u 2 \"./src/server/config/**\" ./build/server/.",
+    "postbuild-server-dev": "copyfiles -u 2 \"./src/server/config/**\" ./build/server/.",
     "build": "run-p build-client build-server",
     "build-dev": "run-p build-client-dev build-server-dev",
     "build-client": "cross-env NODE_ENV=production webpack -p",
@@ -66,6 +66,7 @@
     "sequelize": "4.39.0",
     "sequelize-typescript": "0.6.6",
     "string-similarity": "^2.0.0",
+    "typeorm": "^0.2.9",
     "uuid": "^3.1.0",
     "winston": "^3.0.0-rc2"
   },
