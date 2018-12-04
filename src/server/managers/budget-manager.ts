@@ -1,5 +1,5 @@
 import * as Moment from "moment";
-import { DeepPartial } from "typeorm";
+import { cleanUuid } from "../db/utils";
 import { DbBudget } from "../models/db/DbBudget";
 import { DbTransaction } from "../models/db/DbTransaction";
 import { DbUser } from "../models/db/DbUser";
@@ -8,7 +8,7 @@ import { IBudgetBalance } from "../models/IBudgetBalance";
 
 function getBudget(user: DbUser, budgetId: string, mustExist: boolean = false): Promise<DbBudget> {
 	return DbBudget
-			.findOne(budgetId)
+			.findOne(cleanUuid(budgetId))
 			.then((budget) => {
 				if (!budget && mustExist) {
 					throw new Error("That budget does not exist");

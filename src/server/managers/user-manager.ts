@@ -1,3 +1,4 @@
+import { cleanUuid } from "../db/utils";
 import { DbUser } from "../models/db/DbUser";
 import { createProfileAndAddToUser } from "./profile-manager";
 
@@ -9,7 +10,7 @@ class GoogleProfile {
 
 function getUser(userId: string): Promise<DbUser> {
 	return DbUser
-			.findOne(userId)
+			.findOne(cleanUuid(userId))
 			.then((user) => {
 				if (user) {
 					user.profiles.sort((a, b) => a.name.localeCompare(b.name));

@@ -10,7 +10,6 @@ import { DbCategory } from "../models/db/DbCategory";
 import { DbUser } from "../models/db/DbUser";
 import { MomentDateTransformer } from "../models/helpers/MomentDateTransformer";
 import { IBudgetBalance } from "../models/IBudgetBalance";
-import { DEFAULT_CATEGORY } from "../models/ICategory";
 
 const router = Express.Router();
 

@@ -10,6 +10,7 @@ const typeormConf: ConnectionOptions = {
 	password: getSecret("postgres.password"),
 	database: "money_dashboard",
 	namingStrategy: new PostgresNamingStrategy(),
+	logging: true,
 	entities: [
 		join(__dirname, "../models/db/*.js"),
 	],

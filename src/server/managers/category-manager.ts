@@ -1,11 +1,12 @@
+import { cleanUuid } from "../db/utils";
 import { DbCategory } from "../models/db/DbCategory";
 import { DbTransaction } from "../models/db/DbTransaction";
 import { DbUser } from "../models/db/DbUser";
 import { ICategoryBalance } from "../models/ICategoryBalance";
 
-function getCategory(user: DbUser, categoryId: string): Promise<DbCategory> {
+function getCategory(user: DbUser, categoryId?: string): Promise<DbCategory> {
 	return DbCategory
-			.findOne(categoryId)
+			.findOne(cleanUuid(categoryId))
 			.then((category) => {
 				if (category && user && category.profile.id !== user.activeProfile.id) {
 					throw new Error("DbUser does not own this category");

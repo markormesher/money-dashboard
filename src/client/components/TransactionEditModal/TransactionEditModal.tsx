@@ -160,7 +160,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
 								<ControlledSelectInput
 										id={"account"}
 										label={"Account"}
-										value={currentValues.account ? currentValues.account.id : null}
+										value={currentValues.account ? currentValues.account.id : ""}
 										disabled={editorBusy || !accountList}
 										error={errors.account}
 										onValueChange={this.handleAccountChange}
@@ -192,7 +192,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
 								<ControlledSelectInput
 										id={"category"}
 										label={"Category"}
-										value={currentValues.category ? currentValues.category.id : null}
+										value={currentValues.category ? currentValues.category.id : ""}
 										disabled={editorBusy || !categoryList}
 										error={errors.category}
 										onValueChange={this.handleCategoryChange}

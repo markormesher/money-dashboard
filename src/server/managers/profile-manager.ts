@@ -1,10 +1,17 @@
+import { cleanUuid } from "../db/utils";
 import { DbProfile } from "../models/db/DbProfile";
 import { DbUser } from "../models/db/DbUser";
 import { getUser } from "./user-manager";
 
 function getProfile(user: DbUser, profileId: string): Promise<DbProfile> {
 	return DbProfile
-			.findOne(profileId)
+			.createQueryBuilder("profile")
+			.leftJoinAndSelect("profile.users", "users")
+			.where("profile.id = :profileId")
+			.setParameters({
+				profileId: cleanUuid(profileId),
+			})
+			.getOne()
 			.then((profile) => {
 				if (profile && user && !profile.users.some((u) => u.id === user.id)) {
 					throw new Error("DbUser does not own this profile");

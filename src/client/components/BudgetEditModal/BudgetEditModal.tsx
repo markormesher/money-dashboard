@@ -108,7 +108,7 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
 							<ControlledSelectInput
 									id={"category"}
 									label={"Category"}
-									value={currentValues.category.id}
+									value={currentValues.category ? currentValues.category.id : ""}
 									disabled={editorBusy || !categoryList}
 									error={errors.category}
 									onValueChange={this.handleCategoryChange}

@@ -1,9 +1,10 @@
+import { cleanUuid } from "../db/utils";
 import { DbTransaction } from "../models/db/DbTransaction";
 import { DbUser } from "../models/db/DbUser";
 
 function getTransaction(user: DbUser, transactionId: string, mustExist: boolean = false): Promise<DbTransaction> {
 	return DbTransaction
-			.findOne(transactionId)
+			.findOne(cleanUuid(transactionId))
 			.then((transaction) => {
 				if (!transaction && mustExist) {
 					throw new Error("That transaction does not exist");

@@ -1,3 +1,4 @@
+import { cleanUuid } from "../db/utils";
 import { DbAccount } from "../models/db/DbAccount";
 import { DbTransaction } from "../models/db/DbTransaction";
 import { DbUser } from "../models/db/DbUser";
@@ -5,7 +6,7 @@ import { IAccountBalance } from "../models/IAccountBalance";
 
 function getAccount(user: DbUser, accountId: string): Promise<DbAccount> {
 	return DbAccount
-			.findOne(accountId)
+			.findOne(cleanUuid(accountId))
 			.then((account) => {
 				if (account && user && account.profile.id !== user.activeProfile.id) {
 					throw new Error("DbUser does not own this account");

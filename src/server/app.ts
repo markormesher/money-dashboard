@@ -57,6 +57,7 @@ app.use((error: StatusError, req: Request, res: Response, next: NextFunction) =>
 	const status = error.status || 500;
 	const name = error.name || error.message || "Internal Server Error";
 	logger.error(`Error: ${name}`, error);
+	console.log(error);
 	res.status(status).json(error);
 });
 
