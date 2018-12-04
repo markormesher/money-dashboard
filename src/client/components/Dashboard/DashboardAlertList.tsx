@@ -2,7 +2,7 @@ import { faExclamationTriangle } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
-import { ICategoryBalance } from "../../../server/model-thins/ICategoryBalance";
+import { ICategoryBalance } from "../../../server/models/ICategoryBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatCurrencyStyled } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";

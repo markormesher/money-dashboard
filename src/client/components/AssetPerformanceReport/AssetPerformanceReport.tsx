@@ -9,9 +9,9 @@ import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IAssetPerformanceData } from "../../../server/model-thins/IAssetPerformanceData";
-import { ThinAccount } from "../../../server/model-thins/ThinAccount";
-import { DateModeOption } from "../../../server/models/Transaction";
+import { IAccount } from "../../../server/models/IAccount";
+import { IAssetPerformanceData } from "../../../server/models/IAssetPerformanceData";
+import { DateModeOption } from "../../../server/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency } from "../../helpers/formatters";
@@ -28,7 +28,7 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 
 interface IAssetPerformanceReportProps {
-	readonly accountList?: ThinAccount[];
+	readonly accountList?: IAccount[];
 
 	readonly actions?: {
 		readonly startLoadAccountList: () => AnyAction,

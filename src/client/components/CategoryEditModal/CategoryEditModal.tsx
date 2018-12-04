@@ -2,8 +2,11 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinCategory } from "../../../server/model-thins/ThinCategory";
-import { IThinCategoryValidationResult, validateThinCategory } from "../../../server/model-thins/ThinCategoryValidator";
+import { DEFAULT_CATEGORY, ICategory } from "../../../server/models/ICategory";
+import {
+	ICategoryValidationResult,
+	validateCategory,
+} from "../../../server/models/validators/ThinCategoryValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { setCategoryToEdit, startSaveCategory } from "../../redux/categories";
 import { IRootState } from "../../redux/root";
@@ -14,18 +17,18 @@ import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 
 interface ICategoryEditModalProps {
-	readonly categoryToEdit?: ThinCategory;
+	readonly categoryToEdit?: ICategory;
 	readonly editorBusy?: boolean;
 
 	readonly actions?: {
-		readonly setCategoryToEdit: (category: ThinCategory) => AnyAction,
-		readonly startSaveCategory: (category: Partial<ThinCategory>) => AnyAction,
+		readonly setCategoryToEdit: (category: ICategory) => AnyAction,
+		readonly startSaveCategory: (category: Partial<ICategory>) => AnyAction,
 	};
 }
 
 interface ICategoryEditModalState {
-	readonly currentValues: ThinCategory;
-	readonly validationResult: IThinCategoryValidationResult;
+	readonly currentValues: ICategory;
+	readonly validationResult: ICategoryValidationResult;
 }
 
 function mapStateToProps(state: IRootState, props: ICategoryEditModalProps): ICategoryEditModalProps {
@@ -50,10 +53,10 @@ class UCCategoryEditModal extends PureComponent<ICategoryEditModalProps, ICatego
 
 	constructor(props: ICategoryEditModalProps) {
 		super(props);
-		const categoryToEdit = props.categoryToEdit || ThinCategory.DEFAULT;
+		const categoryToEdit = props.categoryToEdit || DEFAULT_CATEGORY;
 		this.state = {
 			currentValues: categoryToEdit,
-			validationResult: validateThinCategory(categoryToEdit),
+			validationResult: validateCategory(categoryToEdit),
 		};
 
 		this.handleNameChange = this.handleNameChange.bind(this);
@@ -184,14 +187,14 @@ class UCCategoryEditModal extends PureComponent<ICategoryEditModalProps, ICatego
 		this.props.actions.setCategoryToEdit(undefined);
 	}
 
-	private updateModel(category: Partial<ThinCategory>): void {
+	private updateModel(category: Partial<ICategory>): void {
 		const updatedCategory = {
 			...this.state.currentValues,
 			...category,
 		};
 		this.setState({
 			currentValues: updatedCategory,
-			validationResult: validateThinCategory(updatedCategory),
+			validationResult: validateCategory(updatedCategory),
 		});
 	}
 }

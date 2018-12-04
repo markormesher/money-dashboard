@@ -1,15 +1,15 @@
 import axios from "axios";
 import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { ThinProfile } from "../../server/model-thins/ThinProfile";
+import { IProfile } from "../../server/models/IProfile";
 import { startLoadCurrentUser } from "./auth";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IProfilesState {
-	readonly activeProfile: ThinProfile;
-	readonly profileToEdit: ThinProfile;
+	readonly activeProfile: IProfile;
+	readonly profileToEdit: IProfile;
 	readonly editorBusy: boolean;
 }
 
@@ -39,17 +39,17 @@ const startDeleteProfile: ActionCreator<PayloadAction> = (profileId: string) => 
 	payload: { profileId },
 });
 
-const startSaveProfile: ActionCreator<PayloadAction> = (profile: Partial<ThinProfile>) => ({
+const startSaveProfile: ActionCreator<PayloadAction> = (profile: Partial<IProfile>) => ({
 	type: ProfileActions.START_SAVE_PROFILE,
 	payload: { profile },
 });
 
-const startSetCurrentProfile: ActionCreator<PayloadAction> = (profile: ThinProfile) => ({
+const startSetCurrentProfile: ActionCreator<PayloadAction> = (profile: IProfile) => ({
 	type: ProfileActions.START_SET_CURRENT_PROFILE,
 	payload: { profile },
 });
 
-const setProfileToEdit: ActionCreator<PayloadAction> = (profile: ThinProfile) => ({
+const setProfileToEdit: ActionCreator<PayloadAction> = (profile: IProfile) => ({
 	type: ProfileActions.SET_PROFILE_TO_EDIT,
 	payload: { profile },
 });
@@ -59,7 +59,7 @@ const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
 	payload: { editorBusy },
 });
 
-const setCurrentProfile: ActionCreator<PayloadAction> = (profile: ThinProfile) => ({
+const setCurrentProfile: ActionCreator<PayloadAction> = (profile: IProfile) => ({
 	type: ProfileActions.SET_CURRENT_PROFILE,
 	payload: { profile },
 });
@@ -78,7 +78,7 @@ function*deleteProfileSaga(): Generator {
 function*saveProfileSaga(): Generator {
 	yield takeEvery(ProfileActions.START_SAVE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
-			const profile: Partial<ThinProfile> = action.payload.profile;
+			const profile: Partial<IProfile> = action.payload.profile;
 			const profileId = profile.id || "";
 			yield all([
 				put(setEditorBusy(true)),
@@ -98,7 +98,7 @@ function*saveProfileSaga(): Generator {
 function*setCurrentProfileSaga(): Generator {
 	yield takeEvery(ProfileActions.START_SET_CURRENT_PROFILE, function*(action: PayloadAction): Generator {
 		try {
-			const profile: ThinProfile = action.payload.profile;
+			const profile: IProfile = action.payload.profile;
 			yield call(() => axios.post(`/profiles/select/${profile.id}`));
 			yield all([
 				put(setCurrentProfile(profile)),

@@ -1,56 +1,51 @@
-import * as Bluebird from "bluebird";
-import * as sequelize from "sequelize";
-import { ICategoryBalance } from "../model-thins/ICategoryBalance";
-import { Category } from "../models/Category";
-import { Profile } from "../models/Profile";
-import { Transaction } from "../models/Transaction";
-import { User } from "../models/User";
+import { DbCategory } from "../models/db/DbCategory";
+import { DbTransaction } from "../models/db/DbTransaction";
+import { DbUser } from "../models/db/DbUser";
+import { ICategoryBalance } from "../models/ICategoryBalance";
 
-function getCategory(user: User, categoryId: string): Bluebird<Category> {
-	return Category
-			.findOne({
-				where: { id: categoryId },
-				include: [Profile],
-			})
+function getCategory(user: DbUser, categoryId: string): Promise<DbCategory> {
+	return DbCategory
+			.findOne(categoryId)
 			.then((category) => {
 				if (category && user && category.profile.id !== user.activeProfile.id) {
-					throw new Error("User does not own this category");
+					throw new Error("DbUser does not own this category");
 				} else {
 					return category;
 				}
 			});
 }
 
-function getAllCategories(user: User): Bluebird<Category[]> {
-	return Category.findAll({
-		where: {
-			profileId: user.activeProfile.id,
-		},
-		include: [Profile],
-	});
+function getAllCategories(user: DbUser): Promise<DbCategory[]> {
+	return DbCategory
+			.find<DbCategory>({
+				profile: {
+					id: user.activeProfile.id,
+				},
+			});
 }
 
-function getMemoCategoryBalances(user: User): Bluebird<ICategoryBalance[]> {
-	const categoryBalanceQuery = Transaction.findAll({
-		attributes: [
-			"categoryId",
-			[sequelize.fn("SUM", sequelize.col("amount")), "balance"],
-		],
-		where: {
-			profileId: user.activeProfile.id,
-		},
-		group: [["categoryId"]],
-	});
+function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]> {
+	const categoryBalanceQuery2 = DbTransaction
+			.createQueryBuilder("transaction")
+			.leftJoin("transaction.category", "category")
+			.select("transaction.category_id")
+			.addSelect("SUM(amount)", "balance")
+			.where("category.is_memo_category = TRUE")
+			.groupBy("category_id")
+			.getRawMany() as Promise<Array<{ category_id: string, balance: number }>>;
 
-	return Bluebird
+	return Promise
 			.all([
 				getAllCategories(user),
-				categoryBalanceQuery,
+				categoryBalanceQuery2,
 			])
-			.spread((categories: Category[], balances: Transaction[]) => {
+			.then((results) => {
+				const categories = results[0];
+				const balances = results[1];
+
 				const balanceMap: { [key: string]: number } = {};
 				balances.forEach((sum) => {
-					balanceMap[sum.categoryId] = Math.round(sum.getDataValue("balance") * 100) / 100;
+					balanceMap[sum.category_id] = Math.round(sum.balance * 100) / 100;
 				});
 
 				return categories
@@ -65,18 +60,16 @@ function getMemoCategoryBalances(user: User): Bluebird<ICategoryBalance[]> {
 			});
 }
 
-function saveCategory(user: User, categoryId: string, properties: Partial<Category>): Bluebird<Category> {
+function saveCategory(user: DbUser, categoryId: string, properties: Partial<DbCategory>): Promise<DbCategory> {
 	return getCategory(user, categoryId)
 			.then((category) => {
-				category = category || new Category();
-				return category.update(properties);
-			})
-			.then((category) => {
-				return category.$set("profile", user.activeProfile);
+				category = DbCategory.getRepository().merge(category || new DbCategory(), properties);
+				category.profile = user.activeProfile;
+				return category.save();
 			});
 }
 
-function deleteCategory(user: User, categoryId: string): Bluebird<void> {
+function deleteCategory(user: DbUser, categoryId: string): Promise<DbCategory> {
 	return getCategory(user, categoryId)
 			.then((category) => {
 				if (!category) {
@@ -85,7 +78,7 @@ function deleteCategory(user: User, categoryId: string): Bluebird<void> {
 					return category;
 				}
 			})
-			.then((category) => category.destroy());
+			.then((category) => category.remove());
 }
 
 export {

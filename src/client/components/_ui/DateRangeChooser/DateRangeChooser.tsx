@@ -2,6 +2,7 @@ import { faCalendar, faCheck } from "@fortawesome/pro-light-svg-icons";
 import * as Moment from "moment";
 import * as React from "react";
 import { Component, CSSProperties, MouseEvent, ReactNode, RefObject } from "react";
+import { IDateRange } from "../../../../server/models/IDateRange";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
@@ -23,15 +24,9 @@ interface IDateRangeChooserProps {
 interface IDateRangeChooserState {
 	readonly chooserOpen: boolean;
 	readonly customRangeChooserOpen: boolean;
-	readonly customRangeStart: string;
-	readonly customRangeEnd: string;
+	readonly customRangeStart: Moment.Moment;
+	readonly customRangeEnd: Moment.Moment;
 	readonly usingCustomRange: boolean;
-}
-
-interface IDateRange {
-	readonly label: string;
-	readonly startDate: Moment.Moment;
-	readonly endDate: Moment.Moment;
 }
 
 class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChooserState> {
@@ -247,11 +242,11 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 		});
 	}
 
-	private handleCustomRangeStartChange(value: string): void {
+	private handleCustomRangeStartChange(value: Moment.Moment): void {
 		this.setState({ customRangeStart: value });
 	}
 
-	private handleCustomRangeEndChange(value: string): void {
+	private handleCustomRangeEndChange(value: Moment.Moment): void {
 		this.setState({ customRangeEnd: value });
 	}
 
@@ -262,7 +257,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 				usingCustomRange: true,
 			});
 			if (this.props.onValueChange) {
-				this.props.onValueChange(Moment(customRangeStart), Moment(customRangeEnd));
+				this.props.onValueChange(customRangeStart, customRangeEnd);
 			}
 			this.closeChooser();
 		}

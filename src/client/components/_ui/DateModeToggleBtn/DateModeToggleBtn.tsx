@@ -1,7 +1,7 @@
 import { faCalendar } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
-import { DateModeOption } from "../../../../server/models/Transaction";
+import { DateModeOption } from "../../../../server/models/ITransaction";
 import { capitaliseFirstLetter } from "../../../helpers/formatters";
 import { IconBtn } from "../IconBtn/IconBtn";
 

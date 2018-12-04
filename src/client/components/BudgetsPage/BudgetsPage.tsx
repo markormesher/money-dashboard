@@ -3,7 +3,7 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinBudget } from "../../../server/model-thins/ThinBudget";
+import { IBudget, mapBudgetFromApi } from "../../../server/models/IBudget";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
@@ -30,12 +30,12 @@ import { BudgetEditModal } from "../BudgetEditModal/BudgetEditModal";
 interface IBudgetsPageProps {
 	readonly cacheTime: number;
 	readonly displayCurrentOnly: boolean;
-	readonly budgetToEdit?: ThinBudget;
+	readonly budgetToEdit?: IBudget;
 	readonly budgetIdsToClone?: string[];
 	readonly actions?: {
 		readonly deleteBudget: (id: string) => AnyAction,
 		readonly setDisplayCurrentOnly: (active: boolean) => AnyAction,
-		readonly setBudgetToEdit: (budget: ThinBudget) => AnyAction,
+		readonly setBudgetToEdit: (budget: IBudget) => AnyAction,
 		readonly setBudgetIdsToClone: (budgetIds: string[]) => AnyAction,
 	};
 }
@@ -90,10 +90,14 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinBudget>("/budgets/table-data", () => ({
-		cacheTime: this.props.cacheTime,
-		currentOnly: this.props.displayCurrentOnly,
-	}));
+	private dataProvider = new ApiDataTableDataProvider<IBudget>(
+			"/budgets/table-data",
+			() => ({
+				cacheTime: this.props.cacheTime,
+				currentOnly: this.props.displayCurrentOnly,
+			}),
+			mapBudgetFromApi,
+	);
 
 	constructor(props: IBudgetsPageProps) {
 		super(props);
@@ -155,7 +159,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 						</div>
 					</div>
 
-					<DataTable<ThinBudget>
+					<DataTable<IBudget>
 							columns={this.tableColumns}
 							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
@@ -165,7 +169,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 		);
 	}
 
-	private tableRowRenderer(budget: ThinBudget): ReactElement<void> {
+	private tableRowRenderer(budget: IBudget): ReactElement<void> {
 		const { selectedBudgetIds } = this.state;
 		const cloneId = `clone-${budget.id}`;
 		return (
@@ -188,7 +192,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 		);
 	}
 
-	private generateActionButtons(budget: ThinBudget): ReactElement<void> {
+	private generateActionButtons(budget: IBudget): ReactElement<void> {
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<IconBtn

@@ -2,8 +2,8 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinProfile } from "../../../server/model-thins/ThinProfile";
-import { IThinProfileValidationResult, validateThinProfile } from "../../../server/model-thins/ThinProfileValidator";
+import { DEFAULT_PROFILE, IProfile } from "../../../server/models/IProfile";
+import { IProfileValidationResult, validateProfile } from "../../../server/models/validators/ProfileValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { setProfileToEdit, startSaveProfile } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
@@ -12,18 +12,18 @@ import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 
 interface IProfileEditModalProps {
-	readonly profileToEdit?: ThinProfile;
+	readonly profileToEdit?: IProfile;
 	readonly editorBusy?: boolean;
 
 	readonly actions?: {
-		readonly setProfileToEdit: (profile: ThinProfile) => AnyAction,
-		readonly startSaveProfile: (profile: Partial<ThinProfile>) => AnyAction,
+		readonly setProfileToEdit: (profile: IProfile) => AnyAction,
+		readonly startSaveProfile: (profile: Partial<IProfile>) => AnyAction,
 	};
 }
 
 interface IProfileEditModalState {
-	readonly currentValues: ThinProfile;
-	readonly validationResult: IThinProfileValidationResult;
+	readonly currentValues: IProfile;
+	readonly validationResult: IProfileValidationResult;
 }
 
 function mapStateToProps(state: IRootState, props: IProfileEditModalProps): IProfileEditModalProps {
@@ -48,10 +48,10 @@ class UCProfileEditModal extends PureComponent<IProfileEditModalProps, IProfileE
 
 	constructor(props: IProfileEditModalProps) {
 		super(props);
-		const profileToEdit = props.profileToEdit || ThinProfile.DEFAULT;
+		const profileToEdit = props.profileToEdit || DEFAULT_PROFILE;
 		this.state = {
 			currentValues: profileToEdit,
-			validationResult: validateThinProfile(profileToEdit),
+			validationResult: validateProfile(profileToEdit),
 		};
 
 		this.handleNameChange = this.handleNameChange.bind(this);
@@ -118,14 +118,14 @@ class UCProfileEditModal extends PureComponent<IProfileEditModalProps, IProfileE
 		this.props.actions.setProfileToEdit(undefined);
 	}
 
-	private updateModel(profile: Partial<ThinProfile>): void {
+	private updateModel(profile: Partial<IProfile>): void {
 		const updatedProfile = {
 			...this.state.currentValues,
 			...profile,
 		};
 		this.setState({
 			currentValues: updatedProfile,
-			validationResult: validateThinProfile(updatedProfile),
+			validationResult: validateProfile(updatedProfile),
 		});
 	}
 }

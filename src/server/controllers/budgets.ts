@@ -1,72 +1,61 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import { Op } from "sequelize";
-import { IFindOptions } from "sequelize-typescript";
-import { getData } from "../helpers/datatable-helper";
-import { cloneBudgets, deleteBudget, saveBudget } from "../managers/budget-manager";
-import { getBudgetBalances} from "../managers/budget-manager";
+import * as Moment from "moment";
+import { Brackets } from "typeorm";
+import { getDataForTable } from "../helpers/datatable-helper";
+import { cloneBudgets, deleteBudget, getBudgetBalances, saveBudget } from "../managers/budget-manager";
 import { requireUser } from "../middleware/auth-middleware";
-import { IBudgetBalance } from "../model-thins/IBudgetBalance";
-import { Budget } from "../models/Budget";
-import { Category } from "../models/Category";
-import { User } from "../models/User";
+import { DbBudget } from "../models/db/DbBudget";
+import { DbCategory } from "../models/db/DbCategory";
+import { DbUser } from "../models/db/DbUser";
+import { MomentDateTransformer } from "../models/helpers/MomentDateTransformer";
+import { IBudgetBalance } from "../models/IBudgetBalance";
+import { DEFAULT_CATEGORY } from "../models/ICategory";
 
 const router = Express.Router();
 
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	const searchTerm = req.query.searchTerm;
 	const currentOnly = req.query.currentOnly === "true";
-	const now = new Date();
 
-	const currentOnlyQueryFragment = currentOnly ? {
-		[Op.and]: {
-			startDate: {
-				[Op.lte]: now,
-			},
-			endDate: {
-				[Op.gte]: now,
-			},
-		},
-	} : {};
+	const totalQuery = DbBudget
+			.createQueryBuilder("budget")
+			.where("budget.profile_id = :profileId", { profileId: user.activeProfile.id });
 
-	const countQuery: IFindOptions<Budget> = {
-		where: {
-			profileId: user.activeProfile.id,
-		},
-	};
-	const dataQuery: IFindOptions<Budget> = {
-		where: {
-			[Op.and]: {
-				profileId: user.activeProfile.id,
-				[Op.or]: {
-					"type": {
-						[Op.iLike]: `%${searchTerm}%`,
-					},
-					"$category.name$": {
-						[Op.iLike]: `%${searchTerm}%`,
-					},
+	let filteredQuery = DbBudget
+			.createQueryBuilder("budget")
+			.leftJoin("budget.category", "category")
+			.where("budget.profile_id = :profileId", { profileId: user.activeProfile.id })
+			.andWhere(new Brackets((qb) => qb.where(
+					"budget.type ILIKE :searchTerm" +
+					" OR category.name ILIKE :searchTerm",
+					{ searchTerm: `%${searchTerm}%` },
+			)));
+
+	if (currentOnly) {
+		filteredQuery = filteredQuery.andWhere(
+				"start_date <= :now AND end_date >= :now",
+				{
+					now: MomentDateTransformer.toDbFormat(Moment()),
 				},
-				[Op.and]: currentOnlyQueryFragment,
-			},
-		},
-		include: [Category],
-	};
+		);
+	}
 
-	getData(Budget, req, countQuery, dataQuery)
+	getDataForTable(DbBudget, req, totalQuery, filteredQuery)
 			.then((response) => res.json(response))
 			.catch(next);
 });
 
 router.post("/edit/:budgetId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	const budgetId = req.params.budgetId;
-	const properties: Partial<Budget> = {
-		categoryId: req.body.categoryId,
+	const properties: Partial<DbBudget> = {
+		category: DbCategory.create({ id: req.body.category.id }),
 		type: req.body.type,
 		amount: parseFloat(req.body.amount),
-		startDate: new Date(req.body.startDate),
-		endDate: new Date(req.body.endDate),
+		startDate: Moment(req.body.startDate),
+		endDate: Moment(req.body.endDate),
 	};
 
 	saveBudget(user, budgetId, properties)
@@ -75,7 +64,7 @@ router.post("/edit/:budgetId?", requireUser, (req: Request, res: Response, next:
 });
 
 router.post("/delete/:budgetId", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	const budgetId = req.params.budgetId;
 
 	deleteBudget(user, budgetId)
@@ -84,10 +73,10 @@ router.post("/delete/:budgetId", requireUser, (req: Request, res: Response, next
 });
 
 router.post("/clone", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	const budgetIds: string[] = req.body.budgetIds;
-	const startDate = new Date(req.body.startDate);
-	const endDate = new Date(req.body.endDate);
+	const startDate = Moment(req.body.startDate);
+	const endDate = Moment(req.body.endDate);
 
 	cloneBudgets(user, budgetIds, startDate, endDate)
 			.then(() => res.status(200).end())
@@ -95,7 +84,7 @@ router.post("/clone", requireUser, (req: Request, res: Response, next: NextFunct
 });
 
 router.get("/balances", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	getBudgetBalances(req.user as User)
+	getBudgetBalances(req.user as DbUser, true)
 			.then((balances: IBudgetBalance[]) => res.json(balances))
 			.catch(next);
 });

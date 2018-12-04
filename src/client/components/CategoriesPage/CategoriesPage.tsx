@@ -3,7 +3,7 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinCategory } from "../../../server/model-thins/ThinCategory";
+import { ICategory, mapCategoryFromApi } from "../../../server/models/ICategory";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";
@@ -20,10 +20,10 @@ import { CategoryEditModal } from "../CategoryEditModal/CategoryEditModal";
 
 interface ICategoriesPageProps {
 	readonly cacheTime: number;
-	readonly categoryToEdit?: ThinCategory;
+	readonly categoryToEdit?: ICategory;
 	readonly actions?: {
 		readonly deleteCategory: (id: string) => AnyAction,
-		readonly setCategoryToEdit: (category: ThinCategory) => AnyAction,
+		readonly setCategoryToEdit: (category: ICategory) => AnyAction,
 	};
 }
 
@@ -53,9 +53,13 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinCategory>("/categories/table-data", () => ({
-		cacheTime: this.props.cacheTime,
-	}));
+	private dataProvider = new ApiDataTableDataProvider<ICategory>(
+			"/categories/table-data",
+			() => ({
+				cacheTime: this.props.cacheTime,
+			}),
+			mapCategoryFromApi,
+	);
 
 	constructor(props: ICategoriesPageProps) {
 		super(props);
@@ -91,7 +95,7 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
 						</div>
 					</div>
 
-					<DataTable<ThinCategory>
+					<DataTable<ICategory>
 							columns={this.tableColumns}
 							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
@@ -101,7 +105,7 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
 		);
 	}
 
-	private tableRowRenderer(category: ThinCategory): ReactElement<void> {
+	private tableRowRenderer(category: ICategory): ReactElement<void> {
 		return (
 				<tr key={category.id}>
 					<td>{category.name}</td>
@@ -111,7 +115,7 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
 		);
 	}
 
-	private generateActionButtons(category: ThinCategory): ReactElement<void> {
+	private generateActionButtons(category: ICategory): ReactElement<void> {
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<IconBtn

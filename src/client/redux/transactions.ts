@@ -1,8 +1,11 @@
 import axios from "axios";
 import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { ThinTransaction } from "../../server/model-thins/ThinTransaction";
-import { DateModeOption } from "../../server/models/Transaction";
+import {
+	DateModeOption,
+	getNextTransactionForContinuousCreation,
+	ITransaction,
+} from "../../server/models/ITransaction";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -10,7 +13,7 @@ import { ProfileCacheKeys } from "./profiles";
 
 interface ITransactionsState {
 	readonly dateMode: DateModeOption;
-	readonly transactionToEdit: ThinTransaction;
+	readonly transactionToEdit: ITransaction;
 	readonly editorBusy: boolean;
 	readonly payeeList: string[];
 }
@@ -43,7 +46,7 @@ const startDeleteTransaction: ActionCreator<PayloadAction> = (transactionId: str
 	payload: { transactionId },
 });
 
-const startSaveTransaction: ActionCreator<PayloadAction> = (transaction: Partial<ThinTransaction>) => ({
+const startSaveTransaction: ActionCreator<PayloadAction> = (transaction: Partial<ITransaction>) => ({
 	type: TransactionActions.START_SAVE_TRANSACTION,
 	payload: { transaction },
 });
@@ -57,7 +60,7 @@ const setDateMode: ActionCreator<PayloadAction> = (dateMode: DateModeOption) => 
 	payload: { dateMode },
 });
 
-const setTransactionToEdit: ActionCreator<PayloadAction> = (transaction: ThinTransaction) => ({
+const setTransactionToEdit: ActionCreator<PayloadAction> = (transaction: ITransaction) => ({
 	type: TransactionActions.SET_TRANSACTION_TO_EDIT,
 	payload: { transaction },
 });
@@ -88,7 +91,7 @@ function*deleteTransactionSaga(): Generator {
 function*saveTransactionSaga(): Generator {
 	yield takeEvery(TransactionActions.START_SAVE_TRANSACTION, function*(action: PayloadAction): Generator {
 		try {
-			const transaction: Partial<ThinTransaction> = action.payload.transaction;
+			const transaction: Partial<ITransaction> = action.payload.transaction;
 			const transactionId = transaction.id || "";
 			yield all([
 				put(setEditorBusy(true)),
@@ -102,7 +105,7 @@ function*saveTransactionSaga(): Generator {
 				put(setTransactionToEdit(undefined)),
 
 				// ...but if they were creating a new transaction, re-open it with some fields pre-filled
-				transactionId === "" && put(setTransactionToEdit(ThinTransaction.getNextForContinuousCreation(transaction))),
+				transactionId === "" && put(setTransactionToEdit(getNextTransactionForContinuousCreation(transaction))),
 			]);
 		} catch (err) {
 			yield put(setError(err));

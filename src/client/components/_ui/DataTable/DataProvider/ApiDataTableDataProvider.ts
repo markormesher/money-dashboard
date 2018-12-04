@@ -12,10 +12,16 @@ class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
 
 	private readonly api: string;
 	private readonly apiParamProvider: () => IApiParams;
+	private readonly apiResponseMapper: (entity: any) => Model;
 
-	constructor(api: string, apiParamProvider?: () => IApiParams) {
+	constructor(
+			api: string,
+			apiParamProvider?: () => IApiParams,
+			apiResponseMapper?: (entity: any) => Model,
+	) {
 		this.api = api;
 		this.apiParamProvider = apiParamProvider;
+		this.apiResponseMapper = apiResponseMapper;
 	}
 
 	public getData(
@@ -36,7 +42,16 @@ class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
 						order: this.formatOrdering(sortedColumns),
 					},
 				})
-				.then((res: AxiosResponse<IDataTableResponse<Model>>) => res.data);
+				.then((res: AxiosResponse<IDataTableResponse<Model>>) => {
+					if (this.apiResponseMapper) {
+						return {
+							...res.data,
+							data: res.data.data.map(this.apiResponseMapper),
+						};
+					} else {
+						return res.data;
+					}
+				});
 	}
 
 	private formatOrdering(sortedColumns: IColumnSortEntry[]): string[][] {

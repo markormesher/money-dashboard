@@ -1,55 +1,47 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import { Op } from "sequelize";
-import { IFindOptions } from "sequelize-typescript";
-import { getData } from "../helpers/datatable-helper";
-import { getMemoCategoryBalances} from "../managers/category-manager";
-import { deleteCategory, getAllCategories, saveCategory } from "../managers/category-manager";
+import { getDataForTable } from "../helpers/datatable-helper";
+import { deleteCategory, getAllCategories, getMemoCategoryBalances, saveCategory } from "../managers/category-manager";
 import { requireUser } from "../middleware/auth-middleware";
-import { ICategoryBalance } from "../model-thins/ICategoryBalance";
-import { Category } from "../models/Category";
-import { User } from "../models/User";
+import { DbCategory } from "../models/db/DbCategory";
+import { DbUser } from "../models/db/DbUser";
+import { ICategoryBalance } from "../models/ICategoryBalance";
 
 const router = Express.Router();
 
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	const searchTerm = req.query.searchTerm;
 
-	const countQuery: IFindOptions<Category> = {
-		where: {
-			profileId: user.activeProfile.id,
-		},
-	};
-	const dataQuery: IFindOptions<Category> = {
-		where: {
-			[Op.and]: {
-				profileId: user.activeProfile.id,
-				[Op.or]: {
-					name: {
-						[Op.iLike]: `%${searchTerm}%`,
-					},
-				},
-			},
-		},
-	};
+	const totalQuery = DbCategory
+			.createQueryBuilder("category")
+			.where("category.profile_id = :profileId", { profileId: user.activeProfile.id });
 
-	getData(Category, req, countQuery, dataQuery)
+	const filteredQuery = DbCategory
+			.createQueryBuilder("category")
+			.where("category.profile_id = :profileId")
+			.andWhere("category.name ILIKE :searchTerm")
+			.setParameters({
+				profileId: user.activeProfile.id,
+				searchTerm: `%${searchTerm}%`,
+			});
+
+	getDataForTable(DbCategory, req, totalQuery, filteredQuery)
 			.then((response) => res.json(response))
 			.catch(next);
 });
 
 router.get("/list", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	getAllCategories(user)
-			.then((categories: Category[]) => res.json(categories))
+			.then((categories: DbCategory[]) => res.json(categories))
 			.catch(next);
 });
 
 router.post("/edit/:categoryId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	const categoryId = req.params.categoryId;
-	const properties: Partial<Category> = {
+	const properties: Partial<DbCategory> = {
 		name: req.body.name,
 		isIncomeCategory: req.body.isIncomeCategory,
 		isExpenseCategory: req.body.isExpenseCategory,
@@ -63,7 +55,7 @@ router.post("/edit/:categoryId?", requireUser, (req: Request, res: Response, nex
 });
 
 router.post("/delete/:categoryId", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	const categoryId = req.params.categoryId;
 
 	deleteCategory(user, categoryId)
@@ -72,7 +64,9 @@ router.post("/delete/:categoryId", requireUser, (req: Request, res: Response, ne
 });
 
 router.get("/memo-balances", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	getMemoCategoryBalances(req.user as User)
+	const user = req.user as DbUser;
+
+	getMemoCategoryBalances(user)
 			.then((balances: ICategoryBalance[]) => res.json(balances))
 			.catch(next);
 });

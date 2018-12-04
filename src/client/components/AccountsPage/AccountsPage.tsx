@@ -1,9 +1,9 @@
 import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import { PureComponent, ReactElement, ReactNode } from "react";
 import * as React from "react";
+import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinAccount } from "../../../server/model-thins/ThinAccount";
+import { IAccount, mapAccountFromApi } from "../../../server/models/IAccount";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateAccountTypeBadge } from "../../helpers/formatters";
@@ -22,12 +22,12 @@ import { AccountEditModal } from "../AccountEditModal/AccountEditModal";
 interface IAccountsPageProps {
 	readonly cacheTime: number;
 	readonly displayActiveOnly?: boolean;
-	readonly accountToEdit?: ThinAccount;
+	readonly accountToEdit?: IAccount;
 
 	readonly actions?: {
 		readonly deleteAccount: (id: string) => AnyAction,
 		readonly setDisplayActiveOnly: (active: boolean) => AnyAction,
-		readonly setAccountToEdit: (account: ThinAccount) => AnyAction,
+		readonly setAccountToEdit: (account: IAccount) => AnyAction,
 	};
 }
 
@@ -59,10 +59,14 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinAccount>("/accounts/table-data", () => ({
-		cacheTime: this.props.cacheTime,
-		activeOnly: this.props.displayActiveOnly,
-	}));
+	private dataProvider = new ApiDataTableDataProvider<IAccount>(
+			"/accounts/table-data",
+			() => ({
+				cacheTime: this.props.cacheTime,
+				activeOnly: this.props.displayActiveOnly,
+			}),
+			mapAccountFromApi,
+	);
 
 	constructor(props: IAccountsPageProps) {
 		super(props);
@@ -107,7 +111,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
 						</div>
 					</div>
 
-					<DataTable<ThinAccount>
+					<DataTable<IAccount>
 							columns={this.tableColumns}
 							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
@@ -117,7 +121,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
 		);
 	}
 
-	private tableRowRenderer(account: ThinAccount): ReactElement<void> {
+	private tableRowRenderer(account: IAccount): ReactElement<void> {
 		return (
 				<tr key={account.id}>
 					<td>{account.name}</td>
@@ -127,7 +131,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
 		);
 	}
 
-	private generateActionButtons(account: ThinAccount): ReactElement<void> {
+	private generateActionButtons(account: IAccount): ReactElement<void> {
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<IconBtn

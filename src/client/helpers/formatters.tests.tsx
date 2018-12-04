@@ -7,9 +7,9 @@ import * as Adapter from "enzyme-adapter-react-16";
 import { describe, it } from "mocha";
 import * as Moment from "moment";
 import * as React from "react";
-import { ThinAccount } from "../../server/model-thins/ThinAccount";
-import { ThinBudget } from "../../server/model-thins/ThinBudget";
-import { ThinCategory } from "../../server/model-thins/ThinCategory";
+import { DEFAULT_ACCOUNT } from "../../server/models/IAccount";
+import { DEFAULT_BUDGET } from "../../server/models/IBudget";
+import { DEFAULT_CATEGORY } from "../../server/models/ICategory";
 import * as bs from "../global-styles/Bootstrap.scss";
 import {
 	capitaliseFirstLetter,
@@ -88,7 +88,7 @@ describe(__filename, () => {
 		});
 
 		it("should be able to format for users", () => {
-			formatDate("2015-04-01", "user").should.equal("01 Apr 2015");
+			formatDate(Moment("2015-04-01"), "user").should.equal("01 Apr 2015");
 		});
 	});
 
@@ -118,7 +118,7 @@ describe(__filename, () => {
 	describe("generateAccountTypeBadge()", () => {
 
 		it("should apply the right class for each account type", () => {
-			let account = ThinAccount.DEFAULT;
+			let account = DEFAULT_ACCOUNT;
 
 			account = { ...account, type: "current" };
 			let badge = generateAccountTypeBadge(account);
@@ -138,15 +138,15 @@ describe(__filename, () => {
 		});
 
 		it("should insert the right text for each account type", () => {
-			let account = ThinAccount.DEFAULT;
+			let account = DEFAULT_ACCOUNT;
 
 			account = { ...account, type: "current" };
 			let badge = generateAccountTypeBadge(account);
-			shallow(badge).text().should.equal("Current Account");
+			shallow(badge).text().should.equal("Current DbAccount");
 
 			account = { ...account, type: "savings" };
 			badge = generateAccountTypeBadge(account);
-			shallow(badge).text().should.equal("Savings Account");
+			shallow(badge).text().should.equal("Savings DbAccount");
 
 			account = { ...account, type: "asset" };
 			badge = generateAccountTypeBadge(account);
@@ -161,7 +161,7 @@ describe(__filename, () => {
 	describe("generateBudgetTypeBadge()", () => {
 
 		it("should apply the right class for each budget type", () => {
-			let budget = ThinBudget.DEFAULT;
+			let budget = DEFAULT_BUDGET;
 
 			budget = { ...budget, type: "budget" };
 			let badge = generateBudgetTypeBadge(budget);
@@ -173,11 +173,11 @@ describe(__filename, () => {
 		});
 
 		it("should insert the right text for each budget type", () => {
-			let budget = ThinBudget.DEFAULT;
+			let budget = DEFAULT_BUDGET;
 
 			budget = { ...budget, type: "budget" };
 			let badge = generateBudgetTypeBadge(budget);
-			shallow(badge).text().should.equal("Budget");
+			shallow(badge).text().should.equal("DbBudget");
 
 			budget = { ...budget, type: "bill" };
 			badge = generateBudgetTypeBadge(budget);
@@ -187,91 +187,82 @@ describe(__filename, () => {
 
 	describe("getBudgetPeriodType()", () => {
 
-		it("should accept string dates", () => {
-			getBudgetPeriodType("2018-01-01", "2018-01-31").should.equal("month");
-		});
-
-		it("should accept JS dates", () => {
-			// note: months are 0-indexed
-			getBudgetPeriodType(new Date(2018, 0, 1), new Date(2018, 0, 31)).should.equal("month");
-		});
-
 		it("should determine month periods", () => {
-			getBudgetPeriodType("2018-01-01", "2018-01-31").should.equal("month");
-			getBudgetPeriodType("2018-02-01", "2018-02-28").should.equal("month");
+			getBudgetPeriodType(Moment("2018-01-01"), Moment("2018-01-31")).should.equal("month");
+			getBudgetPeriodType(Moment("2018-02-01"), Moment("2018-02-28")).should.equal("month");
 		});
 
 		it("should determine calendar year periods", () => {
-			getBudgetPeriodType("2018-01-01", "2018-12-31").should.equal("calendar year");
+			getBudgetPeriodType(Moment("2018-01-01"), Moment("2018-12-31")).should.equal("calendar year");
 		});
 
 		it("should determine tax year periods", () => {
-			getBudgetPeriodType("2017-04-06", "2018-04-05").should.equal("tax year");
+			getBudgetPeriodType(Moment("2017-04-06"), Moment("2018-04-05")).should.equal("tax year");
 		});
 
 		it("should return 'other' if the period is not month/year/tax year", () => {
-			getBudgetPeriodType("2018-01-01", "2018-01-02").should.equal("other");
+			getBudgetPeriodType(Moment("2018-01-01"), Moment("2018-01-02")).should.equal("other");
 		});
 	});
 
 	describe("generateCategoryTypeBadge()", () => {
 
 		it("should apply the right class for each category type", () => {
-			let category = { ...ThinCategory.DEFAULT, isIncomeCategory: true };
+			let category = { ...DEFAULT_CATEGORY, isIncomeCategory: true };
 			let badge = generateCategoryTypeBadge(category)[0];
 			shallow(badge).find(`.${bs.badgeSuccess}`).should.have.lengthOf(1);
 
-			category = { ...ThinCategory.DEFAULT, isExpenseCategory: true };
+			category = { ...DEFAULT_CATEGORY, isExpenseCategory: true };
 			badge = generateCategoryTypeBadge(category)[0];
 			shallow(badge).find(`.${bs.badgeDanger}`).should.have.lengthOf(1);
 
-			category = { ...ThinCategory.DEFAULT, isAssetGrowthCategory: true };
+			category = { ...DEFAULT_CATEGORY, isAssetGrowthCategory: true };
 			badge = generateCategoryTypeBadge(category)[0];
 			shallow(badge).find(`.${bs.badgeWarning}`).should.have.lengthOf(1);
 
-			category = { ...ThinCategory.DEFAULT, isMemoCategory: true };
+			category = { ...DEFAULT_CATEGORY, isMemoCategory: true };
 			badge = generateCategoryTypeBadge(category)[0];
 			shallow(badge).find(`.${bs.badgeInfo}`).should.have.lengthOf(1);
 		});
 
 		it("should insert the right text for each category type", () => {
-			let category = { ...ThinCategory.DEFAULT, isIncomeCategory: true };
+			let category = { ...DEFAULT_CATEGORY, isIncomeCategory: true };
 			let badge = generateCategoryTypeBadge(category)[0];
 			shallow(badge).text().should.equal("Income");
 
-			category = { ...ThinCategory.DEFAULT, isExpenseCategory: true };
+			category = { ...DEFAULT_CATEGORY, isExpenseCategory: true };
 			badge = generateCategoryTypeBadge(category)[0];
 			shallow(badge).text().should.equal("Expense");
 
-			category = { ...ThinCategory.DEFAULT, isAssetGrowthCategory: true };
+			category = { ...DEFAULT_CATEGORY, isAssetGrowthCategory: true };
 			badge = generateCategoryTypeBadge(category)[0];
 			shallow(badge).text().should.equal("Asset");
 
-			category = { ...ThinCategory.DEFAULT, isMemoCategory: true };
+			category = { ...DEFAULT_CATEGORY, isMemoCategory: true };
 			badge = generateCategoryTypeBadge(category)[0];
 			shallow(badge).text().should.equal("Memo");
 		});
 
 		it("should return one node when category has no types", () => {
-			const category = ThinCategory.DEFAULT; // all types are false
+			const category = DEFAULT_CATEGORY; // all types are false
 			const badges = generateCategoryTypeBadge(category);
 			badges.length.should.equal(1);
 			shallow(badges[0]).filter("span").should.have.lengthOf(1);
 		});
 
 		it("should return a styled 'none' message when category has no types", () => {
-			const category = ThinCategory.DEFAULT; // all types are false
+			const category = DEFAULT_CATEGORY; // all types are false
 			const badge = generateCategoryTypeBadge(category)[0];
 			shallow(badge).find(`.${bs.textMuted}`).should.have.lengthOf(1);
 			shallow(badge).text().should.equal("None");
 		});
 
 		it("should return one node per category type", () => {
-			let category = { ...ThinCategory.DEFAULT, isIncomeCategory: true };
+			let category = { ...DEFAULT_CATEGORY, isIncomeCategory: true };
 			let badges = generateCategoryTypeBadge(category);
 			badges.length.should.equal(1);
 
-			category = { ...ThinCategory.DEFAULT, isIncomeCategory: true, isExpenseCategory: true };
+			category = { ...DEFAULT_CATEGORY, isIncomeCategory: true, isExpenseCategory: true };
 			badges = generateCategoryTypeBadge(category);
 			badges.length.should.equal(2);
 		});

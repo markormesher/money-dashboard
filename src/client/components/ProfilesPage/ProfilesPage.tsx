@@ -3,8 +3,8 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinProfile } from "../../../server/model-thins/ThinProfile";
-import { ThinUser } from "../../../server/model-thins/ThinUser";
+import { IProfile, mapProfileFromApi } from "../../../server/models/IProfile";
+import { IUser } from "../../../server/models/IUser";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
@@ -21,12 +21,12 @@ import { ProfileEditModal } from "../ProfileEditModal/ProfileEditModal";
 
 interface IProfilesPageProps {
 	readonly cacheTime: number;
-	readonly profileToEdit?: ThinProfile;
-	readonly activeUser?: ThinUser;
+	readonly profileToEdit?: IProfile;
+	readonly activeUser?: IUser;
 	readonly actions?: {
 		readonly deleteProfile: (id: string) => AnyAction,
-		readonly setProfileToEdit: (profile: ThinProfile) => AnyAction,
-		readonly setCurrentProfile: (profile: ThinProfile) => AnyAction,
+		readonly setProfileToEdit: (profile: IProfile) => AnyAction,
+		readonly setCurrentProfile: (profile: IProfile) => AnyAction,
 	};
 }
 
@@ -60,9 +60,13 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinProfile>("/profiles/table-data", () => ({
-		cacheTime: this.props.cacheTime,
-	}));
+	private dataProvider = new ApiDataTableDataProvider<IProfile>(
+			"/profiles/table-data",
+			() => ({
+				cacheTime: this.props.cacheTime,
+			}),
+			mapProfileFromApi,
+	);
 
 	constructor(props: IProfilesPageProps) {
 		super(props);
@@ -98,7 +102,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 						</div>
 					</div>
 
-					<DataTable<ThinProfile>
+					<DataTable<IProfile>
 							columns={this.tableColumns}
 							dataProvider={this.dataProvider}
 							rowRenderer={this.tableRowRenderer}
@@ -108,7 +112,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 		);
 	}
 
-	private tableRowRenderer(profile: ThinProfile): ReactElement<void> {
+	private tableRowRenderer(profile: IProfile): ReactElement<void> {
 		const activeProfile = profile.id === this.props.activeUser.activeProfile.id;
 		return (
 				<tr key={profile.id}>
@@ -121,7 +125,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 		);
 	}
 
-	private generateActionButtons(profile: ThinProfile): ReactElement<void> {
+	private generateActionButtons(profile: IProfile): ReactElement<void> {
 		const activeProfile = profile.id === this.props.activeUser.activeProfile.id;
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>

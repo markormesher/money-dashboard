@@ -1,85 +1,55 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import { Op } from "sequelize";
-import { IFindOptions } from "sequelize-typescript";
-import { getData } from "../helpers/datatable-helper";
+import * as Moment from "moment";
+import { Brackets } from "typeorm";
+import { getDataForTable } from "../helpers/datatable-helper";
 import { deleteTransaction, getAllPayees, saveTransaction } from "../managers/transaction-manager";
 import { requireUser } from "../middleware/auth-middleware";
-import { Account } from "../models/Account";
-import { Category } from "../models/Category";
-import { Transaction } from "../models/Transaction";
-import { User } from "../models/User";
+import { DbTransaction } from "../models/db/DbTransaction";
+import { DbUser } from "../models/db/DbUser";
 
 const router = Express.Router();
 
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	const searchTerm = req.query.searchTerm || "";
+
+	// TODO: custom order by date mode
 	const dateMode = req.query.dateMode || "transaction";
-	const order: string[][] = req.query.order || [];
 
-	const countQuery: IFindOptions<Transaction> = {
-		where: {
-			profileId: user.activeProfile.id,
-		},
-	};
-	const dataQuery: IFindOptions<Transaction> = {
-		where: {
-			[Op.and]: {
-				profileId: user.activeProfile.id,
-				[Op.or]: {
-					"payee": {
-						[Op.iLike]: `%${searchTerm}%`,
-					},
-					"note": {
-						[Op.iLike]: `%${searchTerm}%`,
-					},
-					"$category.name$": {
-						[Op.iLike]: `%${searchTerm}%`,
-					},
-					"$account.name$": {
-						[Op.iLike]: `%${searchTerm}%`,
-					},
-				},
-			},
-		},
-		include: [
-			{
-				model: Category,
-				paranoid: false,
-			},
-			{
-				model: Account,
-				paranoid: false,
-			},
-		],
-	};
+	const totalQuery = DbTransaction
+			.createQueryBuilder("transaction")
+			.where("transaction.profile_id = :profileId", { profileId: user.activeProfile.id });
 
-	// fix "displayDate" to "effectiveDate" or "transactionDate"
-	for (const i in order) {
-		if (order[i][0] === "displayDate") {
-			order[i][0] = dateMode + "Date";
-		}
-	}
-	req.query.order = order;
-	const postOrder = [["createdAt", "desc"]];
+	const filteredQuery = DbTransaction
+			.createQueryBuilder("transaction")
+			.leftJoin("transaction.category", "category")
+			.leftJoin("transaction.account", "account")
+			.where("transaction.profile_id = :profileId", { profileId: user.activeProfile.id })
+			.andWhere(new Brackets((qb) => qb.where(
+					"transaction.payee ILIKE :searchTerm" +
+					" OR transaction.note ILIKE :searchTerm" +
+					" OR category.name ILIKE :searchTerm" +
+					" OR account.name ILIKE :searchTerm",
+					{ searchTerm: `%${searchTerm}%` },
+			)));
 
-	getData(Transaction, req, countQuery, dataQuery, [], postOrder)
+	getDataForTable(DbTransaction, req, totalQuery, filteredQuery)
 			.then((response) => res.json(response))
 			.catch(next);
 });
 
 router.post("/edit/:transactionId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	const transactionId = req.params.transactionId;
-	const properties: Partial<Transaction> = {
-		transactionDate: new Date(req.body.transactionDate),
-		effectiveDate: new Date(req.body.effectiveDate),
+	const properties: Partial<DbTransaction> = {
+		transactionDate: Moment(req.body.transactionDate),
+		effectiveDate: Moment(req.body.effectiveDate),
 		amount: parseFloat(req.body.amount),
 		payee: req.body.payee.trim(),
 		note: (req.body.note || "").trim(),
-		accountId: req.body.accountId,
-		categoryId: req.body.categoryId,
+		account: req.body.account,
+		category: req.body.category,
 	};
 
 	if (properties.note.length === 0) {
@@ -92,7 +62,7 @@ router.post("/edit/:transactionId?", requireUser, (req: Request, res: Response, 
 });
 
 router.post("/delete/:transactionId", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	const transactionId = req.params.transactionId;
 
 	deleteTransaction(user, transactionId)
@@ -101,7 +71,7 @@ router.post("/delete/:transactionId", requireUser, (req: Request, res: Response,
 });
 
 router.get("/payees", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as DbUser;
 	getAllPayees(user)
 			.then((payees: string[]) => res.json(payees))
 			.catch(next);

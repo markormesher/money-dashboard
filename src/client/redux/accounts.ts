@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { ThinAccount } from "../../server/model-thins/ThinAccount";
+import { IAccount, mapAccountFromApi } from "../../server/models/IAccount";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -9,9 +9,9 @@ import { ProfileCacheKeys } from "./profiles";
 
 interface IAccountsState {
 	readonly displayActiveOnly: boolean;
-	readonly accountToEdit: ThinAccount;
+	readonly accountToEdit: IAccount;
 	readonly editorBusy: boolean;
-	readonly accountList: ThinAccount[];
+	readonly accountList: IAccount[];
 }
 
 const initialState: IAccountsState = {
@@ -41,7 +41,7 @@ const startDeleteAccount: ActionCreator<PayloadAction> = (accountId: string) => 
 	payload: { accountId },
 });
 
-const startSaveAccount: ActionCreator<PayloadAction> = (account: Partial<ThinAccount>) => ({
+const startSaveAccount: ActionCreator<PayloadAction> = (account: Partial<IAccount>) => ({
 	type: AccountActions.START_SAVE_ACCOUNT,
 	payload: { account },
 });
@@ -55,7 +55,7 @@ const setDisplayActiveOnly: ActionCreator<PayloadAction> = (activeOnly: boolean)
 	payload: { activeOnly },
 });
 
-const setAccountToEdit: ActionCreator<PayloadAction> = (account: ThinAccount) => ({
+const setAccountToEdit: ActionCreator<PayloadAction> = (account: IAccount) => ({
 	type: AccountActions.SET_ACCOUNT_TO_EDIT,
 	payload: { account },
 });
@@ -65,12 +65,9 @@ const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
 	payload: { editorBusy },
 });
 
-const setAccountList: ActionCreator<PayloadAction> = (accountList: ThinAccount[]) => ({
+const setAccountList: ActionCreator<PayloadAction> = (accountList: IAccount[]) => ({
 	type: AccountActions.SET_ACCOUNT_LIST,
-	payload: {
-		accountList,
-		accountListLoadedAt: new Date().getTime(),
-	},
+	payload: { accountList },
 });
 
 function*deleteAccountSaga(): Generator {
@@ -88,7 +85,7 @@ function*deleteAccountSaga(): Generator {
 function*saveAccountSaga(): Generator {
 	yield takeEvery(AccountActions.START_SAVE_ACCOUNT, function*(action: PayloadAction): Generator {
 		try {
-			const account: Partial<ThinAccount> = action.payload.account;
+			const account: Partial<IAccount> = action.payload.account;
 			const accountId = account.id || "";
 			yield all([
 				put(setEditorBusy(true)),
@@ -114,8 +111,12 @@ function*loadAccountListSaga(): Generator {
 			return;
 		}
 		try {
-			const accountList: ThinAccount[] = yield call(() => {
-				return axios.get("/accounts/list").then((res) => res.data);
+			const accountList: IAccount[] = yield call(() => {
+				return axios.get("/accounts/list")
+						.then((res) => {
+							const raw: IAccount[] = res.data;
+							return raw.map(mapAccountFromApi);
+						});
 			});
 			yield all([
 				put(setAccountList(accountList)),

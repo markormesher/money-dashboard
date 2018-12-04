@@ -6,46 +6,22 @@ import * as ExpressSession from "express-session";
 import * as Passport from "passport";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
+import { typeormConf } from "./db/db-config";
 import { getSecret, runningInDocker } from "./helpers/config-loader";
-import { SequelizeDb, typeormConf } from "./helpers/db";
 import { logger } from "./helpers/logging";
 import * as PassportConfig from "./helpers/passport-config";
 import { StatusError } from "./helpers/StatusError";
 import { setupApiRoutes } from "./middleware/api-routes";
 import { setupDevAppRoutes, setupProdAppRoutes } from "./middleware/app-routes";
 
-import { NewAccount } from "./new-models/NewAccount";
-import { NewBudget } from "./new-models/NewBudget";
-import { NewCategory } from "./new-models/NewCategory";
-import { NewProfile } from "./new-models/NewProfile";
-import { NewTransaction } from "./new-models/NewTransaction";
-import { NewUser } from "./new-models/NewUser";
-
 const app = Express();
-
-// TODO: lots of API routes intermittently generate this warning; 95% sure it's from a lib, not this code
-// Warning: a promise was created in a handler at ... but was not returned from it, see http://goo.gl/rRqMUw
 
 // TODO: check whether Redis and Postgres are up
 
-// TODO: major refactoring of server-side
-
-// TODO: tidy up models and model-thins (combine if possible)
-
-// TODO: convert all dates to moment where possible (string dates are a PITA)
-
-// TODO: de-dupe the date range class
-
-// TODO: remove sequelize, pg-hstore, related types and bluebird pin after migration
+// TODO: handle soft deletion
 
 // db connection
-SequelizeDb
-		.sync({ force: false }) // true will DROP all tables/keys before creating them
-		.then(() => logger.info("Database models synced successfully"))
-		.catch((err) => logger.error("Failed to sync database models", err));
-
-// new db connection
-createConnection({ ...typeormConf, synchronize: false }) // true will DROP all tables/keys before creating them
+createConnection({ ...typeormConf, synchronize: false })
 		.then(() => logger.info("Database connection created successfully"))
 		.catch((err) => logger.error("Failed to connect to database", err));
 
@@ -77,11 +53,10 @@ if (process.env.NODE_ENV.indexOf("prod") >= 0) {
 // error handlers
 // noinspection JSUnusedLocalSymbols
 app.use((error: StatusError, req: Request, res: Response, next: NextFunction) => {
+	// TODO: log the actual error object as well
 	const status = error.status || 500;
 	const name = error.name || error.message || "Internal Server Error";
-
 	logger.error(`Error: ${name}`, error);
-
 	res.status(status).json(error);
 });
 

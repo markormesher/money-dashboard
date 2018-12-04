@@ -1,14 +1,14 @@
 import axios from "axios";
 import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { ThinBudget } from "../../server/model-thins/ThinBudget";
+import { IBudget } from "../../server/models/IBudget";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IBudgetsState {
 	readonly displayCurrentOnly: boolean;
-	readonly budgetToEdit: ThinBudget;
+	readonly budgetToEdit: IBudget;
 	readonly budgetIdsToClone: string[];
 	readonly editorBusy: boolean;
 }
@@ -40,7 +40,7 @@ const startDeleteBudget: ActionCreator<PayloadAction> = (budgetId: string) => ({
 	payload: { budgetId },
 });
 
-const startSaveBudget: ActionCreator<PayloadAction> = (budget: Partial<ThinBudget>) => ({
+const startSaveBudget: ActionCreator<PayloadAction> = (budget: Partial<IBudget>) => ({
 	type: BudgetActions.START_SAVE_BUDGET,
 	payload: { budget },
 });
@@ -59,7 +59,7 @@ const setDisplayCurrentOnly: ActionCreator<PayloadAction> = (currentOnly: boolea
 	payload: { currentOnly },
 });
 
-const setBudgetToEdit: ActionCreator<PayloadAction> = (budget: ThinBudget) => ({
+const setBudgetToEdit: ActionCreator<PayloadAction> = (budget: IBudget) => ({
 	type: BudgetActions.SET_BUDGET_TO_EDIT,
 	payload: { budget },
 });
@@ -88,7 +88,7 @@ function*deleteBudgetSaga(): Generator {
 function*saveBudgetSaga(): Generator {
 	yield takeEvery(BudgetActions.START_SAVE_BUDGET, function*(action: PayloadAction): Generator {
 		try {
-			const budget: Partial<ThinBudget> = action.payload.budget;
+			const budget: Partial<IBudget> = action.payload.budget;
 			const budgetId = budget.id || "";
 			yield all([
 				put(setEditorBusy(true)),

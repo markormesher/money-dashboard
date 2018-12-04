@@ -1,49 +1,43 @@
-import * as Bluebird from "bluebird";
+import { DbTransaction } from "../models/db/DbTransaction";
+import { DbUser } from "../models/db/DbUser";
 
-import { Category } from "../models/Category";
-import { Profile } from "../models/Profile";
-import { Transaction } from "../models/Transaction";
-import { User } from "../models/User";
-
-function getTransaction(user: User, transactionId: string, mustExist: boolean = false): Bluebird<Transaction> {
-	return Transaction
-			.findOne({
-				where: { id: transactionId },
-				include: [Profile, Category],
-			})
+function getTransaction(user: DbUser, transactionId: string, mustExist: boolean = false): Promise<DbTransaction> {
+	return DbTransaction
+			.findOne(transactionId)
 			.then((transaction) => {
 				if (!transaction && mustExist) {
 					throw new Error("That transaction does not exist");
 				} else if (transaction && user && transaction.profile.id !== user.activeProfile.id) {
-					throw new Error("User does not own this transaction");
+					throw new Error("DbUser does not own this transaction");
 				} else {
 					return transaction;
 				}
 			});
 }
 
-function getAllPayees(user: User): Bluebird<string[]> {
-	return Transaction
-			.findAll({
-				where: { profileId: user.activeProfile.id },
-			})
-			.then((transactions: Transaction[]) => {
-				return transactions.map((t) => t.payee).filter((v, i, a) => a.indexOf(v) === i).sort();
-			});
+function getAllPayees(user: DbUser): Promise<string[]> {
+	return (DbTransaction
+			.createQueryBuilder("transaction")
+			.select("DISTINCT payee")
+			.where("transaction.profile_id = :profileId", { profileId: user.activeProfile.id })
+			.getRawMany() as Promise<Array<{ payee: string }>>)
+			.then((results) => results.map((r) => r.payee).sort());
 }
 
-function saveTransaction(user: User, transactionId: string, properties: Partial<Transaction>): Bluebird<Transaction> {
+function saveTransaction(
+		user: DbUser,
+		transactionId: string,
+		properties: Partial<DbTransaction>,
+): Promise<DbTransaction> {
 	return getTransaction(user, transactionId)
 			.then((transaction) => {
-				transaction = transaction || new Transaction();
-				return transaction.update(properties);
-			})
-			.then((transaction) => {
-				return transaction.$set("profile", user.activeProfile);
+				transaction = DbTransaction.getRepository().merge(transaction || new DbTransaction(), properties)
+				transaction.profile = user.activeProfile;
+				return transaction.save();
 			});
 }
 
-function deleteTransaction(user: User, transactionId: string): Bluebird<void> {
+function deleteTransaction(user: DbUser, transactionId: string): Promise<DbTransaction> {
 	return getTransaction(user, transactionId)
 			.then((transaction) => {
 				if (!transaction) {
@@ -52,7 +46,7 @@ function deleteTransaction(user: User, transactionId: string): Bluebird<void> {
 					return transaction;
 				}
 			})
-			.then((transaction) => transaction.destroy());
+			.then((transaction) => transaction.remove());
 }
 
 export {

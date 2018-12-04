@@ -2,8 +2,8 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinAccount } from "../../../server/model-thins/ThinAccount";
-import { IThinAccountValidationResult, validateThinAccount } from "../../../server/model-thins/ThinAccountValidator";
+import { DEFAULT_ACCOUNT, IAccount } from "../../../server/models/IAccount";
+import { IAccountValidationResult, validateAccount } from "../../../server/models/validators/AccountValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { setAccountToEdit, startSaveAccount } from "../../redux/accounts";
 import { IRootState } from "../../redux/root";
@@ -13,18 +13,18 @@ import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 
 interface IAccountEditModalProps {
-	readonly accountToEdit?: ThinAccount;
+	readonly accountToEdit?: IAccount;
 	readonly editorBusy?: boolean;
 
 	readonly actions?: {
-		readonly setAccountToEdit: (account: ThinAccount) => AnyAction,
-		readonly startSaveAccount: (account: Partial<ThinAccount>) => AnyAction,
+		readonly setAccountToEdit: (account: IAccount) => AnyAction,
+		readonly startSaveAccount: (account: Partial<IAccount>) => AnyAction,
 	};
 }
 
 interface IAccountEditModalState {
-	readonly currentValues: ThinAccount;
-	readonly validationResult: IThinAccountValidationResult;
+	readonly currentValues: IAccount;
+	readonly validationResult: IAccountValidationResult;
 }
 
 function mapStateToProps(state: IRootState, props: IAccountEditModalProps): IAccountEditModalProps {
@@ -49,10 +49,10 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
 
 	constructor(props: IAccountEditModalProps) {
 		super(props);
-		const accountToEdit = props.accountToEdit || ThinAccount.DEFAULT;
+		const accountToEdit = props.accountToEdit || DEFAULT_ACCOUNT;
 		this.state = {
 			currentValues: accountToEdit,
-			validationResult: validateThinAccount(accountToEdit),
+			validationResult: validateAccount(accountToEdit),
 		};
 
 		this.handleNameChange = this.handleNameChange.bind(this);
@@ -139,14 +139,14 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
 		this.props.actions.setAccountToEdit(undefined);
 	}
 
-	private updateModel(account: Partial<ThinAccount>): void {
+	private updateModel(account: Partial<IAccount>): void {
 		const updatedAccount = {
 			...this.state.currentValues,
 			...account,
 		};
 		this.setState({
 			currentValues: updatedAccount,
-			validationResult: validateThinAccount(updatedAccount),
+			validationResult: validateAccount(updatedAccount),
 		});
 	}
 }

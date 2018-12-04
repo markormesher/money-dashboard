@@ -1,5 +1,6 @@
 import { mount } from "enzyme";
 import { describe, it } from "mocha";
+import * as Moment from "moment";
 import * as React from "react";
 import * as sinon from "sinon";
 import { testGlobals } from "../../../../../test/global.tests";
@@ -133,6 +134,6 @@ describe(__filename, () => {
 				/>
 		));
 		mountWrapper.find("input").simulate("change", { target: { value: "2015-04-02" } });
-		spy.calledOnceWithExactly("2015-04-02", "test-id").should.equal(true);
+		spy.calledOnceWithExactly(Moment("2015-04-02"), "test-id").should.equal(true);
 	});
 });

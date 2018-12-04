@@ -1,9 +1,9 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { StatusError } from "../helpers/StatusError";
-import { User } from "../models/User";
+import { IUser } from "../models/IUser";
 
 const loadUser: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
+	const user = req.user as IUser;
 	if (user) {
 		res.locals.user = user;
 	} else {

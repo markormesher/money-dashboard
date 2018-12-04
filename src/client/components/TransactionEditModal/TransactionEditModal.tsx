@@ -1,14 +1,15 @@
+import * as Moment from "moment";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinAccount } from "../../../server/model-thins/ThinAccount";
-import { ThinCategory } from "../../../server/model-thins/ThinCategory";
-import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
+import { DEFAULT_ACCOUNT, IAccount } from "../../../server/models/IAccount";
+import { DEFAULT_CATEGORY, ICategory } from "../../../server/models/ICategory";
+import { DEFAULT_TRANSACTION, ITransaction } from "../../../server/models/ITransaction";
 import {
-	IThinTransactionValidationResult,
-	validateThinTransaction,
-} from "../../../server/model-thins/ThinTransactionValidator";
+	ITransactionValidationResult,
+	validateTransaction,
+} from "../../../server/models/validators/TransactionValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
@@ -25,15 +26,15 @@ import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { SuggestionTextInput } from "../_ui/SuggestionTextInput/SuggestionTextInput";
 
 interface ITransactionEditModalProps {
-	readonly transactionToEdit?: ThinTransaction;
+	readonly transactionToEdit?: ITransaction;
 	readonly editorBusy?: boolean;
-	readonly categoryList?: ThinCategory[];
-	readonly accountList?: ThinAccount[];
+	readonly categoryList?: ICategory[];
+	readonly accountList?: IAccount[];
 	readonly payeeList?: string[];
 
 	readonly actions?: {
-		readonly setTransactionToEdit: (transaction: ThinTransaction) => AnyAction,
-		readonly startSaveTransaction: (transaction: Partial<ThinTransaction>) => AnyAction,
+		readonly setTransactionToEdit: (transaction: ITransaction) => AnyAction,
+		readonly startSaveTransaction: (transaction: Partial<ITransaction>) => AnyAction,
 		readonly startLoadCategoryList: () => AnyAction,
 		readonly startLoadAccountList: () => AnyAction,
 		readonly startLoadPayeeList: () => AnyAction,
@@ -41,8 +42,8 @@ interface ITransactionEditModalProps {
 }
 
 interface ITransactionEditModalState {
-	readonly currentValues: ThinTransaction;
-	readonly validationResult: IThinTransactionValidationResult;
+	readonly currentValues: ITransaction;
+	readonly validationResult: ITransactionValidationResult;
 }
 
 function mapStateToProps(state: IRootState, props: ITransactionEditModalProps): ITransactionEditModalProps {
@@ -73,10 +74,10 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
 
 	constructor(props: ITransactionEditModalProps) {
 		super(props);
-		const transactionToEdit = props.transactionToEdit || ThinTransaction.DEFAULT;
+		const transactionToEdit = props.transactionToEdit || DEFAULT_TRANSACTION;
 		this.state = {
 			currentValues: transactionToEdit,
-			validationResult: validateThinTransaction(transactionToEdit),
+			validationResult: validateTransaction(transactionToEdit),
 		};
 
 		this.handleTransactionDateChange = this.handleTransactionDateChange.bind(this);
@@ -102,7 +103,9 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
 
-		const continuousEditing = currentValues.createdAt === null && currentValues.accountId !== undefined;
+		// TODO
+		// const continuousEditing = currentValues.createdAt === null && currentValues.accountId !== undefined;
+		const continuousEditing = false;
 
 		const modalBtns: IModalBtn[] = [
 			{
@@ -157,7 +160,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
 								<ControlledSelectInput
 										id={"account"}
 										label={"Account"}
-										value={currentValues.accountId}
+										value={currentValues.account ? currentValues.account.id : null}
 										disabled={editorBusy || !accountList}
 										error={errors.account}
 										onValueChange={this.handleAccountChange}
@@ -189,7 +192,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
 								<ControlledSelectInput
 										id={"category"}
 										label={"Category"}
-										value={currentValues.categoryId}
+										value={currentValues.category ? currentValues.category.id : null}
 										disabled={editorBusy || !categoryList}
 										error={errors.category}
 										onValueChange={this.handleCategoryChange}
@@ -232,19 +235,24 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
 		);
 	}
 
-	private handleTransactionDateChange(value: string): void {
+	private handleTransactionDateChange(value: Moment.Moment): void {
 		this.updateModel({
 			transactionDate: value,
 			effectiveDate: value,
 		});
 	}
 
-	private handleEffectiveDateChange(value: string): void {
+	private handleEffectiveDateChange(value: Moment.Moment): void {
 		this.updateModel({ effectiveDate: value });
 	}
 
 	private handleAccountChange(value: string): void {
-		this.updateModel({ accountId: value });
+		this.updateModel({
+			account: {
+				...DEFAULT_ACCOUNT,
+				id: value,
+			},
+		});
 	}
 
 	private handlePayeeChange(value: string): void {
@@ -252,7 +260,12 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
 	}
 
 	private handleCategoryChange(value: string): void {
-		this.updateModel({ categoryId: value });
+		this.updateModel({
+			category: {
+				...DEFAULT_CATEGORY,
+				id: value,
+			},
+		});
 	}
 
 	private handleAmountChange(value: string): void {
@@ -273,14 +286,14 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
 		this.props.actions.setTransactionToEdit(undefined);
 	}
 
-	private updateModel(transaction: Partial<ThinTransaction>): void {
+	private updateModel(transaction: Partial<ITransaction>): void {
 		const updatedTransaction = {
 			...this.state.currentValues,
 			...transaction,
 		};
 		this.setState({
 			currentValues: updatedTransaction,
-			validationResult: validateThinTransaction(updatedTransaction),
+			validationResult: validateTransaction(updatedTransaction),
 		});
 	}
 }

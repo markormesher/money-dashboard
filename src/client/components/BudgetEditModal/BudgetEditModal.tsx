@@ -1,13 +1,12 @@
 import * as Moment from "moment";
-import * as React from "react";
 import { PureComponent, ReactNode } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinBudget } from "../../../server/model-thins/ThinBudget";
-import { IThinBudgetValidationResult, validateThinBudget } from "../../../server/model-thins/ThinBudgetValidator";
-import { ThinCategory } from "../../../server/model-thins/ThinCategory";
+import { DEFAULT_BUDGET, IBudget } from "../../../server/models/IBudget";
+import { DEFAULT_CATEGORY, ICategory } from "../../../server/models/ICategory";
+import { IBudgetValidationResult, validateBudget } from "../../../server/models/validators/BudgetValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { setBudgetToEdit, startSaveBudget } from "../../redux/budgets";
 import { startLoadCategoryList } from "../../redux/categories";
@@ -21,20 +20,20 @@ import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 
 interface IBudgetEditModalProps {
-	readonly budgetToEdit?: ThinBudget;
+	readonly budgetToEdit?: IBudget;
 	readonly editorBusy?: boolean;
-	readonly categoryList?: ThinCategory[];
+	readonly categoryList?: ICategory[];
 
 	readonly actions?: {
-		readonly setBudgetToEdit: (budget: ThinBudget) => AnyAction,
-		readonly startSaveBudget: (budget: Partial<ThinBudget>) => AnyAction,
+		readonly setBudgetToEdit: (budget: IBudget) => AnyAction,
+		readonly startSaveBudget: (budget: IBudget) => AnyAction,
 		readonly startLoadCategoryList: () => AnyAction,
 	};
 }
 
 interface IBudgetEditModalState {
-	readonly currentValues: ThinBudget;
-	readonly validationResult: IThinBudgetValidationResult;
+	readonly currentValues: IBudget;
+	readonly validationResult: IBudgetValidationResult;
 }
 
 function mapStateToProps(state: IRootState, props: IBudgetEditModalProps): IBudgetEditModalProps {
@@ -61,10 +60,10 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
 
 	constructor(props: IBudgetEditModalProps) {
 		super(props);
-		const budgetToEdit = props.budgetToEdit || ThinBudget.DEFAULT;
+		const budgetToEdit = props.budgetToEdit || DEFAULT_BUDGET;
 		this.state = {
 			currentValues: budgetToEdit,
-			validationResult: validateThinBudget(budgetToEdit),
+			validationResult: validateBudget(budgetToEdit),
 		};
 
 		this.handleCategoryChange = this.handleCategoryChange.bind(this);
@@ -109,7 +108,7 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
 							<ControlledSelectInput
 									id={"category"}
 									label={"Category"}
-									value={currentValues.categoryId}
+									value={currentValues.category.id}
 									disabled={editorBusy || !categoryList}
 									error={errors.category}
 									onValueChange={this.handleCategoryChange}
@@ -143,8 +142,8 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
 							<div className={combine(bs.col, bs.formGroup)}>
 								<label>Date Range</label>
 								<DateRangeChooser
-										startDate={currentValues.startDate ? Moment(currentValues.startDate) : undefined}
-										endDate={currentValues.endDate ? Moment(currentValues.endDate) : undefined}
+										startDate={currentValues.startDate ? (currentValues.startDate as Moment.Moment) : undefined}
+										endDate={currentValues.endDate ? (currentValues.endDate as Moment.Moment) : undefined}
 										includeYearToDate={false}
 										includeAllTime={false}
 										onValueChange={this.handleDateRangeSelection}
@@ -187,7 +186,12 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
 	}
 
 	private handleCategoryChange(value: string): void {
-		this.updateModel({ categoryId: value });
+		this.updateModel({
+			category: {
+				...DEFAULT_CATEGORY,
+				id: value,
+			},
+		});
 	}
 
 	private handleAmountChange(value: string): void {
@@ -196,12 +200,15 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
 
 	private handleDateRangeSelection(start: Moment.Moment, end: Moment.Moment): void {
 		this.updateModel({
-			startDate: formatDate(start, "system"),
-			endDate: formatDate(end, "system"),
+			startDate: start,
+			endDate: end,
 		});
 	}
 
 	private handleTypeChange(value: string): void {
+		if (value !== "bill" && value !== "budget") {
+			throw new Error(`"Invalid budget type: ${value}`);
+		}
 		this.updateModel({ type: value });
 	}
 
@@ -215,14 +222,14 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
 		this.props.actions.setBudgetToEdit(undefined);
 	}
 
-	private updateModel(budget: Partial<ThinBudget>): void {
+	private updateModel(budget: Partial<IBudget>): void {
 		const updatedBudget = {
 			...this.state.currentValues,
 			...budget,
 		};
 		this.setState({
 			currentValues: updatedBudget,
-			validationResult: validateThinBudget(updatedBudget),
+			validationResult: validateBudget(updatedBudget),
 		});
 	}
 }

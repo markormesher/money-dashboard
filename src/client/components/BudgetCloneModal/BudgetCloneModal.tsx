@@ -3,10 +3,12 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IDateRange } from "../../../server/model-thins/IDateRange";
-import { IDateRangeValidationResult, validateDateRange } from "../../../server/model-thins/IDateRangeValidator";
+import { IDateRange } from "../../../server/models/IDateRange";
+import {
+	IDateRangeValidationResult,
+	validateDateRange,
+} from "../../../server/models/validators/DateRangeValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { setBudgetIdsToClone, startCloneBudgets } from "../../redux/budgets";
 import { IRootState } from "../../redux/root";
@@ -20,7 +22,7 @@ interface IBudgetCloneModalProps {
 
 	readonly actions?: {
 		readonly setBudgetIdsToClone: (budgets: string[]) => AnyAction,
-		readonly startCloneBudgets: (budgetIds: string[], startDate: string, endDate: string) => AnyAction,
+		readonly startCloneBudgets: (budgetIds: string[], startDate: Moment.Moment, endDate: Moment.Moment) => AnyAction,
 	};
 }
 
@@ -52,8 +54,8 @@ class UCBudgetCloneModal extends PureComponent<IBudgetCloneModalProps, IBudgetCl
 	constructor(props: IBudgetCloneModalProps) {
 		super(props);
 		const initialRange = {
-			startDate: formatDate(Moment().startOf("month"), "system"),
-			endDate: formatDate(Moment().endOf("month"), "system"),
+			startDate: Moment().startOf("month"),
+			endDate: Moment().endOf("month"),
 		};
 		this.state = {
 			currentValues: initialRange,
@@ -110,8 +112,8 @@ class UCBudgetCloneModal extends PureComponent<IBudgetCloneModalProps, IBudgetCl
 
 	private handleDateRangeSelection(start: Moment.Moment, end: Moment.Moment): void {
 		this.updateModel({
-			startDate: formatDate(start, "system"),
-			endDate: formatDate(end, "system"),
+			startDate: start,
+			endDate: end,
 		});
 	}
 

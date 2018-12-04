@@ -1,107 +1,96 @@
-import * as Bluebird from "bluebird";
 import * as Moment from "moment";
-import * as sequelize from "sequelize";
-import { Op } from "sequelize";
-import { IBudgetBalance } from "../model-thins/IBudgetBalance";
-import { Budget } from "../models/Budget";
-import { Category } from "../models/Category";
-import { Profile } from "../models/Profile";
-import { Transaction } from "../models/Transaction";
-import { User } from "../models/User";
+import { DeepPartial } from "typeorm";
+import { DbBudget } from "../models/db/DbBudget";
+import { DbTransaction } from "../models/db/DbTransaction";
+import { DbUser } from "../models/db/DbUser";
+import { MomentDateTransformer } from "../models/helpers/MomentDateTransformer";
+import { IBudgetBalance } from "../models/IBudgetBalance";
 
-function getBudget(user: User, budgetId: string, mustExist: boolean = false): Bluebird<Budget> {
-	return Budget
-			.findOne({
-				where: { id: budgetId },
-				include: [Profile, Category],
-			})
+function getBudget(user: DbUser, budgetId: string, mustExist: boolean = false): Promise<DbBudget> {
+	return DbBudget
+			.findOne(budgetId)
 			.then((budget) => {
 				if (!budget && mustExist) {
 					throw new Error("That budget does not exist");
 				} else if (budget && user && budget.profile.id !== user.activeProfile.id) {
-					throw new Error("User does not own this budget");
+					throw new Error("DbUser does not own this budget");
 				} else {
 					return budget;
 				}
 			});
 }
 
-function getAllBudgets(user: User, start: Date = null, end: Date = null): Bluebird<Budget[]> {
-	const dateQueryFragment = [];
+function getAllBudgets(user: DbUser, currentOnly: boolean): Promise<DbBudget[]> {
+	let idFinder = DbBudget
+			.createQueryBuilder("budget")
+			.where("1=1 AND profile_id = :profileId", { profileId: user.activeProfile.id });
 
-	if (start !== null) {
-		dateQueryFragment.push({
-			endDate: {
-				[Op.gte]: start,
-			},
-		});
-	}
-	if (end !== null) {
-		dateQueryFragment.push({
-			startDate: {
-				[Op.lte]: end,
-			},
-		});
-	}
-
-	return Budget
-			.findAll({
-				where: {
-					profileId: user.activeProfile.id,
-					[Op.and]: dateQueryFragment,
+	if (currentOnly) {
+		idFinder = idFinder.andWhere(
+				"start_date <= :now AND end_date >= :now",
+				{
+					now: MomentDateTransformer.toDbFormat(Moment()),
 				},
-				include: [Profile, Category],
+		);
+	}
+
+	// TODO: this "get things then get again by ID" logic could be useful elsewhere
+	return idFinder
+			.getMany()
+			.then((results) => {
+				const ids = results.map((r) => r.id);
+				return DbBudget.findByIds(ids);
 			});
 }
 
-function getBudgetBalances(user: User, start: Date = null, end: Date = null): Bluebird<IBudgetBalance[]> {
-	const now = Moment();
-	const defaultStart = now.clone().startOf("month").toDate();
-	const defaultEnd = now.clone().endOf("month").toDate();
-	return getAllBudgets(user, start || defaultStart, end || defaultEnd)
-			.then((budgets: Budget[]) => {
+function getBudgetBalances(user: DbUser, currentOnly: boolean): Promise<IBudgetBalance[]> {
+	return getAllBudgets(user, currentOnly)
+			.then((budgets: DbBudget[]) => {
 				const getBalanceTasks = budgets.map((budget) => {
-					return Transaction.findOne({
-						attributes: [[sequelize.fn("SUM", sequelize.col("amount")), "balance"]],
-						where: {
-							profileId: user.activeProfile.id,
-							categoryId: budget.category.id,
-							[Op.and]: [
-								{ effectiveDate: { [Op.gte]: budget.startDate } },
-								{ effectiveDate: { [Op.lte]: budget.endDate } },
-							],
-						},
-					});
+					return DbTransaction
+							.createQueryBuilder()
+							.select("SUM(amount)", "balance")
+							.where("profile_id = :profileId")
+							.andWhere("category_id = :categoryId")
+							.andWhere("effective_date >= :startDate")
+							.andWhere("effective_date <= :endDate")
+							.setParameters({
+								profileId: user.activeProfile.id,
+								categoryId: budget.category.id,
+								startDate: MomentDateTransformer.toDbFormat(budget.startDate),
+								endDate: MomentDateTransformer.toDbFormat(budget.endDate),
+							})
+							.getRawOne() as Promise<{ balance: number }>;
 				});
-				return [budgets, getBalanceTasks];
+				return Promise.all([
+					budgets,
+					Promise.all(getBalanceTasks),
+				]);
 			})
-			.spread((budgets: Budget[], balanceTasks: Array<Promise<Transaction>>) => {
-				return [budgets, Bluebird.all(balanceTasks)];
-			})
-			.spread((budgets: Budget[], balances: Transaction[]) => {
-				const result: IBudgetBalance[] = [];
+			.then((results) => {
+				const budgets = results[0];
+				const balances = results[1];
+				const output: IBudgetBalance[] = [];
 				for (let i = 0; i < budgets.length; ++i) {
-					result.push({
+					output.push({
 						budget: budgets[i],
-						balance: Math.round(balances[i].getDataValue("balance") * 100) / 100,
+						balance: Math.round((balances[i].balance || 0) * 100) / 100,
 					} as IBudgetBalance);
 				}
-				return result;
+				return output;
 			});
 }
 
-function saveBudget(user: User, budgetId: string, properties: Partial<Budget>): Bluebird<Budget> {
+function saveBudget(user: DbUser, budgetId: string, properties: Partial<DbBudget>): Promise<DbBudget> {
 	return getBudget(user, budgetId)
 			.then((budget) => {
-				budget = budget || new Budget();
-				return budget.update(properties);
-			})
-			.then((budget) => {
-				return budget.$set("profile", user.activeProfile);
+				budget = DbBudget.getRepository().merge(budget || new DbBudget(), properties);
+				budget.profile = user.activeProfile;
+				return budget.save();
 			});
 }
 
-function deleteBudget(user: User, budgetId: string): Bluebird<void> {
+function deleteBudget(user: DbUser, budgetId: string): Promise<DbBudget> {
 	return getBudget(user, budgetId)
 			.then((budget) => {
 				if (!budget) {
@@ -110,22 +99,27 @@ function deleteBudget(user: User, budgetId: string): Bluebird<void> {
 					return budget;
 				}
 			})
-			.then((budget) => budget.destroy());
+			.then((budget) => budget.remove());
 }
 
-function cloneBudgets(user: User, budgetsIds: string[], startDate: Date, endDate: Date): Bluebird<Budget[]> {
-	return Bluebird
+function cloneBudgets(
+		user: DbUser,
+		budgetsIds: string[],
+		startDate: Moment.Moment,
+		endDate: Moment.Moment,
+): Promise<DbBudget[]> {
+	return Promise
 			.all(budgetsIds.map((id) => getBudget(user, id, true)))
-			.then((budgets: Budget[]) => {
+			.then((budgets: DbBudget[]) => {
 				return budgets.map((budget) => {
-					const clonedBudget = budget.buildClone();
-					clonedBudget.startDate = startDate;
-					clonedBudget.endDate = endDate;
-					return clonedBudget;
+					const clonedNewBudget = budget.clone();
+					clonedNewBudget.startDate = startDate;
+					clonedNewBudget.endDate = endDate;
+					return clonedNewBudget;
 				});
 			})
-			.then((clonedBudgets: Budget[]) => {
-				return Bluebird.all(clonedBudgets.map((b) => b.save()));
+			.then((clonedNewBudgets: DbBudget[]) => {
+				return Promise.all(clonedNewBudgets.map((b) => b.save()));
 			});
 }
 

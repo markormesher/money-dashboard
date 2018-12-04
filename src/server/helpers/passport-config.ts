@@ -1,7 +1,7 @@
 import { PassportStatic as Passport } from "passport";
 import { Strategy as GoogleStrategy, StrategyOptionsWithRequest } from "passport-google-oauth2";
 import { getOrRegisterUserWithGoogleProfile, getUser } from "../managers/user-manager";
-import { User } from "../models/User";
+import { IUser } from "../models/IUser";
 import { getConstants, getSecret } from "./config-loader";
 
 function init(passport: Passport): void {
@@ -13,11 +13,11 @@ function init(passport: Passport): void {
 		passReqToCallback: true,
 	};
 
-	passport.serializeUser((user: User, callback) => {
+	passport.serializeUser((user: IUser, callback) => {
 		callback(null, user.id);
 	});
 
-	passport.deserializeUser((userId: string, callback: (error: any, user?: User) => void) => {
+	passport.deserializeUser((userId: string, callback: (error: any, user?: IUser) => void) => {
 		if (!userId) {
 			return callback(null, null);
 		}

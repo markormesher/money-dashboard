@@ -1,9 +1,10 @@
 import axios from "axios";
 import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IAccountBalance } from "../../server/model-thins/IAccountBalance";
-import { IBudgetBalance } from "../../server/model-thins/IBudgetBalance";
-import { ICategoryBalance } from "../../server/model-thins/ICategoryBalance";
+import { IAccountBalance } from "../../server/models/IAccountBalance";
+import { mapBudgetFromApi } from "../../server/models/IBudget";
+import { IBudgetBalance } from "../../server/models/IBudgetBalance";
+import { ICategoryBalance } from "../../server/models/ICategoryBalance";
 import { AccountCacheKeys } from "./accounts";
 import { BudgetCacheKeys } from "./budgets";
 import { setError } from "./global";
@@ -101,7 +102,13 @@ function*loadBudgetBalancesSaga(): Generator {
 		}
 		try {
 			const balances: IBudgetBalance[] = yield call(() => {
-				return axios.get("/budgets/balances").then((res) => res.data);
+				return axios.get("/budgets/balances").then((res) => {
+					const raw: IBudgetBalance[] = res.data;
+					return raw.map((rawItem) => ({
+						...rawItem,
+						budget: mapBudgetFromApi(rawItem.budget),
+					}));
+				});
 			});
 			yield all([
 				put(setBudgetBalances(balances)),

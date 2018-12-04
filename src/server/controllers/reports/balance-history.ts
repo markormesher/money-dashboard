@@ -1,55 +1,59 @@
-import * as Bluebird from "bluebird";
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
-import * as sequelize from "sequelize";
-import { Op } from "sequelize";
 import { requireUser } from "../../middleware/auth-middleware";
-import { IBalanceHistoryData } from "../../model-thins/IBalanceHistoryData";
-import { DateModeOption, Transaction } from "../../models/Transaction";
-import { User } from "../../models/User";
+import { DbTransaction } from "../../models/db/DbTransaction";
+import { DbUser } from "../../models/db/DbUser";
+import { MomentDateTransformer } from "../../models/helpers/MomentDateTransformer";
+import { IBalanceHistoryData } from "../../models/IBalanceHistoryData";
+import { DateModeOption } from "../../models/ITransaction";
 
 const router = Express.Router();
 
 router.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const user = req.user as User;
-
-	const startDate = Moment(req.query.startDate).startOf("day").toISOString();
-	const endDate = Moment(req.query.endDate).endOf("day").toISOString();
+	const user = req.user as DbUser;
+	const startDate = Moment(req.query.startDate).startOf("day");
+	const endDate = Moment(req.query.endDate).endOf("day");
 	const dateMode: DateModeOption = req.query.dateMode;
-
 	const dateField = `${dateMode}Date`;
 
-	const getSumBeforeRange = Transaction.findOne({
-		attributes: [[sequelize.fn("SUM", sequelize.col("amount")), "balance"]],
-		where: {
-			profileId: user.activeProfile.id,
-			[dateField]: {
-				[Op.lt]: startDate,
-			},
-		},
-	});
-	const getTransactionsInRange = Transaction.findAll({
-		where: {
-			profileId: user.activeProfile.id,
-			[dateField]: {
-				[Op.gte]: startDate,
-				[Op.lte]: endDate,
-			},
-		},
-		order: [[dateField, "ASC"]],
-	});
+	const getSumBeforeRange = DbTransaction
+			.createQueryBuilder("transaction")
+			.select("SUM(transaction.amount)", "balance")
+			.where("transaction.profile_id = :profileId")
+			.andWhere(`transaction.${dateField} < :startDate`)
+			.setParameters({
+				profileId: user.activeProfile.id,
+				startDate: MomentDateTransformer.toDbFormat(startDate),
+			})
+			.getRawOne() as Promise<{ balance: number }>;
 
-	Bluebird
+	const getTransactionsInRange = DbTransaction
+			.createQueryBuilder("transaction")
+			.where("transaction.profile_id = :profileId")
+			.andWhere(`transaction.${dateField} >= :startDate`)
+			.andWhere(`transaction.${dateField} <= :endDate`)
+			.orderBy(`transaction.${dateField}`, "ASC")
+			.setParameters({
+				profileId: user.activeProfile.id,
+				startDate: MomentDateTransformer.toDbFormat(startDate),
+				endDate: MomentDateTransformer.toDbFormat(endDate),
+			})
+			.getMany();
+
+	Promise
 			.all([
 				getSumBeforeRange,
 				getTransactionsInRange,
 			])
-			.spread((sumBeforeRange: Transaction, transactionsInRange: Transaction[]) => {
+			.then((results) => {
+				const sumBeforeRange = results[0].balance;
+				const transactionsInRange = results[1];
+
 				const data: Array<{ x: number, y: number }> = [];
 
 				let lastDate = 0;
-				let runningTotal = sumBeforeRange.getDataValue("balance") as number;
+				let runningTotal = sumBeforeRange;
 
 				let minTotal = Number.MAX_VALUE;
 				let maxTotal = Number.MIN_VALUE;
@@ -70,9 +74,9 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 					}
 				};
 
-				transactionsInRange.forEach((transaction: Transaction) => {
+				transactionsInRange.forEach((transaction: DbTransaction) => {
 					const rawDate = dateMode === "effective" ? transaction.effectiveDate : transaction.transactionDate;
-					const date = new Date(rawDate).getTime();
+					const date = rawDate.unix() * 1000;
 					if (lastDate > 0 && lastDate !== date) {
 						takeValues();
 					}

@@ -3,8 +3,7 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ThinTransaction } from "../../../server/model-thins/ThinTransaction";
-import { DateModeOption } from "../../../server/models/Transaction";
+import { DateModeOption, ITransaction, mapTransactionFromApi } from "../../../server/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
@@ -29,11 +28,11 @@ import { TransactionEditModal } from "../TransactionEditModal/TransactionEditMod
 interface ITransactionPageProps {
 	readonly cacheTime: number;
 	readonly dateMode: DateModeOption;
-	readonly transactionToEdit?: ThinTransaction;
+	readonly transactionToEdit?: ITransaction;
 	readonly actions?: {
 		readonly deleteTransaction: (id: string) => AnyAction,
 		readonly setDateMode: (mode: DateModeOption) => AnyAction,
-		readonly setTransactionToEdit: (transaction: ThinTransaction) => AnyAction,
+		readonly setTransactionToEdit: (transaction: ITransaction) => AnyAction,
 	};
 }
 
@@ -69,14 +68,18 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
 		{ title: "Account", sortField: ["account", "name"] },
 		{ title: "Payee", sortField: "payee" },
 		{ title: "Amount", sortField: "amount" },
-		{ title: "Category", sortField: ["category", "name"] },
+		{ title: "DbCategory", sortField: ["category", "name"] },
 		{ title: "Actions", sortable: false },
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<ThinTransaction>("/transactions/table-data", () => ({
-		cacheTime: this.props.cacheTime,
-		dateMode: this.props.dateMode,
-	}));
+	private dataProvider = new ApiDataTableDataProvider<ITransaction>(
+			"/transactions/table-data",
+			() => ({
+				cacheTime: this.props.cacheTime,
+				dateMode: this.props.dateMode,
+			}),
+			mapTransactionFromApi,
+	);
 
 	constructor(props: ITransactionPageProps) {
 		super(props);
@@ -120,7 +123,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
 						</div>
 					</div>
 
-					<DataTable<ThinTransaction>
+					<DataTable<ITransaction>
 							columns={this.tableColumns}
 							dataProvider={this.dataProvider}
 							watchedProps={{ cacheTime, dateMode }}
@@ -130,7 +133,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
 		);
 	}
 
-	private tableRowRenderer(transaction: ThinTransaction): ReactElement<void> {
+	private tableRowRenderer(transaction: ITransaction): ReactElement<void> {
 		const { dateMode } = this.props;
 		const mainDate = formatDate(dateMode === "effective" ? transaction.effectiveDate : transaction.transactionDate);
 		const altDate = formatDate(dateMode === "effective" ? transaction.transactionDate : transaction.effectiveDate);
@@ -152,7 +155,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
 		);
 	}
 
-	private generateActionButtons(transaction: ThinTransaction): ReactElement<void> {
+	private generateActionButtons(transaction: ITransaction): ReactElement<void> {
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<IconBtn

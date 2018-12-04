@@ -3,7 +3,7 @@ import { ErrorInfo, PureComponent, ReactElement, ReactNode } from "react";
 import * as Loadable from "react-loadable";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
-import { ThinUser } from "../../../server/model-thins/ThinUser";
+import { IUser } from "../../../server/models/IUser";
 import { DetailedError } from "../../helpers/errors/DetailedError";
 import { Http404Error } from "../../helpers/errors/Http404Error";
 import { IRootState } from "../../redux/root";
@@ -26,7 +26,7 @@ import { AppRootWrapper } from "./AppRootWrapper";
 interface IAppProps {
 	readonly waitingFor?: string[];
 	readonly globalError?: Error;
-	readonly activeUser?: ThinUser;
+	readonly activeUser?: IUser;
 	readonly currentPath?: string;
 }
 
@@ -82,8 +82,8 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 							error={new DetailedError(caughtError.name, caughtError.message)}
 							fullPage={true}
 							stacks={[
-									caughtError.stack,
-									`Component stack:${caughtErrorInfo.componentStack}`,
+								caughtError.stack,
+								`Component stack:${caughtErrorInfo.componentStack}`,
 							]}
 					/>
 			);

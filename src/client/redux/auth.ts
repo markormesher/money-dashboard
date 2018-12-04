@@ -1,12 +1,12 @@
 import axios from "axios";
 import { ActionCreator } from "redux";
 import { all, call, put, take, takeEvery } from "redux-saga/effects";
-import { ThinUser } from "../../server/model-thins/ThinUser";
+import { IUser, mapUserFromApi } from "../../server/models/IUser";
 import { addWait, removeWait, setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IAuthState {
-	readonly activeUser?: ThinUser;
+	readonly activeUser?: IUser;
 }
 
 const initialState: IAuthState = {
@@ -28,7 +28,7 @@ const startLogOutCurrentUser: ActionCreator<PayloadAction> = () => ({
 	type: AuthActions.START_LOGOUT_CURRENT_USER,
 });
 
-const setCurrentUser: ActionCreator<PayloadAction> = (user: ThinUser) => ({
+const setCurrentUser: ActionCreator<PayloadAction> = (user: IUser) => ({
 	type: AuthActions.SET_CURRENT_USER,
 	payload: { user },
 });
@@ -41,7 +41,13 @@ function*loadUserSaga(): Generator {
 	yield takeEvery(AuthActions.START_LOAD_CURRENT_USER, function*(): Generator {
 		yield put(addWait("auth"));
 		try {
-			const user: ThinUser = yield call(() => axios.get("/auth/current-user").then((res) => res.data));
+			const user: IUser = yield call(() => {
+				return axios.get("/auth/current-user")
+						.then((res) => {
+							const raw: IUser = res.data;
+							return mapUserFromApi(raw);
+						});
+			});
 			if (user !== undefined) {
 				yield all([
 					put(setCurrentUser(user)),

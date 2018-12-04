@@ -1,16 +1,16 @@
 import axios from "axios";
 import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { ThinCategory } from "../../server/model-thins/ThinCategory";
+import { ICategory, mapCategoryFromApi } from "../../server/models/ICategory";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
 
 interface ICategoriesState {
-	readonly categoryToEdit: ThinCategory;
+	readonly categoryToEdit: ICategory;
 	readonly editorBusy: boolean;
-	readonly categoryList: ThinCategory[];
+	readonly categoryList: ICategory[];
 }
 
 const initialState: ICategoriesState = {
@@ -39,7 +39,7 @@ const startDeleteCategory: ActionCreator<PayloadAction> = (categoryId: string) =
 	payload: { categoryId },
 });
 
-const startSaveCategory: ActionCreator<PayloadAction> = (category: Partial<ThinCategory>) => ({
+const startSaveCategory: ActionCreator<PayloadAction> = (category: Partial<ICategory>) => ({
 	type: CategoryActions.START_SAVE_CATEGORY,
 	payload: { category },
 });
@@ -48,7 +48,7 @@ const startLoadCategoryList: ActionCreator<PayloadAction> = () => ({
 	type: CategoryActions.START_LOAD_CATEGORY_LIST,
 });
 
-const setCategoryToEdit: ActionCreator<PayloadAction> = (category: ThinCategory) => ({
+const setCategoryToEdit: ActionCreator<PayloadAction> = (category: ICategory) => ({
 	type: CategoryActions.SET_CATEGORY_TO_EDIT,
 	payload: { category },
 });
@@ -58,7 +58,7 @@ const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
 	payload: { editorBusy },
 });
 
-const setCategoryList: ActionCreator<PayloadAction> = (categoryList: ThinCategory[]) => ({
+const setCategoryList: ActionCreator<PayloadAction> = (categoryList: ICategory[]) => ({
 	type: CategoryActions.SET_CATEGORY_LIST,
 	payload: {
 		categoryList,
@@ -80,7 +80,7 @@ function*deleteCategorySaga(): Generator {
 function*saveCategorySaga(): Generator {
 	yield takeEvery(CategoryActions.START_SAVE_CATEGORY, function*(action: PayloadAction): Generator {
 		try {
-			const category: Partial<ThinCategory> = action.payload.category;
+			const category: Partial<ICategory> = action.payload.category;
 			const categoryId = category.id || "";
 			yield all([
 				put(setEditorBusy(true)),
@@ -106,8 +106,12 @@ function*loadCategoryListSaga(): Generator {
 			return;
 		}
 		try {
-			const categoryList: ThinCategory[] = yield call(() => {
-				return axios.get("/categories/list").then((res) => res.data);
+			const categoryList: ICategory[] = yield call(() => {
+				return axios.get("/categories/list")
+						.then((res) => {
+							const raw: ICategory[] = res.data;
+							return raw.map(mapCategoryFromApi);
+						});
 			});
 			yield all([
 				put(setCategoryList(categoryList)),

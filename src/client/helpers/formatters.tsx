@@ -1,13 +1,14 @@
 import * as Moment from "moment";
 import * as React from "react";
 import { ReactElement } from "react";
-import { ThinAccount } from "../../server/model-thins/ThinAccount";
-import { ThinBudget } from "../../server/model-thins/ThinBudget";
-import { ThinCategory } from "../../server/model-thins/ThinCategory";
-import { BudgetPeriod } from "../../server/models/Budget";
+import { IAccount } from "../../server/models/IAccount";
+import { IBudget } from "../../server/models/IBudget";
+import { ICategory } from "../../server/models/ICategory";
 import { Badge } from "../components/_ui/Badge/Badge";
 import * as bs from "../global-styles/Bootstrap.scss";
 import * as gs from "../global-styles/Global.scss";
+
+type BudgetPeriod = "month" | "calendar year" | "tax year" | "other";
 
 function formatCurrency(amount: number): string {
 	return amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
@@ -38,7 +39,7 @@ function capitaliseFirstLetter(str?: string): string {
 
 // accounts
 
-function generateAccountTypeBadge(account: ThinAccount): ReactElement<void> {
+function generateAccountTypeBadge(account: IAccount): ReactElement<void> {
 	switch (account.type) {
 		case "current":
 			return (<Badge className={bs.badgeInfo}>Current Account</Badge>);
@@ -53,7 +54,7 @@ function generateAccountTypeBadge(account: ThinAccount): ReactElement<void> {
 
 // budgets
 
-function generateBudgetTypeBadge(budget: ThinBudget): ReactElement<void> {
+function generateBudgetTypeBadge(budget: IBudget): ReactElement<void> {
 	if (budget.type === "budget") {
 		return (<Badge className={bs.badgeInfo}>Budget</Badge>);
 	} else {
@@ -61,38 +62,24 @@ function generateBudgetTypeBadge(budget: ThinBudget): ReactElement<void> {
 	}
 }
 
-function getBudgetPeriodType(start: Date | string, end: Date | string): BudgetPeriod {
-	if (typeof start === "string") {
-		start = new Date(start);
-	}
-
-	if (typeof end === "string") {
-		end = new Date(end);
-	}
-
-	return getBudgetPeriodTypeInternal(start as Date, end as Date);
-}
-
-function getBudgetPeriodTypeInternal(start: Date, end: Date): BudgetPeriod {
-	const oneDay = 24 * 60 * 60 * 1000;
-
-	if (start.getDate() === 1
-			&& start.getMonth() === end.getMonth()
-			&& new Date(end.getTime() + oneDay).getMonth() !== end.getMonth()) {
+function getBudgetPeriodType(start: Moment.Moment, end: Moment.Moment): BudgetPeriod {
+	if (start.get("date") === 1
+			&& start.get("month") === end.get("month")
+			&& end.clone().add(1, "day").get("month") !== end.get("month")) {
 		return "month";
 
-	} else if (start.getDate() === 1
-			&& start.getMonth() === 0
-			&& end.getDate() === 31
-			&& end.getMonth() === 11
-			&& start.getFullYear() === end.getFullYear()) {
+	} else if (start.get("date") === 1
+			&& start.get("month") === 0
+			&& end.get("date") === 31
+			&& end.get("month") === 11
+			&& start.get("year") === end.get("year")) {
 		return "calendar year";
 
-	} else if (start.getDate() === 6
-			&& start.getMonth() === 3
-			&& end.getDate() === 5
-			&& end.getMonth() === 3
-			&& start.getFullYear() === end.getFullYear() - 1) {
+	} else if (start.get("date") === 6
+			&& start.get("month") === 3
+			&& end.get("date") === 5
+			&& end.get("month") === 3
+			&& start.get("year") === end.get("year") - 1) {
 		return "tax year";
 
 	} else {
@@ -100,7 +87,7 @@ function getBudgetPeriodTypeInternal(start: Date, end: Date): BudgetPeriod {
 	}
 }
 
-function formatBudgetPeriod(start: Date | string, end: Date | string): string {
+function formatBudgetPeriod(start: Moment.Moment, end: Moment.Moment): string {
 	const type = getBudgetPeriodType(start, end);
 
 	if (type === "month") {
@@ -116,7 +103,7 @@ function formatBudgetPeriod(start: Date | string, end: Date | string): string {
 
 // categories
 
-function generateCategoryTypeBadge(category: ThinCategory): Array<ReactElement<void>> {
+function generateCategoryTypeBadge(category: ICategory): Array<ReactElement<void>> {
 	const output = [] as Array<ReactElement<void>>;
 	if (category.isAssetGrowthCategory) {
 		output.push((<Badge key={"category-asset"} className={bs.badgeWarning} marginRight={true}>Asset</Badge>));

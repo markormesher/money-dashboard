@@ -1,46 +1,43 @@
-import * as Bluebird from "bluebird";
-import { Profile } from "../models/Profile";
-import { User } from "../models/User";
+import { DbProfile } from "../models/db/DbProfile";
+import { DbUser } from "../models/db/DbUser";
 import { getUser } from "./user-manager";
 
-function getProfile(user: User, profileId: string): Bluebird<Profile> {
-	return Profile
-			.findOne({
-				where: { id: profileId },
-				include: [User],
-			})
+function getProfile(user: DbUser, profileId: string): Promise<DbProfile> {
+	return DbProfile
+			.findOne(profileId)
 			.then((profile) => {
 				if (profile && user && !profile.users.some((u) => u.id === user.id)) {
-					throw new Error("User does not own this profile");
+					throw new Error("DbUser does not own this profile");
 				} else {
 					return profile;
 				}
 			});
 }
 
-function createProfileAndAddToUser(user: User, profileName: string): Bluebird<User> {
-	return Profile
+function createProfileAndAddToUser(user: DbUser, profileName: string): Promise<DbUser> {
+	return DbProfile
 			.create({ name: profileName })
+			.save()
 			.then((profile) => {
-				return user.$add("profile", profile);
-			})
-			.then(() => {
-				return user.reload();
+				user.profiles = user.profiles || [];
+				user.profiles.push(profile);
+				return user.save();
 			});
 }
 
-function saveProfile(user: User, profileId: string, properties: Partial<Profile>): Bluebird<Profile> {
+function saveProfile(user: DbUser, profileId: string, properties: Partial<DbProfile>): Promise<DbProfile> {
 	return getProfile(user, profileId)
 			.then((profile) => {
-				profile = profile || new Profile();
-				return profile.update(properties);
-			})
-			.then((profile) => {
-				return profile.$add("user", user);
+				profile = DbProfile.getRepository().merge(profile || new DbProfile(), properties)
+				profile.users = profile.users || [];
+				if (profile.users.findIndex((u) => u.id === user.id) < 0) {
+					profile.users.push(user);
+				}
+				return profile.save();
 			});
 }
 
-function deleteProfile(user: User, profileId: string): Bluebird<void> {
+function deleteProfile(user: DbUser, profileId: string): Promise<DbProfile> {
 	return getProfile(user, profileId)
 			.then((profile) => {
 				if (!profile) {
@@ -51,14 +48,14 @@ function deleteProfile(user: User, profileId: string): Bluebird<void> {
 					return profile;
 				}
 			})
-			.then((profile) => profile.destroy());
+			.then((profile) => profile.remove());
 }
 
-function setActiveProfileForUser(user: User, profileId: string): Bluebird<User> {
+function setActiveProfileForUser(user: DbUser, profileId: string): Promise<DbUser> {
 	return getUser(user.id)
-			.then((u: User) => {
-				const activeProfile = user.profiles.find((p) => p.id === profileId) || user.profiles[0];
-				return u.$set("activeProfile", activeProfile.id);
+			.then((u) => {
+				u.activeProfile = user.profiles.find((p) => p.id === profileId) || user.profiles[0];
+				return u.save();
 			});
 }
 

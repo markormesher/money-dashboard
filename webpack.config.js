@@ -186,6 +186,10 @@ module.exports = {
 	resolve: {
 		extensions: [".js", ".jsx", ".ts", ".tsx"],
 		modules: ["node_modules", join("src", "client")],
+		alias: {
+			// this shim turns all of the decorators into no-ops
+			typeorm: resolve(__dirname, "node_modules/typeorm/typeorm-model-shim"),
+		},
 	},
 	optimization: {
 		minimize: IS_PROD,

@@ -1,51 +1,52 @@
-import * as Bluebird from "bluebird";
 import { Request } from "express";
-import { IFindOptions } from "sequelize-typescript";
+import { SelectQueryBuilder } from "typeorm";
+import { BaseModel } from "../models/db/BaseModel";
 
-interface IDataTableResponse<Model> {
+interface IDataTableResponse<T> {
 	readonly filteredRowCount: number;
 	readonly totalRowCount: number;
-	readonly data: Model[];
+	readonly data: T[];
 }
 
-// TODO: figure out what type "model" is meant to be
-function getData<T>(
-		model: any,
+function getDataForTable<T extends BaseModel>(
+		model: typeof BaseModel,
 		req: Request,
-		countFilter: IFindOptions<T>,
-		dataFilter: IFindOptions<T>,
-		preOrder: string[][] = [],
-		postOrder: string[][] = [],
-): Bluebird<IDataTableResponse<T>> {
-	const rawOrder: string[][] = req.query.order || [];
-	const finalOrdering: string[][] = [];
-	preOrder.forEach((o) => finalOrdering.push(o));
-	rawOrder.forEach((o) => finalOrdering.push(o));
-	postOrder.forEach((o) => finalOrdering.push(o));
+		totalQuery: SelectQueryBuilder<T>,
+		filteredQuery: SelectQueryBuilder<T>,
+): Promise<IDataTableResponse<T>> {
 
-	const limitedDataFilter: IFindOptions<T> = {
-		...dataFilter,
-		offset: parseInt(req.query.start, 10),
-		limit: parseInt(req.query.length, 10),
-		order: finalOrdering,
-	};
+	// TODO: ordering
 
-	return Bluebird
+	const start = parseInt(req.query.start, 10);
+	const length = parseInt(req.query.length, 10);
+
+	totalQuery.printSql();
+	filteredQuery.printSql();
+
+	return Promise
 			.all([
-				model.count({ ...countFilter, distinct: true, col: "id" }),
-				model.count({ ...dataFilter, distinct: true, col: "id" }),
-				model.findAll(limitedDataFilter),
+				totalQuery.getCount(),
+				filteredQuery.skip(start).take(length).getManyAndCount(),
 			])
-			.spread((totalCount: number, dataCount: number, data: T[]) => {
-				return {
-					totalRowCount: totalCount,
-					filteredRowCount: dataCount,
-					data,
-				};
-			});
+			.then((results) => {
+				const totalCount = results[0];
+				const filteredCount = results[1][1];
+				const filteredIds = results[1][0].map((r) => r.id);
+
+				return Promise.all([
+					totalCount,
+					filteredCount,
+					model.findByIds(filteredIds),
+				]);
+			})
+			.then((results) => ({
+				totalRowCount: results[0],
+				filteredRowCount: results[1],
+				data: results[2] as T[],
+			}));
 }
 
 export {
-	getData,
-		IDataTableResponse,
+	getDataForTable,
+	IDataTableResponse,
 };

@@ -1,60 +1,54 @@
-import * as Bluebird from "bluebird";
-import * as sequelize from "sequelize";
-import { Op } from "sequelize";
-import { IAccountBalance } from "../model-thins/IAccountBalance";
-import { Account } from "../models/Account";
-import { Profile } from "../models/Profile";
-import { Transaction } from "../models/Transaction";
-import { User } from "../models/User";
+import { DbAccount } from "../models/db/DbAccount";
+import { DbTransaction } from "../models/db/DbTransaction";
+import { DbUser } from "../models/db/DbUser";
+import { IAccountBalance } from "../models/IAccountBalance";
 
-function getAccount(user: User, accountId: string): Bluebird<Account> {
-	return Account
-			.findOne({
-				where: { id: accountId },
-				include: [Profile],
-			})
+function getAccount(user: DbUser, accountId: string): Promise<DbAccount> {
+	return DbAccount
+			.findOne(accountId)
 			.then((account) => {
 				if (account && user && account.profile.id !== user.activeProfile.id) {
-					throw new Error("User does not own this account");
+					throw new Error("DbUser does not own this account");
 				} else {
 					return account;
 				}
 			});
 }
 
-function getAllAccounts(user: User, activeOnly: boolean = true): Bluebird<Account[]> {
-	const activeOnlyQueryFragment = activeOnly ? { active: true } : {};
+function getAllAccounts(user: DbUser, activeOnly: boolean = true): Promise<DbAccount[]> {
+	let query = DbAccount
+			.createQueryBuilder("account")
+			.where("account.profile_id = :profileId")
+			.setParameters({
+				profileId: user.activeProfile.id,
+			});
 
-	return Account.findAll({
-		where: {
-			profileId: user.activeProfile.id,
-			[Op.and]: activeOnlyQueryFragment,
-		},
-		include: [Profile],
-	});
+	if (activeOnly) {
+		query = query.andWhere("account.active = TRUE");
+	}
+
+	return query.getMany();
 }
 
-function getAccountBalances(user: User): Bluebird<IAccountBalance[]> {
-	const accountBalanceQuery = Transaction.findAll({
-		attributes: [
-			"accountId",
-			[sequelize.fn("SUM", sequelize.col("amount")), "balance"],
-		],
-		where: {
-			profileId: user.activeProfile.id,
-		},
-		group: [["accountId"]],
-	});
+function getAccountBalances(user: DbUser): Promise<IAccountBalance[]> {
+	const accountBalanceQuery: Promise<Array<{ account_id: string, balance: number }>> = DbTransaction
+			.createQueryBuilder()
+			.select("account_id")
+			.addSelect("SUM(amount)", "balance")
+			.where("profile_id = :profileId", { profileId: user.activeProfile.id })
+			.groupBy("account_id")
+			.getRawMany();
 
-	return Bluebird
+	return Promise
 			.all([
 				getAllAccounts(user),
 				accountBalanceQuery,
 			])
-			.spread((accounts: Account[], balances: Transaction[]) => {
+			.then((results) => {
+				const [accounts, balances] = results;
 				const balanceMap: { [key: string]: number } = {};
 				balances.forEach((sum) => {
-					balanceMap[sum.accountId] = Math.round(sum.getDataValue("balance") * 100) / 100;
+					balanceMap[sum.account_id] = Math.round(sum.balance * 100) / 100;
 				});
 
 				return accounts.map((account) => {
@@ -66,18 +60,16 @@ function getAccountBalances(user: User): Bluebird<IAccountBalance[]> {
 			});
 }
 
-function saveAccount(user: User, accountId: string, properties: Partial<Account>): Bluebird<Account> {
+function saveAccount(user: DbUser, accountId: string, properties: Partial<DbAccount>): Promise<DbAccount> {
 	return getAccount(user, accountId)
 			.then((account) => {
-				account = account || new Account();
-				return account.update(properties);
-			})
-			.then((account) => {
-				return account.$set("profile", user.activeProfile);
+				account = DbAccount.getRepository().merge(account || new DbAccount(), properties);
+				account.profile = user.activeProfile;
+				return account.save();
 			});
 }
 
-function toggleAccountActive(user: User, accountId: string): Bluebird<Account> {
+function toggleAccountActive(user: DbUser, accountId: string): Promise<DbAccount> {
 	return getAccount(user, accountId)
 			.then((account) => {
 				account.active = !account.active;
@@ -85,7 +77,7 @@ function toggleAccountActive(user: User, accountId: string): Bluebird<Account> {
 			});
 }
 
-function deleteAccount(user: User, accountId: string): Bluebird<void> {
+function deleteAccount(user: DbUser, accountId: string): Promise<DbAccount> {
 	return getAccount(user, accountId)
 			.then((account) => {
 				if (!account) {
@@ -94,7 +86,7 @@ function deleteAccount(user: User, accountId: string): Bluebird<void> {
 					return account;
 				}
 			})
-			.then((account) => account.destroy());
+			.then((account) => account.remove());
 }
 
 export {
