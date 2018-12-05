@@ -8,6 +8,7 @@ interface IAccount {
 	readonly active: boolean;
 	readonly transactions: ITransaction[];
 	readonly profile: IProfile;
+	readonly deleted: boolean;
 }
 
 const DEFAULT_ACCOUNT: IAccount = {
@@ -17,6 +18,7 @@ const DEFAULT_ACCOUNT: IAccount = {
 	active: true,
 	transactions: undefined,
 	profile: undefined,
+	deleted: false,
 };
 
 function mapAccountFromApi(account: IAccount): IAccount {

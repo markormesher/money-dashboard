@@ -30,6 +30,9 @@ class DbCategory extends BaseEntity implements ICategory {
 	@ManyToOne(() => DbProfile, (p) => p.categories, { eager: true })
 	public profile: DbProfile;
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 }
 
 export {

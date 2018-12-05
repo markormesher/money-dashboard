@@ -16,6 +16,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			.createQueryBuilder("profile")
 			.leftJoin("profile.users", "user")
 			.where("user.id = :userId")
+			.andWhere("profile.deleted = FALSE")
 			.setParameters({
 				userId: user.id,
 			});
@@ -24,6 +25,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			.createQueryBuilder("profile")
 			.leftJoinAndSelect("profile.users", "user")
 			.where("user.id = :userId")
+			.andWhere("profile.deleted = FALSE")
 			.andWhere("profile.name ILIKE :searchTerm")
 			.setParameters({
 				userId: user.id,

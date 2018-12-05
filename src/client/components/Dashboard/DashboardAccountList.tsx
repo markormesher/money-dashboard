@@ -40,7 +40,8 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
 	}
 
 	private renderInner(): ReactNode {
-		const total = this.props.accountBalances.map((a) => a.balance).reduce((a, b) => a + b);
+		const balances = this.props.accountBalances.map((a) => a.balance);
+		const total = balances.length ? balances.reduce((a, b) => a + b) : 0;
 		return (
 				<div className={styles.accountList}>
 					{this.renderAccountBalanceList("current", "Current Accounts")}

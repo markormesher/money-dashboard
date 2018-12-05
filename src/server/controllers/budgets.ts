@@ -21,6 +21,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const totalQuery = DbBudget
 			.createQueryBuilder("budget")
 			.where("budget.profile_id = :profileId")
+			.andWhere("budget.deleted = FALSE")
 			.setParameters({
 				profileId: user.activeProfile.id,
 			});
@@ -29,6 +30,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			.createQueryBuilder("budget")
 			.leftJoinAndSelect("budget.category", "category")
 			.where("budget.profile_id = :profileId")
+			.andWhere("budget.deleted = FALSE")
 			.andWhere(new Brackets((qb) => qb.where(
 					"budget.type ILIKE :searchTerm" +
 					" OR category.name ILIKE :searchTerm",

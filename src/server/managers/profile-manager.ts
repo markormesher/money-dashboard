@@ -4,17 +4,19 @@ import { DbUser } from "../models/db/DbUser";
 import { getUser } from "./user-manager";
 
 function getProfile(user: DbUser, profileId: string): Promise<DbProfile> {
+	// TODO: users.contains(user) instead of checking after
 	return DbProfile
 			.createQueryBuilder("profile")
 			.leftJoinAndSelect("profile.users", "users")
 			.where("profile.id = :profileId")
+			.andWhere("profile.deleted = FALSE")
 			.setParameters({
 				profileId: cleanUuid(profileId),
 			})
 			.getOne()
 			.then((profile) => {
 				if (profile && user && !profile.users.some((u) => u.id === user.id)) {
-					throw new Error("DbUser does not own this profile");
+					throw new Error("User does not own this profile");
 				} else {
 					return profile;
 				}
@@ -22,12 +24,16 @@ function getProfile(user: DbUser, profileId: string): Promise<DbProfile> {
 }
 
 function createProfileAndAddToUser(user: DbUser, profileName: string): Promise<DbUser> {
+	// re-select the user from the DB to make sure we have their existing profiles
 	return DbProfile
 			.create({ name: profileName })
 			.save()
 			.then((profile) => {
-				user.profiles = user.profiles || [];
-				user.profiles.push(profile);
+				return Promise.all([profile, getUser(user.id)]);
+			})
+			.then(([profile, userFromDb]) => {
+				userFromDb.profiles = user.profiles || [];
+				userFromDb.profiles.push(profile);
 				return user.save();
 			});
 }
@@ -52,10 +58,10 @@ function deleteProfile(user: DbUser, profileId: string): Promise<DbProfile> {
 				} else if (user.profiles.length <= 1) {
 					throw new Error("Cannot delete a user's last profile");
 				} else {
-					return profile;
+					profile.deleted = true;
+					return profile.save();
 				}
-			})
-			.then((profile) => profile.remove());
+			});
 }
 
 function setActiveProfileForUser(user: DbUser, profileId: string): Promise<DbUser> {

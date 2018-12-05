@@ -24,6 +24,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const totalQuery = DbAccount
 			.createQueryBuilder("account")
 			.where("account.profile_id = :profileId")
+			.andWhere("account.deleted = FALSE")
 			.setParameters({
 				profileId: user.activeProfile.id,
 			});
@@ -31,6 +32,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	let filteredQuery = DbAccount
 			.createQueryBuilder("account")
 			.where("account.profile_id = :profileId")
+			.andWhere("account.deleted = FALSE")
 			.andWhere(new Brackets((qb) => qb.where(
 					"account.name ILIKE :searchTerm" +
 					" OR account.type ILIKE :searchTerm",

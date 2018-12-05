@@ -18,8 +18,6 @@ const app = Express();
 
 // TODO: check whether Redis and Postgres are up
 
-// TODO: handle soft deletion
-
 // db connection
 createConnection({ ...typeormConf, synchronize: false })
 		.then(() => logger.info("Database connection created successfully"))

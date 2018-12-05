@@ -41,6 +41,9 @@ class DbBudget extends BaseModel implements IBudget {
 	@ManyToOne(() => DbProfile, (p) => p.budgets, { eager: true })
 	public profile: DbProfile;
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 	public clone(): DbBudget {
 		const output = new DbBudget();
 		output.type = this.type;

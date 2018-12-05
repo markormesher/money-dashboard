@@ -15,6 +15,7 @@ interface ITransaction {
 	readonly account: IAccount;
 	readonly category: ICategory;
 	readonly profile: IProfile;
+	readonly deleted: boolean;
 }
 
 const DEFAULT_TRANSACTION: ITransaction = {
@@ -27,6 +28,7 @@ const DEFAULT_TRANSACTION: ITransaction = {
 	account: undefined,
 	category: undefined,
 	profile: undefined,
+	deleted: false,
 };
 
 function mapTransactionFromApi(transaction: ITransaction): ITransaction {

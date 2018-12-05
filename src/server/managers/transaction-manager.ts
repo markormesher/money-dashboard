@@ -2,18 +2,17 @@ import { cleanUuid } from "../db/utils";
 import { DbTransaction } from "../models/db/DbTransaction";
 import { DbUser } from "../models/db/DbUser";
 
-function getTransaction(user: DbUser, transactionId: string, mustExist: boolean = false): Promise<DbTransaction> {
+function getTransaction(user: DbUser, transactionId: string): Promise<DbTransaction> {
 	return DbTransaction
-			.findOne(cleanUuid(transactionId))
-			.then((transaction) => {
-				if (!transaction && mustExist) {
-					throw new Error("That transaction does not exist");
-				} else if (transaction && user && transaction.profile.id !== user.activeProfile.id) {
-					throw new Error("DbUser does not own this transaction");
-				} else {
-					return transaction;
-				}
-			});
+			.createQueryBuilder("transaction")
+			.where("transaction.id = :transactionId")
+			.andWhere("transaction.profile_id = :profileId")
+			.andWhere("transaction.deleted = FALSE")
+			.setParameters({
+				transactionId: cleanUuid(transactionId),
+				profileId: user.activeProfile.id,
+			})
+			.getOne();
 }
 
 function getAllPayees(user: DbUser): Promise<string[]> {
@@ -22,6 +21,7 @@ function getAllPayees(user: DbUser): Promise<string[]> {
 					.createQueryBuilder("transaction")
 					.select("DISTINCT payee")
 					.where("transaction.profile_id = :profileId")
+					.andWhere("transaction.deleted = FALSE")
 					.setParameters({
 						profileId: user.activeProfile.id,
 					})
@@ -48,10 +48,10 @@ function deleteTransaction(user: DbUser, transactionId: string): Promise<DbTrans
 				if (!transaction) {
 					throw new Error("That transaction does not exist");
 				} else {
-					return transaction;
+					transaction.deleted = true;
+					return transaction.save();
 				}
-			})
-			.then((transaction) => transaction.remove());
+			});
 }
 
 export {

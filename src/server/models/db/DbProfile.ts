@@ -29,6 +29,9 @@ class DbProfile extends BaseEntity implements IProfile {
 	@OneToMany(() => DbUser, (b) => b.activeProfile)
 	public usersWithProfileActivated: DbUser[];
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 }
 
 export {

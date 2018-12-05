@@ -180,6 +180,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
 							onClick={this.props.actions.setTransactionToEdit}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),
+								disabled: transaction.account.deleted || transaction.category.deleted,
 							}}
 					/>
 					<DeleteBtn

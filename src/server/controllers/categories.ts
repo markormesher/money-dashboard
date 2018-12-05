@@ -16,6 +16,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const totalQuery = DbCategory
 			.createQueryBuilder("category")
 			.where("category.profile_id = :profileId")
+			.andWhere("category.deleted = FALSE")
 			.setParameters({
 				profileId: user.activeProfile.id,
 			});
@@ -23,6 +24,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const filteredQuery = DbCategory
 			.createQueryBuilder("category")
 			.where("category.profile_id = :profileId")
+			.andWhere("category.deleted = FALSE")
 			.andWhere("category.name ILIKE :searchTerm")
 			.setParameters({
 				profileId: user.activeProfile.id,

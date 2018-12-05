@@ -6,20 +6,22 @@ import { IAccountBalance } from "../models/IAccountBalance";
 
 function getAccount(user: DbUser, accountId: string): Promise<DbAccount> {
 	return DbAccount
-			.findOne(cleanUuid(accountId))
-			.then((account) => {
-				if (account && user && account.profile.id !== user.activeProfile.id) {
-					throw new Error("DbUser does not own this account");
-				} else {
-					return account;
-				}
-			});
+			.createQueryBuilder("account")
+			.where("account.id = :accountId")
+			.andWhere("account.profile_id = :profileId")
+			.andWhere("account.deleted = FALSE")
+			.setParameters({
+				accountId: cleanUuid(accountId),
+				profileId: user.activeProfile.id,
+			})
+			.getOne();
 }
 
 function getAllAccounts(user: DbUser, activeOnly: boolean = true): Promise<DbAccount[]> {
 	let query = DbAccount
 			.createQueryBuilder("account")
 			.where("account.profile_id = :profileId")
+			.andWhere("account.deleted = FALSE")
 			.setParameters({
 				profileId: user.activeProfile.id,
 			});
@@ -37,6 +39,7 @@ function getAccountBalances(user: DbUser): Promise<IAccountBalance[]> {
 			.select("transaction.account_id")
 			.addSelect("SUM(transaction.amount)", "balance")
 			.where("transaction.profile_id = :profileId")
+			.andWhere("transaction.deleted = FALSE")
 			.groupBy("transaction.account_id")
 			.setParameters({
 				profileId: user.activeProfile.id,
@@ -86,10 +89,10 @@ function deleteAccount(user: DbUser, accountId: string): Promise<DbAccount> {
 				if (!account) {
 					throw new Error("That account does not exist");
 				} else {
-					return account;
+					account.deleted = true;
+					return account.save();
 				}
-			})
-			.then((account) => account.remove());
+			});
 }
 
 export {

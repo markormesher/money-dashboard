@@ -8,12 +8,18 @@ import { IBudgetBalance } from "../models/IBudgetBalance";
 
 function getBudget(user: DbUser, budgetId: string, mustExist: boolean = false): Promise<DbBudget> {
 	return DbBudget
-			.findOne(cleanUuid(budgetId))
+			.createQueryBuilder("budget")
+			.where("budget.id = :budgetId")
+			.andWhere("budget.profile_id = :profileId")
+			.andWhere("budget.deleted = FALSE")
+			.setParameters({
+				budgetId: cleanUuid(budgetId),
+				profileId: user.activeProfile.id,
+			})
+			.getOne()
 			.then((budget) => {
 				if (!budget && mustExist) {
 					throw new Error("That budget does not exist");
-				} else if (budget && user && budget.profile.id !== user.activeProfile.id) {
-					throw new Error("DbUser does not own this budget");
 				} else {
 					return budget;
 				}
@@ -25,6 +31,7 @@ function getAllBudgets(user: DbUser, currentOnly: boolean): Promise<DbBudget[]> 
 			.createQueryBuilder("budget")
 			.leftJoinAndSelect("budget.category", "category")
 			.where("budget.profile_id = :profileId")
+			.andWhere("budget.deleted = FALSE")
 			.setParameters({
 				profileId: user.activeProfile.id,
 			});
@@ -48,6 +55,7 @@ function getBudgetBalances(user: DbUser, currentOnly: boolean): Promise<IBudgetB
 							.createQueryBuilder("transaction")
 							.select("SUM(transaction.amount)", "balance")
 							.where("transaction.profile_id = :profileId")
+							.andWhere("transaction.deleted = FALSE")
 							.andWhere("transaction.category_id = :categoryId")
 							.andWhere("transaction.effective_date >= :startDate")
 							.andWhere("transaction.effective_date <= :endDate")
@@ -91,10 +99,10 @@ function deleteBudget(user: DbUser, budgetId: string): Promise<DbBudget> {
 				if (!budget) {
 					throw new Error("That budget does not exist");
 				} else {
-					return budget;
+					budget.deleted = true;
+					return budget.save();
 				}
-			})
-			.then((budget) => budget.remove());
+			});
 }
 
 function cloneBudgets(

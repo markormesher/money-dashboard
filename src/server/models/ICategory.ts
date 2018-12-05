@@ -10,6 +10,7 @@ interface ICategory {
 	readonly isAssetGrowthCategory: boolean;
 	readonly budgets: IBudget[];
 	readonly profile: IProfile;
+	readonly deleted: boolean;
 }
 
 const DEFAULT_CATEGORY: ICategory = {
@@ -21,6 +22,7 @@ const DEFAULT_CATEGORY: ICategory = {
 	isAssetGrowthCategory: false,
 	budgets: undefined,
 	profile: undefined,
+	deleted: false,
 };
 
 function mapCategoryFromApi(category: ICategory): ICategory {

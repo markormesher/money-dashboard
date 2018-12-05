@@ -9,6 +9,7 @@ interface IProfile {
 	readonly budgets: IBudget[];
 	readonly users: IUser[];
 	readonly usersWithProfileActivated: IUser[];
+	readonly deleted: boolean;
 }
 
 const DEFAULT_PROFILE: IProfile = {
@@ -18,6 +19,7 @@ const DEFAULT_PROFILE: IProfile = {
 	budgets: undefined,
 	users: undefined,
 	usersWithProfileActivated: undefined,
+	deleted: false,
 };
 
 function mapProfileFromApi(profile: IProfile): IProfile {

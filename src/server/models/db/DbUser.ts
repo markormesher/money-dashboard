@@ -24,6 +24,9 @@ class DbUser extends BaseEntity implements IUser {
 	@ManyToOne(() => DbProfile, (p) => p.usersWithProfileActivated, { eager: true })
 	public activeProfile: DbProfile;
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 }
 
 export {

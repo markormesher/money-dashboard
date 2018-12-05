@@ -6,23 +6,26 @@ import { ICategoryBalance } from "../models/ICategoryBalance";
 
 function getCategory(user: DbUser, categoryId?: string): Promise<DbCategory> {
 	return DbCategory
-			.findOne(cleanUuid(categoryId))
-			.then((category) => {
-				if (category && user && category.profile.id !== user.activeProfile.id) {
-					throw new Error("DbUser does not own this category");
-				} else {
-					return category;
-				}
-			});
+			.createQueryBuilder("category")
+			.where("category.id = :categoryId")
+			.andWhere("category.profile_id = :profileId")
+			.andWhere("category.deleted = FALSE")
+			.setParameters({
+				categoryId: cleanUuid(categoryId),
+				profileId: user.activeProfile.id,
+			})
+			.getOne();
 }
 
 function getAllCategories(user: DbUser): Promise<DbCategory[]> {
 	return DbCategory
-			.find<DbCategory>({
-				profile: {
-					id: user.activeProfile.id,
-				},
-			});
+			.createQueryBuilder("category")
+			.where("category.profile_id = :profileId")
+			.andWhere("category.deleted = FALSE")
+			.setParameters({
+				profileId: user.activeProfile.id,
+			})
+			.getMany();
 }
 
 function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]> {
@@ -32,6 +35,7 @@ function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]> {
 			.select("transaction.category_id")
 			.addSelect("SUM(amount)", "balance")
 			.where("category.is_memo_category = TRUE")
+			.andWhere("category.deleted = FALSE")
 			.groupBy("category_id")
 			.getRawMany() as Promise<Array<{ category_id: string, balance: number }>>;
 
@@ -73,10 +77,10 @@ function deleteCategory(user: DbUser, categoryId: string): Promise<DbCategory> {
 				if (!category) {
 					throw new Error("That category does not exist");
 				} else {
-					return category;
+					category.deleted = true;
+					return category.save();
 				}
-			})
-			.then((category) => category.remove());
+			});
 }
 
 export {

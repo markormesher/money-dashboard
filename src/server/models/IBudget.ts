@@ -10,6 +10,7 @@ interface IBudget {
 	readonly endDate: Moment.Moment;
 	readonly category: ICategory;
 	readonly profile: IProfile;
+	readonly deleted: boolean;
 }
 
 const DEFAULT_BUDGET: IBudget = {
@@ -20,6 +21,7 @@ const DEFAULT_BUDGET: IBudget = {
 	endDate: Moment().endOf("month"),
 	category: undefined,
 	profile: undefined,
+	deleted: false,
 };
 
 function mapBudgetFromApi(budget: IBudget): IBudget {

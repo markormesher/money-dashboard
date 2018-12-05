@@ -10,7 +10,15 @@ class GoogleProfile {
 
 function getUser(userId: string): Promise<DbUser> {
 	return DbUser
-			.findOne(cleanUuid(userId))
+			.createQueryBuilder("user")
+			.leftJoinAndSelect("user.profiles", "profiles")
+			.leftJoinAndSelect("user.activeProfile", "activeProfile")
+			.where("user.id = :userId")
+			.andWhere("user.deleted = FALSE")
+			.setParameters({
+				userId: cleanUuid(userId),
+			})
+			.getOne()
 			.then((user) => {
 				if (user) {
 					user.profiles.sort((a, b) => a.name.localeCompare(b.name));
@@ -23,7 +31,10 @@ function getOrRegisterUserWithGoogleProfile(googleProfile: GoogleProfile): Promi
 	const googleId = googleProfile.id;
 	return DbUser
 			.createQueryBuilder("user")
-			.where("user.google_id = :googleId")
+			.leftJoinAndSelect("user.profiles", "profiles")
+			.leftJoinAndSelect("user.activeProfile", "activeProfile")
+			.where("user.googleId = :googleId")
+			.andWhere("user.deleted = FALSE")
 			.setParameters({
 				googleId,
 			})
@@ -39,7 +50,7 @@ function getOrRegisterUserWithGoogleProfile(googleProfile: GoogleProfile): Promi
 			.then((user: DbUser) => {
 				// make sure the user has a profile
 				if (!user.profiles || user.profiles.length === 0) {
-					return createProfileAndAddToUser(user, "Default DbProfile");
+					return createProfileAndAddToUser(user, "Default Profile");
 				} else {
 					return user;
 				}
@@ -48,7 +59,7 @@ function getOrRegisterUserWithGoogleProfile(googleProfile: GoogleProfile): Promi
 				// make sure a profile is active
 				if (!user.activeProfile) {
 					if (!user.profiles || user.profiles.length === 0) {
-						throw new Error("DbUser has no profiles after profile creation stage");
+						throw new Error("User has no profiles after profile creation stage");
 					}
 
 					user.activeProfile = user.profiles[0];

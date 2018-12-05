@@ -25,6 +25,9 @@ class DbAccount extends BaseModel implements IAccount {
 	@ManyToOne(() => DbProfile, (p) => p.accounts, { eager: true })
 	public profile: DbProfile;
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 }
 
 export {

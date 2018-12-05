@@ -44,6 +44,9 @@ class DbTransaction extends BaseEntity implements ITransaction {
 	@ManyToOne(() => DbProfile, (p) => p.budgets, { eager: true })
 	public profile: DbProfile;
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 }
 
 export {

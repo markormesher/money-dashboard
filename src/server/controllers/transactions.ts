@@ -30,6 +30,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const totalQuery = DbTransaction
 			.createQueryBuilder("transaction")
 			.where("transaction.profile_id = :profileId")
+			.andWhere("transaction.deleted = FALSE")
 			.setParameters({
 				profileId: user.activeProfile.id,
 			});
@@ -39,6 +40,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			.leftJoinAndSelect("transaction.category", "category")
 			.leftJoinAndSelect("transaction.account", "account")
 			.where("transaction.profile_id = :profileId")
+			.andWhere("transaction.deleted = FALSE")
 			.andWhere(new Brackets((qb) => qb.where(
 					"transaction.payee ILIKE :searchTerm" +
 					" OR transaction.note ILIKE :searchTerm" +

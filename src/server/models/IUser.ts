@@ -7,6 +7,7 @@ interface IUser {
 	readonly image: string;
 	readonly profiles: IProfile[];
 	readonly activeProfile: IProfile;
+	readonly deleted: boolean;
 }
 
 function mapUserFromApi(user: IUser): IUser {

@@ -211,6 +211,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 							onClick={this.props.actions.setBudgetToEdit}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),
+								disabled: budget.category.deleted,
 							}}
 					/>
 					<DeleteBtn
