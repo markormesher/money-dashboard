@@ -22,6 +22,8 @@ services:
       - npm_execpath=yarn
       - RUNNING_IN=docker
       - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
+    volumes:
+      - ./logs:/usr/src/app/logs
     ports:
       - "3006:3000"
 

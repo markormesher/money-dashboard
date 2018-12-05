@@ -5,8 +5,6 @@ services:
     environment:
       - ENV=dev
       - NODE_ENV=development
-    volumes:
-      - ./logs:/usr/src/app/logs
 
   postgres:
     ports:
