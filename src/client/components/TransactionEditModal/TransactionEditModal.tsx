@@ -103,7 +103,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
 
-		// TODO
+		// TODO: auto-highlight the category if this is a "create another" transactions
 		// const continuousEditing = currentValues.createdAt === null && currentValues.accountId !== undefined;
 		const continuousEditing = false;
 
