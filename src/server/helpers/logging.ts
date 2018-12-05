@@ -1,12 +1,10 @@
-import { TransformableInfo } from "logform";
 import { format } from "logform";
 import * as Winston from "winston";
 
 const consoleLogFormat = format.combine(
+		format.colorize(),
 		format.timestamp(),
-		format.json(),
-		format.align(),
-		format.printf((info: TransformableInfo) => `${info.timestamp} ${info.level}: ${info.message}`),
+		format.simple(),
 );
 
 const fileLogFormat = format.combine(

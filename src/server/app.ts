@@ -51,11 +51,9 @@ if (process.env.NODE_ENV.indexOf("prod") >= 0) {
 // error handlers
 // noinspection JSUnusedLocalSymbols
 app.use((error: StatusError, req: Request, res: Response, next: NextFunction) => {
-	// TODO: log the actual error object as well
 	const status = error.status || 500;
 	const name = error.name || error.message || "Internal Server Error";
 	logger.error(`Error: ${name}`, error);
-	console.log(error);
 	res.status(status).json(error);
 });
 
