@@ -1,6 +1,5 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import { Brackets } from "typeorm";
 import { getDataForTable } from "../helpers/datatable-helper";
 import { deleteProfile, saveProfile, setActiveProfileForUser } from "../managers/profile-manager";
 import { requireUser } from "../middleware/auth-middleware";
@@ -16,16 +15,20 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const totalQuery = DbProfile
 			.createQueryBuilder("profile")
 			.leftJoin("profile.users", "user")
-			.where("user.id = :userId", { userId: user.id });
+			.where("user.id = :userId")
+			.setParameters({
+				userId: user.id,
+			});
 
 	const filteredQuery = DbProfile
 			.createQueryBuilder("profile")
-			.leftJoin("profile.users", "user")
-			.where("user.id = :userId", { userId: user.id })
-			.andWhere(new Brackets((qb) => qb.where(
-					"profile.name ILIKE :searchTerm",
-					{ searchTerm: `%${searchTerm}%` },
-			)));
+			.leftJoinAndSelect("profile.users", "user")
+			.where("user.id = :userId")
+			.andWhere("profile.name ILIKE :searchTerm")
+			.setParameters({
+				userId: user.id,
+				searchTerm: `%${searchTerm}%`,
+			});
 
 	getDataForTable(DbProfile, req, totalQuery, filteredQuery)
 			.then((response) => res.json(response))

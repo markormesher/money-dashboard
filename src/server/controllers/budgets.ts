@@ -20,17 +20,23 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 
 	const totalQuery = DbBudget
 			.createQueryBuilder("budget")
-			.where("budget.profile_id = :profileId", { profileId: user.activeProfile.id });
+			.where("budget.profile_id = :profileId")
+			.setParameters({
+				profileId: user.activeProfile.id,
+			});
 
 	let filteredQuery = DbBudget
 			.createQueryBuilder("budget")
-			.leftJoin("budget.category", "category")
-			.where("budget.profile_id = :profileId", { profileId: user.activeProfile.id })
+			.leftJoinAndSelect("budget.category", "category")
+			.where("budget.profile_id = :profileId")
 			.andWhere(new Brackets((qb) => qb.where(
 					"budget.type ILIKE :searchTerm" +
 					" OR category.name ILIKE :searchTerm",
-					{ searchTerm: `%${searchTerm}%` },
-			)));
+			)))
+			.setParameters({
+				profileId: user.activeProfile.id,
+				searchTerm: `%${searchTerm}%`,
+			});
 
 	if (currentOnly) {
 		filteredQuery = filteredQuery.andWhere(

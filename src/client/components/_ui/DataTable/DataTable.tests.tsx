@@ -243,7 +243,7 @@ describe(__filename, () => {
 				/>
 		));
 		const callCountBefore = mockProvider.callCount;
-		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: mockCol1, dir: "asc" }]);
+		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: mockCol1, dir: "ASC" }]);
 		mockProvider.callCount.should.be.greaterThan(callCountBefore);
 	});
 
@@ -293,12 +293,12 @@ describe(__filename, () => {
 		));
 		mountWrapper.find(PagerBtns).props().onPageChange(2);
 		mountWrapper.find(BufferedTextInput).props().onValueChange("test");
-		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: mockCol1, dir: "asc" }]);
+		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: mockCol1, dir: "ASC" }]);
 
 		mockProvider.lastStart.should.equal(4);
 		mockProvider.lastLength.should.equal(2);
 		mockProvider.lastSearchTerm.should.equal("test");
-		mockProvider.lastSortedColumns.should.deep.equal([{ column: mockCol1, dir: "asc" }]);
+		mockProvider.lastSortedColumns.should.deep.equal([{ column: mockCol1, dir: "ASC" }]);
 	});
 
 	it("should not render frames that arrived late", (done) => {
@@ -322,7 +322,7 @@ describe(__filename, () => {
 		// make sure we trigger several requests
 		mountWrapper.find(PagerBtns).props().onPageChange(2);
 		mountWrapper.find(BufferedTextInput).props().onValueChange("test");
-		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: mockCol1, dir: "asc" }]);
+		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: mockCol1, dir: "ASC" }]);
 
 		setTimeout(() => {
 			didRenderDelayedFrame.should.equal(false);

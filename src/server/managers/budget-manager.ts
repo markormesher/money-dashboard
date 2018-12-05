@@ -21,26 +21,23 @@ function getBudget(user: DbUser, budgetId: string, mustExist: boolean = false): 
 }
 
 function getAllBudgets(user: DbUser, currentOnly: boolean): Promise<DbBudget[]> {
-	let idFinder = DbBudget
+	let query = DbBudget
 			.createQueryBuilder("budget")
-			.where("1=1 AND profile_id = :profileId", { profileId: user.activeProfile.id });
+			.leftJoinAndSelect("budget.category", "category")
+			.where("budget.profile_id = :profileId")
+			.setParameters({
+				profileId: user.activeProfile.id,
+			});
 
 	if (currentOnly) {
-		idFinder = idFinder.andWhere(
-				"start_date <= :now AND end_date >= :now",
-				{
+		query = query
+				.andWhere("start_date <= :now AND end_date >= :now")
+				.setParameters({
 					now: MomentDateTransformer.toDbFormat(Moment()),
-				},
-		);
+				});
 	}
 
-	// TODO: this "get things then get again by ID" logic could be useful elsewhere
-	return idFinder
-			.getMany()
-			.then((results) => {
-				const ids = results.map((r) => r.id);
-				return DbBudget.findByIds(ids);
-			});
+	return query.getMany();
 }
 
 function getBudgetBalances(user: DbUser, currentOnly: boolean): Promise<IBudgetBalance[]> {
@@ -48,12 +45,12 @@ function getBudgetBalances(user: DbUser, currentOnly: boolean): Promise<IBudgetB
 			.then((budgets: DbBudget[]) => {
 				const getBalanceTasks = budgets.map((budget) => {
 					return DbTransaction
-							.createQueryBuilder()
-							.select("SUM(amount)", "balance")
-							.where("profile_id = :profileId")
-							.andWhere("category_id = :categoryId")
-							.andWhere("effective_date >= :startDate")
-							.andWhere("effective_date <= :endDate")
+							.createQueryBuilder("transaction")
+							.select("SUM(transaction.amount)", "balance")
+							.where("transaction.profile_id = :profileId")
+							.andWhere("transaction.category_id = :categoryId")
+							.andWhere("transaction.effective_date >= :startDate")
+							.andWhere("transaction.effective_date <= :endDate")
 							.setParameters({
 								profileId: user.activeProfile.id,
 								categoryId: budget.category.id,
@@ -67,9 +64,7 @@ function getBudgetBalances(user: DbUser, currentOnly: boolean): Promise<IBudgetB
 					Promise.all(getBalanceTasks),
 				]);
 			})
-			.then((results) => {
-				const budgets = results[0];
-				const balances = results[1];
+			.then(([budgets, balances]) => {
 				const output: IBudgetBalance[] = [];
 				for (let i = 0; i < budgets.length; ++i) {
 					output.push({

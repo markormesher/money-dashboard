@@ -10,6 +10,13 @@ interface IApiParams {
 
 class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
 
+	private static formatOrdering(sortedColumns: IColumnSortEntry[]): string[][] {
+		if (!sortedColumns) {
+			return [];
+		}
+		return sortedColumns.map((sortEntry) => [sortEntry.column.sortField, sortEntry.dir]);
+	}
+
 	private readonly api: string;
 	private readonly apiParamProvider: () => IApiParams;
 	private readonly apiResponseMapper: (entity: any) => Model;
@@ -39,7 +46,7 @@ class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
 						start,
 						length,
 						searchTerm: searchTerm || "",
-						order: this.formatOrdering(sortedColumns),
+						order: ApiDataTableDataProvider.formatOrdering(sortedColumns),
 					},
 				})
 				.then((res: AxiosResponse<IDataTableResponse<Model>>) => {
@@ -52,23 +59,6 @@ class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
 						return res.data;
 					}
 				});
-	}
-
-	private formatOrdering(sortedColumns: IColumnSortEntry[]): string[][] {
-		if (!sortedColumns) {
-			return [];
-		}
-		return sortedColumns.map((sortEntry) => {
-			const sortField = sortEntry.column.sortField;
-			const output: string[] = [];
-			if (typeof sortField === typeof "") {
-				output.push(sortField as string);
-			} else {
-				(sortField as string[]).forEach((f) => output.push(f));
-			}
-			output.push(sortEntry.dir);
-			return output;
-		});
 	}
 }
 

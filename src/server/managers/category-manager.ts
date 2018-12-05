@@ -26,7 +26,7 @@ function getAllCategories(user: DbUser): Promise<DbCategory[]> {
 }
 
 function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]> {
-	const categoryBalanceQuery2 = DbTransaction
+	const categoryBalanceQuery = DbTransaction
 			.createQueryBuilder("transaction")
 			.leftJoin("transaction.category", "category")
 			.select("transaction.category_id")
@@ -38,12 +38,9 @@ function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]> {
 	return Promise
 			.all([
 				getAllCategories(user),
-				categoryBalanceQuery2,
+				categoryBalanceQuery,
 			])
-			.then((results) => {
-				const categories = results[0];
-				const balances = results[1];
-
+			.then(([categories, balances]) => {
 				const balanceMap: { [key: string]: number } = {};
 				balances.forEach((sum) => {
 					balanceMap[sum.category_id] = Math.round(sum.balance * 100) / 100;

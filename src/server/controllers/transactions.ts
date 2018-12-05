@@ -7,6 +7,7 @@ import { deleteTransaction, getAllPayees, saveTransaction } from "../managers/tr
 import { requireUser } from "../middleware/auth-middleware";
 import { DbTransaction } from "../models/db/DbTransaction";
 import { DbUser } from "../models/db/DbUser";
+import { DateModeOption } from "../models/ITransaction";
 
 const router = Express.Router();
 
@@ -14,25 +15,40 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const user = req.user as DbUser;
 	const searchTerm = req.query.searchTerm || "";
 
-	// TODO: custom order by date mode
-	const dateMode = req.query.dateMode || "transaction";
+	const dateMode: DateModeOption = req.query.dateMode || "transaction";
+	const dateField = `transaction.${dateMode}Date`;
+	if (req.query.order) {
+		const order: Array<[string, string]> = req.query.order;
+		for (const [i, o] of order.entries()) {
+			if (o[0] === "__date__") {
+				order[i][0] = dateField;
+			}
+		}
+		req.query.order = order;
+	}
 
 	const totalQuery = DbTransaction
 			.createQueryBuilder("transaction")
-			.where("transaction.profile_id = :profileId", { profileId: user.activeProfile.id });
+			.where("transaction.profile_id = :profileId")
+			.setParameters({
+				profileId: user.activeProfile.id,
+			});
 
 	const filteredQuery = DbTransaction
 			.createQueryBuilder("transaction")
-			.leftJoin("transaction.category", "category")
-			.leftJoin("transaction.account", "account")
-			.where("transaction.profile_id = :profileId", { profileId: user.activeProfile.id })
+			.leftJoinAndSelect("transaction.category", "category")
+			.leftJoinAndSelect("transaction.account", "account")
+			.where("transaction.profile_id = :profileId")
 			.andWhere(new Brackets((qb) => qb.where(
 					"transaction.payee ILIKE :searchTerm" +
 					" OR transaction.note ILIKE :searchTerm" +
 					" OR category.name ILIKE :searchTerm" +
 					" OR account.name ILIKE :searchTerm",
-					{ searchTerm: `%${searchTerm}%` },
-			)));
+			)))
+			.setParameters({
+				profileId: user.activeProfile.id,
+				searchTerm: `%${searchTerm}%`,
+			});
 
 	getDataForTable(DbTransaction, req, totalQuery, filteredQuery)
 			.then((response) => res.json(response))

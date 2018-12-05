@@ -17,14 +17,14 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 
 	private static getNextSortDirection(dir: SortDirection): SortDirection {
 		switch (dir) {
-			case "asc":
-				return "desc";
+			case "ASC":
+				return "DESC";
 
-			case "desc":
+			case "DESC":
 				return undefined;
 
 			default:
-				return "asc";
+				return "ASC";
 		}
 	}
 
@@ -49,8 +49,8 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 			const sortEntry: IColumnSortEntry = sortedColumns.find((sc) => sc.column.title === col.title);
 			const sorted = sortEntry !== undefined;
 
-			const sortIcon = sorted ? (sortEntry.dir === "asc" ? faSortAmountUp : faSortAmountDown) : faExchange;
-			const sortIconFlip = sorted && sortEntry.dir === "asc" ? "vertical" : undefined;
+			const sortIcon = sorted ? (sortEntry.dir === "ASC" ? faSortAmountUp : faSortAmountDown) : faExchange;
+			const sortIconFlip = sorted && sortEntry.dir === "ASC" ? "vertical" : undefined;
 			const sortIconRotate = sortIcon === faExchange ? 90 : undefined;
 			const sortIconClasses = combine(bs.mr1, !sorted && styles.sortInactive);
 
@@ -95,7 +95,7 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 
 		if (currentSortEntryIndex < 0) {
 			// add at the beginning
-			sortedColumns.unshift({ column, dir: "asc" });
+			sortedColumns.unshift({ column, dir: "ASC" });
 		} else {
 			const nextDir = DataTableInnerHeader.getNextSortDirection(sortedColumns[currentSortEntryIndex].dir);
 			// remove...

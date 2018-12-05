@@ -23,16 +23,22 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 
 	const totalQuery = DbAccount
 			.createQueryBuilder("account")
-			.where("account.profile_id = :profileId", { profileId: user.activeProfile.id });
+			.where("account.profile_id = :profileId")
+			.setParameters({
+				profileId: user.activeProfile.id,
+			});
 
 	let filteredQuery = DbAccount
 			.createQueryBuilder("account")
-			.where("account.profile_id = :profileId", { profileId: user.activeProfile.id })
+			.where("account.profile_id = :profileId")
 			.andWhere(new Brackets((qb) => qb.where(
 					"account.name ILIKE :searchTerm" +
 					" OR account.type ILIKE :searchTerm",
-					{ searchTerm: `%${searchTerm}%` },
-			)));
+			)))
+			.setParameters({
+				profileId: user.activeProfile.id,
+				searchTerm: `%${searchTerm}%`,
+			});
 
 	if (activeOnly) {
 		filteredQuery = filteredQuery.andWhere("active = TRUE");

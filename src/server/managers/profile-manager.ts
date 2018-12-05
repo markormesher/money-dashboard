@@ -35,7 +35,7 @@ function createProfileAndAddToUser(user: DbUser, profileName: string): Promise<D
 function saveProfile(user: DbUser, profileId: string, properties: Partial<DbProfile>): Promise<DbProfile> {
 	return getProfile(user, profileId)
 			.then((profile) => {
-				profile = DbProfile.getRepository().merge(profile || new DbProfile(), properties)
+				profile = DbProfile.getRepository().merge(profile || new DbProfile(), properties);
 				profile.users = profile.users || [];
 				if (profile.users.findIndex((u) => u.id === user.id) < 0) {
 					profile.users.push(user);

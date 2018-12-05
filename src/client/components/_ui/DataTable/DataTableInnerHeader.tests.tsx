@@ -41,12 +41,12 @@ describe(__filename, () => {
 		mountWrapper.find(FontAwesomeIcon).should.have.lengthOf(2);
 	});
 
-	it("should render an 'small to big' icon for asc sorted", () => {
+	it("should render an 'small to big' icon for ASC sorted", () => {
 		mountWrapper = mount((
 				<table>
 					<DataTableInnerHeader
 							columns={[col1]}
-							sortedColumns={[{ column: col1, dir: "asc" }]}
+							sortedColumns={[{ column: col1, dir: "ASC" }]}
 					/>
 				</table>
 		));
@@ -60,7 +60,7 @@ describe(__filename, () => {
 				<table>
 					<DataTableInnerHeader
 							columns={[col1]}
-							sortedColumns={[{ column: col1, dir: "desc" }]}
+							sortedColumns={[{ column: col1, dir: "DESC" }]}
 					/>
 				</table>
 		));
@@ -84,7 +84,7 @@ describe(__filename, () => {
 
 	it("should call the listener with a different sort order when a sortable column is clicked", () => {
 		const spy = sinon.spy();
-		const originalSortOrder: IColumnSortEntry[] = [{ column: col1, dir: "asc" }];
+		const originalSortOrder: IColumnSortEntry[] = [{ column: col1, dir: "ASC" }];
 		mountWrapper = mount((
 				<table>
 					<DataTableInnerHeader
@@ -116,8 +116,8 @@ describe(__filename, () => {
 	});
 
 	it("should determine the correct default sort order", () => {
-		const col1WithSort: IColumn = { ...col1, defaultSortDirection: "asc", defaultSortPriority: 1 };
-		const col2WithSort: IColumn = { ...col2, defaultSortDirection: "desc", defaultSortPriority: 0 };
+		const col1WithSort: IColumn = { ...col1, defaultSortDirection: "ASC", defaultSortPriority: 1 };
+		const col2WithSort: IColumn = { ...col2, defaultSortDirection: "DESC", defaultSortPriority: 0 };
 		const spy = sinon.spy();
 		mountWrapper = mount((
 				<table>
@@ -128,12 +128,12 @@ describe(__filename, () => {
 				</table>
 		));
 		spy.lastCall.args[0].should.deep.equal([
-			{ column: col2WithSort, dir: "desc" },
-			{ column: col1WithSort, dir: "asc" },
+			{ column: col2WithSort, dir: "DESC" },
+			{ column: col1WithSort, dir: "ASC" },
 		]);
 	});
 
-	it("should determine the correct next sort order for a single column (none -> asc)", () => {
+	it("should determine the correct next sort order for a single column (none -> ASC)", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount((
 				<table>
@@ -145,22 +145,22 @@ describe(__filename, () => {
 				</table>
 		));
 		mountWrapper.find("th").simulate("click");
-		spy.lastCall.args[0].should.deep.equal([{ column: col1, dir: "asc" }]);
+		spy.lastCall.args[0].should.deep.equal([{ column: col1, dir: "ASC" }]);
 	});
 
-	it("should determine the correct next sort order for a single column (asc -> desc)", () => {
+	it("should determine the correct next sort order for a single column (ASC -> desc)", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount((
 				<table>
 					<DataTableInnerHeader
 							columns={[col1]}
-							sortedColumns={[{ column: col1, dir: "asc" }]}
+							sortedColumns={[{ column: col1, dir: "ASC" }]}
 							onSortOrderUpdate={spy}
 					/>
 				</table>
 		));
 		mountWrapper.find("th").simulate("click");
-		spy.lastCall.args[0].should.deep.equal([{ column: col1, dir: "desc" }]);
+		spy.lastCall.args[0].should.deep.equal([{ column: col1, dir: "DESC" }]);
 	});
 
 	it("should determine the correct next sort order for a single column (desc -> none)", () => {
@@ -169,7 +169,7 @@ describe(__filename, () => {
 				<table>
 					<DataTableInnerHeader
 							columns={[col1]}
-							sortedColumns={[{ column: col1, dir: "desc" }]}
+							sortedColumns={[{ column: col1, dir: "DESC" }]}
 							onSortOrderUpdate={spy}
 					/>
 				</table>
@@ -184,13 +184,13 @@ describe(__filename, () => {
 				<table>
 					<DataTableInnerHeader
 							columns={[col1, col2]}
-							sortedColumns={[{ column: col1, dir: "desc" }]}
+							sortedColumns={[{ column: col1, dir: "DESC" }]}
 							onSortOrderUpdate={spy}
 					/>
 				</table>
 		));
 		mountWrapper.find("th").at(1).simulate("click");
-		spy.lastCall.args[0].should.deep.equal([{ column: col2, dir: "asc" }, { column: col1, dir: "desc" }]);
+		spy.lastCall.args[0].should.deep.equal([{ column: col2, dir: "ASC" }, { column: col1, dir: "DESC" }]);
 	});
 
 	it("should remove unsorted columns from the sort order", () => {
@@ -199,12 +199,12 @@ describe(__filename, () => {
 				<table>
 					<DataTableInnerHeader
 							columns={[col1, col2]}
-							sortedColumns={[{ column: col2, dir: "asc" }, { column: col1, dir: "desc" }]}
+							sortedColumns={[{ column: col2, dir: "ASC" }, { column: col1, dir: "DESC" }]}
 							onSortOrderUpdate={spy}
 					/>
 				</table>
 		));
 		mountWrapper.find("th").at(0).simulate("click");
-		spy.lastCall.args[0].should.deep.equal([{ column: col2, dir: "asc" }]);
+		spy.lastCall.args[0].should.deep.equal([{ column: col2, dir: "ASC" }]);
 	});
 });

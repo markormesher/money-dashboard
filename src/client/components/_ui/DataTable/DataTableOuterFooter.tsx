@@ -13,8 +13,8 @@ interface IDataTableOuterFooterProps {
 }
 
 const sortDirectionFull = {
-	asc: "ascending",
-	desc: "descending",
+	ASC: "ascending",
+	DESC: "descending",
 };
 
 class DataTableOuterFooter extends PureComponent<IDataTableOuterFooterProps> {

@@ -46,14 +46,11 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				getSumBeforeRange,
 				getTransactionsInRange,
 			])
-			.then((results) => {
-				const sumBeforeRange = results[0].balance;
-				const transactionsInRange = results[1];
-
+			.then(([sumBeforeRange, transactionsInRange]) => {
 				const data: Array<{ x: number, y: number }> = [];
 
 				let lastDate = 0;
-				let runningTotal = sumBeforeRange;
+				let runningTotal = sumBeforeRange.balance;
 
 				let minTotal = Number.MAX_VALUE;
 				let maxTotal = Number.MIN_VALUE;

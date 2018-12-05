@@ -11,13 +11,13 @@ import { DataTableInnerHeader } from "./DataTableInnerHeader";
 import { DataTableOuterFooter } from "./DataTableOuterFooter";
 import { DataTableOuterHeader } from "./DataTableOuterHeader";
 
-type SortDirection = "asc" | "desc";
+type SortDirection = "ASC" | "DESC";
 
 interface IColumn {
 	readonly title: string;
 	readonly lowercaseTitle?: string;
 	readonly sortable?: boolean;
-	readonly sortField?: string | string[];
+	readonly sortField?: string;
 	readonly defaultSortDirection?: SortDirection;
 	readonly defaultSortPriority?: number;
 }

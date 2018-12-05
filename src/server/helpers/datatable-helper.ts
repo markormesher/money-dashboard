@@ -13,36 +13,36 @@ function getDataForTable<T extends BaseModel>(
 		req: Request,
 		totalQuery: SelectQueryBuilder<T>,
 		filteredQuery: SelectQueryBuilder<T>,
+		preOrder?: Array<[string, "ASC" | "DESC"]>,
+		postOrder?: Array<[string, "ASC" | "DESC"]>,
 ): Promise<IDataTableResponse<T>> {
-
-	// TODO: ordering
-
 	const start = parseInt(req.query.start, 10);
 	const length = parseInt(req.query.length, 10);
 
-	totalQuery.printSql();
-	filteredQuery.printSql();
+	const rawOrder: Array<[string, "ASC" | "DESC"]> = req.query.order;
+	const order: Array<[string, "ASC" | "DESC"]> = [];
+	if (preOrder) {
+		preOrder.forEach((o) => order.push(o));
+	}
+	if (rawOrder) {
+		rawOrder.forEach((o) => order.push(o));
+	}
+	if (postOrder) {
+		postOrder.forEach((o) => order.push(o));
+	}
+
+	filteredQuery = filteredQuery.skip(start).take(length);
+	order.forEach((o) => filteredQuery = filteredQuery.addOrderBy(o[0], o[1]));
 
 	return Promise
 			.all([
 				totalQuery.getCount(),
-				filteredQuery.skip(start).take(length).getManyAndCount(),
+				filteredQuery.getManyAndCount(),
 			])
-			.then((results) => {
-				const totalCount = results[0];
-				const filteredCount = results[1][1];
-				const filteredIds = results[1][0].map((r) => r.id);
-
-				return Promise.all([
-					totalCount,
-					filteredCount,
-					model.findByIds(filteredIds),
-				]);
-			})
-			.then((results) => ({
-				totalRowCount: results[0],
-				filteredRowCount: results[1],
-				data: results[2] as T[],
+			.then(([totalRowCount, [data, filteredRowCount]]) => ({
+				totalRowCount,
+				filteredRowCount,
+				data,
 			}));
 }
 

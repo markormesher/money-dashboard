@@ -56,8 +56,15 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfilesPageProps): IPro
 class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 
 	private tableColumns: IColumn[] = [
-		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
-		{ title: "Actions", sortable: false },
+		{
+			title: "Name",
+			sortField: "profile.name",
+			defaultSortDirection: "ASC",
+		},
+		{
+			title: "Actions",
+			sortable: false,
+		},
 	];
 
 	private dataProvider = new ApiDataTableDataProvider<IProfile>(

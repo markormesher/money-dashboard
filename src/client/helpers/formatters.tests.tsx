@@ -142,11 +142,11 @@ describe(__filename, () => {
 
 			account = { ...account, type: "current" };
 			let badge = generateAccountTypeBadge(account);
-			shallow(badge).text().should.equal("Current DbAccount");
+			shallow(badge).text().should.equal("Current Account");
 
 			account = { ...account, type: "savings" };
 			badge = generateAccountTypeBadge(account);
-			shallow(badge).text().should.equal("Savings DbAccount");
+			shallow(badge).text().should.equal("Savings Account");
 
 			account = { ...account, type: "asset" };
 			badge = generateAccountTypeBadge(account);
@@ -177,7 +177,7 @@ describe(__filename, () => {
 
 			budget = { ...budget, type: "budget" };
 			let badge = generateBudgetTypeBadge(budget);
-			shallow(badge).text().should.equal("DbBudget");
+			shallow(badge).text().should.equal("Budget");
 
 			budget = { ...budget, type: "bill" };
 			badge = generateBudgetTypeBadge(budget);

@@ -55,10 +55,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 				getTransactionsBeforeRange,
 				getTransactionsInRange,
 			])
-			.then((results) => {
-				const transactionsBeforeRange = results[0];
-				const transactionsInRange = results[1];
-
+			.then(([transactionsBeforeRange, transactionsInRange]) => {
 				const dataInclGrowth: Array<{ x: number, y: number }> = [];
 				const dataExclGrowth: Array<{ x: number, y: number }> = [];
 

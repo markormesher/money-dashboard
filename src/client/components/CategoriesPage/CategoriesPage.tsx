@@ -48,9 +48,19 @@ function mapDispatchToProps(dispatch: Dispatch, props: ICategoriesPageProps): IC
 class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
 
 	private tableColumns: IColumn[] = [
-		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
-		{ title: "Type", sortable: false },
-		{ title: "Actions", sortable: false },
+		{
+			title: "Name",
+			sortField: "category.name",
+			defaultSortDirection: "ASC",
+		},
+		{
+			title: "Type",
+			sortable: false,
+		},
+		{
+			title: "Actions",
+			sortable: false,
+		},
 	];
 
 	private dataProvider = new ApiDataTableDataProvider<ICategory>(

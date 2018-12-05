@@ -61,15 +61,30 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
 	private tableColumns: IColumn[] = [
 		{
 			title: "Date",
-			sortField: "displayDate", // this is swapped for effective/transaction date on the server side
-			defaultSortDirection: "desc",
+			sortField: "__date__", // this is swapped for effective/transaction date on the server side
+			defaultSortDirection: "DESC",
 			defaultSortPriority: 0,
 		},
-		{ title: "Account", sortField: ["account", "name"] },
-		{ title: "Payee", sortField: "payee" },
-		{ title: "Amount", sortField: "amount" },
-		{ title: "DbCategory", sortField: ["category", "name"] },
-		{ title: "Actions", sortable: false },
+		{
+			title: "Account",
+			sortField: "account.name",
+		},
+		{
+			title: "Payee",
+			sortField: "transaction.payee",
+		},
+		{
+			title: "Amount",
+			sortField: "transaction.amount",
+		},
+		{
+			title: "Category",
+			sortField: "category.name",
+		},
+		{
+			title: "Actions",
+			sortable: false,
+		},
 	];
 
 	private dataProvider = new ApiDataTableDataProvider<ITransaction>(

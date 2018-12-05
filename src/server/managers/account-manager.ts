@@ -33,11 +33,14 @@ function getAllAccounts(user: DbUser, activeOnly: boolean = true): Promise<DbAcc
 
 function getAccountBalances(user: DbUser): Promise<IAccountBalance[]> {
 	const accountBalanceQuery: Promise<Array<{ account_id: string, balance: number }>> = DbTransaction
-			.createQueryBuilder()
-			.select("account_id")
-			.addSelect("SUM(amount)", "balance")
-			.where("profile_id = :profileId", { profileId: user.activeProfile.id })
-			.groupBy("account_id")
+			.createQueryBuilder("transaction")
+			.select("transaction.account_id")
+			.addSelect("SUM(transaction.amount)", "balance")
+			.where("transaction.profile_id = :profileId")
+			.groupBy("transaction.account_id")
+			.setParameters({
+				profileId: user.activeProfile.id,
+			})
 			.getRawMany();
 
 	return Promise
@@ -45,8 +48,7 @@ function getAccountBalances(user: DbUser): Promise<IAccountBalance[]> {
 				getAllAccounts(user),
 				accountBalanceQuery,
 			])
-			.then((results) => {
-				const [accounts, balances] = results;
+			.then(([accounts, balances]) => {
 				const balanceMap: { [key: string]: number } = {};
 				balances.forEach((sum) => {
 					balanceMap[sum.account_id] = Math.round(sum.balance * 100) / 100;

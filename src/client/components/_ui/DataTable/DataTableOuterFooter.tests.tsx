@@ -107,7 +107,7 @@ describe(__filename, () => {
 						currentPage={0}
 						filteredRowCount={1}
 						totalRowCount={1}
-						sortedColumns={[{ column: col1, dir: "asc" }]}
+						sortedColumns={[{ column: col1, dir: "ASC" }]}
 				/>
 		));
 		mountWrapper.text().should.containIgnoreCase("sorted by col1 ascending");
@@ -121,9 +121,9 @@ describe(__filename, () => {
 						filteredRowCount={1}
 						totalRowCount={1}
 						sortedColumns={[
-							{ column: col1, dir: "asc" },
-							{ column: col2, dir: "desc" },
-							{ column: col3, dir: "asc" },
+							{ column: col1, dir: "ASC" },
+							{ column: col2, dir: "DESC" },
+							{ column: col3, dir: "ASC" },
 						]}
 				/>
 		));

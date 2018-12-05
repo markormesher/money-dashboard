@@ -15,7 +15,10 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 
 	const totalQuery = DbCategory
 			.createQueryBuilder("category")
-			.where("category.profile_id = :profileId", { profileId: user.activeProfile.id });
+			.where("category.profile_id = :profileId")
+			.setParameters({
+				profileId: user.activeProfile.id,
+			});
 
 	const filteredQuery = DbCategory
 			.createQueryBuilder("category")

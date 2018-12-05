@@ -17,12 +17,16 @@ function getTransaction(user: DbUser, transactionId: string, mustExist: boolean 
 }
 
 function getAllPayees(user: DbUser): Promise<string[]> {
-	return (DbTransaction
-			.createQueryBuilder("transaction")
-			.select("DISTINCT payee")
-			.where("transaction.profile_id = :profileId", { profileId: user.activeProfile.id })
-			.getRawMany() as Promise<Array<{ payee: string }>>)
-			.then((results) => results.map((r) => r.payee).sort());
+	return (
+			DbTransaction
+					.createQueryBuilder("transaction")
+					.select("DISTINCT payee")
+					.where("transaction.profile_id = :profileId")
+					.setParameters({
+						profileId: user.activeProfile.id,
+					})
+					.getRawMany() as Promise<Array<{ payee: string }>>
+	).then((results) => results.map((r) => r.payee).sort());
 }
 
 function saveTransaction(
@@ -32,7 +36,7 @@ function saveTransaction(
 ): Promise<DbTransaction> {
 	return getTransaction(user, transactionId)
 			.then((transaction) => {
-				transaction = DbTransaction.getRepository().merge(transaction || new DbTransaction(), properties)
+				transaction = DbTransaction.getRepository().merge(transaction || new DbTransaction(), properties);
 				transaction.profile = user.activeProfile;
 				return transaction.save();
 			});

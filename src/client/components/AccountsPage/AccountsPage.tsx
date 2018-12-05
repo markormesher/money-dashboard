@@ -54,9 +54,19 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAccountsPageProps): IAcc
 class UCAccountsPage extends PureComponent<IAccountsPageProps> {
 
 	private tableColumns: IColumn[] = [
-		{ title: "Name", sortField: "name", defaultSortDirection: "asc" },
-		{ title: "Type", sortField: "type" },
-		{ title: "Actions", sortable: false },
+		{
+			title: "Name",
+			sortField: "account.name",
+			defaultSortDirection: "ASC",
+		},
+		{
+			title: "Type",
+			sortField: "account.type",
+		},
+		{
+			title: "Actions",
+			sortable: false,
+		},
 	];
 
 	private dataProvider = new ApiDataTableDataProvider<IAccount>(

@@ -75,19 +75,28 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 		},
 		{
 			title: "Name",
-			sortField: ["category", "name"],
-			defaultSortDirection: "asc",
+			sortField: "category.name",
+			defaultSortDirection: "ASC",
 			defaultSortPriority: 1,
 		},
-		{ title: "Type", sortField: "type" },
+		{
+			title: "Type",
+			sortField: "budget.type",
+		},
 		{
 			title: "Period",
-			sortField: "startDate",
-			defaultSortDirection: "desc",
+			sortField: "budget.startDate",
+			defaultSortDirection: "DESC",
 			defaultSortPriority: 0,
 		},
-		{ title: "Amount", sortField: "amount" },
-		{ title: "Actions", sortable: false },
+		{
+			title: "Amount",
+			sortField: "budget.amount",
+		},
+		{
+			title: "Actions",
+			sortable: false,
+		},
 	];
 
 	private dataProvider = new ApiDataTableDataProvider<IBudget>(
