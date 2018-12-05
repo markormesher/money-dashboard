@@ -4,23 +4,17 @@ import { DbUser } from "../models/db/DbUser";
 import { getUser } from "./user-manager";
 
 function getProfile(user: DbUser, profileId: string): Promise<DbProfile> {
-	// TODO: users.contains(user) instead of checking after
 	return DbProfile
 			.createQueryBuilder("profile")
-			.leftJoinAndSelect("profile.users", "users")
+			.leftJoinAndSelect("profile.users", "user")
 			.where("profile.id = :profileId")
 			.andWhere("profile.deleted = FALSE")
+			.andWhere("user.id = :userId")
 			.setParameters({
 				profileId: cleanUuid(profileId),
+				userId: cleanUuid(user.id),
 			})
-			.getOne()
-			.then((profile) => {
-				if (profile && user && !profile.users.some((u) => u.id === user.id)) {
-					throw new Error("User does not own this profile");
-				} else {
-					return profile;
-				}
-			});
+			.getOne();
 }
 
 function createProfileAndAddToUser(user: DbUser, profileName: string): Promise<DbUser> {
