@@ -1,5 +1,5 @@
-@import "../../../../../node_modules/bootstrap/scss/functions";
-@import "../../../../../node_modules/bootstrap/scss/variables";
+@import "~bootstrap-scss/functions";
+@import "~bootstrap-scss/variables";
 
 // sass-lint:disable no-color-literals
 $highlight: rgba(red($blue), green($blue), blue($blue), .2);
