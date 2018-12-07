@@ -144,6 +144,15 @@ describe(__filename, () => {
 		spy.calledOnceWithExactly("aa", "test").should.equal(true);
 	});
 
+	it("should not call the listener when ENTER is pressed but no selection is selected", () => {
+		const spy = sinon.spy();
+		mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["aa"]}/>);
+		findInnerInput().simulate("change", { target: { value: "a" } });
+		spy.resetHistory(); // ignore the change event from "typing"
+		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ENTER });
+		spy.notCalled.should.equal(true);
+	});
+
 	it("should close the suggestions when the escape key is pressed", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["a"]}/>);
