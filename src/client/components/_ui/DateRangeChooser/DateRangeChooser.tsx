@@ -87,9 +87,8 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 		this.handleCustomRangeStartChange = this.handleCustomRangeStartChange.bind(this);
 		this.handleCustomRangeEndChange = this.handleCustomRangeEndChange.bind(this);
 		this.handleCustomRangeSubmit = this.handleCustomRangeSubmit.bind(this);
-		this.openChooser = this.openChooser.bind(this);
-		this.closeChooser = this.closeChooser.bind(this);
 		this.toggleChooser = this.toggleChooser.bind(this);
+		this.closeChooser = this.closeChooser.bind(this);
 		this.toggleCustomRangeChooserOpen = this.toggleCustomRangeChooserOpen.bind(this);
 		this.customRangeIsValid = this.customRangeIsValid.bind(this);
 		this.getChooserPosition = this.getChooserPosition.bind(this);
@@ -201,9 +200,9 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 		);
 	}
 
-	private openChooser(): void {
+	private toggleChooser(): void {
 		this.setState({
-			chooserOpen: true,
+			chooserOpen: !this.state.chooserOpen,
 			customRangeChooserOpen: this.state.usingCustomRange,
 		});
 	}
@@ -215,25 +214,16 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 		});
 	}
 
-	private toggleChooser(): void {
-		this.setState({
-			chooserOpen: !this.state.chooserOpen,
-			customRangeChooserOpen: this.state.usingCustomRange,
-		});
-	}
-
 	private handlePresetSubmit(evt: MouseEvent<HTMLButtonElement>): void {
 		const start = evt.currentTarget.attributes.getNamedItem("data-start").value;
 		const end = evt.currentTarget.attributes.getNamedItem("data-end").value;
-		if (start && end) {
-			this.setState({
-				usingCustomRange: false,
-			});
-			if (this.props.onValueChange) {
-				this.props.onValueChange(Moment(start), Moment(end));
-			}
-			this.closeChooser();
+		this.setState({
+			usingCustomRange: false,
+		});
+		if (this.props.onValueChange) {
+			this.props.onValueChange(Moment(start), Moment(end));
 		}
+		this.closeChooser();
 	}
 
 	private toggleCustomRangeChooserOpen(): void {
@@ -251,12 +241,13 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 	}
 
 	private handleCustomRangeSubmit(): void {
-		const { customRangeStart, customRangeEnd } = this.state;
-		if (customRangeStart && customRangeEnd) {
+		/* istanbul ignore else: cannot be triggered if invalid */
+		if (this.customRangeIsValid()) {
 			this.setState({
 				usingCustomRange: true,
 			});
 			if (this.props.onValueChange) {
+				const { customRangeStart, customRangeEnd } = this.state;
 				this.props.onValueChange(customRangeStart, customRangeEnd);
 			}
 			this.closeChooser();
@@ -276,6 +267,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 	}
 
 	private getChooserPosition(): CSSProperties {
+		/* istanbul ignore if: cannot be simulated with JSDOM/Enzyme */
 		if (!this.btnRef.current) {
 			return null;
 		}
