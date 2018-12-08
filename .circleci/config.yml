@@ -45,9 +45,6 @@ jobs:
           name: Run Tests
           command: yarn test
       - run:
-          name: Generate Coverage Report
-          command: yarn test-coverage-report
-      - run:
           name: Copy Results
           command: |
             mkdir -p ./test-results/mocha
