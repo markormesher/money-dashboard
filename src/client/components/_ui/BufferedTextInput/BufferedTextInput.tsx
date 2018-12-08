@@ -32,7 +32,7 @@ class BufferedTextInput extends Component<IBufferedTextInputProps> {
 
 	private handleValueChange(event: React.KeyboardEvent): void {
 		const { delay, onValueChange } = this.props;
-		clearTimeout(this.valueChangeTimeout);
+		global.clearTimeout(this.valueChangeTimeout);
 		const searchTerm = (event.target as HTMLInputElement).value;
 		this.valueChangeTimeout = global.setTimeout(() => onValueChange(searchTerm), delay || 200);
 	}

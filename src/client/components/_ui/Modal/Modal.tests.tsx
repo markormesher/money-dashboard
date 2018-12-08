@@ -164,6 +164,16 @@ describe(__filename, () => {
 		spy.calledOnce.should.equal(true);
 	});
 
+	it("should clear the animation timeout on unmount", () => {
+		const spy = sinon.spy();
+		const originalClearTimeout = global.clearTimeout;
+		global.clearTimeout = spy;
+		mountWrapper = mount(<Modal title={"hello"}/>);
+		mountWrapper.unmount();
+		global.clearTimeout = originalClearTimeout;
+		spy.calledOnce.should.equal(true);
+	});
+
 	it("should call the close request listener when the 'Esc' key is pressed", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<Modal title={"hello"} onCloseRequest={spy}/>);

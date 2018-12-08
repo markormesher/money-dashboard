@@ -45,6 +45,16 @@ describe(__filename, () => {
 		}, 30);
 	});
 
+	it("should cancel the reset timer when unmounted", () => {
+		const spy = sinon.spy();
+		const originalClearTimeout = global.clearTimeout;
+		global.clearTimeout = spy;
+		mountWrapper = mount(<DeleteBtn timeout={10}/>);
+		mountWrapper.unmount();
+		global.clearTimeout = originalClearTimeout;
+		spy.calledOnce.should.equal(true);
+	});
+
 	it("should lock when triggered", () => {
 		mountWrapper = mount(<DeleteBtn/>);
 		mountWrapper.find("button").simulate("click");

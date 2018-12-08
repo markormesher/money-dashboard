@@ -30,7 +30,7 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 	}
 
 	public componentWillUnmount(): void {
-		clearTimeout(this.triggerExpiryTimeout);
+		global.clearTimeout(this.triggerExpiryTimeout);
 	}
 
 	public render(): ReactNode {
@@ -59,11 +59,7 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 
 	private handleClick(payload: Payload): void {
 		const { timeout } = this.props;
-		const { triggered, running } = this.state;
-
-		if (running) {
-			return;
-		}
+		const { triggered } = this.state;
 
 		if (!triggered) {
 			this.setState({ triggered: true });

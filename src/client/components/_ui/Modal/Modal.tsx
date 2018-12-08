@@ -101,7 +101,7 @@ class Modal extends PureComponent<IModalProps, IModalState> {
 	public componentWillUnmount(): void {
 		Modal.lastClose = new Date().getTime();
 		document.removeEventListener("keydown", this.handleKeyDown);
-		clearTimeout(this.animateDelay);
+		global.clearTimeout(this.animateDelay);
 	}
 
 	public render(): ReactNode {
