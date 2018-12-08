@@ -123,7 +123,7 @@ describe(__filename, () => {
 		mountWrapper.find(`div.${bs.invalidFeedback}`).text().should.equal("Test error");
 	});
 
-	it("should call the change listener when the value changes", () => {
+	it("should call the change listener when the value changes to a date", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount((
 				<ControlledDateInput
@@ -135,5 +135,19 @@ describe(__filename, () => {
 		));
 		mountWrapper.find("input").simulate("change", { target: { value: "2015-04-02" } });
 		spy.calledOnceWithExactly(Moment("2015-04-02"), "test-id").should.equal(true);
+	});
+
+	it("should call the change listener when the value changes to blank", () => {
+		const spy = sinon.spy();
+		mountWrapper = mount((
+				<ControlledDateInput
+						id={"test-id"}
+						value={"2015-04-01"}
+						label={"Test Label"}
+						onValueChange={spy}
+				/>
+		));
+		mountWrapper.find("input").simulate("change", { target: { value: "" } });
+		spy.calledOnceWithExactly(undefined, "test-id").should.equal(true);
 	});
 });

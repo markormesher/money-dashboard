@@ -30,9 +30,7 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 	}
 
 	public componentWillUnmount(): void {
-		if (this.triggerExpiryTimeout) {
-			clearTimeout(this.triggerExpiryTimeout);
-		}
+		clearTimeout(this.triggerExpiryTimeout);
 	}
 
 	public render(): ReactNode {

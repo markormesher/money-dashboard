@@ -57,4 +57,14 @@ describe(__filename, () => {
 		mountWrapper.find("button").simulate("click");
 		spy.calledOnceWithExactly(true).should.equal(true);
 	});
+
+	it("should not fail when clicked without a listener (true -> false)", () => {
+		mountWrapper = mount(<CheckboxBtn checked={true}/>);
+		mountWrapper.find("button").simulate("click");
+	});
+
+	it("should not fail when clicked without a listener (false -> true)", () => {
+		mountWrapper = mount(<CheckboxBtn checked={false}/>);
+		mountWrapper.find("button").simulate("click");
+	});
 });

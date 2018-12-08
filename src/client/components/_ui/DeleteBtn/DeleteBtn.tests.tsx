@@ -80,6 +80,19 @@ describe(__filename, () => {
 		spy.calledOnce.should.equal(true);
 	});
 
+	it("should not call the click listener again when already triggered", (done) => {
+		const spy = sinon.spy();
+		mountWrapper = mount(<DeleteBtn onConfirmedClick={spy}/>);
+		mountWrapper.find("button").simulate("click");
+		mountWrapper.find("button").simulate("click");
+		spy.calledOnce.should.equal(true);
+		setTimeout(() => {
+			mountWrapper.find("button").simulate("click");
+			spy.calledOnce.should.equal(true);
+			done();
+		}, 30);
+	}).timeout(50);
+
 	it("should pass the payload to the click listener", () => {
 		const spy = sinon.spy();
 		const payload = { hello: 42 };

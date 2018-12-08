@@ -13,6 +13,7 @@ import { DEFAULT_CATEGORY } from "../../server/models/ICategory";
 import * as bs from "../global-styles/Bootstrap.scss";
 import {
 	capitaliseFirstLetter,
+	formatBudgetPeriod,
 	formatCurrency,
 	formatCurrencyStyled,
 	formatDate,
@@ -202,6 +203,27 @@ describe(__filename, () => {
 
 		it("should return 'other' if the period is not month/year/tax year", () => {
 			getBudgetPeriodType(Moment("2018-01-01"), Moment("2018-01-02")).should.equal("other");
+		});
+	});
+
+	describe("formatBudgetPeriod()", () => {
+
+		it("should format month periods", () => {
+			formatBudgetPeriod(Moment("2018-01-01"), Moment("2018-01-31")).should.equal("Jan, 2018");
+			formatBudgetPeriod(Moment("2018-02-01"), Moment("2018-02-28")).should.equal("Feb, 2018");
+		});
+
+		it("should format calendar year periods", () => {
+			formatBudgetPeriod(Moment("2018-01-01"), Moment("2018-12-31")).should.equal("2018");
+		});
+
+		it("should format tax year periods", () => {
+			formatBudgetPeriod(Moment("2017-04-06"), Moment("2018-04-05")).should.equal("2017/2018 tax year");
+		});
+
+		it("should return simple format if the period is not month/year/tax year", () => {
+			formatBudgetPeriod(Moment("2018-01-01"), Moment("2018-01-02"))
+					.should.equal(`${formatDate(Moment("2018-01-01"))} to ${formatDate(Moment("2018-01-02"))}`);
 		});
 	});
 

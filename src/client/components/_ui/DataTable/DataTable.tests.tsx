@@ -19,6 +19,13 @@ interface IMockData {
 	readonly field3: string;
 }
 
+interface IMockDataOptions {
+	readonly firstCallShouldFail?: boolean;
+	readonly allCallsShouldFail?: boolean;
+	readonly firstCallShouldBeDelayed?: boolean;
+	readonly responseShouldBeEmpty?: boolean;
+}
+
 class MockDataProvider implements IDataTableDataProvider<IMockData> {
 
 	public callCount = 0;
@@ -27,12 +34,16 @@ class MockDataProvider implements IDataTableDataProvider<IMockData> {
 	public lastSearchTerm: string = undefined;
 	public lastSortedColumns: IColumnSortEntry[] = undefined;
 
-	private readonly shouldFail: boolean;
-	private readonly shouldDelayFirstCall: boolean;
+	private readonly firstCallShouldFail: boolean;
+	private readonly allCallsShouldFail: boolean;
+	private readonly firstCallShouldBeDelayed: boolean;
+	private readonly responseShouldBeEmpty: boolean;
 
-	constructor(shouldFail: boolean = false, shouldDelayFirstCall: boolean = false) {
-		this.shouldFail = shouldFail;
-		this.shouldDelayFirstCall = shouldDelayFirstCall;
+	constructor(options: IMockDataOptions = {}) {
+		this.firstCallShouldFail = options.firstCallShouldFail || false;
+		this.allCallsShouldFail = options.allCallsShouldFail || false;
+		this.firstCallShouldBeDelayed = options.firstCallShouldBeDelayed || false;
+		this.responseShouldBeEmpty = options.responseShouldBeEmpty || false;
 	}
 
 	public getData(
@@ -47,16 +58,23 @@ class MockDataProvider implements IDataTableDataProvider<IMockData> {
 		this.lastSearchTerm = searchTerm;
 		this.lastSortedColumns = sortedColumns;
 
-		const shouldDelay = this.shouldDelayFirstCall && this.callCount === 1;
+		const shouldDelay = this.firstCallShouldBeDelayed && this.callCount === 1;
+		const shouldFail = this.allCallsShouldFail || (this.firstCallShouldFail && this.callCount === 1);
 
-		if (this.shouldFail) {
-			return Promise.reject("error");
+		if (shouldFail) {
+			return new Promise((_, reject) => {
+				if (shouldDelay) {
+					setTimeout(reject, 20);
+				} else {
+					reject();
+				}
+			});
 		} else {
 			return Promise
 					.resolve({
-						filteredRowCount: 80,
-						totalRowCount: 100,
-						data: [
+						filteredRowCount: this.responseShouldBeEmpty ? 0 : 80,
+						totalRowCount: this.responseShouldBeEmpty ? 0 : 100,
+						data: this.responseShouldBeEmpty ? [] : [
 							{ field1: shouldDelay ? "delayed1" : "a1", field2: "b1", field3: "c1" },
 							{ field1: shouldDelay ? "delayed2" : "a2", field2: "b2", field3: "c2" },
 						],
@@ -142,6 +160,29 @@ describe(__filename, () => {
 		}, 30);
 	}).timeout(100);
 
+	it("should handle an empty response", (done) => {
+		const mockProvider = new MockDataProvider({ responseShouldBeEmpty: true });
+		mountWrapper = mount((
+				<DataTable<IMockData>
+						columns={mockColumns}
+						rowRenderer={mockRowRenderer}
+						dataProvider={mockProvider}
+						pageSize={20}
+				/>
+		));
+		setTimeout(() => {
+			mountWrapper.update();
+			const outerHeader = mountWrapper.find(DataTableOuterHeader);
+			outerHeader.props().currentPage.should.equal(0);
+			outerHeader.props().rowCount.should.equal(0);
+			const outerFooter = mountWrapper.find(DataTableOuterFooter);
+			outerFooter.props().currentPage.should.equal(0);
+			outerFooter.props().filteredRowCount.should.equal(0);
+			outerFooter.props().totalRowCount.should.equal(0);
+			done();
+		}, 30);
+	}).timeout(100);
+
 	it("should render each row", (done) => {
 		const mockProvider = new MockDataProvider();
 		mountWrapper = mount((
@@ -159,7 +200,7 @@ describe(__filename, () => {
 		}, 30);
 	}).timeout(100);
 
-	it("should render a only message when there is no data", (done) => {
+	it("should render a message when there is no data", (done) => {
 		mountWrapper = mount((
 				<DataTable<IMockData>
 						columns={mockColumns}
@@ -175,8 +216,8 @@ describe(__filename, () => {
 		}, 30);
 	}).timeout(100);
 
-	it("should render a only message when loading fails", (done) => {
-		const mockProvider = new MockDataProvider(true);
+	it("should render a message when loading fails", (done) => {
+		const mockProvider = new MockDataProvider({ allCallsShouldFail: true });
 		mountWrapper = mount((
 				<DataTable<IMockData>
 						columns={mockColumns}
@@ -301,9 +342,9 @@ describe(__filename, () => {
 		mockProvider.lastSortedColumns.should.deep.equal([{ column: mockCol1, dir: "ASC" }]);
 	});
 
-	it("should not render frames that arrived late", (done) => {
+	it("should not render data that arrived late", (done) => {
 		let didRenderDelayedFrame = false;
-		const mockProvider = new MockDataProvider(false, true);
+		const mockProvider = new MockDataProvider({ firstCallShouldBeDelayed: true });
 		const delayRejectingRowRenderer: (data: IMockData) => ReactElement<void> = (data: IMockData) => {
 			if (data.field1.startsWith("delayed")) {
 				didRenderDelayedFrame = true;
@@ -315,14 +356,47 @@ describe(__filename, () => {
 						columns={mockColumns}
 						rowRenderer={delayRejectingRowRenderer}
 						dataProvider={mockProvider}
-						pageSize={2}
+						watchedProps={{
+							key: 1,
+						}}
 				/>
 		));
 
 		// make sure we trigger several requests
-		mountWrapper.find(PagerBtns).props().onPageChange(2);
-		mountWrapper.find(BufferedTextInput).props().onValueChange("test");
-		mountWrapper.find(DataTableInnerHeader).props().onSortOrderUpdate([{ column: mockCol1, dir: "ASC" }]);
+		mountWrapper.setProps({ watchedProps: { key: 2 } });
+		mountWrapper.setProps({ watchedProps: { key: 3 } });
+		mountWrapper.setProps({ watchedProps: { key: 4 } });
+
+		setTimeout(() => {
+			didRenderDelayedFrame.should.equal(false);
+			done();
+		}, 30);
+	}).timeout(100);
+
+	it("should not render an error that arrived late", (done) => {
+		let didRenderDelayedFrame = false;
+		const mockProvider = new MockDataProvider({ firstCallShouldBeDelayed: true, firstCallShouldFail: true });
+		const delayRejectingRowRenderer: (data: IMockData) => ReactElement<void> = (data: IMockData) => {
+			if (data.field1.startsWith("delayed")) {
+				didRenderDelayedFrame = true;
+			}
+			return (<tr key={data.field2}/>);
+		};
+		mountWrapper = mount((
+				<DataTable<IMockData>
+						columns={mockColumns}
+						rowRenderer={delayRejectingRowRenderer}
+						dataProvider={mockProvider}
+						watchedProps={{
+							key: 1,
+						}}
+				/>
+		));
+
+		// make sure we trigger several requests
+		mountWrapper.setProps({ watchedProps: { key: 2 } });
+		mountWrapper.setProps({ watchedProps: { key: 3 } });
+		mountWrapper.setProps({ watchedProps: { key: 4 } });
 
 		setTimeout(() => {
 			didRenderDelayedFrame.should.equal(false);

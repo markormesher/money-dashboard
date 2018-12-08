@@ -4,7 +4,7 @@
   "version": "3.5.0",
   "license": "Apache-2.0",
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build  ./coverage ./.nyc_output",
     "prod": "run-s clean build start",
     "dev": "run-s clean build-dev start-dev",
     "postbuild-server": "copyfiles -u 2 \"./src/server/config/**\" ./build/server/.",
@@ -23,7 +23,7 @@
     "lint-ts-fix": "tslint --fix -c ./tslint.json \"./src/client/**/*.{ts,tsx}\" \"./src/server/**/*.ts\"",
     "test": "run-s test-client test-server",
     "test-client": "run-s test-client-clean test-client-build test-client-run",
-    "test-client-clean": "rimraf ./build/client-test ./coverage ./.nyc_output",
+    "test-client-clean": "rimraf ./build/client-test",
     "test-client-build": "cross-env NODE_ENV=test webpack",
     "test-client-run": "if [ \"$CI\" = \"true\" ]; then run-s test-client-run-ci; else run-s test-client-run-local; fi",
     "test-client-run-ci": "nyc mocha --reporter mocha-circleci-reporter -r ./test/jsdom-setup.js \"./build/client-test/*.js\"",

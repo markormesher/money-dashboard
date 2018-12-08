@@ -1,4 +1,4 @@
-import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
+import { faCheck, faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { should } from "chai";
 import { mount } from "enzyme";
@@ -7,11 +7,30 @@ import * as React from "react";
 import * as sinon from "sinon";
 import { testGlobals } from "../../../../../test/global.tests";
 import * as bs from "../../../global-styles/Bootstrap.scss";
+import { IconBtn } from "../IconBtn/IconBtn";
 import { IModalBtn, Modal, ModalBtnType } from "./Modal";
 
 describe(__filename, () => {
 
 	let { mountWrapper } = testGlobals;
+
+	it("should animate entrance when rendered for the first time in 10ms", (done) => {
+		Modal.resetLastClose();
+		mountWrapper = mount(<Modal/>);
+		mountWrapper.find(Modal).state().shown.should.equal(false);
+		setTimeout(() => {
+			mountWrapper.find(Modal).state().shown.should.equal(true);
+			done();
+		}, 20);
+	}).timeout(50);
+
+	it("should animate entrance when rendered for the second time in 10ms", () => {
+		Modal.resetLastClose();
+		mountWrapper = mount(<Modal/>);
+		mountWrapper.unmount();
+		mountWrapper = mount(<Modal/>);
+		mountWrapper.find(Modal).state().shown.should.equal(true);
+	});
 
 	it("should render children", () => {
 		mountWrapper = mount(<Modal><span id={"child1"}/><span id={"child2"}/></Modal>);
@@ -66,6 +85,36 @@ describe(__filename, () => {
 		mountWrapper.find(`.${footerClass}`).find("button").should.have.lengthOf(2);
 	});
 
+	it("should render buttons correctly (cancel)", () => {
+		const footerClass = bs.modalFooter;
+		const btn: IModalBtn = { type: ModalBtnType.CANCEL };
+		mountWrapper = mount(<Modal buttons={[btn]}/>);
+		const renderedBtn = mountWrapper.find(`.${footerClass}`).find(IconBtn);
+		renderedBtn.props().icon.should.equal(faTimes);
+		renderedBtn.text().should.equal("Cancel");
+		renderedBtn.find("button").props().className.should.contain(bs.btnOutlineDark);
+	});
+
+	it("should render buttons correctly (save)", () => {
+		const footerClass = bs.modalFooter;
+		const btn: IModalBtn = { type: ModalBtnType.SAVE };
+		mountWrapper = mount(<Modal buttons={[btn]}/>);
+		const renderedBtn = mountWrapper.find(`.${footerClass}`).find(IconBtn);
+		renderedBtn.props().icon.should.equal(faSave);
+		renderedBtn.text().should.equal("Save");
+		renderedBtn.find("button").props().className.should.contain(bs.btnSuccess);
+	});
+
+	it("should render buttons correctly (ok)", () => {
+		const footerClass = bs.modalFooter;
+		const btn: IModalBtn = { type: ModalBtnType.OK };
+		mountWrapper = mount(<Modal buttons={[btn]}/>);
+		const renderedBtn = mountWrapper.find(`.${footerClass}`).find(IconBtn);
+		renderedBtn.props().icon.should.equal(faCheck);
+		renderedBtn.text().should.equal("OK");
+		renderedBtn.find("button").props().className.should.contain(bs.btnPrimary);
+	});
+
 	it("should disable buttons if requested", () => {
 		const footerClass = bs.modalFooter;
 		const btn: IModalBtn = { type: ModalBtnType.CANCEL, disabled: true };
@@ -94,6 +143,58 @@ describe(__filename, () => {
 		mountWrapper = mount(<Modal title={"hello"} onCloseRequest={spy}/>);
 		mountWrapper.find(`.${headerClass}`).find("button").simulate("click");
 		spy.calledOnce.should.equal(true);
+	});
+
+	it("should attach a document key listener on mount", () => {
+		const spy = sinon.spy();
+		const originalListener = document.addEventListener;
+		document.addEventListener = spy;
+		mountWrapper = mount(<Modal title={"hello"}/>);
+		document.addEventListener = originalListener;
+		spy.calledOnce.should.equal(true);
+	});
+
+	it("should remove the document key listener on unmount", () => {
+		const spy = sinon.spy();
+		const originalListener = document.removeEventListener;
+		document.removeEventListener = spy;
+		mountWrapper = mount(<Modal title={"hello"}/>);
+		mountWrapper.unmount();
+		document.removeEventListener = originalListener;
+		spy.calledOnce.should.equal(true);
+	});
+
+	it("should call the close request listener when the 'Esc' key is pressed", () => {
+		const spy = sinon.spy();
+		mountWrapper = mount(<Modal title={"hello"} onCloseRequest={spy}/>);
+		const evt = new KeyboardEvent("keydown", { key: "Esc" });
+		document.dispatchEvent(evt);
+		spy.calledOnce.should.equal(true);
+	});
+
+	it("should call the close request listener when the 'Escape' key is pressed", () => {
+		const spy = sinon.spy();
+		mountWrapper = mount(<Modal title={"hello"} onCloseRequest={spy}/>);
+		const evt = new KeyboardEvent("keydown", { key: "Escape" });
+		document.dispatchEvent(evt);
+		spy.calledOnce.should.equal(true);
+	});
+
+	it("should not call the close request listener when a non-escape key is pressed", () => {
+		const spy = sinon.spy();
+		mountWrapper = mount(<Modal title={"hello"} onCloseRequest={spy}/>);
+		const evt = new KeyboardEvent("keydown", { key: "A" });
+		document.dispatchEvent(evt);
+		spy.called.should.equal(false);
+	});
+
+	it("should not call the close request listener when an already-cancelled 'Esc' key is pressed", () => {
+		const spy = sinon.spy();
+		mountWrapper = mount(<Modal title={"hello"} onCloseRequest={spy}/>);
+		const evt = new KeyboardEvent("keydown", { key: "Esc", cancelable: true });
+		evt.preventDefault();
+		document.dispatchEvent(evt);
+		spy.called.should.equal(false);
 	});
 
 	it("should call button click listeners when they are clicked", () => {

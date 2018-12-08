@@ -1,22 +1,29 @@
 {
 	"all": true,
+	"watermarks": {
+		"lines": [80, 99],
+		"functions": [80, 99],
+		"branches": [80, 99],
+		"statements": [80, 99]
+	},
 	"exclude": [
-		"// there are no tests for type declarations",
+		"// don't check coverage of type declarations",
 		"**/*.d.ts",
 
-		"// there are no tests for config files",
+		"// don't check coverage of config files",
 		"webpack.config.js",
 
-		"// there are no tests for the test init scripts",
+		"// don't check coverage of test init scripts or the tests themselves",
 		"test/global.tests.ts",
 		"test/jsdom-setup.js",
 		"test/test-helpers.ts",
+		"**/*.tests.*",
 
-		"// there are no tests for test outputs (of course!)",
+		"// don't check coverage of test outputs",
 		".nyc_output/",
 		"coverage/",
 
-		"// there are no tests after the code is compiled",
+		"// don't check coverage of compiled code (check the source instead)",
 		"build/",
 
 		"// there are no server code test (yet)",

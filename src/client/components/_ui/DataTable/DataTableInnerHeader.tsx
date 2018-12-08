@@ -95,7 +95,7 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 
 		if (currentSortEntryIndex < 0) {
 			// add at the beginning
-			sortedColumns.unshift({ column, dir: "ASC" });
+			sortedColumns.unshift({ column, dir: DataTableInnerHeader.getNextSortDirection(undefined) });
 		} else {
 			const nextDir = DataTableInnerHeader.getNextSortDirection(sortedColumns[currentSortEntryIndex].dir);
 			// remove...
@@ -106,8 +106,7 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 			}
 		}
 
-		// using JSON as a cheap deep-compare to check whether the value changed
-		if (this.props.onSortOrderUpdate && JSON.stringify(this.props.sortedColumns) !== JSON.stringify(sortedColumns)) {
+		if (this.props.onSortOrderUpdate) {
 			this.props.onSortOrderUpdate(sortedColumns);
 		}
 	}

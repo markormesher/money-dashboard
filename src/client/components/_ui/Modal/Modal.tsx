@@ -33,6 +33,10 @@ interface IModalState {
 
 class Modal extends PureComponent<IModalProps, IModalState> {
 
+	public static resetLastClose(): void {
+		this.lastClose = 0;
+	}
+
 	private static lastClose = 0;
 
 	private static shouldAnimateEntrance(): boolean {
@@ -77,6 +81,8 @@ class Modal extends PureComponent<IModalProps, IModalState> {
 		);
 	}
 
+	private animateDelay: NodeJS.Timer = undefined;
+
 	constructor(props: IModalProps) {
 		super(props);
 		this.state = {
@@ -88,13 +94,14 @@ class Modal extends PureComponent<IModalProps, IModalState> {
 	public componentDidMount(): void {
 		document.addEventListener("keydown", this.handleKeyDown);
 		if (Modal.shouldAnimateEntrance()) {
-			setTimeout(() => this.setState({ shown: true }), 10);
+			this.animateDelay = global.setTimeout(() => this.setState({ shown: true }), 10);
 		}
 	}
 
 	public componentWillUnmount(): void {
-		document.removeEventListener("keydown", this.handleKeyDown);
 		Modal.lastClose = new Date().getTime();
+		document.removeEventListener("keydown", this.handleKeyDown);
+		clearTimeout(this.animateDelay);
 	}
 
 	public render(): ReactNode {
@@ -140,7 +147,7 @@ class Modal extends PureComponent<IModalProps, IModalState> {
 
 	private handleKeyDown(evt: KeyboardEvent): void {
 		// abort if this event was already cancelled before it reached us
-		if (!evt.returnValue) {
+		if (evt.defaultPrevented) {
 			return;
 		}
 

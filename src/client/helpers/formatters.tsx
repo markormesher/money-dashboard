@@ -23,6 +23,7 @@ function formatDate(date: Date | Moment.Moment | string, format: "user" | "syste
 		return undefined;
 	}
 
+	/* istanbul ignore else: protected by type system */
 	if (format === "user") {
 		return Moment(date).format("DD MMM YYYY");
 	} else if (format === "system") {

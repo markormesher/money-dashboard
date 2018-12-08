@@ -91,6 +91,35 @@ describe(__filename, () => {
 		spy.calledOnceWithExactly(4).should.equal(true);
 	});
 
+	it("should not fail when the prev button is clicked but there is no listener", () => {
+		mountWrapper = mount(<PagerBtns currentPage={5} totalPages={10}/>);
+		mountWrapper.find(IconBtn).forEach((btn) => {
+			if (btn.props().icon === faArrowLeft) {
+				btn.find("button").simulate("click");
+			}
+		});
+	});
+
+	it("should not call the listener when the prev button is clicked at the start", () => {
+		const spy = sinon.spy();
+		mountWrapper = mount(<PagerBtns currentPage={0} totalPages={10} onPageChange={spy}/>);
+		mountWrapper.find(IconBtn).forEach((btn) => {
+			if (btn.props().icon === faArrowLeft) {
+				btn.find("button").simulate("click");
+			}
+		});
+		spy.notCalled.should.equal(true);
+	});
+
+	it("should not fail when the prev button is clicked at the start and there is no listener", () => {
+		mountWrapper = mount(<PagerBtns currentPage={0} totalPages={10}/>);
+		mountWrapper.find(IconBtn).forEach((btn) => {
+			if (btn.props().icon === faArrowLeft) {
+				btn.find("button").simulate("click");
+			}
+		});
+	});
+
 	it("should call the listener with the next page when the next button is clicked", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<PagerBtns currentPage={5} totalPages={10} onPageChange={spy}/>);
@@ -102,18 +131,16 @@ describe(__filename, () => {
 		spy.calledOnceWithExactly(6).should.equal(true);
 	});
 
-	it("should not call the listener when the prev button is clicked at the startDate", () => {
-		const spy = sinon.spy();
-		mountWrapper = mount(<PagerBtns currentPage={0} totalPages={10} onPageChange={spy}/>);
+	it("should not fail when the next button is clicked but there is no listener", () => {
+		mountWrapper = mount(<PagerBtns currentPage={5} totalPages={10}/>);
 		mountWrapper.find(IconBtn).forEach((btn) => {
-			if (btn.props().icon === faArrowLeft) {
+			if (btn.props().icon === faArrowRight) {
 				btn.find("button").simulate("click");
 			}
 		});
-		spy.notCalled.should.equal(true);
 	});
 
-	it("should not call the listener when the next button is clicked at the endDate", () => {
+	it("should not call the listener when the next button is clicked at the end", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<PagerBtns currentPage={9} totalPages={10} onPageChange={spy}/>);
 		mountWrapper.find(IconBtn).forEach((btn) => {
@@ -122,5 +149,14 @@ describe(__filename, () => {
 			}
 		});
 		spy.notCalled.should.equal(true);
+	});
+
+	it("should not fail when the next button is clicked and there is no listener", () => {
+		mountWrapper = mount(<PagerBtns currentPage={9} totalPages={10}/>);
+		mountWrapper.find(IconBtn).forEach((btn) => {
+			if (btn.props().icon === faArrowRight) {
+				btn.find("button").simulate("click");
+			}
+		});
 	});
 });

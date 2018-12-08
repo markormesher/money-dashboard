@@ -56,6 +56,44 @@ describe(__filename, () => {
 		mountWrapper.find("textarea").props().title.should.equal("test");
 	});
 
+	it("should use an empty strings when the placeholder is not defined", () => {
+		mountWrapper = mount((
+				<ControlledTextArea
+						id={"test-id"}
+						value={"test-val"}
+						label={"Test Label"}
+						onValueChange={voidListener}
+				/>
+		));
+		mountWrapper.find("textarea").props().placeholder.should.equal("");
+	});
+
+	it("should use an empty strings when the value is null", () => {
+		mountWrapper = mount((
+				<ControlledTextArea
+						id={"test-id"}
+						value={null}
+						placeholder={"test-placeholder"}
+						label={"Test Label"}
+						onValueChange={voidListener}
+				/>
+		));
+		mountWrapper.find("textarea").props().value.should.equal("");
+	});
+
+	it("should use an empty strings when the value is undefined", () => {
+		mountWrapper = mount((
+				<ControlledTextArea
+						id={"test-id"}
+						value={undefined}
+						placeholder={"test-placeholder"}
+						label={"Test Label"}
+						onValueChange={voidListener}
+				/>
+		));
+		mountWrapper.find("textarea").props().value.should.equal("");
+	});
+
 	it("should render a text label", () => {
 		mountWrapper = mount((
 				<ControlledTextArea

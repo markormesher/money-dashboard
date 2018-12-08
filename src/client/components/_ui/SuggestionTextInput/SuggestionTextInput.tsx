@@ -22,10 +22,6 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 	private static MAX_SUGGESTIONS_SHOWN = 10;
 
 	private static removeRegexChars(str: string): string {
-		if (!str) {
-			return undefined;
-		}
-
 		return str.replace(/[\^$\\+*?.(){}\[\]]/g, "");
 	}
 
@@ -154,6 +150,7 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
 				if (suggestions && suggestions.length) {
 					this.clearSuggestions();
 					evt.preventDefault();
+					evt.stopPropagation();
 				}
 				break;
 		}

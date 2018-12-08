@@ -21,6 +21,11 @@ describe(__filename, () => {
 		levenshteinDistance("", "test").should.equal(4);
 	});
 
+	it("should return string length when the other string is undefined", () => {
+		levenshteinDistance("test", undefined).should.equal(4);
+		levenshteinDistance(undefined, "test").should.equal(4);
+	});
+
 	it("should return one for one-char differences", () => {
 		levenshteinDistance("tes", "test").should.equal(1); // add one
 		levenshteinDistance("test", "tes").should.equal(1); // remove one

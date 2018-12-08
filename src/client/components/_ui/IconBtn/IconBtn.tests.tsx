@@ -47,4 +47,9 @@ describe(__filename, () => {
 		mountWrapper.find("button").simulate("click");
 		spy.calledOnceWithExactly(payload).should.equal(true);
 	});
+
+	it("should not fail when clicked without a listener", () => {
+		mountWrapper = mount(<IconBtn icon={faRocket}/>);
+		mountWrapper.find("button").simulate("click");
+	});
 });

@@ -48,4 +48,14 @@ describe(__filename, () => {
 		mountWrapper.find("button").simulate("click");
 		spy.calledOnceWithExactly("effective").should.equal(true);
 	});
+
+	it("should not fail when clicked without a listener (E -> T)", () => {
+		mountWrapper = mount(<DateModeToggleBtn value={"effective"}/>);
+		mountWrapper.find("button").simulate("click");
+	});
+
+	it("should not fail when clicked without a listener (T -> E)", () => {
+		mountWrapper = mount(<DateModeToggleBtn value={"transaction"}/>);
+		mountWrapper.find("button").simulate("click");
+	});
 });

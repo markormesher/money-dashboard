@@ -25,10 +25,6 @@ describe(__filename, () => {
 		"ag", "ah", "ai", "aj", "ak", "al",
 	];
 
-	function findInput(): ReactWrapper {
-		return mountWrapper.find(ControlledTextInput);
-	}
-
 	function findInnerInput(): ReactWrapper<HTMLAttributes> {
 		return mountWrapper.find("input");
 	}
@@ -43,19 +39,31 @@ describe(__filename, () => {
 
 	it("should render as an input", () => {
 		mountWrapper = mount(<SuggestionTextInput {...defaultProps}/>);
-		findInput().length.should.equal(1);
+		mountWrapper.find(ControlledTextInput).length.should.equal(1);
 	});
 
 	it("should not render a drop down when there are no matches for the input", () => {
 		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["b"]}/>);
-		findInput().simulate("change", { target: { value: "a" } });
+		findInnerInput().simulate("change", { target: { value: "a" } });
+		findSuggestionWrapper().length.should.equal(0);
+	});
+
+	it("should not render a drop down when the input is an empty string", () => {
+		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a"]}/>);
+		findInnerInput().simulate("change", { target: { value: "" } });
+		findSuggestionWrapper().length.should.equal(0);
+	});
+
+	it("should not render a drop down when the input is null", () => {
+		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a"]}/>);
+		findInnerInput().simulate("change", { target: { value: null } });
 		findSuggestionWrapper().length.should.equal(0);
 	});
 
 	it("should render a drop down when there are matches for the input", () => {
 		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a"]}/>);
-		findInput().simulate("change", { target: { value: "a" } });
-		findSuggestionWrapper().length.should.equal(0);
+		findInnerInput().simulate("change", { target: { value: "a" } });
+		findSuggestionWrapper().length.should.equal(1);
 	});
 
 	it("should only include suggestions that match the input", () => {
@@ -85,6 +93,12 @@ describe(__filename, () => {
 		spy.resetHistory(); // ignore the change event from "typing"
 		findSuggestions((w) => w.text() === "aa").simulate("mousedown");
 		spy.calledOnceWithExactly("aa", "test").should.equal(true);
+	});
+
+	it("should not fail when a suggestion is clicked but there is no listener", () => {
+		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["aa"]}/>);
+		findInnerInput().simulate("change", { target: { value: "a" } });
+		findSuggestions((w) => w.text() === "aa").simulate("mousedown");
 	});
 
 	it("should highlight suggestions selected via the keyboard", () => {
@@ -144,13 +158,20 @@ describe(__filename, () => {
 		spy.calledOnceWithExactly("aa", "test").should.equal(true);
 	});
 
-	it("should not call the listener when ENTER is pressed but no selection is selected", () => {
+	it("should not call the listener when 'Enter' is pressed but no selection is selected", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["aa"]}/>);
 		findInnerInput().simulate("change", { target: { value: "a" } });
 		spy.resetHistory(); // ignore the change event from "typing"
 		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ENTER });
 		spy.notCalled.should.equal(true);
+	});
+
+	it("should not fail when 'Enter' is pressed but there is no listener", () => {
+		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["aa"]}/>);
+		findInnerInput().simulate("change", { target: { value: "a" } });
+		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
+		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ENTER });
 	});
 
 	it("should close the suggestions when the escape key is pressed", () => {
@@ -160,6 +181,32 @@ describe(__filename, () => {
 		findSuggestionWrapper().length.should.equal(1);
 		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ESC });
 		findSuggestionWrapper().length.should.equal(0);
+	});
+
+	it("should swallow the event when the escape key is pressed when there are suggestions", () => {
+		const spyInner = sinon.spy();
+		const spyOuter = sinon.spy();
+		mountWrapper = mount((
+				<div onKeyDown={spyOuter}>
+					<SuggestionTextInput {...defaultProps} onValueChange={spyInner} suggestionOptions={["a"]}/>
+				</div>
+		));
+		findInnerInput().simulate("change", { target: { value: "a" } });
+		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ESC });
+		spyOuter.called.should.equal(false);
+	});
+
+	it("should not swallow the event when the escape key is pressed when there are no suggestions", () => {
+		const spyInner = sinon.spy();
+		const spyOuter = sinon.spy();
+		mountWrapper = mount((
+				<div onKeyDown={spyOuter}>
+					<SuggestionTextInput {...defaultProps} onValueChange={spyInner} suggestionOptions={["b"]}/>
+				</div>
+		));
+		findInnerInput().simulate("change", { target: { value: "a" } });
+		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ESC });
+		spyOuter.called.should.equal(true);
 	});
 
 	it("should close the suggestions when the input blurs", () => {
