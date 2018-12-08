@@ -45,12 +45,16 @@ jobs:
           name: Run Tests
           command: yarn test
       - run:
+          name: Generate Coverage Report
+          command: yarn test-coverage-report
+      - run:
           name: Copy Results
           command: |
             mkdir -p ./test-results/mocha
-            [[ -e test-results.xml ]] && cp test-results.xml ./test-results/mocha/test-results.xml
+            [[ -e ./test-results.xml ]] && cp ./test-results.xml ./test-results/mocha/test-results.xml
             mkdir -p ./test-results/clover
-            [[ -e coverage/clover.xml ]] && cp coverage/clover.xml ./test-results/clover/clover.xml
+            [[ -e ./coverage/clover.xml ]] && cp ./coverage/clover.xml ./test-results/clover/clover.xml
+            ls ./test-results
       - store_test_results:
           path: test-results
 
