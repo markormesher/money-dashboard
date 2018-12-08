@@ -9,9 +9,14 @@ const webpack = require("webpack");
 const {resolve, join} = require("path");
 
 const notFalse = (val) => val !== false;
-const IS_TEST = process.env.TEST === "y";
-const IS_PROD = !IS_TEST && process.env.NODE_ENV === "production";
-const IS_DEV = !IS_PROD; // for better readability below
+const nodeEnv = process.env.NODE_ENV.toLowerCase();
+const IS_TEST = nodeEnv === "test";
+const IS_PROD = nodeEnv === "production";
+const IS_DEV = nodeEnv === "development";
+
+if (!IS_TEST && !IS_PROD && !IS_DEV) {
+	throw new Error("NODE_ENV was not set to one of test, production or development (it was '" + nodeEnv + "'")
+}
 
 const outputDir = resolve(__dirname, "build", IS_TEST ? "client-test" : "client");
 const entryPoints = IS_TEST ? glob.sync("./src/client/**/*.tests.{ts,tsx}") : resolve(__dirname, "src", "client", "index.tsx");
@@ -21,6 +26,7 @@ const babelLoader = {
 	options: {
 		cacheDirectory: true,
 		plugins: [
+			"istanbul",
 			"@babel/plugin-syntax-dynamic-import",
 		],
 		presets: [

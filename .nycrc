@@ -1,0 +1,25 @@
+{
+	"all": true,
+	"exclude": [
+		"// there are no tests for type declarations",
+		"**/*.d.ts",
+
+		"// there are no tests for config files",
+		"webpack.config.js",
+
+		"// there are no tests for the test init scripts",
+		"test/global.tests.ts",
+		"test/jsdom-setup.js",
+		"test/test-helpers.ts",
+
+		"// there are no tests for test outputs (of course!)",
+		".nyc_output/",
+		"coverage/",
+
+		"// there are no tests after the code is compiled",
+		"build/",
+
+		"// there are no server code test (yet)",
+		"src/server/"
+	]
+}

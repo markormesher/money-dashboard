@@ -1,12 +1,17 @@
+# Generated code
 build/
-dist/
 node_modules/
-yarn-debug.log*
-yarn-error.log*
 
+# Test outputs
+coverage/
+.nyc_output/
+
+# Logs
+yarn-*.log*
 logs/**
 !logs/.gitkeep
 
+# Helper scripts
 .scripts/pull-data-from-prod.sh
 
 # IntelliJ

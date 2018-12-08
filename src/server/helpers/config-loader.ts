@@ -12,8 +12,10 @@ let loadedSecrets: { readonly [key: string]: string } = {};
 const projectDir = resolve(__dirname, "..", "..", "..");
 const configDir = resolve(__dirname, "..", "config");
 
+const nodeEnv = process.env.NODE_ENV.toLowerCase();
+
 function isProd(): boolean {
-	return process.env.NODE_ENV.indexOf("prod") >= 0;
+	return nodeEnv === "production";
 }
 
 function runningInDocker(): boolean {

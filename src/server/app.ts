@@ -7,7 +7,7 @@ import * as Passport from "passport";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { typeormConf } from "./db/db-config";
-import { getSecret, runningInDocker } from "./helpers/config-loader";
+import { getSecret, isProd, runningInDocker } from "./helpers/config-loader";
 import { logger } from "./helpers/logging";
 import * as PassportConfig from "./helpers/passport-config";
 import { StatusError } from "./helpers/StatusError";
@@ -42,7 +42,7 @@ app.use(BodyParser.json());
 
 // routes
 setupApiRoutes(app);
-if (process.env.NODE_ENV.indexOf("prod") >= 0) {
+if (isProd()) {
 	setupProdAppRoutes(app);
 } else {
 	setupDevAppRoutes(app);
