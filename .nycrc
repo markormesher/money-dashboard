@@ -21,5 +21,11 @@
 
 		"// there are no server code test (yet)",
 		"src/server/"
+	],
+	"reporter": [
+		"html",
+		"clover",
+		"text",
+		"text-summary"
 	]
 }
