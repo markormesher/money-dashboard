@@ -1,4 +1,5 @@
-[![CircleCI](https://circleci.com/gh/markormesher/money-dashboard/tree/master.svg?style=svg)](https://circleci.com/gh/markormesher/money-dashboard/tree/master)
+[![CircleCI](https://circleci.com/gh/markormesher/money-dashboard/tree/master.svg?style=shield&logo=circleci)](https://circleci.com/gh/markormesher/money-dashboard/tree/master)
+[![codecov](https://codecov.io/gh/markormesher/money-dashboard/branch/master/graph/badge.svg)](https://codecov.io/gh/markormesher/money-dashboard)
 
 # Money Dashboard
 

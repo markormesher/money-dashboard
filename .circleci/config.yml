@@ -45,7 +45,7 @@ jobs:
           name: Run Tests
           command: yarn test
       - run:
-          name: Copy Results
+          name: Copy/Upload Results
           command: |
             mkdir -p ./test-results/mocha
             [[ -e ./test-results.xml ]] && cp ./test-results.xml ./test-results/mocha/test-results.xml
