@@ -14,9 +14,7 @@
 		"webpack.config.js",
 
 		"// don't check coverage of test init scripts or the tests themselves",
-		"test/global.tests.ts",
-		"test/jsdom-setup.js",
-		"test/test-helpers.ts",
+		"test-utils/*",
 		"**/*.tests.*",
 
 		"// don't check coverage of test outputs",

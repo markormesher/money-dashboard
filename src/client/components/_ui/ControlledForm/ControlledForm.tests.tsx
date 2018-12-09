@@ -1,14 +1,19 @@
 import { mount } from "enzyme";
-import { describe, it } from "mocha";
+import { afterEach, describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
-import { testGlobals } from "../../../../../test/global.tests";
-import { voidListener } from "../../../../../test/test-helpers";
+import { testGlobals } from "../../../../../test-utils/global.tests";
+import { voidListener } from "../../../../../test-utils/test-helpers";
 import { ControlledForm } from "./ControlledForm";
 
 describe(__filename, () => {
 
 	let { mountWrapper } = testGlobals;
+	const sandbox = sinon.createSandbox();
+
+	afterEach(() => {
+		sandbox.restore();
+	});
 
 	it("should render children", () => {
 		mountWrapper = mount((
@@ -29,20 +34,16 @@ describe(__filename, () => {
 
 	it("should attach a document key listener on mount", () => {
 		const spy = sinon.spy();
-		const originalListener = document.addEventListener;
-		document.addEventListener = spy;
+		sandbox.stub(document, "addEventListener").callsFake(spy);
 		mountWrapper = mount(<ControlledForm/>);
-		document.addEventListener = originalListener;
 		spy.calledOnce.should.equal(true);
 	});
 
 	it("should remove the document key listener on unmount", () => {
 		const spy = sinon.spy();
-		const originalListener = document.removeEventListener;
-		document.removeEventListener = spy;
+		sandbox.stub(document, "removeEventListener").callsFake(spy);
 		mountWrapper = mount(<ControlledForm/>);
 		mountWrapper.unmount();
-		document.removeEventListener = originalListener;
 		spy.calledOnce.should.equal(true);
 	});
 

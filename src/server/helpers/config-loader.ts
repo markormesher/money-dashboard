@@ -18,6 +18,14 @@ function isProd(): boolean {
 	return nodeEnv === "production";
 }
 
+function isDev(): boolean {
+	return nodeEnv === "development";
+}
+
+function isTest(): boolean {
+	return nodeEnv === "test";
+}
+
 function runningInDocker(): boolean {
 	return process.env.RUNNING_IN === "docker";
 }
@@ -56,6 +64,8 @@ function getDevWebpackConfig(): webpack.Configuration {
 
 export {
 	isProd,
+	isDev,
+	isTest,
 	runningInDocker,
 	getConstants,
 	getSecret,

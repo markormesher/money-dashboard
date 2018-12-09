@@ -2,16 +2,21 @@ import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { should } from "chai";
 import { mount } from "enzyme";
-import { describe, it } from "mocha";
+import { afterEach, describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
-import { testGlobals } from "../../../../../test/global.tests";
+import { testGlobals } from "../../../../../test-utils/global.tests";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { DeleteBtn } from "./DeleteBtn";
 
 describe(__filename, () => {
 
 	let { mountWrapper } = testGlobals;
+	const sandbox = sinon.createSandbox();
+
+	afterEach(() => {
+		sandbox.restore();
+	});
 
 	it("should pass the button props down to the button", () => {
 		mountWrapper = mount(<DeleteBtn btnProps={{ disabled: true }}/>);
@@ -47,11 +52,9 @@ describe(__filename, () => {
 
 	it("should cancel the reset timer when unmounted", () => {
 		const spy = sinon.spy();
-		const originalClearTimeout = global.clearTimeout;
-		global.clearTimeout = spy;
+		sandbox.stub(global, "clearTimeout").callsFake(spy);
 		mountWrapper = mount(<DeleteBtn timeout={10}/>);
 		mountWrapper.unmount();
-		global.clearTimeout = originalClearTimeout;
 		spy.calledOnce.should.equal(true);
 	});
 

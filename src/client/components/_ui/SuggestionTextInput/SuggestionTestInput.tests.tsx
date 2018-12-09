@@ -3,7 +3,7 @@ import { HTMLAttributes, mount, ReactWrapper } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
-import { testGlobals } from "../../../../../test/global.tests";
+import { testGlobals } from "../../../../../test-utils/global.tests";
 import { UIConstants } from "../../_commons/ui-constants";
 import { ControlledTextInput } from "../ControlledInputs/ControlledTextInput";
 import { ISuggestionTextInputProps, SuggestionTextInput } from "./SuggestionTextInput";

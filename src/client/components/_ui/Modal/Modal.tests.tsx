@@ -2,10 +2,10 @@ import { faCheck, faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { should } from "chai";
 import { mount } from "enzyme";
-import { describe, it } from "mocha";
+import { afterEach, describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
-import { testGlobals } from "../../../../../test/global.tests";
+import { testGlobals } from "../../../../../test-utils/global.tests";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { IModalBtn, Modal, ModalBtnType } from "./Modal";
@@ -13,6 +13,11 @@ import { IModalBtn, Modal, ModalBtnType } from "./Modal";
 describe(__filename, () => {
 
 	let { mountWrapper } = testGlobals;
+	const sandbox = sinon.createSandbox();
+
+	afterEach(() => {
+		sandbox.restore();
+	});
 
 	it("should animate entrance when rendered for the first time in 10ms", (done) => {
 		Modal.resetLastClose();
@@ -147,30 +152,24 @@ describe(__filename, () => {
 
 	it("should attach a document key listener on mount", () => {
 		const spy = sinon.spy();
-		const originalListener = document.addEventListener;
-		document.addEventListener = spy;
+		sandbox.stub(document, "addEventListener").callsFake(spy);
 		mountWrapper = mount(<Modal title={"hello"}/>);
-		document.addEventListener = originalListener;
 		spy.calledOnce.should.equal(true);
 	});
 
 	it("should remove the document key listener on unmount", () => {
 		const spy = sinon.spy();
-		const originalListener = document.removeEventListener;
-		document.removeEventListener = spy;
+		sandbox.stub(document, "removeEventListener").callsFake(spy);
 		mountWrapper = mount(<Modal title={"hello"}/>);
 		mountWrapper.unmount();
-		document.removeEventListener = originalListener;
 		spy.calledOnce.should.equal(true);
 	});
 
 	it("should clear the animation timeout on unmount", () => {
 		const spy = sinon.spy();
-		const originalClearTimeout = global.clearTimeout;
-		global.clearTimeout = spy;
+		sandbox.stub(global, "clearTimeout").callsFake(spy);
 		mountWrapper = mount(<Modal title={"hello"}/>);
 		mountWrapper.unmount();
-		global.clearTimeout = originalClearTimeout;
 		spy.calledOnce.should.equal(true);
 	});
 

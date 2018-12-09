@@ -220,7 +220,7 @@ module.exports = {
 			},
 		},
 	},
-	stats: !IS_TEST && {
+	stats: IS_TEST ? "errors-only" : {
 		assetsSort: "!size",
 		children: false,
 		chunks: false,

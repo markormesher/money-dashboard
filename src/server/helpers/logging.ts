@@ -1,6 +1,6 @@
 import { format } from "logform";
 import * as Winston from "winston";
-import { isProd } from "./config-loader";
+import { isDev, isTest } from "./config-loader";
 
 const consoleLogFormat = format.combine(
 		format.colorize(),
@@ -21,7 +21,7 @@ const logger = Winston.createLogger({
 	],
 });
 
-if (isProd()) {
+if (isDev() || isTest()) {
 	logger.add(new Winston.transports.Console({
 		format: consoleLogFormat,
 		level: "info",

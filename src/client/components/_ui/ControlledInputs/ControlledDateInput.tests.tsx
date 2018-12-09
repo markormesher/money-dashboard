@@ -3,8 +3,8 @@ import { describe, it } from "mocha";
 import * as Moment from "moment";
 import * as React from "react";
 import * as sinon from "sinon";
-import { testGlobals } from "../../../../../test/global.tests";
-import { voidListener } from "../../../../../test/test-helpers";
+import { testGlobals } from "../../../../../test-utils/global.tests";
+import { voidListener } from "../../../../../test-utils/test-helpers";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { ControlledDateInput } from "./ControlledDateInput";
 

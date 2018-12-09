@@ -1,7 +1,7 @@
 // From https://github.com/airbnb/enzyme/blob/master/docs/guides/jsdom.md
 
 const {JSDOM} = require("jsdom");
-const jsdom = new JSDOM("<!doctype html><html><body></body></html>");
+const jsdom = new JSDOM("<!doctype html><html><body></body></html>", {url: "http://localhost:9999"});
 const {window} = jsdom;
 
 function copyProps(src, target) {

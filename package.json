@@ -26,8 +26,8 @@
     "test-client-clean": "rimraf ./build/client-test",
     "test-client-build": "cross-env NODE_ENV=test webpack",
     "test-client-run": "if [ \"$CI\" = \"true\" ]; then run-s test-client-run-ci; else run-s test-client-run-local; fi",
-    "test-client-run-ci": "nyc mocha --reporter mocha-circleci-reporter -r ./test/jsdom-setup.js \"./build/client-test/*.js\"",
-    "test-client-run-local": "nyc mocha -r ./test/jsdom-setup.js \"./build/client-test/*.js\"",
+    "test-client-run-ci": "nyc mocha --reporter mocha-circleci-reporter -r ./test-utils/jsdom-setup.js \"./build/client-test/*.js\"",
+    "test-client-run-local": "nyc mocha -r ./test-utils/jsdom-setup.js \"./build/client-test/*.js\"",
     "test-server": "echo No server tests yet"
   },
   "dependencies": {

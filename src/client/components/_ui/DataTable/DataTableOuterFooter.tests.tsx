@@ -1,7 +1,7 @@
 import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
-import { testGlobals } from "../../../../../test/global.tests";
+import { testGlobals } from "../../../../../test-utils/global.tests";
 import { IColumn } from "./DataTable";
 import { DataTableOuterFooter } from "./DataTableOuterFooter";
 

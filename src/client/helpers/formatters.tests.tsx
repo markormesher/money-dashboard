@@ -1,9 +1,5 @@
-import * as chai from "chai";
 import { expect, should } from "chai";
-import * as chaiString from "chai-string";
-import * as Enzyme from "enzyme";
 import { shallow } from "enzyme";
-import * as Adapter from "enzyme-adapter-react-16";
 import { describe, it } from "mocha";
 import * as Moment from "moment";
 import * as React from "react";
@@ -22,10 +18,6 @@ import {
 	generateCategoryTypeBadge,
 	getBudgetPeriodType,
 } from "./formatters";
-
-Enzyme.configure({ adapter: new Adapter() });
-chai.use(chaiString);
-should();
 
 describe(__filename, () => {
 

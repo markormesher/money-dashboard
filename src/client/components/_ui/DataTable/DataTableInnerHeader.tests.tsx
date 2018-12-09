@@ -2,10 +2,10 @@ import { faExchange, faSortAmountDown, faSortAmountUp } from "@fortawesome/pro-l
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { expect } from "chai";
 import { mount } from "enzyme";
-import { describe, it } from "mocha";
+import { afterEach, describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
-import { testGlobals } from "../../../../../test/global.tests";
+import { testGlobals } from "../../../../../test-utils/global.tests";
 import { IColumn, IColumnSortEntry } from "./DataTable";
 import { DataTableInnerHeader } from "./DataTableInnerHeader";
 
@@ -16,6 +16,11 @@ const col3: IColumn = { title: "col3", sortable: false };
 describe(__filename, () => {
 
 	let { mountWrapper } = testGlobals;
+	const sandbox = sinon.createSandbox();
+
+	afterEach(() => {
+		sandbox.restore();
+	});
 
 	it("should render a header for each column", () => {
 		mountWrapper = mount((
