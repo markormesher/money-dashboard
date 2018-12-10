@@ -6,6 +6,10 @@ function cleanUuid(uuid: string): string {
 		return NULL_UUID;
 	}
 
+	if (uuid === NULL_UUID) {
+		return uuid;
+	}
+
 	if (!UUID_REGEX.test(uuid)) {
 		throw new Error(`UUID was not valid: ${uuid}`);
 	} else {
@@ -14,5 +18,6 @@ function cleanUuid(uuid: string): string {
 }
 
 export {
+	NULL_UUID,
 	cleanUuid,
 };

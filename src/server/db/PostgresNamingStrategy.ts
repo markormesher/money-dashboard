@@ -11,12 +11,28 @@ class PostgresNamingStrategy extends DefaultNamingStrategy {
 		return prefix + (customName ? customName : snakeCase(propertyName));
 	}
 
+	public joinColumnName(relationName: string, referencedColumnName: string): string {
+		return snakeCase(super.joinColumnName(relationName, referencedColumnName));
+	}
+
+	public joinTableColumnName(tableName: string, propertyName: string, columnName?: string): string {
+		return snakeCase(super.joinTableColumnName(tableName, propertyName, columnName));
+	}
+
 	public relationName(propertyName: string): string {
 		return snakeCase(propertyName);
 	}
 
 	public primaryKeyName(tableOrName: Table | string, columnNames: string[]): string {
 		return super.primaryKeyName(tableOrName, columnNames).toLowerCase();
+	}
+
+	public foreignKeyName(tableOrName: Table | string, columnNames: string[]): string {
+		return super.foreignKeyName(tableOrName, columnNames).toLowerCase();
+	}
+
+	public indexName(tableOrName: Table | string, columns: string[], where?: string): string {
+		return super.indexName(tableOrName, columns, where).toLowerCase();
 	}
 
 	public uniqueConstraintName(tableOrName: Table | string, columnNames: string[]): string {
@@ -31,24 +47,8 @@ class PostgresNamingStrategy extends DefaultNamingStrategy {
 		return super.defaultConstraintName(tableOrName, columnName).toLowerCase();
 	}
 
-	public foreignKeyName(tableOrName: Table | string, columnNames: string[]): string {
-		return super.foreignKeyName(tableOrName, columnNames).toLowerCase();
-	}
-
-	public indexName(tableOrName: Table | string, columns: string[], where?: string): string {
-		return super.indexName(tableOrName, columns, where).toLowerCase();
-	}
-
 	public checkConstraintName(tableOrName: Table | string, expression: string): string {
 		return super.checkConstraintName(tableOrName, expression).toLowerCase();
-	}
-
-	public joinColumnName(relationName: string, referencedColumnName: string): string {
-		return snakeCase(super.joinColumnName(relationName, referencedColumnName));
-	}
-
-	public joinTableColumnName(tableName: string, propertyName: string, columnName?: string): string {
-		return snakeCase(super.joinTableColumnName(tableName, propertyName, columnName));
 	}
 }
 
