@@ -1,0 +1,14 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"outDir": "./build/server-test",
+		"sourceMap": false,
+		"inlineSourceMap": true
+	},
+	"include": [
+		"./src/server/**/*.tests.ts"
+	],
+	"exclude": [
+		"./node_modules"
+	]
+}

@@ -104,7 +104,7 @@ describe(__filename, () => {
 			spy.calledOnce.should.equal(true);
 			done();
 		}, 30);
-	}).timeout(50);
+	}).timeout(1000);
 
 	it("should pass the payload to the click listener", () => {
 		const spy = sinon.spy();

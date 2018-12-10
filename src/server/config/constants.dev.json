@@ -1,3 +1,4 @@
 {
+	"env": "development",
 	"host": "http://localhost:3000"
 }

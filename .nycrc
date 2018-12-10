@@ -21,11 +21,12 @@
 		".nyc_output/",
 		"coverage/",
 
-		"// don't check coverage of compiled code (check the source instead)",
-		"build/",
+		"// client tests run against the actual source, so don't check coverage of the compiled code",
+		"build/client-test",
 
-		"// there are no server code test (yet)",
-		"src/server/"
+		"// don't check coverage of non-test compiled code either",
+		"build/client",
+		"build/server"
 	],
 	"reporter": [
 		"html",

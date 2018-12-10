@@ -27,7 +27,7 @@ describe(__filename, () => {
 			mountWrapper.find(Modal).state().shown.should.equal(true);
 			done();
 		}, 20);
-	}).timeout(50);
+	}).timeout(1000);
 
 	it("should animate entrance when rendered for the second time in 10ms", () => {
 		Modal.resetLastClose();

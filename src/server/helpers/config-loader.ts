@@ -3,6 +3,7 @@ import { resolve } from "path";
 import * as webpack from "webpack";
 
 export class Constants {
+	public env: string;
 	public host: string;
 }
 
@@ -12,33 +13,41 @@ let loadedSecrets: { readonly [key: string]: string } = {};
 const projectDir = resolve(__dirname, "..", "..", "..");
 const configDir = resolve(__dirname, "..", "config");
 
-const nodeEnv = process.env.NODE_ENV.toLowerCase();
-
 function isProd(): boolean {
-	return nodeEnv === "production";
+	return process.env.NODE_ENV.toLowerCase() === "production";
 }
 
 function isDev(): boolean {
-	return nodeEnv === "development";
+	return process.env.NODE_ENV.toLowerCase() === "development";
 }
 
 function isTest(): boolean {
-	return nodeEnv === "test";
+	return process.env.NODE_ENV.toLowerCase() === "test";
 }
 
 function runningInDocker(): boolean {
 	return process.env.RUNNING_IN === "docker";
 }
 
+function clearConstantsCache(): void {
+	loadedConstants = undefined;
+}
+
 function getConstants(): Constants {
 	if (!loadedConstants) {
+		let configFile: string;
 		if (isProd()) {
-			loadedConstants = require(`${configDir}/constants.prod.json`) as Constants;
+			configFile = `${configDir}/constants.prod.json`;
 		} else {
-			loadedConstants = require(`${configDir}/constants.dev.json`) as Constants;
+			configFile = `${configDir}/constants.dev.json`;
 		}
+		loadedConstants = JSON.parse(readFileSync(configFile).toString().trim()) as Constants;
 	}
 	return loadedConstants;
+}
+
+function clearSecretsCache(): void {
+	loadedSecrets = {};
 }
 
 function getSecret(key: string): string {
@@ -67,7 +76,9 @@ export {
 	isDev,
 	isTest,
 	runningInDocker,
+	clearConstantsCache,
 	getConstants,
+	clearSecretsCache,
 	getSecret,
 	getDevWebpackConfig,
 };

@@ -158,7 +158,7 @@ describe(__filename, () => {
 			outerFooter.props().totalRowCount.should.equal(100);
 			done();
 		}, 30);
-	}).timeout(100);
+	}).timeout(1000);
 
 	it("should handle an empty response", (done) => {
 		const mockProvider = new MockDataProvider({ responseShouldBeEmpty: true });
@@ -181,7 +181,7 @@ describe(__filename, () => {
 			outerFooter.props().totalRowCount.should.equal(0);
 			done();
 		}, 30);
-	}).timeout(100);
+	}).timeout(1000);
 
 	it("should render each row", (done) => {
 		const mockProvider = new MockDataProvider();
@@ -198,7 +198,7 @@ describe(__filename, () => {
 			["a1", "b1", "c1", "a2", "b2", "c2"].forEach((val) => html.should.contain(val));
 			done();
 		}, 30);
-	}).timeout(100);
+	}).timeout(1000);
 
 	it("should render a message when there is no data", (done) => {
 		mountWrapper = mount((
@@ -214,7 +214,7 @@ describe(__filename, () => {
 			mountWrapper.find("td").props().colSpan.should.equal(mockColumns.length);
 			done();
 		}, 30);
-	}).timeout(100);
+	}).timeout(1000);
 
 	it("should render a message when loading fails", (done) => {
 		const mockProvider = new MockDataProvider({ allCallsShouldFail: true });
@@ -232,7 +232,7 @@ describe(__filename, () => {
 			mountWrapper.find("td").props().colSpan.should.equal(mockColumns.length);
 			done();
 		}, 30);
-	}).timeout(100);
+	}).timeout(1000);
 
 	it("should call the data provider when it renders", () => {
 		const mockProvider = new MockDataProvider();
@@ -371,7 +371,7 @@ describe(__filename, () => {
 			didRenderDelayedFrame.should.equal(false);
 			done();
 		}, 30);
-	}).timeout(100);
+	}).timeout(1000);
 
 	it("should not render an error that arrived late", (done) => {
 		let didRenderDelayedFrame = false;
@@ -402,5 +402,5 @@ describe(__filename, () => {
 			didRenderDelayedFrame.should.equal(false);
 			done();
 		}, 30);
-	}).timeout(100);
+	}).timeout(1000);
 });
