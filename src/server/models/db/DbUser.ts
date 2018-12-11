@@ -17,11 +17,23 @@ class DbUser extends BaseEntity implements IUser {
 	@Column()
 	public image: string;
 
-	@ManyToMany(() => DbProfile, (p) => p.users, { eager: true, cascade: true })
+	@ManyToMany(
+			/* istanbul ignore next */
+			() => DbProfile,
+			/* istanbul ignore next */
+			(p) => p.users,
+			{ eager: true, cascade: true },
+	)
 	@JoinTable()
 	public profiles: DbProfile[];
 
-	@ManyToOne(() => DbProfile, (p) => p.usersWithProfileActivated, { eager: true })
+	@ManyToOne(
+			/* istanbul ignore next */
+			() => DbProfile,
+			/* istanbul ignore next */
+			(p) => p.usersWithProfileActivated,
+			{ eager: true },
+	)
 	public activeProfile: DbProfile;
 
 	@Column({ default: false })

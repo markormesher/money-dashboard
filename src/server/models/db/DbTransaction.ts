@@ -35,13 +35,31 @@ class DbTransaction extends BaseEntity implements ITransaction {
 	@Column({ nullable: true })
 	public note: string;
 
-	@ManyToOne(() => DbAccount, (a) => a.transactions, { eager: true })
+	@ManyToOne(
+			/* istanbul ignore next */
+			() => DbAccount,
+			/* istanbul ignore next */
+			(a) => a.transactions,
+			{ eager: true },
+	)
 	public account: DbAccount;
 
-	@ManyToOne(() => DbCategory, (c) => c.budgets, { eager: true })
+	@ManyToOne(
+			/* istanbul ignore next */
+			() => DbCategory,
+			/* istanbul ignore next */
+			(c) => c.budgets,
+			{ eager: true },
+	)
 	public category: DbCategory;
 
-	@ManyToOne(() => DbProfile, (p) => p.budgets, { eager: true })
+	@ManyToOne(
+			/* istanbul ignore next */
+			() => DbProfile,
+			/* istanbul ignore next */
+			(p) => p.budgets,
+			{ eager: true },
+	)
 	public profile: DbProfile;
 
 	@Column({ default: false })

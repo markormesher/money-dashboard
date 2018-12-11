@@ -14,19 +14,44 @@ class DbProfile extends BaseEntity implements IProfile {
 	@Column()
 	public name: string;
 
-	@OneToMany(() => DbAccount, (a) => a.profile)
+	@OneToMany(
+			/* istanbul ignore next */
+			() => DbAccount,
+			/* istanbul ignore next */
+			(a) => a.profile,
+	)
 	public accounts: DbAccount[];
 
-	@OneToMany(() => DbBudget, (b) => b.profile)
+	@OneToMany(
+			/* istanbul ignore next */
+			() => DbBudget,
+			/* istanbul ignore next */
+			(b) => b.profile,
+	)
 	public budgets: DbBudget[];
 
-	@OneToMany(() => DbCategory, (c) => c.profile)
+	@OneToMany(
+			/* istanbul ignore next */
+			() => DbCategory,
+			/* istanbul ignore next */
+			(c) => c.profile,
+	)
 	public categories: DbCategory[];
 
-	@ManyToMany(() => DbUser, (u) => u.profiles)
+	@ManyToMany(
+			/* istanbul ignore next */
+			() => DbUser,
+			/* istanbul ignore next */
+			(u) => u.profiles,
+	)
 	public users: DbUser[];
 
-	@OneToMany(() => DbUser, (b) => b.activeProfile)
+	@OneToMany(
+			/* istanbul ignore next */
+			() => DbUser,
+			/* istanbul ignore next */
+			(b) => b.activeProfile,
+	)
 	public usersWithProfileActivated: DbUser[];
 
 	@Column({ default: false })

@@ -19,10 +19,21 @@ class DbAccount extends BaseModel implements IAccount {
 	@Column({ default: true })
 	public active: boolean;
 
-	@OneToMany(() => DbTransaction, (t) => t.account)
+	@OneToMany(
+			/* istanbul ignore next */
+			() => DbTransaction,
+			/* istanbul ignore next */
+			(t) => t.account,
+	)
 	public transactions: DbTransaction[];
 
-	@ManyToOne(() => DbProfile, (p) => p.accounts, { eager: true })
+	@ManyToOne(
+			/* istanbul ignore next */
+			() => DbProfile,
+			/* istanbul ignore next */
+			(p) => p.accounts,
+			{ eager: true },
+	)
 	public profile: DbProfile;
 
 	@Column({ default: false })

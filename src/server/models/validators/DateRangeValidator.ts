@@ -34,7 +34,11 @@ function validateDateRange(range: IDateRange): IDateRangeValidationResult {
 		};
 	}
 
-	if (range.startDate.isSameOrAfter(range.endDate)) {
+	if (
+			range.startDate && range.startDate.isValid()
+			&& range.startDate && range.startDate.isValid()
+			&& range.startDate.isSameOrAfter(range.endDate)
+	) {
 		result = {
 			isValid: false,
 			errors: {

@@ -6,7 +6,7 @@ import { DEFAULT_CATEGORY, ICategory } from "../../../server/models/ICategory";
 import {
 	ICategoryValidationResult,
 	validateCategory,
-} from "../../../server/models/validators/ThinCategoryValidator";
+} from "../../../server/models/validators/CategoryValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { setCategoryToEdit, startSaveCategory } from "../../redux/categories";
 import { IRootState } from "../../redux/root";

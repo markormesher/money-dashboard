@@ -24,10 +24,21 @@ class DbCategory extends BaseEntity implements ICategory {
 	@Column({ default: false })
 	public isAssetGrowthCategory: boolean;
 
-	@OneToMany(() => DbBudget, (b) => b.category)
+	@OneToMany(
+			/* istanbul ignore next */
+			() => DbBudget,
+			/* istanbul ignore next */
+			(b) => b.category,
+	)
 	public budgets: DbBudget[];
 
-	@ManyToOne(() => DbProfile, (p) => p.categories, { eager: true })
+	@ManyToOne(
+			/* istanbul ignore next */
+			() => DbProfile,
+			/* istanbul ignore next */
+			(p) => p.categories,
+			{ eager: true },
+	)
 	public profile: DbProfile;
 
 	@Column({ default: false })

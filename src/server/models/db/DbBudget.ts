@@ -35,10 +35,22 @@ class DbBudget extends BaseModel implements IBudget {
 	})
 	public endDate: Moment.Moment;
 
-	@ManyToOne(() => DbCategory, (c) => c.budgets, { eager: true })
+	@ManyToOne(
+			/* istanbul ignore next */
+			() => DbCategory,
+			/* istanbul ignore next */
+			(c) => c.budgets,
+			{ eager: true },
+	)
 	public category: DbCategory;
 
-	@ManyToOne(() => DbProfile, (p) => p.budgets, { eager: true })
+	@ManyToOne(
+			/* istanbul ignore next */
+			() => DbProfile,
+			/* istanbul ignore next */
+			(p) => p.budgets,
+			{ eager: true },
+	)
 	public profile: DbProfile;
 
 	@Column({ default: false })
@@ -52,6 +64,7 @@ class DbBudget extends BaseModel implements IBudget {
 		output.endDate = this.endDate;
 		output.category = this.category;
 		output.profile = this.profile;
+		output.deleted = this.deleted;
 		return output;
 	}
 

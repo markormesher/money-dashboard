@@ -3,7 +3,8 @@
 	"compilerOptions": {
 		"outDir": "./build/server-test",
 		"sourceMap": false,
-		"inlineSourceMap": true
+		"inlineSourceMap": true,
+		"removeComments": false
 	},
 	"include": [
 		"./src/server/**/*.tests.ts"
