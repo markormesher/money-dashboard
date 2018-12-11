@@ -26,16 +26,6 @@ function validateBudget(budget: IBudget): IBudgetValidationResult {
 		errors: {},
 	};
 
-	if (!budget.category || !budget.category.id || budget.category.id.trim() === "") {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				category: "A category must be selected",
-			},
-		};
-	}
-
 	if (budget.type !== "bill" && budget.type !== "budget") {
 		result = {
 			isValid: false,
@@ -60,6 +50,16 @@ function validateBudget(budget: IBudget): IBudgetValidationResult {
 			errors: {
 				...result.errors,
 				amount: "The amount must be greater than zero",
+			},
+		};
+	}
+
+	if (!budget.category || !budget.category.id || budget.category.id.trim() === "") {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				category: "A category must be selected",
 			},
 		};
 	}
