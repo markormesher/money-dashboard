@@ -1,18 +1,9 @@
 import { afterEach, describe } from "mocha";
 import * as Moment from "moment";
-import * as sinon from "sinon";
 import { IDateRange } from "../IDateRange";
 import { validateDateRange } from "./DateRangeValidator";
 
 describe(__filename, () => {
-
-	// TODO: tests
-
-	const sandbox = sinon.createSandbox();
-
-	afterEach(() => {
-		sandbox.restore();
-	});
 
 	describe("validateDateRange()", () => {
 
