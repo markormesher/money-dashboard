@@ -36,7 +36,7 @@ function validateAccount(account: IAccount): IAccountValidationResult {
 			isValid: false,
 			errors: {
 				...result.errors,
-				name: "A valid account type must be selected",
+				type: "A valid account type must be selected",
 			},
 		};
 	}

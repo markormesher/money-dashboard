@@ -1,5 +1,6 @@
 import { IBudget } from "./IBudget";
 import { IProfile } from "./IProfile";
+import { ITransaction } from "./ITransaction";
 
 interface ICategory {
 	readonly id: string;
@@ -9,6 +10,7 @@ interface ICategory {
 	readonly isExpenseCategory: boolean;
 	readonly isAssetGrowthCategory: boolean;
 	readonly budgets: IBudget[];
+	readonly transactions: ITransaction[];
 	readonly profile: IProfile;
 	readonly deleted: boolean;
 }
@@ -21,6 +23,7 @@ const DEFAULT_CATEGORY: ICategory = {
 	isExpenseCategory: false,
 	isAssetGrowthCategory: false,
 	budgets: undefined,
+	transactions: undefined,
 	profile: undefined,
 	deleted: false,
 };

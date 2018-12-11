@@ -9,6 +9,13 @@ interface IDateRangeValidationResult {
 }
 
 function validateDateRange(range: IDateRange): IDateRangeValidationResult {
+	if (!range) {
+		return {
+			isValid: false,
+			errors: {},
+		};
+	}
+
 	let result: IDateRangeValidationResult = {
 		isValid: true,
 		errors: {},

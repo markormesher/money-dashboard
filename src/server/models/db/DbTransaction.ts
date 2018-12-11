@@ -57,7 +57,7 @@ class DbTransaction extends BaseEntity implements ITransaction {
 			/* istanbul ignore next */
 			() => DbProfile,
 			/* istanbul ignore next */
-			(p) => p.budgets,
+			(p) => p.transactions,
 			{ eager: true },
 	)
 	public profile: DbProfile;

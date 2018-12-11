@@ -1,22 +1,74 @@
 import { afterEach, describe } from "mocha";
-import * as sinon from "sinon";
-import { DEFAULT_ACCOUNT } from "../IAccount";
+import { v4 } from "uuid";
+import { IAccount } from "../IAccount";
+import { DEFAULT_PROFILE } from "../IProfile";
 import { validateAccount } from "./AccountValidator";
 
 describe(__filename, () => {
 
-	// TODO: tests
+	describe("validateAccount()", () => {
 
-	const sandbox = sinon.createSandbox();
+		const VALID_ACCOUNT: IAccount = {
+			id: v4(),
+			name: "Account",
+			type: "current",
+			active: true,
+			transactions: [],
+			profile: DEFAULT_PROFILE,
+			deleted: false,
+		};
 
-	afterEach(() => {
-		sandbox.restore();
-	});
+		it("should accept a valid account", () => {
+			const result = validateAccount(VALID_ACCOUNT);
+			result.isValid.should.equal(true);
+			result.errors.should.deep.equal({});
+		});
 
-	describe("method()", () => {
+		it("should reject a null account", () => {
+			const result = validateAccount(null);
+			result.isValid.should.equal(false);
+			result.errors.should.deep.equal({});
+		});
 
-		it("should do something", () => {
-			validateAccount(DEFAULT_ACCOUNT);
+		it("should reject an undefined account", () => {
+			const result = validateAccount(undefined);
+			result.isValid.should.equal(false);
+			result.errors.should.deep.equal({});
+		});
+
+		it("should reject an account with no name", () => {
+			const result = validateAccount({ ...VALID_ACCOUNT, name: undefined });
+			result.isValid.should.equal(false);
+			result.errors.should.have.keys("name");
+			result.errors.name.should.not.equal("");
+		});
+
+		it("should reject an account with a blank name", () => {
+			const result = validateAccount({ ...VALID_ACCOUNT, name: "" });
+			result.isValid.should.equal(false);
+			result.errors.should.have.keys("name");
+			result.errors.name.should.not.equal("");
+		});
+
+		it("should reject an account with an all-whitespace name", () => {
+			const result = validateAccount({ ...VALID_ACCOUNT, name: "   " });
+			result.isValid.should.equal(false);
+			result.errors.should.have.keys("name");
+			result.errors.name.should.not.equal("");
+		});
+
+		it("should reject an account with no type", () => {
+			const result = validateAccount({ ...VALID_ACCOUNT, type: undefined });
+			result.isValid.should.equal(false);
+			result.errors.should.have.keys("type");
+			result.errors.type.should.not.equal("");
+		});
+
+		it("should reject an account with an invalid type", () => {
+			const result = validateAccount({ ...VALID_ACCOUNT, type: "invalid type" });
+			result.isValid.should.equal(false);
+			result.errors.should.have.keys("type");
+			result.errors.type.should.not.equal("");
 		});
 	});
 });

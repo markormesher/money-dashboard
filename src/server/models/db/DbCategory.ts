@@ -2,6 +2,7 @@ import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { ICategory } from "../ICategory";
 import { DbBudget } from "./DbBudget";
 import { DbProfile } from "./DbProfile";
+import { DbTransaction } from "./DbTransaction";
 
 @Entity("new_category")
 class DbCategory extends BaseEntity implements ICategory {
@@ -31,6 +32,14 @@ class DbCategory extends BaseEntity implements ICategory {
 			(b) => b.category,
 	)
 	public budgets: DbBudget[];
+
+	@OneToMany(
+			/* istanbul ignore next */
+			() => DbTransaction,
+			/* istanbul ignore next */
+			(t) => t.category,
+	)
+	public transactions: DbTransaction[];
 
 	@ManyToOne(
 			/* istanbul ignore next */

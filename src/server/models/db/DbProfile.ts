@@ -3,6 +3,7 @@ import { IProfile } from "../IProfile";
 import { DbAccount } from "./DbAccount";
 import { DbBudget } from "./DbBudget";
 import { DbCategory } from "./DbCategory";
+import { DbTransaction } from "./DbTransaction";
 import { DbUser } from "./DbUser";
 
 @Entity("new_profile")
@@ -37,6 +38,14 @@ class DbProfile extends BaseEntity implements IProfile {
 			(c) => c.profile,
 	)
 	public categories: DbCategory[];
+
+	@OneToMany(
+			/* istanbul ignore next */
+			() => DbTransaction,
+			/* istanbul ignore next */
+			(t) => t.profile,
+	)
+	public transactions: DbTransaction[];
 
 	@ManyToMany(
 			/* istanbul ignore next */
