@@ -1,6 +1,6 @@
 import { Store } from "redux";
 
-interface ICacheState {
+interface IKeyCacheState {
 	readonly [key: string]: number;
 }
 
@@ -22,7 +22,7 @@ class KeyCache<State> {
 		KeyCache.store = store;
 	}
 
-	public static reducer(state: ICacheState = {}, action: IKeyCacheAction): ICacheState {
+	public static reducer(state: IKeyCacheState = {}, action?: IKeyCacheAction): IKeyCacheState {
 		if (!action) {
 			return state;
 		}
@@ -49,13 +49,16 @@ class KeyCache<State> {
 
 	public static getKeyTime(key: string): number {
 		KeyCache.checkStore();
-		const state = KeyCache.store.getState()[this.STATE_KEY] as ICacheState;
+		const state = KeyCache.store.getState()[this.STATE_KEY] as IKeyCacheState;
 		return state[key] || 0;
 	}
 
 	public static keyIsValid(key: string, dependencies: string[]): boolean {
 		KeyCache.checkStore();
 		const keyTime = KeyCache.getKeyTime(key);
+		if (keyTime === 0) {
+			return false;
+		}
 		let valid = true;
 		dependencies.forEach((d) => {
 			if (KeyCache.getKeyTime(d) >= keyTime) {
@@ -65,6 +68,8 @@ class KeyCache<State> {
 		return valid;
 	}
 
+	private static maxTimestampGiven = 0;
+
 	private static checkStore(): void {
 		if (!KeyCache.store) {
 			throw new Error("Store is not set");
@@ -72,11 +77,17 @@ class KeyCache<State> {
 	}
 
 	private static getTimestamp(): number {
-		return new Date().getTime();
+		const raw = new Date().getTime();
+		const output = raw > this.maxTimestampGiven ? raw : this.maxTimestampGiven + 1;
+		this.maxTimestampGiven = output;
+		return output;
 	}
 
 }
 
 export {
+	IKeyCacheState,
+	IKeyCacheAction,
+	KeyCacheActions,
 	KeyCache,
 };
