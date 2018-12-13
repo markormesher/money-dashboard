@@ -1,16 +1,42 @@
 import { afterEach, beforeEach, describe, it } from "mocha";
-import { createStore, Store } from "redux";
-import { INavState, navReducer } from "./nav";
+import { closeNav, NavActions, navReducer, openNav } from "./nav";
 
 describe(__filename, () => {
 
-	let store: Store<INavState>;
+	describe("openNav()", () => {
 
-	beforeEach(() => {
-		store = createStore(navReducer);
+		it("should generate an action with the correct type", () => {
+			openNav().type.should.equal(NavActions.OPEN_NAV);
+		});
 	});
 
-	it("should do things", () => {
-		// TODO: tests
+	describe("closeNav()", () => {
+
+		it("should generate an action with the correct type", () => {
+			closeNav().type.should.equal(NavActions.CLOSE_NAV);
+		});
+	});
+
+	describe("navReducer()", () => {
+
+		it("should initialise its state correctly", () => {
+			navReducer(undefined, { type: "@@INIT" }).should.deep.equal({
+				isOpen: false,
+			});
+		});
+
+		describe(NavActions.OPEN_NAV, () => {
+
+			it("should set the flag to true", () => {
+				navReducer(undefined, openNav()).isOpen.should.equal(true);
+			});
+		});
+
+		describe(NavActions.CLOSE_NAV, () => {
+
+			it("should set the flag to false", () => {
+				navReducer(undefined, closeNav()).isOpen.should.equal(false);
+			});
+		});
 	});
 });

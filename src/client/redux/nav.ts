@@ -1,4 +1,3 @@
-import { ActionCreator } from "redux";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface INavState {
@@ -14,13 +13,17 @@ enum NavActions {
 	CLOSE_NAV = "NavActions.CLOSE_NAV",
 }
 
-const openNav: ActionCreator<PayloadAction> = () => ({
-	type: NavActions.OPEN_NAV,
-});
+function openNav(): PayloadAction {
+	return {
+		type: NavActions.OPEN_NAV,
+	};
+}
 
-const closeNav: ActionCreator<PayloadAction> = () => ({
-	type: NavActions.CLOSE_NAV,
-});
+function closeNav(): PayloadAction {
+	return {
+		type: NavActions.CLOSE_NAV,
+	};
+}
 
 function navReducer(state = initialState, action: PayloadAction): INavState {
 	switch (action.type) {
@@ -43,6 +46,7 @@ function navReducer(state = initialState, action: PayloadAction): INavState {
 
 export {
 	INavState,
+	NavActions,
 	navReducer,
 	openNav,
 	closeNav,

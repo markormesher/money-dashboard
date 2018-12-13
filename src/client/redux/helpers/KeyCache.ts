@@ -22,23 +22,6 @@ class KeyCache<State> {
 		KeyCache.store = store;
 	}
 
-	public static reducer(state: IKeyCacheState = {}, action?: IKeyCacheAction): IKeyCacheState {
-		if (!action) {
-			return state;
-		}
-
-		switch (action.type) {
-			case KeyCacheActions.TOUCH:
-				return {
-					...state,
-					[action.key]: KeyCache.getTimestamp(),
-				};
-
-			default:
-				return state;
-		}
-	}
-
 	public static touchKey(key: string): IKeyCacheAction {
 		KeyCache.checkStore();
 		return {
@@ -66,6 +49,19 @@ class KeyCache<State> {
 			}
 		});
 		return valid;
+	}
+
+	public static reducer(state: IKeyCacheState = {}, action: IKeyCacheAction | { readonly type: "@@INIT" }): IKeyCacheState {
+		switch (action.type) {
+			case KeyCacheActions.TOUCH:
+				return {
+					...state,
+					[action.key]: KeyCache.getTimestamp(),
+				};
+
+			default:
+				return state;
+		}
 	}
 
 	private static maxTimestampGiven = 0;

@@ -1,4 +1,3 @@
-import { ActionCreator } from "redux";
 import { DetailedError } from "../helpers/errors/DetailedError";
 import { PayloadAction } from "./helpers/PayloadAction";
 
@@ -14,8 +13,6 @@ const initialState: IGlobalState = {
 	keyShortcutModalVisible: false,
 };
 
-// TODO: avoid flicker by enforcing minimum global wait time? might not be worth it
-
 enum GlobalActions {
 	ADD_WAIT = "GlobalActions.ADD_WAIT",
 	REMOVE_WAIT = "GlobalActions.REMOVE_WAIT",
@@ -23,44 +20,61 @@ enum GlobalActions {
 	SET_KEY_SHORTCUT_MODAL_VISIBLE = "GlobalActions.SET_KEY_SHORTCUT_MODAL_VISIBLE",
 }
 
-const addWait: ActionCreator<PayloadAction> = (wait: string) => ({
-	type: GlobalActions.ADD_WAIT,
-	payload: { wait },
-});
+function addWait(wait: string): PayloadAction {
+	return {
+		type: GlobalActions.ADD_WAIT,
+		payload: { wait },
+	};
+}
 
-const removeWait: ActionCreator<PayloadAction> = (wait: string) => ({
-	type: GlobalActions.REMOVE_WAIT,
-	payload: { wait },
-});
+function removeWait(wait: string): PayloadAction {
+	return {
+		type: GlobalActions.REMOVE_WAIT,
+		payload: { wait },
+	};
+}
 
-const setError: ActionCreator<PayloadAction> = (error: DetailedError) => ({
-	type: GlobalActions.SET_ERROR,
-	payload: { error },
-});
+function setError(error: DetailedError): PayloadAction {
+	return {
+		type: GlobalActions.SET_ERROR,
+		payload: { error },
+	};
+}
 
-const setKeyShortcutModalVisible: ActionCreator<PayloadAction> = (keyShortcutModalVisible: boolean) => ({
-	type: GlobalActions.SET_KEY_SHORTCUT_MODAL_VISIBLE,
-	payload: { keyShortcutModalVisible },
-});
+function setKeyShortcutModalVisible(keyShortcutModalVisible: boolean): PayloadAction {
+	return {
+		type: GlobalActions.SET_KEY_SHORTCUT_MODAL_VISIBLE,
+		payload: { keyShortcutModalVisible },
+	};
+}
 
 function globalReducer(state = initialState, action: PayloadAction): IGlobalState {
 	switch (action.type) {
 		case GlobalActions.ADD_WAIT:
 			return (() => {
 				const wait = action.payload.wait as string;
+				const arrCopy = [...state.waitingFor];
+				arrCopy.push(wait);
 				return {
 					...state,
-					waitingFor: state.waitingFor.splice(0).concat(wait),
+					waitingFor: arrCopy,
 				};
 			})();
 
 		case GlobalActions.REMOVE_WAIT:
 			return (() => {
 				const wait = action.payload.wait as string;
-				return {
-					...state,
-					waitingFor: state.waitingFor.filter((w) => w !== wait),
-				};
+				const idx = state.waitingFor.indexOf(wait);
+				if (idx >= 0) {
+					const arrCopy = [...state.waitingFor];
+					arrCopy.splice(idx, 1);
+					return {
+						...state,
+						waitingFor: arrCopy,
+					};
+				} else {
+					return state;
+				}
 			})();
 
 		case GlobalActions.SET_ERROR:
@@ -82,6 +96,7 @@ function globalReducer(state = initialState, action: PayloadAction): IGlobalStat
 
 export {
 	IGlobalState,
+	GlobalActions,
 	globalReducer,
 	addWait,
 	removeWait,

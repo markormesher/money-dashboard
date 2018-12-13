@@ -25,41 +25,6 @@ describe(__filename, () => {
 		KeyCache.setStore(undefined);
 	});
 
-	it("should initialise its state as an empty object", () => {
-		KeyCache.reducer({}).should.deep.equal({});
-	});
-
-	it("should issue increasing key times", () => {
-		let state: IKeyCacheState = {};
-		state = KeyCache.reducer(state, KeyCache.touchKey("test-key1"));
-		state = KeyCache.reducer(state, KeyCache.touchKey("test-key2"));
-		state = KeyCache.reducer(state, KeyCache.touchKey("test-key3"));
-		state["test-key1"].should.be.lessThan(state["test-key2"]);
-		state["test-key2"].should.be.lessThan(state["test-key3"]);
-	});
-
-	describe("reducer()", () => {
-
-		it("should not mutate the state when no action is passed", () => {
-			const state = {};
-			KeyCache.reducer(state).should.equal(state);
-		});
-
-		it("should not mutate the state when an unrecognised action is passed", () => {
-			const state = {};
-			const action: IKeyCacheAction = { type: KeyCacheActions.TOUCH, key: "" };
-			Object.defineProperty(action, "type", { writable: true, value: "random-action" });
-			KeyCache.reducer(state, action).should.equal(state);
-		});
-
-		it("should add the key when the TOUCH action is passed", () => {
-			let state: IKeyCacheState = {};
-			state = KeyCache.reducer(state, KeyCache.touchKey("test-key"));
-			state.should.have.keys("test-key");
-			state["test-key"].should.be.greaterThan(0);
-		});
-	});
-
 	describe("touchKey()", () => {
 
 		it("should throw an exception when the store is not set", () => {
@@ -147,6 +112,36 @@ describe(__filename, () => {
 			state = KeyCache.reducer(state, KeyCache.touchKey("test-key2"));
 			resetStore(state);
 			KeyCache.keyIsValid("test-key1", ["test-key2", "test-key3"]).should.equal(false);
+		});
+	});
+
+	describe("reducer()", () => {
+
+		it("should initialise its state as an empty object", () => {
+			KeyCache.reducer({}, { type: "@@INIT" }).should.deep.equal({});
+		});
+
+		it("should not mutate the state when an unrecognised action is passed", () => {
+			const state = {};
+			const action: IKeyCacheAction = { type: KeyCacheActions.TOUCH, key: "" };
+			Object.defineProperty(action, "type", { writable: true, value: "random-action" });
+			KeyCache.reducer(state, action).should.equal(state);
+		});
+
+		it("should add the key when the TOUCH action is passed", () => {
+			let state: IKeyCacheState = {};
+			state = KeyCache.reducer(state, KeyCache.touchKey("test-key"));
+			state.should.have.keys("test-key");
+			state["test-key"].should.be.greaterThan(0);
+		});
+
+		it("should issue increasing key times", () => {
+			let state: IKeyCacheState = {};
+			state = KeyCache.reducer(state, KeyCache.touchKey("test-key1"));
+			state = KeyCache.reducer(state, KeyCache.touchKey("test-key2"));
+			state = KeyCache.reducer(state, KeyCache.touchKey("test-key3"));
+			state["test-key1"].should.be.lessThan(state["test-key2"]);
+			state["test-key2"].should.be.lessThan(state["test-key3"]);
 		});
 	});
 });
