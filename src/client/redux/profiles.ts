@@ -11,12 +11,14 @@ interface IProfilesState {
 	readonly activeProfile: IProfile;
 	readonly profileToEdit: IProfile;
 	readonly editorBusy: boolean;
+	readonly profileSwitchInProgress: boolean;
 }
 
 const initialState: IProfilesState = {
 	activeProfile: undefined,
 	profileToEdit: undefined,
 	editorBusy: false,
+	profileSwitchInProgress: false,
 };
 
 enum ProfileActions {
@@ -27,6 +29,7 @@ enum ProfileActions {
 	SET_PROFILE_TO_EDIT = "ProfileActions.SET_PROFILE_TO_EDIT",
 	SET_EDITOR_BUSY = "ProfileActions.SET_EDITOR_BUSY",
 	SET_CURRENT_PROFILE = "ProfileActions.SET_CURRENT_PROFILE",
+	SET_PROFILE_SWITCH_IN_PROGRESS = "ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS",
 }
 
 enum ProfileCacheKeys {
@@ -64,6 +67,11 @@ const setCurrentProfile: ActionCreator<PayloadAction> = (profile: IProfile) => (
 	payload: { profile },
 });
 
+const setProfileSwitchInProgress: ActionCreator<PayloadAction> = (profileSwitchInProgress: boolean) => ({
+	type: ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS,
+	payload: { profileSwitchInProgress },
+});
+
 function*deleteProfileSaga(): Generator {
 	yield takeEvery(ProfileActions.START_DELETE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
@@ -99,16 +107,19 @@ function*setCurrentProfileSaga(): Generator {
 	yield takeEvery(ProfileActions.START_SET_CURRENT_PROFILE, function*(action: PayloadAction): Generator {
 		try {
 			const profile: IProfile = action.payload.profile;
+			put(setProfileSwitchInProgress(true));
 			yield call(() => axios.post(`/profiles/select/${profile.id}`));
 			yield all([
 				put(setCurrentProfile(profile)),
 				put(startLoadCurrentUser()),
 				put(KeyCache.touchKey(ProfileCacheKeys.CURRENT_PROFILE)),
+				put(setProfileSwitchInProgress(false)),
 			]);
 		} catch (err) {
 			yield all([
 				put(setError(err)),
 				put(KeyCache.touchKey(ProfileCacheKeys.CURRENT_PROFILE)),
+				put(setProfileSwitchInProgress(false)),
 			]);
 		}
 	});
@@ -140,6 +151,12 @@ function profilesReducer(state = initialState, action: PayloadAction): IProfiles
 			return {
 				...state,
 				activeProfile: action.payload.profile,
+			};
+
+		case ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS:
+			return {
+				...state,
+				profileSwitchInProgress: action.payload.profileSwitchInProgress,
 			};
 
 		default:

@@ -1,9 +1,10 @@
 import axios from "axios";
 import { ActionCreator } from "redux";
-import { all, call, put, take, takeEvery } from "redux-saga/effects";
+import { all, call, put, select, take, takeEvery } from "redux-saga/effects";
 import { IUser, mapUserFromApi } from "../../server/models/IUser";
 import { addWait, removeWait, setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
+import { IRootState } from "./root";
 
 interface IAuthState {
 	readonly activeUser?: IUser;
@@ -39,7 +40,13 @@ const unsetCurrentUser: ActionCreator<PayloadAction> = () => ({
 
 function*loadUserSaga(): Generator {
 	yield takeEvery(AuthActions.START_LOAD_CURRENT_USER, function*(): Generator {
-		yield put(addWait("auth"));
+		// only use global waits if a user wasn't already loaded
+		const currentUser = yield select((state: IRootState) => state.auth.activeUser);
+		const useWaits = !currentUser;
+
+		if (useWaits) {
+			yield put(addWait("auth"));
+		}
 		try {
 			const user: IUser = yield call(() => {
 				return axios.get("/auth/current-user")
@@ -51,18 +58,18 @@ function*loadUserSaga(): Generator {
 			if (user !== undefined) {
 				yield all([
 					put(setCurrentUser(user)),
-					put(removeWait("auth")),
+					useWaits && put(removeWait("auth")),
 				]);
 			} else {
 				yield all([
 					put(unsetCurrentUser()),
-					put(removeWait("auth")),
+					useWaits && put(removeWait("auth")),
 				]);
 			}
 		} catch (err) {
 			yield all([
 				put(setError(err)),
-				put(removeWait("auth")),
+				useWaits && put(removeWait("auth")),
 			]);
 		}
 	});
