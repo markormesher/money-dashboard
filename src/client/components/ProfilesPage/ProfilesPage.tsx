@@ -22,7 +22,7 @@ import { ProfileEditModal } from "../ProfileEditModal/ProfileEditModal";
 interface IProfilesPageProps {
 	readonly cacheTime: number;
 	readonly profileToEdit?: IProfile;
-	readonly switchInProgress: boolean;
+	readonly profileSwitchInProgress: boolean;
 	readonly activeUser?: IUser;
 	readonly actions?: {
 		readonly deleteProfile: (id: string) => AnyAction,
@@ -39,7 +39,7 @@ function mapStateToProps(state: IRootState, props: IProfilesPageProps): IProfile
 				KeyCache.getKeyTime(ProfileCacheKeys.CURRENT_PROFILE),
 		),
 		profileToEdit: state.profiles.profileToEdit,
-		switchInProgress: state.profiles.switchInProgress,
+		profileSwitchInProgress: state.profiles.profileSwitchInProgress,
 		activeUser: state.auth.activeUser,
 	};
 }
@@ -135,7 +135,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 	}
 
 	private generateActionButtons(profile: IProfile): ReactElement<void> {
-		const { switchInProgress, activeUser } = this.props;
+		const { profileSwitchInProgress, activeUser } = this.props;
 		const activeProfile = profile.id === activeUser.activeProfile.id;
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
@@ -146,7 +146,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 							onClick={this.props.actions.setProfileToEdit}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),
-								disabled: switchInProgress,
+								disabled: profileSwitchInProgress,
 							}}
 					/>
 
@@ -157,7 +157,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 							onClick={this.props.actions.setCurrentProfile}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),
-								disabled: switchInProgress,
+								disabled: profileSwitchInProgress,
 							}}
 					/>}
 
@@ -166,7 +166,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 							onConfirmedClick={this.props.actions.deleteProfile}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),
-								disabled: switchInProgress,
+								disabled: profileSwitchInProgress,
 							}}
 					/>}
 				</div>
