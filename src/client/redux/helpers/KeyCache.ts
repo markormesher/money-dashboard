@@ -5,8 +5,8 @@ interface IKeyCacheState {
 }
 
 interface IKeyCacheAction {
-	readonly type: KeyCacheActions;
-	readonly key: string;
+	readonly type: KeyCacheActions | "@@INIT";
+	readonly key?: string;
 }
 
 enum KeyCacheActions {
@@ -51,7 +51,7 @@ class KeyCache<State> {
 		return valid;
 	}
 
-	public static reducer(state: IKeyCacheState = {}, action: IKeyCacheAction | { readonly type: "@@INIT" }): IKeyCacheState {
+	public static reducer(state: IKeyCacheState = {}, action: IKeyCacheAction): IKeyCacheState {
 		switch (action.type) {
 			case KeyCacheActions.TOUCH:
 				return {
