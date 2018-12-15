@@ -35,6 +35,7 @@ function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]> {
 			.select("transaction.category_id")
 			.addSelect("SUM(amount)", "balance")
 			.where("category.is_memo_category = TRUE")
+			.andWhere("transaction.deleted = FALSE")
 			.andWhere("category.deleted = FALSE")
 			.groupBy("category_id")
 			.getRawMany() as Promise<Array<{ category_id: string, balance: number }>>;
