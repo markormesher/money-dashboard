@@ -32,7 +32,7 @@ interface IAccountsPageProps {
 	readonly accountEditsInProgress?: IAccount[];
 
 	readonly actions?: {
-		readonly deleteAccount: (id: string) => AnyAction,
+		readonly deleteAccount: (account: IAccount) => AnyAction,
 		readonly setDisplayActiveOnly: (active: boolean) => AnyAction,
 		readonly setAccountToEdit: (account: IAccount) => AnyAction,
 		readonly setAccountActive: (active: boolean, account: IAccount) => AnyAction,
@@ -53,7 +53,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAccountsPageProps): IAcc
 	return {
 		...props,
 		actions: {
-			deleteAccount: (id) => dispatch(startDeleteAccount(id)),
+			deleteAccount: (account) => dispatch(startDeleteAccount(account)),
 			setDisplayActiveOnly: (active) => dispatch(setDisplayActiveOnly(active)),
 			setAccountToEdit: (account) => dispatch(setAccountToEdit(account)),
 			setAccountActive: (active, account) => dispatch(startSetAccountActive(account, active)),
@@ -178,7 +178,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
 					/>
 
 					<DeleteBtn
-							payload={account.id}
+							payload={account}
 							onConfirmedClick={actions.deleteAccount}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),

@@ -41,9 +41,9 @@ enum AccountCacheKeys {
 	ACCOUNT_LIST = "AccountCacheKeys.ACCOUNT_LIST",
 }
 
-const startDeleteAccount: ActionCreator<PayloadAction> = (accountId: string) => ({
+const startDeleteAccount: ActionCreator<PayloadAction> = (account: IAccount) => ({
 	type: AccountActions.START_DELETE_ACCOUNT,
-	payload: { accountId },
+	payload: { account },
 });
 
 const startSaveAccount: ActionCreator<PayloadAction> = (account: Partial<IAccount>) => ({
@@ -93,8 +93,8 @@ const removeAccountEditInProgress: ActionCreator<PayloadAction> = (account: IAcc
 function*deleteAccountSaga(): Generator {
 	yield takeEvery(AccountActions.START_DELETE_ACCOUNT, function*(action: PayloadAction): Generator {
 		try {
-			const accountId: string = action.payload.accountId;
-			yield call(() => axios.post(`/accounts/delete/${accountId}`));
+			const account: IAccount = action.payload.account;
+			yield call(() => axios.post(`/accounts/delete/${account.id}`));
 			yield put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA));
 		} catch (err) {
 			yield put(setError(err));
