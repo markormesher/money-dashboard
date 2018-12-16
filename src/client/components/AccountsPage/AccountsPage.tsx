@@ -29,6 +29,7 @@ interface IAccountsPageProps {
 	readonly cacheTime: number;
 	readonly displayActiveOnly?: boolean;
 	readonly accountToEdit?: IAccount;
+	readonly accountEditsInProgress?: IAccount[];
 
 	readonly actions?: {
 		readonly deleteAccount: (id: string) => AnyAction,
@@ -44,6 +45,7 @@ function mapStateToProps(state: IRootState, props: IAccountsPageProps): IAccount
 		cacheTime: KeyCache.getKeyTime(AccountCacheKeys.ACCOUNT_DATA),
 		displayActiveOnly: state.accounts.displayActiveOnly,
 		accountToEdit: state.accounts.accountToEdit,
+		accountEditsInProgress: state.accounts.accountEditsInProgress,
 	};
 }
 
@@ -150,15 +152,17 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
 	}
 
 	private generateActionButtons(account: IAccount): ReactElement<void> {
+		const { actions, accountEditsInProgress } = this.props;
 		return (
 				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
 					<IconBtn
 							icon={faPencil}
 							text={"Edit"}
 							payload={account}
-							onClick={this.props.actions.setAccountToEdit}
+							onClick={actions.setAccountToEdit}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),
+								disabled: accountEditsInProgress.some((a) => a.id === account.id),
 							}}
 					/>
 
@@ -166,17 +170,19 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
 							text={"Active?"}
 							payload={account}
 							checked={account.active}
-							onChange={this.props.actions.setAccountActive}
+							onChange={actions.setAccountActive}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),
+								disabled: accountEditsInProgress.some((a) => a.id === account.id),
 							}}
 					/>
 
 					<DeleteBtn
 							payload={account.id}
-							onConfirmedClick={this.props.actions.deleteAccount}
+							onConfirmedClick={actions.deleteAccount}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),
+								disabled: accountEditsInProgress.some((a) => a.id === account.id),
 							}}
 					/>
 				</div>

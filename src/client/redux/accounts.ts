@@ -12,6 +12,7 @@ interface IAccountsState {
 	readonly accountToEdit: IAccount;
 	readonly editorBusy: boolean;
 	readonly accountList: IAccount[];
+	readonly accountEditsInProgress: IAccount[];
 }
 
 const initialState: IAccountsState = {
@@ -19,6 +20,7 @@ const initialState: IAccountsState = {
 	accountToEdit: undefined,
 	editorBusy: false,
 	accountList: undefined,
+	accountEditsInProgress: [],
 };
 
 enum AccountActions {
@@ -30,6 +32,8 @@ enum AccountActions {
 	SET_ACCOUNT_TO_EDIT = "AccountActions.SET_ACCOUNT_TO_EDIT",
 	SET_EDITOR_BUSY = "AccountActions.SET_EDITOR_BUSY",
 	SET_ACCOUNT_LIST = "AccountActions.SET_ACCOUNT_LIST",
+	ADD_ACCOUNT_EDIT_IN_PROGRESS = "AccountActions.ADD_ACCOUNT_EDIT_IN_PROGRESS",
+	REMOVE_ACCOUNT_EDIT_IN_PROGRESS = "AccountActions.REMOVE_ACCOUNT_EDIT_IN_PROGRESS",
 }
 
 enum AccountCacheKeys {
@@ -76,6 +80,16 @@ const setAccountList: ActionCreator<PayloadAction> = (accountList: IAccount[]) =
 	payload: { accountList },
 });
 
+const addAccountEditInProgress: ActionCreator<PayloadAction> = (account: IAccount) => ({
+	type: AccountActions.ADD_ACCOUNT_EDIT_IN_PROGRESS,
+	payload: { account },
+});
+
+const removeAccountEditInProgress: ActionCreator<PayloadAction> = (account: IAccount) => ({
+	type: AccountActions.REMOVE_ACCOUNT_EDIT_IN_PROGRESS,
+	payload: { account },
+});
+
 function*deleteAccountSaga(): Generator {
 	yield takeEvery(AccountActions.START_DELETE_ACCOUNT, function*(action: PayloadAction): Generator {
 		try {
@@ -115,10 +129,12 @@ function*setAccountActiveSaga(): Generator {
 			const active: boolean = action.payload.active;
 			const apiRoute = active ? "set-active" : "set-inactive";
 			yield all([
+				put(addAccountEditInProgress(account)),
 				call(() => axios.post(`/accounts/${apiRoute}/${account.id}`)),
 			]);
 			yield all([
 				put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA)),
+				put(removeAccountEditInProgress(account)),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -186,6 +202,33 @@ function accountsReducer(state = initialState, action: PayloadAction): IAccounts
 				...state,
 				accountList: action.payload.accountList,
 			};
+
+		case AccountActions.ADD_ACCOUNT_EDIT_IN_PROGRESS:
+			return (() => {
+				const account = action.payload.account as IAccount;
+				const arrCopy = [...state.accountEditsInProgress];
+				arrCopy.push(account);
+				return {
+					...state,
+					accountEditsInProgress: arrCopy,
+				};
+			})();
+
+		case AccountActions.REMOVE_ACCOUNT_EDIT_IN_PROGRESS:
+			return (() => {
+				const account = action.payload.account as IAccount;
+				const idx = state.accountEditsInProgress.findIndex((a) => a.id === account.id);
+				if (idx >= 0) {
+					const arrCopy = [...state.accountEditsInProgress];
+					arrCopy.splice(idx, 1);
+					return {
+						...state,
+						accountEditsInProgress: arrCopy,
+					};
+				} else {
+					return state;
+				}
+			})();
 
 		default:
 			return state;
