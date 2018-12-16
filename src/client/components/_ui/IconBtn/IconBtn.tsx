@@ -10,7 +10,7 @@ interface IIconBtnProps<Payload = {}> {
 	readonly text?: string;
 	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
 	readonly iconProps?: Partial<FontAwesomeIconProps>;
-	readonly onClick?: (payload: Payload) => void;
+	readonly onClick?: (payload?: Payload) => void;
 	readonly payload?: Payload;
 }
 
@@ -40,7 +40,11 @@ class IconBtn<Payload = {}> extends PureComponent<IIconBtnProps<Payload>> {
 	private handleClick(): void {
 		const { onClick, payload } = this.props;
 		if (onClick) {
-			onClick(payload);
+			if (payload) {
+				onClick(payload);
+			} else {
+				onClick();
+			}
 		}
 	}
 }

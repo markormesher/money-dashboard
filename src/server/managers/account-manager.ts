@@ -75,10 +75,10 @@ function saveAccount(user: DbUser, accountId: string, properties: Partial<DbAcco
 			});
 }
 
-function toggleAccountActive(user: DbUser, accountId: string): Promise<DbAccount> {
+function setAccountActive(user: DbUser, accountId: string, active: boolean): Promise<DbAccount> {
 	return getAccount(user, accountId)
 			.then((account) => {
-				account.active = !account.active;
+				account.active = active;
 				return account.save();
 			});
 }
@@ -100,6 +100,6 @@ export {
 	getAllAccounts,
 	getAccountBalances,
 	saveAccount,
-	toggleAccountActive,
+	setAccountActive,
 	deleteAccount,
 };

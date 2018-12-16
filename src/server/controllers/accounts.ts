@@ -7,7 +7,7 @@ import {
 	getAccountBalances,
 	getAllAccounts,
 	saveAccount,
-	toggleAccountActive,
+	setAccountActive,
 } from "../managers/account-manager";
 import { requireUser } from "../middleware/auth-middleware";
 import { DbAccount } from "../models/db/DbAccount";
@@ -78,11 +78,20 @@ router.post("/edit/:accountId?", requireUser, (req: Request, res: Response, next
 			.catch(next);
 });
 
-router.post("/toggle-active/:accountId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/set-active/:accountId", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as DbUser;
 	const accountId = req.params.accountId;
 
-	toggleAccountActive(user, accountId)
+	setAccountActive(user, accountId, true)
+			.then(() => res.status(200).end())
+			.catch(next);
+});
+
+router.post("/set-inactive/:accountId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const user = req.user as DbUser;
+	const accountId = req.params.accountId;
+
+	setAccountActive(user, accountId, false)
 			.then(() => res.status(200).end())
 			.catch(next);
 });

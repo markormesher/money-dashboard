@@ -6,7 +6,7 @@ import { IconBtn } from "../IconBtn/IconBtn";
 interface IDeleteBtnProps<Payload> {
 	readonly timeout?: number;
 	readonly payload?: Payload;
-	readonly onConfirmedClick?: (payload: Payload) => void;
+	readonly onConfirmedClick?: (payload?: Payload) => void;
 	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
 }
 
@@ -58,7 +58,7 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 	}
 
 	private handleClick(payload: Payload): void {
-		const { timeout } = this.props;
+		const { timeout, onConfirmedClick } = this.props;
 		const { triggered } = this.state;
 
 		if (!triggered) {
@@ -67,8 +67,12 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 		} else {
 			clearTimeout(this.triggerExpiryTimeout);
 			this.setState({ running: true });
-			if (this.props.onConfirmedClick) {
-				this.props.onConfirmedClick(payload);
+			if (onConfirmedClick) {
+				if (payload) {
+					onConfirmedClick(payload);
+				} else {
+					onConfirmedClick();
+				}
 			}
 		}
 	}

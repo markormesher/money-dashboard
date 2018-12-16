@@ -44,18 +44,34 @@ describe(__filename, () => {
 		mountWrapper.find("button").props().disabled.should.equal(true);
 	});
 
-	it("should call the click listener with the new value (true -> false)", () => {
+	it("should call the change listener with the new value (true -> false)", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<CheckboxBtn checked={true} onChange={spy}/>);
 		mountWrapper.find("button").simulate("click");
 		spy.calledOnceWithExactly(false).should.equal(true);
 	});
 
-	it("should call the click listener with the new value (false -> true)", () => {
+	it("should call the change listener with the new value (false -> true)", () => {
 		const spy = sinon.spy();
 		mountWrapper = mount(<CheckboxBtn checked={false} onChange={spy}/>);
 		mountWrapper.find("button").simulate("click");
 		spy.calledOnceWithExactly(true).should.equal(true);
+	});
+
+	it("should pass the payload to the change listener (true -> false)", () => {
+		const spy = sinon.spy();
+		const payload = { hello: 42 };
+		mountWrapper = mount(<CheckboxBtn checked={true} payload={payload} onChange={spy}/>);
+		mountWrapper.find("button").simulate("click");
+		spy.calledOnceWithExactly(false, payload).should.equal(true);
+	});
+
+	it("should pass the payload to the change listener (false -> true)", () => {
+		const spy = sinon.spy();
+		const payload = { hello: 42 };
+		mountWrapper = mount(<CheckboxBtn checked={false} payload={payload} onChange={spy}/>);
+		mountWrapper.find("button").simulate("click");
+		spy.calledOnceWithExactly(true, payload).should.equal(true);
 	});
 
 	it("should not fail when clicked without a listener (true -> false)", () => {

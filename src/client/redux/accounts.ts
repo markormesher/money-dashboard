@@ -24,6 +24,7 @@ const initialState: IAccountsState = {
 enum AccountActions {
 	START_DELETE_ACCOUNT = "AccountActions.START_DELETE_ACCOUNT",
 	START_SAVE_ACCOUNT = "AccountActions.START_SAVE_ACCOUNT",
+	START_SET_ACCOUNT_ACTIVE = "AccountActions.START_SET_ACCOUNT_ACTIVE",
 	START_LOAD_ACCOUNT_LIST = "AccountActions.START_LOAD_ACCOUNT_LIST",
 	SET_DISPLAY_ACTIVE_ONLY = "AccountActions.SET_DISPLAY_ACTIVE_ONLY",
 	SET_ACCOUNT_TO_EDIT = "AccountActions.SET_ACCOUNT_TO_EDIT",
@@ -44,6 +45,11 @@ const startDeleteAccount: ActionCreator<PayloadAction> = (accountId: string) => 
 const startSaveAccount: ActionCreator<PayloadAction> = (account: Partial<IAccount>) => ({
 	type: AccountActions.START_SAVE_ACCOUNT,
 	payload: { account },
+});
+
+const startSetAccountActive: ActionCreator<PayloadAction> = (account: IAccount, active: boolean) => ({
+	type: AccountActions.START_SET_ACCOUNT_ACTIVE,
+	payload: { account, active },
 });
 
 const startLoadAccountList: ActionCreator<PayloadAction> = () => ({
@@ -102,6 +108,24 @@ function*saveAccountSaga(): Generator {
 	});
 }
 
+function*setAccountActiveSaga(): Generator {
+	yield takeEvery(AccountActions.START_SET_ACCOUNT_ACTIVE, function*(action: PayloadAction): Generator {
+		try {
+			const account: IAccount = action.payload.account;
+			const active: boolean = action.payload.active;
+			const apiRoute = active ? "set-active" : "set-inactive";
+			yield all([
+				call(() => axios.post(`/accounts/${apiRoute}/${account.id}`)),
+			]);
+			yield all([
+				put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA)),
+			]);
+		} catch (err) {
+			yield put(setError(err));
+		}
+	});
+}
+
 function*loadAccountListSaga(): Generator {
 	yield takeEvery(AccountActions.START_LOAD_ACCOUNT_LIST, function*(): Generator {
 		if (KeyCache.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [
@@ -132,6 +156,7 @@ function*accountsSagas(): Generator {
 	yield all([
 		deleteAccountSaga(),
 		saveAccountSaga(),
+		setAccountActiveSaga(),
 		loadAccountListSaga(),
 	]);
 }
@@ -174,6 +199,7 @@ export {
 	accountsSagas,
 	startDeleteAccount,
 	startSaveAccount,
+	startSetAccountActive,
 	startLoadAccountList,
 	setDisplayActiveOnly,
 	setAccountToEdit,

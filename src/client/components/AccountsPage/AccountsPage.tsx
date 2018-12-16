@@ -8,7 +8,13 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateAccountTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { AccountCacheKeys, setAccountToEdit, setDisplayActiveOnly, startDeleteAccount } from "../../redux/accounts";
+import {
+	AccountCacheKeys,
+	setAccountToEdit,
+	setDisplayActiveOnly,
+	startDeleteAccount,
+	startSetAccountActive,
+} from "../../redux/accounts";
 import { KeyCache } from "../../redux/helpers/KeyCache";
 import { IRootState } from "../../redux/root";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
@@ -28,6 +34,7 @@ interface IAccountsPageProps {
 		readonly deleteAccount: (id: string) => AnyAction,
 		readonly setDisplayActiveOnly: (active: boolean) => AnyAction,
 		readonly setAccountToEdit: (account: IAccount) => AnyAction,
+		readonly setAccountActive: (active: boolean, account: IAccount) => AnyAction,
 	};
 }
 
@@ -47,6 +54,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAccountsPageProps): IAcc
 			deleteAccount: (id) => dispatch(startDeleteAccount(id)),
 			setDisplayActiveOnly: (active) => dispatch(setDisplayActiveOnly(active)),
 			setAccountToEdit: (account) => dispatch(setAccountToEdit(account)),
+			setAccountActive: (active, account) => dispatch(startSetAccountActive(account, active)),
 		},
 	};
 }
@@ -149,6 +157,16 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
 							text={"Edit"}
 							payload={account}
 							onClick={this.props.actions.setAccountToEdit}
+							btnProps={{
+								className: combine(bs.btnOutlineDark, gs.btnMini),
+							}}
+					/>
+
+					<CheckboxBtn
+							text={"Active?"}
+							payload={account}
+							checked={account.active}
+							onChange={this.props.actions.setAccountActive}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),
 							}}
