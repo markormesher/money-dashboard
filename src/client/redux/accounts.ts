@@ -256,6 +256,7 @@ function accountsReducer(state = initialState, action: PayloadAction): IAccounts
 
 export {
 	IAccountsState,
+	AccountActions,
 	AccountCacheKeys,
 	accountsReducer,
 	accountsSagas,
@@ -267,4 +268,6 @@ export {
 	setAccountToEdit,
 	setEditorBusy,
 	setAccountList,
+	addAccountEditInProgress,
+	removeAccountEditInProgress,
 };

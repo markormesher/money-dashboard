@@ -127,6 +127,7 @@ function authReducer(state = initialState, action: PayloadAction): IAuthState {
 
 export {
 	IAuthState,
+	AuthActions,
 	authReducer,
 	authSagas,
 	startLoadCurrentUser,

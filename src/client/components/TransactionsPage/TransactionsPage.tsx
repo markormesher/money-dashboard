@@ -30,7 +30,7 @@ interface ITransactionPageProps {
 	readonly dateMode: DateModeOption;
 	readonly transactionToEdit?: ITransaction;
 	readonly actions?: {
-		readonly deleteTransaction: (id: string) => AnyAction,
+		readonly deleteTransaction: (transaction: ITransaction) => AnyAction,
 		readonly setDateMode: (mode: DateModeOption) => AnyAction,
 		readonly setTransactionToEdit: (transaction: ITransaction) => AnyAction,
 	};
@@ -49,7 +49,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: ITransactionPageProps): I
 	return {
 		...props,
 		actions: {
-			deleteTransaction: (id) => dispatch(startDeleteTransaction(id)),
+			deleteTransaction: (transaction) => dispatch(startDeleteTransaction(transaction)),
 			setDateMode: (active) => dispatch(setDateMode(active)),
 			setTransactionToEdit: (transaction) => dispatch(setTransactionToEdit(transaction)),
 		},
@@ -184,7 +184,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
 							}}
 					/>
 					<DeleteBtn
-							payload={transaction.id}
+							payload={transaction}
 							onConfirmedClick={this.props.actions.deleteTransaction}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),

@@ -33,7 +33,7 @@ interface IBudgetsPageProps {
 	readonly budgetToEdit?: IBudget;
 	readonly budgetIdsToClone?: string[];
 	readonly actions?: {
-		readonly deleteBudget: (id: string) => AnyAction,
+		readonly deleteBudget: (budget: IBudget) => AnyAction,
 		readonly setDisplayCurrentOnly: (active: boolean) => AnyAction,
 		readonly setBudgetToEdit: (budget: IBudget) => AnyAction,
 		readonly setBudgetIdsToClone: (budgetIds: string[]) => AnyAction,
@@ -58,7 +58,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetsPageProps): IBudg
 	return {
 		...props,
 		actions: {
-			deleteBudget: (id) => dispatch(startDeleteBudget(id)),
+			deleteBudget: (budget) => dispatch(startDeleteBudget(budget)),
 			setDisplayCurrentOnly: (active) => dispatch(setDisplayCurrentOnly(active)),
 			setBudgetToEdit: (budget) => dispatch(setBudgetToEdit(budget)),
 			setBudgetIdsToClone: (budgetIds) => dispatch(setBudgetIdsToClone(budgetIds)),
@@ -215,7 +215,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 							}}
 					/>
 					<DeleteBtn
-							payload={budget.id}
+							payload={budget}
 							onConfirmedClick={this.props.actions.deleteBudget}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),

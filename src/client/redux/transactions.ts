@@ -40,10 +40,10 @@ enum TransactionCacheKeys {
 	TRANSACTION_DATA = "TransactionsCacheKeys.TRANSACTION_DATA",
 }
 
-function startDeleteTransaction(transactionId: string): PayloadAction {
+function startDeleteTransaction(transaction: ITransaction): PayloadAction {
 	return {
 		type: TransactionActions.START_DELETE_TRANSACTION,
-		payload: { transactionId },
+		payload: { transaction },
 	};
 }
 
@@ -91,9 +91,8 @@ function setPayeeList(payeeList: string[]): PayloadAction {
 function*deleteTransactionSaga(): Generator {
 	yield takeEvery(TransactionActions.START_DELETE_TRANSACTION, function*(action: PayloadAction): Generator {
 		try {
-			yield call(() => axios
-					.post(`/transactions/delete/${action.payload.transactionId}`)
-					.then((res) => res.data));
+			const transaction: ITransaction = action.payload.transaction;
+			yield call(() => axios.post(`/transactions/delete/${transaction.id}`));
 			yield put(KeyCache.touchKey(TransactionCacheKeys.TRANSACTION_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -189,6 +188,7 @@ function transactionsReducer(state = initialState, action: PayloadAction): ITran
 
 export {
 	ITransactionsState,
+	TransactionActions,
 	TransactionCacheKeys,
 	transactionsReducer,
 	transactionsSagas,

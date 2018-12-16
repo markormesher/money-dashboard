@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Moment } from "moment";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { IBudget } from "../../server/models/IBudget";
 import { setError } from "./global";
@@ -34,10 +35,10 @@ enum BudgetCacheKeys {
 	BUDGET_DATA = "BudgetCacheKeys.BUDGET_DATA",
 }
 
-function startDeleteBudget(budgetId: string): PayloadAction {
+function startDeleteBudget(budget: IBudget): PayloadAction {
 	return {
 		type: BudgetActions.START_DELETE_BUDGET,
-		payload: { budgetId },
+		payload: { budget },
 	};
 }
 
@@ -48,7 +49,7 @@ function startSaveBudget(budget: Partial<IBudget>): PayloadAction {
 	};
 }
 
-function startCloneBudgets(budgetIds: string[], startDate: string, endDate: string): PayloadAction {
+function startCloneBudgets(budgetIds: string[], startDate: Moment, endDate: Moment): PayloadAction {
 	return {
 		type: BudgetActions.START_CLONE_BUDGETS,
 		payload: {
@@ -73,10 +74,10 @@ function setBudgetToEdit(budget: IBudget): PayloadAction {
 	};
 }
 
-function setBudgetIdsToClone(budgets: string[]): PayloadAction {
+function setBudgetIdsToClone(budgetIds: string[]): PayloadAction {
 	return {
 		type: BudgetActions.SET_BUDGETS_TO_CLONE,
-		payload: { budgets },
+		payload: { budgetIds },
 	};
 }
 
@@ -90,7 +91,8 @@ function setEditorBusy(editorBusy: boolean): PayloadAction {
 function*deleteBudgetSaga(): Generator {
 	yield takeEvery(BudgetActions.START_DELETE_BUDGET, function*(action: PayloadAction): Generator {
 		try {
-			yield call(() => axios.post(`/budgets/delete/${action.payload.budgetId}`).then((res) => res.data));
+			const budget: IBudget = action.payload.budget;
+			yield call(() => axios.post(`/budgets/delete/${budget.id}`).then((res) => res.data));
 			yield put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -168,7 +170,7 @@ function budgetsReducer(state = initialState, action: PayloadAction): IBudgetsSt
 		case BudgetActions.SET_BUDGETS_TO_CLONE:
 			return {
 				...state,
-				budgetIdsToClone: action.payload.budgets,
+				budgetIdsToClone: action.payload.budgetIds,
 			};
 
 		case BudgetActions.SET_EDITOR_BUSY:
@@ -184,6 +186,7 @@ function budgetsReducer(state = initialState, action: PayloadAction): IBudgetsSt
 
 export {
 	IBudgetsState,
+	BudgetActions,
 	BudgetCacheKeys,
 	budgetsReducer,
 	budgetsSagas,

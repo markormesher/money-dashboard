@@ -192,6 +192,7 @@ function dashboardReducer(state: IDashboardState = initialState, action: Payload
 
 export {
 	IDashboardState,
+	DashboardActions,
 	dashboardReducer,
 	dashboardSagas,
 	startLoadAccountBalances,

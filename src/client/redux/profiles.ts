@@ -36,10 +36,10 @@ enum ProfileCacheKeys {
 	CURRENT_PROFILE = "ProfileCacheKeys.CURRENT_PROFILE",
 }
 
-function startDeleteProfile(profileId: string): PayloadAction {
+function startDeleteProfile(profile: IProfile): PayloadAction {
 	return {
 		type: ProfileActions.START_DELETE_PROFILE,
-		payload: { profileId },
+		payload: { profile },
 	};
 }
 
@@ -88,7 +88,8 @@ function setProfileSwitchInProgress(profileSwitchInProgress: boolean): PayloadAc
 function*deleteProfileSaga(): Generator {
 	yield takeEvery(ProfileActions.START_DELETE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
-			yield call(() => axios.post(`/profiles/delete/${action.payload.profileId}`).then((res) => res.data));
+			const profile: IProfile = action.payload.profile;
+			yield call(() => axios.post(`/profiles/delete/${profile.id}`).then((res) => res.data));
 			yield put(KeyCache.touchKey(ProfileCacheKeys.PROFILE_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -179,6 +180,7 @@ function profilesReducer(state = initialState, action: PayloadAction): IProfiles
 
 export {
 	IProfilesState,
+	ProfileActions,
 	ProfileCacheKeys,
 	profilesReducer,
 	profilesSagas,
@@ -187,4 +189,6 @@ export {
 	startSetCurrentProfile,
 	setProfileToEdit,
 	setEditorBusy,
+	setCurrentProfile,
+	setProfileSwitchInProgress,
 };

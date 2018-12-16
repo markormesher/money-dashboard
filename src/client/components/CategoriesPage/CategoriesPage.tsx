@@ -22,7 +22,7 @@ interface ICategoriesPageProps {
 	readonly cacheTime: number;
 	readonly categoryToEdit?: ICategory;
 	readonly actions?: {
-		readonly deleteCategory: (id: string) => AnyAction,
+		readonly deleteCategory: (category: ICategory) => AnyAction,
 		readonly setCategoryToEdit: (category: ICategory) => AnyAction,
 	};
 }
@@ -39,7 +39,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: ICategoriesPageProps): IC
 	return {
 		...props,
 		actions: {
-			deleteCategory: (id) => dispatch(startDeleteCategory(id)),
+			deleteCategory: (category) => dispatch(startDeleteCategory(category)),
 			setCategoryToEdit: (category) => dispatch(setCategoryToEdit(category)),
 		},
 	};
@@ -138,7 +138,7 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
 							}}
 					/>
 					<DeleteBtn
-							payload={category.id}
+							payload={category}
 							onConfirmedClick={this.props.actions.deleteCategory}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),

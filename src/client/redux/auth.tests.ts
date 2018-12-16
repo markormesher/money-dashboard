@@ -1,16 +1,83 @@
+import { expect } from "chai";
 import { afterEach, beforeEach, describe, it } from "mocha";
-import { createStore, Store } from "redux";
-import { authReducer, IAuthState } from "./auth";
+import { DEFAULT_PROFILE } from "../../server/models/IProfile";
+import { IUser } from "../../server/models/IUser";
+import {
+	AuthActions,
+	authReducer,
+	setCurrentUser,
+	startLoadCurrentUser,
+	startLogOutCurrentUser,
+	unsetCurrentUser,
+} from "./auth";
 
 describe(__filename, () => {
 
-	let store: Store<IAuthState>;
+	const user: IUser = {
+		id: "id",
+		googleId: "google id",
+		displayName: "display name",
+		image: "image",
+		profiles: [DEFAULT_PROFILE],
+		activeProfile: DEFAULT_PROFILE,
+		deleted: false,
+	};
 
-	beforeEach(() => {
-		store = createStore(authReducer);
+	describe("startLoadCurrentUser()", () => {
+
+		it("should generate an action with the correct type", () => {
+			startLoadCurrentUser().type.should.equal(AuthActions.START_LOAD_CURRENT_USER);
+		});
 	});
 
-	it("should do things", () => {
-		// TODO: tests
+	describe("startLogOutCurrentUser()", () => {
+
+		it("should generate an action with the correct type", () => {
+			startLogOutCurrentUser().type.should.equal(AuthActions.START_LOGOUT_CURRENT_USER);
+		});
 	});
+
+	describe("setCurrentUser()", () => {
+
+		it("should setCurrentUser an action with the correct type", () => {
+			setCurrentUser(user).type.should.equal(AuthActions.SET_CURRENT_USER);
+		});
+
+		it("should add the account to the payload", () => {
+			setCurrentUser(user).payload.should.have.keys("user");
+			setCurrentUser(user).payload.user.should.equal(user);
+		});
+	});
+
+	describe("unsetCurrentUser()", () => {
+
+		it("should generate an action with the correct type", () => {
+			unsetCurrentUser().type.should.equal(AuthActions.UNSET_CURRENT_USER);
+		});
+	});
+
+	describe("authReducer()", () => {
+
+		it("should initialise its state correctly", () => {
+			authReducer(undefined, { type: "@@INIT" }).should.deep.equal({
+				activeUser: undefined,
+			});
+		});
+
+		describe(AuthActions.SET_CURRENT_USER, () => {
+
+			it("should set the current user", () => {
+				authReducer(undefined, setCurrentUser(user)).activeUser.should.equal(user);
+			});
+		});
+
+		describe(AuthActions.UNSET_CURRENT_USER, () => {
+
+			it("should unset the current user", () => {
+				expect(authReducer(undefined, unsetCurrentUser()).activeUser).to.equal(undefined);
+			});
+		});
+	});
+
+	// TODO: sagas
 });

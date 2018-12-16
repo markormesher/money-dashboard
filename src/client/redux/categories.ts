@@ -33,10 +33,10 @@ enum CategoryCacheKeys {
 	CATEGORY_LIST = "CategoryCacheKeys.CATEGORY_LIST",
 }
 
-function startDeleteCategory(categoryId: string): PayloadAction {
+function startDeleteCategory(category: ICategory): PayloadAction {
 	return {
 		type: CategoryActions.START_DELETE_CATEGORY,
-		payload: { categoryId },
+		payload: { category },
 	};
 }
 
@@ -70,17 +70,15 @@ function setEditorBusy(editorBusy: boolean): PayloadAction {
 function setCategoryList(categoryList: ICategory[]): PayloadAction {
 	return {
 		type: CategoryActions.SET_CATEGORY_LIST,
-		payload: {
-			categoryList,
-			categoryListLoadedAt: new Date().getTime(),
-		},
+		payload: { categoryList },
 	};
 }
 
 function*deleteCategorySaga(): Generator {
 	yield takeEvery(CategoryActions.START_DELETE_CATEGORY, function*(action: PayloadAction): Generator {
 		try {
-			yield call(() => axios.post(`/categories/delete/${action.payload.categoryId}`).then((res) => res.data));
+			const category: ICategory = action.payload.category;
+			yield call(() => axios.post(`/categories/delete/${category.id}`).then((res) => res.data));
 			yield put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -169,6 +167,7 @@ function categoriesReducer(state = initialState, action: PayloadAction): ICatego
 
 export {
 	ICategoriesState,
+	CategoryActions,
 	CategoryCacheKeys,
 	categoriesReducer,
 	categoriesSagas,
