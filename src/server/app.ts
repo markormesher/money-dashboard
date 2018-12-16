@@ -16,8 +16,6 @@ import { setupDevAppRoutes, setupProdAppRoutes } from "./middleware/app-routes";
 
 const app = Express();
 
-// TODO: check whether Redis and Postgres are up
-
 // db connection
 createConnection({ ...typeormConf, synchronize: false })
 		.then(() => logger.info("Database connection created successfully"))

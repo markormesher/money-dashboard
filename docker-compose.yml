@@ -26,6 +26,7 @@ services:
       - ./logs:/usr/src/app/logs
     ports:
       - "3006:3000"
+    command: ["./entry-point.sh"]
 
   postgres:
     image: postgres:10.1-alpine
