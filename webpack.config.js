@@ -26,9 +26,9 @@ const babelLoader = {
 	options: {
 		cacheDirectory: true,
 		plugins: [
-			"istanbul",
+			IS_TEST && "istanbul",
 			"@babel/plugin-syntax-dynamic-import",
-		],
+		].filter(notFalse),
 		presets: [
 			[
 				"@babel/preset-env",
@@ -54,6 +54,17 @@ const tsLoader = {
 			target: "es6",
 			removeComments: false, // keep for webpackChunkName and similar
 		},
+	},
+};
+
+const typedCssLoader = {
+	loader: "typings-for-css-modules-loader",
+	options: {
+		camelCase: "only",
+		modules: true,
+		namedExport: true,
+		sourceMap: IS_DEV,
+		localIdentName: IS_PROD ? "[hash:base64:5]" : "[name]_[local]_[hash:base64:5]",
 	},
 };
 
@@ -133,16 +144,7 @@ module.exports = {
 				exclude: /node_modules/,
 				use: [
 					IS_PROD ? MiniCssExtractPlugin.loader : "style-loader",
-					{
-						loader: "typings-for-css-modules-loader",
-						options: {
-							camelCase: "only",
-							modules: true,
-							namedExport: true,
-							sourceMap: IS_DEV,
-							localIdentName: IS_PROD ? "[hash:base64:5]" : "[name]_[local]_[hash:base64:5]",
-						},
-					},
+					typedCssLoader,
 					"sass-loader",
 				],
 			},
@@ -156,7 +158,7 @@ module.exports = {
 	plugins: [
 		new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
 		new webpack.EnvironmentPlugin(["NODE_ENV"]),
-		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // remove other locales from Moment.js
 		!IS_TEST && new HtmlWebpackPlugin({
 			template: resolve(__dirname, "src", "client", "index.html"),
 			inject: true,
@@ -164,21 +166,35 @@ module.exports = {
 			minify: IS_PROD,
 			alwaysWriteToDisk: IS_DEV,
 		}),
-		IS_PROD && new ReplaceInFileWebpackPlugin([{
-			dir: outputDir,
-			rules: [
-				{
-					// replace redux action strings with hashes
-					search: /"([A-Za-z]+)Actions\.([_A-Z]+)"/g,
-					replace: (str) => "\"" + md5(str).substring(0, 6) + "\"",
-				},
-				{
-					// replace redux cache keys with hashes
-					search: /"([A-Za-z]+)CacheKeys\.([_A-Z]+)"/g,
-					replace: (str) => "\"" + md5(str).substring(0, 6) + "\"",
-				},
-			],
-		}]),
+		IS_PROD && new ReplaceInFileWebpackPlugin([
+			{
+				test: /\.[jt]s(x?)$/,
+				dir: outputDir,
+				rules: [
+					{
+						// replace redux action strings with hashes
+						search: /"([A-Za-z]+)Actions\.([_A-Z]+)"/g,
+						replace: (str) => "\"" + md5(str).substring(0, 6) + "\"",
+					},
+					{
+						// replace redux cache keys with hashes
+						search: /"([A-Za-z]+)CacheKeys\.([_A-Z]+)"/g,
+						replace: (str) => "\"" + md5(str).substring(0, 6) + "\"",
+					},
+				],
+			},
+			{
+				test: /\.(s?)css$/,
+				dir: outputDir,
+				rules: [
+					{
+						// trim a couple of bytes from the (S)CSS output
+						search: /\n/g,
+						replace: "",
+					},
+				],
+			},
+		]),
 		IS_PROD && new MiniCssExtractPlugin({
 			minimize: true,
 			filename: "[name]~[contenthash].css",
@@ -187,13 +203,13 @@ module.exports = {
 			analyzerMode: "static",
 			openAnalyzer: false,
 		}),
-		IS_DEV && !IS_TEST && new webpack.HotModuleReplacementPlugin(),
+		IS_DEV && new webpack.HotModuleReplacementPlugin(),
 	].filter(notFalse),
 	resolve: {
 		extensions: [".js", ".jsx", ".ts", ".tsx"],
 		modules: ["node_modules", join("src", "client")],
 		alias: {
-			// this shim turns all of the decorators into no-ops
+			// this shim turns all typeorm decorators into no-ops
 			typeorm: resolve(__dirname, "node_modules/typeorm/typeorm-model-shim"),
 		},
 	},
@@ -206,6 +222,7 @@ module.exports = {
 			maxInitialRequests: Infinity,
 			minSize: 0,
 			cacheGroups: {
+				// bundle dependencies and global styles separately so they can be cached for longer
 				vendor: {
 					test: /[\\/]node_modules[\\/]/,
 					name: (m) => "npm." + m.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1].replace("@", ""),
