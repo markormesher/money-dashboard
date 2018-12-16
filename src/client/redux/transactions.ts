@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import {
 	DateModeOption,
@@ -41,39 +40,53 @@ enum TransactionCacheKeys {
 	TRANSACTION_DATA = "TransactionsCacheKeys.TRANSACTION_DATA",
 }
 
-const startDeleteTransaction: ActionCreator<PayloadAction> = (transactionId: string) => ({
-	type: TransactionActions.START_DELETE_TRANSACTION,
-	payload: { transactionId },
-});
+function startDeleteTransaction(transactionId: string): PayloadAction {
+	return {
+		type: TransactionActions.START_DELETE_TRANSACTION,
+		payload: { transactionId },
+	};
+}
 
-const startSaveTransaction: ActionCreator<PayloadAction> = (transaction: Partial<ITransaction>) => ({
-	type: TransactionActions.START_SAVE_TRANSACTION,
-	payload: { transaction },
-});
+function startSaveTransaction(transaction: Partial<ITransaction>): PayloadAction {
+	return {
+		type: TransactionActions.START_SAVE_TRANSACTION,
+		payload: { transaction },
+	};
+}
 
-const startLoadPayeeList: ActionCreator<PayloadAction> = () => ({
-	type: TransactionActions.START_LOAD_PAYEE_LIST,
-});
+function startLoadPayeeList(): PayloadAction {
+	return {
+		type: TransactionActions.START_LOAD_PAYEE_LIST,
+	};
+}
 
-const setDateMode: ActionCreator<PayloadAction> = (dateMode: DateModeOption) => ({
-	type: TransactionActions.SET_DATE_MODE,
-	payload: { dateMode },
-});
+function setDateMode(dateMode: DateModeOption): PayloadAction {
+	return {
+		type: TransactionActions.SET_DATE_MODE,
+		payload: { dateMode },
+	};
+}
 
-const setTransactionToEdit: ActionCreator<PayloadAction> = (transaction: ITransaction) => ({
-	type: TransactionActions.SET_TRANSACTION_TO_EDIT,
-	payload: { transaction },
-});
+function setTransactionToEdit(transaction: ITransaction): PayloadAction {
+	return {
+		type: TransactionActions.SET_TRANSACTION_TO_EDIT,
+		payload: { transaction },
+	};
+}
 
-const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
-	type: TransactionActions.SET_EDITOR_BUSY,
-	payload: { editorBusy },
-});
+function setEditorBusy(editorBusy: boolean): PayloadAction {
+	return {
+		type: TransactionActions.SET_EDITOR_BUSY,
+		payload: { editorBusy },
+	};
+}
 
-const setPayeeList: ActionCreator<PayloadAction> = (payeeList: string[]) => ({
-	type: TransactionActions.SET_PAYEE_LIST,
-	payload: { payeeList },
-});
+function setPayeeList(payeeList: string[]): PayloadAction {
+	return {
+		type: TransactionActions.SET_PAYEE_LIST,
+		payload: { payeeList },
+	};
+}
 
 function*deleteTransactionSaga(): Generator {
 	yield takeEvery(TransactionActions.START_DELETE_TRANSACTION, function*(action: PayloadAction): Generator {

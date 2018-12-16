@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ActionCreator } from "redux";
 import { all, call, put, select, take, takeEvery } from "redux-saga/effects";
 import { IUser, mapUserFromApi } from "../../server/models/IUser";
 import { addWait, removeWait, setError } from "./global";
@@ -21,22 +20,30 @@ enum AuthActions {
 	UNSET_CURRENT_USER = "AuthActions.UNSET_CURRENT_USER",
 }
 
-const startLoadCurrentUser: ActionCreator<PayloadAction> = () => ({
-	type: AuthActions.START_LOAD_CURRENT_USER,
-});
+function startLoadCurrentUser(): PayloadAction {
+	return {
+		type: AuthActions.START_LOAD_CURRENT_USER,
+	};
+}
 
-const startLogOutCurrentUser: ActionCreator<PayloadAction> = () => ({
-	type: AuthActions.START_LOGOUT_CURRENT_USER,
-});
+function startLogOutCurrentUser(): PayloadAction {
+	return {
+		type: AuthActions.START_LOGOUT_CURRENT_USER,
+	};
+}
 
-const setCurrentUser: ActionCreator<PayloadAction> = (user: IUser) => ({
-	type: AuthActions.SET_CURRENT_USER,
-	payload: { user },
-});
+function setCurrentUser(user: IUser): PayloadAction {
+	return {
+		type: AuthActions.SET_CURRENT_USER,
+		payload: { user },
+	};
+}
 
-const unsetCurrentUser: ActionCreator<PayloadAction> = () => ({
-	type: AuthActions.UNSET_CURRENT_USER,
-});
+function unsetCurrentUser(): PayloadAction {
+	return {
+		type: AuthActions.UNSET_CURRENT_USER,
+	};
+}
 
 function*loadUserSaga(): Generator {
 	yield takeEvery(AuthActions.START_LOAD_CURRENT_USER, function*(): Generator {

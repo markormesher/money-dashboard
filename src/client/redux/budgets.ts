@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { IBudget } from "../../server/models/IBudget";
 import { setError } from "./global";
@@ -35,44 +34,58 @@ enum BudgetCacheKeys {
 	BUDGET_DATA = "BudgetCacheKeys.BUDGET_DATA",
 }
 
-const startDeleteBudget: ActionCreator<PayloadAction> = (budgetId: string) => ({
-	type: BudgetActions.START_DELETE_BUDGET,
-	payload: { budgetId },
-});
+function startDeleteBudget(budgetId: string): PayloadAction {
+	return {
+		type: BudgetActions.START_DELETE_BUDGET,
+		payload: { budgetId },
+	};
+}
 
-const startSaveBudget: ActionCreator<PayloadAction> = (budget: Partial<IBudget>) => ({
-	type: BudgetActions.START_SAVE_BUDGET,
-	payload: { budget },
-});
+function startSaveBudget(budget: Partial<IBudget>): PayloadAction {
+	return {
+		type: BudgetActions.START_SAVE_BUDGET,
+		payload: { budget },
+	};
+}
 
-const startCloneBudgets: ActionCreator<PayloadAction> = (budgetIds: string[], startDate: string, endDate: string) => ({
-	type: BudgetActions.START_CLONE_BUDGETS,
-	payload: {
-		budgetIds,
-		startDate,
-		endDate,
-	},
-});
+function startCloneBudgets(budgetIds: string[], startDate: string, endDate: string): PayloadAction {
+	return {
+		type: BudgetActions.START_CLONE_BUDGETS,
+		payload: {
+			budgetIds,
+			startDate,
+			endDate,
+		},
+	};
+}
 
-const setDisplayCurrentOnly: ActionCreator<PayloadAction> = (currentOnly: boolean) => ({
-	type: BudgetActions.SET_DISPLAY_CURRENT_ONLY,
-	payload: { currentOnly },
-});
+function setDisplayCurrentOnly(currentOnly: boolean): PayloadAction {
+	return {
+		type: BudgetActions.SET_DISPLAY_CURRENT_ONLY,
+		payload: { currentOnly },
+	};
+}
 
-const setBudgetToEdit: ActionCreator<PayloadAction> = (budget: IBudget) => ({
-	type: BudgetActions.SET_BUDGET_TO_EDIT,
-	payload: { budget },
-});
+function setBudgetToEdit(budget: IBudget): PayloadAction {
+	return {
+		type: BudgetActions.SET_BUDGET_TO_EDIT,
+		payload: { budget },
+	};
+}
 
-const setBudgetIdsToClone: ActionCreator<PayloadAction> = (budgets: string[]) => ({
-	type: BudgetActions.SET_BUDGETS_TO_CLONE,
-	payload: { budgets },
-});
+function setBudgetIdsToClone(budgets: string[]): PayloadAction {
+	return {
+		type: BudgetActions.SET_BUDGETS_TO_CLONE,
+		payload: { budgets },
+	};
+}
 
-const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
-	type: BudgetActions.SET_EDITOR_BUSY,
-	payload: { editorBusy },
-});
+function setEditorBusy(editorBusy: boolean): PayloadAction {
+	return {
+		type: BudgetActions.SET_EDITOR_BUSY,
+		payload: { editorBusy },
+	};
+}
 
 function*deleteBudgetSaga(): Generator {
 	yield takeEvery(BudgetActions.START_DELETE_BUDGET, function*(action: PayloadAction): Generator {

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { IAccountBalance } from "../../server/models/IAccountBalance";
 import { mapBudgetFromApi } from "../../server/models/IBudget";
@@ -39,32 +38,44 @@ enum DashboardCacheKeys {
 	MEMO_CATEGORY_BALANCE = "DashboardCacheKeys.MEMO_CATEGORY_BALANCE",
 }
 
-const startLoadAccountBalances: ActionCreator<PayloadAction> = () => ({
-	type: DashboardActions.START_LOAD_ACCOUNT_BALANCES,
-});
+function startLoadAccountBalances(): PayloadAction {
+	return {
+		type: DashboardActions.START_LOAD_ACCOUNT_BALANCES,
+	};
+}
 
-const startLoadBudgetBalances: ActionCreator<PayloadAction> = () => ({
-	type: DashboardActions.START_LOAD_BUDGET_BALANCES,
-});
+function startLoadBudgetBalances(): PayloadAction {
+	return {
+		type: DashboardActions.START_LOAD_BUDGET_BALANCES,
+	};
+}
 
-const startLoadMemoCategoryBalances: ActionCreator<PayloadAction> = () => ({
-	type: DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES,
-});
+function startLoadMemoCategoryBalances(): PayloadAction {
+	return {
+		type: DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES,
+	};
+}
 
-const setAccountBalances: ActionCreator<PayloadAction> = (accountBalances: IAccountBalance[]) => ({
-	type: DashboardActions.SET_ACCOUNT_BALANCES,
-	payload: { accountBalances },
-});
+function setAccountBalances(accountBalances: IAccountBalance[]): PayloadAction {
+	return {
+		type: DashboardActions.SET_ACCOUNT_BALANCES,
+		payload: { accountBalances },
+	};
+}
 
-const setBudgetBalances: ActionCreator<PayloadAction> = (budgetBalances: IBudgetBalance[]) => ({
-	type: DashboardActions.SET_BUDGET_BALANCES,
-	payload: { budgetBalances },
-});
+function setBudgetBalances(budgetBalances: IBudgetBalance[]): PayloadAction {
+	return {
+		type: DashboardActions.SET_BUDGET_BALANCES,
+		payload: { budgetBalances },
+	};
+}
 
-const setMemoCategoryBalances: ActionCreator<PayloadAction> = (memoCategoryBalances: ICategoryBalance[]) => ({
-	type: DashboardActions.SET_MEMO_CATEGORY_BALANCES,
-	payload: { memoCategoryBalances },
-});
+function setMemoCategoryBalances(memoCategoryBalances: ICategoryBalance[]): PayloadAction {
+	return {
+		type: DashboardActions.SET_MEMO_CATEGORY_BALANCES,
+		payload: { memoCategoryBalances },
+	};
+}
 
 function*loadAccountBalancesSaga(): Generator {
 	yield takeEvery(DashboardActions.START_LOAD_ACCOUNT_BALANCES, function*(): Generator {
@@ -131,7 +142,7 @@ function*loadMemoCategoryBalancesSaga(): Generator {
 			return;
 		}
 		try {
-			const balances: IBudgetBalance[] = yield call(() => {
+			const balances: ICategoryBalance[] = yield call(() => {
 				return axios.get("/categories/memo-balances").then((res) => res.data);
 			});
 			yield all([

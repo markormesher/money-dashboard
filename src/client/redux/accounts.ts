@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { IAccount, mapAccountFromApi } from "../../server/models/IAccount";
 import { setError } from "./global";
@@ -41,54 +40,74 @@ enum AccountCacheKeys {
 	ACCOUNT_LIST = "AccountCacheKeys.ACCOUNT_LIST",
 }
 
-const startDeleteAccount: ActionCreator<PayloadAction> = (account: IAccount) => ({
-	type: AccountActions.START_DELETE_ACCOUNT,
-	payload: { account },
-});
+function startDeleteAccount(account: IAccount): PayloadAction {
+	return {
+		type: AccountActions.START_DELETE_ACCOUNT,
+		payload: { account },
+	};
+}
 
-const startSaveAccount: ActionCreator<PayloadAction> = (account: Partial<IAccount>) => ({
-	type: AccountActions.START_SAVE_ACCOUNT,
-	payload: { account },
-});
+function startSaveAccount(account: Partial<IAccount>): PayloadAction {
+	return {
+		type: AccountActions.START_SAVE_ACCOUNT,
+		payload: { account },
+	};
+}
 
-const startSetAccountActive: ActionCreator<PayloadAction> = (account: IAccount, active: boolean) => ({
-	type: AccountActions.START_SET_ACCOUNT_ACTIVE,
-	payload: { account, active },
-});
+function startSetAccountActive(account: IAccount, active: boolean): PayloadAction {
+	return {
+		type: AccountActions.START_SET_ACCOUNT_ACTIVE,
+		payload: { account, active },
+	};
+}
 
-const startLoadAccountList: ActionCreator<PayloadAction> = () => ({
-	type: AccountActions.START_LOAD_ACCOUNT_LIST,
-});
+function startLoadAccountList(): PayloadAction {
+	return {
+		type: AccountActions.START_LOAD_ACCOUNT_LIST,
+	};
+}
 
-const setDisplayActiveOnly: ActionCreator<PayloadAction> = (activeOnly: boolean) => ({
-	type: AccountActions.SET_DISPLAY_ACTIVE_ONLY,
-	payload: { activeOnly },
-});
+function setDisplayActiveOnly(activeOnly: boolean): PayloadAction {
+	return {
+		type: AccountActions.SET_DISPLAY_ACTIVE_ONLY,
+		payload: { activeOnly },
+	};
+}
 
-const setAccountToEdit: ActionCreator<PayloadAction> = (account: IAccount) => ({
-	type: AccountActions.SET_ACCOUNT_TO_EDIT,
-	payload: { account },
-});
+function setAccountToEdit(account: IAccount): PayloadAction {
+	return {
+		type: AccountActions.SET_ACCOUNT_TO_EDIT,
+		payload: { account },
+	};
+}
 
-const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
-	type: AccountActions.SET_EDITOR_BUSY,
-	payload: { editorBusy },
-});
+function setEditorBusy(editorBusy: boolean): PayloadAction {
+	return {
+		type: AccountActions.SET_EDITOR_BUSY,
+		payload: { editorBusy },
+	};
+}
 
-const setAccountList: ActionCreator<PayloadAction> = (accountList: IAccount[]) => ({
-	type: AccountActions.SET_ACCOUNT_LIST,
-	payload: { accountList },
-});
+function setAccountList(accountList: IAccount[]): PayloadAction {
+	return {
+		type: AccountActions.SET_ACCOUNT_LIST,
+		payload: { accountList },
+	};
+}
 
-const addAccountEditInProgress: ActionCreator<PayloadAction> = (account: IAccount) => ({
-	type: AccountActions.ADD_ACCOUNT_EDIT_IN_PROGRESS,
-	payload: { account },
-});
+function addAccountEditInProgress(account: IAccount): PayloadAction {
+	return {
+		type: AccountActions.ADD_ACCOUNT_EDIT_IN_PROGRESS,
+		payload: { account },
+	};
+}
 
-const removeAccountEditInProgress: ActionCreator<PayloadAction> = (account: IAccount) => ({
-	type: AccountActions.REMOVE_ACCOUNT_EDIT_IN_PROGRESS,
-	payload: { account },
-});
+function removeAccountEditInProgress(account: IAccount): PayloadAction {
+	return {
+		type: AccountActions.REMOVE_ACCOUNT_EDIT_IN_PROGRESS,
+		payload: { account },
+	};
+}
 
 function*deleteAccountSaga(): Generator {
 	yield takeEvery(AccountActions.START_DELETE_ACCOUNT, function*(action: PayloadAction): Generator {
