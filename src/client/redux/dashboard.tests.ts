@@ -85,4 +85,8 @@ describe(__filename, () => {
 			setMemoCategoryBalances(categoryBalances).payload.memoCategoryBalances.should.equal(categoryBalances);
 		});
 	});
+
+	// TODO: reducer
+
+	// TODO: sagas
 });

@@ -55,13 +55,11 @@ function*loadUserSaga(): Generator {
 			yield put(addWait("auth"));
 		}
 		try {
-			const user: IUser = yield call(() => {
-				return axios.get("/auth/current-user")
-						.then((res) => {
-							const raw: IUser = res.data;
-							return mapUserFromApi(raw);
-						});
-			});
+			const user: IUser = yield call(() => axios.get("/auth/current-user")
+					.then((res) => {
+						const raw: IUser = res.data;
+						return mapUserFromApi(raw);
+					}));
 			if (user !== undefined) {
 				yield all([
 					put(setCurrentUser(user)),
@@ -130,8 +128,10 @@ export {
 	AuthActions,
 	authReducer,
 	authSagas,
+	loadUserSaga,
+	logOutCurrentUserSaga,
+	setCurrentUser,
 	startLoadCurrentUser,
 	startLogOutCurrentUser,
-	setCurrentUser,
 	unsetCurrentUser,
 };
