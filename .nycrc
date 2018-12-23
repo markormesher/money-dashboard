@@ -1,10 +1,10 @@
 {
 	"all": true,
 	"watermarks": {
-		"lines": [80, 99],
-		"functions": [80, 99],
-		"branches": [80, 99],
-		"statements": [80, 99]
+		"lines": [70, 90],
+		"functions": [70, 90],
+		"branches": [70, 90],
+		"statements": [70, 90]
 	},
 	"exclude": [
 		"// don't check coverage of type declarations",

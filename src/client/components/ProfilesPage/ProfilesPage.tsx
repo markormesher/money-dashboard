@@ -25,7 +25,7 @@ interface IProfilesPageProps {
 	readonly profileSwitchInProgress: boolean;
 	readonly activeUser?: IUser;
 	readonly actions?: {
-		readonly deleteProfile: (id: string) => AnyAction,
+		readonly deleteProfile: (profile: IProfile) => AnyAction,
 		readonly setProfileToEdit: (profile: IProfile) => AnyAction,
 		readonly setCurrentProfile: (profile: IProfile) => AnyAction,
 	};
@@ -48,7 +48,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfilesPageProps): IPro
 	return {
 		...props,
 		actions: {
-			deleteProfile: (id) => dispatch(startDeleteProfile(id)),
+			deleteProfile: (profile) => dispatch(startDeleteProfile(profile)),
 			setProfileToEdit: (profile) => dispatch(setProfileToEdit(profile)),
 			setCurrentProfile: (profile) => dispatch(startSetCurrentProfile(profile)),
 		},
@@ -162,7 +162,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 					/>}
 
 					{!activeProfile && <DeleteBtn
-							payload={profile.id}
+							payload={profile}
 							onConfirmedClick={this.props.actions.deleteProfile}
 							btnProps={{
 								className: combine(bs.btnOutlineDark, gs.btnMini),

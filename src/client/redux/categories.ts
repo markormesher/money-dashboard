@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { ICategory, mapCategoryFromApi } from "../../server/models/ICategory";
 import { setError } from "./global";
@@ -34,42 +33,52 @@ enum CategoryCacheKeys {
 	CATEGORY_LIST = "CategoryCacheKeys.CATEGORY_LIST",
 }
 
-const startDeleteCategory: ActionCreator<PayloadAction> = (categoryId: string) => ({
-	type: CategoryActions.START_DELETE_CATEGORY,
-	payload: { categoryId },
-});
+function startDeleteCategory(category: ICategory): PayloadAction {
+	return {
+		type: CategoryActions.START_DELETE_CATEGORY,
+		payload: { category },
+	};
+}
 
-const startSaveCategory: ActionCreator<PayloadAction> = (category: Partial<ICategory>) => ({
-	type: CategoryActions.START_SAVE_CATEGORY,
-	payload: { category },
-});
+function startSaveCategory(category: Partial<ICategory>): PayloadAction {
+	return {
+		type: CategoryActions.START_SAVE_CATEGORY,
+		payload: { category },
+	};
+}
 
-const startLoadCategoryList: ActionCreator<PayloadAction> = () => ({
-	type: CategoryActions.START_LOAD_CATEGORY_LIST,
-});
+function startLoadCategoryList(): PayloadAction {
+	return {
+		type: CategoryActions.START_LOAD_CATEGORY_LIST,
+	};
+}
 
-const setCategoryToEdit: ActionCreator<PayloadAction> = (category: ICategory) => ({
-	type: CategoryActions.SET_CATEGORY_TO_EDIT,
-	payload: { category },
-});
+function setCategoryToEdit(category: ICategory): PayloadAction {
+	return {
+		type: CategoryActions.SET_CATEGORY_TO_EDIT,
+		payload: { category },
+	};
+}
 
-const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
-	type: CategoryActions.SET_EDITOR_BUSY,
-	payload: { editorBusy },
-});
+function setEditorBusy(editorBusy: boolean): PayloadAction {
+	return {
+		type: CategoryActions.SET_EDITOR_BUSY,
+		payload: { editorBusy },
+	};
+}
 
-const setCategoryList: ActionCreator<PayloadAction> = (categoryList: ICategory[]) => ({
-	type: CategoryActions.SET_CATEGORY_LIST,
-	payload: {
-		categoryList,
-		categoryListLoadedAt: new Date().getTime(),
-	},
-});
+function setCategoryList(categoryList: ICategory[]): PayloadAction {
+	return {
+		type: CategoryActions.SET_CATEGORY_LIST,
+		payload: { categoryList },
+	};
+}
 
 function*deleteCategorySaga(): Generator {
 	yield takeEvery(CategoryActions.START_DELETE_CATEGORY, function*(action: PayloadAction): Generator {
 		try {
-			yield call(() => axios.post(`/categories/delete/${action.payload.categoryId}`).then((res) => res.data));
+			const category: ICategory = action.payload.category;
+			yield call(() => axios.post(`/categories/delete/${category.id}`).then((res) => res.data));
 			yield put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -158,6 +167,7 @@ function categoriesReducer(state = initialState, action: PayloadAction): ICatego
 
 export {
 	ICategoriesState,
+	CategoryActions,
 	CategoryCacheKeys,
 	categoriesReducer,
 	categoriesSagas,

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ActionCreator } from "redux";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { IProfile } from "../../server/models/IProfile";
 import { startLoadCurrentUser } from "./auth";
@@ -37,45 +36,60 @@ enum ProfileCacheKeys {
 	CURRENT_PROFILE = "ProfileCacheKeys.CURRENT_PROFILE",
 }
 
-const startDeleteProfile: ActionCreator<PayloadAction> = (profileId: string) => ({
-	type: ProfileActions.START_DELETE_PROFILE,
-	payload: { profileId },
-});
+function startDeleteProfile(profile: IProfile): PayloadAction {
+	return {
+		type: ProfileActions.START_DELETE_PROFILE,
+		payload: { profile },
+	};
+}
 
-const startSaveProfile: ActionCreator<PayloadAction> = (profile: Partial<IProfile>) => ({
-	type: ProfileActions.START_SAVE_PROFILE,
-	payload: { profile },
-});
+function startSaveProfile(profile: Partial<IProfile>): PayloadAction {
+	return {
+		type: ProfileActions.START_SAVE_PROFILE,
+		payload: { profile },
+	};
+}
 
-const startSetCurrentProfile: ActionCreator<PayloadAction> = (profile: IProfile) => ({
-	type: ProfileActions.START_SET_CURRENT_PROFILE,
-	payload: { profile },
-});
+function startSetCurrentProfile(profile: IProfile): PayloadAction {
+	return {
+		type: ProfileActions.START_SET_CURRENT_PROFILE,
+		payload: { profile },
+	};
+}
 
-const setProfileToEdit: ActionCreator<PayloadAction> = (profile: IProfile) => ({
-	type: ProfileActions.SET_PROFILE_TO_EDIT,
-	payload: { profile },
-});
+function setProfileToEdit(profile: IProfile): PayloadAction {
+	return {
+		type: ProfileActions.SET_PROFILE_TO_EDIT,
+		payload: { profile },
+	};
+}
 
-const setEditorBusy: ActionCreator<PayloadAction> = (editorBusy: boolean) => ({
-	type: ProfileActions.SET_EDITOR_BUSY,
-	payload: { editorBusy },
-});
+function setEditorBusy(editorBusy: boolean): PayloadAction {
+	return {
+		type: ProfileActions.SET_EDITOR_BUSY,
+		payload: { editorBusy },
+	};
+}
 
-const setCurrentProfile: ActionCreator<PayloadAction> = (profile: IProfile) => ({
-	type: ProfileActions.SET_CURRENT_PROFILE,
-	payload: { profile },
-});
+function setCurrentProfile(profile: IProfile): PayloadAction {
+	return {
+		type: ProfileActions.SET_CURRENT_PROFILE,
+		payload: { profile },
+	};
+}
 
-const setProfileSwitchInProgress: ActionCreator<PayloadAction> = (profileSwitchInProgress: boolean) => ({
-	type: ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS,
-	payload: { profileSwitchInProgress },
-});
+function setProfileSwitchInProgress(profileSwitchInProgress: boolean): PayloadAction {
+	return {
+		type: ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS,
+		payload: { profileSwitchInProgress },
+	};
+}
 
 function*deleteProfileSaga(): Generator {
 	yield takeEvery(ProfileActions.START_DELETE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
-			yield call(() => axios.post(`/profiles/delete/${action.payload.profileId}`).then((res) => res.data));
+			const profile: IProfile = action.payload.profile;
+			yield call(() => axios.post(`/profiles/delete/${profile.id}`).then((res) => res.data));
 			yield put(KeyCache.touchKey(ProfileCacheKeys.PROFILE_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -166,6 +180,7 @@ function profilesReducer(state = initialState, action: PayloadAction): IProfiles
 
 export {
 	IProfilesState,
+	ProfileActions,
 	ProfileCacheKeys,
 	profilesReducer,
 	profilesSagas,
@@ -174,4 +189,6 @@ export {
 	startSetCurrentProfile,
 	setProfileToEdit,
 	setEditorBusy,
+	setCurrentProfile,
+	setProfileSwitchInProgress,
 };
