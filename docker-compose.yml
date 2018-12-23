@@ -4,11 +4,14 @@ services:
   app:
     build:
       context: .
+      dockerfile: ./docker/app/Dockerfile
       args:
         - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     depends_on:
-      - postgres
       - redis
+      - postgres_master
+      - postgres_slave_1
+      - postgres_slave_2
     restart: always
     secrets:
       - google.client.id
@@ -16,36 +19,64 @@ services:
       - postgres.password
       - session.secret
     environment:
-      - ENV=prod
-      - NODE_ENV=production
       - NPM_EXECPATH=yarn
       - npm_execpath=yarn
       - RUNNING_IN=docker
       - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     volumes:
-      - ./logs:/usr/src/app/logs
+      - ./logs:/app/logs
     ports:
       - "3006:3000"
-    command: ["./entry-point.sh"]
 
-  postgres:
-    image: postgres:10.1-alpine
+  postgres_master:
+    build: docker/postgres-master
     restart: always
     secrets:
       - postgres.password
+      - postgres-rep.password
     environment:
       - POSTGRES_DATABASE=money_dashboard
       - POSTGRES_USER=money_dashboard
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres.password
+      - POSTGRES_REP_USER=money_dashboard_rep
+      - POSTGRES_REP_PASSWORD_FILE=/run/secrets/postgres-rep.password
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-master-data:/var/lib/postgresql/data
+
+  postgres_slave_1:
+    build: ./docker/postgres-slave
+    restart: always
+    secrets:
+      - postgres.password
+      - postgres-rep.password
+    environment:
+      - POSTGRES_DATABASE=money_dashboard
+      - POSTGRES_USER=money_dashboard
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres.password
+      - POSTGRES_REP_USER=money_dashboard_rep
+      - POSTGRES_REP_PASSWORD_FILE=/run/secrets/postgres-rep.password
+    volumes:
+      - /var/lib/postgresql/data
+
+  postgres_slave_2:
+    build: ./docker/postgres-slave
+    restart: always
+    secrets:
+      - postgres.password
+      - postgres-rep.password
+    environment:
+      - POSTGRES_DATABASE=money_dashboard
+      - POSTGRES_REP_USER=money_dashboard_rep
+      - POSTGRES_REP_PASSWORD_FILE=/run/secrets/postgres-rep.password
+    volumes:
+      - /var/lib/postgresql/data
 
   redis:
     image: redis:3.2-alpine
     restart: always
 
 volumes:
-  postgres-data:
+  postgres-master-data:
 
 secrets:
   google.client.id:
@@ -54,5 +85,7 @@ secrets:
     file: ./src/server/config/secrets/google.client.secret
   postgres.password:
     file: ./src/server/config/secrets/postgres.password
+  postgres-rep.password:
+    file: ./src/server/config/secrets/postgres-rep.password
   session.secret:
     file: ./src/server/config/secrets/session.secret

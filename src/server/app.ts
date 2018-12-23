@@ -7,7 +7,7 @@ import * as Passport from "passport";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { typeormConf } from "./db/db-config";
-import { getSecret, isProd, runningInDocker } from "./helpers/config-loader";
+import { getSecret, isProd } from "./helpers/config-loader";
 import { logger } from "./helpers/logging";
 import * as PassportConfig from "./helpers/passport-config";
 import { StatusError } from "./helpers/StatusError";
@@ -24,7 +24,7 @@ createConnection({ ...typeormConf, synchronize: false })
 // cookies and sessions
 const RedisSessionStore = ConnectRedis(ExpressSession);
 app.use(ExpressSession({
-	store: new RedisSessionStore({ host: runningInDocker() ? "redis" : "localhost" }),
+	store: new RedisSessionStore({ host: "redis" }),
 	secret: getSecret("session.secret"),
 	resave: false,
 	saveUninitialized: false,

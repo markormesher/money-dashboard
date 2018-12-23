@@ -25,10 +25,6 @@ function isTest(): boolean {
 	return process.env.NODE_ENV.toLowerCase() === "test";
 }
 
-function runningInDocker(): boolean {
-	return process.env.RUNNING_IN === "docker";
-}
-
 function clearConstantsCache(): void {
 	loadedConstants = undefined;
 }
@@ -52,17 +48,10 @@ function clearSecretsCache(): void {
 
 function getSecret(key: string): string {
 	if (loadedSecrets[key] === undefined) {
-		if (runningInDocker()) {
-			loadedSecrets = {
-				...loadedSecrets,
-				[key]: readFileSync(`/run/secrets/${key}`).toString().trim(),
-			};
-		} else {
-			loadedSecrets = {
-				...loadedSecrets,
-				[key]: readFileSync(`${configDir}/secrets/${key}`).toString().trim(),
-			};
-		}
+		loadedSecrets = {
+			...loadedSecrets,
+			[key]: readFileSync(`/run/secrets/${key}`).toString().trim(),
+		};
 	}
 	return loadedSecrets[key];
 }
@@ -75,7 +64,6 @@ export {
 	isProd,
 	isDev,
 	isTest,
-	runningInDocker,
 	clearConstantsCache,
 	getConstants,
 	clearSecretsCache,

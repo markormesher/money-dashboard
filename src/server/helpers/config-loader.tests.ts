@@ -10,7 +10,6 @@ import {
 	isDev,
 	isProd,
 	isTest,
-	runningInDocker,
 } from "./config-loader";
 
 describe(__filename, () => {
@@ -57,42 +56,6 @@ describe(__filename, () => {
 		it("should return false when not running in test", () => {
 			sandbox.replace(process.env, "NODE_ENV", "not-test");
 			isTest().should.equal(false);
-		});
-	});
-
-	describe("runningInDocker()", () => {
-
-		let didAddRunningInEnvVar = false;
-
-		before(() => {
-			if (!process.env.RUNNING_IN) {
-				didAddRunningInEnvVar = true;
-				process.env.RUNNING_IN = "";
-			}
-		});
-
-		after(() => {
-			if (didAddRunningInEnvVar) {
-				delete process.env.RUNNING_IN;
-			}
-		});
-
-		it("should return true when running in docker", () => {
-			sandbox.replace(process.env, "RUNNING_IN", "docker");
-			runningInDocker().should.equal(true);
-		});
-
-		it("should return false when not running in docker", () => {
-			sandbox.replace(process.env, "RUNNING_IN", "not-docker");
-			runningInDocker().should.equal(false);
-		});
-
-		it("should return false 'running in' variable is not defined", () => {
-			// manual stubbing b/c sinon sandbox can't stub a variable to "undefined"
-			const originalVal = process.env.RUNNING_IN;
-			process.env.RUNNING_IN = undefined;
-			runningInDocker().should.equal(false);
-			process.env.RUNNING_IN = originalVal;
 		});
 	});
 

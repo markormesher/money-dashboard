@@ -1,11 +1,19 @@
-.dockerignore
-.gitignore
+.*
+!.npmrc
+!.yarnrc
 
 .git/
+.gitignore
+
+.dockerignore
+**/Dockerfile*
+**/docker-compose*
+docker/
+!docker/app/docker-entrypoint.sh
+
 build/
 dist/
-logs/
 node_modules/
 
-Dockerfile
-*.log
+logs/
+**/*.log
