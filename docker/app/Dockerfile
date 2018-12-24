@@ -11,7 +11,11 @@ RUN yarn
 # source code
 COPY . ./
 
+# build
+ARG BUILD_TYPE=production
+RUN if [ $BUILD_TYPE = development ]; then yarn build-dev; else yarn build; fi
+
 # run
-EXPOSE 3000
+EXPOSE 3006
 ENTRYPOINT ["./docker/app/docker-entrypoint.sh"]
-CMD yarn build && yarn start
+CMD yarn start

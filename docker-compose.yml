@@ -26,7 +26,7 @@ services:
     volumes:
       - ./logs:/app/logs
     ports:
-      - "3006:3000"
+      - "3006:3006"
 
   postgres_master:
     build: docker/postgres-master
