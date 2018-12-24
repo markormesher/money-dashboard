@@ -2,6 +2,7 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPl
 const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const md5 = require("md5");
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
@@ -48,6 +49,7 @@ const babelLoader = {
 const tsLoader = {
 	loader: "ts-loader",
 	options: {
+		transpileOnly: true,
 		// these override the settings in tsconfig.json
 		compilerOptions: {
 			module: "esnext",
@@ -87,7 +89,9 @@ const terserMinimiser = new TerserWebpackPlugin({
 	},
 });
 
-module.exports = {
+const smp = new SpeedMeasurePlugin();
+
+module.exports = smp.wrap({
 	mode: IS_PROD ? "production" : "development",
 	cache: false,
 	target: "web",
@@ -237,12 +241,8 @@ module.exports = {
 			},
 		},
 	},
-	stats: IS_TEST ? "errors-only" : {
-		assetsSort: "!size",
-		children: false,
-		chunks: false,
-		colors: true,
-		entrypoints: false,
-		modules: false,
+	performance: {
+		hints: IS_PROD ? "warning" : false,
 	},
-};
+	stats: IS_TEST ? "errors-only" : "minimal",
+});

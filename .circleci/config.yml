@@ -3,25 +3,13 @@ version: 2
 defaults: &defaults
   working_directory: ~/money-dashboard
   docker:
-    - image: circleci/node:9.11.2
+    - image: centos
 
 jobs:
   setup:
     <<: *defaults
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-            - dependency-cache-{{ checksum "package.json" }}-
-            - dependency-cache-
-      - run:
-          name: Install dependencies
-          command: yarn install
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
       - persist_to_workspace:
           root: .
           paths:
@@ -30,6 +18,7 @@ jobs:
   lint:
     <<: *defaults
     steps:
+      - setup_remote_docker
       - attach_workspace:
           at: .
       - run:
@@ -39,28 +28,15 @@ jobs:
   test:
     <<: *defaults
     steps:
+      - setup_remote_docker
       - attach_workspace:
           at: .
       - run:
           name: Run Tests
-          command: yarn test
+          command: yarn dc-test
       - run:
-          name: Copy/Upload Results
-          command: |
-            mkdir -p ./test-results/mocha
-            [[ -e ./test-results.xml ]] && cp ./test-results.xml ./test-results/mocha/test-results.xml
-            bash <(curl -s https://codecov.io/bash)
-      - store_test_results:
-          path: test-results
-
-  build:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: Build
-          command: yarn build
+          name: Upload Coverage Results
+          command: bash <(curl -s https://codecov.io/bash)
 
   maybe_deploy:
     # Tag filtering in CircleCI is unreliable - this is hacky, but it works
@@ -89,10 +65,7 @@ workflows:
       - test:
           requires:
             - setup
-      - build:
+      - maybe_deploy:
           requires:
             - lint
             - test
-      - maybe_deploy:
-          requires:
-            - build

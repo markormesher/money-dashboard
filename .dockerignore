@@ -1,6 +1,6 @@
-.*
-!.npmrc
-!.yarnrc
+.circleci/
+.idea/
+.scripts/
 
 .git/
 .gitignore
@@ -12,6 +12,7 @@ docker/
 !docker/app/docker-entrypoint.sh
 
 build/
+coverage/
 dist/
 node_modules/
 

@@ -1,6 +1,6 @@
 import { join } from "path";
 import { ConnectionOptions } from "typeorm";
-import { getSecret } from "../helpers/config-loader";
+import { getSecret, isTest } from "../helpers/config-loader";
 import { PostgresNamingStrategy } from "./PostgresNamingStrategy";
 
 const typeormConf: ConnectionOptions = {
@@ -11,20 +11,20 @@ const typeormConf: ConnectionOptions = {
 			host: "postgres_master",
 			username: "money_dashboard",
 			password: getSecret("postgres.password"),
-			database: "money_dashboard",
+			database: isTest() ? "money_dashboard_test" : "money_dashboard",
 		},
 		slaves: [
 			{
 				host: "postgres_slave_1",
 				username: "money_dashboard",
 				password: getSecret("postgres.password"),
-				database: "money_dashboard",
+				database: isTest() ? "money_dashboard_test" : "money_dashboard",
 			},
 			{
 				host: "postgres_slave_2",
 				username: "money_dashboard",
 				password: getSecret("postgres.password"),
-				database: "money_dashboard",
+				database: isTest() ? "money_dashboard_test" : "money_dashboard",
 			},
 		],
 	},

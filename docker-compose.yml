@@ -7,12 +7,12 @@ services:
       dockerfile: ./docker/app/Dockerfile
       args:
         - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
+    restart: always
     depends_on:
       - redis
       - postgres_master
       - postgres_slave_1
       - postgres_slave_2
-    restart: always
     secrets:
       - google.client.id
       - google.client.secret

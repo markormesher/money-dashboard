@@ -13,9 +13,7 @@ const clientBuildPath = resolve(__dirname, "..", "..", "client");
 function setupDevAppRoutes(app: Express): void {
 	app.use(webpackDevMiddleware(compiler, {
 		publicPath: webpackDevConfig.output.publicPath,
-		stats: {
-			colors: true,
-		},
+		stats: "minimal",
 	}));
 	app.use(webpackHotMiddleware(compiler));
 

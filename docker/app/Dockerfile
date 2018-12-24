@@ -3,17 +3,21 @@ ARG NPM_FONT_AWESOME_TOKEN
 
 WORKDIR /app
 
-# dependencies
+# dependency: wait-for-it script
 RUN git -c http.sslVerify=false clone https://github.com/vishnubob/wait-for-it.git
+
+# dependency: node modules
 COPY package.json .yarnrc yarn.lock .npmrc ./
-RUN yarn
+RUN yarn install
 
 # source code
 COPY . ./
 
 # build
 ARG BUILD_TYPE=production
-RUN if [ $BUILD_TYPE = development ]; then yarn build-dev; else yarn build; fi
+RUN if [ $BUILD_TYPE = production ]; then yarn build; fi
+RUN if [ $BUILD_TYPE = development ]; then yarn build-dev; fi
+RUN if [ $BUILD_TYPE = test ]; then yarn build-test; fi
 
 # run
 EXPOSE 3006

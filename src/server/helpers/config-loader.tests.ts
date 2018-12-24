@@ -105,28 +105,16 @@ describe(__filename, () => {
 
 	describe("getSecret() and clearSecretsCache()", () => {
 
-		// TODO: remove this stubbing when we start running tests in docker
-
-		let fsStub: sinon.SinonStub;
-
-		beforeEach(() => {
-			fsStub = sandbox.stub(fs, "readFileSync").callsFake((...args) => {
-				args[0].should.equal("/run/secrets/test.secret");
-				return "test-secret";
-			});
-		});
-
 		afterEach(() => {
-			fsStub.reset();
 			clearSecretsCache();
 		});
 
-		it("should call the file system to read a secret file", () => {
-			getSecret("test.secret");
-			fsStub.callCount.should.equal(1);
+		it("should read a secret file successfully", () => {
+			getSecret("test.secret").should.equal("test-secret");
 		});
 
 		it("should use cached secrets when running more than once", () => {
+			const fsStub = sandbox.stub(fs, "readFileSync").callThrough();
 			getSecret("test.secret");
 			fsStub.callCount.should.equal(1);
 			getSecret("test.secret");
@@ -134,6 +122,7 @@ describe(__filename, () => {
 		});
 
 		it("should re-read the file when the secrets cache is cleared", () => {
+			const fsStub = sandbox.stub(fs, "readFileSync").callThrough();
 			getSecret("test.secret");
 			fsStub.callCount.should.equal(1);
 			clearSecretsCache();
@@ -148,6 +137,6 @@ describe(__filename, () => {
 			const config = getDevWebpackConfig();
 			config.should.not.equal(null);
 			config.should.not.equal(undefined);
-		}).timeout(2000);
+		}).timeout(10000);
 	});
 });

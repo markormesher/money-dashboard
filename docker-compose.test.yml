@@ -1,0 +1,29 @@
+version: '3.3'
+
+services:
+  app:
+    build:
+      args:
+        - BUILD_TYPE=test
+    restart: "no"
+    secrets:
+      - test.secret
+    volumes:
+      - ./coverage:/app/coverage
+    command: yarn start-test
+
+  postgres_master:
+    environment:
+      - POSTGRES_DATABASE=money_dashboard_test
+
+  postgres_slave_1:
+    environment:
+      - POSTGRES_DATABASE=money_dashboard_test
+
+  postgres_slave_2:
+    environment:
+      - POSTGRES_DATABASE=money_dashboard_test
+
+secrets:
+  test.secret:
+    file: ./src/server/config/secrets/test.secret
