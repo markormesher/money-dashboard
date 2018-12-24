@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/money-dashboard
   docker:
-    - image: centos
+    - image: circleci/node:9.11.2
 
 jobs:
   setup:
