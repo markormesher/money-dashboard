@@ -15,17 +15,14 @@ services:
   postgres_master:
     environment:
       - POSTGRES_DATABASE=money_dashboard_test
-    volumes: []
 
   postgres_slave_1:
     environment:
       - POSTGRES_DATABASE=money_dashboard_test
-    volumes: []
 
   postgres_slave_2:
     environment:
       - POSTGRES_DATABASE=money_dashboard_test
-    volumes: []
 
 secrets:
   test.secret:

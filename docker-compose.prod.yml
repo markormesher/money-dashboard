@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+  app:
+    volumes:
+      - ./logs:/app/logs
+
+  postgres_master:
+    volumes:
+      - postgres-master-data:/var/lib/postgresql/data
+
+  postgres_slave_1:
+    volumes:
+      - postgres-slave-1-data:/var/lib/postgresql/data
+
+  postgres_slave_2:
+    volumes:
+      - postgres-slave-2-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-master-data:
+  postgres-slave-1-data:
+  postgres-slave-2-data:
