@@ -60,6 +60,8 @@ services:
       - postgres-rep.password
     environment:
       - POSTGRES_DATABASE=money_dashboard
+      - POSTGRES_USER=money_dashboard
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres.password
       - POSTGRES_REP_USER=money_dashboard_rep
       - POSTGRES_REP_PASSWORD_FILE=/run/secrets/postgres-rep.password
 

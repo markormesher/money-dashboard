@@ -18,6 +18,14 @@ jobs:
       - run:
           name: Install dependencies
           command: yarn install
+      - run:
+          name: Generate Secrets
+          command: |
+            echo "NOOP" > ./src/server/config/secrets/google.client.id
+            echo "NOOP" > ./src/server/config/secrets/google.client.secret
+            echo "$RANDOM $(date)" | md5sum | cut -d ' ' -f 1 > ./src/server/config/secrets/postgres.password
+            echo "$RANDOM $(date)" | md5sum | cut -d ' ' -f 1 > ./src/server/config/secrets/postgres-rep.password
+            echo "$RANDOM $(date)" | md5sum | cut -d ' ' -f 1 > ./src/server/config/secrets/session.secret
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           paths:
