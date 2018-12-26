@@ -29,13 +29,16 @@ jobs:
             echo "$RANDOM $(date)" | md5sum | cut -d ' ' -f 1 > ./src/server/config/secrets/session.secret
       - run:
           name: Docker Compose Preview (Prod)
-          command: docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+          command: docker-compose -f docker-compose.yml -f docker-compose.prod.yml config
       - run:
           name: Docker Compose Preview (Dev)
-          command: docker-compose -f docker-compose.yml -f docker-compose.dev.yml build
+          command: docker-compose -f docker-compose.yml -f docker-compose.dev.yml config
       - run:
           name: Docker Compose Preview (Test)
-          command: docker-compose -f docker-compose.yml -f docker-compose.test.yml build
+          command: docker-compose -f docker-compose.yml -f docker-compose.test.yml config
+      - run:
+          name: Fail Fast
+          command: exit 1
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           paths:
