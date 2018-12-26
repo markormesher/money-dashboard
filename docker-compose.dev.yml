@@ -7,5 +7,4 @@ services:
         - BUILD_TYPE=development
     command: yarn start-dev
     volumes:
-      - ./logs:/app/logs
       - ./src:/app/src

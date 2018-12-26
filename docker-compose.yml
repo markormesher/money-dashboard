@@ -25,6 +25,8 @@ services:
       - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     ports:
       - "3006:3006"
+    volumes:
+      - ./logs:/app/logs
 
   postgres_master:
     build: docker/postgres-master
@@ -38,6 +40,8 @@ services:
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres.password
       - POSTGRES_REP_USER=money_dashboard_rep
       - POSTGRES_REP_PASSWORD_FILE=/run/secrets/postgres-rep.password
+    volumes:
+      - postgres-master-data:/var/lib/postgresql/data
 
   postgres_slave_1:
     build: ./docker/postgres-slave
@@ -51,6 +55,8 @@ services:
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres.password
       - POSTGRES_REP_USER=money_dashboard_rep
       - POSTGRES_REP_PASSWORD_FILE=/run/secrets/postgres-rep.password
+    volumes:
+      - postgres-slave-1-data:/var/lib/postgresql/data
 
   postgres_slave_2:
     build: ./docker/postgres-slave
@@ -64,10 +70,17 @@ services:
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres.password
       - POSTGRES_REP_USER=money_dashboard_rep
       - POSTGRES_REP_PASSWORD_FILE=/run/secrets/postgres-rep.password
+    volumes:
+      - postgres-slave-2-data:/var/lib/postgresql/data
 
   redis:
     image: redis:3.2-alpine
     restart: always
+
+volumes:
+  postgres-master-data:
+  postgres-slave-1-data:
+  postgres-slave-2-data:
 
 secrets:
   google.client.id:

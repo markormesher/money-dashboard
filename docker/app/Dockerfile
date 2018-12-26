@@ -17,7 +17,6 @@ COPY . ./
 ARG BUILD_TYPE=production
 RUN if [ $BUILD_TYPE = production ]; then yarn build; fi
 RUN if [ $BUILD_TYPE = development ]; then yarn build-dev; fi
-RUN if [ $BUILD_TYPE = test ]; then yarn build-test; fi
 
 # run
 EXPOSE 3006
