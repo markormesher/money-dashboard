@@ -26,6 +26,15 @@ jobs:
             echo "$RANDOM $(date)" | md5sum | cut -d ' ' -f 1 > ./src/server/config/secrets/postgres.password
             echo "$RANDOM $(date)" | md5sum | cut -d ' ' -f 1 > ./src/server/config/secrets/postgres-rep.password
             echo "$RANDOM $(date)" | md5sum | cut -d ' ' -f 1 > ./src/server/config/secrets/session.secret
+      - run:
+          name: Docker Compose Preview (Prod)
+          command: docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+      - run:
+          name: Docker Compose Preview (Dev)
+          command: docker-compose -f docker-compose.yml -f docker-compose.dev.yml build
+      - run:
+          name: Docker Compose Preview (Test)
+          command: docker-compose -f docker-compose.yml -f docker-compose.test.yml build
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           paths:
