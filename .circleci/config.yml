@@ -1,13 +1,10 @@
 version: 2
 
-defaults: &defaults
-  working_directory: ~/money-dashboard
-  docker:
-    - image: circleci/node:9.11.2
-
 jobs:
   setup:
-    <<: *defaults
+    working_directory: ~/money-dashboard
+    docker:
+      - image: circleci/node:9.11.2
     steps:
       - checkout
       - setup_remote_docker
@@ -28,7 +25,9 @@ jobs:
           paths:
             - .
   lint:
-    <<: *defaults
+    working_directory: ~/money-dashboard
+    docker:
+      - image: circleci/node:9.11.2
     steps:
       - setup_remote_docker
       - attach_workspace:
@@ -38,20 +37,20 @@ jobs:
           command: yarn lint
 
   test:
-    <<: *defaults
+    working_directory: ~/money-dashboard
+    machine:
+      image: circleci/node:9.11.2
     steps:
-      - setup_remote_docker
       - attach_workspace:
           at: .
       - run:
           name: Generate Secrets
           command: |
-            echo $RANDOM | docker secret create google.client.id -
-            echo $RANDOM | docker secret create google.client.secret -
-            echo $RANDOM | docker secret create postgres.password -
-            echo $RANDOM | docker secret create postgres-rep.password -
-            echo $RANDOM | docker secret create session.secret -
-            echo "test-secret" | docker secret create test.secret -
+            echo $RANDOM > ./src/server/config/secrets/google.client.id
+            echo $RANDOM > ./src/server/config/secrets/google.client.secret
+            echo $RANDOM > ./src/server/config/secrets/postgres.password
+            echo $RANDOM > ./src/server/config/secrets/postgres-rep.password
+            echo $RANDOM > ./src/server/config/secrets/session.secret
       - run:
           name: Run Tests
           command: yarn dc-test
@@ -61,7 +60,9 @@ jobs:
 
   maybe_deploy:
     # Tag filtering in CircleCI is unreliable - this is hacky, but it works
-    <<: *defaults
+    working_directory: ~/money-dashboard
+    docker:
+      - image: circleci/node:9.11.2
     steps:
       - add_ssh_keys:
           fingerprints:
