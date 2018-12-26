@@ -22,15 +22,11 @@ jobs:
       - run:
           name: Generate Secrets
           command: |
-            ls
-            echo "NOOP" > ./src/server/config/secrets/google.client.id
-            echo "NOOP" > ./src/server/config/secrets/google.client.secret
-            echo "$RANDOM $(date)" | md5sum | cut -d ' ' -f 1 > ./src/server/config/secrets/postgres.password
-            echo "$RANDOM $(date)" | md5sum | cut -d ' ' -f 1 > ./src/server/config/secrets/postgres-rep.password
-            echo "$RANDOM $(date)" | md5sum | cut -d ' ' -f 1 > ./src/server/config/secrets/session.secret
-      - run:
-          name: Fail Fast
-          command: exit 1
+            echo NOOP > ./src/server/config/secrets/google.client.id
+            echo NOOP > ./src/server/config/secrets/google.client.secret
+            echo $RANDOM > ./src/server/config/secrets/postgres.password
+            echo $RANDOM > ./src/server/config/secrets/postgres-rep.password
+            echo $RANDOM > ./src/server/config/secrets/session.secret
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           paths:
