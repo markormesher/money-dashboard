@@ -46,7 +46,8 @@ jobs:
           command: yarn lint
 
   test:
-    <<: *defaults
+    working_directory: ~/money-dashboard
+    machine: true
     steps:
       - setup_remote_docker
       - attach_workspace:
