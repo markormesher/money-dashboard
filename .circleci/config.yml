@@ -44,7 +44,7 @@ jobs:
           at: .
       - run:
           name: Generate Secrets
-          run: |
+          command: |
             echo $RANDOM | docker secret create google.client.id -
             echo $RANDOM | docker secret create google.client.secret -
             echo $RANDOM | docker secret create postgres.password -
