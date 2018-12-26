@@ -19,14 +19,6 @@ jobs:
       - run:
           name: Install dependencies
           command: yarn install
-      - run:
-          name: Generate Secrets
-          command: |
-            echo NOOP > ./src/server/config/secrets/google.client.id
-            echo NOOP > ./src/server/config/secrets/google.client.secret
-            echo $RANDOM > ./src/server/config/secrets/postgres.password
-            echo $RANDOM > ./src/server/config/secrets/postgres-rep.password
-            echo $RANDOM > ./src/server/config/secrets/session.secret
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           paths:
@@ -46,11 +38,19 @@ jobs:
           command: yarn lint
 
   test:
-    working_directory: ~/money-dashboard
-    machine: true
+    <<: *defaults
     steps:
       - attach_workspace:
           at: .
+      - run:
+          name: Generate Secrets
+          run: |
+            echo $RANDOM | docker secret create google.client.id -
+            echo $RANDOM | docker secret create google.client.secret -
+            echo $RANDOM | docker secret create postgres.password -
+            echo $RANDOM | docker secret create postgres-rep.password -
+            echo $RANDOM | docker secret create session.secret -
+            echo "test-secret" | docker secret create test.secret -
       - run:
           name: Run Tests
           command: yarn dc-test

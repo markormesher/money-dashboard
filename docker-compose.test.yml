@@ -25,5 +25,21 @@ services:
       - POSTGRES_DATABASE=money_dashboard_test
 
 secrets:
+  google.client.id:
+    file: null
+    external: true
+  google.client.secret:
+    file: null
+    external: true
+  postgres.password:
+    file: null
+    external: true
+  postgres-rep.password:
+    file: null
+    external: true
+  session.secret:
+    file: null
+    external: true
   test.secret:
-    file: ./src/server/config/secrets/test.secret
+    file: null
+    external: true
