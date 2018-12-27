@@ -41,6 +41,8 @@ interface IBudgetsPageProps {
 }
 
 interface IBudgetsPageState {
+	// TODO: move this fully into Redux
+	// TODO: clear checked budgets on successful clone
 	readonly selectedBudgetIds: string[];
 }
 
