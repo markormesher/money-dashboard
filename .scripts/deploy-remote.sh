@@ -39,8 +39,8 @@ fi
 
 echo
 echo "Rebuilding images..."
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+docker-compose build
 
 echo
 echo "Starting containers..."
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+docker-compose up -d
