@@ -2,7 +2,7 @@ import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGe
 import { IUser } from "../IUser";
 import { DbProfile } from "./DbProfile";
 
-@Entity("new_user")
+@Entity("user")
 class DbUser extends BaseEntity implements IUser {
 
 	@PrimaryGeneratedColumn("uuid")

@@ -4,7 +4,7 @@ import { DbBudget } from "./DbBudget";
 import { DbProfile } from "./DbProfile";
 import { DbTransaction } from "./DbTransaction";
 
-@Entity("new_category")
+@Entity("category")
 class DbCategory extends BaseEntity implements ICategory {
 
 	@PrimaryGeneratedColumn("uuid")

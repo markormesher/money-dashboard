@@ -6,7 +6,7 @@ import { BaseModel } from "./BaseModel";
 import { DbCategory } from "./DbCategory";
 import { DbProfile } from "./DbProfile";
 
-@Entity("new_budget")
+@Entity("budget")
 class DbBudget extends BaseModel implements IBudget {
 
 	@PrimaryGeneratedColumn("uuid")

@@ -4,7 +4,7 @@ import { BaseModel } from "./BaseModel";
 import { DbProfile } from "./DbProfile";
 import { DbTransaction } from "./DbTransaction";
 
-@Entity("new_account")
+@Entity("account")
 class DbAccount extends BaseModel implements IAccount {
 
 	@PrimaryGeneratedColumn("uuid")

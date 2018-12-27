@@ -6,7 +6,7 @@ import { DbCategory } from "./DbCategory";
 import { DbTransaction } from "./DbTransaction";
 import { DbUser } from "./DbUser";
 
-@Entity("new_profile")
+@Entity("profile")
 class DbProfile extends BaseEntity implements IProfile {
 
 	@PrimaryGeneratedColumn("uuid")

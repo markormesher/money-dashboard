@@ -6,7 +6,7 @@ import { DbAccount } from "./DbAccount";
 import { DbCategory } from "./DbCategory";
 import { DbProfile } from "./DbProfile";
 
-@Entity("new_transaction")
+@Entity("transaction")
 class DbTransaction extends BaseEntity implements ITransaction {
 
 	@PrimaryGeneratedColumn("uuid")
