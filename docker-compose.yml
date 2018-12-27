@@ -76,11 +76,15 @@ services:
   redis:
     image: redis:3.2-alpine
     restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
 
 volumes:
   postgres-master-data:
   postgres-slave-1-data:
   postgres-slave-2-data:
+  redis-data:
 
 secrets:
   google.client.id:
