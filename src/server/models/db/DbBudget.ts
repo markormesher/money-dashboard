@@ -40,7 +40,6 @@ class DbBudget extends BaseModel implements IBudget {
 			() => DbCategory,
 			/* istanbul ignore next */
 			(c) => c.budgets,
-			{ eager: true },
 	)
 	public category: DbCategory;
 
@@ -49,7 +48,6 @@ class DbBudget extends BaseModel implements IBudget {
 			() => DbProfile,
 			/* istanbul ignore next */
 			(p) => p.budgets,
-			{ eager: true },
 	)
 	public profile: DbProfile;
 

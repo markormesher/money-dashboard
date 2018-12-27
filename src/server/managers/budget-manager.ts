@@ -6,10 +6,21 @@ import { DbUser } from "../models/db/DbUser";
 import { MomentDateTransformer } from "../models/helpers/MomentDateTransformer";
 import { IBudgetBalance } from "../models/IBudgetBalance";
 
-function getBudget(user: DbUser, budgetId: string, mustExist: boolean = false): Promise<DbBudget> {
-	return DbBudget
-			.createQueryBuilder("budget")
-			.where("budget.id = :budgetId")
+function getBudget(
+		user: DbUser,
+		budgetId: string,
+		mustExist: boolean = false,
+		includeRelations: boolean = false,
+): Promise<DbBudget> {
+	let query = DbBudget.createQueryBuilder("budget");
+
+	if (includeRelations) {
+		query = query
+				.leftJoinAndSelect("budget.category", "category")
+				.leftJoinAndSelect("budget.profile", "profile");
+	}
+
+	return query.where("budget.id = :budgetId")
 			.andWhere("budget.profile_id = :profileId")
 			.andWhere("budget.deleted = FALSE")
 			.setParameters({
