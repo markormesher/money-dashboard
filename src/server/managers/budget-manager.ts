@@ -123,7 +123,7 @@ function cloneBudgets(
 		endDate: Moment.Moment,
 ): Promise<DbBudget[]> {
 	return Promise
-			.all(budgetsIds.map((id) => getBudget(user, id, true)))
+			.all(budgetsIds.map((id) => getBudget(user, id, true, true)))
 			.then((budgets: DbBudget[]) => {
 				return budgets.map((budget) => {
 					const clonedNewBudget = budget.clone();
