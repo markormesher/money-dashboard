@@ -6,13 +6,12 @@ import * as ExpressSession from "express-session";
 import * as Passport from "passport";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
+import { getSecret } from "../commons/config-loader";
+import { logger } from "../commons/logging";
 import { typeormConf } from "./db/db-config";
-import { getSecret, isProd } from "./helpers/config-loader";
-import { logger } from "./helpers/logging";
 import * as PassportConfig from "./helpers/passport-config";
 import { StatusError } from "./helpers/StatusError";
 import { setupApiRoutes } from "./middleware/api-routes";
-import { setupDevAppRoutes, setupProdAppRoutes } from "./middleware/app-routes";
 
 const app = Express();
 
@@ -40,11 +39,6 @@ app.use(BodyParser.json());
 
 // routes
 setupApiRoutes(app);
-if (isProd()) {
-	setupProdAppRoutes(app);
-} else {
-	setupDevAppRoutes(app);
-}
 
 // error handlers
 // noinspection JSUnusedLocalSymbols
@@ -56,5 +50,6 @@ app.use((error: StatusError, req: Request, res: Response, next: NextFunction) =>
 });
 
 // go!
-const server = app.listen(3001, () => logger.info("Listening on port 3001"));
+const port = 3000;
+const server = app.listen(port, () => logger.info(`API server listening on port ${port}`));
 process.on("SIGTERM", () => server.close(() => process.exit(0)));

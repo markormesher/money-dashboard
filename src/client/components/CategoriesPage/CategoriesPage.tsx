@@ -3,7 +3,7 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { ICategory, mapCategoryFromApi } from "../../../server/models/ICategory";
+import { ICategory, mapCategoryFromApi } from "../../../api/models/ICategory";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";
@@ -64,7 +64,7 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
 	];
 
 	private dataProvider = new ApiDataTableDataProvider<ICategory>(
-			"/categories/table-data",
+			"/api/categories/table-data",
 			() => ({
 				cacheTime: this.props.cacheTime,
 			}),

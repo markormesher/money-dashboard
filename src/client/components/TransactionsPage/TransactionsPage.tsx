@@ -3,7 +3,7 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { DateModeOption, ITransaction, mapTransactionFromApi } from "../../../server/models/ITransaction";
+import { DateModeOption, ITransaction, mapTransactionFromApi } from "../../../api/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
@@ -88,7 +88,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
 	];
 
 	private dataProvider = new ApiDataTableDataProvider<ITransaction>(
-			"/transactions/table-data",
+			"/api/transactions/table-data",
 			() => ({
 				cacheTime: this.props.cacheTime,
 				dateMode: this.props.dateMode,

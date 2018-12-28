@@ -3,9 +3,9 @@ import { shallow } from "enzyme";
 import { describe, it } from "mocha";
 import * as Moment from "moment";
 import * as React from "react";
-import { DEFAULT_ACCOUNT } from "../../server/models/IAccount";
-import { DEFAULT_BUDGET } from "../../server/models/IBudget";
-import { DEFAULT_CATEGORY } from "../../server/models/ICategory";
+import { DEFAULT_ACCOUNT } from "../../api/models/IAccount";
+import { DEFAULT_BUDGET } from "../../api/models/IBudget";
+import { DEFAULT_CATEGORY } from "../../api/models/ICategory";
 import * as bs from "../global-styles/Bootstrap.scss";
 import {
 	capitaliseFirstLetter,

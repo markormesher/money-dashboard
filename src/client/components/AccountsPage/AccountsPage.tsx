@@ -3,7 +3,7 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IAccount, mapAccountFromApi } from "../../../server/models/IAccount";
+import { IAccount, mapAccountFromApi } from "../../../api/models/IAccount";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateAccountTypeBadge } from "../../helpers/formatters";
@@ -80,7 +80,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
 	];
 
 	private dataProvider = new ApiDataTableDataProvider<IAccount>(
-			"/accounts/table-data",
+			"/api/accounts/table-data",
 			() => ({
 				cacheTime: this.props.cacheTime,
 				activeOnly: this.props.displayActiveOnly,

@@ -4,7 +4,7 @@ import { should } from "chai";
 import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
-import { testGlobals } from "../../../../../test-utils/global.tests";
+import { testGlobals } from "../../../../test-utils/global.tests";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { RelativeChangeIcon } from "./RelativeChangeIcon";
 

@@ -1,9 +1,9 @@
 import * as Moment from "moment";
 import * as React from "react";
 import { ReactElement } from "react";
-import { IAccount } from "../../server/models/IAccount";
-import { IBudget } from "../../server/models/IBudget";
-import { ICategory } from "../../server/models/ICategory";
+import { IAccount } from "../../api/models/IAccount";
+import { IBudget } from "../../api/models/IBudget";
+import { ICategory } from "../../api/models/ICategory";
 import { Badge } from "../components/_ui/Badge/Badge";
 import * as bs from "../global-styles/Bootstrap.scss";
 import * as gs from "../global-styles/Global.scss";

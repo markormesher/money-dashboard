@@ -3,7 +3,7 @@ import { ErrorInfo, PureComponent, ReactElement, ReactNode } from "react";
 import * as Loadable from "react-loadable";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
-import { IUser } from "../../../server/models/IUser";
+import { IUser } from "../../../api/models/IUser";
 import { DetailedError } from "../../helpers/errors/DetailedError";
 import { Http404Error } from "../../helpers/errors/Http404Error";
 import { IRootState } from "../../redux/root";

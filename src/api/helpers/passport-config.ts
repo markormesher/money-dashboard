@@ -1,15 +1,15 @@
 import { PassportStatic as Passport } from "passport";
 import { Strategy as GoogleStrategy, StrategyOptionsWithRequest } from "passport-google-oauth2";
+import { getConstants, getSecret } from "../../commons/config-loader";
 import { getOrRegisterUserWithGoogleProfile, getUser } from "../managers/user-manager";
 import { IUser } from "../models/IUser";
-import { getConstants, getSecret } from "./config-loader";
 
 function init(passport: Passport): void {
 
 	const googleConfig: StrategyOptionsWithRequest = {
 		clientID: getSecret("google.client.id"),
 		clientSecret: getSecret("google.client.secret"),
-		callbackURL: getConstants().host + "/auth/google/callback",
+		callbackURL: getConstants().host + "/api/auth/google/callback",
 		passReqToCallback: true,
 	};
 

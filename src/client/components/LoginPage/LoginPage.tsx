@@ -14,7 +14,7 @@ class LoginPage extends PureComponent {
 					<div className={style.titleWrapper}>
 						<h1>Login</h1>
 					</div>
-					<form action="/auth/google/login" method="get">
+					<form action="/api/auth/google/login" method="get">
 						<button role="submit" className={combine(bs.btn, bs.btnOutlinePrimary, bs.mt4)}>
 							<FontAwesomeIcon icon={faGoogle} className={bs.mr2}/>
 							Login with Google

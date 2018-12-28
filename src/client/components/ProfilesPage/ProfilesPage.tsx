@@ -3,8 +3,8 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IProfile, mapProfileFromApi } from "../../../server/models/IProfile";
-import { IUser } from "../../../server/models/IUser";
+import { IProfile, mapProfileFromApi } from "../../../api/models/IProfile";
+import { IUser } from "../../../api/models/IUser";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
@@ -70,7 +70,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
 	];
 
 	private dataProvider = new ApiDataTableDataProvider<IProfile>(
-			"/profiles/table-data",
+			"/api/profiles/table-data",
 			() => ({
 				cacheTime: this.props.cacheTime,
 			}),

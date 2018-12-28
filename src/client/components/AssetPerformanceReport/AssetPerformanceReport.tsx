@@ -9,9 +9,9 @@ import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IAccount } from "../../../server/models/IAccount";
-import { IAssetPerformanceData } from "../../../server/models/IAssetPerformanceData";
-import { DateModeOption } from "../../../server/models/ITransaction";
+import { IAccount } from "../../../api/models/IAccount";
+import { IAssetPerformanceData } from "../../../api/models/IAssetPerformanceData";
+import { DateModeOption } from "../../../api/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency } from "../../helpers/formatters";
@@ -357,7 +357,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 		const frame = ++this.frameCounter;
 
 		axios
-				.get("/reports/asset-performance/data", {
+				.get("/api/reports/asset-performance/data", {
 					params: {
 						startDate: startDate.toISOString(),
 						endDate: endDate.toISOString(),

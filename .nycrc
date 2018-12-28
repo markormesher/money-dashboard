@@ -14,7 +14,7 @@
 		"webpack.config.js",
 
 		"// don't check coverage of test init scripts or the tests themselves",
-		"test-utils/*",
+		"src/test-utils/*",
 		"**/*.tests.*",
 
 		"// don't check coverage of test outputs",
@@ -22,11 +22,7 @@
 		"coverage/",
 
 		"// client tests run against the actual source, so don't check coverage of the compiled code",
-		"build/client-test",
-
-		"// don't check coverage of non-test compiled code either",
-		"build/client",
-		"build/server"
+		"build/client"
 	],
 	"reporter": [
 		"html",

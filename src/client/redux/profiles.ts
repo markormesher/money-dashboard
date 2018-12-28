@@ -1,6 +1,6 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IProfile } from "../../server/models/IProfile";
+import { IProfile } from "../../api/models/IProfile";
 import { startLoadCurrentUser } from "./auth";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
@@ -89,7 +89,7 @@ function*deleteProfileSaga(): Generator {
 	yield takeEvery(ProfileActions.START_DELETE_PROFILE, function*(action: PayloadAction): Generator {
 		try {
 			const profile: IProfile = action.payload.profile;
-			yield call(() => axios.post(`/profiles/delete/${profile.id}`).then((res) => res.data));
+			yield call(() => axios.post(`/api/profiles/delete/${profile.id}`).then((res) => res.data));
 			yield put(KeyCache.touchKey(ProfileCacheKeys.PROFILE_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -104,7 +104,7 @@ function*saveProfileSaga(): Generator {
 			const profileId = profile.id || "";
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post(`/profiles/edit/${profileId}`, profile)),
+				call(() => axios.post(`/api/profiles/edit/${profileId}`, profile)),
 			]);
 			yield all([
 				put(KeyCache.touchKey(ProfileCacheKeys.PROFILE_DATA)),
@@ -122,7 +122,7 @@ function*setCurrentProfileSaga(): Generator {
 		try {
 			const profile: IProfile = action.payload.profile;
 			put(setProfileSwitchInProgress(true));
-			yield call(() => axios.post(`/profiles/select/${profile.id}`));
+			yield call(() => axios.post(`/api/profiles/select/${profile.id}`));
 			yield all([
 				put(setCurrentProfile(profile)),
 				put(startLoadCurrentUser()),

@@ -5,14 +5,31 @@ services:
     build: ./docker/nginx
     restart: always
     depends_on:
-      - app
+      - api
+      - client
     ports:
       - "3006:3006"
 
-  app:
+  client:
     build:
       context: .
-      dockerfile: ./docker/app/Dockerfile
+      dockerfile: docker/client/Dockerfile
+      args:
+        - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
+    restart: always
+    depends_on:
+      - api
+    environment:
+      - NPM_EXECPATH=yarn
+      - npm_execpath=yarn
+      - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
+    volumes:
+      - ./logs:/app/logs
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
       args:
         - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     restart: always
@@ -94,12 +111,12 @@ volumes:
 
 secrets:
   google.client.id:
-    file: ./src/server/config/secrets/google.client.id
+    file: ./src/commons/config/secrets/google.client.id
   google.client.secret:
-    file: ./src/server/config/secrets/google.client.secret
+    file: ./src/commons/config/secrets/google.client.secret
   postgres.password:
-    file: ./src/server/config/secrets/postgres.password
+    file: ./src/commons/config/secrets/postgres.password
   postgres-rep.password:
-    file: ./src/server/config/secrets/postgres-rep.password
+    file: ./src/commons/config/secrets/postgres-rep.password
   session.secret:
-    file: ./src/server/config/secrets/session.secret
+    file: ./src/commons/config/secrets/session.secret

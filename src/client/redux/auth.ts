@@ -1,6 +1,6 @@
 import axios from "axios";
 import { all, call, put, select, take, takeEvery } from "redux-saga/effects";
-import { IUser, mapUserFromApi } from "../../server/models/IUser";
+import { IUser, mapUserFromApi } from "../../api/models/IUser";
 import { addWait, removeWait, setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { IRootState } from "./root";
@@ -55,7 +55,7 @@ function*loadUserSaga(): Generator {
 			yield put(addWait("auth"));
 		}
 		try {
-			const user: IUser = yield call(() => axios.get("/auth/current-user")
+			const user: IUser = yield call(() => axios.get("/api/auth/current-user")
 					.then((res) => {
 						const raw: IUser = res.data;
 						return mapUserFromApi(raw);
@@ -84,7 +84,7 @@ function*logOutCurrentUserSaga(): Generator {
 	yield take(AuthActions.START_LOGOUT_CURRENT_USER);
 	yield put(addWait("auth"));
 	try {
-		yield call(() => axios.post("/auth/logout"));
+		yield call(() => axios.post("/api/auth/logout"));
 		yield all([
 			put(unsetCurrentUser()),
 			put(removeWait("auth")),

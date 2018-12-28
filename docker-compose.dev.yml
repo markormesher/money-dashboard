@@ -1,10 +1,19 @@
 version: '3.3'
 
 services:
-  app:
+  api:
     build:
       args:
         - BUILD_TYPE=development
-    command: yarn start-dev
+    command: yarn start-api-dev
     volumes:
-      - ./src:/app/src
+      - ./src:/money-dashboard/src
+
+  client:
+    build:
+      args:
+        - BUILD_TYPE=development
+    command: yarn start-client-dev
+    volumes:
+      - ./src:/money-dashboard/src
+

@@ -2,10 +2,10 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IAccountBalance } from "../../../server/models/IAccountBalance";
-import { IBudgetBalance } from "../../../server/models/IBudgetBalance";
-import { ICategoryBalance } from "../../../server/models/ICategoryBalance";
-import { IUser } from "../../../server/models/IUser";
+import { IAccountBalance } from "../../../api/models/IAccountBalance";
+import { IBudgetBalance } from "../../../api/models/IBudgetBalance";
+import { ICategoryBalance } from "../../../api/models/ICategoryBalance";
+import { IUser } from "../../../api/models/IUser";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import {

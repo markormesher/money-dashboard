@@ -3,11 +3,11 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IDateRange } from "../../../server/models/IDateRange";
+import { IDateRange } from "../../../api/models/IDateRange";
 import {
 	IDateRangeValidationResult,
 	validateDateRange,
-} from "../../../server/models/validators/DateRangeValidator";
+} from "../../../api/models/validators/DateRangeValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { setBudgetCloneInProgress, startCloneBudgets } from "../../redux/budgets";

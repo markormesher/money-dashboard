@@ -19,7 +19,7 @@ if (!IS_TEST && !IS_PROD && !IS_DEV) {
 	throw new Error("NODE_ENV was not set to one of test, production or development (it was '" + nodeEnv + "'")
 }
 
-const outputDir = resolve(__dirname, "build", IS_TEST ? "client-test" : "client");
+const outputDir = resolve(__dirname, "build", "client");
 const entryPoints = IS_TEST ? glob.sync("./src/client/**/*.tests.{ts,tsx}") : resolve(__dirname, "src", "client", "index.tsx");
 
 const babelLoader = {
@@ -50,12 +50,7 @@ const tsLoader = {
 	loader: "ts-loader",
 	options: {
 		transpileOnly: true,
-		// these override the settings in tsconfig.json
-		compilerOptions: {
-			module: "esnext",
-			target: "es6",
-			removeComments: false, // keep for webpackChunkName and similar
-		},
+		configFile: IS_TEST ? "tsconfig.client-test.json" : "tsconfig.client.json",
 	},
 };
 

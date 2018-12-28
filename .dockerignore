@@ -6,10 +6,10 @@
 .gitignore
 
 .dockerignore
-**/Dockerfile*
-**/docker-compose*
+docker-compose*
 docker/
-!docker/app/*.sh
+!docker/api/*.sh
+!docker/client/*.sh
 
 build/
 coverage/

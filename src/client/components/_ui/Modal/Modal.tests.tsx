@@ -5,7 +5,7 @@ import { mount } from "enzyme";
 import { afterEach, describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
-import { testGlobals } from "../../../../../test-utils/global.tests";
+import { testGlobals } from "../../../../test-utils/global.tests";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { IModalBtn, Modal, ModalBtnType } from "./Modal";

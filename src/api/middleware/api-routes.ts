@@ -9,14 +9,14 @@ import { router as BalanceHistoryReportController } from "../controllers/reports
 import { router as TransactionsController } from "../controllers/transactions";
 
 function setupApiRoutes(app: Express): void {
-	app.use("/accounts", AccountSettingsController);
-	app.use("/auth", AuthRouter);
-	app.use("/budgets", BudgetSettingsController);
-	app.use("/categories", CategorySettingsController);
-	app.use("/profiles", ProfileSettingsController);
-	app.use("/reports/asset-performance", AssetPerformanceReportRouter);
-	app.use("/reports/balance-history", BalanceHistoryReportController);
-	app.use("/transactions", TransactionsController);
+	app.use("/api/accounts", AccountSettingsController);
+	app.use("/api/auth", AuthRouter);
+	app.use("/api/budgets", BudgetSettingsController);
+	app.use("/api/categories", CategorySettingsController);
+	app.use("/api/profiles", ProfileSettingsController);
+	app.use("/api/reports/asset-performance", AssetPerformanceReportRouter);
+	app.use("/api/reports/balance-history", BalanceHistoryReportController);
+	app.use("/api/transactions", TransactionsController);
 }
 
 export {

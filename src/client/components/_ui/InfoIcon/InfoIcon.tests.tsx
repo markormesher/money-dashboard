@@ -4,7 +4,7 @@ import { should } from "chai";
 import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
-import { testGlobals } from "../../../../../test-utils/global.tests";
+import { testGlobals } from "../../../../test-utils/global.tests";
 import { InfoIcon } from "./InfoIcon";
 
 describe(__filename, () => {

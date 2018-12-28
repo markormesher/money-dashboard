@@ -1,7 +1,7 @@
 import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
-import { testGlobals } from "../../../../../test-utils/global.tests";
+import { testGlobals } from "../../../../test-utils/global.tests";
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 import { FullPageSpinner } from "./FullPageSpinner";
 import * as styles from "./FullPageSpinner.scss";

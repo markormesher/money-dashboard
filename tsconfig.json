@@ -5,18 +5,16 @@
 		"jsx": "react",
 		"noImplicitAny": true,
 		"moduleResolution": "node",
-		"outDir": "./build/server",
+		"outDir": "./build",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"alwaysStrict": true,
 		"baseUrl": "./",
 		"allowJs": true,
-		"sourceMap": true,
-		"removeComments": true
+		"removeComments": false,
+		"sourceMap": false,
+		"inlineSourceMap": true
 	},
-	"include": [
-		"./src/server/app.ts"
-	],
 	"exclude": [
 		"./node_modules"
 	]

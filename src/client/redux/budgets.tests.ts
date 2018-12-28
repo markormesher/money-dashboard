@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, it } from "mocha";
+import { describe, it } from "mocha";
 import * as Moment from "moment";
-import { DEFAULT_BUDGET } from "../../server/models/IBudget";
+import { DEFAULT_BUDGET } from "../../api/models/IBudget";
 import {
 	BudgetActions,
-	setBudgetIdsToClone,
+	setBudgetsToClone,
 	setBudgetToEdit,
 	setDisplayCurrentOnly,
 	setEditorBusy,
@@ -80,17 +80,19 @@ describe(__filename, () => {
 		});
 	});
 
-	describe("setBudgetIdsToClone()", () => {
+	// TODO: toggle action and in progress action
+
+	describe("setBudgetsToClone()", () => {
 
 		const ids = ["test-id"];
 
 		it("should generate an action with the correct type", () => {
-			setBudgetIdsToClone(ids).type.should.equal(BudgetActions.SET_BUDGETS_TO_CLONE);
+			setBudgetsToClone(ids).type.should.equal(BudgetActions.SET_BUDGETS_TO_CLONE);
 		});
 
 		it("should add the budget IDs to the payload", () => {
-			setBudgetIdsToClone(ids).payload.should.have.keys("budgetIds");
-			setBudgetIdsToClone(ids).payload.budgetIds.should.equal(ids);
+			setBudgetsToClone(ids).payload.should.have.keys("budgetIds");
+			setBudgetsToClone(ids).payload.budgetIds.should.equal(ids);
 		});
 	});
 

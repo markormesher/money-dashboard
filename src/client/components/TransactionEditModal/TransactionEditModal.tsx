@@ -3,13 +3,13 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { DEFAULT_ACCOUNT, IAccount } from "../../../server/models/IAccount";
-import { DEFAULT_CATEGORY, ICategory } from "../../../server/models/ICategory";
-import { DEFAULT_TRANSACTION, ITransaction } from "../../../server/models/ITransaction";
+import { DEFAULT_ACCOUNT, IAccount } from "../../../api/models/IAccount";
+import { DEFAULT_CATEGORY, ICategory } from "../../../api/models/ICategory";
+import { DEFAULT_TRANSACTION, ITransaction } from "../../../api/models/ITransaction";
 import {
 	ITransactionValidationResult,
 	validateTransaction,
-} from "../../../server/models/validators/TransactionValidator";
+} from "../../../api/models/validators/TransactionValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";

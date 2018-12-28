@@ -3,7 +3,7 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IBudget, mapBudgetFromApi } from "../../../server/models/IBudget";
+import { IBudget, mapBudgetFromApi } from "../../../api/models/IBudget";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
@@ -101,7 +101,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
 	];
 
 	private dataProvider = new ApiDataTableDataProvider<IBudget>(
-			"/budgets/table-data",
+			"/api/budgets/table-data",
 			() => ({
 				cacheTime: this.props.cacheTime,
 				currentOnly: this.props.displayCurrentOnly,

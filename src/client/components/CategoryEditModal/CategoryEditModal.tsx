@@ -2,11 +2,11 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { DEFAULT_CATEGORY, ICategory } from "../../../server/models/ICategory";
+import { DEFAULT_CATEGORY, ICategory } from "../../../api/models/ICategory";
 import {
 	ICategoryValidationResult,
 	validateCategory,
-} from "../../../server/models/validators/CategoryValidator";
+} from "../../../api/models/validators/CategoryValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { setCategoryToEdit, startSaveCategory } from "../../redux/categories";
 import { IRootState } from "../../redux/root";

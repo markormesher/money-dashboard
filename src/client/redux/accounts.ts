@@ -1,6 +1,6 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IAccount, mapAccountFromApi } from "../../server/models/IAccount";
+import { IAccount, mapAccountFromApi } from "../../api/models/IAccount";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -113,7 +113,7 @@ function*deleteAccountSaga(): Generator {
 	yield takeEvery(AccountActions.START_DELETE_ACCOUNT, function*(action: PayloadAction): Generator {
 		try {
 			const account: IAccount = action.payload.account;
-			yield call(() => axios.post(`/accounts/delete/${account.id}`));
+			yield call(() => axios.post(`/api/accounts/delete/${account.id}`));
 			yield put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -128,7 +128,7 @@ function*saveAccountSaga(): Generator {
 			const accountId = account.id || "";
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post(`/accounts/edit/${accountId}`, account)),
+				call(() => axios.post(`/api/accounts/edit/${accountId}`, account)),
 			]);
 			yield all([
 				put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA)),
@@ -149,7 +149,7 @@ function*setAccountActiveSaga(): Generator {
 			const apiRoute = active ? "set-active" : "set-inactive";
 			yield all([
 				put(addAccountEditInProgress(account)),
-				call(() => axios.post(`/accounts/${apiRoute}/${account.id}`)),
+				call(() => axios.post(`/api/accounts/${apiRoute}/${account.id}`)),
 			]);
 			yield all([
 				put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA)),
@@ -171,7 +171,7 @@ function*loadAccountListSaga(): Generator {
 		}
 		try {
 			const accountList: IAccount[] = yield call(() => {
-				return axios.get("/accounts/list")
+				return axios.get("/api/accounts/list")
 						.then((res) => {
 							const raw: IAccount[] = res.data;
 							return raw.map(mapAccountFromApi);

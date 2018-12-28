@@ -5,8 +5,8 @@ import * as Moment from "moment";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
-import { IBalanceHistoryData } from "../../../server/models/IBalanceHistoryData";
-import { DateModeOption } from "../../../server/models/ITransaction";
+import { IBalanceHistoryData } from "../../../api/models/IBalanceHistoryData";
+import { DateModeOption } from "../../../api/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency, formatDate } from "../../helpers/formatters";
@@ -220,7 +220,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
 		const frame = ++this.frameCounter;
 
 		axios
-				.get("/reports/balance-history/data", {
+				.get("/api/reports/balance-history/data", {
 					params: {
 						startDate: startDate.toISOString(),
 						endDate: endDate.toISOString(),

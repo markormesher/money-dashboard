@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, it } from "mocha";
-import { DEFAULT_PROFILE } from "../../server/models/IProfile";
+import { DEFAULT_PROFILE } from "../../api/models/IProfile";
 import {
 	ProfileActions,
 	setCurrentProfile,

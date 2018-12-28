@@ -1,9 +1,9 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IAccountBalance } from "../../server/models/IAccountBalance";
-import { mapBudgetFromApi } from "../../server/models/IBudget";
-import { IBudgetBalance } from "../../server/models/IBudgetBalance";
-import { ICategoryBalance } from "../../server/models/ICategoryBalance";
+import { IAccountBalance } from "../../api/models/IAccountBalance";
+import { mapBudgetFromApi } from "../../api/models/IBudget";
+import { IBudgetBalance } from "../../api/models/IBudgetBalance";
+import { ICategoryBalance } from "../../api/models/ICategoryBalance";
 import { AccountCacheKeys } from "./accounts";
 import { BudgetCacheKeys } from "./budgets";
 import { setError } from "./global";
@@ -88,7 +88,7 @@ function*loadAccountBalancesSaga(): Generator {
 		}
 		try {
 			const balances: IAccountBalance[] = yield call(() => {
-				return axios.get("/accounts/balances").then((res) => res.data);
+				return axios.get("/api/accounts/balances").then((res) => res.data);
 			});
 			yield all([
 				put(setAccountBalances(balances)),
@@ -113,7 +113,7 @@ function*loadBudgetBalancesSaga(): Generator {
 		}
 		try {
 			const balances: IBudgetBalance[] = yield call(() => {
-				return axios.get("/budgets/balances").then((res) => {
+				return axios.get("/api/budgets/balances").then((res) => {
 					const raw: IBudgetBalance[] = res.data;
 					return raw.map((rawItem) => ({
 						...rawItem,
@@ -143,7 +143,7 @@ function*loadMemoCategoryBalancesSaga(): Generator {
 		}
 		try {
 			const balances: ICategoryBalance[] = yield call(() => {
-				return axios.get("/categories/memo-balances").then((res) => res.data);
+				return axios.get("/api/categories/memo-balances").then((res) => res.data);
 			});
 			yield all([
 				put(setMemoCategoryBalances(balances)),

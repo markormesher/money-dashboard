@@ -5,7 +5,7 @@ import { mount, render } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
-import { testGlobals } from "../../../../../test-utils/global.tests";
+import { testGlobals } from "../../../../test-utils/global.tests";
 import { CheckboxBtn } from "./CheckboxBtn";
 
 describe(__filename, () => {

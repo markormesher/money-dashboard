@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Moment } from "moment";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IBudget } from "../../server/models/IBudget";
+import { IBudget } from "../../api/models/IBudget";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -110,7 +110,7 @@ function*deleteBudgetSaga(): Generator {
 	yield takeEvery(BudgetActions.START_DELETE_BUDGET, function*(action: PayloadAction): Generator {
 		try {
 			const budget: IBudget = action.payload.budget;
-			yield call(() => axios.post(`/budgets/delete/${budget.id}`).then((res) => res.data));
+			yield call(() => axios.post(`/api/budgets/delete/${budget.id}`).then((res) => res.data));
 			yield put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -125,7 +125,7 @@ function*saveBudgetSaga(): Generator {
 			const budgetId = budget.id || "";
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post(`/budgets/edit/${budgetId}`, budget)),
+				call(() => axios.post(`/api/budgets/edit/${budgetId}`, budget)),
 			]);
 			yield all([
 				put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA)),
@@ -146,7 +146,7 @@ function*cloneBudgetsSaga(): Generator {
 			const endDate: string = action.payload.endDate;
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post("/budgets/clone", {
+				call(() => axios.post("/api/budgets/clone", {
 					budgetIds,
 					startDate,
 					endDate,
@@ -243,6 +243,7 @@ export {
 	startCloneBudgets,
 	setDisplayCurrentOnly,
 	setBudgetToEdit,
+	setBudgetsToClone,
 	toggleBudgetToClone,
 	setBudgetCloneInProgress,
 	setEditorBusy,

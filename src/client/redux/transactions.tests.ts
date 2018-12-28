@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, it } from "mocha";
-import { DEFAULT_TRANSACTION } from "../../server/models/ITransaction";
+import { DEFAULT_TRANSACTION } from "../../api/models/ITransaction";
 import {
 	setDateMode,
 	setEditorBusy,

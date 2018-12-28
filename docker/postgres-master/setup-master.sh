@@ -3,7 +3,7 @@ set -euo pipefail
 POSTGRES_REP_PASSWORD=$(cat "$POSTGRES_REP_PASSWORD_FILE")
 
 # add replication user to PG HBA
-echo "host replication all 172.0.0.0/8 md5" >> "$PGDATA/pg_hba.conf"
+echo "host replication all all md5" >> "$PGDATA/pg_hba.conf"
 
 # add replication user to DB itself
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL

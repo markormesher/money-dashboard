@@ -1,6 +1,6 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { ICategory, mapCategoryFromApi } from "../../server/models/ICategory";
+import { ICategory, mapCategoryFromApi } from "../../api/models/ICategory";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -78,7 +78,7 @@ function*deleteCategorySaga(): Generator {
 	yield takeEvery(CategoryActions.START_DELETE_CATEGORY, function*(action: PayloadAction): Generator {
 		try {
 			const category: ICategory = action.payload.category;
-			yield call(() => axios.post(`/categories/delete/${category.id}`).then((res) => res.data));
+			yield call(() => axios.post(`/api/categories/delete/${category.id}`).then((res) => res.data));
 			yield put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -93,7 +93,7 @@ function*saveCategorySaga(): Generator {
 			const categoryId = category.id || "";
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post(`/categories/edit/${categoryId}`, category)),
+				call(() => axios.post(`/api/categories/edit/${categoryId}`, category)),
 			]);
 			yield all([
 				put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_DATA)),
@@ -116,7 +116,7 @@ function*loadCategoryListSaga(): Generator {
 		}
 		try {
 			const categoryList: ICategory[] = yield call(() => {
-				return axios.get("/categories/list")
+				return axios.get("/api/categories/list")
 						.then((res) => {
 							const raw: ICategory[] = res.data;
 							return raw.map(mapCategoryFromApi);

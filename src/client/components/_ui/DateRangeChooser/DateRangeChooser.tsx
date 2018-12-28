@@ -2,7 +2,7 @@ import { faCalendar, faCheck } from "@fortawesome/pro-light-svg-icons";
 import * as Moment from "moment";
 import * as React from "react";
 import { Component, CSSProperties, MouseEvent, ReactNode, RefObject } from "react";
-import { IDateRange } from "../../../../server/models/IDateRange";
+import { IDateRange } from "../../../../api/models/IDateRange";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";

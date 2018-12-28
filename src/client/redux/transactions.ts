@@ -4,7 +4,7 @@ import {
 	DateModeOption,
 	getNextTransactionForContinuousCreation,
 	ITransaction,
-} from "../../server/models/ITransaction";
+} from "../../api/models/ITransaction";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -92,7 +92,7 @@ function*deleteTransactionSaga(): Generator {
 	yield takeEvery(TransactionActions.START_DELETE_TRANSACTION, function*(action: PayloadAction): Generator {
 		try {
 			const transaction: ITransaction = action.payload.transaction;
-			yield call(() => axios.post(`/transactions/delete/${transaction.id}`));
+			yield call(() => axios.post(`/api/transactions/delete/${transaction.id}`));
 			yield put(KeyCache.touchKey(TransactionCacheKeys.TRANSACTION_DATA));
 		} catch (err) {
 			yield put(setError(err));
@@ -107,7 +107,7 @@ function*saveTransactionSaga(): Generator {
 			const transactionId = transaction.id || "";
 			yield all([
 				put(setEditorBusy(true)),
-				call(() => axios.post(`/transactions/edit/${transactionId}`, transaction)),
+				call(() => axios.post(`/api/transactions/edit/${transactionId}`, transaction)),
 			]);
 			yield all([
 				put(KeyCache.touchKey(TransactionCacheKeys.TRANSACTION_DATA)),
@@ -135,7 +135,7 @@ function*loadPayeeListSaga(): Generator {
 		}
 		try {
 			const payeeList: string[] = yield call(() => {
-				return axios.get("/transactions/payees").then((res) => res.data);
+				return axios.get("/api/transactions/payees").then((res) => res.data);
 			});
 			yield all([
 				put(setPayeeList(payeeList)),

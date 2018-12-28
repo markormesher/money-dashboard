@@ -10,8 +10,8 @@ export class Constants {
 let loadedConstants: Constants;
 let loadedSecrets: { readonly [key: string]: string } = {};
 
-const projectDir = resolve(__dirname, "..", "..", "..");
-const configDir = resolve(__dirname, "..", "config");
+const projectDir = resolve(__dirname, "..", "..");
+const configDir = resolve(__dirname, "config");
 
 function isProd(): boolean {
 	return process.env.NODE_ENV.toLowerCase() === "production";

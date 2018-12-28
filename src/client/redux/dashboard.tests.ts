@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, it } from "mocha";
-import { DEFAULT_ACCOUNT } from "../../server/models/IAccount";
-import { DEFAULT_BUDGET } from "../../server/models/IBudget";
-import { DEFAULT_CATEGORY } from "../../server/models/ICategory";
+import { DEFAULT_ACCOUNT } from "../../api/models/IAccount";
+import { DEFAULT_BUDGET } from "../../api/models/IBudget";
+import { DEFAULT_CATEGORY } from "../../api/models/ICategory";
 import {
 	DashboardActions,
 	setAccountBalances,
