@@ -56,5 +56,5 @@ app.use((error: StatusError, req: Request, res: Response, next: NextFunction) =>
 });
 
 // go!
-const server = app.listen(3006, () => logger.info("Listening on port 3006"));
+const server = app.listen(3001, () => logger.info("Listening on port 3001"));
 process.on("SIGTERM", () => server.close(() => process.exit(0)));

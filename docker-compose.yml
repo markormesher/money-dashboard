@@ -1,6 +1,14 @@
 version: '3.3'
 
 services:
+  nginx:
+    build: ./docker/nginx
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - "3006:3006"
+
   app:
     build:
       context: .
@@ -23,13 +31,11 @@ services:
       - npm_execpath=yarn
       - RUNNING_IN=docker
       - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
-    ports:
-      - "3006:3006"
     volumes:
       - ./logs:/app/logs
 
   postgres_master:
-    build: docker/postgres-master
+    build: ./docker/postgres-master
     restart: always
     secrets:
       - postgres.password
