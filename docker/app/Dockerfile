@@ -3,10 +3,7 @@ ARG NPM_FONT_AWESOME_TOKEN
 
 WORKDIR /app
 
-# dependency: wait-for-it script
-RUN git -c http.sslVerify=false clone https://github.com/vishnubob/wait-for-it.git
-
-# dependency: node modules
+# dependencies
 COPY package.json .yarnrc yarn.lock .npmrc ./
 RUN yarn install
 

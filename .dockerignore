@@ -9,7 +9,7 @@
 **/Dockerfile*
 **/docker-compose*
 docker/
-!docker/app/docker-entrypoint.sh
+!docker/app/*.sh
 
 build/
 coverage/
