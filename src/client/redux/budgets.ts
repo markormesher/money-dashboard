@@ -10,13 +10,15 @@ interface IBudgetsState {
 	readonly displayCurrentOnly: boolean;
 	readonly budgetToEdit: IBudget;
 	readonly budgetIdsToClone: string[];
+	readonly budgetCloneInProgress: boolean;
 	readonly editorBusy: boolean;
 }
 
 const initialState: IBudgetsState = {
 	displayCurrentOnly: true,
 	budgetToEdit: undefined,
-	budgetIdsToClone: undefined,
+	budgetIdsToClone: [],
+	budgetCloneInProgress: false,
 	editorBusy: false,
 };
 
@@ -28,6 +30,8 @@ enum BudgetActions {
 	SET_DISPLAY_CURRENT_ONLY = "BudgetActions.SET_DISPLAY_CURRENT_ONLY",
 	SET_BUDGET_TO_EDIT = "BudgetActions.SET_BUDGET_TO_EDIT",
 	SET_BUDGETS_TO_CLONE = "BudgetActions.SET_BUDGETS_TO_CLONE",
+	TOGGLE_BUDGET_TO_CLONE = "BudgetActions.TOGGLE_BUDGET_TO_CLONE",
+	SET_BUDGET_CLONE_IN_PROGRESS = "BudgetActions.SET_BUDGET_CLONE_IN_PROGRESS",
 	SET_EDITOR_BUSY = "BudgetActions.SET_EDITOR_BUSY",
 }
 
@@ -74,10 +78,24 @@ function setBudgetToEdit(budget: IBudget): PayloadAction {
 	};
 }
 
-function setBudgetIdsToClone(budgetIds: string[]): PayloadAction {
+function setBudgetsToClone(budgetIds: string[]): PayloadAction {
 	return {
 		type: BudgetActions.SET_BUDGETS_TO_CLONE,
 		payload: { budgetIds },
+	};
+}
+
+function toggleBudgetToClone(budgetId: string): PayloadAction {
+	return {
+		type: BudgetActions.TOGGLE_BUDGET_TO_CLONE,
+		payload: { budgetId },
+	};
+}
+
+function setBudgetCloneInProgress(budgetCloneInProgress: boolean): PayloadAction {
+	return {
+		type: BudgetActions.SET_BUDGET_CLONE_IN_PROGRESS,
+		payload: { budgetCloneInProgress },
 	};
 }
 
@@ -137,7 +155,8 @@ function*cloneBudgetsSaga(): Generator {
 			yield all([
 				put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA)),
 				put(setEditorBusy(false)),
-				put(setBudgetIdsToClone(undefined)),
+				put(setBudgetCloneInProgress(false)),
+				put(setBudgetsToClone([])),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -173,6 +192,35 @@ function budgetsReducer(state = initialState, action: PayloadAction): IBudgetsSt
 				budgetIdsToClone: action.payload.budgetIds,
 			};
 
+		case BudgetActions.TOGGLE_BUDGET_TO_CLONE:
+			return (() => {
+				const budgetId = action.payload.budgetId as string;
+				if (state.budgetIdsToClone.indexOf(budgetId) >= 0) {
+					// remove
+					const idx = state.budgetIdsToClone.indexOf(budgetId);
+					const arrCopy = [...state.budgetIdsToClone];
+					arrCopy.splice(idx, 1);
+					return {
+						...state,
+						budgetIdsToClone: arrCopy,
+					};
+				} else {
+					// add
+					const arrCopy = [...state.budgetIdsToClone];
+					arrCopy.push(budgetId);
+					return {
+						...state,
+						budgetIdsToClone: arrCopy,
+					};
+				}
+			})();
+
+		case BudgetActions.SET_BUDGET_CLONE_IN_PROGRESS:
+			return {
+				...state,
+				budgetCloneInProgress: action.payload.budgetCloneInProgress,
+			};
+
 		case BudgetActions.SET_EDITOR_BUSY:
 			return {
 				...state,
@@ -195,6 +243,7 @@ export {
 	startCloneBudgets,
 	setDisplayCurrentOnly,
 	setBudgetToEdit,
-	setBudgetIdsToClone,
+	toggleBudgetToClone,
+	setBudgetCloneInProgress,
 	setEditorBusy,
 };

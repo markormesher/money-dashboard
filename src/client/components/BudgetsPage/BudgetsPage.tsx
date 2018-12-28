@@ -10,10 +10,11 @@ import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } fro
 import { combine } from "../../helpers/style-helpers";
 import {
 	BudgetCacheKeys,
-	setBudgetIdsToClone,
+	setBudgetCloneInProgress,
 	setBudgetToEdit,
 	setDisplayCurrentOnly,
 	startDeleteBudget,
+	toggleBudgetToClone,
 } from "../../redux/budgets";
 import { KeyCache } from "../../redux/helpers/KeyCache";
 import { IRootState } from "../../redux/root";
@@ -32,18 +33,14 @@ interface IBudgetsPageProps {
 	readonly displayCurrentOnly: boolean;
 	readonly budgetToEdit?: IBudget;
 	readonly budgetIdsToClone?: string[];
+	readonly budgetCloneInProgress?: boolean;
 	readonly actions?: {
 		readonly deleteBudget: (budget: IBudget) => AnyAction,
 		readonly setDisplayCurrentOnly: (active: boolean) => AnyAction,
 		readonly setBudgetToEdit: (budget: IBudget) => AnyAction,
-		readonly setBudgetIdsToClone: (budgetIds: string[]) => AnyAction,
+		readonly toggleBudgetToClone: (budgetId: string) => AnyAction,
+		readonly setBudgetCloneInProgress: (inProgress: boolean) => AnyAction,
 	};
-}
-
-interface IBudgetsPageState {
-	// TODO: move this fully into Redux
-	// TODO: clear checked budgets on successful clone
-	readonly selectedBudgetIds: string[];
 }
 
 function mapStateToProps(state: IRootState, props: IBudgetsPageProps): IBudgetsPageProps {
@@ -53,6 +50,7 @@ function mapStateToProps(state: IRootState, props: IBudgetsPageProps): IBudgetsP
 		displayCurrentOnly: state.budgets.displayCurrentOnly,
 		budgetToEdit: state.budgets.budgetToEdit,
 		budgetIdsToClone: state.budgets.budgetIdsToClone,
+		budgetCloneInProgress: state.budgets.budgetCloneInProgress,
 	};
 }
 
@@ -63,12 +61,13 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetsPageProps): IBudg
 			deleteBudget: (budget) => dispatch(startDeleteBudget(budget)),
 			setDisplayCurrentOnly: (active) => dispatch(setDisplayCurrentOnly(active)),
 			setBudgetToEdit: (budget) => dispatch(setBudgetToEdit(budget)),
-			setBudgetIdsToClone: (budgetIds) => dispatch(setBudgetIdsToClone(budgetIds)),
+			toggleBudgetToClone: (budgetId) => dispatch(toggleBudgetToClone(budgetId)),
+			setBudgetCloneInProgress: (inProgress) => dispatch(setBudgetCloneInProgress(inProgress)),
 		},
 	};
 }
 
-class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> {
+class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
 
 	private tableColumns: IColumn[] = [
 		{
@@ -112,9 +111,6 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 
 	constructor(props: IBudgetsPageProps) {
 		super(props);
-		this.state = {
-			selectedBudgetIds: [],
-		};
 
 		this.tableRowRenderer = this.tableRowRenderer.bind(this);
 		this.generateActionButtons = this.generateActionButtons.bind(this);
@@ -124,13 +120,12 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 	}
 
 	public render(): ReactNode {
-		const { cacheTime, budgetToEdit, budgetIdsToClone, displayCurrentOnly } = this.props;
-		const { selectedBudgetIds } = this.state;
+		const { cacheTime, budgetToEdit, budgetIdsToClone, budgetCloneInProgress, displayCurrentOnly } = this.props;
 
 		return (
 				<>
 					{budgetToEdit !== undefined && <BudgetEditModal/>}
-					{budgetIdsToClone && <BudgetCloneModal/>}
+					{budgetCloneInProgress && <BudgetCloneModal/>}
 
 					<div className={gs.headerWrapper}>
 						<h1 className={bs.h2}>Budgets</h1>
@@ -150,7 +145,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 									onClick={this.startCloneOnSelectedBudgets}
 									btnProps={{
 										className: combine(bs.btnSm, bs.btnOutlineInfo),
-										disabled: selectedBudgetIds.length === 0,
+										disabled: budgetIdsToClone.length === 0,
 									}}
 							/>
 
@@ -181,16 +176,15 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 	}
 
 	private tableRowRenderer(budget: IBudget): ReactElement<void> {
-		const { selectedBudgetIds } = this.state;
-		const cloneId = `clone-${budget.id}`;
+		const { budgetIdsToClone } = this.props;
 		return (
 				<tr key={budget.id}>
 					<td>
 						<ControlledCheckboxInput
-								id={cloneId}
+								id={budget.id}
 								label={undefined}
 								disabled={false}
-								checked={selectedBudgetIds.indexOf(cloneId) >= 0}
+								checked={budgetIdsToClone.indexOf(budget.id) >= 0}
 								onCheckedChange={this.handleCloneCheckedChange}
 						/>
 					</td>
@@ -231,21 +225,12 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps, IBudgetsPageState> 
 		this.props.actions.setBudgetToEdit(null);
 	}
 
-	private handleCloneCheckedChange(checked: boolean, id: string): void {
-		const original = this.state.selectedBudgetIds;
-		if (checked) {
-			this.setState({
-				selectedBudgetIds: original.concat([id]),
-			});
-		} else {
-			this.setState({
-				selectedBudgetIds: original.filter((b) => b !== id),
-			});
-		}
+	private handleCloneCheckedChange(_: boolean, id: string): void {
+		this.props.actions.toggleBudgetToClone(id);
 	}
 
 	private startCloneOnSelectedBudgets(): void {
-		this.props.actions.setBudgetIdsToClone(this.state.selectedBudgetIds.map((b) => b.replace("clone-", "")));
+		this.props.actions.setBudgetCloneInProgress(true);
 	}
 }
 

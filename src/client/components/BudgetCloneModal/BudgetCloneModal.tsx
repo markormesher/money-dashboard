@@ -10,7 +10,7 @@ import {
 } from "../../../server/models/validators/DateRangeValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
-import { setBudgetIdsToClone, startCloneBudgets } from "../../redux/budgets";
+import { setBudgetCloneInProgress, startCloneBudgets } from "../../redux/budgets";
 import { IRootState } from "../../redux/root";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
@@ -21,7 +21,7 @@ interface IBudgetCloneModalProps {
 	readonly editorBusy?: boolean;
 
 	readonly actions?: {
-		readonly setBudgetIdsToClone: (budgets: string[]) => AnyAction,
+		readonly setBudgetCloneInProgress: (inProgress: boolean) => AnyAction,
 		readonly startCloneBudgets: (budgetIds: string[], startDate: Moment.Moment, endDate: Moment.Moment) => AnyAction,
 	};
 }
@@ -43,7 +43,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetCloneModalProps): 
 	return {
 		...props,
 		actions: {
-			setBudgetIdsToClone: (budgets) => dispatch(setBudgetIdsToClone(budgets)),
+			setBudgetCloneInProgress: (inProgress) => dispatch(setBudgetCloneInProgress(inProgress)),
 			startCloneBudgets: (budgetIds, startDate, endDate) => dispatch(startCloneBudgets(budgetIds, startDate, endDate)),
 		},
 	};
@@ -128,7 +128,7 @@ class UCBudgetCloneModal extends PureComponent<IBudgetCloneModalProps, IBudgetCl
 	}
 
 	private handleCancel(): void {
-		this.props.actions.setBudgetIdsToClone(undefined);
+		this.props.actions.setBudgetCloneInProgress(false);
 	}
 
 	private updateModel(range: Partial<IDateRange>): void {
