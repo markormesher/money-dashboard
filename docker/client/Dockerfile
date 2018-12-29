@@ -7,9 +7,11 @@ ARG NPM_FONT_AWESOME_TOKEN
 COPY package.json .yarnrc yarn.lock .npmrc ./
 RUN yarn install
 
-# TODO: limit how much we copy here to reduce cache busting
-# source code
-COPY . ./
+# source
+COPY ./docker ./docker
+COPY ./src/commons ./src/commons
+COPY ./src/client ./src/client
+COPY ./tsconfig.json ./tsconfig.client*.json ./webpack.config.js ./
 
 # build
 ARG BUILD_TYPE=production
