@@ -3,6 +3,7 @@ import * as Moment from "moment";
 import { DEFAULT_BUDGET } from "../../commons/models/IBudget";
 import {
 	BudgetActions,
+	setBudgetCloneInProgress,
 	setBudgetsToClone,
 	setBudgetToEdit,
 	setDisplayCurrentOnly,
@@ -10,6 +11,7 @@ import {
 	startCloneBudgets,
 	startDeleteBudget,
 	startSaveBudget,
+	toggleBudgetToClone,
 } from "./budgets";
 
 describe(__filename, () => {
@@ -80,8 +82,6 @@ describe(__filename, () => {
 		});
 	});
 
-	// TODO: toggle action and in progress action
-
 	describe("setBudgetsToClone()", () => {
 
 		const ids = ["test-id"];
@@ -93,6 +93,33 @@ describe(__filename, () => {
 		it("should add the budget IDs to the payload", () => {
 			setBudgetsToClone(ids).payload.should.have.keys("budgetIds");
 			setBudgetsToClone(ids).payload.budgetIds.should.equal(ids);
+		});
+	});
+
+	describe("toggleBudgetToClone()", () => {
+
+		const id = "test-id";
+
+		it("should generate an action with the correct type", () => {
+			toggleBudgetToClone(id).type.should.equal(BudgetActions.TOGGLE_BUDGET_TO_CLONE);
+		});
+
+		it("should add the budget IDs to the payload", () => {
+			toggleBudgetToClone(id).payload.should.have.keys("budgetId");
+			toggleBudgetToClone(id).payload.budgetId.should.equal(id);
+		});
+	});
+
+	describe("setBudgetCloneInProgress()", () => {
+
+		it("should generate an action with the correct type", () => {
+			setBudgetCloneInProgress(true).type.should.equal(BudgetActions.SET_BUDGET_CLONE_IN_PROGRESS);
+		});
+
+		it("should add the budget IDs to the payload", () => {
+			setBudgetCloneInProgress(true).payload.should.have.keys("budgetCloneInProgress");
+			setBudgetCloneInProgress(true).payload.budgetCloneInProgress.should.equal(true);
+			setBudgetCloneInProgress(false).payload.budgetCloneInProgress.should.equal(false);
 		});
 	});
 
