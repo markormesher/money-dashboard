@@ -29,7 +29,7 @@ describe(__filename, () => {
 		}, 20);
 	}).timeout(1000);
 
-	it("should animate entrance when rendered for the second time in 10ms", () => {
+	it("should not animate entrance when rendered for the second time in 10ms", () => {
 		Modal.resetLastClose();
 		mountWrapper = mount(<Modal/>);
 		mountWrapper.unmount();
@@ -174,7 +174,6 @@ describe(__filename, () => {
 	});
 
 	it("should call the close request listener when the 'Esc' key is pressed", () => {
-		// TODO: causes "Can't call setState (or forceUpdate) on an unmounted component"
 		const spy = sinon.spy();
 		mountWrapper = mount(<Modal title={"hello"} onCloseRequest={spy}/>);
 		const evt = new KeyboardEvent("keydown", { key: "Esc" });
