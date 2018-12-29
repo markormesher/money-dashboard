@@ -3,6 +3,7 @@ import { Strategy as GoogleStrategy, StrategyOptionsWithRequest } from "passport
 import { IUser } from "../../commons/models/IUser";
 import { getConstants, getSecret } from "../config/config-loader";
 import { getOrRegisterUserWithGoogleProfile, getUser } from "../managers/user-manager";
+import { StatusError } from "./StatusError";
 
 function init(passport: Passport): void {
 
@@ -25,7 +26,7 @@ function init(passport: Passport): void {
 		getUser(userId)
 				.then((user) => {
 					if (!user) {
-						throw new Error("Could not find user");
+						throw new StatusError(401, "Could not find user");
 					} else {
 						callback(null, user);
 					}
