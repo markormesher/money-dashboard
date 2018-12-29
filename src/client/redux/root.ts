@@ -1,4 +1,4 @@
-import { combineReducers } from "redux";
+import { RouterState } from "connected-react-router";
 import { all } from "redux-saga/effects";
 import { accountsReducer, accountsSagas, IAccountsState } from "./accounts";
 import { authReducer, authSagas, IAuthState } from "./auth";
@@ -22,14 +22,11 @@ interface IRootState {
 	readonly profiles?: IProfilesState;
 	readonly transactions?: ITransactionsState;
 
-	readonly router?: { // from connected-react-router
-		readonly location?: {
-			readonly pathname?: string;
-		};
-	};
+	// from connected-react-router
+	readonly router?: RouterState;
 }
 
-const rootReducer = combineReducers({
+const rootReducers = {
 	[KeyCache.STATE_KEY]: KeyCache.reducer,
 	accounts: accountsReducer,
 	auth: authReducer,
@@ -40,7 +37,7 @@ const rootReducer = combineReducers({
 	nav: navReducer,
 	profiles: profilesReducer,
 	transactions: transactionsReducer,
-});
+};
 
 function*rootSaga(): Generator {
 	yield all([
@@ -56,6 +53,6 @@ function*rootSaga(): Generator {
 
 export {
 	IRootState,
-	rootReducer,
+	rootReducers,
 	rootSaga,
 };
