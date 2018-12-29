@@ -39,8 +39,8 @@ fi
 
 echo
 echo "Rebuilding images..."
-yarn dc-build-prod
+docker-compose build
 
 echo
 echo "Starting containers..."
-yarn dc-up-prod
+docker-compose up -d
