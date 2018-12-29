@@ -12,7 +12,6 @@
 		"baseUrl": "./",
 		"allowJs": true,
 		"removeComments": false,
-		"sourceMap": false,
 		"inlineSourceMap": true
 	},
 	"exclude": [

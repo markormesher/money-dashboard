@@ -35,6 +35,3 @@ app.get("*", (req: Request, res: Response) => {
 const port = 3001;
 const server = app.listen(port, () => logger.info(`Client server listening on port ${port}`));
 process.on("SIGTERM", () => server.close(() => process.exit(0)));
-
-// TODO: client React tests have gone missing
-// TODO:
