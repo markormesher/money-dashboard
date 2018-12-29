@@ -1,5 +1,8 @@
 [![CircleCI](https://circleci.com/gh/markormesher/money-dashboard/tree/master.svg?style=shield&logo=circleci)](https://circleci.com/gh/markormesher/money-dashboard/tree/master)
-[![codecov](https://codecov.io/gh/markormesher/money-dashboard/branch/master/graph/badge.svg)](https://codecov.io/gh/markormesher/money-dashboard)
+[![CodeCov](https://codecov.io/gh/markormesher/money-dashboard/branch/master/graph/badge.svg)](https://codecov.io/gh/markormesher/money-dashboard)
+[![Known Vulnerabilities](https://snyk.io/test/github/markormesher/money-dashboard/badge.svg)](https://snyk.io/test/github/markormesher/money-dashboard) 
+[![David DM](https://david-dm.org/markormesher/money-dashboard/status.svg)](https://david-dm.org/markormesher/money-dashboard)
+[![David DM](https://david-dm.org/markormesher/money-dashboard/dev-status.svg)](https://david-dm.org/markormesher/money-dashboard?type=dev)
 
 # Money Dashboard
 
