@@ -1,4 +1,4 @@
-import { expect, should } from "chai";
+import { expect } from "chai";
 import { shallow } from "enzyme";
 import { describe, it } from "mocha";
 import * as Moment from "moment";

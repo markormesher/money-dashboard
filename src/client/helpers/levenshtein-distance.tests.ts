@@ -1,5 +1,4 @@
 import { describe, it } from "mocha";
-import * as React from "react";
 import { levenshteinDistance } from "./levenshtein-distance";
 
 describe(__filename, () => {

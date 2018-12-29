@@ -1,9 +1,13 @@
-import { afterEach, beforeEach, describe, it } from "mocha";
+import { describe, it } from "mocha";
 import { DEFAULT_ACCOUNT } from "../../commons/models/IAccount";
+import { IAccountBalance } from "../../commons/models/IAccountBalance";
 import { DEFAULT_BUDGET } from "../../commons/models/IBudget";
+import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
 import { DEFAULT_CATEGORY } from "../../commons/models/ICategory";
+import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
 import {
 	DashboardActions,
+	dashboardReducer,
 	setAccountBalances,
 	setBudgetBalances,
 	setMemoCategoryBalances,
@@ -86,7 +90,46 @@ describe(__filename, () => {
 		});
 	});
 
-	// TODO: reducer
+	describe("dashboardReducer()", () => {
+
+		it("should initialise its state correctly", () => {
+			dashboardReducer(undefined, { type: "@@INIT" }).should.deep.equal({
+				accountBalances: undefined,
+				budgetBalances: undefined,
+				memoCategoryBalances: undefined,
+			});
+		});
+
+		describe(DashboardActions.SET_ACCOUNT_BALANCES, () => {
+
+			const accountBalances: IAccountBalance[] = [{ account: DEFAULT_ACCOUNT, balance: 0 }];
+
+			it("should set the account balances", () => {
+				dashboardReducer(undefined, setAccountBalances(accountBalances))
+						.accountBalances.should.equal(accountBalances);
+			});
+		});
+
+		describe(DashboardActions.SET_BUDGET_BALANCES, () => {
+
+			const budgetBalances: IBudgetBalance[] = [{ budget: DEFAULT_BUDGET, balance: 0 }];
+
+			it("should set the budget balances", () => {
+				dashboardReducer(undefined, setBudgetBalances(budgetBalances))
+						.budgetBalances.should.equal(budgetBalances);
+			});
+		});
+
+		describe(DashboardActions.SET_MEMO_CATEGORY_BALANCES, () => {
+
+			const categoryBalances: ICategoryBalance[] = [{ category: DEFAULT_CATEGORY, balance: 0 }];
+
+			it("should set the memo category balances", () => {
+				dashboardReducer(undefined, setMemoCategoryBalances(categoryBalances))
+						.memoCategoryBalances.should.equal(categoryBalances);
+			});
+		});
+	});
 
 	// TODO: sagas
 });

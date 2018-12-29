@@ -27,7 +27,7 @@ enum ProfileActions {
 
 	SET_PROFILE_TO_EDIT = "ProfileActions.SET_PROFILE_TO_EDIT",
 	SET_EDITOR_BUSY = "ProfileActions.SET_EDITOR_BUSY",
-	SET_CURRENT_PROFILE = "ProfileActions.SET_CURRENT_PROFILE",
+	SET_ACTIVE_PROFILE = "ProfileActions.SET_ACTIVE_PROFILE",
 	SET_PROFILE_SWITCH_IN_PROGRESS = "ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS",
 }
 
@@ -71,9 +71,9 @@ function setEditorBusy(editorBusy: boolean): PayloadAction {
 	};
 }
 
-function setCurrentProfile(profile: IProfile): PayloadAction {
+function setActiveProfile(profile: IProfile): PayloadAction {
 	return {
-		type: ProfileActions.SET_CURRENT_PROFILE,
+		type: ProfileActions.SET_ACTIVE_PROFILE,
 		payload: { profile },
 	};
 }
@@ -124,7 +124,7 @@ function*setCurrentProfileSaga(): Generator {
 			put(setProfileSwitchInProgress(true));
 			yield call(() => axios.post(`/api/profiles/select/${profile.id}`));
 			yield all([
-				put(setCurrentProfile(profile)),
+				put(setActiveProfile(profile)),
 				put(startLoadCurrentUser()),
 				put(KeyCache.touchKey(ProfileCacheKeys.CURRENT_PROFILE)),
 				put(setProfileSwitchInProgress(false)),
@@ -161,7 +161,7 @@ function profilesReducer(state = initialState, action: PayloadAction): IProfiles
 				editorBusy: action.payload.editorBusy,
 			};
 
-		case ProfileActions.SET_CURRENT_PROFILE:
+		case ProfileActions.SET_ACTIVE_PROFILE:
 			return {
 				...state,
 				activeProfile: action.payload.profile,
@@ -189,6 +189,6 @@ export {
 	startSetCurrentProfile,
 	setProfileToEdit,
 	setEditorBusy,
-	setCurrentProfile,
+	setActiveProfile,
 	setProfileSwitchInProgress,
 };

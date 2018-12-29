@@ -43,7 +43,8 @@
     "lint-ts": "tslint -c ./tslint.json \"./src/**/*.{ts,tsx}\"",
     "lint-ts-fix": "tslint --fix -c ./tslint.json \"./src/**/*.{ts,tsx}\"",
     "// misc": "//",
-    "clean": "rimraf ./build ./coverage ./.nyc_output",
+    "TODO: clean": "rimraf ./build ./coverage ./.nyc_output",
+    "clean": "rimraf ./build",
     "copy-api-config": "copyfiles -u 2 -e \"./**/*.ts\" \"./src/api/config/**\" ./build/api/.",
     "check-cross-refs": "./.scripts/check-cross-project-references.sh"
   },

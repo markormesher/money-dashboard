@@ -1,4 +1,5 @@
-import { afterEach, beforeEach, describe, it } from "mocha";
+import { expect } from "chai";
+import { describe, it } from "mocha";
 import { DEFAULT_TRANSACTION } from "../../commons/models/ITransaction";
 import {
 	setDateMode,
@@ -9,6 +10,7 @@ import {
 	startLoadPayeeList,
 	startSaveTransaction,
 	TransactionActions,
+	transactionsReducer,
 } from "./transactions";
 
 describe(__filename, () => {
@@ -94,7 +96,52 @@ describe(__filename, () => {
 		});
 	});
 
-	// TODO: reducer
+	describe("transactionsReducer()", () => {
+
+		it("should initialise its state correctly", () => {
+			transactionsReducer(undefined, { type: "@@INIT" }).should.deep.equal({
+				dateMode: "transaction",
+				transactionToEdit: undefined,
+				editorBusy: false,
+				payeeList: undefined,
+			});
+		});
+
+		describe(TransactionActions.SET_DATE_MODE, () => {
+
+			it("should set the date mode", () => {
+				transactionsReducer(undefined, setDateMode("effective")).dateMode.should.equal("effective");
+				transactionsReducer(undefined, setDateMode("transaction")).dateMode.should.equal("transaction");
+			});
+		});
+
+		describe(TransactionActions.SET_TRANSACTION_TO_EDIT, () => {
+
+			it("should set the transaction to edit", () => {
+				expect(transactionsReducer(undefined, setTransactionToEdit(null)).transactionToEdit).to.equal(null);
+				expect(transactionsReducer(undefined, setTransactionToEdit(undefined)).transactionToEdit).to.equal(undefined);
+				transactionsReducer(undefined, setTransactionToEdit(DEFAULT_TRANSACTION))
+						.transactionToEdit.should.equal(DEFAULT_TRANSACTION);
+			});
+		});
+
+		describe(TransactionActions.SET_EDITOR_BUSY, () => {
+
+			it("should set the editor-busy flag", () => {
+				transactionsReducer(undefined, setEditorBusy(true)).editorBusy.should.equal(true);
+				transactionsReducer(undefined, setEditorBusy(false)).editorBusy.should.equal(false);
+			});
+		});
+
+		describe(TransactionActions.SET_PAYEE_LIST, () => {
+
+			const payeeList = ["a", "b", "c"];
+
+			it("should set the payee list", () => {
+				transactionsReducer(undefined, setPayeeList(payeeList)).payeeList.should.equal(payeeList);
+			});
+		});
+	});
 
 	// TODO: sagas
 });

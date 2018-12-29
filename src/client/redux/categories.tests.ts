@@ -1,6 +1,8 @@
-import { afterEach, beforeEach, describe, it } from "mocha";
+import { expect } from "chai";
+import { describe, it } from "mocha";
 import { DEFAULT_CATEGORY } from "../../commons/models/ICategory";
 import {
+	categoriesReducer,
 	CategoryActions,
 	setCategoryList,
 	setCategoryToEdit,
@@ -81,7 +83,42 @@ describe(__filename, () => {
 		});
 	});
 
-	// TODO: reducer
+	describe("categoriesReducer()", () => {
+
+		it("should initialise its state correctly", () => {
+			categoriesReducer(undefined, { type: "@@INIT" }).should.deep.equal({
+				categoryToEdit: undefined,
+				editorBusy: false,
+				categoryList: undefined,
+			});
+		});
+
+		describe(CategoryActions.SET_CATEGORY_TO_EDIT, () => {
+
+			it("should set the category to edit", () => {
+				expect(categoriesReducer(undefined, setCategoryToEdit(null)).categoryToEdit).to.equal(null);
+				expect(categoriesReducer(undefined, setCategoryToEdit(undefined)).categoryToEdit).to.equal(undefined);
+				categoriesReducer(undefined, setCategoryToEdit(DEFAULT_CATEGORY)).categoryToEdit.should.equal(DEFAULT_CATEGORY);
+			});
+		});
+
+		describe(CategoryActions.SET_EDITOR_BUSY, () => {
+
+			it("should set the editor-busy flag", () => {
+				categoriesReducer(undefined, setEditorBusy(true)).editorBusy.should.equal(true);
+				categoriesReducer(undefined, setEditorBusy(false)).editorBusy.should.equal(false);
+			});
+		});
+
+		describe(CategoryActions.SET_CATEGORY_LIST, () => {
+
+			const categoryList = [DEFAULT_CATEGORY];
+
+			it("should set the category list", () => {
+				categoriesReducer(undefined, setCategoryList(categoryList)).categoryList.should.equal(categoryList);
+			});
+		});
+	});
 
 	// TODO: sagas
 });

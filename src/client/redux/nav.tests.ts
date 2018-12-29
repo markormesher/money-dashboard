@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, it } from "mocha";
+import { describe, it } from "mocha";
 import { closeNav, NavActions, navReducer, openNav } from "./nav";
 
 describe(__filename, () => {

@@ -1,8 +1,10 @@
-import { afterEach, beforeEach, describe, it } from "mocha";
+import { expect } from "chai";
+import { describe, it } from "mocha";
 import { DEFAULT_PROFILE } from "../../commons/models/IProfile";
 import {
 	ProfileActions,
-	setCurrentProfile,
+	profilesReducer,
+	setActiveProfile,
 	setEditorBusy,
 	setProfileSwitchInProgress,
 	setProfileToEdit,
@@ -73,15 +75,15 @@ describe(__filename, () => {
 		});
 	});
 
-	describe("setCurrentProfile()", () => {
+	describe("setActiveProfile()", () => {
 
 		it("should generate an action with the correct type", () => {
-			setCurrentProfile(DEFAULT_PROFILE).type.should.equal(ProfileActions.SET_CURRENT_PROFILE);
+			setActiveProfile(DEFAULT_PROFILE).type.should.equal(ProfileActions.SET_ACTIVE_PROFILE);
 		});
 
 		it("should add the profile to the payload", () => {
-			setCurrentProfile(DEFAULT_PROFILE).payload.should.have.keys("profile");
-			setCurrentProfile(DEFAULT_PROFILE).payload.profile.should.equal(DEFAULT_PROFILE);
+			setActiveProfile(DEFAULT_PROFILE).payload.should.have.keys("profile");
+			setActiveProfile(DEFAULT_PROFILE).payload.profile.should.equal(DEFAULT_PROFILE);
 		});
 	});
 
@@ -97,7 +99,53 @@ describe(__filename, () => {
 		});
 	});
 
-	// TODO: reducer
+	describe("profilesReducer()", () => {
+
+		it("should initialise its state correctly", () => {
+			profilesReducer(undefined, { type: "@@INIT" }).should.deep.equal({
+				activeProfile: undefined,
+				profileToEdit: undefined,
+				editorBusy: false,
+				profileSwitchInProgress: false,
+			});
+		});
+
+		describe(ProfileActions.SET_PROFILE_TO_EDIT, () => {
+
+			it("should set the profile to edit", () => {
+				expect(profilesReducer(undefined, setProfileToEdit(null)).profileToEdit).to.equal(null);
+				expect(profilesReducer(undefined, setProfileToEdit(undefined)).profileToEdit).to.equal(undefined);
+				profilesReducer(undefined, setProfileToEdit(DEFAULT_PROFILE)).profileToEdit.should.equal(DEFAULT_PROFILE);
+			});
+		});
+
+		describe(ProfileActions.SET_EDITOR_BUSY, () => {
+
+			it("should set the editor-busy flag", () => {
+				profilesReducer(undefined, setEditorBusy(true)).editorBusy.should.equal(true);
+				profilesReducer(undefined, setEditorBusy(false)).editorBusy.should.equal(false);
+			});
+		});
+
+		describe(ProfileActions.SET_ACTIVE_PROFILE, () => {
+
+			it("should set the active profile", () => {
+				expect(profilesReducer(undefined, setActiveProfile(null)).activeProfile).to.equal(null);
+				expect(profilesReducer(undefined, setActiveProfile(undefined)).activeProfile).to.equal(undefined);
+				profilesReducer(undefined, setActiveProfile(DEFAULT_PROFILE)).activeProfile.should.equal(DEFAULT_PROFILE);
+			});
+		});
+
+		describe(ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS, () => {
+
+			it("should set the switch-in-progress flag", () => {
+				profilesReducer(undefined, setProfileSwitchInProgress(true))
+						.profileSwitchInProgress.should.equal(true);
+				profilesReducer(undefined, setProfileSwitchInProgress(false))
+						.profileSwitchInProgress.should.equal(false);
+			});
+		});
+	});
 
 	// TODO: sagas
 });

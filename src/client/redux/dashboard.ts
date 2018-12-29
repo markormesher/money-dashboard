@@ -21,6 +21,7 @@ interface IDashboardState {
 const initialState: IDashboardState = {
 	accountBalances: undefined,
 	budgetBalances: undefined,
+	memoCategoryBalances: undefined,
 };
 
 enum DashboardActions {
