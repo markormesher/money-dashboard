@@ -5513,7 +5513,7 @@ logform@^1.9.1:
 logform@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/logform/-/logform-2.0.0.tgz#3fa8d1562f2db52e798a46827456567c463f8185"
-  integrity sha512-Yk0RJmDy9ps/EPR9dLKC88CHzMyLn/H0XS4hLmqOFRRyrHpfH49RaMAuyldJWGWMizpVJBRXBmZk9j/lQ8ZilUg==
+  integrity sha512-Yk0RJmD9ps/EPR9dLKC88CHzMyLn/H0XS4hLmqOFRRyrHpfH49RaMAuyldJWGWMizpVJBRXBmZk9j/lQ8ZilUg==
   dependencies:
     colors "^1.2.1"
     fast-safe-stringify "^2.0.4"
