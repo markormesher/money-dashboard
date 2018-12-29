@@ -1,4 +1,4 @@
-import { afterEach, describe } from "mocha";
+import { describe } from "mocha";
 import { DEFAULT_PROFILE, mapProfileFromApi } from "./IProfile";
 
 describe(__filename, () => {

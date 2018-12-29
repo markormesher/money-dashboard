@@ -1,5 +1,4 @@
 import { faArrowLeft, faArrowRight } from "@fortawesome/pro-light-svg-icons";
-import { should } from "chai";
 import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";

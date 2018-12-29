@@ -1,7 +1,6 @@
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
-import { combine } from "../../../helpers/style-helpers";
 import { BufferedTextInput } from "../BufferedTextInput/BufferedTextInput";
 import { PagerBtns } from "../PagerBtns/PagerBtns";
 import * as styles from "./DataTable.scss";

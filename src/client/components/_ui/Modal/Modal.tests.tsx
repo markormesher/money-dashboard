@@ -1,6 +1,5 @@
 import { faCheck, faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { should } from "chai";
 import { mount } from "enzyme";
 import { afterEach, describe, it } from "mocha";
 import * as React from "react";

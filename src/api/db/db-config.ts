@@ -1,7 +1,7 @@
 import { join } from "path";
 import { ConnectionOptions } from "typeorm";
 import { isTest } from "../../commons/utils/env";
-import { getSecret} from "../config/config-loader";
+import { getSecret } from "../config/config-loader";
 import { PostgresNamingStrategy } from "./PostgresNamingStrategy";
 
 const typeormConf: ConnectionOptions = {

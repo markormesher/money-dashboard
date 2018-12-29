@@ -1,4 +1,4 @@
-import { afterEach, describe } from "mocha";
+import { describe } from "mocha";
 import { DEFAULT_PROFILE } from "./IProfile";
 import { IUser, mapUserFromApi } from "./IUser";
 

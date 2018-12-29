@@ -1,4 +1,3 @@
-import { should } from "chai";
 import { HTMLAttributes, mount, ReactWrapper } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";

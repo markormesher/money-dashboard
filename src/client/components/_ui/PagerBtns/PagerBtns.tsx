@@ -56,7 +56,7 @@ class PagerBtns extends Component<IPagerBtnsProps> {
 	}
 
 	private handlePrevClick(): void {
-		const { currentPage, onPageChange} = this.props;
+		const { currentPage, onPageChange } = this.props;
 		if (currentPage > 0 && onPageChange) {
 			onPageChange(currentPage - 1);
 		}

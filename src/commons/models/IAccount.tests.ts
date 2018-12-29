@@ -1,4 +1,4 @@
-import { afterEach, describe } from "mocha";
+import { describe } from "mocha";
 import { DEFAULT_ACCOUNT, mapAccountFromApi } from "./IAccount";
 
 describe(__filename, () => {

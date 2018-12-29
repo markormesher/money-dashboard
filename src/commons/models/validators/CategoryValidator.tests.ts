@@ -1,4 +1,4 @@
-import { afterEach, describe } from "mocha";
+import { describe } from "mocha";
 import { v4 } from "uuid";
 import { ICategory } from "../ICategory";
 import { DEFAULT_PROFILE } from "../IProfile";

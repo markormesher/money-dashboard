@@ -1,6 +1,5 @@
 import { faCaretDown, faCaretUp } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { should } from "chai";
 import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";

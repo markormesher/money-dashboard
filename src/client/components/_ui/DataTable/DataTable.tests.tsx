@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";

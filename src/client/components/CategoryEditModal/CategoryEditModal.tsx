@@ -3,10 +3,7 @@ import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { DEFAULT_CATEGORY, ICategory } from "../../../commons/models/ICategory";
-import {
-	ICategoryValidationResult,
-	validateCategory,
-} from "../../../commons/models/validators/CategoryValidator";
+import { ICategoryValidationResult, validateCategory } from "../../../commons/models/validators/CategoryValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { setCategoryToEdit, startSaveCategory } from "../../redux/categories";
 import { IRootState } from "../../redux/root";

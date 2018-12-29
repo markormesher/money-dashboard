@@ -17,6 +17,7 @@ const compiler = Webpack(webpackConfig);
 if (isDev()) {
 	app.use(webpackDevMiddleware(compiler, {
 		publicPath: webpackConfig.output.publicPath,
+		logLevel: "warn",
 	}));
 	app.use(webpackHotMiddleware(compiler));
 } else {

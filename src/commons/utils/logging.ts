@@ -3,7 +3,18 @@ import * as Winston from "winston";
 import { isDev, isTest } from "./env";
 
 const consoleLogFormat = format.combine(
-		format.colorize(),
+		format.colorize({
+			colors: {
+				error: "red",
+				warning: "yellow",
+				warn: "yellow",
+				info: "green",
+				verbose: "cyan",
+				debug: "magenta",
+				silly: "white",
+			},
+		}),
+		format.padLevels(),
 		format.timestamp(),
 		format.simple(),
 );
@@ -17,14 +28,14 @@ const logger = Winston.createLogger({
 	format: fileLogFormat,
 	transports: [
 		new Winston.transports.File({ filename: "logs/error.log", level: "error" }),
-		new Winston.transports.File({ filename: "logs/all.log", level: "info" }),
+		new Winston.transports.File({ filename: "logs/all.log", level: "silly" }),
 	],
 });
 
 if (isDev() || isTest()) {
 	logger.add(new Winston.transports.Console({
 		format: consoleLogFormat,
-		level: "info",
+		level: "silly",
 	}));
 }
 
