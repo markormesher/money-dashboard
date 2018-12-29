@@ -1,4 +1,4 @@
-import { IDataTableResponse } from "../../../../../api/helpers/datatable-helper";
+import { IDataTableResponse } from "../../../../../commons/models/IDataTableResponse";
 import { IColumnSortEntry } from "../DataTable";
 
 interface IDataTableDataProvider<Model> {

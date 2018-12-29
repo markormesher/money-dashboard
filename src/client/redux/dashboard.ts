@@ -1,9 +1,9 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IAccountBalance } from "../../api/models/IAccountBalance";
-import { mapBudgetFromApi } from "../../api/models/IBudget";
-import { IBudgetBalance } from "../../api/models/IBudgetBalance";
-import { ICategoryBalance } from "../../api/models/ICategoryBalance";
+import { IAccountBalance } from "../../commons/models/IAccountBalance";
+import { mapBudgetFromApi } from "../../commons/models/IBudget";
+import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
+import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
 import { AccountCacheKeys } from "./accounts";
 import { BudgetCacheKeys } from "./budgets";
 import { setError } from "./global";

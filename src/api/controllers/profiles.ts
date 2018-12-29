@@ -1,10 +1,10 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
+import { DbProfile } from "../db/models/DbProfile";
+import { DbUser } from "../db/models/DbUser";
 import { getDataForTable } from "../helpers/datatable-helper";
 import { deleteProfile, saveProfile, setActiveProfileForUser } from "../managers/profile-manager";
 import { requireUser } from "../middleware/auth-middleware";
-import { DbProfile } from "../models/db/DbProfile";
-import { DbUser } from "../models/db/DbUser";
 
 const router = Express.Router();
 

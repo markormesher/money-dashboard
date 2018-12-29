@@ -4,7 +4,7 @@ import {
 	DateModeOption,
 	getNextTransactionForContinuousCreation,
 	ITransaction,
-} from "../../api/models/ITransaction";
+} from "../../commons/models/ITransaction";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";

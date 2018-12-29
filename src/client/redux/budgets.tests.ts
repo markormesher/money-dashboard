@@ -1,6 +1,6 @@
 import { describe, it } from "mocha";
 import * as Moment from "moment";
-import { DEFAULT_BUDGET } from "../../api/models/IBudget";
+import { DEFAULT_BUDGET } from "../../commons/models/IBudget";
 import {
 	BudgetActions,
 	setBudgetsToClone,

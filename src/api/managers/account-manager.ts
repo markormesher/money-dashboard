@@ -1,8 +1,8 @@
+import { IAccountBalance } from "../../commons/models/IAccountBalance";
+import { DbAccount } from "../db/models/DbAccount";
+import { DbTransaction } from "../db/models/DbTransaction";
+import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
-import { DbAccount } from "../models/db/DbAccount";
-import { DbTransaction } from "../models/db/DbTransaction";
-import { DbUser } from "../models/db/DbUser";
-import { IAccountBalance } from "../models/IAccountBalance";
 
 function getAccount(user: DbUser, accountId: string): Promise<DbAccount> {
 	return DbAccount

@@ -1,6 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
+import { IUser } from "../../commons/models/IUser";
 import { StatusError } from "../helpers/StatusError";
-import { IUser } from "../models/IUser";
 
 const loadUser: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
 	const user = req.user as IUser;

@@ -12,7 +12,7 @@
 		"baseUrl": "./",
 		"allowJs": true,
 		"removeComments": false,
-		"inlineSourceMap": true
+		"sourceMap": true
 	},
 	"exclude": [
 		"./node_modules"

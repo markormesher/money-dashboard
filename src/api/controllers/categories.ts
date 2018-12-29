@@ -1,11 +1,11 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
+import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
+import { DbCategory } from "../db/models/DbCategory";
+import { DbUser } from "../db/models/DbUser";
 import { getDataForTable } from "../helpers/datatable-helper";
 import { deleteCategory, getAllCategories, getMemoCategoryBalances, saveCategory } from "../managers/category-manager";
 import { requireUser } from "../middleware/auth-middleware";
-import { DbCategory } from "../models/db/DbCategory";
-import { DbUser } from "../models/db/DbUser";
-import { ICategoryBalance } from "../models/ICategoryBalance";
 
 const router = Express.Router();
 

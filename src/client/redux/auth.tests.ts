@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { afterEach, beforeEach, describe, it } from "mocha";
-import { DEFAULT_PROFILE } from "../../api/models/IProfile";
-import { IUser } from "../../api/models/IUser";
+import { DEFAULT_PROFILE } from "../../commons/models/IProfile";
+import { IUser } from "../../commons/models/IUser";
 import {
 	AuthActions,
 	authReducer,

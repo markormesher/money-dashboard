@@ -1,6 +1,6 @@
 import { format } from "logform";
 import * as Winston from "winston";
-import { isDev, isTest } from "./config-loader";
+import { isDev, isTest } from "./env";
 
 const consoleLogFormat = format.combine(
 		format.colorize(),

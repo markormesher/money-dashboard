@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Moment } from "moment";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IBudget } from "../../api/models/IBudget";
+import { IBudget } from "../../commons/models/IBudget";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";

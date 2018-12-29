@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ICategory } from "../ICategory";
+import { ICategory } from "../../../commons/models/ICategory";
 import { DbBudget } from "./DbBudget";
 import { DbProfile } from "./DbProfile";
 import { DbTransaction } from "./DbTransaction";

@@ -1,6 +1,7 @@
 import { join } from "path";
 import { ConnectionOptions } from "typeorm";
-import { getSecret, isTest } from "../../commons/config-loader";
+import { isTest } from "../../commons/utils/env";
+import { getSecret} from "../config/config-loader";
 import { PostgresNamingStrategy } from "./PostgresNamingStrategy";
 
 const typeormConf: ConnectionOptions = {
@@ -29,7 +30,7 @@ const typeormConf: ConnectionOptions = {
 		],
 	},
 	entities: [
-		join(__dirname, "../models/db/*.js"),
+		join(__dirname, "models", "*.js"),
 	],
 };
 

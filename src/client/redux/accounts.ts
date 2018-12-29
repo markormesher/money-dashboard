@@ -1,6 +1,6 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IAccount, mapAccountFromApi } from "../../api/models/IAccount";
+import { IAccount, mapAccountFromApi } from "../../commons/models/IAccount";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";

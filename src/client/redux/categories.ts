@@ -1,6 +1,6 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { ICategory, mapCategoryFromApi } from "../../api/models/ICategory";
+import { ICategory, mapCategoryFromApi } from "../../commons/models/ICategory";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";

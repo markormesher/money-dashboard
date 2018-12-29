@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, it } from "mocha";
-import { DEFAULT_CATEGORY } from "../../api/models/ICategory";
+import { DEFAULT_CATEGORY } from "../../commons/models/ICategory";
 import {
 	CategoryActions,
 	setCategoryList,

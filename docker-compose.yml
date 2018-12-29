@@ -111,12 +111,12 @@ volumes:
 
 secrets:
   google.client.id:
-    file: ./src/commons/config/secrets/google.client.id
+    file: ./src/api/config/secrets/google.client.id
   google.client.secret:
-    file: ./src/commons/config/secrets/google.client.secret
+    file: ./src/api/config/secrets/google.client.secret
   postgres.password:
-    file: ./src/commons/config/secrets/postgres.password
+    file: ./src/api/config/secrets/postgres.password
   postgres-rep.password:
-    file: ./src/commons/config/secrets/postgres-rep.password
+    file: ./src/api/config/secrets/postgres-rep.password
   session.secret:
-    file: ./src/commons/config/secrets/session.secret
+    file: ./src/api/config/secrets/session.secret

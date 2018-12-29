@@ -5,20 +5,18 @@ import { resolve } from "path";
 import * as Webpack from "webpack";
 import * as webpackDevMiddleware from "webpack-dev-middleware";
 import * as webpackHotMiddleware from "webpack-hot-middleware";
-import { getDevWebpackConfig, isDev } from "../commons/config-loader";
-import { logger } from "../commons/logging";
+import { isDev } from "../commons/utils/env";
+import { logger } from "../commons/utils/logging";
 
 const app = Express();
 
-const webpackDevConfig = getDevWebpackConfig();
-const compiler = Webpack(webpackDevConfig);
+// tslint:disable-next-line:no-var-requires
+const webpackConfig: Webpack.Configuration = require(resolve(__dirname, "..", "..", "webpack.config.js"));
+const compiler = Webpack(webpackConfig);
 
 if (isDev()) {
 	app.use(webpackDevMiddleware(compiler, {
-		publicPath: webpackDevConfig.output.publicPath,
-		stats: {
-			colors: true,
-		},
+		publicPath: webpackConfig.output.publicPath,
 	}));
 	app.use(webpackHotMiddleware(compiler));
 } else {

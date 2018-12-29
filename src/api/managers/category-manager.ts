@@ -1,8 +1,8 @@
+import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
+import { DbCategory } from "../db/models/DbCategory";
+import { DbTransaction } from "../db/models/DbTransaction";
+import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
-import { DbCategory } from "../models/db/DbCategory";
-import { DbTransaction } from "../models/db/DbTransaction";
-import { DbUser } from "../models/db/DbUser";
-import { ICategoryBalance } from "../models/ICategoryBalance";
 
 function getCategory(user: DbUser, categoryId?: string): Promise<DbCategory> {
 	return DbCategory

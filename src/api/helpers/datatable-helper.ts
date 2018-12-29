@@ -1,12 +1,7 @@
 import { Request } from "express";
 import { SelectQueryBuilder } from "typeorm";
-import { BaseModel } from "../models/db/BaseModel";
-
-interface IDataTableResponse<T> {
-	readonly filteredRowCount: number;
-	readonly totalRowCount: number;
-	readonly data: T[];
-}
+import { IDataTableResponse } from "../../commons/models/IDataTableResponse";
+import { BaseModel } from "../db/models/BaseModel";
 
 function getDataForTable<T extends BaseModel>(
 		model: typeof BaseModel,
@@ -48,5 +43,4 @@ function getDataForTable<T extends BaseModel>(
 
 export {
 	getDataForTable,
-	IDataTableResponse,
 };

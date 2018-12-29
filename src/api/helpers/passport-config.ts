@@ -1,8 +1,8 @@
 import { PassportStatic as Passport } from "passport";
 import { Strategy as GoogleStrategy, StrategyOptionsWithRequest } from "passport-google-oauth2";
-import { getConstants, getSecret } from "../../commons/config-loader";
+import { IUser } from "../../commons/models/IUser";
+import { getConstants, getSecret } from "../config/config-loader";
 import { getOrRegisterUserWithGoogleProfile, getUser } from "../managers/user-manager";
-import { IUser } from "../models/IUser";
 
 function init(passport: Passport): void {
 

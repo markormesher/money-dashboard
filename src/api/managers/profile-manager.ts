@@ -1,6 +1,6 @@
+import { DbProfile } from "../db/models/DbProfile";
+import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
-import { DbProfile } from "../models/db/DbProfile";
-import { DbUser } from "../models/db/DbUser";
 import { getUser } from "./user-manager";
 
 function getProfile(user: DbUser, profileId: string): Promise<DbProfile> {

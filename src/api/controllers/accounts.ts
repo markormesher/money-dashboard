@@ -1,6 +1,9 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Brackets } from "typeorm";
+import { IAccountBalance } from "../../commons/models/IAccountBalance";
+import { DbAccount } from "../db/models/DbAccount";
+import { DbUser } from "../db/models/DbUser";
 import { getDataForTable } from "../helpers/datatable-helper";
 import {
 	deleteAccount,
@@ -10,9 +13,6 @@ import {
 	setAccountActive,
 } from "../managers/account-manager";
 import { requireUser } from "../middleware/auth-middleware";
-import { DbAccount } from "../models/db/DbAccount";
-import { DbUser } from "../models/db/DbUser";
-import { IAccountBalance } from "../models/IAccountBalance";
 
 const router = Express.Router();
 

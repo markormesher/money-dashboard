@@ -1,6 +1,6 @@
+import { DbTransaction } from "../db/models/DbTransaction";
+import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
-import { DbTransaction } from "../models/db/DbTransaction";
-import { DbUser } from "../models/db/DbUser";
 
 function getTransaction(user: DbUser, transactionId: string): Promise<DbTransaction> {
 	return DbTransaction

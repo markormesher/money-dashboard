@@ -3,7 +3,7 @@ import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
 import { ReactElement } from "react";
-import { IDataTableResponse } from "../../../../api/helpers/datatable-helper";
+import { IDataTableResponse } from "../../../../commons/models/IDataTableResponse";
 import { testGlobals } from "../../../../test-utils/global.tests";
 import { BufferedTextInput } from "../BufferedTextInput/BufferedTextInput";
 import { PagerBtns } from "../PagerBtns/PagerBtns";

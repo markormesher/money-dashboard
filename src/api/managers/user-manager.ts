@@ -1,5 +1,5 @@
+import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
-import { DbUser } from "../models/db/DbUser";
 import { createProfileAndAddToUser } from "./profile-manager";
 
 class GoogleProfile {

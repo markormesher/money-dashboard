@@ -1,7 +1,7 @@
 import * as Moment from "moment";
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { MomentDateTransformer } from "../helpers/MomentDateTransformer";
-import { ITransaction } from "../ITransaction";
+import { ITransaction } from "../../../commons/models/ITransaction";
+import { MomentDateTransformer } from "../MomentDateTransformer";
 import { DbAccount } from "./DbAccount";
 import { DbCategory } from "./DbCategory";
 import { DbProfile } from "./DbProfile";

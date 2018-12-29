@@ -1,6 +1,6 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IProfile } from "../../api/models/IProfile";
+import { IProfile } from "../../commons/models/IProfile";
 import { startLoadCurrentUser } from "./auth";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";

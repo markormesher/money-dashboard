@@ -4,6 +4,6 @@
 	},
 	"include": [
 		"./src/api/**/*.tests.ts",
-		"./src/commons/**/*.tests.ts",
+		"./src/commons/**/*.tests.ts"
 	]
 }

@@ -51,6 +51,9 @@ const tsLoader = {
 	options: {
 		transpileOnly: true,
 		configFile: IS_TEST ? "tsconfig.client-test.json" : "tsconfig.client.json",
+		compilerOptions: {
+			module: "esnext",
+		},
 	},
 };
 
@@ -84,9 +87,7 @@ const terserMinimiser = new TerserWebpackPlugin({
 	},
 });
 
-const smp = new SpeedMeasurePlugin();
-
-module.exports = smp.wrap({
+const config = {
 	mode: IS_PROD ? "production" : "development",
 	cache: false,
 	target: "web",
@@ -240,4 +241,10 @@ module.exports = smp.wrap({
 		hints: IS_PROD ? "warning" : false,
 	},
 	stats: IS_TEST ? "errors-only" : "minimal",
-});
+};
+
+if (IS_DEV || IS_PROD) {
+	module.exports = new SpeedMeasurePlugin().wrap(config);
+} else {
+	module.exports = config;
+}

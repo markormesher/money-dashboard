@@ -1,10 +1,10 @@
 import * as Moment from "moment";
+import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
+import { DbBudget } from "../db/models/DbBudget";
+import { DbTransaction } from "../db/models/DbTransaction";
+import { DbUser } from "../db/models/DbUser";
+import { MomentDateTransformer } from "../db/MomentDateTransformer";
 import { cleanUuid } from "../db/utils";
-import { DbBudget } from "../models/db/DbBudget";
-import { DbTransaction } from "../models/db/DbTransaction";
-import { DbUser } from "../models/db/DbUser";
-import { MomentDateTransformer } from "../models/helpers/MomentDateTransformer";
-import { IBudgetBalance } from "../models/IBudgetBalance";
 
 function getBudget(
 		user: DbUser,

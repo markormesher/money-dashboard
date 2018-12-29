@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import * as webpack from "webpack";
+import { isProd, runningInDocker } from "../../commons/utils/env";
 
 export class Constants {
 	public env: string;
@@ -10,24 +10,7 @@ export class Constants {
 let loadedConstants: Constants;
 let loadedSecrets: { readonly [key: string]: string } = {};
 
-const projectDir = resolve(__dirname, "..", "..");
-const configDir = resolve(__dirname, "config");
-
-function isProd(): boolean {
-	return process.env.NODE_ENV.toLowerCase() === "production";
-}
-
-function isDev(): boolean {
-	return process.env.NODE_ENV.toLowerCase() === "development";
-}
-
-function isTest(): boolean {
-	return process.env.NODE_ENV.toLowerCase() === "test";
-}
-
-function runningInDocker(): boolean {
-	return process.env.RUNNING_IN === "docker";
-}
+const configDir = resolve(__dirname);
 
 function clearConstantsCache(): void {
 	loadedConstants = undefined;
@@ -67,18 +50,9 @@ function getSecret(key: string): string {
 	return loadedSecrets[key];
 }
 
-function getDevWebpackConfig(): webpack.Configuration {
-	return require(`${projectDir}/webpack.config.js`);
-}
-
 export {
-	isProd,
-	isDev,
-	isTest,
-	runningInDocker,
 	clearConstantsCache,
 	getConstants,
 	clearSecretsCache,
 	getSecret,
-	getDevWebpackConfig,
 };

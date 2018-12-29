@@ -2,7 +2,7 @@ import { faPiggyBank } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component, ReactNode } from "react";
-import { IAccountBalance } from "../../../api/models/IAccountBalance";
+import { IAccountBalance } from "../../../commons/models/IAccountBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled } from "../../helpers/formatters";

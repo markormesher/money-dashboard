@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, it } from "mocha";
-import { DEFAULT_ACCOUNT } from "../../api/models/IAccount";
+import { DEFAULT_ACCOUNT } from "../../commons/models/IAccount";
 import {
 	AccountActions,
 	addAccountEditInProgress,
