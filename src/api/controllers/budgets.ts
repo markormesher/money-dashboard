@@ -44,7 +44,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 		filteredQuery = filteredQuery.andWhere(
 				"start_date <= :now AND end_date >= :now",
 				{
-					now: MomentDateTransformer.toDbFormat(Moment()),
+					now: MomentDateTransformer.toDbFormat(Moment().startOf("day")),
 				},
 		);
 	}

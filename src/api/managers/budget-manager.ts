@@ -51,7 +51,7 @@ function getAllBudgets(user: DbUser, currentOnly: boolean): Promise<DbBudget[]> 
 		query = query
 				.andWhere("start_date <= :now AND end_date >= :now")
 				.setParameters({
-					now: MomentDateTransformer.toDbFormat(Moment()),
+					now: MomentDateTransformer.toDbFormat(Moment().startOf("day")),
 				});
 	}
 
