@@ -5,8 +5,8 @@ describe(__filename, () => {
 
 	describe("mapCategoryFromApi()", () => {
 
-		it("should be a no-op for now", () => {
-			mapCategoryFromApi(DEFAULT_CATEGORY).should.equal(DEFAULT_CATEGORY);
+		it("should not mutate the input", () => {
+			mapCategoryFromApi(DEFAULT_CATEGORY).should.not.equal(DEFAULT_CATEGORY);
 		});
 	});
 });

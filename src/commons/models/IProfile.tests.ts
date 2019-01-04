@@ -5,8 +5,8 @@ describe(__filename, () => {
 
 	describe("mapProfileFromApi()", () => {
 
-		it("should be a no-op for now", () => {
-			mapProfileFromApi(DEFAULT_PROFILE).should.equal(DEFAULT_PROFILE);
+		it("should not mutate the input", () => {
+			mapProfileFromApi(DEFAULT_PROFILE).should.not.equal(DEFAULT_PROFILE);
 		});
 	});
 });

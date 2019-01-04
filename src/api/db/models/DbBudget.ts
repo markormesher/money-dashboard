@@ -35,6 +35,9 @@ class DbBudget extends BaseModel implements IBudget {
 	})
 	public endDate: Moment.Moment;
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 	@ManyToOne(
 			/* istanbul ignore next */
 			() => DbCategory,
@@ -50,9 +53,6 @@ class DbBudget extends BaseModel implements IBudget {
 			(p) => p.budgets,
 	)
 	public profile: DbProfile;
-
-	@Column({ default: false })
-	public deleted: boolean;
 
 	public clone(): DbBudget {
 		const output = new DbBudget();

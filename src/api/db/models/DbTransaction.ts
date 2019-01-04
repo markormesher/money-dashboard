@@ -24,9 +24,7 @@ class DbTransaction extends BaseEntity implements ITransaction {
 	})
 	public effectiveDate: Moment.Moment;
 
-	@Column({
-		type: "float",
-	})
+	@Column({ type: "float" })
 	public amount: number;
 
 	@Column()
@@ -35,12 +33,14 @@ class DbTransaction extends BaseEntity implements ITransaction {
 	@Column({ nullable: true })
 	public note: string;
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 	@ManyToOne(
 			/* istanbul ignore next */
 			() => DbAccount,
 			/* istanbul ignore next */
 			(a) => a.transactions,
-			{ eager: true },
 	)
 	public account: DbAccount;
 
@@ -49,7 +49,6 @@ class DbTransaction extends BaseEntity implements ITransaction {
 			() => DbCategory,
 			/* istanbul ignore next */
 			(c) => c.budgets,
-			{ eager: true },
 	)
 	public category: DbCategory;
 
@@ -58,12 +57,8 @@ class DbTransaction extends BaseEntity implements ITransaction {
 			() => DbProfile,
 			/* istanbul ignore next */
 			(p) => p.transactions,
-			{ eager: true },
 	)
 	public profile: DbProfile;
-
-	@Column({ default: false })
-	public deleted: boolean;
 
 }
 

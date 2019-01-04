@@ -15,6 +15,10 @@ describe(__filename, () => {
 
 	describe("mapTransactionFromApi()", () => {
 
+		it("should not mutate the input", () => {
+			mapTransactionFromApi(DEFAULT_TRANSACTION).should.not.equal(DEFAULT_TRANSACTION);
+		});
+
 		it("should map string dates to Moment dates", () => {
 			// clone the default transaction and then change the dates without making typescript angry
 			const transaction = { ...DEFAULT_TRANSACTION };

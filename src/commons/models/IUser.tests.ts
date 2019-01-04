@@ -6,7 +6,7 @@ describe(__filename, () => {
 
 	describe("mapUserFromApi()", () => {
 
-		it("should be a no-op", () => {
+		it("should not mutate the input", () => {
 			const user: IUser = {
 				id: "id",
 				googleId: "google id",
@@ -16,7 +16,7 @@ describe(__filename, () => {
 				activeProfile: DEFAULT_PROFILE,
 				deleted: false,
 			};
-			mapUserFromApi(user).should.equal(user);
+			mapUserFromApi(user).should.not.equal(user);
 		});
 	});
 });

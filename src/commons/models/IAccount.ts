@@ -1,14 +1,15 @@
-import { IProfile } from "./IProfile";
-import { ITransaction } from "./ITransaction";
+import { IProfile, mapProfileFromApi } from "./IProfile";
+import { ITransaction, mapTransactionFromApi } from "./ITransaction";
 
 interface IAccount {
 	readonly id: string;
 	readonly name: string;
 	readonly type: string;
 	readonly active: boolean;
-	readonly transactions: ITransaction[];
-	readonly profile: IProfile;
 	readonly deleted: boolean;
+
+	readonly profile: IProfile;
+	readonly transactions: ITransaction[];
 }
 
 const DEFAULT_ACCOUNT: IAccount = {
@@ -16,14 +17,18 @@ const DEFAULT_ACCOUNT: IAccount = {
 	name: "",
 	type: "current",
 	active: true,
-	transactions: undefined,
-	profile: undefined,
 	deleted: false,
+
+	profile: undefined,
+	transactions: undefined,
 };
 
 function mapAccountFromApi(account: IAccount): IAccount {
-	// no-op, for now
-	return account;
+	return {
+		...account,
+		profile: account.profile ? mapProfileFromApi(account.profile) : undefined,
+		transactions: account.transactions ? account.transactions.map(mapTransactionFromApi) : undefined,
+	};
 }
 
 export {

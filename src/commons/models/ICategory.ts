@@ -1,6 +1,6 @@
-import { IBudget } from "./IBudget";
-import { IProfile } from "./IProfile";
-import { ITransaction } from "./ITransaction";
+import { IBudget, mapBudgetFromApi } from "./IBudget";
+import { IProfile, mapProfileFromApi } from "./IProfile";
+import { ITransaction, mapTransactionFromApi } from "./ITransaction";
 
 interface ICategory {
 	readonly id: string;
@@ -9,10 +9,11 @@ interface ICategory {
 	readonly isIncomeCategory: boolean;
 	readonly isExpenseCategory: boolean;
 	readonly isAssetGrowthCategory: boolean;
+	readonly deleted: boolean;
+
 	readonly budgets: IBudget[];
 	readonly transactions: ITransaction[];
 	readonly profile: IProfile;
-	readonly deleted: boolean;
 }
 
 const DEFAULT_CATEGORY: ICategory = {
@@ -22,15 +23,21 @@ const DEFAULT_CATEGORY: ICategory = {
 	isIncomeCategory: false,
 	isExpenseCategory: false,
 	isAssetGrowthCategory: false,
+	deleted: false,
+
 	budgets: undefined,
 	transactions: undefined,
 	profile: undefined,
-	deleted: false,
 };
 
 function mapCategoryFromApi(category: ICategory): ICategory {
-	// no-op, for now
-	return category;
+	return {
+		...category,
+
+		budgets: category.budgets ? category.budgets.map(mapBudgetFromApi) : undefined,
+		transactions: category.transactions ? category.transactions.map(mapTransactionFromApi) : undefined,
+		profile: category.profile ? mapProfileFromApi(category.profile) : undefined,
+	};
 }
 
 export {

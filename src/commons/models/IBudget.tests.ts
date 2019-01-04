@@ -6,6 +6,10 @@ describe(__filename, () => {
 
 	describe("mapBudgetFromApi()", () => {
 
+		it("should not mutate the input", () => {
+			mapBudgetFromApi(DEFAULT_BUDGET).should.not.equal(DEFAULT_BUDGET);
+		});
+
 		it("should map string dates to Moment dates", () => {
 			// clone the default budget and then change the dates without making typescript angry
 			const budget = { ...DEFAULT_BUDGET };

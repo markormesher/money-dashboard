@@ -17,12 +17,15 @@ class DbUser extends BaseEntity implements IUser {
 	@Column()
 	public image: string;
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 	@ManyToMany(
 			/* istanbul ignore next */
 			() => DbProfile,
 			/* istanbul ignore next */
 			(p) => p.users,
-			{ eager: true, cascade: true },
+			{ cascade: true },
 	)
 	@JoinTable()
 	public profiles: DbProfile[];
@@ -32,12 +35,8 @@ class DbUser extends BaseEntity implements IUser {
 			() => DbProfile,
 			/* istanbul ignore next */
 			(p) => p.usersWithProfileActivated,
-			{ eager: true },
 	)
 	public activeProfile: DbProfile;
-
-	@Column({ default: false })
-	public deleted: boolean;
 
 }
 

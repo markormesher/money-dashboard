@@ -25,6 +25,9 @@ class DbCategory extends BaseEntity implements ICategory {
 	@Column({ default: false })
 	public isAssetGrowthCategory: boolean;
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 	@OneToMany(
 			/* istanbul ignore next */
 			() => DbBudget,
@@ -46,12 +49,8 @@ class DbCategory extends BaseEntity implements ICategory {
 			() => DbProfile,
 			/* istanbul ignore next */
 			(p) => p.categories,
-			{ eager: true },
 	)
 	public profile: DbProfile;
-
-	@Column({ default: false })
-	public deleted: boolean;
 
 }
 

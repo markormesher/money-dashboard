@@ -1,6 +1,6 @@
 import * as Moment from "moment";
-import { ICategory } from "./ICategory";
-import { IProfile } from "./IProfile";
+import { ICategory, mapCategoryFromApi } from "./ICategory";
+import { IProfile, mapProfileFromApi } from "./IProfile";
 
 interface IBudget {
 	readonly id: string;
@@ -8,9 +8,10 @@ interface IBudget {
 	readonly amount: number;
 	readonly startDate: Moment.Moment;
 	readonly endDate: Moment.Moment;
+	readonly deleted: boolean;
+
 	readonly category: ICategory;
 	readonly profile: IProfile;
-	readonly deleted: boolean;
 }
 
 const DEFAULT_BUDGET: IBudget = {
@@ -19,17 +20,20 @@ const DEFAULT_BUDGET: IBudget = {
 	type: "budget",
 	startDate: Moment().startOf("month"),
 	endDate: Moment().endOf("month"),
+	deleted: false,
+
 	category: undefined,
 	profile: undefined,
-	deleted: false,
 };
 
 function mapBudgetFromApi(budget: IBudget): IBudget {
-	// make sure dates are definitely Moment types
 	return {
 		...budget,
 		startDate: Moment(budget.startDate),
 		endDate: Moment(budget.endDate),
+
+		category: budget.category ? mapCategoryFromApi(budget.category) : undefined,
+		profile: budget.profile ? mapProfileFromApi(budget.profile) : undefined,
 	};
 }
 

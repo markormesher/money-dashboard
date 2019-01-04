@@ -5,8 +5,8 @@ describe(__filename, () => {
 
 	describe("mapAccountFromApi()", () => {
 
-		it("should be a no-op for now", () => {
-			mapAccountFromApi(DEFAULT_ACCOUNT).should.equal(DEFAULT_ACCOUNT);
+		it("should not mutate the input", () => {
+			mapAccountFromApi(DEFAULT_ACCOUNT).should.not.equal(DEFAULT_ACCOUNT);
 		});
 	});
 });

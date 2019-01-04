@@ -15,6 +15,9 @@ class DbProfile extends BaseEntity implements IProfile {
 	@Column()
 	public name: string;
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 	@OneToMany(
 			/* istanbul ignore next */
 			() => DbAccount,
@@ -62,9 +65,6 @@ class DbProfile extends BaseEntity implements IProfile {
 			(b) => b.activeProfile,
 	)
 	public usersWithProfileActivated: DbUser[];
-
-	@Column({ default: false })
-	public deleted: boolean;
 
 }
 

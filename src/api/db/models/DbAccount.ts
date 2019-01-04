@@ -19,6 +19,9 @@ class DbAccount extends BaseModel implements IAccount {
 	@Column({ default: true })
 	public active: boolean;
 
+	@Column({ default: false })
+	public deleted: boolean;
+
 	@OneToMany(
 			/* istanbul ignore next */
 			() => DbTransaction,
@@ -32,12 +35,8 @@ class DbAccount extends BaseModel implements IAccount {
 			() => DbProfile,
 			/* istanbul ignore next */
 			(p) => p.accounts,
-			{ eager: true },
 	)
 	public profile: DbProfile;
-
-	@Column({ default: false })
-	public deleted: boolean;
 
 }
 

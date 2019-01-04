@@ -1,7 +1,7 @@
 import * as Moment from "moment";
-import { IAccount } from "./IAccount";
-import { ICategory } from "./ICategory";
-import { IProfile } from "./IProfile";
+import { IAccount, mapAccountFromApi } from "./IAccount";
+import { ICategory, mapCategoryFromApi } from "./ICategory";
+import { IProfile, mapProfileFromApi } from "./IProfile";
 
 type DateModeOption = "effective" | "transaction";
 
@@ -12,10 +12,11 @@ interface ITransaction {
 	readonly amount: number;
 	readonly payee: string;
 	readonly note: string;
+	readonly deleted: boolean;
+
 	readonly account: IAccount;
 	readonly category: ICategory;
 	readonly profile: IProfile;
-	readonly deleted: boolean;
 }
 
 const DEFAULT_TRANSACTION: ITransaction = {
@@ -25,10 +26,11 @@ const DEFAULT_TRANSACTION: ITransaction = {
 	amount: 0,
 	payee: "",
 	note: undefined,
+	deleted: false,
+
 	account: undefined,
 	category: undefined,
 	profile: undefined,
-	deleted: false,
 };
 
 function mapTransactionFromApi(transaction: ITransaction): ITransaction {
@@ -37,6 +39,10 @@ function mapTransactionFromApi(transaction: ITransaction): ITransaction {
 		...transaction,
 		transactionDate: Moment(transaction.transactionDate),
 		effectiveDate: Moment(transaction.effectiveDate),
+
+		account: transaction.account ? mapAccountFromApi(transaction.account) : undefined,
+		category: transaction.category ? mapCategoryFromApi(transaction.category) : undefined,
+		profile: transaction.profile ? mapProfileFromApi(transaction.profile) : undefined,
 	};
 }
 

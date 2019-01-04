@@ -1,4 +1,4 @@
-import { IProfile } from "./IProfile";
+import { IProfile, mapProfileFromApi } from "./IProfile";
 
 interface IUser {
 	readonly id: string;
@@ -11,8 +11,12 @@ interface IUser {
 }
 
 function mapUserFromApi(user: IUser): IUser {
-	// no-op, for now
-	return user;
+	return {
+		...user,
+
+		profiles: user.profiles ? user.profiles.map(mapProfileFromApi) : undefined,
+		activeProfile: user.activeProfile ? mapProfileFromApi(user.activeProfile) : undefined,
+	};
 }
 
 export {
