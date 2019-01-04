@@ -1,12 +1,8 @@
+import { Profile } from "passport-google-oauth";
+import { logger } from "../../commons/utils/logging";
 import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
 import { createProfileAndAddToUser } from "./profile-manager";
-
-class GoogleProfile {
-	public id: string;
-	public displayName: string;
-	public photos: Array<{ value: string }>;
-}
 
 function getUser(userId: string): Promise<DbUser> {
 	return DbUser
@@ -27,7 +23,9 @@ function getUser(userId: string): Promise<DbUser> {
 			});
 }
 
-function getOrRegisterUserWithGoogleProfile(googleProfile: GoogleProfile): Promise<DbUser> {
+function getOrRegisterUserWithGoogleProfile(googleProfile: Profile): Promise<DbUser> {
+	logger.debug("Got Google profile", { googleProfile });
+
 	const googleId = googleProfile.id;
 	return DbUser
 			.createQueryBuilder("user")

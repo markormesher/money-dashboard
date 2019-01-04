@@ -1,5 +1,6 @@
+import { Request } from "express";
 import { PassportStatic as Passport } from "passport";
-import { Strategy as GoogleStrategy, StrategyOptionsWithRequest } from "passport-google-oauth2";
+import { IOAuth2StrategyOptionWithRequest, OAuth2Strategy, Profile } from "passport-google-oauth";
 import { IUser } from "../../commons/models/IUser";
 import { getConstants, getSecret } from "../config/config-loader";
 import { getOrRegisterUserWithGoogleProfile, getUser } from "../managers/user-manager";
@@ -7,10 +8,11 @@ import { StatusError } from "./StatusError";
 
 function init(passport: Passport): void {
 
-	const googleConfig: StrategyOptionsWithRequest = {
+	const googleConfig: IOAuth2StrategyOptionWithRequest = {
 		clientID: getSecret("google.client.id"),
 		clientSecret: getSecret("google.client.secret"),
 		callbackURL: getConstants().host + "/api/auth/google/callback",
+		userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
 		passReqToCallback: true,
 	};
 
@@ -34,7 +36,13 @@ function init(passport: Passport): void {
 				.catch(callback);
 	});
 
-	passport.use(new GoogleStrategy(googleConfig, (request, accessToken, refreshToken, profile, callback) => {
+	passport.use(new OAuth2Strategy(googleConfig, (
+			req: Request,
+			accessToken: string,
+			refreshToken: string,
+			profile: Profile,
+			callback: (error: any, user?: any) => void,
+	) => {
 		getOrRegisterUserWithGoogleProfile(profile)
 				.then((user) => callback(null, user))
 				.catch(callback);

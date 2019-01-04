@@ -968,14 +968,15 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.18.tgz#1d3ca764718915584fcd9f6344621b7672665c67"
   integrity sha512-fh+pAqt4xRzPfqA6eh3Z2y6fyZavRIumvjhaCL753+TVkGKGhpPeyrJG2JftD0T9q4GF00KjefsQ+PQNDdWQaQ==
 
-"@types/passport-google-oauth2@^0.1.1":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@types/passport-google-oauth2/-/passport-google-oauth2-0.1.2.tgz#41576ee586dae4bd241474b4102d6732f8838b7a"
-  integrity sha512-RiANdjeBclApb//bLvRvoqM8Hb/VgJSro2LPIMyrqJGTCSuotmPTETUOq580Wxp6df2hUvCE+ZjkBv8q/+iZmA==
+"@types/passport-google-oauth@^1.0.39":
+  version "1.0.39"
+  resolved "https://registry.yarnpkg.com/@types/passport-google-oauth/-/passport-google-oauth-1.0.39.tgz#af0e9035a1c3e03849d86baabfcec4c210ab49d1"
+  integrity sha512-Gtzju0dYVt3gW4g3a21NJjA73q18PydJNE3PlETQXbK/dd2/rvDLNC4SrEiGv7bS+fX9cvyDckqH+g49zYmDrw==
   dependencies:
     "@types/express" "*"
+    "@types/passport" "*"
 
-"@types/passport@^1.0.0y":
+"@types/passport@*", "@types/passport@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/passport/-/passport-1.0.0.tgz#747fa127a747a145ff279f3df3e07c425e5ff297"
   integrity sha512-R2FXqM+AgsMIym0PuKj08Ybx+GR6d2rU3b1/8OcHolJ+4ga2pRPX105wboV6hq1AJvMo2frQzYKdqXS5+4cyMw==
@@ -6658,14 +6659,38 @@ pascalcase@^0.1.1:
   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
   integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
 
-passport-google-oauth2@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/passport-google-oauth2/-/passport-google-oauth2-0.1.6.tgz#dfd7016ac7449fe27cfeb252ae974afc23257a0d"
-  integrity sha1-39cBasdEn+J8/rJSrpdK/CMleg0=
+passport-google-oauth1@1.x.x:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/passport-google-oauth1/-/passport-google-oauth1-1.0.0.tgz#af74a803df51ec646f66a44d82282be6f108e0cc"
+  integrity sha1-r3SoA99R7GRvZqRNgigr5vEI4Mw=
   dependencies:
-    passport-oauth2 "^1.1.2"
+    passport-oauth1 "1.x.x"
 
-passport-oauth2@^1.1.2:
+passport-google-oauth20@1.x.x:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/passport-google-oauth20/-/passport-google-oauth20-1.0.0.tgz#3b960e8a1d70d1dbe794615c827c68c40392a5d0"
+  integrity sha1-O5YOih1w0dvnlGFcgnxoxAOSpdA=
+  dependencies:
+    passport-oauth2 "1.x.x"
+
+passport-google-oauth@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/passport-google-oauth/-/passport-google-oauth-1.0.0.tgz#65f50633192ad0627a18b08960077109d84eb76d"
+  integrity sha1-ZfUGMxkq0GJ6GLCJYAdxCdhOt20=
+  dependencies:
+    passport-google-oauth1 "1.x.x"
+    passport-google-oauth20 "1.x.x"
+
+passport-oauth1@1.x.x:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/passport-oauth1/-/passport-oauth1-1.1.0.tgz#a7de988a211f9cf4687377130ea74df32730c918"
+  integrity sha1-p96YiiEfnPRoc3cTDqdN8ycwyRg=
+  dependencies:
+    oauth "0.9.x"
+    passport-strategy "1.x.x"
+    utils-merge "1.x.x"
+
+passport-oauth2@1.x.x:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/passport-oauth2/-/passport-oauth2-1.4.0.tgz#f62f81583cbe12609be7ce6f160b9395a27b86ad"
   integrity sha1-9i+BWDy+EmCb585vFguTlaJ7hq0=
