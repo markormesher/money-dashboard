@@ -26,7 +26,6 @@ function getUserQueryBuilder(options: IUserQueryBuilderOptions = {}): SelectQuer
 }
 
 function getUser(userId: string): Promise<DbUser> {
-	logger.debug("Called getUser()", { userId });
 	return getUserQueryBuilder({ withProfiles: true, withActiveProfile: true })
 			.where("user.id = :userId")
 			.andWhere("user.deleted = FALSE")
@@ -35,7 +34,6 @@ function getUser(userId: string): Promise<DbUser> {
 			})
 			.getOne()
 			.then((user) => {
-				logger.debug("Got user", { user });
 				if (user) {
 					user.profiles.sort((a, b) => a.name.localeCompare(b.name));
 				}
@@ -44,8 +42,6 @@ function getUser(userId: string): Promise<DbUser> {
 }
 
 function getOrRegisterUserWithGoogleProfile(googleProfile: Profile): Promise<DbUser> {
-	logger.debug("Got Google profile", { googleProfile });
-
 	const googleId = googleProfile.id;
 	return getUserQueryBuilder({ withProfiles: true, withActiveProfile: true })
 			.where("user.googleId = :googleId")

@@ -24,7 +24,6 @@ class MomentDateTransformer implements ValueTransformer {
 	}
 
 	public to(value: Moment.Moment | FindOperator<any>): number | FindOperator<any> {
-		logger.debug("Trying to convert TO database format", { value });
 		if (value instanceof FindOperator) {
 			return value;
 		}
@@ -33,7 +32,6 @@ class MomentDateTransformer implements ValueTransformer {
 	}
 
 	public from(value: number): Moment.Moment {
-		logger.debug("Trying to convert FROM database format", { value });
 		return MomentDateTransformer.fromDbFormat(value);
 	}
 }

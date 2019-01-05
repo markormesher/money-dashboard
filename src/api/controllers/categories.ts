@@ -9,7 +9,7 @@ import {
 	getAllCategories,
 	getCategoryQueryBuilder,
 	getMemoCategoryBalances,
-	saveCategory
+	saveCategory,
 } from "../managers/category-manager";
 import { requireUser } from "../middleware/auth-middleware";
 
