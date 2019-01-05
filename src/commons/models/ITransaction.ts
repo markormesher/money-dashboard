@@ -9,6 +9,7 @@ interface ITransaction {
 	readonly id: string;
 	readonly transactionDate: Moment.Moment;
 	readonly effectiveDate: Moment.Moment;
+	readonly creationDate: Moment.Moment;
 	readonly amount: number;
 	readonly payee: string;
 	readonly note: string;
@@ -23,6 +24,7 @@ const DEFAULT_TRANSACTION: ITransaction = {
 	id: null,
 	transactionDate: Moment(),
 	effectiveDate: Moment(),
+	creationDate: Moment(),
 	amount: 0,
 	payee: "",
 	note: undefined,
@@ -39,6 +41,7 @@ function mapTransactionFromApi(transaction: ITransaction): ITransaction {
 		...transaction,
 		transactionDate: Moment(transaction.transactionDate),
 		effectiveDate: Moment(transaction.effectiveDate),
+		creationDate: Moment(transaction.creationDate),
 
 		account: transaction.account ? mapAccountFromApi(transaction.account) : undefined,
 		category: transaction.category ? mapCategoryFromApi(transaction.category) : undefined,

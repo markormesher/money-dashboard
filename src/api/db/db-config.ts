@@ -6,6 +6,7 @@ import { PostgresNamingStrategy } from "./PostgresNamingStrategy";
 
 const typeormConf: ConnectionOptions = {
 	type: "postgres",
+	logging: "all",
 	namingStrategy: new PostgresNamingStrategy(),
 	replication: {
 		master: {

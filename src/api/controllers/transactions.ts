@@ -52,7 +52,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 				searchTerm: `%${searchTerm}%`,
 			});
 
-	getDataForTable(DbTransaction, req, totalQuery, filteredQuery)
+	getDataForTable(DbTransaction, req, totalQuery, filteredQuery, [], [["transaction.creationDate", "DESC"]])
 			.then((response) => res.json(response))
 			.catch(next);
 });

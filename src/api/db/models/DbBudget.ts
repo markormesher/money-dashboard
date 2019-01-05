@@ -19,7 +19,7 @@ class DbBudget extends BaseModel implements IBudget {
 	public type: "budget" | "bill";
 
 	@Column({
-		type: "float",
+		type: "double precision",
 	})
 	public amount: number;
 

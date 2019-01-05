@@ -1,5 +1,5 @@
 import * as Moment from "moment";
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ITransaction } from "../../../commons/models/ITransaction";
 import { MomentDateTransformer } from "../MomentDateTransformer";
 import { DbAccount } from "./DbAccount";
@@ -24,7 +24,13 @@ class DbTransaction extends BaseEntity implements ITransaction {
 	})
 	public effectiveDate: Moment.Moment;
 
-	@Column({ type: "float" })
+	@CreateDateColumn({
+		type: "timestamp",
+		transformer: new MomentDateTransformer(),
+	})
+	public creationDate: Moment.Moment;
+
+	@Column({ type: "double precision" })
 	public amount: number;
 
 	@Column()
