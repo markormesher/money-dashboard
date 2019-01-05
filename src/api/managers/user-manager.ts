@@ -1,14 +1,31 @@
 import { Profile } from "passport-google-oauth";
+import { SelectQueryBuilder } from "typeorm";
 import { logger } from "../../commons/utils/logging";
 import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
 import { createProfileAndAddToUser } from "./profile-manager";
 
+interface IUserQueryBuilderOptions {
+	readonly withProfiles?: boolean;
+	readonly withActiveProfile?: boolean;
+}
+
+function getUserQueryBuilder(options: IUserQueryBuilderOptions = {}): SelectQueryBuilder<DbUser> {
+	let builder = DbUser.createQueryBuilder("user");
+
+	if (options.withProfiles) {
+		builder = builder.leftJoinAndSelect("user.profile", "profile");
+	}
+
+	if (options.withActiveProfile) {
+		builder = builder.leftJoinAndSelect("user.activeProfile", "active_profile");
+	}
+
+	return builder;
+}
+
 function getUser(userId: string): Promise<DbUser> {
-	return DbUser
-			.createQueryBuilder("user")
-			.leftJoinAndSelect("user.profiles", "profiles")
-			.leftJoinAndSelect("user.activeProfile", "activeProfile")
+	return getUserQueryBuilder({ withProfiles: true, withActiveProfile: true })
 			.where("user.id = :userId")
 			.andWhere("user.deleted = FALSE")
 			.setParameters({
@@ -27,10 +44,7 @@ function getOrRegisterUserWithGoogleProfile(googleProfile: Profile): Promise<DbU
 	logger.debug("Got Google profile", { googleProfile });
 
 	const googleId = googleProfile.id;
-	return DbUser
-			.createQueryBuilder("user")
-			.leftJoinAndSelect("user.profiles", "profiles")
-			.leftJoinAndSelect("user.activeProfile", "activeProfile")
+	return getUserQueryBuilder({ withProfiles: true, withActiveProfile: true })
 			.where("user.googleId = :googleId")
 			.andWhere("user.deleted = FALSE")
 			.setParameters({
@@ -75,6 +89,7 @@ function getOrRegisterUserWithGoogleProfile(googleProfile: Profile): Promise<DbU
 }
 
 export {
+	getUserQueryBuilder,
 	getUser,
 	getOrRegisterUserWithGoogleProfile,
 };

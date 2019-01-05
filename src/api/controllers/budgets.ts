@@ -8,7 +8,13 @@ import { DbCategory } from "../db/models/DbCategory";
 import { DbUser } from "../db/models/DbUser";
 import { MomentDateTransformer } from "../db/MomentDateTransformer";
 import { getDataForTable } from "../helpers/datatable-helper";
-import { cloneBudgets, deleteBudget, getBudgetBalances, saveBudget } from "../managers/budget-manager";
+import {
+	cloneBudgets,
+	deleteBudget,
+	getBudgetBalances,
+	getBudgetQueryBuilder,
+	saveBudget,
+} from "../managers/budget-manager";
 import { requireUser } from "../middleware/auth-middleware";
 
 const router = Express.Router();
@@ -18,17 +24,14 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const searchTerm = req.query.searchTerm;
 	const currentOnly = req.query.currentOnly === "true";
 
-	const totalQuery = DbBudget
-			.createQueryBuilder("budget")
+	const totalQuery = getBudgetQueryBuilder()
 			.where("budget.profile_id = :profileId")
 			.andWhere("budget.deleted = FALSE")
 			.setParameters({
 				profileId: user.activeProfile.id,
 			});
 
-	let filteredQuery = DbBudget
-			.createQueryBuilder("budget")
-			.leftJoinAndSelect("budget.category", "category")
+	let filteredQuery = getBudgetQueryBuilder({ withCategory: true })
 			.where("budget.profile_id = :profileId")
 			.andWhere("budget.deleted = FALSE")
 			.andWhere(new Brackets((qb) => qb.where(
@@ -41,12 +44,11 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 			});
 
 	if (currentOnly) {
-		filteredQuery = filteredQuery.andWhere(
-				"start_date <= :now AND end_date >= :now",
-				{
+		filteredQuery = filteredQuery
+				.andWhere("start_date <= :now AND end_date >= :now")
+				.setParameters({
 					now: MomentDateTransformer.toDbFormat(Moment().startOf("day")),
-				},
-		);
+				});
 	}
 
 	getDataForTable(DbBudget, req, totalQuery, filteredQuery)

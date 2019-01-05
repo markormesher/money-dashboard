@@ -3,7 +3,12 @@ import { NextFunction, Request, Response } from "express";
 import { DbProfile } from "../db/models/DbProfile";
 import { DbUser } from "../db/models/DbUser";
 import { getDataForTable } from "../helpers/datatable-helper";
-import { deleteProfile, saveProfile, setActiveProfileForUser } from "../managers/profile-manager";
+import {
+	deleteProfile,
+	getProfileQueryBuilder,
+	saveProfile,
+	setActiveProfileForUser,
+} from "../managers/profile-manager";
 import { requireUser } from "../middleware/auth-middleware";
 
 const router = Express.Router();
@@ -12,18 +17,14 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const user = req.user as DbUser;
 	const searchTerm = req.query.searchTerm;
 
-	const totalQuery = DbProfile
-			.createQueryBuilder("profile")
-			.leftJoin("profile.users", "user")
+	const totalQuery = getProfileQueryBuilder({ withUsers: true })
 			.where("user.id = :userId")
 			.andWhere("profile.deleted = FALSE")
 			.setParameters({
 				userId: user.id,
 			});
 
-	const filteredQuery = DbProfile
-			.createQueryBuilder("profile")
-			.leftJoinAndSelect("profile.users", "user")
+	const filteredQuery = getProfileQueryBuilder({ withUsers: true })
 			.where("user.id = :userId")
 			.andWhere("profile.deleted = FALSE")
 			.andWhere("profile.name ILIKE :searchTerm")

@@ -1,12 +1,26 @@
+import { SelectQueryBuilder } from "typeorm";
 import { IAccountBalance } from "../../commons/models/IAccountBalance";
 import { DbAccount } from "../db/models/DbAccount";
-import { DbTransaction } from "../db/models/DbTransaction";
 import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
+import { getTransactionQueryBuilder } from "./transaction-manager";
+
+interface IAccountQueryBuilderOptions {
+	readonly withProfile?: boolean;
+}
+
+function getAccountQueryBuilder(options: IAccountQueryBuilderOptions = {}): SelectQueryBuilder<DbAccount> {
+	let builder = DbAccount.createQueryBuilder("account");
+
+	if (options.withProfile) {
+		builder = builder.leftJoinAndSelect("account.profile", "profile");
+	}
+
+	return builder;
+}
 
 function getAccount(user: DbUser, accountId: string): Promise<DbAccount> {
-	return DbAccount
-			.createQueryBuilder("account")
+	return getAccountQueryBuilder()
 			.where("account.id = :accountId")
 			.andWhere("account.profile_id = :profileId")
 			.andWhere("account.deleted = FALSE")
@@ -18,8 +32,7 @@ function getAccount(user: DbUser, accountId: string): Promise<DbAccount> {
 }
 
 function getAllAccounts(user: DbUser, activeOnly: boolean = true): Promise<DbAccount[]> {
-	let query = DbAccount
-			.createQueryBuilder("account")
+	let query = getAccountQueryBuilder()
 			.where("account.profile_id = :profileId")
 			.andWhere("account.deleted = FALSE")
 			.setParameters({
@@ -34,8 +47,7 @@ function getAllAccounts(user: DbUser, activeOnly: boolean = true): Promise<DbAcc
 }
 
 function getAccountBalances(user: DbUser): Promise<IAccountBalance[]> {
-	const accountBalanceQuery: Promise<Array<{ account_id: string, balance: number }>> = DbTransaction
-			.createQueryBuilder("transaction")
+	const accountBalanceQuery: Promise<Array<{ account_id: string, balance: number }>> = getTransactionQueryBuilder()
 			.select("transaction.account_id")
 			.addSelect("SUM(transaction.amount)", "balance")
 			.where("transaction.profile_id = :profileId")
@@ -96,6 +108,7 @@ function deleteAccount(user: DbUser, accountId: string): Promise<DbAccount> {
 }
 
 export {
+	getAccountQueryBuilder,
 	getAccount,
 	getAllAccounts,
 	getAccountBalances,

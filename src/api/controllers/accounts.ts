@@ -7,7 +7,7 @@ import { DbUser } from "../db/models/DbUser";
 import { getDataForTable } from "../helpers/datatable-helper";
 import {
 	deleteAccount,
-	getAccountBalances,
+	getAccountBalances, getAccountQueryBuilder,
 	getAllAccounts,
 	saveAccount,
 	setAccountActive,
@@ -21,16 +21,14 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const searchTerm = req.query.searchTerm;
 	const activeOnly = req.query.activeOnly === "true";
 
-	const totalQuery = DbAccount
-			.createQueryBuilder("account")
+	const totalQuery = getAccountQueryBuilder()
 			.where("account.profile_id = :profileId")
 			.andWhere("account.deleted = FALSE")
 			.setParameters({
 				profileId: user.activeProfile.id,
 			});
 
-	let filteredQuery = DbAccount
-			.createQueryBuilder("account")
+	let filteredQuery = getAccountQueryBuilder()
 			.where("account.profile_id = :profileId")
 			.andWhere("account.deleted = FALSE")
 			.andWhere(new Brackets((qb) => qb.where(

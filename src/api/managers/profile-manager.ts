@@ -1,12 +1,25 @@
+import { SelectQueryBuilder } from "typeorm";
 import { DbProfile } from "../db/models/DbProfile";
 import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
 import { getUser } from "./user-manager";
 
+interface IProfileQueryBuilderOptions {
+	readonly withUsers?: boolean;
+}
+
+function getProfileQueryBuilder(options: IProfileQueryBuilderOptions = {}): SelectQueryBuilder<DbProfile> {
+	let builder = DbProfile.createQueryBuilder("profile");
+
+	if (options.withUsers) {
+		builder = builder.leftJoinAndSelect("profile.users", "user");
+	}
+
+	return builder;
+}
+
 function getProfile(user: DbUser, profileId: string): Promise<DbProfile> {
-	return DbProfile
-			.createQueryBuilder("profile")
-			.leftJoinAndSelect("profile.users", "user")
+	return getProfileQueryBuilder({ withUsers: true })
 			.where("profile.id = :profileId")
 			.andWhere("profile.deleted = FALSE")
 			.andWhere("user.id = :userId")
@@ -67,6 +80,7 @@ function setActiveProfileForUser(user: DbUser, profileId: string): Promise<DbUse
 }
 
 export {
+	getProfileQueryBuilder,
 	getProfile,
 	createProfileAndAddToUser,
 	saveProfile,

@@ -6,7 +6,12 @@ import { DateModeOption } from "../../commons/models/ITransaction";
 import { DbTransaction } from "../db/models/DbTransaction";
 import { DbUser } from "../db/models/DbUser";
 import { getDataForTable } from "../helpers/datatable-helper";
-import { deleteTransaction, getAllPayees, saveTransaction } from "../managers/transaction-manager";
+import {
+	deleteTransaction,
+	getAllPayees,
+	getTransactionQueryBuilder,
+	saveTransaction,
+} from "../managers/transaction-manager";
 import { requireUser } from "../middleware/auth-middleware";
 
 const router = Express.Router();
@@ -27,18 +32,14 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 		req.query.order = order;
 	}
 
-	const totalQuery = DbTransaction
-			.createQueryBuilder("transaction")
+	const totalQuery = getTransactionQueryBuilder()
 			.where("transaction.profile_id = :profileId")
 			.andWhere("transaction.deleted = FALSE")
 			.setParameters({
 				profileId: user.activeProfile.id,
 			});
 
-	const filteredQuery = DbTransaction
-			.createQueryBuilder("transaction")
-			.leftJoinAndSelect("transaction.category", "category")
-			.leftJoinAndSelect("transaction.account", "account")
+	const filteredQuery = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
 			.where("transaction.profile_id = :profileId")
 			.andWhere("transaction.deleted = FALSE")
 			.andWhere(new Brackets((qb) => qb.where(

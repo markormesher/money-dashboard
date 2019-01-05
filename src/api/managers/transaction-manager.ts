@@ -1,10 +1,34 @@
+import { SelectQueryBuilder } from "typeorm";
 import { DbTransaction } from "../db/models/DbTransaction";
 import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
 
+interface ITransactionQueryBuilderOptions {
+	readonly withAccount?: boolean;
+	readonly withCategory?: boolean;
+	readonly withProfile?: boolean;
+}
+
+function getTransactionQueryBuilder(options: ITransactionQueryBuilderOptions = {}): SelectQueryBuilder<DbTransaction> {
+	let builder = DbTransaction.createQueryBuilder("transactions");
+
+	if (options.withAccount) {
+		builder = builder.leftJoinAndSelect("transactions.account", "account");
+	}
+
+	if (options.withCategory) {
+		builder = builder.leftJoinAndSelect("transactions.category", "category");
+	}
+
+	if (options.withProfile) {
+		builder = builder.leftJoinAndSelect("transactions.profile", "profile");
+	}
+
+	return builder;
+}
+
 function getTransaction(user: DbUser, transactionId: string): Promise<DbTransaction> {
-	return DbTransaction
-			.createQueryBuilder("transaction")
+	return getTransactionQueryBuilder()
 			.where("transaction.id = :transactionId")
 			.andWhere("transaction.profile_id = :profileId")
 			.andWhere("transaction.deleted = FALSE")
@@ -17,8 +41,7 @@ function getTransaction(user: DbUser, transactionId: string): Promise<DbTransact
 
 function getAllPayees(user: DbUser): Promise<string[]> {
 	return (
-			DbTransaction
-					.createQueryBuilder("transaction")
+			getTransactionQueryBuilder()
 					.select("DISTINCT payee")
 					.where("transaction.profile_id = :profileId")
 					.andWhere("transaction.deleted = FALSE")
@@ -55,6 +78,7 @@ function deleteTransaction(user: DbUser, transactionId: string): Promise<DbTrans
 }
 
 export {
+	getTransactionQueryBuilder,
 	getTransaction,
 	getAllPayees,
 	saveTransaction,

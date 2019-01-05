@@ -1,46 +1,46 @@
 import * as Moment from "moment";
+import { SelectQueryBuilder } from "typeorm";
 import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
 import { DbBudget } from "../db/models/DbBudget";
-import { DbTransaction } from "../db/models/DbTransaction";
 import { DbUser } from "../db/models/DbUser";
 import { MomentDateTransformer } from "../db/MomentDateTransformer";
 import { cleanUuid } from "../db/utils";
+import { StatusError } from "../helpers/StatusError";
+import { getTransactionQueryBuilder } from "./transaction-manager";
 
-function getBudget(
-		user: DbUser,
-		budgetId: string,
-		mustExist: boolean = false,
-		includeRelations: boolean = false,
-): Promise<DbBudget> {
-	let query = DbBudget.createQueryBuilder("budget");
+interface IBudgetQueryBuilderOptions {
+	readonly withCategory?: boolean;
+	readonly withProfile?: boolean;
+}
 
-	if (includeRelations) {
-		query = query
-				.leftJoinAndSelect("budget.category", "category")
-				.leftJoinAndSelect("budget.profile", "profile");
+function getBudgetQueryBuilder(options: IBudgetQueryBuilderOptions = {}): SelectQueryBuilder<DbBudget> {
+	let builder = DbBudget.createQueryBuilder("budget");
+
+	if (options.withCategory) {
+		builder = builder.leftJoinAndSelect("budget.category", "category");
 	}
 
-	return query.where("budget.id = :budgetId")
+	if (options.withProfile) {
+		builder = builder.leftJoinAndSelect("budget.profile", "profile");
+	}
+
+	return builder;
+}
+
+function getBudget(user: DbUser, budgetId: string, options?: IBudgetQueryBuilderOptions): Promise<DbBudget> {
+	return getBudgetQueryBuilder(options)
+			.where("budget.id = :budgetId")
 			.andWhere("budget.profile_id = :profileId")
 			.andWhere("budget.deleted = FALSE")
 			.setParameters({
 				budgetId: cleanUuid(budgetId),
 				profileId: user.activeProfile.id,
 			})
-			.getOne()
-			.then((budget) => {
-				if (!budget && mustExist) {
-					throw new Error("That budget does not exist");
-				} else {
-					return budget;
-				}
-			});
+			.getOne();
 }
 
 function getAllBudgets(user: DbUser, currentOnly: boolean): Promise<DbBudget[]> {
-	let query = DbBudget
-			.createQueryBuilder("budget")
-			.leftJoinAndSelect("budget.category", "category")
+	let query = getBudgetQueryBuilder({ withCategory: true })
 			.where("budget.profile_id = :profileId")
 			.andWhere("budget.deleted = FALSE")
 			.setParameters({
@@ -62,8 +62,7 @@ function getBudgetBalances(user: DbUser, currentOnly: boolean): Promise<IBudgetB
 	return getAllBudgets(user, currentOnly)
 			.then((budgets: DbBudget[]) => {
 				const getBalanceTasks = budgets.map((budget) => {
-					return DbTransaction
-							.createQueryBuilder("transaction")
+					return getTransactionQueryBuilder()
 							.select("SUM(transaction.amount)", "balance")
 							.where("transaction.profile_id = :profileId")
 							.andWhere("transaction.deleted = FALSE")
@@ -108,7 +107,7 @@ function deleteBudget(user: DbUser, budgetId: string): Promise<DbBudget> {
 	return getBudget(user, budgetId)
 			.then((budget) => {
 				if (!budget) {
-					throw new Error("That budget does not exist");
+					throw new StatusError(404, "That budget does not exist");
 				} else {
 					budget.deleted = true;
 					return budget.save();
@@ -123,21 +122,29 @@ function cloneBudgets(
 		endDate: Moment.Moment,
 ): Promise<DbBudget[]> {
 	return Promise
-			.all(budgetsIds.map((id) => getBudget(user, id, true, true)))
+			.all(budgetsIds.map((id) => getBudget(user, id, { withCategory: true, withProfile: true })))
+			.then((budgets: DbBudget[]) => {
+				if (budgets.some((b) => !b)) {
+					throw new StatusError(404, "One or more budgets did not exist");
+				} else {
+					return budgets;
+				}
+			})
 			.then((budgets: DbBudget[]) => {
 				return budgets.map((budget) => {
-					const clonedNewBudget = budget.clone();
-					clonedNewBudget.startDate = startDate;
-					clonedNewBudget.endDate = endDate;
-					return clonedNewBudget;
+					const clonedBudget = budget.clone();
+					clonedBudget.startDate = startDate;
+					clonedBudget.endDate = endDate;
+					return clonedBudget;
 				});
 			})
-			.then((clonedNewBudgets: DbBudget[]) => {
-				return Promise.all(clonedNewBudgets.map((b) => b.save()));
+			.then((clonedBudgets: DbBudget[]) => {
+				return Promise.all(clonedBudgets.map((b) => b.save()));
 			});
 }
 
 export {
+	getBudgetQueryBuilder,
 	getBudget,
 	getAllBudgets,
 	getBudgetBalances,

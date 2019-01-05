@@ -6,6 +6,7 @@ import { DateModeOption } from "../../../commons/models/ITransaction";
 import { DbTransaction } from "../../db/models/DbTransaction";
 import { DbUser } from "../../db/models/DbUser";
 import { MomentDateTransformer } from "../../db/MomentDateTransformer";
+import { getTransactionQueryBuilder } from "../../managers/transaction-manager";
 import { requireUser } from "../../middleware/auth-middleware";
 
 const router = Express.Router();
@@ -17,8 +18,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 	const dateMode: DateModeOption = req.query.dateMode;
 	const dateField = `${dateMode}Date`;
 
-	const getSumBeforeRange = DbTransaction
-			.createQueryBuilder("transaction")
+	const getSumBeforeRange = getTransactionQueryBuilder()
 			.select("SUM(transaction.amount)", "balance")
 			.where("transaction.profile_id = :profileId")
 			.andWhere(`transaction.${dateField} < :startDate`)
@@ -28,8 +28,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 			})
 			.getRawOne() as Promise<{ balance: number }>;
 
-	const getTransactionsInRange = DbTransaction
-			.createQueryBuilder("transaction")
+	const getTransactionsInRange = getTransactionQueryBuilder()
 			.where("transaction.profile_id = :profileId")
 			.andWhere(`transaction.${dateField} >= :startDate`)
 			.andWhere(`transaction.${dateField} <= :endDate`)

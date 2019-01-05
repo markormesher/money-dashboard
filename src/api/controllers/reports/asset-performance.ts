@@ -6,6 +6,7 @@ import { DateModeOption } from "../../../commons/models/ITransaction";
 import { DbTransaction } from "../../db/models/DbTransaction";
 import { DbUser } from "../../db/models/DbUser";
 import { MomentDateTransformer } from "../../db/MomentDateTransformer";
+import { getTransactionQueryBuilder } from "../../managers/transaction-manager";
 import { requireUser } from "../../middleware/auth-middleware";
 
 const router = Express.Router();
@@ -19,10 +20,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 	const accountId: string = req.query.accountId || "";
 	const zeroBasis: boolean = req.query.zeroBasis === "true";
 
-	const getTransactionsBeforeRange = DbTransaction
-			.createQueryBuilder("transaction")
-			.leftJoinAndSelect("transaction.category", "category")
-			.leftJoin("transaction.account", "account")
+	const getTransactionsBeforeRange = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
 			.where("transaction.profile_id = :profileId")
 			.andWhere("account.id = :accountId")
 			.andWhere(`transaction.${dateField} < :startDate`)
@@ -33,10 +31,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 			})
 			.getMany();
 
-	const getTransactionsInRange = DbTransaction
-			.createQueryBuilder("transaction")
-			.leftJoinAndSelect("transaction.category", "category")
-			.leftJoin("transaction.account", "account")
+	const getTransactionsInRange = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
 			.where("transaction.profile_id = :profileId")
 			.andWhere("account.id = :accountId")
 			.andWhere(`transaction.${dateField} >= :startDate`)

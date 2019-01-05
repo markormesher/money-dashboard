@@ -1,12 +1,26 @@
+import { SelectQueryBuilder } from "typeorm";
 import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
 import { DbCategory } from "../db/models/DbCategory";
-import { DbTransaction } from "../db/models/DbTransaction";
 import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
+import { getTransactionQueryBuilder } from "./transaction-manager";
+
+interface ICategoryQueryBuilderOptions {
+	readonly withProfile?: boolean;
+}
+
+function getCategoryQueryBuilder(options: ICategoryQueryBuilderOptions = {}): SelectQueryBuilder<DbCategory> {
+	let builder = DbCategory.createQueryBuilder("category");
+
+	if (options.withProfile) {
+		builder = builder.leftJoinAndSelect("category.profile", "profile");
+	}
+
+	return builder;
+}
 
 function getCategory(user: DbUser, categoryId?: string): Promise<DbCategory> {
-	return DbCategory
-			.createQueryBuilder("category")
+	return getCategoryQueryBuilder()
 			.where("category.id = :categoryId")
 			.andWhere("category.profile_id = :profileId")
 			.andWhere("category.deleted = FALSE")
@@ -18,8 +32,7 @@ function getCategory(user: DbUser, categoryId?: string): Promise<DbCategory> {
 }
 
 function getAllCategories(user: DbUser): Promise<DbCategory[]> {
-	return DbCategory
-			.createQueryBuilder("category")
+	return getCategoryQueryBuilder()
 			.where("category.profile_id = :profileId")
 			.andWhere("category.deleted = FALSE")
 			.setParameters({
@@ -29,9 +42,7 @@ function getAllCategories(user: DbUser): Promise<DbCategory[]> {
 }
 
 function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]> {
-	const categoryBalanceQuery = DbTransaction
-			.createQueryBuilder("transaction")
-			.leftJoin("transaction.category", "category")
+	const categoryBalanceQuery = getTransactionQueryBuilder({ withCategory: true })
 			.select("transaction.category_id")
 			.addSelect("SUM(amount)", "balance")
 			.where("category.is_memo_category = TRUE")
@@ -85,6 +96,7 @@ function deleteCategory(user: DbUser, categoryId: string): Promise<DbCategory> {
 }
 
 export {
+	getCategoryQueryBuilder,
 	getCategory,
 	getAllCategories,
 	getMemoCategoryBalances,

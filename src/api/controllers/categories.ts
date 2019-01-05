@@ -4,7 +4,13 @@ import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
 import { DbCategory } from "../db/models/DbCategory";
 import { DbUser } from "../db/models/DbUser";
 import { getDataForTable } from "../helpers/datatable-helper";
-import { deleteCategory, getAllCategories, getMemoCategoryBalances, saveCategory } from "../managers/category-manager";
+import {
+	deleteCategory,
+	getAllCategories,
+	getCategoryQueryBuilder,
+	getMemoCategoryBalances,
+	saveCategory
+} from "../managers/category-manager";
 import { requireUser } from "../middleware/auth-middleware";
 
 const router = Express.Router();
@@ -13,16 +19,14 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const user = req.user as DbUser;
 	const searchTerm = req.query.searchTerm;
 
-	const totalQuery = DbCategory
-			.createQueryBuilder("category")
+	const totalQuery = getCategoryQueryBuilder()
 			.where("category.profile_id = :profileId")
 			.andWhere("category.deleted = FALSE")
 			.setParameters({
 				profileId: user.activeProfile.id,
 			});
 
-	const filteredQuery = DbCategory
-			.createQueryBuilder("category")
+	const filteredQuery = getCategoryQueryBuilder()
 			.where("category.profile_id = :profileId")
 			.andWhere("category.deleted = FALSE")
 			.andWhere("category.name ILIKE :searchTerm")
