@@ -3,7 +3,6 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { StatusError } from "../../../api/helpers/StatusError";
 import { DEFAULT_BUDGET, IBudget } from "../../../commons/models/IBudget";
 import { DEFAULT_CATEGORY, ICategory } from "../../../commons/models/ICategory";
 import { IBudgetValidationResult, validateBudget } from "../../../commons/models/validators/BudgetValidator";
@@ -207,10 +206,9 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
 	}
 
 	private handleTypeChange(value: string): void {
-		if (value !== "bill" && value !== "budget") {
-			throw new StatusError(400, `"Invalid budget type: ${value}`);
+		if (value === "bill" || value === "budget") {
+			this.updateModel({ type: value });
 		}
-		this.updateModel({ type: value });
 	}
 
 	private handleSave(): void {

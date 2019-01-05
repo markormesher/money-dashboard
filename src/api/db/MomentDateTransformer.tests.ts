@@ -23,7 +23,7 @@ describe(__filename, () => {
 
 		it("should pass on falsy values", () => {
 			expect(MomentDateTransformer.toDbFormat(null)).to.equal(null);
-			expect(MomentDateTransformer.toDbFormat(undefined)).to.equal(null);
+			expect(MomentDateTransformer.toDbFormat(undefined)).to.equal(undefined);
 		});
 
 		it("should throw an exception for invalid values", () => {

@@ -103,9 +103,8 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
 		const { currentValues, validationResult } = this.state;
 		const errors = validationResult.errors || {};
 
-		// TODO: auto-highlight the category if this is a "create another" transactions
-		// const continuousEditing = currentValues.createdAt === null && currentValues.accountId !== undefined;
-		const continuousEditing = false;
+		// must be continuous editing if there is no creation date but the account is already set
+		const continuousEditing = !currentValues.creationDate && !!currentValues.account;
 
 		const modalBtns: IModalBtn[] = [
 			{
