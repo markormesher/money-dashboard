@@ -3,6 +3,7 @@ import { SelectQueryBuilder } from "typeorm";
 import { logger } from "../../commons/utils/logging";
 import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
+import { StatusError } from "../helpers/StatusError";
 import { createProfileAndAddToUser } from "./profile-manager";
 
 interface IUserQueryBuilderOptions {
@@ -14,7 +15,7 @@ function getUserQueryBuilder(options: IUserQueryBuilderOptions = {}): SelectQuer
 	let builder = DbUser.createQueryBuilder("user");
 
 	if (options.withProfiles) {
-		builder = builder.leftJoinAndSelect("user.profile", "profile");
+		builder = builder.leftJoinAndSelect("user.profiles", "profile");
 	}
 
 	if (options.withActiveProfile) {
@@ -25,6 +26,7 @@ function getUserQueryBuilder(options: IUserQueryBuilderOptions = {}): SelectQuer
 }
 
 function getUser(userId: string): Promise<DbUser> {
+	logger.debug("Called getUser()", { userId });
 	return getUserQueryBuilder({ withProfiles: true, withActiveProfile: true })
 			.where("user.id = :userId")
 			.andWhere("user.deleted = FALSE")
@@ -33,6 +35,7 @@ function getUser(userId: string): Promise<DbUser> {
 			})
 			.getOne()
 			.then((user) => {
+				logger.debug("Got user", { user });
 				if (user) {
 					user.profiles.sort((a, b) => a.name.localeCompare(b.name));
 				}
@@ -71,7 +74,7 @@ function getOrRegisterUserWithGoogleProfile(googleProfile: Profile): Promise<DbU
 				// make sure a profile is active
 				if (!user.activeProfile) {
 					if (!user.profiles || user.profiles.length === 0) {
-						throw new Error("User has no profiles after profile creation stage");
+						throw new StatusError(500, "User has no profiles after profile creation stage");
 					}
 
 					user.activeProfile = user.profiles[0];

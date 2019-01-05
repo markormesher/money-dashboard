@@ -1,5 +1,6 @@
 import * as Moment from "moment";
 import { FindOperator, ValueTransformer } from "typeorm";
+import { StatusError } from "../helpers/StatusError";
 
 class MomentDateTransformer implements ValueTransformer {
 
@@ -8,7 +9,7 @@ class MomentDateTransformer implements ValueTransformer {
 			if (value.isValid()) {
 				return value.unix();
 			} else {
-				throw new Error("Invalid Moment date");
+				throw new StatusError(500, "Invalid Moment date");
 			}
 		} else {
 			return null;

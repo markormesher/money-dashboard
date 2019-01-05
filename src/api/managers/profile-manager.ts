@@ -2,6 +2,7 @@ import { SelectQueryBuilder } from "typeorm";
 import { DbProfile } from "../db/models/DbProfile";
 import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
+import { StatusError } from "../helpers/StatusError";
 import { getUser } from "./user-manager";
 
 interface IProfileQueryBuilderOptions {
@@ -61,9 +62,9 @@ function deleteProfile(user: DbUser, profileId: string): Promise<DbProfile> {
 	return getProfile(user, profileId)
 			.then((profile) => {
 				if (!profile) {
-					throw new Error("That profile does not exist");
+					throw new StatusError(404, "That profile does not exist");
 				} else if (user.profiles.length <= 1) {
-					throw new Error("Cannot delete a user's last profile");
+					throw new StatusError(400, "Cannot delete a user's last profile");
 				} else {
 					profile.deleted = true;
 					return profile.save();

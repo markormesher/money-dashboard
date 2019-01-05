@@ -3,6 +3,7 @@ import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
 import { DbCategory } from "../db/models/DbCategory";
 import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
+import { StatusError } from "../helpers/StatusError";
 import { getTransactionQueryBuilder } from "./transaction-manager";
 
 interface ICategoryQueryBuilderOptions {
@@ -87,7 +88,7 @@ function deleteCategory(user: DbUser, categoryId: string): Promise<DbCategory> {
 	return getCategory(user, categoryId)
 			.then((category) => {
 				if (!category) {
-					throw new Error("That category does not exist");
+					throw new StatusError(404, "That category does not exist");
 				} else {
 					category.deleted = true;
 					return category.save();

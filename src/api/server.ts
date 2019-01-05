@@ -45,7 +45,7 @@ setupApiRoutes(app);
 app.use((error: StatusError, req: Request, res: Response, next: NextFunction) => {
 	const status = error.status || 500;
 	const name = error.name || error.message || "Internal Server Error";
-	logger.error(`Error: ${name}`, error);
+	logger.error(`Error: ${name}`, { error });
 	res.status(status).json(error);
 });
 

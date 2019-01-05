@@ -3,6 +3,7 @@ import { IAccountBalance } from "../../commons/models/IAccountBalance";
 import { DbAccount } from "../db/models/DbAccount";
 import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
+import { StatusError } from "../helpers/StatusError";
 import { getTransactionQueryBuilder } from "./transaction-manager";
 
 interface IAccountQueryBuilderOptions {
@@ -99,7 +100,7 @@ function deleteAccount(user: DbUser, accountId: string): Promise<DbAccount> {
 	return getAccount(user, accountId)
 			.then((account) => {
 				if (!account) {
-					throw new Error("That account does not exist");
+					throw new StatusError(404, "That account does not exist");
 				} else {
 					account.deleted = true;
 					return account.save();

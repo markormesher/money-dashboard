@@ -2,6 +2,7 @@ import { SelectQueryBuilder } from "typeorm";
 import { DbTransaction } from "../db/models/DbTransaction";
 import { DbUser } from "../db/models/DbUser";
 import { cleanUuid } from "../db/utils";
+import { StatusError } from "../helpers/StatusError";
 
 interface ITransactionQueryBuilderOptions {
 	readonly withAccount?: boolean;
@@ -10,18 +11,18 @@ interface ITransactionQueryBuilderOptions {
 }
 
 function getTransactionQueryBuilder(options: ITransactionQueryBuilderOptions = {}): SelectQueryBuilder<DbTransaction> {
-	let builder = DbTransaction.createQueryBuilder("transactions");
+	let builder = DbTransaction.createQueryBuilder("transaction");
 
 	if (options.withAccount) {
-		builder = builder.leftJoinAndSelect("transactions.account", "account");
+		builder = builder.leftJoinAndSelect("transaction.account", "account");
 	}
 
 	if (options.withCategory) {
-		builder = builder.leftJoinAndSelect("transactions.category", "category");
+		builder = builder.leftJoinAndSelect("transaction.category", "category");
 	}
 
 	if (options.withProfile) {
-		builder = builder.leftJoinAndSelect("transactions.profile", "profile");
+		builder = builder.leftJoinAndSelect("transaction.profile", "profile");
 	}
 
 	return builder;
@@ -69,7 +70,7 @@ function deleteTransaction(user: DbUser, transactionId: string): Promise<DbTrans
 	return getTransaction(user, transactionId)
 			.then((transaction) => {
 				if (!transaction) {
-					throw new Error("That transaction does not exist");
+					throw new StatusError(404, "That transaction does not exist");
 				} else {
 					transaction.deleted = true;
 					return transaction.save();
