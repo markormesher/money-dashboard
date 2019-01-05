@@ -1,12 +1,12 @@
 import { join } from "path";
 import { ConnectionOptions } from "typeorm";
-import { isTest } from "../../commons/utils/env";
+import { isDev, isTest } from "../../commons/utils/env";
 import { getSecret } from "../config/config-loader";
 import { PostgresNamingStrategy } from "./PostgresNamingStrategy";
 
 const typeormConf: ConnectionOptions = {
 	type: "postgres",
-	logging: "all",
+	logging: isDev() ? "all" : false,
 	namingStrategy: new PostgresNamingStrategy(),
 	replication: {
 		master: {
