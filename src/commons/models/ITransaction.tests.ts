@@ -15,6 +15,14 @@ describe(__filename, () => {
 
 	describe("mapTransactionFromApi()", () => {
 
+		it("should return undefined for null/undefined/empty-string inputs", () => {
+			expect(mapTransactionFromApi(null)).to.equal(undefined);
+			expect(mapTransactionFromApi(undefined)).to.equal(undefined);
+
+			// @ts-ignore
+			expect(mapTransactionFromApi("")).to.equal(undefined);
+		});
+
 		it("should not mutate the input", () => {
 			mapTransactionFromApi(DEFAULT_TRANSACTION).should.not.equal(DEFAULT_TRANSACTION);
 		});

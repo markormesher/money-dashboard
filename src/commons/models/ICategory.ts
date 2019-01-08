@@ -1,3 +1,4 @@
+import { mapEntitiesFromApi } from "../utils/entities";
 import { IBudget, mapBudgetFromApi } from "./IBudget";
 import { IProfile, mapProfileFromApi } from "./IProfile";
 import { ITransaction, mapTransactionFromApi } from "./ITransaction";
@@ -30,13 +31,17 @@ const DEFAULT_CATEGORY: ICategory = {
 	profile: undefined,
 };
 
-function mapCategoryFromApi(category: ICategory): ICategory {
+function mapCategoryFromApi(category?: ICategory): ICategory {
+	if (!category) {
+		return undefined;
+	}
+
 	return {
 		...category,
 
-		budgets: category.budgets ? category.budgets.map(mapBudgetFromApi) : undefined,
-		transactions: category.transactions ? category.transactions.map(mapTransactionFromApi) : undefined,
-		profile: category.profile ? mapProfileFromApi(category.profile) : undefined,
+		budgets: mapEntitiesFromApi(mapBudgetFromApi, category.budgets),
+		transactions: mapEntitiesFromApi(mapTransactionFromApi, category.transactions),
+		profile: mapProfileFromApi(category.profile),
 	};
 }
 

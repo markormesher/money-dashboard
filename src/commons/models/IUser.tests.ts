@@ -1,3 +1,4 @@
+import { expect } from "chai";
 import { describe } from "mocha";
 import { DEFAULT_PROFILE } from "./IProfile";
 import { IUser, mapUserFromApi } from "./IUser";
@@ -5,6 +6,14 @@ import { IUser, mapUserFromApi } from "./IUser";
 describe(__filename, () => {
 
 	describe("mapUserFromApi()", () => {
+
+		it("should return undefined for null/undefined/empty-string inputs", () => {
+			expect(mapUserFromApi(null)).to.equal(undefined);
+			expect(mapUserFromApi(undefined)).to.equal(undefined);
+
+			// @ts-ignore
+			expect(mapUserFromApi("")).to.equal(undefined);
+		});
 
 		it("should not mutate the input", () => {
 			const user: IUser = {

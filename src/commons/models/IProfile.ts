@@ -1,3 +1,4 @@
+import { mapEntitiesFromApi } from "../utils/entities";
 import { IAccount, mapAccountFromApi } from "./IAccount";
 import { IBudget, mapBudgetFromApi } from "./IBudget";
 import { ICategory, mapCategoryFromApi } from "./ICategory";
@@ -31,16 +32,19 @@ const DEFAULT_PROFILE: IProfile = {
 };
 
 function mapProfileFromApi(profile: IProfile): IProfile {
+	if (!profile) {
+		return undefined;
+	}
+
 	return {
 		...profile,
 
-		accounts: profile.accounts ? profile.accounts.map(mapAccountFromApi) : undefined,
-		budgets: profile.budgets ? profile.budgets.map(mapBudgetFromApi) : undefined,
-		categories: profile.categories ? profile.categories.map(mapCategoryFromApi) : undefined,
-		transactions: profile.transactions ? profile.transactions.map(mapTransactionFromApi) : undefined,
-		users: profile.users ? profile.users.map(mapUserFromApi) : undefined,
-		usersWithProfileActivated: profile.usersWithProfileActivated
-				? profile.usersWithProfileActivated.map(mapUserFromApi) : undefined,
+		accounts: mapEntitiesFromApi(mapAccountFromApi, profile.accounts),
+		budgets: mapEntitiesFromApi(mapBudgetFromApi, profile.budgets),
+		categories: mapEntitiesFromApi(mapCategoryFromApi, profile.categories),
+		transactions: mapEntitiesFromApi(mapTransactionFromApi, profile.transactions),
+		users: mapEntitiesFromApi(mapUserFromApi, profile.users),
+		usersWithProfileActivated: mapEntitiesFromApi(mapUserFromApi, profile.usersWithProfileActivated),
 	};
 }
 

@@ -26,14 +26,18 @@ const DEFAULT_BUDGET: IBudget = {
 	profile: undefined,
 };
 
-function mapBudgetFromApi(budget: IBudget): IBudget {
+function mapBudgetFromApi(budget?: IBudget): IBudget {
+	if (!budget) {
+		return undefined;
+	}
+
 	return {
 		...budget,
 		startDate: Moment(budget.startDate),
 		endDate: Moment(budget.endDate),
 
-		category: budget.category ? mapCategoryFromApi(budget.category) : undefined,
-		profile: budget.profile ? mapProfileFromApi(budget.profile) : undefined,
+		category: mapCategoryFromApi(budget.category),
+		profile: mapProfileFromApi(budget.profile),
 	};
 }
 

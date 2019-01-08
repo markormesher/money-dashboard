@@ -1,3 +1,4 @@
+import { mapEntitiesFromApi } from "../utils/entities";
 import { IProfile, mapProfileFromApi } from "./IProfile";
 import { ITransaction, mapTransactionFromApi } from "./ITransaction";
 
@@ -23,11 +24,15 @@ const DEFAULT_ACCOUNT: IAccount = {
 	transactions: undefined,
 };
 
-function mapAccountFromApi(account: IAccount): IAccount {
+function mapAccountFromApi(account?: IAccount): IAccount {
+	if (!account) {
+		return undefined;
+	}
+
 	return {
 		...account,
-		profile: account.profile ? mapProfileFromApi(account.profile) : undefined,
-		transactions: account.transactions ? account.transactions.map(mapTransactionFromApi) : undefined,
+		profile: mapProfileFromApi(account.profile),
+		transactions: mapEntitiesFromApi(mapTransactionFromApi, account.transactions),
 	};
 }
 

@@ -1,3 +1,4 @@
+import { mapEntitiesFromApi } from "../utils/entities";
 import { IProfile, mapProfileFromApi } from "./IProfile";
 
 interface IUser {
@@ -10,12 +11,16 @@ interface IUser {
 	readonly deleted: boolean;
 }
 
-function mapUserFromApi(user: IUser): IUser {
+function mapUserFromApi(user?: IUser): IUser {
+	if (!user) {
+		return undefined;
+	}
+
 	return {
 		...user,
 
-		profiles: user.profiles ? user.profiles.map(mapProfileFromApi) : undefined,
-		activeProfile: user.activeProfile ? mapProfileFromApi(user.activeProfile) : undefined,
+		profiles: mapEntitiesFromApi(mapProfileFromApi, user.profiles),
+		activeProfile: mapProfileFromApi(user.activeProfile),
 	};
 }
 

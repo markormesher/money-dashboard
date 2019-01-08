@@ -34,17 +34,20 @@ const DEFAULT_TRANSACTION: ITransaction = {
 	profile: undefined,
 };
 
-function mapTransactionFromApi(transaction: ITransaction): ITransaction {
-	// make sure dates are definitely Moment types
+function mapTransactionFromApi(transaction?: ITransaction): ITransaction {
+	if (!transaction) {
+		return undefined;
+	}
+
 	return {
 		...transaction,
 		transactionDate: Moment(transaction.transactionDate),
 		effectiveDate: Moment(transaction.effectiveDate),
 		creationDate: Moment(transaction.creationDate),
 
-		account: transaction.account ? mapAccountFromApi(transaction.account) : undefined,
-		category: transaction.category ? mapCategoryFromApi(transaction.category) : undefined,
-		profile: transaction.profile ? mapProfileFromApi(transaction.profile) : undefined,
+		account: mapAccountFromApi(transaction.account),
+		category: mapCategoryFromApi(transaction.category),
+		profile: mapProfileFromApi(transaction.profile),
 	};
 }
 

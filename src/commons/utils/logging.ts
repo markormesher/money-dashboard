@@ -32,6 +32,7 @@ const logger = Winston.createLogger({
 	],
 });
 
+/* istanbul ignore else: tests never run in prod mode */
 if (isDev() || isTest()) {
 	logger.add(new Winston.transports.Console({
 		format: consoleLogFormat,
