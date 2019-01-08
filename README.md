@@ -2,7 +2,6 @@
 [![CodeCov](https://codecov.io/gh/markormesher/money-dashboard/branch/master/graph/badge.svg)](https://codecov.io/gh/markormesher/money-dashboard)
 [![David DM](https://david-dm.org/markormesher/money-dashboard/status.svg)](https://david-dm.org/markormesher/money-dashboard)
 [![David DM](https://david-dm.org/markormesher/money-dashboard/dev-status.svg)](https://david-dm.org/markormesher/money-dashboard?type=dev)
-[![Known Vulnerabilities](https://snyk.io/test/github/markormesher/money-dashboard/badge.svg)](https://snyk.io/test/github/markormesher/money-dashboard) 
 
 # Money Dashboard
 
