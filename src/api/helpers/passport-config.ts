@@ -2,9 +2,9 @@ import { Request } from "express";
 import { PassportStatic as Passport } from "passport";
 import { IOAuth2StrategyOptionWithRequest, OAuth2Strategy, Profile } from "passport-google-oauth";
 import { IUser } from "../../commons/models/IUser";
+import { StatusError } from "../../commons/StatusError";
 import { getConstants, getSecret } from "../config/config-loader";
 import { getOrRegisterUserWithGoogleProfile, getUser } from "../managers/user-manager";
-import { StatusError } from "./StatusError";
 
 function init(passport: Passport): void {
 

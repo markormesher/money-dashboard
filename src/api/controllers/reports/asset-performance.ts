@@ -3,10 +3,10 @@ import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
 import { IAssetPerformanceData } from "../../../commons/models/IAssetPerformanceData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
+import { NULL_UUID } from "../../../commons/utils/entities";
 import { DbTransaction } from "../../db/models/DbTransaction";
 import { DbUser } from "../../db/models/DbUser";
 import { MomentDateTransformer } from "../../db/MomentDateTransformer";
-import { NULL_UUID } from "../../db/utils";
 import { getTransactionQueryBuilder } from "../../managers/transaction-manager";
 import { requireUser } from "../../middleware/auth-middleware";
 

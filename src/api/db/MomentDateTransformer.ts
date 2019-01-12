@@ -1,7 +1,7 @@
 import * as Moment from "moment";
 import { FindOperator, ValueTransformer } from "typeorm";
+import { StatusError } from "../../commons/StatusError";
 import { logger } from "../../commons/utils/logging";
-import { StatusError } from "../helpers/StatusError";
 
 class MomentDateTransformer implements ValueTransformer {
 

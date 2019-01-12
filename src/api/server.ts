@@ -6,11 +6,11 @@ import * as ExpressSession from "express-session";
 import * as Passport from "passport";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
+import { StatusError } from "../commons/StatusError";
 import { logger } from "../commons/utils/logging";
 import { getSecret } from "./config/config-loader";
 import { typeormConf } from "./db/db-config";
 import * as PassportConfig from "./helpers/passport-config";
-import { StatusError } from "./helpers/StatusError";
 import { setupApiRoutes } from "./middleware/api-routes";
 
 const app = Express();

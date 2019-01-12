@@ -1,8 +1,8 @@
 import { SelectQueryBuilder } from "typeorm";
+import { StatusError } from "../../commons/StatusError";
+import { cleanUuid } from "../../commons/utils/entities";
 import { DbProfile } from "../db/models/DbProfile";
 import { DbUser } from "../db/models/DbUser";
-import { cleanUuid } from "../db/utils";
-import { StatusError } from "../helpers/StatusError";
 import { getUser } from "./user-manager";
 
 interface IProfileQueryBuilderOptions {

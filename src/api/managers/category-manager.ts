@@ -1,9 +1,9 @@
 import { SelectQueryBuilder } from "typeorm";
 import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
+import { StatusError } from "../../commons/StatusError";
+import { cleanUuid } from "../../commons/utils/entities";
 import { DbCategory } from "../db/models/DbCategory";
 import { DbUser } from "../db/models/DbUser";
-import { cleanUuid } from "../db/utils";
-import { StatusError } from "../helpers/StatusError";
 import { getTransactionQueryBuilder } from "./transaction-manager";
 
 interface ICategoryQueryBuilderOptions {
