@@ -9,6 +9,7 @@ import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
+import { NULL_UUID } from "../../../api/db/utils";
 import { IAccount } from "../../../commons/models/IAccount";
 import { IAssetPerformanceData } from "../../../commons/models/IAssetPerformanceData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
@@ -88,8 +89,8 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 			startDate: Moment().subtract(1, "year"),
 			endDate: Moment(),
 			dateMode: "transaction",
-			zeroBasis: false,
-			accountId: undefined,
+			zeroBasis: true,
+			accountId: NULL_UUID,
 			data: undefined,
 			loading: true,
 			failed: false,
@@ -98,7 +99,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 		this.renderChart = this.renderChart.bind(this);
 		this.renderInfoPanel = this.renderInfoPanel.bind(this);
 		this.renderAccountChooser = this.renderAccountChooser.bind(this);
-		this.renderAccountForm = this.renderAccountForm.bind(this);
+		this.renderAccountInputs = this.renderAccountInputs.bind(this);
 		this.handleDateModeChange = this.handleDateModeChange.bind(this);
 		this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
 		this.handleAccountChange = this.handleAccountChange.bind(this);
@@ -284,15 +285,14 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 						Select Account
 					</h5>
 					<div className={combine(bs.cardBody, gs.cardBody)}>
-
 						{!accountList && <LoadingSpinner centre={true}/>}
-						{accountList && this.renderAccountForm()}
+						{accountList && this.renderAccountInputs()}
 					</div>
 				</div>
 		);
 	}
 
-	private renderAccountForm(): ReactNode {
+	private renderAccountInputs(): ReactNode {
 		const { accountList } = this.props;
 		const { accountId } = this.state;
 		const accounts = accountList
@@ -305,26 +305,40 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 
 		return (
 				<form>
-					<div className={bs.formGroup}>
-						<div className={bs.row}>
-							{
-								accounts.map((ac) => (
-										<div
-												key={`account-chooser-${ac.id}`}
-												className={combine(bs.col12, bs.colMd6)}
-										>
-											<ControlledRadioInput
-													name={"account"}
-													id={ac.id}
-													value={ac.id}
-													label={ac.name}
-													checked={accountId === ac.id}
-													onValueChange={this.handleAccountChange}
-											/>
-										</div>
-								))
-							}
+					<div className={bs.row}>
+						<div
+								key={`account-chooser-all`}
+								className={combine(bs.col12, bs.colMd6, bs.mb3)}
+						>
+							<ControlledRadioInput
+									name={"account"}
+									id={NULL_UUID}
+									value={NULL_UUID}
+									label={"All Accounts"}
+									checked={accountId === NULL_UUID}
+									onValueChange={this.handleAccountChange}
+							/>
 						</div>
+						<div className={combine(bs.col12, bs.mb3)}>
+							<hr className={bs.my0}/>
+						</div>
+						{
+							accounts.map((ac) => (
+									<div
+											key={`account-chooser-${ac.id}`}
+											className={combine(bs.col12, bs.colMd6, bs.mb3)}
+									>
+										<ControlledRadioInput
+												name={"account"}
+												id={ac.id}
+												value={ac.id}
+												label={ac.name}
+												checked={accountId === ac.id}
+												onValueChange={this.handleAccountChange}
+										/>
+									</div>
+							))
+						}
 					</div>
 				</form>
 		);

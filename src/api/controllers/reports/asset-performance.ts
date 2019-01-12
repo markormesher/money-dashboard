@@ -6,6 +6,7 @@ import { DateModeOption } from "../../../commons/models/ITransaction";
 import { DbTransaction } from "../../db/models/DbTransaction";
 import { DbUser } from "../../db/models/DbUser";
 import { MomentDateTransformer } from "../../db/MomentDateTransformer";
+import { NULL_UUID } from "../../db/utils";
 import { getTransactionQueryBuilder } from "../../managers/transaction-manager";
 import { requireUser } from "../../middleware/auth-middleware";
 
@@ -20,35 +21,53 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 	const accountId: string = req.query.accountId || "";
 	const zeroBasis: boolean = req.query.zeroBasis === "true";
 
-	const getTransactionsBeforeRange = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
+	const showAllAssets = accountId === NULL_UUID;
+
+	let getTransactionsBeforeRange = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
 			.where("transaction.profile_id = :profileId")
-			.andWhere("account.id = :accountId")
 			.andWhere(`transaction.${dateField} < :startDate`)
 			.setParameters({
-				accountId,
 				profileId: user.activeProfile.id,
 				startDate: MomentDateTransformer.toDbFormat(startDate),
-			})
-			.getMany();
+			});
 
-	const getTransactionsInRange = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
+	if (showAllAssets) {
+		getTransactionsBeforeRange = getTransactionsBeforeRange
+				.andWhere("account.type = 'asset'");
+	} else {
+		getTransactionsBeforeRange = getTransactionsBeforeRange
+				.andWhere("account.id = :accountId")
+				.setParameters({
+					accountId,
+				});
+	}
+
+	let getTransactionsInRange = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
 			.where("transaction.profile_id = :profileId")
-			.andWhere("account.id = :accountId")
 			.andWhere(`transaction.${dateField} >= :startDate`)
 			.andWhere(`transaction.${dateField} <= :endDate`)
 			.orderBy(`transaction.${dateField}`, "ASC")
 			.setParameters({
-				accountId,
 				profileId: user.activeProfile.id,
 				startDate: MomentDateTransformer.toDbFormat(startDate),
 				endDate: MomentDateTransformer.toDbFormat(endDate),
-			})
-			.getMany();
+			});
+
+	if (showAllAssets) {
+		getTransactionsInRange = getTransactionsInRange
+				.andWhere("account.type = 'asset'");
+	} else {
+		getTransactionsInRange = getTransactionsInRange
+				.andWhere("account.id = :accountId")
+				.setParameters({
+					accountId,
+				});
+	}
 
 	Promise
 			.all([
-				getTransactionsBeforeRange,
-				getTransactionsInRange,
+				getTransactionsBeforeRange.getMany(),
+				getTransactionsInRange.getMany(),
 			])
 			.then(([transactionsBeforeRange, transactionsInRange]) => {
 				const dataInclGrowth: Array<{ x: number, y: number }> = [];
