@@ -72,7 +72,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 
 				transactionsInRange.forEach((transaction: DbTransaction) => {
 					const rawDate = dateMode === "effective" ? transaction.effectiveDate : transaction.transactionDate;
-					const date = rawDate.unix() * 1000;
+					const date = rawDate.startOf("day").unix() * 1000;
 					if (lastDate > 0 && lastDate !== date) {
 						takeValues();
 					}
