@@ -106,7 +106,12 @@ describe(__filename, () => {
 		findChooser().text().should.not.contain("Next Year");
 	});
 
-	// TODO: custom presets
+	it("should render custom presets", () => {
+		const now = Moment();
+		mountWrapper = mount(<DateRangeChooser customPresets={[{ label: "Custom", startDate: now, endDate: now }]}/>);
+		mountWrapper.simulate("click");
+		findChooser().text().should.contain("Custom");
+	});
 
 	it("should call the listener when a preset is selected", () => {
 		const spy = sinon.spy();
