@@ -102,8 +102,8 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
 									startDate={startDate}
 									endDate={endDate}
 									onValueChange={this.handleDateRangeChange}
-									includeAllTime={true}
-									includeYearToDate={true}
+									includeAllTimePreset={true}
+									includeYearToDatePreset={true}
 									includeFuturePresets={false}
 									setPosition={true}
 									btnProps={{

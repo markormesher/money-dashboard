@@ -8,6 +8,7 @@ import {
 	faTable,
 	faTags,
 	faUsers,
+	faWallet,
 } from "@fortawesome/pro-light-svg-icons";
 import { push } from "connected-react-router";
 import * as React from "react";
@@ -85,10 +86,11 @@ class UCNav extends PureComponent<INavProps> {
 							<NavSection title="Reports">
 								<NavLink to="/reports/balance-history" text="Balance History" icon={faChartLine}/>
 								<NavLink to="/reports/asset-performance" text="Asset Performance" icon={faAnalytics}/>
+								<NavLink to="/reports/isa-deposits" text="ISA Deposits" icon={faPiggyBank}/>
 							</NavSection>
 
 							<NavSection title="Settings">
-								<NavLink to="/accounts" text="Accounts" icon={faPiggyBank}/>
+								<NavLink to="/accounts" text="Accounts" icon={faWallet}/>
 								<NavLink to="/budgets" text="Budgets" icon={faSlidersH}/>
 								<NavLink to="/categories" text="Categories" icon={faTags}/>
 								<NavLink to="/profiles" text="Profiles" icon={faUsers}/>

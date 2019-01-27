@@ -94,8 +94,8 @@ class UCBudgetCloneModal extends PureComponent<IBudgetCloneModalProps, IBudgetCl
 							<DateRangeChooser
 									startDate={currentValues.startDate ? Moment(currentValues.startDate) : undefined}
 									endDate={currentValues.endDate ? Moment(currentValues.endDate) : undefined}
-									includeYearToDate={false}
-									includeAllTime={false}
+									includeYearToDatePreset={false}
+									includeAllTimePreset={false}
 									onValueChange={this.handleDateRangeSelection}
 									btnProps={{
 										className: combine(bs.btnOutlineDark, bs.btnSm, bs.formControl),
