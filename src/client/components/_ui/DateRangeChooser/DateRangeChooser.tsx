@@ -39,7 +39,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 			includeAllTimePreset, customPresets,
 		} = props;
 		return ([
-			includeCurrentPresets && {
+			includeCurrentPresets !== false && {
 				label: "This Month",
 				startDate: Moment().startOf("month"),
 				endDate: Moment().endOf("month"),
@@ -49,7 +49,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 				startDate: Moment().add(1, "month").startOf("month"),
 				endDate: Moment().add(1, "month").endOf("month"),
 			},
-			includeCurrentPresets && {
+			includeCurrentPresets !== false && {
 				label: "This Year",
 				startDate: Moment().startOf("year"),
 				endDate: Moment().endOf("year"),
