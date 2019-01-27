@@ -2,8 +2,11 @@ import axios, { AxiosResponse } from "axios";
 import * as Moment from "moment";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
-import { IAccountBalance, mapAccountBalanceFromApi } from "../../../commons/models/IAccountBalance";
 import { IDateRange } from "../../../commons/models/IDateRange";
+import {
+	IDetailedAccountBalance,
+	mapDetailedAccountBalanceFromApi,
+} from "../../../commons/models/IDetailedAccountBalance";
 import { DateModeOption } from "../../../commons/models/ITransaction";
 import { getTaxYear, getTaxYearEnd, getTaxYearStart } from "../../../commons/utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
@@ -32,19 +35,27 @@ class IsaDepositsReport extends PureComponent<{}, IIsaDepositReportState> {
 			defaultSortPriority: 0,
 		},
 		{
-			title: "Balance",
+			title: "Payments In",
+			sortable: false,
+		},
+		{
+			title: "Payments Out",
+			sortable: false,
+		},
+		{
+			title: "Net Payments",
 			sortable: false,
 		},
 	];
 
-	private dataProvider = new ApiDataTableDataProvider<IAccountBalance>(
+	private dataProvider = new ApiDataTableDataProvider<IDetailedAccountBalance>(
 			"/api/reports/isa-deposits/table-data",
 			() => ({
 				startDate: formatDate(this.state.startDate, "system"),
 				endDate: formatDate(this.state.endDate, "system"),
 				dateMode: this.state.dateMode,
 			}),
-			mapAccountBalanceFromApi,
+			mapDetailedAccountBalanceFromApi,
 	);
 
 	constructor(props: {}, context: any) {
@@ -109,8 +120,9 @@ class IsaDepositsReport extends PureComponent<{}, IIsaDepositReportState> {
 						</div>
 					</div>
 
-					<DataTable<IAccountBalance>
+					<DataTable<IDetailedAccountBalance>
 							columns={this.tableColumns}
+							pageSize={Number.MAX_SAFE_INTEGER}
 							dataProvider={this.dataProvider}
 							watchedProps={{ startDate, endDate, dateMode }}
 							rowRenderer={this.tableRowRenderer}
@@ -119,11 +131,13 @@ class IsaDepositsReport extends PureComponent<{}, IIsaDepositReportState> {
 		);
 	}
 
-	private tableRowRenderer(balance: IAccountBalance): ReactElement<void> {
+	private tableRowRenderer(balance: IDetailedAccountBalance): ReactElement<void> {
 		return (
 				<tr key={balance.account.id}>
 					<td>{balance.account.name}</td>
-					<td>{formatCurrencyStyled(balance.balance)}</td>
+					<td>{formatCurrencyStyled(balance.balanceIn)}</td>
+					<td>{formatCurrencyStyled(balance.balanceOut)}</td>
+					<td>{formatCurrencyStyled(balance.balanceIn - balance.balanceOut)}</td>
 				</tr>
 		);
 	}

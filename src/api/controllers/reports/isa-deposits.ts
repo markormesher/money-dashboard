@@ -1,8 +1,8 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
-import { IAccountBalance } from "../../../commons/models/IAccountBalance";
 import { IDataTableResponse } from "../../../commons/models/IDataTableResponse";
+import { IDetailedAccountBalance } from "../../../commons/models/IDetailedAccountBalance";
 import { DateModeOption } from "../../../commons/models/ITransaction";
 import { getTaxYear } from "../../../commons/utils/helpers";
 import { logger } from "../../../commons/utils/logging";
@@ -49,7 +49,8 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	const getAccounts = getAllAccounts(user, false);
 	let getTransactions = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
 			.select("account.id", "accountId")
-			.addSelect("SUM(transaction.amount)", "balance")
+			.addSelect("SUM(CASE WHEN transaction.amount < 0 THEN transaction.amount ELSE 0 END) * -1", "balanceOut")
+			.addSelect("SUM(CASE WHEN transaction.amount > 0 THEN transaction.amount ELSE 0 END)", "balanceIn")
 			.where("transaction.profile_id = :profileId")
 			.andWhere("account.name LIKE '%ISA%'")
 			.andWhere("account.name LIKE :searchTerm")
@@ -71,19 +72,21 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 	Promise
 			.all([
 				getAccounts,
-				getTransactions.getRawMany() as Promise<Array<{ accountId: string, balance: number }>>,
+				getTransactions.getRawMany() as Promise<Array<{ accountId: string, balanceOut: number, balanceIn: number }>>,
 			])
 			.then(([accounts, balances]) => {
 				const accountMap: { [key: string]: DbAccount } = {};
 				accounts.forEach((a) => accountMap[a.id] = a);
 
-				logger.debug("BALANCE", { balances });
-
 				res.json({
 					filteredRowCount: balances.length,
 					totalRowCount: balances.length,
-					data: balances.map((b) => ({ account: accountMap[b.accountId], balance: b.balance })),
-				} as IDataTableResponse<IAccountBalance>);
+					data: balances.map((b) => ({
+						account: accountMap[b.accountId],
+						balanceOut: b.balanceOut,
+						balanceIn: b.balanceIn,
+					})),
+				} as IDataTableResponse<IDetailedAccountBalance>);
 			})
 			.catch(next);
 });
