@@ -5,12 +5,7 @@ import { PureComponent, ReactElement, ReactNode } from "react";
 import { IAccountBalance, mapAccountBalanceFromApi } from "../../../commons/models/IAccountBalance";
 import { IDateRange } from "../../../commons/models/IDateRange";
 import { DateModeOption } from "../../../commons/models/ITransaction";
-import {
-	getCurrentTaxYearEnd,
-	getCurrentTaxYearStart,
-	getTaxYearEnd,
-	getTaxYearStart,
-} from "../../../commons/utils/helpers";
+import { getTaxYear, getTaxYearEnd, getTaxYearStart } from "../../../commons/utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
@@ -56,8 +51,8 @@ class IsaDepositsReport extends PureComponent<{}, IIsaDepositReportState> {
 		super(props, context);
 
 		this.state = {
-			startDate: getCurrentTaxYearStart(),
-			endDate: getCurrentTaxYearEnd(),
+			startDate: getTaxYearStart(getTaxYear(Moment())),
+			endDate: getTaxYearEnd(getTaxYear(Moment())),
 			minYear: Moment().year(),
 			dateMode: "transaction",
 		};
@@ -75,7 +70,7 @@ class IsaDepositsReport extends PureComponent<{}, IIsaDepositReportState> {
 		const { startDate, endDate, dateMode, minYear } = this.state;
 
 		const yearRanges: IDateRange[] = [];
-		const currentTaxYearStartYear = getCurrentTaxYearStart().year();
+		const currentTaxYearStartYear = getTaxYearStart(getTaxYear(Moment())).year();
 		for (let year = currentTaxYearStartYear; year >= minYear; --year) {
 			yearRanges.push({
 				startDate: getTaxYearStart(year),
