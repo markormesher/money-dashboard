@@ -19,16 +19,22 @@ describe(__filename, () => {
 	});
 
 	describe("getTaxYearStart()", () => {
-		it("should correct values", () => {
+		it("should return correct values", () => {
 			getTaxYearStart(2017).isSame(Moment("2017-04-06")).should.equal(true);
 			getTaxYearStart(2018).isSame(Moment("2018-04-06")).should.equal(true);
 		});
 	});
 
 	describe("getTaxYearEnd()", () => {
-		it("should correct values", () => {
+		it("should return correct values", () => {
 			getTaxYearEnd(2017).isSame(Moment("2018-04-05")).should.equal(true);
 			getTaxYearEnd(2018).isSame(Moment("2019-04-05")).should.equal(true);
+		});
+	});
+
+	describe("groupBy()", () => {
+		it("should have tests", () => {
+			// TODO
 		});
 	});
 });
