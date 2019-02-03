@@ -59,3 +59,17 @@ button {
 .loading {
 	opacity: .4;
 }
+
+tr {
+	&.bottom-border {
+		td {
+			border-bottom: 1px solid $gray-700;
+		}
+	}
+
+	&.bottom-top {
+		td {
+			border-top: 1px solid $gray-700;
+		}
+	}
+}

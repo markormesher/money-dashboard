@@ -4,3 +4,5 @@ export const btnMini: string;
 export const currency: string;
 export const cardBody: string;
 export const loading: string;
+export const bottomBorder: string;
+export const bottomTop: string;
