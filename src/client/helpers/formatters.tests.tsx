@@ -250,7 +250,7 @@ describe(__filename, () => {
 
 			category = { ...DEFAULT_CATEGORY, isAssetGrowthCategory: true };
 			badge = generateCategoryTypeBadge(category)[0];
-			shallow(badge).text().should.equal("Asset");
+			shallow(badge).text().should.equal("Asset Growth");
 
 			category = { ...DEFAULT_CATEGORY, isMemoCategory: true };
 			badge = generateCategoryTypeBadge(category)[0];
