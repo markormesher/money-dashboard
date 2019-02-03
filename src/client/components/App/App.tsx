@@ -18,6 +18,7 @@ import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { Header } from "../Header/Header";
 import { KeyShortcutModal } from "../KeyShortcutModal/KeyShortcutModal";
 import { Nav } from "../Nav/Nav";
+import { PensionDepositsReport } from "../PensionDepositsReport/PensionDepositsReport";
 import { ProfilesPage } from "../ProfilesPage/ProfilesPage";
 import { TransactionsPage } from "../TransactionsPage/TransactionsPage";
 import { AppContentWrapper } from "./AppContentWrapper";
@@ -121,6 +122,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 
 								<Route path="/reports/balance-history" component={BalanceHistoryReport}/>
 								<Route path="/reports/asset-performance" component={AssetPerformanceReport}/>
+								<Route path="/reports/pension-deposits" component={PensionDepositsReport}/>
 
 								{/* Adding a new route? Keep it above this one! */}
 								<Route render={this.render404Error}/>

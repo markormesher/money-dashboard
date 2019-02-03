@@ -87,11 +87,16 @@ describe(__filename, () => {
 	});
 
 	it("should not render disabled presets", () => {
-		mountWrapper = mount(<DateRangeChooser includeAllTime={false}/>);
+		mountWrapper = mount(<DateRangeChooser includeCurrentPresets={false}/>);
+		mountWrapper.simulate("click");
+		findChooser().text().should.not.contain("This Month");
+		findChooser().text().should.not.contain("This Year");
+
+		mountWrapper = mount(<DateRangeChooser includeAllTimePreset={false}/>);
 		mountWrapper.simulate("click");
 		findChooser().text().should.not.contain("All Time");
 
-		mountWrapper = mount(<DateRangeChooser includeYearToDate={false}/>);
+		mountWrapper = mount(<DateRangeChooser includeYearToDatePreset={false}/>);
 		mountWrapper.simulate("click");
 		findChooser().text().should.not.contain("Year to Date");
 
@@ -99,6 +104,13 @@ describe(__filename, () => {
 		mountWrapper.simulate("click");
 		findChooser().text().should.not.contain("Next Month");
 		findChooser().text().should.not.contain("Next Year");
+	});
+
+	it("should render custom presets", () => {
+		const now = Moment();
+		mountWrapper = mount(<DateRangeChooser customPresets={[{ label: "Custom", startDate: now, endDate: now }]}/>);
+		mountWrapper.simulate("click");
+		findChooser().text().should.contain("Custom");
 	});
 
 	it("should call the listener when a preset is selected", () => {

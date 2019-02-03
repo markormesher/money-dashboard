@@ -14,8 +14,10 @@ interface IDateRangeChooserProps {
 	readonly startDate?: Moment.Moment;
 	readonly endDate?: Moment.Moment;
 	readonly includeFuturePresets?: boolean;
-	readonly includeYearToDate?: boolean;
-	readonly includeAllTime?: boolean;
+	readonly includeCurrentPresets?: boolean;
+	readonly includeYearToDatePreset?: boolean;
+	readonly includeAllTimePreset?: boolean;
+	readonly customPresets?: IDateRange[];
 	readonly onValueChange?: (start: Moment.Moment, end: Moment.Moment) => void;
 	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
 	readonly setPosition?: boolean;
@@ -32,9 +34,12 @@ interface IDateRangeChooserState {
 class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChooserState> {
 
 	private static getDateRanges(props: IDateRangeChooserProps): IDateRange[] {
-		const { includeFuturePresets, includeYearToDate, includeAllTime } = props;
+		const {
+			includeCurrentPresets, includeFuturePresets, includeYearToDatePreset,
+			includeAllTimePreset, customPresets,
+		} = props;
 		return ([
-			{
+			includeCurrentPresets !== false && {
 				label: "This Month",
 				startDate: Moment().startOf("month"),
 				endDate: Moment().endOf("month"),
@@ -44,7 +49,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 				startDate: Moment().add(1, "month").startOf("month"),
 				endDate: Moment().add(1, "month").endOf("month"),
 			},
-			{
+			includeCurrentPresets !== false && {
 				label: "This Year",
 				startDate: Moment().startOf("year"),
 				endDate: Moment().endOf("year"),
@@ -54,16 +59,17 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 				startDate: Moment().add(1, "year").startOf("year"),
 				endDate: Moment().add(1, "year").endOf("year"),
 			},
-			includeYearToDate !== false && {
+			includeYearToDatePreset !== false && {
 				label: "Year to Date",
 				startDate: Moment().subtract(1, "year"),
 				endDate: Moment(),
 			},
-			includeAllTime !== false && {
+			includeAllTimePreset !== false && {
 				label: "All Time",
 				startDate: Moment(new Date(1970, 0, 1)),
 				endDate: Moment(),
 			},
+			...(customPresets || []),
 		] as Array<boolean | IDateRange>).filter((a) => a !== false) as IDateRange[];
 	}
 

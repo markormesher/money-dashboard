@@ -157,8 +157,8 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 									startDate={startDate}
 									endDate={endDate}
 									onValueChange={this.handleDateRangeChange}
-									includeAllTime={true}
-									includeYearToDate={true}
+									includeAllTimePreset={true}
+									includeYearToDatePreset={true}
 									includeFuturePresets={false}
 									setPosition={true}
 									btnProps={{

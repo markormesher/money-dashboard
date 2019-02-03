@@ -144,8 +144,8 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
 								<DateRangeChooser
 										startDate={currentValues.startDate ? (currentValues.startDate as Moment.Moment) : undefined}
 										endDate={currentValues.endDate ? (currentValues.endDate as Moment.Moment) : undefined}
-										includeYearToDate={false}
-										includeAllTime={false}
+										includeYearToDatePreset={false}
+										includeAllTimePreset={false}
 										onValueChange={this.handleDateRangeSelection}
 										btnProps={{
 											className: combine(bs.btnOutlineDark, bs.btnSm, bs.formControl),
