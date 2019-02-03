@@ -145,7 +145,7 @@ class PensionDepositsReport extends Component<{}, IPensionDepositsReportState> {
 					))}
 
 					<tr className={gs.bottomBorder}>
-						<td><strong>Change (excl. Asset Growth)</strong></td>
+						<td><strong>Total (excl. Asset Growth)</strong></td>
 						{years.map((year) => (
 								<td key={year} className={bs.textRight}>
 									{formatCurrencyStyled(
@@ -170,7 +170,7 @@ class PensionDepositsReport extends Component<{}, IPensionDepositsReportState> {
 					))}
 
 					<tr className={gs.bottomBorder}>
-						<td><strong>Change (incl. Asset Growth)</strong></td>
+						<td><strong>Total (incl. Asset Growth)</strong></td>
 						{years.map((year) => (
 								<td key={year} className={bs.textRight}>
 									{formatCurrencyStyled(
