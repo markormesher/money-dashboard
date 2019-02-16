@@ -4,8 +4,8 @@ import axios, { AxiosResponse } from "axios";
 import { ChartDataSets } from "chart.js";
 import { merge } from "lodash";
 import * as Moment from "moment";
-import { Component, ReactNode } from "react";
 import * as React from "react";
+import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
@@ -41,6 +41,7 @@ interface IAssetPerformanceReportState {
 	readonly endDate: Moment.Moment;
 	readonly dateMode: DateModeOption;
 	readonly zeroBasis: boolean;
+	readonly showAsPercent: boolean;
 	readonly accountId: string;
 	readonly data: IAssetPerformanceData;
 	readonly loading: boolean;
@@ -67,16 +68,6 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 
 	private static seriesColours = [chartColours.red, chartColours.blue];
 
-	private static chartProps: Partial<LinearComponentProps> = merge({}, defaultLinearChartOverTimeProps, {
-		options: {
-			elements: {
-				line: {
-					fill: false,
-				},
-			},
-		},
-	});
-
 	// give each remote request an increasing "frame" number so that late arrivals will be dropped
 	private frameCounter = 0;
 	private lastFrameReceived = 0;
@@ -90,6 +81,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 			endDate: Moment(),
 			dateMode: "transaction",
 			zeroBasis: true,
+			showAsPercent: false,
 			accountId: NULL_UUID,
 			data: undefined,
 			loading: true,
@@ -104,6 +96,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 		this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
 		this.handleAccountChange = this.handleAccountChange.bind(this);
 		this.handleZeroBasisChange = this.handleZeroBasisChange.bind(this);
+		this.handleShowAsPercentChange = this.handleShowAsPercentChange.bind(this);
 	}
 
 	public componentDidMount(): void {
@@ -116,7 +109,8 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 				|| this.state.endDate !== nextState.endDate
 				|| this.state.dateMode !== nextState.dateMode
 				|| this.state.accountId !== nextState.accountId
-				|| this.state.zeroBasis !== nextState.zeroBasis) {
+				|| this.state.zeroBasis !== nextState.zeroBasis
+				|| this.state.showAsPercent !== nextState.showAsPercent) {
 			this.fetchPending = true;
 		}
 	}
@@ -136,6 +130,15 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 					<div className={gs.headerWrapper}>
 						<h1 className={bs.h2}>Asset Performance</h1>
 						<div className={combine(bs.btnGroup, gs.headerExtras)}>
+							{this.state.zeroBasis && <CheckboxBtn
+									text={"Show as %"}
+									checked={this.state.showAsPercent}
+									onChange={this.handleShowAsPercentChange}
+									btnProps={{
+										className: combine(bs.btnOutlineInfo, bs.btnSm),
+									}}
+							/>}
+
 							<CheckboxBtn
 									text={"Zero Basis"}
 									checked={this.state.zeroBasis}
@@ -187,7 +190,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 	}
 
 	private renderChart(): ReactNode {
-		const { loading, failed, data, startDate, endDate } = this.state;
+		const { loading, failed, data, startDate, endDate, zeroBasis, showAsPercent } = this.state;
 
 		if (failed) {
 			return <p>Chart failed to load. Please try again.</p>;
@@ -210,10 +213,29 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 			});
 		}
 
+		const chartProps: Partial<LinearComponentProps> = merge({}, defaultLinearChartOverTimeProps, {
+			options: {
+				elements: {
+					line: {
+						fill: false,
+					},
+				},
+				scales: {
+					yAxes: [
+						{
+							ticks: {
+								callback: (val: number) => zeroBasis && showAsPercent ? `${val * 100}%` : formatCurrency(val),
+							},
+						},
+					],
+				},
+			},
+		});
+
 		return (
 				<div className={combine(styles.chartContainer, loading && gs.loading)}>
 					<Line
-							{...UCAssetPerformanceReport.chartProps}
+							{...chartProps}
 							data={{ datasets }}
 					/>
 				</div>
@@ -360,8 +382,12 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 		this.setState({ zeroBasis });
 	}
 
+	private handleShowAsPercentChange(showAsPercent: boolean): void {
+		this.setState({ showAsPercent });
+	}
+
 	private fetchData(): void {
-		const { startDate, endDate, dateMode, accountId, zeroBasis } = this.state;
+		const { startDate, endDate, dateMode, accountId, zeroBasis, showAsPercent } = this.state;
 
 		if (!accountId) {
 			return;
@@ -378,6 +404,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 						dateMode,
 						accountId,
 						zeroBasis,
+						showAsPercent,
 					},
 				})
 				.then((res: AxiosResponse<ChartDataSets[]>) => res.data)

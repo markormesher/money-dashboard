@@ -20,6 +20,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 	const dateField = `${dateMode}Date`;
 	const accountId: string = req.query.accountId || "";
 	const zeroBasis: boolean = req.query.zeroBasis === "true";
+	const showAsPercent: boolean = req.query.showAsPercent === "true";
 
 	const showAllAssets = accountId === NULL_UUID;
 
@@ -88,7 +89,19 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 
 				const takeValues = () => {
 					if (zeroBasis) {
-						dataInclGrowth.push({ x: lastDate, y: runningTotalInclGrowth - runningTotalExclGrowth });
+						if (showAsPercent) {
+							dataInclGrowth.push({
+								x: lastDate,
+								y: runningTotalExclGrowth !== 0
+										? (runningTotalInclGrowth - runningTotalExclGrowth) / runningTotalExclGrowth
+										: 0,
+							});
+						} else {
+							dataInclGrowth.push({
+								x: lastDate,
+								y: runningTotalInclGrowth - runningTotalExclGrowth,
+							});
+						}
 						dataExclGrowth.push({ x: lastDate, y: 0 });
 					} else {
 						dataInclGrowth.push({ x: lastDate, y: runningTotalInclGrowth });
