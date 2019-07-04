@@ -15,7 +15,7 @@ import { DateModeOption } from "../../../commons/models/ITransaction";
 import { NULL_UUID } from "../../../commons/utils/entities";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatCurrency } from "../../helpers/formatters";
+import { formatCurrency, formatPercent } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { startLoadAccountList } from "../../redux/accounts";
 import { IRootState } from "../../redux/root";
@@ -224,7 +224,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 					yAxes: [
 						{
 							ticks: {
-								callback: (val: number) => zeroBasis && showAsPercent ? `${val * 100}%` : formatCurrency(val),
+								callback: (val: number) => zeroBasis && showAsPercent ? formatPercent(val * 100) : formatCurrency(val),
 							},
 						},
 					],

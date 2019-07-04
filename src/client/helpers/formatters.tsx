@@ -18,6 +18,10 @@ function formatCurrencyStyled(amount: number): ReactElement<void> {
 	return (<span className={gs.currency}>{formatCurrency(amount)}</span>);
 }
 
+function formatPercent(amount: number): string {
+	return amount.toFixed(2) + "%";
+}
+
 function formatDate(date: Date | Moment.Moment | string, format: "user" | "system" = "user"): string {
 	if (!date) {
 		return undefined;
@@ -129,6 +133,7 @@ function generateCategoryTypeBadge(category: ICategory): Array<ReactElement<void
 export {
 	formatCurrency,
 	formatCurrencyStyled,
+	formatPercent,
 	formatDate,
 	capitaliseFirstLetter,
 	generateAccountTypeBadge,
