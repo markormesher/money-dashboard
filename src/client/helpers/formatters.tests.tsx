@@ -13,6 +13,7 @@ import {
 	formatCurrency,
 	formatCurrencyStyled,
 	formatDate,
+	formatPercent,
 	generateAccountTypeBadge,
 	generateBudgetTypeBadge,
 	generateCategoryTypeBadge,
@@ -56,6 +57,20 @@ describe(__filename, () => {
 		it("should preserve the un-styled value", () => {
 			const formattedElement = shallow(formatCurrencyStyled(1234.56));
 			formattedElement.text().should.equal("1,234.56");
+		});
+	});
+
+	describe("formatPercent()", () => {
+
+		it("should force two decimal places", () => {
+			formatPercent(0).should.endsWith(".00%");
+			formatPercent(0.5).should.endsWith(".50%");
+			formatPercent(0.001).should.endsWith(".00%");
+		});
+
+		it("should preserve negatives", () => {
+			formatPercent(1).should.equal("1.00%");
+			formatPercent(-1).should.equal("-1.00%");
 		});
 	});
 
