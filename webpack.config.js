@@ -16,11 +16,13 @@ const IS_PROD = nodeEnv === "production";
 const IS_DEV = nodeEnv === "development";
 
 if (!IS_TEST && !IS_PROD && !IS_DEV) {
-	throw new Error("NODE_ENV was not set to one of test, production or development (it was '" + nodeEnv + "'")
+	throw new Error("NODE_ENV was not set to one of test, production or development (it was '" + nodeEnv + "'");
 }
 
 const outputDir = resolve(__dirname, "build", "client");
-const entryPoints = IS_TEST ? glob.sync("./src/client/**/*.tests.{ts,tsx}") : resolve(__dirname, "src", "client", "index.tsx");
+const entryPoints = IS_TEST
+		? glob.sync("./src/client/**/*.tests.{ts,tsx}")
+		: resolve(__dirname, "src", "client", "index.tsx");
 
 const babelLoader = {
 	loader: "babel-loader",
@@ -95,7 +97,7 @@ const config = {
 	output: {
 		publicPath: "/",
 		path: outputDir,
-		filename: IS_PROD ? "[name]~[contenthash].js" : "[name].js",
+		filename: "[name].js",
 
 		// used in development mode only
 		hotUpdateMainFilename: "hot-update.[hash:6].json",
@@ -158,7 +160,7 @@ const config = {
 	plugins: [
 		new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
 		new webpack.EnvironmentPlugin(["NODE_ENV"]),
-		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // remove other locales from Moment.js
+		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 		!IS_TEST && new HtmlWebpackPlugin({
 			template: resolve(__dirname, "src", "client", "index.html"),
 			inject: true,
@@ -197,7 +199,7 @@ const config = {
 		]),
 		IS_PROD && new MiniCssExtractPlugin({
 			minimize: true,
-			filename: "[name]~[contenthash].css",
+			filename: "[name].css",
 		}),
 		IS_PROD && new BundleAnalyzerPlugin({
 			analyzerMode: "static",
