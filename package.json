@@ -65,7 +65,7 @@
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "history": "^4.7.2",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.13",
     "logform": "^2.0.0",
     "moment": "^2.20.1",
     "passport": "^0.4.0",
