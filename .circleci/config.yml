@@ -110,6 +110,6 @@ workflows:
       - maybe_deploy:
           requires:
             - lint
-            - loclfile-lint
+            - lockfile-lint
             - test
             - bundlewatch
