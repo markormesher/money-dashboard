@@ -36,6 +36,15 @@ jobs:
           name: Run Linter
           command: yarn lint
 
+  lockfile-lint:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Run Lockfile Linter
+          command: yarn lockfile-lint --path yarn.lock --allowed-hosts registry.yarnpkg.com npm.fontawesome.com --validate-https --validate-checksum --validate-integrity
+
   bundlewatch:
     <<: *defaults
     steps:
@@ -101,5 +110,6 @@ workflows:
       - maybe_deploy:
           requires:
             - lint
+            - loclfile-lint
             - test
             - bundlewatch
