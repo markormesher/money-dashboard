@@ -39,6 +39,7 @@
     "build-client-test-webpack": "cross-env NODE_ENV=test webpack",
     "// linters": "//",
     "lint": "run-p lint-ts lint-scss",
+    "lint-lockfile": "lockfile-lint --path yarn.lock --allowed-hosts registry.yarnpkg.com npm.fontawesome.com --validate-https --validate-checksum --validate-integrity",
     "lint-scss": "sass-lint -v -c ./sasslint.yml \"./src/**/*.scss\"",
     "lint-ts": "tslint -c ./tslint.json \"./src/**/*.{ts,tsx}\"",
     "lint-ts-fix": "tslint --fix -c ./tslint.json \"./src/**/*.{ts,tsx}\"",
