@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/money-dashboard
   docker:
-    - image: circleci/node:9.11.2
+    - image: circleci/node:10.18.0
 
 jobs:
   setup:
@@ -35,6 +35,15 @@ jobs:
       - run:
           name: Run Linter
           command: yarn lint
+
+  lockfile-lint:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Run Lockfile Linter
+          command: yarn lint-lockfile
 
   bundlewatch:
     <<: *defaults
@@ -92,6 +101,9 @@ workflows:
       - lint:
           requires:
             - setup
+      - lockfile-lint:
+          requires:
+            - setup
       - test:
           requires:
             - setup
@@ -101,5 +113,6 @@ workflows:
       - maybe_deploy:
           requires:
             - lint
+            - lockfile-lint
             - test
             - bundlewatch
