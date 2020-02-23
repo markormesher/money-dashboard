@@ -29,420 +29,397 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 
 interface IAssetPerformanceReportProps {
-	readonly accountList?: IAccount[];
+  readonly accountList?: IAccount[];
 
-	readonly actions?: {
-		readonly startLoadAccountList: () => AnyAction,
-	};
+  readonly actions?: {
+    readonly startLoadAccountList: () => AnyAction;
+  };
 }
 
 interface IAssetPerformanceReportState {
-	readonly startDate: Moment.Moment;
-	readonly endDate: Moment.Moment;
-	readonly dateMode: DateModeOption;
-	readonly zeroBasis: boolean;
-	readonly showAsPercent: boolean;
-	readonly accountId: string;
-	readonly data: IAssetPerformanceData;
-	readonly loading: boolean;
-	readonly failed: boolean;
+  readonly startDate: Moment.Moment;
+  readonly endDate: Moment.Moment;
+  readonly dateMode: DateModeOption;
+  readonly zeroBasis: boolean;
+  readonly showAsPercent: boolean;
+  readonly accountId: string;
+  readonly data: IAssetPerformanceData;
+  readonly loading: boolean;
+  readonly failed: boolean;
 }
 
 function mapStateToProps(state: IRootState, props: IAssetPerformanceReportProps): IAssetPerformanceReportProps {
-	return {
-		...props,
-		accountList: state.accounts.accountList,
-	};
+  return {
+    ...props,
+    accountList: state.accounts.accountList,
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: IAssetPerformanceReportProps): IAssetPerformanceReportProps {
-	return {
-		...props,
-		actions: {
-			startLoadAccountList: () => dispatch(startLoadAccountList()),
-		},
-	};
+  return {
+    ...props,
+    actions: {
+      startLoadAccountList: (): AnyAction => dispatch(startLoadAccountList()),
+    },
+  };
 }
 
 class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, IAssetPerformanceReportState> {
+  private static seriesColours = [chartColours.red, chartColours.blue];
 
-	private static seriesColours = [chartColours.red, chartColours.blue];
+  // give each remote request an increasing "frame" number so that late arrivals will be dropped
+  private frameCounter = 0;
+  private lastFrameReceived = 0;
 
-	// give each remote request an increasing "frame" number so that late arrivals will be dropped
-	private frameCounter = 0;
-	private lastFrameReceived = 0;
+  constructor(props: IAssetPerformanceReportProps) {
+    super(props);
+    this.state = {
+      startDate: Moment().subtract(1, "year"),
+      endDate: Moment(),
+      dateMode: "transaction",
+      zeroBasis: true,
+      showAsPercent: false,
+      accountId: NULL_UUID,
+      data: undefined,
+      loading: true,
+      failed: false,
+    };
 
-	private fetchPending = false;
+    this.renderChart = this.renderChart.bind(this);
+    this.renderInfoPanel = this.renderInfoPanel.bind(this);
+    this.renderAccountChooser = this.renderAccountChooser.bind(this);
+    this.renderAccountInputs = this.renderAccountInputs.bind(this);
+    this.handleDateModeChange = this.handleDateModeChange.bind(this);
+    this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
+    this.handleAccountChange = this.handleAccountChange.bind(this);
+    this.handleZeroBasisChange = this.handleZeroBasisChange.bind(this);
+    this.handleShowAsPercentChange = this.handleShowAsPercentChange.bind(this);
+  }
 
-	constructor(props: IAssetPerformanceReportProps, context: any) {
-		super(props, context);
-		this.state = {
-			startDate: Moment().subtract(1, "year"),
-			endDate: Moment(),
-			dateMode: "transaction",
-			zeroBasis: true,
-			showAsPercent: false,
-			accountId: NULL_UUID,
-			data: undefined,
-			loading: true,
-			failed: false,
-		};
+  public componentDidMount(): void {
+    this.props.actions.startLoadAccountList();
+    this.fetchData();
+  }
 
-		this.renderChart = this.renderChart.bind(this);
-		this.renderInfoPanel = this.renderInfoPanel.bind(this);
-		this.renderAccountChooser = this.renderAccountChooser.bind(this);
-		this.renderAccountInputs = this.renderAccountInputs.bind(this);
-		this.handleDateModeChange = this.handleDateModeChange.bind(this);
-		this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
-		this.handleAccountChange = this.handleAccountChange.bind(this);
-		this.handleZeroBasisChange = this.handleZeroBasisChange.bind(this);
-		this.handleShowAsPercentChange = this.handleShowAsPercentChange.bind(this);
-	}
+  public componentDidUpdate(nextProps: {}, nextState: IAssetPerformanceReportState): void {
+    if (
+      this.state.startDate !== nextState.startDate ||
+      this.state.endDate !== nextState.endDate ||
+      this.state.dateMode !== nextState.dateMode ||
+      this.state.accountId !== nextState.accountId ||
+      this.state.zeroBasis !== nextState.zeroBasis ||
+      this.state.showAsPercent !== nextState.showAsPercent
+    ) {
+      this.fetchData();
+    }
+  }
 
-	public componentDidMount(): void {
-		this.props.actions.startLoadAccountList();
-		this.fetchData();
-	}
+  public render(): ReactNode {
+    const { startDate, endDate, accountId } = this.state;
 
-	public componentWillUpdate(nextProps: {}, nextState: IAssetPerformanceReportState): void {
-		if (this.state.startDate !== nextState.startDate
-				|| this.state.endDate !== nextState.endDate
-				|| this.state.dateMode !== nextState.dateMode
-				|| this.state.accountId !== nextState.accountId
-				|| this.state.zeroBasis !== nextState.zeroBasis
-				|| this.state.showAsPercent !== nextState.showAsPercent) {
-			this.fetchPending = true;
-		}
-	}
+    return (
+      <>
+        <div className={gs.headerWrapper}>
+          <h1 className={bs.h2}>Asset Performance</h1>
+          <div className={combine(bs.btnGroup, gs.headerExtras)}>
+            {this.state.zeroBasis && (
+              <CheckboxBtn
+                text={"Show as %"}
+                checked={this.state.showAsPercent}
+                onChange={this.handleShowAsPercentChange}
+                btnProps={{
+                  className: combine(bs.btnOutlineInfo, bs.btnSm),
+                }}
+              />
+            )}
 
-	public componentDidUpdate(): void {
-		if (this.fetchPending) {
-			this.fetchData();
-			this.fetchPending = false;
-		}
-	}
+            <CheckboxBtn
+              text={"Zero Basis"}
+              checked={this.state.zeroBasis}
+              onChange={this.handleZeroBasisChange}
+              btnProps={{
+                className: combine(bs.btnOutlineInfo, bs.btnSm),
+              }}
+            />
 
-	public render(): ReactNode {
-		const { startDate, endDate, accountId } = this.state;
+            <DateModeToggleBtn
+              value={this.state.dateMode}
+              onChange={this.handleDateModeChange}
+              btnProps={{
+                className: combine(bs.btnOutlineInfo, bs.btnSm),
+              }}
+            />
 
-		return (
-				<>
-					<div className={gs.headerWrapper}>
-						<h1 className={bs.h2}>Asset Performance</h1>
-						<div className={combine(bs.btnGroup, gs.headerExtras)}>
-							{this.state.zeroBasis && <CheckboxBtn
-									text={"Show as %"}
-									checked={this.state.showAsPercent}
-									onChange={this.handleShowAsPercentChange}
-									btnProps={{
-										className: combine(bs.btnOutlineInfo, bs.btnSm),
-									}}
-							/>}
+            <DateRangeChooser
+              startDate={startDate}
+              endDate={endDate}
+              onValueChange={this.handleDateRangeChange}
+              includeAllTimePreset={true}
+              includeYearToDatePreset={true}
+              includeFuturePresets={false}
+              setPosition={true}
+              btnProps={{
+                className: combine(bs.btnOutlineDark, bs.btnSm),
+              }}
+            />
+          </div>
+        </div>
 
-							<CheckboxBtn
-									text={"Zero Basis"}
-									checked={this.state.zeroBasis}
-									onChange={this.handleZeroBasisChange}
-									btnProps={{
-										className: combine(bs.btnOutlineInfo, bs.btnSm),
-									}}
-							/>
+        <div className={bs.row}>
+          <div className={combine(bs.col12, bs.mb3)}>{this.renderChart()}</div>
+          <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderAccountChooser()}</div>
+          {accountId && <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderInfoPanel()}</div>}
+        </div>
+      </>
+    );
+  }
 
-							<DateModeToggleBtn
-									value={this.state.dateMode}
-									onChange={this.handleDateModeChange}
-									btnProps={{
-										className: combine(bs.btnOutlineInfo, bs.btnSm),
-									}}
-							/>
+  private renderChart(): ReactNode {
+    const { loading, failed, data, startDate, endDate, zeroBasis, showAsPercent } = this.state;
 
-							<DateRangeChooser
-									startDate={startDate}
-									endDate={endDate}
-									onValueChange={this.handleDateRangeChange}
-									includeAllTimePreset={true}
-									includeYearToDatePreset={true}
-									includeFuturePresets={false}
-									setPosition={true}
-									btnProps={{
-										className: combine(bs.btnOutlineDark, bs.btnSm),
-									}}
-							/>
-						</div>
-					</div>
+    if (failed) {
+      return <p>Chart failed to load. Please try again.</p>;
+    }
 
-					<div className={bs.row}>
-						<div className={combine(bs.col12, bs.mb3)}>
-							{this.renderChart()}
-						</div>
-						<div className={combine(bs.col12, bs.colLg6, bs.mb3)}>
-							{this.renderAccountChooser()}
-						</div>
-						{
-							accountId
-							&& <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>
-								{this.renderInfoPanel()}
-							</div>
-						}
-					</div>
-				</>
-		);
-	}
+    let datasets: ChartDataSets[] = [
+      {
+        data: [
+          // dummy values to show a blank chart
+          { x: startDate.toDate(), y: 0 },
+          { x: endDate.toDate(), y: 0 },
+        ],
+      },
+    ];
+    if (data) {
+      datasets = data.datasets.map((ds, i) => {
+        return {
+          ...defaultDatasetProps,
+          borderColor: UCAssetPerformanceReport.seriesColours[i],
+          ...ds,
+        };
+      });
+    }
 
-	private renderChart(): ReactNode {
-		const { loading, failed, data, startDate, endDate, zeroBasis, showAsPercent } = this.state;
+    const chartProps: Partial<LinearComponentProps> = merge({}, defaultLinearChartOverTimeProps, {
+      options: {
+        elements: {
+          line: {
+            fill: false,
+          },
+        },
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                callback: (val: number): string =>
+                  zeroBasis && showAsPercent ? formatPercent(val * 100) : formatCurrency(val),
+              },
+            },
+          ],
+        },
+      },
+    });
 
-		if (failed) {
-			return <p>Chart failed to load. Please try again.</p>;
-		}
+    return (
+      <div className={combine(styles.chartContainer, loading && gs.loading)}>
+        <Line {...chartProps} data={{ datasets }} />
+      </div>
+    );
+  }
 
-		let datasets: ChartDataSets[] = [{
-			data: [
-				// dummy values to show a blank chart
-				{ x: startDate.toDate(), y: 0 },
-				{ x: endDate.toDate(), y: 0 },
-			],
-		}];
-		if (data) {
-			datasets = data.datasets.map((ds, i) => {
-				return {
-					...defaultDatasetProps,
-					borderColor: UCAssetPerformanceReport.seriesColours[i],
-					...ds,
-				};
-			});
-		}
+  private renderInfoPanel(): ReactNode {
+    const { loading, failed, data } = this.state;
 
-		const chartProps: Partial<LinearComponentProps> = merge({}, defaultLinearChartOverTimeProps, {
-			options: {
-				elements: {
-					line: {
-						fill: false,
-					},
-				},
-				scales: {
-					yAxes: [
-						{
-							ticks: {
-								callback: (val: number) => zeroBasis && showAsPercent ? formatPercent(val * 100) : formatCurrency(val),
-							},
-						},
-					],
-				},
-			},
-		});
+    if (failed || !data) {
+      return null;
+    }
 
-		return (
-				<div className={combine(styles.chartContainer, loading && gs.loading)}>
-					<Line
-							{...chartProps}
-							data={{ datasets }}
-					/>
-				</div>
-		);
-	}
+    const { totalChangeInclGrowth, totalChangeExclGrowth } = data;
+    const growthOnlyChange = totalChangeInclGrowth - totalChangeExclGrowth;
 
-	private renderInfoPanel(): ReactNode {
-		const { loading, failed, data } = this.state;
+    return (
+      <div className={bs.card}>
+        <div className={combine(bs.cardBody, gs.cardBody)}>
+          <div className={combine(bs.row, loading && gs.loading)}>
+            <div className={combine(bs.col6, bs.colMd4)}>
+              <h6>Change Excl. Growth:</h6>
+              <p>
+                <RelativeChangeIcon
+                  change={totalChangeExclGrowth}
+                  iconProps={{
+                    className: bs.mr2,
+                  }}
+                />
+                {formatCurrency(totalChangeExclGrowth)}
+              </p>
+            </div>
+            <div className={combine(bs.col6, bs.colMd4)}>
+              <h6>Change Incl. Growth:</h6>
+              <p>
+                <RelativeChangeIcon
+                  change={totalChangeInclGrowth}
+                  iconProps={{
+                    className: bs.mr2,
+                  }}
+                />
+                {formatCurrency(totalChangeInclGrowth)}
+              </p>
+            </div>
+            <div className={combine(bs.col6, bs.colMd4)}>
+              <h6>Net Growth:</h6>
+              <p>
+                <RelativeChangeIcon
+                  change={growthOnlyChange}
+                  iconProps={{
+                    className: bs.mr2,
+                  }}
+                />
+                {formatCurrency(growthOnlyChange)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-		if (failed || !data) {
-			return null;
-		}
+  private renderAccountChooser(): ReactNode {
+    const { accountList } = this.props;
+    return (
+      <div className={bs.card}>
+        <h5 className={combine(bs.cardHeader, bs.h5)}>
+          <FontAwesomeIcon icon={faPiggyBank} className={bs.mr3} />
+          Select Account
+        </h5>
+        <div className={combine(bs.cardBody, gs.cardBody)}>
+          {!accountList && <LoadingSpinner centre={true} />}
+          {accountList && this.renderAccountInputs()}
+        </div>
+      </div>
+    );
+  }
 
-		const { totalChangeInclGrowth, totalChangeExclGrowth } = data;
-		const growthOnlyChange = totalChangeInclGrowth - totalChangeExclGrowth;
+  private renderAccountInputs(): ReactNode {
+    const { accountList } = this.props;
+    const { accountId } = this.state;
+    const accounts = accountList.filter((ac) => ac.type === "asset").sort((a, b) => a.name.localeCompare(b.name));
 
-		return (
-				<div className={bs.card}>
-					<div className={combine(bs.cardBody, gs.cardBody)}>
-						<div className={combine(bs.row, loading && gs.loading)}>
-							<div className={combine(bs.col6, bs.colMd4)}>
-								<h6>Change Excl. Growth:</h6>
-								<p>
-									<RelativeChangeIcon
-											change={totalChangeExclGrowth}
-											iconProps={{
-												className: bs.mr2,
-											}}
-									/>
-									{formatCurrency(totalChangeExclGrowth)}
-								</p>
-							</div>
-							<div className={combine(bs.col6, bs.colMd4)}>
-								<h6>Change Incl. Growth:</h6>
-								<p>
-									<RelativeChangeIcon
-											change={totalChangeInclGrowth}
-											iconProps={{
-												className: bs.mr2,
-											}}
-									/>
-									{formatCurrency(totalChangeInclGrowth)}
-								</p>
-							</div>
-							<div className={combine(bs.col6, bs.colMd4)}>
-								<h6>Net Growth:</h6>
-								<p>
-									<RelativeChangeIcon
-											change={growthOnlyChange}
-											iconProps={{
-												className: bs.mr2,
-											}}
-									/>
-									{formatCurrency(growthOnlyChange)}
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
-		);
-	}
+    if (accounts.length === 0) {
+      return <p>{"You don't have any asset-type accounts."}</p>;
+    }
 
-	private renderAccountChooser(): ReactNode {
-		const { accountList } = this.props;
-		return (
-				<div className={bs.card}>
-					<h5 className={combine(bs.cardHeader, bs.h5)}>
-						<FontAwesomeIcon icon={faPiggyBank} className={bs.mr3}/>
-						Select Account
-					</h5>
-					<div className={combine(bs.cardBody, gs.cardBody)}>
-						{!accountList && <LoadingSpinner centre={true}/>}
-						{accountList && this.renderAccountInputs()}
-					</div>
-				</div>
-		);
-	}
+    return (
+      <form>
+        <div className={bs.row}>
+          <div key={`account-chooser-all`} className={combine(bs.col12, bs.colMd6, bs.mb3)}>
+            <ControlledRadioInput
+              name={"account"}
+              id={NULL_UUID}
+              value={NULL_UUID}
+              label={"All Accounts"}
+              checked={accountId === NULL_UUID}
+              onValueChange={this.handleAccountChange}
+            />
+          </div>
+          <div className={combine(bs.col12, bs.mb3)}>
+            <hr className={bs.my0} />
+          </div>
+          {accounts.map((ac) => (
+            <div key={`account-chooser-${ac.id}`} className={combine(bs.col12, bs.colMd6, bs.mb3)}>
+              <ControlledRadioInput
+                name={"account"}
+                id={ac.id}
+                value={ac.id}
+                label={ac.name}
+                checked={accountId === ac.id}
+                onValueChange={this.handleAccountChange}
+              />
+            </div>
+          ))}
+        </div>
+      </form>
+    );
+  }
 
-	private renderAccountInputs(): ReactNode {
-		const { accountList } = this.props;
-		const { accountId } = this.state;
-		const accounts = accountList
-				.filter((ac) => ac.type === "asset")
-				.sort((a, b) => a.name.localeCompare(b.name));
+  private handleDateModeChange(dateMode: DateModeOption): void {
+    this.setState({ dateMode });
+  }
 
-		if (accounts.length === 0) {
-			return <p>You don't have any asset-type accounts.</p>;
-		}
+  private handleDateRangeChange(startDate: Moment.Moment, endDate: Moment.Moment): void {
+    this.setState({ startDate, endDate });
+  }
 
-		return (
-				<form>
-					<div className={bs.row}>
-						<div
-								key={`account-chooser-all`}
-								className={combine(bs.col12, bs.colMd6, bs.mb3)}
-						>
-							<ControlledRadioInput
-									name={"account"}
-									id={NULL_UUID}
-									value={NULL_UUID}
-									label={"All Accounts"}
-									checked={accountId === NULL_UUID}
-									onValueChange={this.handleAccountChange}
-							/>
-						</div>
-						<div className={combine(bs.col12, bs.mb3)}>
-							<hr className={bs.my0}/>
-						</div>
-						{
-							accounts.map((ac) => (
-									<div
-											key={`account-chooser-${ac.id}`}
-											className={combine(bs.col12, bs.colMd6, bs.mb3)}
-									>
-										<ControlledRadioInput
-												name={"account"}
-												id={ac.id}
-												value={ac.id}
-												label={ac.name}
-												checked={accountId === ac.id}
-												onValueChange={this.handleAccountChange}
-										/>
-									</div>
-							))
-						}
-					</div>
-				</form>
-		);
-	}
+  private handleAccountChange(accountId: string): void {
+    this.setState({ accountId });
+  }
 
-	private handleDateModeChange(dateMode: DateModeOption): void {
-		this.setState({ dateMode });
-	}
+  private handleZeroBasisChange(zeroBasis: boolean): void {
+    this.setState({ zeroBasis });
+  }
 
-	private handleDateRangeChange(startDate: Moment.Moment, endDate: Moment.Moment): void {
-		this.setState({ startDate, endDate });
-	}
+  private handleShowAsPercentChange(showAsPercent: boolean): void {
+    this.setState({ showAsPercent });
+  }
 
-	private handleAccountChange(accountId: string): void {
-		this.setState({ accountId });
-	}
+  private fetchData(): void {
+    const { startDate, endDate, dateMode, accountId, zeroBasis, showAsPercent } = this.state;
 
-	private handleZeroBasisChange(zeroBasis: boolean): void {
-		this.setState({ zeroBasis });
-	}
+    if (!accountId) {
+      return;
+    }
 
-	private handleShowAsPercentChange(showAsPercent: boolean): void {
-		this.setState({ showAsPercent });
-	}
+    this.setState({ loading: true });
+    const frame = ++this.frameCounter;
 
-	private fetchData(): void {
-		const { startDate, endDate, dateMode, accountId, zeroBasis, showAsPercent } = this.state;
+    axios
+      .get("/api/reports/asset-performance/data", {
+        params: {
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+          dateMode,
+          accountId,
+          zeroBasis,
+          showAsPercent,
+        },
+      })
+      .then((res: AxiosResponse<ChartDataSets[]>) => res.data)
+      .then((res) => this.onDataLoaded(frame, res))
+      .catch(() => this.onDataLoadFailed(frame));
+  }
 
-		if (!accountId) {
-			return;
-		}
+  private onFrameReceived(frame: number): void {
+    this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
+  }
 
-		this.setState({ loading: true });
-		const frame = ++this.frameCounter;
+  // TODO: figure out what type rawData should be
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private onDataLoaded(frame: number, rawData: any): void {
+    if (frame <= this.lastFrameReceived) {
+      return;
+    }
 
-		axios
-				.get("/api/reports/asset-performance/data", {
-					params: {
-						startDate: startDate.toISOString(),
-						endDate: endDate.toISOString(),
-						dateMode,
-						accountId,
-						zeroBasis,
-						showAsPercent,
-					},
-				})
-				.then((res: AxiosResponse<ChartDataSets[]>) => res.data)
-				.then((res) => this.onDataLoaded(frame, res))
-				.catch(() => this.onDataLoadFailed(frame));
-	}
+    this.onFrameReceived(frame);
 
-	private onFrameReceived(frame: number): void {
-		this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
-	}
+    this.setState({
+      loading: false,
+      failed: false,
+      data: rawData,
+    });
+  }
 
-	private onDataLoaded(frame: number, rawData: any): void {
-		if (frame <= this.lastFrameReceived) {
-			return;
-		}
+  private onDataLoadFailed(frame: number): void {
+    if (frame <= this.lastFrameReceived) {
+      return;
+    }
 
-		this.onFrameReceived(frame);
+    this.onFrameReceived(frame);
 
-		this.setState({
-			loading: false,
-			failed: false,
-			data: rawData,
-		});
-	}
-
-	private onDataLoadFailed(frame: number): void {
-		if (frame <= this.lastFrameReceived) {
-			return;
-		}
-
-		this.onFrameReceived(frame);
-
-		this.setState({
-			loading: false,
-			failed: true,
-			data: undefined,
-		});
-	}
+    this.setState({
+      loading: false,
+      failed: true,
+      data: undefined,
+    });
+  }
 }
 
 export const AssetPerformanceReport = connect(mapStateToProps, mapDispatchToProps)(UCAssetPerformanceReport);

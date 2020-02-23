@@ -4,72 +4,72 @@
 @import "~bootstrap-scss/variables";
 
 body {
-	font-family: "Open Sans", sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 h1,
 h2,
 h3 {
-	margin-bottom: $spacer * .5; // Bootstrap override
+  margin-bottom: $spacer * 0.5; // Bootstrap override
 
-	svg {
-		margin-right: $spacer;
-	}
+  svg {
+    margin-right: $spacer;
+  }
 }
 
 h6 {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 button {
-	&:focus {
-		box-shadow: none !important; // Bootstrap override
-	}
+  &:focus {
+    box-shadow: none !important; // Bootstrap override
+  }
 }
 
 .header-wrapper {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	overflow: auto; // allows the div to have height even though it only contains floated elements
-	width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  overflow: auto; // allows the div to have height even though it only contains floated elements
+  width: 100%;
 
-	.header-extras {
-		margin-bottom: $spacer * .5;
-		overflow-x: scroll;
-	}
+  .header-extras {
+    margin-bottom: $spacer * 0.5;
+    overflow-x: scroll;
+  }
 }
 
 .btn-mini {
-	// Same as .badge in Bootstrap
-	font-size: 75% !important;
-	line-height: 1 !important;
-	padding: .25em .4em !important;
+  // Same as .badge in Bootstrap
+  font-size: 75% !important;
+  line-height: 1 !important;
+  padding: 0.25em 0.4em !important;
 }
 
 .currency {
-	font-family: monospace, monospace;
+  font-family: monospace, monospace;
 }
 
 .card-body {
-	// contents always have margin-bottom: $spacer
-	padding: $spacer $spacer 0 !important; // Bootstrap override; was $spacer on all sides
+  // contents always have margin-bottom: $spacer
+  padding: $spacer $spacer 0 !important; // Bootstrap override; was $spacer on all sides
 }
 
 .loading {
-	opacity: .4;
+  opacity: 0.4;
 }
 
 tr {
-	&.bottom-border {
-		td {
-			border-bottom: 1px solid $gray-700;
-		}
-	}
+  &.bottom-border {
+    td {
+      border-bottom: 1px solid $gray-700;
+    }
+  }
 
-	&.bottom-top {
-		td {
-			border-top: 1px solid $gray-700;
-		}
-	}
+  &.bottom-top {
+    td {
+      border-top: 1px solid $gray-700;
+    }
+  }
 }

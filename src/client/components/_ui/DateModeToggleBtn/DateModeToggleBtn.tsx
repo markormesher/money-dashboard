@@ -6,45 +6,41 @@ import { capitaliseFirstLetter } from "../../../helpers/formatters";
 import { IconBtn } from "../IconBtn/IconBtn";
 
 interface IDateModeToggleBtnProps {
-	readonly value?: DateModeOption;
-	readonly onChange?: (value: DateModeOption) => void;
-	readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
+  readonly value?: DateModeOption;
+  readonly onChange?: (value: DateModeOption) => void;
+  readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
 }
 
 class DateModeToggleBtn extends PureComponent<IDateModeToggleBtnProps> {
+  constructor(props: IDateModeToggleBtnProps) {
+    super(props);
 
-	constructor(props: IDateModeToggleBtnProps) {
-		super(props);
+    this.toggleValue = this.toggleValue.bind(this);
+  }
 
-		this.toggleValue = this.toggleValue.bind(this);
-	}
+  public render(): ReactNode {
+    const { value, btnProps } = this.props;
+    const text = `Date Mode: ${capitaliseFirstLetter(value)} Date`;
 
-	public render(): ReactNode {
-		const { value, btnProps } = this.props;
-		const text = `Date Mode: ${capitaliseFirstLetter(value)} Date`;
+    return (
+      <IconBtn
+        icon={faCalendar}
+        text={text}
+        btnProps={{
+          ...btnProps,
+          onClick: this.toggleValue,
+        }}
+      />
+    );
+  }
 
-		return (
-				<IconBtn
-						icon={faCalendar}
-						text={text}
-						btnProps={{
-							...btnProps,
-							onClick: this.toggleValue,
-						}}
-				/>
-		);
-	}
-
-	private toggleValue(): void {
-		const { value, onChange } = this.props;
-		const newValue = value === "effective" ? "transaction" : "effective";
-		if (onChange) {
-			onChange(newValue);
-		}
-	}
-
+  private toggleValue(): void {
+    const { value, onChange } = this.props;
+    const newValue = value === "effective" ? "transaction" : "effective";
+    if (onChange) {
+      onChange(newValue);
+    }
+  }
 }
 
-export {
-	DateModeToggleBtn,
-};
+export { DateModeToggleBtn };

@@ -25,121 +25,111 @@ import { AppContentWrapper } from "./AppContentWrapper";
 import { AppRootWrapper } from "./AppRootWrapper";
 
 interface IAppProps {
-	readonly waitingFor?: string[];
-	readonly globalError?: Error;
-	readonly activeUser?: IUser;
-	readonly currentPath?: string;
+  readonly waitingFor?: string[];
+  readonly globalError?: Error;
+  readonly activeUser?: IUser;
+  readonly currentPath?: string;
 }
 
 interface IAppState {
-	readonly caughtError?: Error;
-	readonly caughtErrorInfo?: ErrorInfo;
+  readonly caughtError?: Error;
+  readonly caughtErrorInfo?: ErrorInfo;
 }
 
 function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
-	return {
-		...props,
-		waitingFor: state.global.waitingFor,
-		globalError: state.global.error,
-		activeUser: state.auth.activeUser,
-		currentPath: state.router.location.pathname,
-	};
+  return {
+    ...props,
+    waitingFor: state.global.waitingFor,
+    globalError: state.global.error,
+    activeUser: state.auth.activeUser,
+    currentPath: state.router.location.pathname,
+  };
 }
 
 // most sessions will never see this, so lazy load it
 const LoadableLogin = Loadable({
-	loader: () => import(/* webpackChunkName: "login" */ "../LoginPage/LoginPage").then((result) => result.LoginPage),
-	loading: () => (<FullPageSpinner/>),
+  loader: () => import(/* webpackChunkName: "login" */ "../LoginPage/LoginPage").then((result) => result.LoginPage),
+  loading: () => <FullPageSpinner />, // eslint-disable-line react/display-name
 });
 
 class UCApp extends PureComponent<IAppProps, IAppState> {
+  constructor(props: IAppProps) {
+    super(props);
+    this.state = {};
+    this.render404Error = this.render404Error.bind(this);
+  }
 
-	constructor(props: IAppProps) {
-		super(props);
-		this.state = {};
-		this.render404Error = this.render404Error.bind(this);
-	}
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    this.setState({
+      caughtError: error,
+      caughtErrorInfo: errorInfo,
+    });
+  }
 
-	public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-		this.setState({
-			caughtError: error,
-			caughtErrorInfo: errorInfo,
-		});
-	}
+  public render(): ReactNode {
+    const { waitingFor, globalError, activeUser } = this.props;
+    const { caughtError, caughtErrorInfo } = this.state;
 
-	public render(): ReactNode {
-		const { waitingFor, globalError, activeUser } = this.props;
-		const { caughtError, caughtErrorInfo } = this.state;
+    if (globalError) {
+      return <ErrorPage error={globalError} fullPage={true} />;
+    }
 
-		if (globalError) {
-			return (
-					<ErrorPage error={globalError} fullPage={true}/>
-			);
-		}
+    if (caughtError) {
+      return (
+        <ErrorPage
+          error={new DetailedError(caughtError.name, caughtError.message)}
+          fullPage={true}
+          stacks={[caughtError.stack, `Component stack:${caughtErrorInfo.componentStack}`]}
+        />
+      );
+    }
 
-		if (caughtError) {
-			return (
-					<ErrorPage
-							error={new DetailedError(caughtError.name, caughtError.message)}
-							fullPage={true}
-							stacks={[
-								caughtError.stack,
-								`Component stack:${caughtErrorInfo.componentStack}`,
-							]}
-					/>
-			);
-		}
+    if (waitingFor.length > 0) {
+      return <FullPageSpinner />;
+    }
 
-		if (waitingFor.length > 0) {
-			return (
-					<FullPageSpinner/>
-			);
-		}
+    if (!activeUser) {
+      return (
+        <Switch>
+          <Route exact={true} path="/auth/login" component={LoadableLogin} />
+          <Redirect to="/auth/login" />
+        </Switch>
+      );
+    }
 
-		if (!activeUser) {
-			return (
-					<Switch>
-						<Route exact={true} path="/auth/login" component={LoadableLogin}/>
-						<Redirect to="/auth/login"/>
-					</Switch>
-			);
-		}
+    return (
+      <div>
+        <Header />
+        <AppRootWrapper>
+          <KeyShortcutModal />
+          <Nav />
+          <AppContentWrapper>
+            <Switch>
+              <Route exact={true} path="/" component={Dashboard} />
+              <Route path="/accounts" component={AccountsPage} />
+              <Route path="/budgets" component={BudgetsPage} />
+              <Route path="/categories" component={CategoriesPage} />
+              <Route path="/profiles" component={ProfilesPage} />
+              <Route path="/transactions" component={TransactionsPage} />
 
-		return (
-				<div>
-					<Header/>
-					<AppRootWrapper>
-						<KeyShortcutModal/>
-						<Nav/>
-						<AppContentWrapper>
-							<Switch>
-								<Route exact={true} path="/" component={Dashboard}/>
-								<Route path="/accounts" component={AccountsPage}/>
-								<Route path="/budgets" component={BudgetsPage}/>
-								<Route path="/categories" component={CategoriesPage}/>
-								<Route path="/profiles" component={ProfilesPage}/>
-								<Route path="/transactions" component={TransactionsPage}/>
+              <Route path="/reports/balance-history" component={BalanceHistoryReport} />
+              <Route path="/reports/asset-performance" component={AssetPerformanceReport} />
+              <Route path="/reports/pension-deposits" component={PensionDepositsReport} />
 
-								<Route path="/reports/balance-history" component={BalanceHistoryReport}/>
-								<Route path="/reports/asset-performance" component={AssetPerformanceReport}/>
-								<Route path="/reports/pension-deposits" component={PensionDepositsReport}/>
+              {/* Adding a new route? Keep it above this one! */}
+              <Route render={this.render404Error} />
+            </Switch>
+          </AppContentWrapper>
+        </AppRootWrapper>
+      </div>
+    );
+  }
 
-								{/* Adding a new route? Keep it above this one! */}
-								<Route render={this.render404Error}/>
-							</Switch>
-						</AppContentWrapper>
-					</AppRootWrapper>
-				</div>
-		);
-	}
-
-	private render404Error(): ReactElement<void> {
-		const { currentPath } = this.props;
-		const error = new Http404Error(currentPath);
-		return (
-				<ErrorPage error={error}/>
-		);
-	}
+  private render404Error(): ReactElement<void> {
+    const { currentPath } = this.props;
+    const error = new Http404Error(currentPath);
+    return <ErrorPage error={error} />;
+  }
 }
 
 export const App = connect(mapStateToProps)(UCApp);

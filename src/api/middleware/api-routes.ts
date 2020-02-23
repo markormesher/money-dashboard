@@ -10,17 +10,15 @@ import { router as PensionDepositsReportController } from "../controllers/report
 import { router as TransactionsController } from "../controllers/transactions";
 
 function setupApiRoutes(app: Express): void {
-	app.use("/api/accounts", AccountSettingsController);
-	app.use("/api/auth", AuthRouter);
-	app.use("/api/budgets", BudgetSettingsController);
-	app.use("/api/categories", CategorySettingsController);
-	app.use("/api/profiles", ProfileSettingsController);
-	app.use("/api/reports/asset-performance", AssetPerformanceReportRouter);
-	app.use("/api/reports/balance-history", BalanceHistoryReportController);
-	app.use("/api/reports/pension-deposits", PensionDepositsReportController);
-	app.use("/api/transactions", TransactionsController);
+  app.use("/api/accounts", AccountSettingsController);
+  app.use("/api/auth", AuthRouter);
+  app.use("/api/budgets", BudgetSettingsController);
+  app.use("/api/categories", CategorySettingsController);
+  app.use("/api/profiles", ProfileSettingsController);
+  app.use("/api/reports/asset-performance", AssetPerformanceReportRouter);
+  app.use("/api/reports/balance-history", BalanceHistoryReportController);
+  app.use("/api/reports/pension-deposits", PensionDepositsReportController);
+  app.use("/api/transactions", TransactionsController);
 }
 
-export {
-	setupApiRoutes,
-};
+export { setupApiRoutes };

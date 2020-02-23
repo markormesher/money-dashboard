@@ -7,42 +7,39 @@ import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IRelativeChangeIconProps {
-	readonly change: number;
-	readonly iconProps?: Partial<FontAwesomeIconProps>;
+  readonly change: number;
+  readonly iconProps?: Partial<FontAwesomeIconProps>;
 }
 
 class RelativeChangeIcon extends PureComponent<IRelativeChangeIconProps> {
+  public render(): ReactNode {
+    const { change, iconProps } = this.props;
+    const { className: iconClassName, ...otherIconProps } = { ...iconProps };
 
-	public render(): ReactNode {
-		const { change, iconProps } = this.props;
-		const { className: iconClassName, ...otherIconProps } = { ...iconProps };
+    if (change === 0) {
+      return null;
+    }
 
-		if (change === 0) {
-			return null;
-		}
+    let changeIcon: IconProp;
+    let changeClass: string;
+    if (change < 0) {
+      changeIcon = faCaretDown;
+      changeClass = bs.textDanger;
+    }
+    if (change > 0) {
+      changeIcon = faCaretUp;
+      changeClass = bs.textSuccess;
+    }
 
-		let changeIcon: IconProp;
-		let changeClass: string;
-		if (change < 0) {
-			changeIcon = faCaretDown;
-			changeClass = bs.textDanger;
-		}
-		if (change > 0) {
-			changeIcon = faCaretUp;
-			changeClass = bs.textSuccess;
-		}
-
-		return (
-				<FontAwesomeIcon
-						icon={changeIcon}
-						fixedWidth={true}
-						className={combine(changeClass, iconClassName)}
-						{...otherIconProps}
-				/>
-		);
-	}
+    return (
+      <FontAwesomeIcon
+        icon={changeIcon}
+        fixedWidth={true}
+        className={combine(changeClass, iconClassName)}
+        {...otherIconProps}
+      />
+    );
+  }
 }
 
-export {
-	RelativeChangeIcon,
-};
+export { RelativeChangeIcon };

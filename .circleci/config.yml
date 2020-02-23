@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/money-dashboard
   docker:
-    - image: circleci/node:10.18.0
+    - image: circleci/node:carbon
 
 jobs:
   setup:
@@ -33,7 +33,7 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Run Linter
+          name: Check linters
           command: yarn lint
 
   lockfile-lint:
@@ -43,7 +43,7 @@ jobs:
           at: .
       - run:
           name: Run Lockfile Linter
-          command: yarn lint-lockfile
+          command: yarn lockfile-lint -p yarn.lock
 
   bundlewatch:
     <<: *defaults
@@ -89,7 +89,10 @@ jobs:
       - run:
           name: Maybe Deploy
           command: |
+            # deploy tagged commits only
             if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
+            mkdir -p ~/.ssh
+            touch ~/.ssh/known_hosts
             ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
             ssh $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_DIR && git pull && ./.scripts/deploy-remote.sh"
 

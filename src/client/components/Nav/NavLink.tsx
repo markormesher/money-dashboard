@@ -12,78 +12,68 @@ import { IRootState } from "../../redux/root";
 import * as style from "./Nav.scss";
 
 interface INavLinkProps {
-	readonly to: string;
-	readonly text: string;
-	readonly icon: IconProp;
-	readonly onClick?: () => void;
-	readonly navIsOpen?: boolean;
-	readonly currentPath?: string;
+  readonly to: string;
+  readonly text: string;
+  readonly icon: IconProp;
+  readonly onClick?: () => void;
+  readonly navIsOpen?: boolean;
+  readonly currentPath?: string;
 
-	readonly actions?: {
-		readonly closeNav: () => AnyAction,
-	};
+  readonly actions?: {
+    readonly closeNav: () => AnyAction;
+  };
 }
 
 function mapStateToProps(state: IRootState, props: INavLinkProps): INavLinkProps {
-	return {
-		...props,
-		navIsOpen: state.nav.isOpen,
-		currentPath: state.router.location.pathname,
-	};
+  return {
+    ...props,
+    navIsOpen: state.nav.isOpen,
+    currentPath: state.router.location.pathname,
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: INavLinkProps): INavLinkProps {
-	return {
-		...props,
-		actions: {
-			closeNav: () => dispatch(closeNav()),
-		},
-	};
+  return {
+    ...props,
+    actions: {
+      closeNav: (): AnyAction => dispatch(closeNav()),
+    },
+  };
 }
 
 class UCNavLink extends PureComponent<INavLinkProps> {
+  private static linkItemClasses = bs.navItem;
+  private static iconClasses = combine(bs.mr2, bs.textMuted);
 
-	private static linkItemClasses = bs.navItem;
-	private static iconClasses = combine(bs.mr2, bs.textMuted);
+  constructor(props: INavLinkProps) {
+    super(props);
 
-	constructor(props: INavLinkProps) {
-		super(props);
+    this.handleOnClick = this.handleOnClick.bind(this);
+  }
 
-		this.handleOnClick = this.handleOnClick.bind(this);
-	}
+  public render(): ReactNode {
+    const active = this.props.to === this.props.currentPath;
+    const linkClasses = combine(bs.navLink, style.navLink, active && style.active);
 
-	public render(): ReactNode {
-		const active = this.props.to === this.props.currentPath;
-		const linkClasses = combine(bs.navLink, style.navLink, (active && style.active));
+    return (
+      <li className={UCNavLink.linkItemClasses}>
+        <Link to={this.props.to} title={this.props.text} className={linkClasses} onClick={this.handleOnClick}>
+          <FontAwesomeIcon icon={this.props.icon} fixedWidth={true} className={UCNavLink.iconClasses} />
+          {this.props.text}
+        </Link>
+      </li>
+    );
+  }
 
-		return (
-				<li className={UCNavLink.linkItemClasses}>
-					<Link
-							to={this.props.to}
-							title={this.props.text}
-							className={linkClasses}
-							onClick={this.handleOnClick}
-					>
-						<FontAwesomeIcon
-								icon={this.props.icon}
-								fixedWidth={true}
-								className={UCNavLink.iconClasses}
-						/>
-						{this.props.text}
-					</Link>
-				</li>
-		);
-	}
+  private handleOnClick(): void {
+    if (this.props.navIsOpen) {
+      this.props.actions.closeNav();
+    }
 
-	private handleOnClick(): void {
-		if (this.props.navIsOpen) {
-			this.props.actions.closeNav();
-		}
-
-		if (this.props.onClick) {
-			this.props.onClick();
-		}
-	}
+    if (this.props.onClick) {
+      this.props.onClick();
+    }
+  }
 }
 
 export const NavLink = connect(mapStateToProps, mapDispatchToProps)(UCNavLink);

@@ -7,24 +7,21 @@ import { combine } from "../../helpers/style-helpers";
 import * as style from "./LoginPage.scss";
 
 class LoginPage extends PureComponent {
-
-	public render(): ReactNode {
-		return (
-				<div className={style.loginWrapper}>
-					<div className={style.titleWrapper}>
-						<h1>Login</h1>
-					</div>
-					<form action="/api/auth/google/login" method="get">
-						<button role="submit" className={combine(bs.btn, bs.btnOutlinePrimary, bs.mt4)}>
-							<FontAwesomeIcon icon={faGoogle} className={bs.mr2}/>
-							Login with Google
-						</button>
-					</form>
-				</div>
-		);
-	}
+  public render(): ReactNode {
+    return (
+      <div className={style.loginWrapper}>
+        <div className={style.titleWrapper}>
+          <h1>Login</h1>
+        </div>
+        <form action="/api/auth/google/login" method="get">
+          <button role="submit" className={combine(bs.btn, bs.btnOutlinePrimary, bs.mt4)}>
+            <FontAwesomeIcon icon={faGoogle} className={bs.mr2} />
+            Login with Google
+          </button>
+        </form>
+      </div>
+    );
+  }
 }
 
-export {
-	LoginPage,
-};
+export { LoginPage };

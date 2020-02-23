@@ -18,253 +18,240 @@ import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 
 interface IBalanceHistoryReportState {
-	readonly startDate: Moment.Moment;
-	readonly endDate: Moment.Moment;
-	readonly dateMode: DateModeOption;
-	readonly data: IBalanceHistoryData;
-	readonly loading: boolean;
-	readonly failed: boolean;
+  readonly startDate: Moment.Moment;
+  readonly endDate: Moment.Moment;
+  readonly dateMode: DateModeOption;
+  readonly data: IBalanceHistoryData;
+  readonly loading: boolean;
+  readonly failed: boolean;
 }
 
 class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
+  private static chartProps: Partial<LinearComponentProps> = merge({}, defaultLinearChartOverTimeProps, {
+    options: {
+      elements: {
+        line: {
+          borderColor: chartColours.blue,
+          backgroundColor: chartColours.blueFaded,
+          fill: "zero",
+        },
+      },
+    },
+  });
 
-	private static chartProps: Partial<LinearComponentProps> = merge({}, defaultLinearChartOverTimeProps, {
-		options: {
-			elements: {
-				line: {
-					borderColor: chartColours.blue,
-					backgroundColor: chartColours.blueFaded,
-					fill: "zero",
-				},
-			},
-		},
-	});
+  // give each remote request an increasing "frame" number so that late arrivals will be dropped
+  private frameCounter = 0;
+  private lastFrameReceived = 0;
 
-	// give each remote request an increasing "frame" number so that late arrivals will be dropped
-	private frameCounter = 0;
-	private lastFrameReceived = 0;
+  constructor(props: {}) {
+    super(props);
+    this.state = {
+      startDate: Moment().subtract(1, "year"),
+      endDate: Moment(),
+      dateMode: "transaction",
+      data: undefined,
+      loading: true,
+      failed: false,
+    };
 
-	private fetchPending = false;
+    this.renderChart = this.renderChart.bind(this);
+    this.renderInfoPanel = this.renderInfoPanel.bind(this);
+    this.handleDateModeChange = this.handleDateModeChange.bind(this);
+    this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
+  }
 
-	constructor(props: {}, context: any) {
-		super(props, context);
-		this.state = {
-			startDate: Moment().subtract(1, "year"),
-			endDate: Moment(),
-			dateMode: "transaction",
-			data: undefined,
-			loading: true,
-			failed: false,
-		};
+  public componentDidMount(): void {
+    this.fetchData();
+  }
 
-		this.renderChart = this.renderChart.bind(this);
-		this.renderInfoPanel = this.renderInfoPanel.bind(this);
-		this.handleDateModeChange = this.handleDateModeChange.bind(this);
-		this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
-	}
+  public componentDidUpdate(nextProps: {}, nextState: IBalanceHistoryReportState): void {
+    if (
+      this.state.startDate !== nextState.startDate ||
+      this.state.endDate !== nextState.endDate ||
+      this.state.dateMode !== nextState.dateMode
+    ) {
+      this.fetchData();
+    }
+  }
 
-	public componentDidMount(): void {
-		this.fetchData();
-	}
+  public render(): ReactNode {
+    const { startDate, endDate } = this.state;
 
-	public componentWillUpdate(nextProps: {}, nextState: IBalanceHistoryReportState): void {
-		if (this.state.startDate !== nextState.startDate
-				|| this.state.endDate !== nextState.endDate
-				|| this.state.dateMode !== nextState.dateMode) {
-			this.fetchPending = true;
-		}
-	}
+    return (
+      <>
+        <div className={gs.headerWrapper}>
+          <h1 className={bs.h2}>Balance History</h1>
+          <div className={combine(bs.btnGroup, gs.headerExtras)}>
+            <DateModeToggleBtn
+              value={this.state.dateMode}
+              onChange={this.handleDateModeChange}
+              btnProps={{
+                className: combine(bs.btnOutlineInfo, bs.btnSm),
+              }}
+            />
 
-	public componentDidUpdate(): void {
-		if (this.fetchPending) {
-			this.fetchData();
-			this.fetchPending = false;
-		}
-	}
+            <DateRangeChooser
+              startDate={startDate}
+              endDate={endDate}
+              onValueChange={this.handleDateRangeChange}
+              includeAllTimePreset={true}
+              includeYearToDatePreset={true}
+              includeFuturePresets={false}
+              setPosition={true}
+              btnProps={{
+                className: combine(bs.btnOutlineDark, bs.btnSm),
+              }}
+            />
+          </div>
+        </div>
 
-	public render(): ReactNode {
-		const { startDate, endDate } = this.state;
+        <div className={bs.row}>
+          <div className={combine(bs.col12, bs.mb3)}>{this.renderChart()}</div>
+          <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderInfoPanel()}</div>
+        </div>
+      </>
+    );
+  }
 
-		return (
-				<>
-					<div className={gs.headerWrapper}>
-						<h1 className={bs.h2}>Balance History</h1>
-						<div className={combine(bs.btnGroup, gs.headerExtras)}>
-							<DateModeToggleBtn
-									value={this.state.dateMode}
-									onChange={this.handleDateModeChange}
-									btnProps={{
-										className: combine(bs.btnOutlineInfo, bs.btnSm),
-									}}
-							/>
+  private renderChart(): ReactNode {
+    const { loading, failed, data, startDate, endDate } = this.state;
 
-							<DateRangeChooser
-									startDate={startDate}
-									endDate={endDate}
-									onValueChange={this.handleDateRangeChange}
-									includeAllTimePreset={true}
-									includeYearToDatePreset={true}
-									includeFuturePresets={false}
-									setPosition={true}
-									btnProps={{
-										className: combine(bs.btnOutlineDark, bs.btnSm),
-									}}
-							/>
-						</div>
-					</div>
+    if (failed) {
+      return <p>Chart failed to load. Please try again.</p>;
+    }
 
-					<div className={bs.row}>
-						<div className={combine(bs.col12, bs.mb3)}>
-							{this.renderChart()}
-						</div>
-						<div className={combine(bs.col12, bs.colLg6, bs.mb3)}>
-							{this.renderInfoPanel()}
-						</div>
-					</div>
-				</>
-		);
-	}
+    let datasets: ChartDataSets[] = [
+      {
+        data: [
+          // dummy values to show a blank chart
+          { x: startDate.toDate(), y: 0 },
+          { x: endDate.toDate(), y: 0 },
+        ],
+      },
+    ];
+    if (data) {
+      datasets = data.datasets.map((ds) => {
+        return {
+          ...defaultDatasetProps,
+          ...ds,
+        };
+      });
+    }
 
-	private renderChart(): ReactNode {
-		const { loading, failed, data, startDate, endDate } = this.state;
+    return (
+      <div className={combine(styles.chartContainer, loading && gs.loading)}>
+        <Line {...BalanceHistoryReport.chartProps} data={{ datasets }} />
+      </div>
+    );
+  }
 
-		if (failed) {
-			return <p>Chart failed to load. Please try again.</p>;
-		}
+  private renderInfoPanel(): ReactNode {
+    const { loading, failed, data } = this.state;
 
-		let datasets: ChartDataSets[] = [{
-			data: [
-				// dummy values to show a blank chart
-				{ x: startDate.toDate(), y: 0 },
-				{ x: endDate.toDate(), y: 0 },
-			],
-		}];
-		if (data) {
-			datasets = data.datasets.map((ds) => {
-				return {
-					...defaultDatasetProps,
-					...ds,
-				};
-			});
-		}
+    if (failed || !data) {
+      return null;
+    }
 
-		return (
-				<div className={combine(styles.chartContainer, loading && gs.loading)}>
-					<Line
-							{...BalanceHistoryReport.chartProps}
-							data={{ datasets }}
-					/>
-				</div>
-		);
-	}
+    const { minTotal, minDate, maxTotal, maxDate, changeAbsolute } = data;
 
-	private renderInfoPanel(): ReactNode {
-		const { loading, failed, data } = this.state;
+    return (
+      <div className={bs.card}>
+        <div className={combine(bs.cardBody, gs.cardBody)}>
+          <div className={combine(bs.row, loading && gs.loading)}>
+            <div className={combine(bs.col6, bs.colMd4)}>
+              <h6>Minimum:</h6>
+              <p>
+                {formatCurrency(minTotal)}
+                <br />
+                <span className={bs.textMuted}>{formatDate(new Date(minDate))}</span>
+              </p>
+            </div>
+            <div className={combine(bs.col6, bs.colMd4)}>
+              <h6>Maximum:</h6>
+              <p>
+                {formatCurrency(maxTotal)}
+                <br />
+                <span className={bs.textMuted}>{formatDate(new Date(maxDate))}</span>
+              </p>
+            </div>
+            <div className={combine(bs.col6, bs.colMd4)}>
+              <h6>Change:</h6>
+              <p>
+                <RelativeChangeIcon
+                  change={changeAbsolute}
+                  iconProps={{
+                    className: bs.mr2,
+                  }}
+                />
+                {formatCurrency(changeAbsolute)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-		if (failed || !data) {
-			return null;
-		}
+  private handleDateModeChange(dateMode: DateModeOption): void {
+    this.setState({ dateMode });
+  }
 
-		const { minTotal, minDate, maxTotal, maxDate, changeAbsolute } = data;
+  private handleDateRangeChange(startDate: Moment.Moment, endDate: Moment.Moment): void {
+    this.setState({ startDate, endDate });
+  }
 
-		return (
-				<div className={bs.card}>
-					<div className={combine(bs.cardBody, gs.cardBody)}>
-						<div className={combine(bs.row, loading && gs.loading)}>
-							<div className={combine(bs.col6, bs.colMd4)}>
-								<h6>Minimum:</h6>
-								<p>
-									{formatCurrency(minTotal)}
-									<br/>
-									<span className={bs.textMuted}>{formatDate(new Date(minDate))}</span>
-								</p>
-							</div>
-							<div className={combine(bs.col6, bs.colMd4)}>
-								<h6>Maximum:</h6>
-								<p>
-									{formatCurrency(maxTotal)}
-									<br/>
-									<span className={bs.textMuted}>{formatDate(new Date(maxDate))}</span>
-								</p>
-							</div>
-							<div className={combine(bs.col6, bs.colMd4)}>
-								<h6>Change:</h6>
-								<p>
-									<RelativeChangeIcon
-											change={changeAbsolute}
-											iconProps={{
-												className: bs.mr2,
-											}}
-									/>
-									{formatCurrency(changeAbsolute)}
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
-		);
-	}
+  private fetchData(): void {
+    const { startDate, endDate, dateMode } = this.state;
 
-	private handleDateModeChange(dateMode: DateModeOption): void {
-		this.setState({ dateMode });
-	}
+    this.setState({ loading: true });
+    const frame = ++this.frameCounter;
 
-	private handleDateRangeChange(startDate: Moment.Moment, endDate: Moment.Moment): void {
-		this.setState({ startDate, endDate });
-	}
+    axios
+      .get("/api/reports/balance-history/data", {
+        params: {
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+          dateMode,
+        },
+      })
+      .then((res: AxiosResponse<ChartDataSets[]>) => res.data)
+      .then((res) => this.onDataLoaded(frame, res))
+      .catch(() => this.onDataLoadFailed(frame));
+  }
 
-	private fetchData(): void {
-		const { startDate, endDate, dateMode } = this.state;
+  private onFrameReceived(frame: number): void {
+    this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
+  }
 
-		this.setState({ loading: true });
-		const frame = ++this.frameCounter;
+  // TODO: figure out what type rawData should be
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private onDataLoaded(frame: number, rawData: any): void {
+    if (frame <= this.lastFrameReceived) {
+      return;
+    }
 
-		axios
-				.get("/api/reports/balance-history/data", {
-					params: {
-						startDate: startDate.toISOString(),
-						endDate: endDate.toISOString(),
-						dateMode,
-					},
-				})
-				.then((res: AxiosResponse<ChartDataSets[]>) => res.data)
-				.then((res) => this.onDataLoaded(frame, res))
-				.catch(() => this.onDataLoadFailed(frame));
-	}
+    this.onFrameReceived(frame);
 
-	private onFrameReceived(frame: number): void {
-		this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
-	}
+    this.setState({
+      loading: false,
+      failed: false,
+      data: rawData,
+    });
+  }
 
-	private onDataLoaded(frame: number, rawData: any): void {
-		if (frame <= this.lastFrameReceived) {
-			return;
-		}
+  private onDataLoadFailed(frame: number): void {
+    if (frame <= this.lastFrameReceived) {
+      return;
+    }
 
-		this.onFrameReceived(frame);
+    this.onFrameReceived(frame);
 
-		this.setState({
-			loading: false,
-			failed: false,
-			data: rawData,
-		});
-	}
-
-	private onDataLoadFailed(frame: number): void {
-		if (frame <= this.lastFrameReceived) {
-			return;
-		}
-
-		this.onFrameReceived(frame);
-
-		this.setState({
-			loading: false,
-			failed: true,
-			data: undefined,
-		});
-	}
+    this.setState({
+      loading: false,
+      failed: true,
+      data: undefined,
+    });
+  }
 }
 
-export {
-	BalanceHistoryReport,
-};
+export { BalanceHistoryReport };
