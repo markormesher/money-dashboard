@@ -9,269 +9,301 @@ import { ISuggestionTextInputProps, SuggestionTextInput } from "./SuggestionText
 import * as styles from "./SuggestionTextInput.scss";
 
 describe(__filename, () => {
+  let { mountWrapper } = testGlobals;
 
-	let { mountWrapper } = testGlobals;
+  const defaultProps: ISuggestionTextInputProps = {
+    id: "test",
+    label: "test",
+    value: "",
+    onValueChange: undefined,
+  };
 
-	const defaultProps: ISuggestionTextInputProps = {
-		id: "test",
-		label: "test",
-		value: "",
-		onValueChange: undefined,
-	};
+  const twelveOptions = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al"];
 
-	const twelveOptions = [
-		"aa", "ab", "ac", "ad", "ae", "af",
-		"ag", "ah", "ai", "aj", "ak", "al",
-	];
+  function findInnerInput(): ReactWrapper<HTMLAttributes> {
+    return mountWrapper.find("input");
+  }
 
-	function findInnerInput(): ReactWrapper<HTMLAttributes> {
-		return mountWrapper.find("input");
-	}
+  function findSuggestionWrapper(): ReactWrapper<HTMLAttributes> {
+    return mountWrapper.find("div").filterWhere((w) => w.props().className === styles.suggestionWrapper);
+  }
 
-	function findSuggestionWrapper(): ReactWrapper<HTMLAttributes> {
-		return mountWrapper.find("div").filterWhere((w) => w.props().className === styles.suggestionWrapper);
-	}
+  function findSuggestions(filter: (w: ReactWrapper<HTMLAttributes>) => boolean): ReactWrapper<HTMLAttributes> {
+    return findSuggestionWrapper()
+      .find("li")
+      .filterWhere(filter);
+  }
 
-	function findSuggestions(filter: (w: ReactWrapper<HTMLAttributes>) => boolean): ReactWrapper<HTMLAttributes> {
-		return findSuggestionWrapper().find("li").filterWhere(filter);
-	}
+  it("should render as an input", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} />);
+    mountWrapper.find(ControlledTextInput).length.should.equal(1);
+  });
 
-	it("should render as an input", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps}/>);
-		mountWrapper.find(ControlledTextInput).length.should.equal(1);
-	});
+  it("should not render a drop down when there are no matches for the input", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["b"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    findSuggestionWrapper().length.should.equal(0);
+  });
 
-	it("should not render a drop down when there are no matches for the input", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["b"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		findSuggestionWrapper().length.should.equal(0);
-	});
+  it("should not render a drop down when the input is an empty string", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a"]} />);
+    findInnerInput().simulate("change", { target: { value: "" } });
+    findSuggestionWrapper().length.should.equal(0);
+  });
 
-	it("should not render a drop down when the input is an empty string", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a"]}/>);
-		findInnerInput().simulate("change", { target: { value: "" } });
-		findSuggestionWrapper().length.should.equal(0);
-	});
+  it("should not render a drop down when the input is null", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a"]} />);
+    findInnerInput().simulate("change", { target: { value: null } });
+    findSuggestionWrapper().length.should.equal(0);
+  });
 
-	it("should not render a drop down when the input is null", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a"]}/>);
-		findInnerInput().simulate("change", { target: { value: null } });
-		findSuggestionWrapper().length.should.equal(0);
-	});
+  it("should render a drop down when there are matches for the input", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    findSuggestionWrapper().length.should.equal(1);
+  });
 
-	it("should render a drop down when there are matches for the input", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		findSuggestionWrapper().length.should.equal(1);
-	});
+  it("should only include suggestions that match the input", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa", "b"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    findSuggestions((w) => w.text() === "a").length.should.equal(1);
+    findSuggestions((w) => w.text() === "aa").length.should.equal(1);
+    findSuggestions((w) => w.text() === "b").length.should.equal(0);
+  });
 
-	it("should only include suggestions that match the input", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa", "b"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		findSuggestions((w) => w.text() === "a").length.should.equal(1);
-		findSuggestions((w) => w.text() === "aa").length.should.equal(1);
-		findSuggestions((w) => w.text() === "b").length.should.equal(0);
-	});
+  it("should render at most 10 suggestions", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={twelveOptions} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    findSuggestions((w) => w.text().startsWith("a")).length.should.equal(10);
+  });
 
-	it("should render at most 10 suggestions", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={twelveOptions}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		findSuggestions((w) => w.text().startsWith("a")).length.should.equal(10);
-	});
+  it("should render an overflow '...' with more than 10 suggestions", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={twelveOptions} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    findSuggestions((w) => w.text() === "...").length.should.equal(1);
+  });
 
-	it("should render an overflow '...' with more than 10 suggestions", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={twelveOptions}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		findSuggestions((w) => w.text() === "...").length.should.equal(1);
-	});
+  it("should call the listener when a suggestion is clicked", () => {
+    const spy = sinon.spy();
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["aa"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    spy.resetHistory(); // ignore the change event from "typing"
+    findSuggestions((w) => w.text() === "aa").simulate("mousedown");
+    spy.calledOnceWithExactly("aa", "test").should.equal(true);
+  });
 
-	it("should call the listener when a suggestion is clicked", () => {
-		const spy = sinon.spy();
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["aa"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		spy.resetHistory(); // ignore the change event from "typing"
-		findSuggestions((w) => w.text() === "aa").simulate("mousedown");
-		spy.calledOnceWithExactly("aa", "test").should.equal(true);
-	});
+  it("should not fail when a suggestion is clicked but there is no listener", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["aa"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    findSuggestions((w) => w.text() === "aa").simulate("mousedown");
+  });
 
-	it("should not fail when a suggestion is clicked but there is no listener", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["aa"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		findSuggestions((w) => w.text() === "aa").simulate("mousedown");
-	});
+  it("should highlight suggestions selected via the keyboard", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
 
-	it("should highlight suggestions selected via the keyboard", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
+    // nothing should be selected initially
+    const blankSuggestion = findSuggestions((w) => w.props().className === styles.active);
+    blankSuggestion.length.should.equal(0);
 
-		// nothing should be selected initially
-		const blankSuggestion = findSuggestions((w) => w.props().className === styles.active);
-		blankSuggestion.length.should.equal(0);
+    // hitting "down" should select an item
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
+    const firstSuggestion = findSuggestions((w) => w.props().className === styles.active);
+    firstSuggestion.length.should.equal(1);
 
-		// hitting "down" should select an item
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
-		const firstSuggestion = findSuggestions((w) => w.props().className === styles.active);
-		firstSuggestion.length.should.equal(1);
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
+    const secondSuggestion = findSuggestions((w) => w.props().className === styles.active);
+    secondSuggestion.length.should.equal(1);
 
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
-		const secondSuggestion = findSuggestions((w) => w.props().className === styles.active);
-		secondSuggestion.length.should.equal(1);
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.UP });
+    const thirdSuggestion = findSuggestions((w) => w.props().className === styles.active);
+    thirdSuggestion.length.should.equal(1);
 
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.UP });
-		const thirdSuggestion = findSuggestions((w) => w.props().className === styles.active);
-		thirdSuggestion.length.should.equal(1);
+    // selection should have changed then changed back
+    firstSuggestion.text().should.not.equal(secondSuggestion.text());
+    firstSuggestion.text().should.equal(thirdSuggestion.text());
+  });
 
-		// selection should have changed then changed back
-		firstSuggestion.text().should.not.equal(secondSuggestion.text());
-		firstSuggestion.text().should.equal(thirdSuggestion.text());
-	});
+  it("should cap keyboard selections at the bottom of the list", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
 
-	it("should cap keyboard selections at the bottom of the list", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
+    for (let i = 0; i < 20; ++i) {
+      findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
+    }
+    findSuggestions((w) => w.props().className === styles.active)
+      .text()
+      .should.equal("aa");
+  });
 
-		for (let i = 0; i < 20; ++i) {
-			findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
-		}
-		findSuggestions((w) => w.props().className === styles.active).text().should.equal("aa");
-	});
+  it("should cap keyboard selections at the top of the list", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
 
-	it("should cap keyboard selections at the top of the list", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
+    for (let i = 0; i < 20; ++i) {
+      findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.UP });
+    }
+    findSuggestions((w) => w.props().className === styles.active)
+      .text()
+      .should.equal("a");
+  });
 
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
-		for (let i = 0; i < 20; ++i) {
-			findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.UP });
-		}
-		findSuggestions((w) => w.props().className === styles.active).text().should.equal("a");
-	});
+  it("should call the listener when a suggestion is selected via the keyboard", () => {
+    const spy = sinon.spy();
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["aa"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    spy.resetHistory(); // ignore the change event from "typing"
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ENTER });
+    spy.calledOnceWithExactly("aa", "test").should.equal(true);
+  });
 
-	it("should call the listener when a suggestion is selected via the keyboard", () => {
-		const spy = sinon.spy();
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["aa"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		spy.resetHistory(); // ignore the change event from "typing"
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ENTER });
-		spy.calledOnceWithExactly("aa", "test").should.equal(true);
-	});
+  it("should not call the listener when 'Enter' is pressed but no selection is selected", () => {
+    const spy = sinon.spy();
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["aa"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    spy.resetHistory(); // ignore the change event from "typing"
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ENTER });
+    spy.notCalled.should.equal(true);
+  });
 
-	it("should not call the listener when 'Enter' is pressed but no selection is selected", () => {
-		const spy = sinon.spy();
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["aa"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		spy.resetHistory(); // ignore the change event from "typing"
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ENTER });
-		spy.notCalled.should.equal(true);
-	});
+  it("should not fail when 'Enter' is pressed but there is no listener", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["aa"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ENTER });
+  });
 
-	it("should not fail when 'Enter' is pressed but there is no listener", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["aa"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ENTER });
-	});
+  it("should close the suggestions when the escape key is pressed", () => {
+    const spy = sinon.spy();
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["a"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    findSuggestionWrapper().length.should.equal(1);
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ESC });
+    findSuggestionWrapper().length.should.equal(0);
+  });
 
-	it("should close the suggestions when the escape key is pressed", () => {
-		const spy = sinon.spy();
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["a"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		findSuggestionWrapper().length.should.equal(1);
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ESC });
-		findSuggestionWrapper().length.should.equal(0);
-	});
+  it("should swallow the event when the escape key is pressed when there are suggestions", () => {
+    const spyInner = sinon.spy();
+    const spyOuter = sinon.spy();
+    mountWrapper = mount(
+      <div onKeyDown={spyOuter}>
+        <SuggestionTextInput {...defaultProps} onValueChange={spyInner} suggestionOptions={["a"]} />
+      </div>,
+    );
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ESC });
+    spyOuter.called.should.equal(false);
+  });
 
-	it("should swallow the event when the escape key is pressed when there are suggestions", () => {
-		const spyInner = sinon.spy();
-		const spyOuter = sinon.spy();
-		mountWrapper = mount((
-				<div onKeyDown={spyOuter}>
-					<SuggestionTextInput {...defaultProps} onValueChange={spyInner} suggestionOptions={["a"]}/>
-				</div>
-		));
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ESC });
-		spyOuter.called.should.equal(false);
-	});
+  it("should not swallow the event when the escape key is pressed when there are no suggestions", () => {
+    const spyInner = sinon.spy();
+    const spyOuter = sinon.spy();
+    mountWrapper = mount(
+      <div onKeyDown={spyOuter}>
+        <SuggestionTextInput {...defaultProps} onValueChange={spyInner} suggestionOptions={["b"]} />
+      </div>,
+    );
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ESC });
+    spyOuter.called.should.equal(true);
+  });
 
-	it("should not swallow the event when the escape key is pressed when there are no suggestions", () => {
-		const spyInner = sinon.spy();
-		const spyOuter = sinon.spy();
-		mountWrapper = mount((
-				<div onKeyDown={spyOuter}>
-					<SuggestionTextInput {...defaultProps} onValueChange={spyInner} suggestionOptions={["b"]}/>
-				</div>
-		));
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.ESC });
-		spyOuter.called.should.equal(true);
-	});
+  it("should close the suggestions when the input blurs", () => {
+    const spy = sinon.spy();
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["a"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
+    findSuggestionWrapper().length.should.equal(1);
+    findInnerInput().simulate("blur");
+    findSuggestionWrapper().length.should.equal(0);
+  });
 
-	it("should close the suggestions when the input blurs", () => {
-		const spy = sinon.spy();
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} onValueChange={spy} suggestionOptions={["a"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
-		findSuggestionWrapper().length.should.equal(1);
-		findInnerInput().simulate("blur");
-		findSuggestionWrapper().length.should.equal(0);
-	});
+  it("should preserve the highlighted suggestion when the input changes if it still matches", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
 
-	it("should preserve the highlighted suggestion when the input changes if it still matches", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
+    // move down until we select the "aa" option
+    let selectedSuggestion = findSuggestions((w) => w.props().className === styles.active);
+    while (selectedSuggestion.length !== 1 || selectedSuggestion.text() !== "aa") {
+      findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
+      selectedSuggestion = findSuggestions((w) => w.props().className === styles.active);
+    }
+    findSuggestions((w) => w.props().className === styles.active)
+      .text()
+      .should.equal("aa");
 
-		// move down until we select the "aa" option
-		let selectedSuggestion = findSuggestions((w) => w.props().className === styles.active);
-		while (selectedSuggestion.length !== 1 || selectedSuggestion.text() !== "aa") {
-			findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
-			selectedSuggestion = findSuggestions((w) => w.props().className === styles.active);
-		}
-		findSuggestions((w) => w.props().className === styles.active).text().should.equal("aa");
+    // change the input
+    findInnerInput().simulate("change", { target: { value: "aa" } });
 
-		// change the input
-		findInnerInput().simulate("change", { target: { value: "aa" } });
+    // "aa" should still be highlighted
+    findSuggestions((w) => w.props().className === styles.active)
+      .text()
+      .should.equal("aa");
+  });
 
-		// "aa" should still be highlighted
-		findSuggestions((w) => w.props().className === styles.active).text().should.equal("aa");
-	});
+  it("should not preserve the highlighted suggestion when the input changes if it no longer matches", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa"]} />);
+    findInnerInput().simulate("change", { target: { value: "a" } });
 
-	it("should not preserve the highlighted suggestion when the input changes if it no longer matches", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["a", "aa"]}/>);
-		findInnerInput().simulate("change", { target: { value: "a" } });
+    // move down until we select the "aa" option
+    let selectedSuggestion = findSuggestions((w) => w.props().className === styles.active);
+    while (selectedSuggestion.length !== 1 || selectedSuggestion.text() !== "aa") {
+      findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
+      selectedSuggestion = findSuggestions((w) => w.props().className === styles.active);
+    }
+    findSuggestions((w) => w.props().className === styles.active)
+      .text()
+      .should.equal("aa");
 
-		// move down until we select the "aa" option
-		let selectedSuggestion = findSuggestions((w) => w.props().className === styles.active);
-		while (selectedSuggestion.length !== 1 || selectedSuggestion.text() !== "aa") {
-			findInnerInput().simulate("keydown", { keyCode: UIConstants.keys.DOWN });
-			selectedSuggestion = findSuggestions((w) => w.props().className === styles.active);
-		}
-		findSuggestions((w) => w.props().className === styles.active).text().should.equal("aa");
+    // change the input
+    findInnerInput().simulate("change", { target: { value: "b" } });
 
-		// change the input
-		findInnerInput().simulate("change", { target: { value: "b" } });
+    // nothing should be highlighted
+    findSuggestions((w) => w.props().className === styles.active).length.should.equal(0);
+  });
 
-		// nothing should be highlighted
-		findSuggestions((w) => w.props().className === styles.active).length.should.equal(0);
-	});
+  it("should highlight matching letters within suggestions", () => {
+    mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["ab", "aba", "acb"]} />);
+    findInnerInput().simulate("change", { target: { value: "ab" } });
 
-	it("should highlight matching letters within suggestions", () => {
-		mountWrapper = mount(<SuggestionTextInput {...defaultProps} suggestionOptions={["ab", "aba", "acb"]}/>);
-		findInnerInput().simulate("change", { target: { value: "ab" } });
+    let selectedSuggestion = findSuggestions((w) => w.text() === "ab");
+    selectedSuggestion.find("span").length.should.equal(2);
+    selectedSuggestion
+      .find("span")
+      .at(0)
+      .text()
+      .should.equal("a");
+    selectedSuggestion
+      .find("span")
+      .at(1)
+      .text()
+      .should.equal("b");
 
-		let selectedSuggestion = findSuggestions((w) => w.text() === "ab");
-		selectedSuggestion.find("span").length.should.equal(2);
-		selectedSuggestion.find("span").at(0).text().should.equal("a");
-		selectedSuggestion.find("span").at(1).text().should.equal("b");
+    selectedSuggestion = findSuggestions((w) => w.text() === "aba");
+    selectedSuggestion.find("span").length.should.equal(2);
+    selectedSuggestion
+      .find("span")
+      .at(0)
+      .text()
+      .should.equal("a");
+    selectedSuggestion
+      .find("span")
+      .at(1)
+      .text()
+      .should.equal("b");
 
-		selectedSuggestion = findSuggestions((w) => w.text() === "aba");
-		selectedSuggestion.find("span").length.should.equal(2);
-		selectedSuggestion.find("span").at(0).text().should.equal("a");
-		selectedSuggestion.find("span").at(1).text().should.equal("b");
-
-		selectedSuggestion = findSuggestions((w) => w.text() === "acb");
-		selectedSuggestion.find("span").length.should.equal(2);
-		selectedSuggestion.find("span").at(0).text().should.equal("a");
-		selectedSuggestion.find("span").at(1).text().should.equal("b");
-	});
+    selectedSuggestion = findSuggestions((w) => w.text() === "acb");
+    selectedSuggestion.find("span").length.should.equal(2);
+    selectedSuggestion
+      .find("span")
+      .at(0)
+      .text()
+      .should.equal("a");
+    selectedSuggestion
+      .find("span")
+      .at(1)
+      .text()
+      .should.equal("b");
+  });
 });

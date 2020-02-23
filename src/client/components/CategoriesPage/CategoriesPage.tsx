@@ -19,138 +19,134 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { CategoryEditModal } from "../CategoryEditModal/CategoryEditModal";
 
 interface ICategoriesPageProps {
-	readonly cacheTime: number;
-	readonly categoryToEdit?: ICategory;
-	readonly actions?: {
-		readonly deleteCategory: (category: ICategory) => AnyAction,
-		readonly setCategoryToEdit: (category: ICategory) => AnyAction,
-	};
+  readonly cacheTime: number;
+  readonly categoryToEdit?: ICategory;
+  readonly actions?: {
+    readonly deleteCategory: (category: ICategory) => AnyAction;
+    readonly setCategoryToEdit: (category: ICategory) => AnyAction;
+  };
 }
 
 function mapStateToProps(state: IRootState, props: ICategoriesPageProps): ICategoriesPageProps {
-	return {
-		...props,
-		cacheTime: KeyCache.getKeyTime(CategoryCacheKeys.CATEGORY_DATA),
-		categoryToEdit: state.categories.categoryToEdit,
-	};
+  return {
+    ...props,
+    cacheTime: KeyCache.getKeyTime(CategoryCacheKeys.CATEGORY_DATA),
+    categoryToEdit: state.categories.categoryToEdit,
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: ICategoriesPageProps): ICategoriesPageProps {
-	return {
-		...props,
-		actions: {
-			deleteCategory: (category) => dispatch(startDeleteCategory(category)),
-			setCategoryToEdit: (category) => dispatch(setCategoryToEdit(category)),
-		},
-	};
+  return {
+    ...props,
+    actions: {
+      deleteCategory: (category): AnyAction => dispatch(startDeleteCategory(category)),
+      setCategoryToEdit: (category): AnyAction => dispatch(setCategoryToEdit(category)),
+    },
+  };
 }
 
 class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
+  private tableColumns: IColumn[] = [
+    {
+      title: "Name",
+      sortField: "category.name",
+      defaultSortDirection: "ASC",
+    },
+    {
+      title: "Type",
+      sortable: false,
+    },
+    {
+      title: "Actions",
+      sortable: false,
+    },
+  ];
 
-	private tableColumns: IColumn[] = [
-		{
-			title: "Name",
-			sortField: "category.name",
-			defaultSortDirection: "ASC",
-		},
-		{
-			title: "Type",
-			sortable: false,
-		},
-		{
-			title: "Actions",
-			sortable: false,
-		},
-	];
+  private dataProvider = new ApiDataTableDataProvider<ICategory>(
+    "/api/categories/table-data",
+    () => ({
+      cacheTime: this.props.cacheTime,
+    }),
+    mapCategoryFromApi,
+  );
 
-	private dataProvider = new ApiDataTableDataProvider<ICategory>(
-			"/api/categories/table-data",
-			() => ({
-				cacheTime: this.props.cacheTime,
-			}),
-			mapCategoryFromApi,
-	);
+  constructor(props: ICategoriesPageProps) {
+    super(props);
 
-	constructor(props: ICategoriesPageProps) {
-		super(props);
+    this.tableRowRenderer = this.tableRowRenderer.bind(this);
+    this.generateActionButtons = this.generateActionButtons.bind(this);
+    this.startCategoryCreation = this.startCategoryCreation.bind(this);
+  }
 
-		this.tableRowRenderer = this.tableRowRenderer.bind(this);
-		this.generateActionButtons = this.generateActionButtons.bind(this);
-		this.startCategoryCreation = this.startCategoryCreation.bind(this);
-	}
+  public render(): ReactNode {
+    const { cacheTime, categoryToEdit } = this.props;
 
-	public render(): ReactNode {
-		const { cacheTime, categoryToEdit } = this.props;
+    return (
+      <>
+        {categoryToEdit !== undefined && <CategoryEditModal />}
 
-		return (
-				<>
-					{categoryToEdit !== undefined && <CategoryEditModal/>}
+        <div className={gs.headerWrapper}>
+          <h1 className={bs.h2}>Categories</h1>
+          <div className={gs.headerExtras}>
+            <KeyShortcut targetStr={"c"} onTrigger={this.startCategoryCreation}>
+              <IconBtn
+                icon={faPlus}
+                text={"New Category"}
+                onClick={this.startCategoryCreation}
+                btnProps={{
+                  className: combine(bs.btnSm, bs.btnSuccess),
+                }}
+              />
+            </KeyShortcut>
+          </div>
+        </div>
 
-					<div className={gs.headerWrapper}>
-						<h1 className={bs.h2}>Categories</h1>
-						<div className={gs.headerExtras}>
-							<KeyShortcut
-									targetStr={"c"}
-									onTrigger={this.startCategoryCreation}
-							>
-								<IconBtn
-										icon={faPlus}
-										text={"New Category"}
-										onClick={this.startCategoryCreation}
-										btnProps={{
-											className: combine(bs.btnSm, bs.btnSuccess),
-										}}
-								/>
-							</KeyShortcut>
-						</div>
-					</div>
+        <DataTable<ICategory>
+          columns={this.tableColumns}
+          dataProvider={this.dataProvider}
+          rowRenderer={this.tableRowRenderer}
+          watchedProps={{ cacheTime }}
+        />
+      </>
+    );
+  }
 
-					<DataTable<ICategory>
-							columns={this.tableColumns}
-							dataProvider={this.dataProvider}
-							rowRenderer={this.tableRowRenderer}
-							watchedProps={{ cacheTime }}
-					/>
-				</>
-		);
-	}
+  private tableRowRenderer(category: ICategory): ReactElement<void> {
+    return (
+      <tr key={category.id}>
+        <td>{category.name}</td>
+        <td>{generateCategoryTypeBadge(category)}</td>
+        <td>{this.generateActionButtons(category)}</td>
+      </tr>
+    );
+  }
 
-	private tableRowRenderer(category: ICategory): ReactElement<void> {
-		return (
-				<tr key={category.id}>
-					<td>{category.name}</td>
-					<td>{generateCategoryTypeBadge(category)}</td>
-					<td>{this.generateActionButtons(category)}</td>
-				</tr>
-		);
-	}
+  private generateActionButtons(category: ICategory): ReactElement<void> {
+    return (
+      <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
+        <IconBtn
+          icon={faPencil}
+          text={"Edit"}
+          payload={category}
+          onClick={this.props.actions.setCategoryToEdit}
+          btnProps={{
+            className: combine(bs.btnOutlineDark, gs.btnMini),
+          }}
+        />
+        <DeleteBtn
+          payload={category}
+          onConfirmedClick={this.props.actions.deleteCategory}
+          btnProps={{
+            className: combine(bs.btnOutlineDark, gs.btnMini),
+          }}
+        />
+      </div>
+    );
+  }
 
-	private generateActionButtons(category: ICategory): ReactElement<void> {
-		return (
-				<div className={combine(bs.btnGroup, bs.btnGroupSm)}>
-					<IconBtn
-							icon={faPencil}
-							text={"Edit"}
-							payload={category}
-							onClick={this.props.actions.setCategoryToEdit}
-							btnProps={{
-								className: combine(bs.btnOutlineDark, gs.btnMini),
-							}}
-					/>
-					<DeleteBtn
-							payload={category}
-							onConfirmedClick={this.props.actions.deleteCategory}
-							btnProps={{
-								className: combine(bs.btnOutlineDark, gs.btnMini),
-							}}
-					/>
-				</div>
-		);
-	}
-
-	private startCategoryCreation(): void {
-		this.props.actions.setCategoryToEdit(null);
-	}
+  private startCategoryCreation(): void {
+    this.props.actions.setCategoryToEdit(null);
+  }
 }
 
 export const CategoriesPage = connect(mapStateToProps, mapDispatchToProps)(UCCategoriesPage);

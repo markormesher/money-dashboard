@@ -8,66 +8,62 @@ import { DbProfile } from "./DbProfile";
 
 @Entity("budget")
 class DbBudget extends BaseModel implements IBudget {
+  @PrimaryGeneratedColumn("uuid")
+  public id: string;
 
-	@PrimaryGeneratedColumn("uuid")
-	public id: string;
+  @Column({
+    type: String,
+    default: "budget",
+  })
+  public type: "budget" | "bill";
 
-	@Column({
-		type: String,
-		default: "budget",
-	})
-	public type: "budget" | "bill";
+  @Column({
+    type: "double precision",
+  })
+  public amount: number;
 
-	@Column({
-		type: "double precision",
-	})
-	public amount: number;
+  @Column({
+    type: "integer",
+    transformer: new MomentDateTransformer(),
+  })
+  public startDate: Moment.Moment;
 
-	@Column({
-		type: "integer",
-		transformer: new MomentDateTransformer(),
-	})
-	public startDate: Moment.Moment;
+  @Column({
+    type: "integer",
+    transformer: new MomentDateTransformer(),
+  })
+  public endDate: Moment.Moment;
 
-	@Column({
-		type: "integer",
-		transformer: new MomentDateTransformer(),
-	})
-	public endDate: Moment.Moment;
+  @Column({ default: false })
+  public deleted: boolean;
 
-	@Column({ default: false })
-	public deleted: boolean;
+  @ManyToOne(
+    /* istanbul ignore next */
+    () => DbCategory,
+    /* istanbul ignore next */
+    (c) => c.budgets,
+  )
+  public category: DbCategory;
 
-	@ManyToOne(
-			/* istanbul ignore next */
-			() => DbCategory,
-			/* istanbul ignore next */
-			(c) => c.budgets,
-	)
-	public category: DbCategory;
+  @ManyToOne(
+    /* istanbul ignore next */
+    () => DbProfile,
+    /* istanbul ignore next */
+    (p) => p.budgets,
+  )
+  public profile: DbProfile;
 
-	@ManyToOne(
-			/* istanbul ignore next */
-			() => DbProfile,
-			/* istanbul ignore next */
-			(p) => p.budgets,
-	)
-	public profile: DbProfile;
-
-	public clone(): DbBudget {
-		const output = new DbBudget();
-		output.type = this.type;
-		output.amount = this.amount;
-		output.startDate = this.startDate;
-		output.endDate = this.endDate;
-		output.category = this.category;
-		output.profile = this.profile;
-		output.deleted = this.deleted;
-		return output;
-	}
-
+  public clone(): DbBudget {
+    const output = new DbBudget();
+    output.type = this.type;
+    output.amount = this.amount;
+    output.startDate = this.startDate;
+    output.endDate = this.endDate;
+    output.category = this.category;
+    output.profile = this.profile;
+    output.deleted = this.deleted;
+    return output;
+  }
 }
 
-export {
-	DbBudget,
-};
+export { DbBudget };

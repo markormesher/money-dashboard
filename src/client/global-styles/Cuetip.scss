@@ -1,9 +1,9 @@
-$cuetip-padding: .25em .6em;
+$cuetip-padding: 0.25em 0.6em;
 @import "~cuetip";
 
 [data-tooltip] {
-	&::after,
-	&::before {
-		font-size: 75%;
-	}
+  &::after,
+  &::before {
+    font-size: 75%;
+  }
 }

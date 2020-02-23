@@ -17,17 +17,19 @@ const app = Express();
 
 // db connection
 createConnection({ ...typeormConf, synchronize: true })
-		.then(() => logger.info("Database connection created successfully"))
-		.catch((err) => logger.error("Failed to connect to database", err));
+  .then(() => logger.info("Database connection created successfully"))
+  .catch((err) => logger.error("Failed to connect to database", err));
 
 // cookies and sessions
 const RedisSessionStore = ConnectRedis(ExpressSession);
-app.use(ExpressSession({
-	store: new RedisSessionStore({ host: "redis" }),
-	secret: getSecret("session.secret"),
-	resave: false,
-	saveUninitialized: false,
-}));
+app.use(
+  ExpressSession({
+    store: new RedisSessionStore({ host: "redis" }),
+    secret: getSecret("session.secret"),
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
 
 // auth
 PassportConfig.init(Passport);
@@ -41,12 +43,12 @@ app.use(BodyParser.json());
 setupApiRoutes(app);
 
 // error handlers
-// noinspection JSUnusedLocalSymbols
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((error: StatusError, req: Request, res: Response, next: NextFunction) => {
-	const status = error.status || 500;
-	const name = error.name || error.message || "Internal Server Error";
-	logger.error(`Error: ${name}`, { error });
-	res.status(status).json(error);
+  const status = error.status || 500;
+  const name = error.name || error.message || "Internal Server Error";
+  logger.error(`Error: ${name}`, { error });
+  res.status(status).json(error);
 });
 
 // go!

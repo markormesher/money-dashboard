@@ -2,10 +2,10 @@
 @import "~bootstrap-scss/variables";
 
 .chooser {
-	background-color: $white;
-	border: 1px solid $gray-500;
-	border-radius: .25rem;
-	padding: $spacer * .5;
-	position: fixed;
-	z-index: 9000;
+  background-color: $white;
+  border: 1px solid $gray-500;
+  border-radius: 0.25rem;
+  padding: $spacer * 0.5;
+  position: fixed;
+  z-index: 9000;
 }

@@ -12,47 +12,43 @@ import { IProfilesState, profilesReducer, profilesSagas } from "./profiles";
 import { ITransactionsState, transactionsReducer, transactionsSagas } from "./transactions";
 
 interface IRootState {
-	readonly accounts?: IAccountsState;
-	readonly auth?: IAuthState;
-	readonly budgets?: IBudgetsState;
-	readonly categories?: ICategoriesState;
-	readonly dashboard?: IDashboardState;
-	readonly global?: IGlobalState;
-	readonly nav?: INavState;
-	readonly profiles?: IProfilesState;
-	readonly transactions?: ITransactionsState;
+  readonly accounts?: IAccountsState;
+  readonly auth?: IAuthState;
+  readonly budgets?: IBudgetsState;
+  readonly categories?: ICategoriesState;
+  readonly dashboard?: IDashboardState;
+  readonly global?: IGlobalState;
+  readonly nav?: INavState;
+  readonly profiles?: IProfilesState;
+  readonly transactions?: ITransactionsState;
 
-	// from connected-react-router
-	readonly router?: RouterState;
+  // from connected-react-router
+  readonly router?: RouterState;
 }
 
 const rootReducers = {
-	[KeyCache.STATE_KEY]: KeyCache.reducer,
-	accounts: accountsReducer,
-	auth: authReducer,
-	budgets: budgetsReducer,
-	categories: categoriesReducer,
-	dashboard: dashboardReducer,
-	global: globalReducer,
-	nav: navReducer,
-	profiles: profilesReducer,
-	transactions: transactionsReducer,
+  [KeyCache.STATE_KEY]: KeyCache.reducer,
+  accounts: accountsReducer,
+  auth: authReducer,
+  budgets: budgetsReducer,
+  categories: categoriesReducer,
+  dashboard: dashboardReducer,
+  global: globalReducer,
+  nav: navReducer,
+  profiles: profilesReducer,
+  transactions: transactionsReducer,
 };
 
-function*rootSaga(): Generator {
-	yield all([
-		accountsSagas(),
-		authSagas(),
-		budgetsSagas(),
-		categoriesSagas(),
-		dashboardSagas(),
-		profilesSagas(),
-		transactionsSagas(),
-	]);
+function* rootSaga(): Generator {
+  yield all([
+    accountsSagas(),
+    authSagas(),
+    budgetsSagas(),
+    categoriesSagas(),
+    dashboardSagas(),
+    profilesSagas(),
+    transactionsSagas(),
+  ]);
 }
 
-export {
-	IRootState,
-	rootReducers,
-	rootSaga,
-};
+export { IRootState, rootReducers, rootSaga };

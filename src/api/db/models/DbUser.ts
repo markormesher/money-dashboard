@@ -4,42 +4,38 @@ import { DbProfile } from "./DbProfile";
 
 @Entity("user")
 class DbUser extends BaseEntity implements IUser {
+  @PrimaryGeneratedColumn("uuid")
+  public id: string;
 
-	@PrimaryGeneratedColumn("uuid")
-	public id: string;
+  @Column()
+  public googleId: string;
 
-	@Column()
-	public googleId: string;
+  @Column()
+  public displayName: string;
 
-	@Column()
-	public displayName: string;
+  @Column()
+  public image: string;
 
-	@Column()
-	public image: string;
+  @Column({ default: false })
+  public deleted: boolean;
 
-	@Column({ default: false })
-	public deleted: boolean;
+  @ManyToMany(
+    /* istanbul ignore next */
+    () => DbProfile,
+    /* istanbul ignore next */
+    (p) => p.users,
+    { cascade: true },
+  )
+  @JoinTable()
+  public profiles: DbProfile[];
 
-	@ManyToMany(
-			/* istanbul ignore next */
-			() => DbProfile,
-			/* istanbul ignore next */
-			(p) => p.users,
-			{ cascade: true },
-	)
-	@JoinTable()
-	public profiles: DbProfile[];
-
-	@ManyToOne(
-			/* istanbul ignore next */
-			() => DbProfile,
-			/* istanbul ignore next */
-			(p) => p.usersWithProfileActivated,
-	)
-	public activeProfile: DbProfile;
-
+  @ManyToOne(
+    /* istanbul ignore next */
+    () => DbProfile,
+    /* istanbul ignore next */
+    (p) => p.usersWithProfileActivated,
+  )
+  public activeProfile: DbProfile;
 }
 
-export {
-	DbUser,
-};
+export { DbUser };

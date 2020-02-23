@@ -13,257 +13,241 @@ import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 
 interface IPensionDepositsReportState {
-	readonly dateMode: DateModeOption;
-	readonly splitValues: boolean;
-	readonly data: IPensionDepositsData;
-	readonly loading: boolean;
-	readonly failed: boolean;
+  readonly dateMode: DateModeOption;
+  readonly splitValues: boolean;
+  readonly data: IPensionDepositsData;
+  readonly loading: boolean;
+  readonly failed: boolean;
 }
 
 class PensionDepositsReport extends Component<{}, IPensionDepositsReportState> {
+  // give each remote request an increasing "frame" number so that late arrivals will be dropped
+  private frameCounter = 0;
+  private lastFrameReceived = 0;
 
-	// give each remote request an increasing "frame" number so that late arrivals will be dropped
-	private frameCounter = 0;
-	private lastFrameReceived = 0;
+  constructor(props: {}) {
+    super(props);
+    this.state = {
+      dateMode: "transaction",
+      splitValues: false,
+      data: undefined,
+      loading: true,
+      failed: false,
+    };
 
-	private fetchPending = false;
+    this.renderResults = this.renderResults.bind(this);
+    this.renderCategoryBalance = this.renderCategoryBalance.bind(this);
+    this.handleSplitValueChange = this.handleSplitValueChange.bind(this);
+    this.handleDateModeChange = this.handleDateModeChange.bind(this);
+  }
 
-	constructor(props: {}, context: any) {
-		super(props, context);
-		this.state = {
-			dateMode: "transaction",
-			splitValues: false,
-			data: undefined,
-			loading: true,
-			failed: false,
-		};
+  public componentDidMount(): void {
+    this.fetchData();
+  }
 
-		this.renderResults = this.renderResults.bind(this);
-		this.renderCategoryBalance = this.renderCategoryBalance.bind(this);
-		this.handleSplitValueChange = this.handleSplitValueChange.bind(this);
-		this.handleDateModeChange = this.handleDateModeChange.bind(this);
-	}
+  public componentDidUpdate(nextProps: {}, nextState: IPensionDepositsReportState): void {
+    if (this.state.dateMode !== nextState.dateMode) {
+      this.fetchData();
+    }
+  }
 
-	public componentDidMount(): void {
-		this.fetchData();
-	}
+  public render(): ReactNode {
+    return (
+      <>
+        <div className={gs.headerWrapper}>
+          <h1 className={bs.h2}>Pension Deposits</h1>
+          <div className={combine(bs.btnGroup, gs.headerExtras)}>
+            <CheckboxBtn
+              text={"Split Values"}
+              checked={this.state.splitValues}
+              onChange={this.handleSplitValueChange}
+              btnProps={{
+                className: combine(bs.btnOutlineInfo, bs.btnSm),
+              }}
+            />
 
-	public componentWillUpdate(nextProps: {}, nextState: IPensionDepositsReportState): void {
-		if (this.state.dateMode !== nextState.dateMode) {
-			this.fetchPending = true;
-		}
-	}
+            <DateModeToggleBtn
+              value={this.state.dateMode}
+              onChange={this.handleDateModeChange}
+              btnProps={{
+                className: combine(bs.btnOutlineInfo, bs.btnSm),
+              }}
+            />
+          </div>
+        </div>
 
-	public componentDidUpdate(): void {
-		if (this.fetchPending) {
-			this.fetchData();
-			this.fetchPending = false;
-		}
-	}
+        <div className={bs.row}>
+          <div className={bs.col12}>{this.renderResults()}</div>
+        </div>
+      </>
+    );
+  }
 
-	public render(): ReactNode {
-		return (
-				<>
-					<div className={gs.headerWrapper}>
-						<h1 className={bs.h2}>Pension Deposits</h1>
-						<div className={combine(bs.btnGroup, gs.headerExtras)}>
-							<CheckboxBtn
-									text={"Split Values"}
-									checked={this.state.splitValues}
-									onChange={this.handleSplitValueChange}
-									btnProps={{
-										className: combine(bs.btnOutlineInfo, bs.btnSm),
-									}}
-							/>
+  private renderResults(): ReactNode {
+    const { loading, failed, data } = this.state;
 
-							<DateModeToggleBtn
-									value={this.state.dateMode}
-									onChange={this.handleDateModeChange}
-									btnProps={{
-										className: combine(bs.btnOutlineInfo, bs.btnSm),
-									}}
-							/>
-						</div>
-					</div>
+    if (failed) {
+      return <p>Data failed to load. Please try again.</p>;
+    }
 
-					<div className={bs.row}>
-						<div className={bs.col12}>
-							{this.renderResults()}
-						</div>
-					</div>
-				</>
-		);
-	}
+    if (loading) {
+      return <LoadingSpinner centre={true} />;
+    }
 
-	private renderResults(): ReactNode {
-		const { loading, failed, data } = this.state;
+    if (!data) {
+      return <p>No data to display.</p>;
+    }
 
-		if (failed) {
-			return <p>Data failed to load. Please try again.</p>;
-		}
+    const nonAssetCategories = data.allCategories
+      .filter((c) => !c.isAssetGrowthCategory)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    const assetCategories = data.allCategories
+      .filter((c) => c.isAssetGrowthCategory)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    const years = data.allYears.sort((a, b) => a - b);
 
-		if (loading) {
-			return <LoadingSpinner centre={true}/>;
-		}
+    return (
+      <table className={combine(bs.table, bs.tableStriped, bs.tableSm)}>
+        <thead>
+          <tr>
+            <td>{/* blank top-left corner cell */}</td>
+            {years.map((year) => (
+              <th key={year} className={bs.textRight}>
+                {year}/{year + 1}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {nonAssetCategories.map((category) => (
+            <tr key={category.id}>
+              <td>{category.name}</td>
+              {years.map((year) => (
+                <td key={year} className={bs.textRight}>
+                  {this.renderCategoryBalance(data.yearData[year][category.id])}
+                </td>
+              ))}
+            </tr>
+          ))}
 
-		if (!data) {
-			return <p>No data to display.</p>;
-		}
+          <tr className={gs.bottomBorder}>
+            <td>
+              <strong>Total (excl. Asset Growth)</strong>
+            </td>
+            {years.map((year) => (
+              <td key={year} className={bs.textRight}>
+                {formatCurrencyStyled(
+                  Object.values(data.yearData[year])
+                    .filter((b) => !b.category.isAssetGrowthCategory)
+                    .map((b) => b.balanceIn + b.balanceOut)
+                    .reduce((a, b) => a + b, 0),
+                )}
+              </td>
+            ))}
+          </tr>
 
-		const nonAssetCategories = data.allCategories
-				.filter((c) => !c.isAssetGrowthCategory)
-				.sort((a, b) => a.name.localeCompare(b.name));
-		const assetCategories = data.allCategories
-				.filter((c) => c.isAssetGrowthCategory)
-				.sort((a, b) => a.name.localeCompare(b.name));
-		const years = data.allYears
-				.sort((a, b) => a - b);
+          {assetCategories.map((category) => (
+            <tr key={category.id}>
+              <td>{category.name}</td>
+              {years.map((year) => (
+                <td key={year} className={bs.textRight}>
+                  {this.renderCategoryBalance(data.yearData[year][category.id])}
+                </td>
+              ))}
+            </tr>
+          ))}
 
-		return (
-				<table className={combine(bs.table, bs.tableStriped, bs.tableSm)}>
-					<thead>
-					<tr>
-						<td>{/* blank top-left corner cell */}</td>
-						{years.map((year) => (
-								<th key={year} className={bs.textRight}>
-									{year}/{year + 1}
-								</th>
-						))}
-					</tr>
-					</thead>
-					<tbody>
+          <tr className={gs.bottomBorder}>
+            <td>
+              <strong>Total (incl. Asset Growth)</strong>
+            </td>
+            {years.map((year) => (
+              <td key={year} className={bs.textRight}>
+                {formatCurrencyStyled(
+                  Object.values(data.yearData[year])
+                    .map((b) => b.balanceIn + b.balanceOut)
+                    .reduce((a, b) => a + b, 0),
+                )}
+              </td>
+            ))}
+          </tr>
+        </tbody>
+      </table>
+    );
+  }
 
-					{nonAssetCategories.map((category) => (
-							<tr key={category.id}>
-								<td>{category.name}</td>
-								{years.map((year) => (
-										<td key={year} className={bs.textRight}>
-											{this.renderCategoryBalance(data.yearData[year][category.id])}
-										</td>
-								))}
-							</tr>
-					))}
+  private renderCategoryBalance(balance: IDetailedCategoryBalance): ReactNode {
+    if (!balance) {
+      return null;
+    }
 
-					<tr className={gs.bottomBorder}>
-						<td><strong>Total (excl. Asset Growth)</strong></td>
-						{years.map((year) => (
-								<td key={year} className={bs.textRight}>
-									{formatCurrencyStyled(
-											Object.values(data.yearData[year])
-													.filter((b) => !b.category.isAssetGrowthCategory)
-													.map((b) => b.balanceIn + b.balanceOut)
-													.reduce((a, b) => a + b, 0),
-									)}
-								</td>
-						))}
-					</tr>
+    if (this.state.splitValues) {
+      return (
+        <>
+          {formatCurrencyStyled(balance.balanceIn)}
+          <br />
+          {formatCurrencyStyled(balance.balanceOut)}
+        </>
+      );
+    } else {
+      return <>{formatCurrencyStyled(balance.balanceIn + balance.balanceOut)}</>;
+    }
+  }
 
-					{assetCategories.map((category) => (
-							<tr key={category.id}>
-								<td>{category.name}</td>
-								{years.map((year) => (
-										<td key={year} className={bs.textRight}>
-											{this.renderCategoryBalance(data.yearData[year][category.id])}
-										</td>
-								))}
-							</tr>
-					))}
+  private handleSplitValueChange(splitValues: boolean): void {
+    this.setState({ splitValues });
+  }
 
-					<tr className={gs.bottomBorder}>
-						<td><strong>Total (incl. Asset Growth)</strong></td>
-						{years.map((year) => (
-								<td key={year} className={bs.textRight}>
-									{formatCurrencyStyled(
-											Object.values(data.yearData[year])
-													.map((b) => b.balanceIn + b.balanceOut)
-													.reduce((a, b) => a + b, 0),
-									)}
-								</td>
-						))}
-					</tr>
-					</tbody>
-				</table>
-		);
-	}
+  private handleDateModeChange(dateMode: DateModeOption): void {
+    this.setState({ dateMode });
+  }
 
-	private renderCategoryBalance(balance: IDetailedCategoryBalance): ReactNode {
-		if (!balance) {
-			return null;
-		}
+  private fetchData(): void {
+    const { dateMode } = this.state;
 
-		if (this.state.splitValues) {
-			return (
-					<>
-						{formatCurrencyStyled(balance.balanceIn)}
-						<br/>
-						{formatCurrencyStyled(balance.balanceOut)}
-					</>
-			);
-		} else {
-			return (
-					<>
-						{formatCurrencyStyled(balance.balanceIn + balance.balanceOut)}
-					</>
-			);
-		}
-	}
+    this.setState({ loading: true });
+    const frame = ++this.frameCounter;
 
-	private handleSplitValueChange(splitValues: boolean): void {
-		this.setState({ splitValues });
-	}
+    axios
+      .get("/api/reports/pension-deposits/data", {
+        params: { dateMode },
+      })
+      .then((res: AxiosResponse<IPensionDepositsData>) => mapPensionDepositsDataFromApi(res.data))
+      .then((res) => this.onDataLoaded(frame, res))
+      .catch(() => this.onDataLoadFailed(frame));
+  }
 
-	private handleDateModeChange(dateMode: DateModeOption): void {
-		this.setState({ dateMode });
-	}
+  private onFrameReceived(frame: number): void {
+    this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
+  }
 
-	private fetchData(): void {
-		const { dateMode } = this.state;
+  private onDataLoaded(frame: number, rawData: IPensionDepositsData): void {
+    if (frame <= this.lastFrameReceived) {
+      return;
+    }
 
-		this.setState({ loading: true });
-		const frame = ++this.frameCounter;
+    this.onFrameReceived(frame);
 
-		axios
-				.get("/api/reports/pension-deposits/data", {
-					params: { dateMode },
-				})
-				.then((res: AxiosResponse<IPensionDepositsData>) => mapPensionDepositsDataFromApi(res.data))
-				.then((res) => this.onDataLoaded(frame, res))
-				.catch(() => this.onDataLoadFailed(frame));
-	}
+    this.setState({
+      loading: false,
+      failed: false,
+      data: rawData,
+    });
+  }
 
-	private onFrameReceived(frame: number): void {
-		this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
-	}
+  private onDataLoadFailed(frame: number): void {
+    if (frame <= this.lastFrameReceived) {
+      return;
+    }
 
-	private onDataLoaded(frame: number, rawData: IPensionDepositsData): void {
-		if (frame <= this.lastFrameReceived) {
-			return;
-		}
+    this.onFrameReceived(frame);
 
-		this.onFrameReceived(frame);
-
-		this.setState({
-			loading: false,
-			failed: false,
-			data: rawData,
-		});
-	}
-
-	private onDataLoadFailed(frame: number): void {
-		if (frame <= this.lastFrameReceived) {
-			return;
-		}
-
-		this.onFrameReceived(frame);
-
-		this.setState({
-			loading: false,
-			failed: true,
-			data: undefined,
-		});
-	}
+    this.setState({
+      loading: false,
+      failed: true,
+      data: undefined,
+    });
+  }
 }
 
-export {
-	PensionDepositsReport,
-};
+export { PensionDepositsReport };

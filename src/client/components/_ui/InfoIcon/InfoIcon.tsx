@@ -5,25 +5,18 @@ import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 
 interface IInfoIconPros {
-	readonly hoverText: string;
+  readonly hoverText: string;
 }
 
 class InfoIcon extends PureComponent<IInfoIconPros> {
-
-	public render(): ReactNode {
-		const { hoverText } = this.props;
-		return (
-				<span data-tooltip={hoverText}>
-					<FontAwesomeIcon
-							className={bs.textMuted}
-							fixedWidth={true}
-							icon={faInfoCircle}
-					/>
-				</span>
-		);
-	}
+  public render(): ReactNode {
+    const { hoverText } = this.props;
+    return (
+      <span data-tooltip={hoverText}>
+        <FontAwesomeIcon className={bs.textMuted} fixedWidth={true} icon={faInfoCircle} />
+      </span>
+    );
+  }
 }
 
-export {
-	InfoIcon,
-};
+export { InfoIcon };

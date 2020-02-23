@@ -6,40 +6,36 @@ import { DbTransaction } from "./DbTransaction";
 
 @Entity("account")
 class DbAccount extends BaseModel implements IAccount {
+  @PrimaryGeneratedColumn("uuid")
+  public id: string;
 
-	@PrimaryGeneratedColumn("uuid")
-	public id: string;
+  @Column()
+  public name: string;
 
-	@Column()
-	public name: string;
+  @Column({ default: "current" })
+  public type: string;
 
-	@Column({ default: "current" })
-	public type: string;
+  @Column({ default: true })
+  public active: boolean;
 
-	@Column({ default: true })
-	public active: boolean;
+  @Column({ default: false })
+  public deleted: boolean;
 
-	@Column({ default: false })
-	public deleted: boolean;
+  @OneToMany(
+    /* istanbul ignore next */
+    () => DbTransaction,
+    /* istanbul ignore next */
+    (t) => t.account,
+  )
+  public transactions: DbTransaction[];
 
-	@OneToMany(
-			/* istanbul ignore next */
-			() => DbTransaction,
-			/* istanbul ignore next */
-			(t) => t.account,
-	)
-	public transactions: DbTransaction[];
-
-	@ManyToOne(
-			/* istanbul ignore next */
-			() => DbProfile,
-			/* istanbul ignore next */
-			(p) => p.accounts,
-	)
-	public profile: DbProfile;
-
+  @ManyToOne(
+    /* istanbul ignore next */
+    () => DbProfile,
+    /* istanbul ignore next */
+    (p) => p.accounts,
+  )
+  public profile: DbProfile;
 }
 
-export {
-	DbAccount,
-};
+export { DbAccount };
