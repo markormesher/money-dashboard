@@ -1,6 +1,6 @@
 import { describe } from "mocha";
 import * as Moment from "moment";
-import { getTaxYear, getTaxYearEnd, getTaxYearStart } from "./helpers";
+import { getTaxYear, getTaxYearEnd, getTaxYearStart, groupBy } from "./helpers";
 
 describe(__filename, () => {
 
@@ -33,8 +33,48 @@ describe(__filename, () => {
 	});
 
 	describe("groupBy()", () => {
-		it("should have tests", () => {
-			// TODO
+		it("should return empty output for empty input", () => {
+			const actual = groupBy([], (v) => 0);
+			const expected = {};
+			JSON.stringify(actual).should.equal(JSON.stringify(expected));
+		});
+
+		it("should group by a numeric identifier", () => {
+			const ungrouped = [
+				{ id: 0, name: "a" },
+				{ id: 0, name: "b" },
+				{ id: 1, name: "c" },
+			];
+			const actual = groupBy(ungrouped, (v) => v.id);
+			const expected = {
+				0: [
+					{ id: 0, name: "a" },
+					{ id: 0, name: "b" },
+				],
+				1: [
+					{ id: 1, name: "c" },
+				],
+			};
+			JSON.stringify(actual).should.equal(JSON.stringify(expected));
+		});
+
+		it("should group by a string identifier", () => {
+			const ungrouped = [
+				{ id: "0", name: "a" },
+				{ id: "0", name: "b" },
+				{ id: "1", name: "c" },
+			];
+			const actual = groupBy(ungrouped, (v) => v.id);
+			const expected = {
+				"0": [
+					{ id: "0", name: "a" },
+					{ id: "0", name: "b" },
+				],
+				"1": [
+					{ id: "1", name: "c" },
+				],
+			};
+			JSON.stringify(actual).should.equal(JSON.stringify(expected));
 		});
 	});
 });
