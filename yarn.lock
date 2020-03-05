@@ -2783,11 +2783,11 @@ connect-history-api-fallback@^1.6.0:
   integrity sha512-e54B99q/OUoH64zYYRf3HBP5z24G38h5D3qXu23JGRoigpX5Ss4r9ZnDk3g0Z8uQC2x2lPaJ+UlWBc1ZWBWdLg==
 
 connect-redis@^3.3.3:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/connect-redis/-/connect-redis-3.4.0.tgz#4040dd3755bddbf93478fb84937a74052c31b965"
-  integrity sha512-YKPSO9tLwzUr8jzhsGMdSJUxevWrDt0ggXRcTMb+mtnJ/vWGlWV7RC4VUMgqvZv3uTGDFye8Bf7d6No0oSVkOQ==
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/connect-redis/-/connect-redis-3.4.2.tgz#e339fd0b00e1381e130101556657669cc855417e"
+  integrity sha512-ozA1Z0GDnsCJECfNyNJOqPuW3Fk43fUbKC65Sa/V9hkCBNtXsFU2xtTOVsQGUsflpywuJMgGOV4xrnKzIPFqvA==
   dependencies:
-    debug "^4.0.1"
+    debug "^4.1.1"
     redis "^2.8.0"
 
 connected-react-router@^6.1.0:
@@ -7768,9 +7768,9 @@ redent@^1.0.0:
     strip-indent "^1.0.1"
 
 redis-commands@^1.2.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.4.0.tgz#52f9cf99153efcce56a8f86af986bd04e988602f"
-  integrity sha512-cu8EF+MtkwI4DLIT0x9P8qNTLFhQD4jLfxLR0cCNkeGzs87FN6879JOJwNQR/1zD7aSYNbU0hgsV9zGY71Itvw==
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.5.0.tgz#80d2e20698fe688f227127ff9e5164a7dd17e785"
+  integrity sha512-6KxamqpZ468MeQC3bkWmCB1fp56XL64D4Kf0zJSwDZbVLLm7KFkoIcHrgRvQ+sk8dnhySs7+yBg94yIkAK7aJg==
 
 redis-parser@^2.6.0:
   version "2.6.0"
