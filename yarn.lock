@@ -1148,9 +1148,9 @@
     "@types/react" "*"
 
 "@types/react-loadable@^5.4.1":
-  version "5.4.1"
-  resolved "https://registry.yarnpkg.com/@types/react-loadable/-/react-loadable-5.4.1.tgz#bc76978c6d9039e5808797b5ee35f6ae18b7329f"
-  integrity sha512-nBvsWjPfBHepN5LoK/wgaunZSK9LmkKsPYum+/QrEKzUAb1yoe1/dwqTH6ZrinHDjru9LgjvXOqek9hvbq4Skw==
+  version "5.5.3"
+  resolved "https://registry.yarnpkg.com/@types/react-loadable/-/react-loadable-5.5.3.tgz#65d50a6f9f7ff62513010bd6a460ed60ba58ca7d"
+  integrity sha512-BRzQhbMo5CjfxFU2tmmBNh16QqKUwNiaX0vflCwIVPVG8g/pCOyJ3rOdSPo4m+TPS7C9q/TupaqYXXTMtFoyng==
   dependencies:
     "@types/react" "*"
     "@types/webpack" "*"
@@ -1181,9 +1181,9 @@
     "@types/react" "*"
 
 "@types/react-table@^6.7.12":
-  version "6.7.13"
-  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-6.7.13.tgz#f98e01d1d9e2ba25b3d2fa71ba7abab51bab25d7"
-  integrity sha512-EpjyWqfjXjsJPnxJQPOsH3zg9yIVvUF/OJxyUcbvKt9LEyXr08RdqD//XKN/rwLx0re7e/oF7d0U/RzWI5PU8Q==
+  version "6.8.7"
+  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-6.8.7.tgz#210ffa2862dd3711350676c0bdbbfbff45f14b84"
+  integrity sha512-1U0xl47jk0BzE+HNHgxZYSLvtybSvnlLhOpW9Mfqf9iuRm/fGqgRab3TKivPCY6Tl7WPFM2hWEJ1GnsuSFc9AQ==
   dependencies:
     "@types/react" "*"
 
