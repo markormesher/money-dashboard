@@ -4,6 +4,7 @@ import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as ExpressSession from "express-session";
 import * as Passport from "passport";
+import * as Redis from "redis";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { StatusError } from "../commons/StatusError";
@@ -21,10 +22,14 @@ createConnection({ ...typeormConf, synchronize: true })
   .catch((err) => logger.error("Failed to connect to database", err));
 
 // cookies and sessions
+const redisClient = Redis.createClient({
+  host: "redis",
+  port: 6379,
+});
 const RedisSessionStore = ConnectRedis(ExpressSession);
 app.use(
   ExpressSession({
-    store: new RedisSessionStore({ host: "redis" }),
+    store: new RedisSessionStore({ client: redisClient }),
     secret: getSecret("session.secret"),
     resave: false,
     saveUninitialized: false,
