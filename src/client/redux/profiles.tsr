@@ -1,9 +1,9 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IProfile } from "../../commons/models/IProfile";
 import { startLoadCurrentUser } from "./auth";
 import { setError } from "./global";
+import { CacheKeyUtil } from "./helpers/CacheKeyUtil";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IProfilesState {

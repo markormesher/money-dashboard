@@ -1,8 +1,8 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IAccount, mapAccountFromApi } from "../../commons/models/IAccount";
 import { setError } from "./global";
+import { CacheKeyUtil } from "./helpers/CacheKeyUtil";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
 
@@ -148,10 +148,7 @@ function* setAccountActiveSaga(): Generator {
         put(addAccountEditInProgress(account)),
         call(() => axios.post(`/api/accounts/${apiRoute}/${account.id}`)),
       ]);
-      yield all([
-        put(CacheKeyUtil.updateKey(AccountCacheKeys.ACCOUNT_DATA)),
-        put(removeAccountEditInProgress(account)),
-      ]);
+      yield all([put(CacheKeyUtil.updateKey(AccountCacheKeys.ACCOUNT_DATA)), put(removeAccountEditInProgress(account))]);
     } catch (err) {
       yield put(setError(err));
     }

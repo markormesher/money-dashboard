@@ -3,12 +3,12 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { DateModeOption, ITransaction, mapTransactionFromApi } from "../../../commons/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
+import { CacheKeyUtil } from "../../redux/helpers/CacheKeyUtil";
 import { IRootState } from "../../redux/root";
 import {
   setDateMode,
