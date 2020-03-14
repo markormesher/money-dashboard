@@ -6,7 +6,7 @@
 			"compression": "gzip"
 		},
 		{
-			"path": "./build/client/npm.chart.js*",
+			"path": "./build/client/npm~chart.js*",
 			"maxSize": "100kb",
 			"compression": "gzip"
 		}
