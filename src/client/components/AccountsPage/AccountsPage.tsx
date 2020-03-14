@@ -3,6 +3,7 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IAccount, mapAccountFromApi } from "../../../commons/models/IAccount";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
@@ -15,7 +16,6 @@ import {
   startDeleteAccount,
   startSetAccountActive,
 } from "../../redux/accounts";
-import { KeyCache } from "../../redux/helpers/KeyCache";
 import { IRootState } from "../../redux/root";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
@@ -42,7 +42,7 @@ interface IAccountsPageProps {
 function mapStateToProps(state: IRootState, props: IAccountsPageProps): IAccountsPageProps {
   return {
     ...props,
-    cacheTime: KeyCache.getKeyTime(AccountCacheKeys.ACCOUNT_DATA),
+    cacheTime: CacheKeyUtil.getKeyTime(AccountCacheKeys.ACCOUNT_DATA),
     displayActiveOnly: state.accounts.displayActiveOnly,
     accountToEdit: state.accounts.accountToEdit,
     accountEditsInProgress: state.accounts.accountEditsInProgress,

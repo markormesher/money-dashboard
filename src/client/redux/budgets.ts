@@ -1,9 +1,9 @@
 import axios from "axios";
 import { Moment } from "moment";
 import { all, call, put, takeEvery } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IBudget } from "../../commons/models/IBudget";
 import { setError } from "./global";
-import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IBudgetsState {
@@ -111,7 +111,7 @@ function* deleteBudgetSaga(): Generator {
     try {
       const budget: IBudget = action.payload.budget;
       yield call(() => axios.post(`/api/budgets/delete/${budget.id}`).then((res) => res.data));
-      yield put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA));
+      yield put(CacheKeyUtil.updateKey(BudgetCacheKeys.BUDGET_DATA));
     } catch (err) {
       yield put(setError(err));
     }
@@ -125,7 +125,7 @@ function* saveBudgetSaga(): Generator {
       const budgetId = budget.id || "";
       yield all([put(setEditorBusy(true)), call(() => axios.post(`/api/budgets/edit/${budgetId}`, budget))]);
       yield all([
-        put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA)),
+        put(CacheKeyUtil.updateKey(BudgetCacheKeys.BUDGET_DATA)),
         put(setEditorBusy(false)),
         put(setBudgetToEdit(undefined)),
       ]);
@@ -152,7 +152,7 @@ function* cloneBudgetsSaga(): Generator {
         ),
       ]);
       yield all([
-        put(KeyCache.touchKey(BudgetCacheKeys.BUDGET_DATA)),
+        put(CacheKeyUtil.updateKey(BudgetCacheKeys.BUDGET_DATA)),
         put(setEditorBusy(false)),
         put(setBudgetCloneInProgress(false)),
         put(setBudgetsToClone([])),

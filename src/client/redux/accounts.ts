@@ -1,8 +1,8 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IAccount, mapAccountFromApi } from "../../commons/models/IAccount";
 import { setError } from "./global";
-import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
 
@@ -114,7 +114,7 @@ function* deleteAccountSaga(): Generator {
     try {
       const account: IAccount = action.payload.account;
       yield call(() => axios.post(`/api/accounts/delete/${account.id}`));
-      yield put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA));
+      yield put(CacheKeyUtil.updateKey(AccountCacheKeys.ACCOUNT_DATA));
     } catch (err) {
       yield put(setError(err));
     }
@@ -128,7 +128,7 @@ function* saveAccountSaga(): Generator {
       const accountId = account.id || "";
       yield all([put(setEditorBusy(true)), call(() => axios.post(`/api/accounts/edit/${accountId}`, account))]);
       yield all([
-        put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA)),
+        put(CacheKeyUtil.updateKey(AccountCacheKeys.ACCOUNT_DATA)),
         put(setEditorBusy(false)),
         put(setAccountToEdit(undefined)),
       ]);
@@ -148,7 +148,10 @@ function* setAccountActiveSaga(): Generator {
         put(addAccountEditInProgress(account)),
         call(() => axios.post(`/api/accounts/${apiRoute}/${account.id}`)),
       ]);
-      yield all([put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_DATA)), put(removeAccountEditInProgress(account))]);
+      yield all([
+        put(CacheKeyUtil.updateKey(AccountCacheKeys.ACCOUNT_DATA)),
+        put(removeAccountEditInProgress(account)),
+      ]);
     } catch (err) {
       yield put(setError(err));
     }
@@ -158,7 +161,7 @@ function* setAccountActiveSaga(): Generator {
 function* loadAccountListSaga(): Generator {
   yield takeEvery(AccountActions.START_LOAD_ACCOUNT_LIST, function*(): Generator {
     if (
-      KeyCache.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [
+      CacheKeyUtil.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [
         AccountCacheKeys.ACCOUNT_DATA,
         ProfileCacheKeys.CURRENT_PROFILE,
       ])
@@ -172,7 +175,7 @@ function* loadAccountListSaga(): Generator {
           return raw.map(mapAccountFromApi);
         });
       });
-      yield all([put(setAccountList(accountList)), put(KeyCache.touchKey(AccountCacheKeys.ACCOUNT_LIST))]);
+      yield all([put(setAccountList(accountList)), put(CacheKeyUtil.updateKey(AccountCacheKeys.ACCOUNT_LIST))]);
     } catch (err) {
       yield put(setError(err));
     }

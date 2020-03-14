@@ -1,12 +1,12 @@
 import { RouterState } from "connected-react-router";
 import { all } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { accountsReducer, accountsSagas, IAccountsState } from "./accounts";
 import { authReducer, authSagas, IAuthState } from "./auth";
 import { budgetsReducer, budgetsSagas, IBudgetsState } from "./budgets";
 import { categoriesReducer, categoriesSagas, ICategoriesState } from "./categories";
 import { dashboardReducer, dashboardSagas, IDashboardState } from "./dashboard";
 import { globalReducer, IGlobalState } from "./global";
-import { KeyCache } from "./helpers/KeyCache";
 import { INavState, navReducer } from "./nav";
 import { IProfilesState, profilesReducer, profilesSagas } from "./profiles";
 import { ITransactionsState, transactionsReducer, transactionsSagas } from "./transactions";
@@ -27,7 +27,7 @@ interface IRootState {
 }
 
 const rootReducers = {
-  [KeyCache.STATE_KEY]: KeyCache.reducer,
+  [CacheKeyUtil.STATE_KEY]: CacheKeyUtil.reducer,
   accounts: accountsReducer,
   auth: authReducer,
   budgets: budgetsReducer,

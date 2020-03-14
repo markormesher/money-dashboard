@@ -6,9 +6,9 @@ import { Provider } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import createSagaMiddleware from "redux-saga";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { App } from "./components/App/App";
 import { startLoadCurrentUser } from "./redux/auth";
-import { KeyCache } from "./redux/helpers/KeyCache";
 import { rootReducers, rootSaga } from "./redux/root";
 
 // "require" forces webpack to include entire stylesheets; "import" only works for named exports
@@ -27,7 +27,7 @@ const store = createStore(
   composeWithDevTools(applyMiddleware(routerMiddleware(history), sagaMiddleware)),
 );
 
-KeyCache.setStore(store);
+CacheKeyUtil.setStore(store);
 
 sagaMiddleware.run(rootSaga);
 

@@ -3,6 +3,7 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IBudget, mapBudgetFromApi } from "../../../commons/models/IBudget";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
@@ -16,7 +17,6 @@ import {
   startDeleteBudget,
   toggleBudgetToClone,
 } from "../../redux/budgets";
-import { KeyCache } from "../../redux/helpers/KeyCache";
 import { IRootState } from "../../redux/root";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
@@ -46,7 +46,7 @@ interface IBudgetsPageProps {
 function mapStateToProps(state: IRootState, props: IBudgetsPageProps): IBudgetsPageProps {
   return {
     ...props,
-    cacheTime: KeyCache.getKeyTime(BudgetCacheKeys.BUDGET_DATA),
+    cacheTime: CacheKeyUtil.getKeyTime(BudgetCacheKeys.BUDGET_DATA),
     displayCurrentOnly: state.budgets.displayCurrentOnly,
     budgetToEdit: state.budgets.budgetToEdit,
     budgetIdsToClone: state.budgets.budgetIdsToClone,

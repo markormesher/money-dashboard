@@ -1,12 +1,12 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import {
   DateModeOption,
   getNextTransactionForContinuousCreation,
   ITransaction,
 } from "../../commons/models/ITransaction";
 import { setError } from "./global";
-import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
 
@@ -93,7 +93,7 @@ function* deleteTransactionSaga(): Generator {
     try {
       const transaction: ITransaction = action.payload.transaction;
       yield call(() => axios.post(`/api/transactions/delete/${transaction.id}`));
-      yield put(KeyCache.touchKey(TransactionCacheKeys.TRANSACTION_DATA));
+      yield put(CacheKeyUtil.updateKey(TransactionCacheKeys.TRANSACTION_DATA));
     } catch (err) {
       yield put(setError(err));
     }
@@ -110,7 +110,7 @@ function* saveTransactionSaga(): Generator {
         call(() => axios.post(`/api/transactions/edit/${transactionId}`, transaction)),
       ]);
       yield all([
-        put(KeyCache.touchKey(TransactionCacheKeys.TRANSACTION_DATA)),
+        put(CacheKeyUtil.updateKey(TransactionCacheKeys.TRANSACTION_DATA)),
         put(setEditorBusy(false)),
 
         // always close the editor to reset it...
@@ -128,7 +128,7 @@ function* saveTransactionSaga(): Generator {
 function* loadPayeeListSaga(): Generator {
   yield takeEvery(TransactionActions.START_LOAD_PAYEE_LIST, function*(): Generator {
     if (
-      KeyCache.keyIsValid(TransactionCacheKeys.PAYEE_LIST, [
+      CacheKeyUtil.keyIsValid(TransactionCacheKeys.PAYEE_LIST, [
         TransactionCacheKeys.TRANSACTION_DATA,
         ProfileCacheKeys.CURRENT_PROFILE,
       ])
@@ -139,7 +139,7 @@ function* loadPayeeListSaga(): Generator {
       const payeeList: string[] = yield call(() => {
         return axios.get("/api/transactions/payees").then((res) => res.data);
       });
-      yield all([put(setPayeeList(payeeList)), put(KeyCache.touchKey(TransactionCacheKeys.PAYEE_LIST))]);
+      yield all([put(setPayeeList(payeeList)), put(CacheKeyUtil.updateKey(TransactionCacheKeys.PAYEE_LIST))]);
     } catch (err) {
       yield put(setError(err));
     }

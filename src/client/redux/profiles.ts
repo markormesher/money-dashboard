@@ -1,9 +1,9 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IProfile } from "../../commons/models/IProfile";
 import { startLoadCurrentUser } from "./auth";
 import { setError } from "./global";
-import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IProfilesState {
@@ -90,7 +90,7 @@ function* deleteProfileSaga(): Generator {
     try {
       const profile: IProfile = action.payload.profile;
       yield call(() => axios.post(`/api/profiles/delete/${profile.id}`).then((res) => res.data));
-      yield put(KeyCache.touchKey(ProfileCacheKeys.PROFILE_DATA));
+      yield put(CacheKeyUtil.updateKey(ProfileCacheKeys.PROFILE_DATA));
     } catch (err) {
       yield put(setError(err));
     }
@@ -104,7 +104,7 @@ function* saveProfileSaga(): Generator {
       const profileId = profile.id || "";
       yield all([put(setEditorBusy(true)), call(() => axios.post(`/api/profiles/edit/${profileId}`, profile))]);
       yield all([
-        put(KeyCache.touchKey(ProfileCacheKeys.PROFILE_DATA)),
+        put(CacheKeyUtil.updateKey(ProfileCacheKeys.PROFILE_DATA)),
         put(setEditorBusy(false)),
         put(setProfileToEdit(undefined)),
       ]);
@@ -123,13 +123,13 @@ function* setCurrentProfileSaga(): Generator {
       yield all([
         put(setActiveProfile(profile)),
         put(startLoadCurrentUser()),
-        put(KeyCache.touchKey(ProfileCacheKeys.CURRENT_PROFILE)),
+        put(CacheKeyUtil.updateKey(ProfileCacheKeys.CURRENT_PROFILE)),
         put(setProfileSwitchInProgress(false)),
       ]);
     } catch (err) {
       yield all([
         put(setError(err)),
-        put(KeyCache.touchKey(ProfileCacheKeys.CURRENT_PROFILE)),
+        put(CacheKeyUtil.updateKey(ProfileCacheKeys.CURRENT_PROFILE)),
         put(setProfileSwitchInProgress(false)),
       ]);
     }

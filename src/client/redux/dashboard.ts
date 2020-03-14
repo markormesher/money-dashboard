@@ -1,5 +1,6 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IAccountBalance } from "../../commons/models/IAccountBalance";
 import { mapBudgetFromApi } from "../../commons/models/IBudget";
 import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
@@ -7,7 +8,6 @@ import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
 import { AccountCacheKeys } from "./accounts";
 import { BudgetCacheKeys } from "./budgets";
 import { setError } from "./global";
-import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
 import { TransactionCacheKeys } from "./transactions";
@@ -81,7 +81,7 @@ function setMemoCategoryBalances(memoCategoryBalances: ICategoryBalance[]): Payl
 function* loadAccountBalancesSaga(): Generator {
   yield takeEvery(DashboardActions.START_LOAD_ACCOUNT_BALANCES, function*(): Generator {
     if (
-      KeyCache.keyIsValid(DashboardCacheKeys.ACCOUNT_BALANCES, [
+      CacheKeyUtil.keyIsValid(DashboardCacheKeys.ACCOUNT_BALANCES, [
         TransactionCacheKeys.TRANSACTION_DATA,
         AccountCacheKeys.ACCOUNT_DATA,
         ProfileCacheKeys.CURRENT_PROFILE,
@@ -93,7 +93,7 @@ function* loadAccountBalancesSaga(): Generator {
       const balances: IAccountBalance[] = yield call(() => {
         return axios.get("/api/accounts/balances").then((res) => res.data);
       });
-      yield all([put(setAccountBalances(balances)), put(KeyCache.touchKey(DashboardCacheKeys.ACCOUNT_BALANCES))]);
+      yield all([put(setAccountBalances(balances)), put(CacheKeyUtil.updateKey(DashboardCacheKeys.ACCOUNT_BALANCES))]);
     } catch (err) {
       yield all([put(setError(err))]);
     }
@@ -103,7 +103,7 @@ function* loadAccountBalancesSaga(): Generator {
 function* loadBudgetBalancesSaga(): Generator {
   yield takeEvery(DashboardActions.START_LOAD_BUDGET_BALANCES, function*(): Generator {
     if (
-      KeyCache.keyIsValid(DashboardCacheKeys.BUDGET_BALANCES, [
+      CacheKeyUtil.keyIsValid(DashboardCacheKeys.BUDGET_BALANCES, [
         TransactionCacheKeys.TRANSACTION_DATA,
         BudgetCacheKeys.BUDGET_DATA,
         ProfileCacheKeys.CURRENT_PROFILE,
@@ -121,7 +121,7 @@ function* loadBudgetBalancesSaga(): Generator {
           }));
         });
       });
-      yield all([put(setBudgetBalances(balances)), put(KeyCache.touchKey(DashboardCacheKeys.BUDGET_BALANCES))]);
+      yield all([put(setBudgetBalances(balances)), put(CacheKeyUtil.updateKey(DashboardCacheKeys.BUDGET_BALANCES))]);
     } catch (err) {
       yield all([put(setError(err))]);
     }
@@ -131,7 +131,7 @@ function* loadBudgetBalancesSaga(): Generator {
 function* loadMemoCategoryBalancesSaga(): Generator {
   yield takeEvery(DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES, function*(): Generator {
     if (
-      KeyCache.keyIsValid(DashboardCacheKeys.MEMO_CATEGORY_BALANCE, [
+      CacheKeyUtil.keyIsValid(DashboardCacheKeys.MEMO_CATEGORY_BALANCE, [
         TransactionCacheKeys.TRANSACTION_DATA,
         ProfileCacheKeys.CURRENT_PROFILE,
       ])
@@ -144,7 +144,7 @@ function* loadMemoCategoryBalancesSaga(): Generator {
       });
       yield all([
         put(setMemoCategoryBalances(balances)),
-        put(KeyCache.touchKey(DashboardCacheKeys.MEMO_CATEGORY_BALANCE)),
+        put(CacheKeyUtil.updateKey(DashboardCacheKeys.MEMO_CATEGORY_BALANCE)),
       ]);
     } catch (err) {
       yield all([put(setError(err))]);

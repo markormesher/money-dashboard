@@ -3,13 +3,13 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { ICategory, mapCategoryFromApi } from "../../../commons/models/ICategory";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { CategoryCacheKeys, setCategoryToEdit, startDeleteCategory } from "../../redux/categories";
-import { KeyCache } from "../../redux/helpers/KeyCache";
 import { IRootState } from "../../redux/root";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
@@ -30,7 +30,7 @@ interface ICategoriesPageProps {
 function mapStateToProps(state: IRootState, props: ICategoriesPageProps): ICategoriesPageProps {
   return {
     ...props,
-    cacheTime: KeyCache.getKeyTime(CategoryCacheKeys.CATEGORY_DATA),
+    cacheTime: CacheKeyUtil.getKeyTime(CategoryCacheKeys.CATEGORY_DATA),
     categoryToEdit: state.categories.categoryToEdit,
   };
 }

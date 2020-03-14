@@ -3,12 +3,12 @@ import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IProfile, mapProfileFromApi } from "../../../commons/models/IProfile";
 import { IUser } from "../../../commons/models/IUser";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
-import { KeyCache } from "../../redux/helpers/KeyCache";
 import { ProfileCacheKeys, setProfileToEdit, startDeleteProfile, startSetCurrentProfile } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
 import { Badge } from "../_ui/Badge/Badge";
@@ -35,8 +35,8 @@ function mapStateToProps(state: IRootState, props: IProfilesPageProps): IProfile
   return {
     ...props,
     cacheTime: Math.max(
-      KeyCache.getKeyTime(ProfileCacheKeys.PROFILE_DATA),
-      KeyCache.getKeyTime(ProfileCacheKeys.CURRENT_PROFILE),
+      CacheKeyUtil.getKeyTime(ProfileCacheKeys.PROFILE_DATA),
+      CacheKeyUtil.getKeyTime(ProfileCacheKeys.CURRENT_PROFILE),
     ),
     profileToEdit: state.profiles.profileToEdit,
     profileSwitchInProgress: state.profiles.profileSwitchInProgress,

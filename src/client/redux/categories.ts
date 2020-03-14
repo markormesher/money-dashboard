@@ -1,8 +1,8 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { ICategory, mapCategoryFromApi } from "../../commons/models/ICategory";
 import { setError } from "./global";
-import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
 
@@ -79,7 +79,7 @@ function* deleteCategorySaga(): Generator {
     try {
       const category: ICategory = action.payload.category;
       yield call(() => axios.post(`/api/categories/delete/${category.id}`).then((res) => res.data));
-      yield put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_DATA));
+      yield put(CacheKeyUtil.updateKey(CategoryCacheKeys.CATEGORY_DATA));
     } catch (err) {
       yield put(setError(err));
     }
@@ -93,7 +93,7 @@ function* saveCategorySaga(): Generator {
       const categoryId = category.id || "";
       yield all([put(setEditorBusy(true)), call(() => axios.post(`/api/categories/edit/${categoryId}`, category))]);
       yield all([
-        put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_DATA)),
+        put(CacheKeyUtil.updateKey(CategoryCacheKeys.CATEGORY_DATA)),
         put(setEditorBusy(false)),
         put(setCategoryToEdit(undefined)),
       ]);
@@ -106,7 +106,7 @@ function* saveCategorySaga(): Generator {
 function* loadCategoryListSaga(): Generator {
   yield takeEvery(CategoryActions.START_LOAD_CATEGORY_LIST, function*(): Generator {
     if (
-      KeyCache.keyIsValid(CategoryCacheKeys.CATEGORY_LIST, [
+      CacheKeyUtil.keyIsValid(CategoryCacheKeys.CATEGORY_LIST, [
         CategoryCacheKeys.CATEGORY_DATA,
         ProfileCacheKeys.CURRENT_PROFILE,
       ])
@@ -120,7 +120,7 @@ function* loadCategoryListSaga(): Generator {
           return raw.map(mapCategoryFromApi);
         });
       });
-      yield all([put(setCategoryList(categoryList)), put(KeyCache.touchKey(CategoryCacheKeys.CATEGORY_LIST))]);
+      yield all([put(setCategoryList(categoryList)), put(CacheKeyUtil.updateKey(CategoryCacheKeys.CATEGORY_LIST))]);
     } catch (err) {
       yield put(setError(err));
     }
