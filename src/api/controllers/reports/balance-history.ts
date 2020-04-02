@@ -22,6 +22,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
     .select("SUM(transaction.amount)", "balance")
     .where("transaction.profile_id = :profileId")
     .andWhere(`transaction.${dateField} < :startDate`)
+    .andWhere(`transaction.deleted = FALSE`)
     .setParameters({
       profileId: user.activeProfile.id,
       startDate: MomentDateTransformer.toDbFormat(startDate),
@@ -32,6 +33,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
     .where("transaction.profile_id = :profileId")
     .andWhere(`transaction.${dateField} >= :startDate`)
     .andWhere(`transaction.${dateField} <= :endDate`)
+    .andWhere(`transaction.deleted = FALSE`)
     .orderBy(`transaction.${dateField}`, "ASC")
     .setParameters({
       profileId: user.activeProfile.id,
