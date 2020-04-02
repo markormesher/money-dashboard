@@ -1,12 +1,11 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import * as Moment from "moment";
 import { Brackets } from "typeorm";
+import { startOfDay } from "date-fns";
 import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
 import { DbBudget } from "../db/models/DbBudget";
 import { DbCategory } from "../db/models/DbCategory";
 import { DbUser } from "../db/models/DbUser";
-import { MomentDateTransformer } from "../db/MomentDateTransformer";
 import { getDataForTable } from "../helpers/datatable-helper";
 import {
   cloneBudgets,
@@ -42,7 +41,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 
   if (currentOnly) {
     filteredQuery = filteredQuery.andWhere("start_date <= :now AND end_date >= :now").setParameters({
-      now: MomentDateTransformer.toDbFormat(Moment().startOf("day")),
+      now: startOfDay(new Date()).getTime(),
     });
   }
 
@@ -58,8 +57,8 @@ router.post("/edit/:budgetId?", requireUser, (req: Request, res: Response, next:
     category: DbCategory.create({ id: req.body.category.id }),
     type: req.body.type,
     amount: parseFloat(req.body.amount),
-    startDate: Moment(req.body.startDate),
-    endDate: Moment(req.body.endDate),
+    startDate: req.body.startDate,
+    endDate: req.body.endDate,
   };
 
   saveBudget(user, budgetId, properties)
@@ -79,8 +78,8 @@ router.post("/delete/:budgetId", requireUser, (req: Request, res: Response, next
 router.post("/clone", requireUser, (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const budgetIds: string[] = req.body.budgetIds;
-  const startDate = Moment(req.body.startDate);
-  const endDate = Moment(req.body.endDate);
+  const startDate = req.body.startDate;
+  const endDate = req.body.endDate;
 
   cloneBudgets(user, budgetIds, startDate, endDate)
     .then(() => res.status(200).end())

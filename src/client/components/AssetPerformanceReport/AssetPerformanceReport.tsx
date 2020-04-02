@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosResponse } from "axios";
 import { ChartDataSets } from "chart.js";
 import { merge } from "lodash";
-import * as Moment from "moment";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
+import { subYears } from "date-fns";
 import { IAccount } from "../../../commons/models/IAccount";
 import { IAssetPerformanceData } from "../../../commons/models/IAssetPerformanceData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
@@ -37,8 +37,8 @@ interface IAssetPerformanceReportProps {
 }
 
 interface IAssetPerformanceReportState {
-  readonly startDate: Moment.Moment;
-  readonly endDate: Moment.Moment;
+  readonly startDate: number;
+  readonly endDate: number;
   readonly dateMode: DateModeOption;
   readonly zeroBasis: boolean;
   readonly showAsPercent: boolean;
@@ -74,8 +74,8 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
   constructor(props: IAssetPerformanceReportProps) {
     super(props);
     this.state = {
-      startDate: Moment().subtract(1, "year"),
-      endDate: Moment(),
+      startDate: subYears(new Date(), 1).getTime(),
+      endDate: new Date().getTime(),
       dateMode: "transaction",
       zeroBasis: true,
       showAsPercent: false,
@@ -101,7 +101,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     this.fetchData();
   }
 
-  public componentDidUpdate(nextProps: {}, nextState: IAssetPerformanceReportState): void {
+  public componentDidUpdate(_: {}, nextState: IAssetPerformanceReportState): void {
     if (
       this.state.startDate !== nextState.startDate ||
       this.state.endDate !== nextState.endDate ||
@@ -185,8 +185,8 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       {
         data: [
           // dummy values to show a blank chart
-          { x: startDate.toDate(), y: 0 },
-          { x: endDate.toDate(), y: 0 },
+          { x: startDate, y: 0 },
+          { x: endDate, y: 0 },
         ],
       },
     ];
@@ -345,7 +345,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     this.setState({ dateMode });
   }
 
-  private handleDateRangeChange(startDate: Moment.Moment, endDate: Moment.Moment): void {
+  private handleDateRangeChange(startDate: number, endDate: number): void {
     this.setState({ startDate, endDate });
   }
 
@@ -374,8 +374,8 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     axios
       .get("/api/reports/asset-performance/data", {
         params: {
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
+          startDate: startDate,
+          endDate: endDate,
           dateMode,
           accountId,
           zeroBasis,

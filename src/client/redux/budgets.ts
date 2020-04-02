@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Moment } from "moment";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IBudget } from "../../commons/models/IBudget";
@@ -53,7 +52,7 @@ function startSaveBudget(budget: Partial<IBudget>): PayloadAction {
   };
 }
 
-function startCloneBudgets(budgetIds: string[], startDate: Moment, endDate: Moment): PayloadAction {
+function startCloneBudgets(budgetIds: string[], startDate: number, endDate: number): PayloadAction {
   return {
     type: BudgetActions.START_CLONE_BUDGETS,
     payload: {

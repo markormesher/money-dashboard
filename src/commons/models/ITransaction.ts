@@ -1,4 +1,3 @@
-import * as Moment from "moment";
 import { IAccount, mapAccountFromApi } from "./IAccount";
 import { ICategory, mapCategoryFromApi } from "./ICategory";
 import { IProfile, mapProfileFromApi } from "./IProfile";
@@ -7,13 +6,13 @@ type DateModeOption = "effective" | "transaction";
 
 interface ITransaction {
   readonly id: string;
-  readonly transactionDate: Moment.Moment;
-  readonly effectiveDate: Moment.Moment;
+  readonly transactionDate: number;
+  readonly effectiveDate: number;
   readonly amount: number;
   readonly payee: string;
   readonly note: string;
   readonly deleted: boolean;
-  readonly creationDate?: Moment.Moment;
+  readonly creationDate?: number;
 
   readonly account: IAccount;
   readonly category: ICategory;
@@ -22,8 +21,8 @@ interface ITransaction {
 
 const DEFAULT_TRANSACTION: ITransaction = {
   id: null,
-  transactionDate: Moment(),
-  effectiveDate: Moment(),
+  transactionDate: new Date().getTime(),
+  effectiveDate: new Date().getTime(),
   amount: 0,
   payee: "",
   note: undefined,
@@ -41,9 +40,6 @@ function mapTransactionFromApi(transaction?: ITransaction): ITransaction {
 
   return {
     ...transaction,
-    transactionDate: Moment(transaction.transactionDate),
-    effectiveDate: Moment(transaction.effectiveDate),
-    creationDate: Moment(transaction.creationDate),
 
     account: mapAccountFromApi(transaction.account),
     category: mapCategoryFromApi(transaction.category),

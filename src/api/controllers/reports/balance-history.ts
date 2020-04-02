@@ -1,11 +1,10 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import * as Moment from "moment";
+import { startOfDay, endOfDay } from "date-fns";
 import { IBalanceHistoryData } from "../../../commons/models/IBalanceHistoryData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
 import { DbTransaction } from "../../db/models/DbTransaction";
 import { DbUser } from "../../db/models/DbUser";
-import { MomentDateTransformer } from "../../db/MomentDateTransformer";
 import { getTransactionQueryBuilder } from "../../managers/transaction-manager";
 import { requireUser } from "../../middleware/auth-middleware";
 
@@ -13,8 +12,9 @@ const router = Express.Router();
 
 router.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
-  const startDate = Moment(req.query.startDate).startOf("day");
-  const endDate = Moment(req.query.endDate).endOf("day");
+  console.log(req.query);
+  const startDate = startOfDay(parseInt(req.query.startDate)).getTime();
+  const endDate = endOfDay(parseInt(req.query.endDate)).getTime();
   const dateMode: DateModeOption = req.query.dateMode;
   const dateField = `${dateMode}Date`;
 
@@ -24,7 +24,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
     .andWhere(`transaction.${dateField} < :startDate`)
     .setParameters({
       profileId: user.activeProfile.id,
-      startDate: MomentDateTransformer.toDbFormat(startDate),
+      startDate: startDate,
     })
     .getRawOne() as Promise<{ balance: number }>;
 
@@ -35,8 +35,8 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
     .orderBy(`transaction.${dateField}`, "ASC")
     .setParameters({
       profileId: user.activeProfile.id,
-      startDate: MomentDateTransformer.toDbFormat(startDate),
-      endDate: MomentDateTransformer.toDbFormat(endDate),
+      startDate: startDate,
+      endDate: endDate,
     })
     .getMany();
 
@@ -68,7 +68,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 
       transactionsInRange.forEach((transaction: DbTransaction) => {
         const rawDate = dateMode === "effective" ? transaction.effectiveDate : transaction.transactionDate;
-        const date = rawDate.startOf("day").unix() * 1000;
+        const date = startOfDay(rawDate).getTime();
         if (lastDate > 0 && lastDate !== date) {
           takeValues();
         }

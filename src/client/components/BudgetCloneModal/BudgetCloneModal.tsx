@@ -1,8 +1,8 @@
-import * as Moment from "moment";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
+import { startOfMonth, endOfMonth } from "date-fns";
 import { IDateRange } from "../../../commons/models/IDateRange";
 import { IDateRangeValidationResult, validateDateRange } from "../../../commons/models/validators/DateRangeValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
@@ -19,7 +19,7 @@ interface IBudgetCloneModalProps {
 
   readonly actions?: {
     readonly setBudgetCloneInProgress: (inProgress: boolean) => AnyAction;
-    readonly startCloneBudgets: (budgetIds: string[], startDate: Moment.Moment, endDate: Moment.Moment) => AnyAction;
+    readonly startCloneBudgets: (budgetIds: string[], startDate: number, endDate: number) => AnyAction;
   };
 }
 
@@ -51,8 +51,8 @@ class UCBudgetCloneModal extends PureComponent<IBudgetCloneModalProps, IBudgetCl
   constructor(props: IBudgetCloneModalProps) {
     super(props);
     const initialRange = {
-      startDate: Moment().startOf("month"),
-      endDate: Moment().endOf("month"),
+      startDate: startOfMonth(new Date()).getTime(),
+      endDate: endOfMonth(new Date()).getTime(),
     };
     this.state = {
       currentValues: initialRange,
@@ -92,8 +92,8 @@ class UCBudgetCloneModal extends PureComponent<IBudgetCloneModalProps, IBudgetCl
           <div className={bs.formGroup}>
             <label>Date Range</label>
             <DateRangeChooser
-              startDate={currentValues.startDate ? Moment(currentValues.startDate) : undefined}
-              endDate={currentValues.endDate ? Moment(currentValues.endDate) : undefined}
+              startDate={currentValues.startDate ? currentValues.startDate : undefined}
+              endDate={currentValues.endDate ? currentValues.endDate : undefined}
               includeYearToDatePreset={false}
               includeAllTimePreset={false}
               onValueChange={this.handleDateRangeSelection}
@@ -107,7 +107,7 @@ class UCBudgetCloneModal extends PureComponent<IBudgetCloneModalProps, IBudgetCl
     );
   }
 
-  private handleDateRangeSelection(start: Moment.Moment, end: Moment.Moment): void {
+  private handleDateRangeSelection(start: number, end: number): void {
     this.updateModel({
       startDate: start,
       endDate: end,

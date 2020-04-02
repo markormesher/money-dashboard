@@ -1,10 +1,10 @@
 import axios, { AxiosResponse } from "axios";
 import { ChartDataSets } from "chart.js";
 import { merge } from "lodash";
-import * as Moment from "moment";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
+import { subYears } from "date-fns";
 import { IBalanceHistoryData } from "../../../commons/models/IBalanceHistoryData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
@@ -18,8 +18,8 @@ import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 
 interface IBalanceHistoryReportState {
-  readonly startDate: Moment.Moment;
-  readonly endDate: Moment.Moment;
+  readonly startDate: number;
+  readonly endDate: number;
   readonly dateMode: DateModeOption;
   readonly data: IBalanceHistoryData;
   readonly loading: boolean;
@@ -46,8 +46,8 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      startDate: Moment().subtract(1, "year"),
-      endDate: Moment(),
+      startDate: subYears(new Date(), 1).getTime(),
+      endDate: new Date().getTime(),
       dateMode: "transaction",
       data: undefined,
       loading: true,
@@ -64,7 +64,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     this.fetchData();
   }
 
-  public componentDidUpdate(nextProps: {}, nextState: IBalanceHistoryReportState): void {
+  public componentDidUpdate(_: {}, nextState: IBalanceHistoryReportState): void {
     if (
       this.state.startDate !== nextState.startDate ||
       this.state.endDate !== nextState.endDate ||
@@ -124,8 +124,8 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
       {
         data: [
           // dummy values to show a blank chart
-          { x: startDate.toDate(), y: 0 },
-          { x: endDate.toDate(), y: 0 },
+          { x: startDate, y: 0 },
+          { x: endDate, y: 0 },
         ],
       },
     ];
@@ -163,7 +163,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
               <p>
                 {formatCurrency(minTotal)}
                 <br />
-                <span className={bs.textMuted}>{formatDate(new Date(minDate))}</span>
+                <span className={bs.textMuted}>{formatDate(minDate)}</span>
               </p>
             </div>
             <div className={combine(bs.col6, bs.colMd4)}>
@@ -171,7 +171,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
               <p>
                 {formatCurrency(maxTotal)}
                 <br />
-                <span className={bs.textMuted}>{formatDate(new Date(maxDate))}</span>
+                <span className={bs.textMuted}>{formatDate(maxDate)}</span>
               </p>
             </div>
             <div className={combine(bs.col6, bs.colMd4)}>
@@ -196,7 +196,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     this.setState({ dateMode });
   }
 
-  private handleDateRangeChange(startDate: Moment.Moment, endDate: Moment.Moment): void {
+  private handleDateRangeChange(startDate: number, endDate: number): void {
     this.setState({ startDate, endDate });
   }
 
@@ -209,8 +209,8 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     axios
       .get("/api/reports/balance-history/data", {
         params: {
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
+          startDate: startDate,
+          endDate: endDate,
           dateMode,
         },
       })

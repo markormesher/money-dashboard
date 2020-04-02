@@ -1,3 +1,4 @@
+import { isAfter, isSameDay } from "date-fns";
 import { IDateRange } from "../IDateRange";
 
 interface IDateRangeValidationResult {
@@ -21,7 +22,7 @@ function validateDateRange(range: IDateRange): IDateRangeValidationResult {
     errors: {},
   };
 
-  if (!range.startDate || !range.startDate.isValid()) {
+  if (!range.startDate) {
     result = {
       isValid: false,
       errors: {
@@ -31,7 +32,7 @@ function validateDateRange(range: IDateRange): IDateRangeValidationResult {
     };
   }
 
-  if (!range.endDate || !range.endDate.isValid()) {
+  if (!range.endDate) {
     result = {
       isValid: false,
       errors: {
@@ -43,10 +44,8 @@ function validateDateRange(range: IDateRange): IDateRangeValidationResult {
 
   if (
     range.startDate &&
-    range.startDate.isValid() &&
-    range.startDate &&
-    range.startDate.isValid() &&
-    range.startDate.isSameOrAfter(range.endDate)
+    range.endDate &&
+    (isAfter(range.startDate, range.endDate) || isSameDay(range.startDate, range.endDate))
   ) {
     result = {
       isValid: false,

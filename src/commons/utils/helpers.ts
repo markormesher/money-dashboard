@@ -1,27 +1,27 @@
-import * as Moment from "moment";
+import { getMonth, getDate, getYear, endOfDay } from "date-fns";
 
 const APRIL_MONTH = 3; // months are zero-indexed; 3 = April
 
-function getTaxYear(date: Moment.Moment): number {
-  if (date.month() === APRIL_MONTH) {
-    if (date.date() >= 6) {
-      return date.year();
+function getTaxYear(date: number): number {
+  if (getMonth(date) === APRIL_MONTH) {
+    if (getDate(date) >= 6) {
+      return getYear(date);
     } else {
-      return date.year() - 1;
+      return getYear(date) - 1;
     }
-  } else if (date.month() > APRIL_MONTH) {
-    return date.year();
+  } else if (getMonth(date) > APRIL_MONTH) {
+    return getYear(date);
   } else {
-    return date.year() - 1;
+    return getYear(date) - 1;
   }
 }
 
-function getTaxYearStart(startYear: number): Moment.Moment {
-  return Moment({ year: startYear, month: APRIL_MONTH, date: 6 });
+function getTaxYearStart(startYear: number): number {
+  return new Date(startYear, APRIL_MONTH, 6).getTime();
 }
 
-function getTaxYearEnd(startYear: number): Moment.Moment {
-  return Moment({ year: startYear + 1, month: APRIL_MONTH, date: 5 });
+function getTaxYearEnd(startYear: number): number {
+  return endOfDay(new Date(startYear + 1, APRIL_MONTH, 5)).getTime();
 }
 
 function groupBy<T>(

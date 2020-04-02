@@ -1,5 +1,5 @@
 import { describe } from "mocha";
-import * as Moment from "moment";
+import { parseISO } from "date-fns";
 import { DbBudget } from "./DbBudget";
 import { DbCategory } from "./DbCategory";
 import { DbProfile } from "./DbProfile";
@@ -17,8 +17,8 @@ describe(__filename, () => {
       budget.id = "id";
       budget.type = "budget";
       budget.amount = 0;
-      budget.startDate = Moment("2018-01-01");
-      budget.endDate = Moment("2018-01-31");
+      budget.startDate = parseISO("2018-01-01").getTime();
+      budget.endDate = parseISO("2018-01-31").getTime();
       budget.category = new DbCategory();
       budget.profile = new DbProfile();
       budget.deleted = false;

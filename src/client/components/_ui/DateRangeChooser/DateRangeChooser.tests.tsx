@@ -1,8 +1,8 @@
 import { mount, ReactWrapper } from "enzyme";
 import { describe, it } from "mocha";
-import * as Moment from "moment";
 import * as React from "react";
 import * as sinon from "sinon";
+import { startOfMonth, addDays, endOfMonth, isSameDay, parseISO } from "date-fns";
 import { testGlobals } from "../../../../test-utils/global.tests";
 import { formatDate } from "../../../helpers/formatters";
 import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";
@@ -13,11 +13,9 @@ import * as styles from "./DateRangeChooser.scss";
 describe(__filename, () => {
   let { mountWrapper } = testGlobals;
 
-  const startOfMonth = Moment().startOf("month");
-  const startOfMonthPlus1Day = Moment()
-    .startOf("month")
-    .add(1, "day");
-  const endOfMonth = Moment().endOf("month");
+  const monthStart = startOfMonth(new Date()).getTime();
+  const monthStartPlus1Day = addDays(monthStart, 1).getTime();
+  const monthEnd = endOfMonth(new Date()).getTime();
 
   function findChooser(): ReactWrapper {
     return mountWrapper.find("div").filterWhere((w) => w.props().className === styles.chooser);
@@ -41,13 +39,13 @@ describe(__filename, () => {
   });
 
   it("should show the selected date (preset date)", () => {
-    mountWrapper = mount(<DateRangeChooser startDate={startOfMonth} endDate={endOfMonth} />);
+    mountWrapper = mount(<DateRangeChooser startDate={monthStart} endDate={monthEnd} />);
     mountWrapper.text().should.include("This Month");
   });
 
   it("should show the selected date (exact dates)", () => {
-    mountWrapper = mount(<DateRangeChooser startDate={startOfMonthPlus1Day} endDate={endOfMonth} />);
-    mountWrapper.text().should.include(`${formatDate(startOfMonthPlus1Day)} to ${formatDate(endOfMonth)}`);
+    mountWrapper = mount(<DateRangeChooser startDate={monthStartPlus1Day} endDate={monthEnd} />);
+    mountWrapper.text().should.include(`${formatDate(monthStartPlus1Day)} to ${formatDate(monthEnd)}`);
   });
 
   it("should open the chooser when clicked", () => {
@@ -134,7 +132,7 @@ describe(__filename, () => {
   });
 
   it("should render custom presets", () => {
-    const now = Moment();
+    const now = new Date().getTime();
     mountWrapper = mount(<DateRangeChooser customPresets={[{ label: "Custom", startDate: now, endDate: now }]} />);
     mountWrapper.simulate("click");
     findChooser()
@@ -151,8 +149,8 @@ describe(__filename, () => {
       .filterWhere((w) => w.text() === "This Month")
       .simulate("click");
     spy.calledOnce.should.equal(true);
-    (spy.firstCall.args[0] as Moment.Moment).isSame(startOfMonth, "day").should.equal(true);
-    (spy.firstCall.args[1] as Moment.Moment).isSame(endOfMonth, "day").should.equal(true);
+    isSameDay(spy.firstCall.args[0], monthStart).should.equal(true);
+    isSameDay(spy.firstCall.args[1], monthEnd).should.equal(true);
   });
 
   it("should close the chooser when a preset is selected", () => {
@@ -277,8 +275,8 @@ describe(__filename, () => {
       .btnProps.disabled.should.equal(false);
     findCustomRangeSubmit().simulate("click");
     spy.calledOnce.should.equal(true);
-    (spy.firstCall.args[0] as Moment.Moment).isSame(Moment("2015-04-01"), "day").should.equal(true);
-    (spy.firstCall.args[1] as Moment.Moment).isSame(Moment("2015-04-02"), "day").should.equal(true);
+    isSameDay(spy.firstCall.args[0], parseISO("2015-04-01").getTime()).should.equal(true);
+    isSameDay(spy.firstCall.args[1], parseISO("2015-04-02").getTime()).should.equal(true);
   });
 
   it("should keep the custom range chooser open when a custom range was last selected", () => {

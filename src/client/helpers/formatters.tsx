@@ -1,6 +1,6 @@
-import * as Moment from "moment";
 import * as React from "react";
 import { ReactElement } from "react";
+import { format, getDate, getMonth, getYear, endOfMonth } from "date-fns";
 import { IAccount } from "../../commons/models/IAccount";
 import { IBudget } from "../../commons/models/IBudget";
 import { ICategory } from "../../commons/models/ICategory";
@@ -22,16 +22,16 @@ function formatPercent(amount: number): string {
   return amount.toFixed(2) + "%";
 }
 
-function formatDate(date: Date | Moment.Moment | string, format: "user" | "system" = "user"): string {
-  if (!date) {
+function formatDate(date: number, toFormat: "user" | "system" = "user"): string {
+  if (!date && date !== 0) {
     return undefined;
   }
 
   /* istanbul ignore else: protected by type system */
-  if (format === "user") {
-    return Moment(date).format("DD MMM YYYY");
-  } else if (format === "system") {
-    return Moment(date).format("YYYY-MM-DD");
+  if (toFormat === "user") {
+    return format(date, "dd MMM yyyy");
+  } else if (toFormat === "system") {
+    return format(date, "yyy-MM-dd");
   }
 }
 
@@ -67,30 +67,23 @@ function generateBudgetTypeBadge(budget: IBudget): ReactElement<void> {
   }
 }
 
-function getBudgetPeriodType(start: Moment.Moment, end: Moment.Moment): BudgetPeriod {
-  if (
-    start.get("date") === 1 &&
-    start.get("month") === end.get("month") &&
-    end
-      .clone()
-      .add(1, "day")
-      .get("month") !== end.get("month")
-  ) {
+function getBudgetPeriodType(start: number, end: number): BudgetPeriod {
+  if (getDate(start) === 1 && getMonth(start) === getMonth(end) && getDate(end) === getDate(endOfMonth(start))) {
     return "month";
   } else if (
-    start.get("date") === 1 &&
-    start.get("month") === 0 &&
-    end.get("date") === 31 &&
-    end.get("month") === 11 &&
-    start.get("year") === end.get("year")
+    getDate(start) === 1 &&
+    getMonth(start) === 0 &&
+    getDate(end) === 31 &&
+    getMonth(end) === 11 &&
+    getYear(start) === getYear(end)
   ) {
     return "calendar year";
   } else if (
-    start.get("date") === 6 &&
-    start.get("month") === 3 &&
-    end.get("date") === 5 &&
-    end.get("month") === 3 &&
-    start.get("year") === end.get("year") - 1
+    getDate(start) === 6 &&
+    getMonth(start) === 3 &&
+    getDate(end) === 5 &&
+    getMonth(end) === 3 &&
+    getYear(start) === getYear(end) - 1
   ) {
     return "tax year";
   } else {
@@ -98,15 +91,15 @@ function getBudgetPeriodType(start: Moment.Moment, end: Moment.Moment): BudgetPe
   }
 }
 
-function formatBudgetPeriod(start: Moment.Moment, end: Moment.Moment): string {
+function formatBudgetPeriod(start: number, end: number): string {
   const type = getBudgetPeriodType(start, end);
 
   if (type === "month") {
-    return Moment(start).format("MMM, YYYY");
+    return format(start, "MMM, yyyy");
   } else if (type === "calendar year") {
-    return Moment(start).format("YYYY");
+    return format(start, "yyyy");
   } else if (type === "tax year") {
-    return `${Moment(start).format("YYYY")}/${Moment(end).format("YYYY")} tax year`;
+    return `${format(start, "yyyy")}/${format(end, "yyyy")} tax year`;
   } else {
     return `${formatDate(start)} to ${formatDate(end)}`;
   }

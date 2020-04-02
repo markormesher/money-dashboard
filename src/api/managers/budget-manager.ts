@@ -1,11 +1,9 @@
-import * as Moment from "moment";
 import { SelectQueryBuilder } from "typeorm";
 import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
 import { StatusError } from "../../commons/StatusError";
 import { cleanUuid } from "../../commons/utils/entities";
 import { DbBudget } from "../db/models/DbBudget";
 import { DbUser } from "../db/models/DbUser";
-import { MomentDateTransformer } from "../db/MomentDateTransformer";
 import { getTransactionQueryBuilder } from "./transaction-manager";
 
 interface IBudgetQueryBuilderOptions {
@@ -49,7 +47,7 @@ function getAllBudgets(user: DbUser, currentOnly: boolean): Promise<DbBudget[]> 
 
   if (currentOnly) {
     query = query.andWhere("start_date <= :now AND end_date >= :now").setParameters({
-      now: MomentDateTransformer.toDbFormat(Moment().startOf("day")),
+      now: new Date().getTime(),
     });
   }
 
@@ -70,8 +68,8 @@ function getBudgetBalances(user: DbUser, currentOnly: boolean): Promise<IBudgetB
           .setParameters({
             profileId: user.activeProfile.id,
             categoryId: budget.category.id,
-            startDate: MomentDateTransformer.toDbFormat(budget.startDate),
-            endDate: MomentDateTransformer.toDbFormat(budget.endDate),
+            startDate: budget.startDate,
+            endDate: budget.endDate,
           })
           .getRawOne() as Promise<{ balance: number }>;
       });
@@ -108,12 +106,7 @@ function deleteBudget(user: DbUser, budgetId: string): Promise<DbBudget> {
   });
 }
 
-function cloneBudgets(
-  user: DbUser,
-  budgetsIds: string[],
-  startDate: Moment.Moment,
-  endDate: Moment.Moment,
-): Promise<DbBudget[]> {
+function cloneBudgets(user: DbUser, budgetsIds: string[], startDate: number, endDate: number): Promise<DbBudget[]> {
   return Promise.all(budgetsIds.map((id) => getBudget(user, id, { withCategory: true, withProfile: true })))
     .then((budgets: DbBudget[]) => {
       if (budgets.some((b) => !b)) {

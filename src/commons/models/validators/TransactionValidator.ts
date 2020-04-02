@@ -66,7 +66,7 @@ function validateTransaction(transaction: ITransaction): ITransactionValidationR
     };
   }
 
-  if (!transaction.transactionDate || !transaction.transactionDate.isValid()) {
+  if (!transaction.transactionDate) {
     result = {
       isValid: false,
       errors: {
@@ -76,7 +76,7 @@ function validateTransaction(transaction: ITransaction): ITransactionValidationR
     };
   }
 
-  if (!transaction.effectiveDate || !transaction.effectiveDate.isValid()) {
+  if (!transaction.effectiveDate) {
     result = {
       isValid: false,
       errors: {

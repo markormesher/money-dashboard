@@ -1,6 +1,5 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import * as Moment from "moment";
 import { Brackets } from "typeorm";
 import { DateModeOption } from "../../commons/models/ITransaction";
 import { DbTransaction } from "../db/models/DbTransaction";
@@ -66,8 +65,8 @@ router.post("/edit/:transactionId?", requireUser, (req: Request, res: Response, 
   const user = req.user as DbUser;
   const transactionId = req.params.transactionId;
   const properties: Partial<DbTransaction> = {
-    transactionDate: Moment(req.body.transactionDate),
-    effectiveDate: Moment(req.body.effectiveDate),
+    transactionDate: req.body.transactionDate,
+    effectiveDate: req.body.effectiveDate,
     amount: parseFloat(req.body.amount),
     payee: req.body.payee.trim(),
     note: (req.body.note || "").trim(),
