@@ -1,6 +1,6 @@
 import { after, afterEach, before, describe, it } from "mocha";
 import * as sinon from "sinon";
-import { isDev, isProd, isTest, runningInDocker } from "./env";
+import { isDev, isProd, isTest, runningInDocker, isPrimaryServer } from "./env";
 
 describe(__filename, () => {
   const sandbox = sinon.createSandbox();
@@ -42,6 +42,26 @@ describe(__filename, () => {
     it("should return false when not running in test", () => {
       sandbox.replace(process.env, "NODE_ENV", "not-test");
       isTest().should.equal(false);
+    });
+  });
+
+  describe("isPrimaryServer()", () => {
+    after(() => {
+      delete process.env.RUNNING_IN;
+    });
+
+    it("should return true when running on primary server", () => {
+      process.env.IS_PRIMARY_SERVER = "yes";
+      isPrimaryServer().should.equal(true);
+    });
+
+    it("should return false when running on non-primary server", () => {
+      process.env.IS_PRIMARY_SERVER = "no";
+      isPrimaryServer().should.equal(false);
+    });
+
+    it("should return false when running on unknown server", () => {
+      isPrimaryServer().should.equal(false);
     });
   });
 

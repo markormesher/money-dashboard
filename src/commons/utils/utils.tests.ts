@@ -1,18 +1,18 @@
 import { describe } from "mocha";
-import { delayPromise, roundToDp } from "./utils";
+import { delayPromise } from "./utils";
 
 describe(__filename, () => {
   describe("delayPromise()", () => {
-    // TODO
-    it("TODO", () => {
-      delayPromise(1);
-    });
-  });
+    it("should resolve", () => {
+      // mocha will fail the test if this rejects or doesn't resolve within the timeout
+      return delayPromise(1);
+    }).timeout(10);
 
-  describe("roundToDp()", () => {
-    // TODO
-    it("TODO", () => {
-      roundToDp(0, 0);
+    it("should delay by the correct duration", async () => {
+      const start = new Date().getTime();
+      const end = await delayPromise(20).then(() => new Date().getTime());
+      const duration = end - start;
+      duration.should.closeTo(20, 2);
     });
   });
 });

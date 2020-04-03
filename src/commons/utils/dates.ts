@@ -1,4 +1,4 @@
-function convertLocalDateToServerDate(input: number): number {
+function convertLocalDateToUtc(input: number): number {
   const localDate = new Date(input);
   return Date.UTC(
     localDate.getFullYear(),
@@ -11,7 +11,7 @@ function convertLocalDateToServerDate(input: number): number {
   );
 }
 
-function convertServerDateToLocalDate(input: number): number {
+function convertUtcDateToLocal(input: number): number {
   const inputDate = new Date(input);
   return new Date(
     inputDate.getUTCFullYear(),
@@ -24,4 +24,4 @@ function convertServerDateToLocalDate(input: number): number {
   ).getTime();
 }
 
-export { convertLocalDateToServerDate, convertServerDateToLocalDate };
+export { convertLocalDateToUtc, convertUtcDateToLocal };
