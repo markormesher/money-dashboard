@@ -12,7 +12,6 @@ const router = Express.Router();
 
 router.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
-  console.log(req.query);
   const startDate = startOfDay(parseInt(req.query.startDate)).getTime();
   const endDate = endOfDay(parseInt(req.query.endDate)).getTime();
   const dateMode: DateModeOption = req.query.dateMode;
