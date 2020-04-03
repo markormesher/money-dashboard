@@ -1,7 +1,19 @@
-// import { expect } from "chai";
-// import { describe } from "mocha";
-// import { differenceInSeconds, isEqual } from "date-fns";
-// import { fixedDate, utcDate } from "./dates";
+import { describe } from "mocha";
+import { convertLocalDateToServerDate, convertServerDateToLocalDate } from "./dates";
+
+describe(__filename, () => {
+  describe("convertLocalDateToServerDate()", () => {
+    it("TODO", () => {
+      convertLocalDateToServerDate(0);
+    });
+  });
+
+  describe("convertServerDateToLocalDate()", () => {
+    it("TODO", () => {
+      convertServerDateToLocalDate(0);
+    });
+  });
+});
 
 // describe(__filename, () => {
 //   describe("utcDate()", () => {
