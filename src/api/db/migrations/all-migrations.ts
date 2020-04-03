@@ -50,12 +50,12 @@ ALTER TABLE ONLY budget
         PRIMARY KEY (id);
 
 ALTER TABLE ONLY budget
-    ADD CONSTRAINT ${ns.foreignKeyName("budget", ["profile_id"])}
-        FOREIGN KEY (profile_id) REFERENCES profile(id);
-
-ALTER TABLE ONLY budget
     ADD CONSTRAINT ${ns.foreignKeyName("budget", ["category_id"])}
         FOREIGN KEY (category_id) REFERENCES category(id);
+
+ALTER TABLE ONLY budget
+    ADD CONSTRAINT ${ns.foreignKeyName("budget", ["profile_id"])}
+        FOREIGN KEY (profile_id) REFERENCES profile(id);
 
 
 
@@ -117,16 +117,16 @@ ALTER TABLE ONLY transaction
         PRIMARY KEY (id);
 
 ALTER TABLE ONLY transaction
-    ADD CONSTRAINT ${ns.foreignKeyName("transaction", ["profile_id"])}
-        FOREIGN KEY (profile_id) REFERENCES profile(id);
+    ADD CONSTRAINT ${ns.foreignKeyName("transaction", ["account_id"])}
+        FOREIGN KEY (account_id) REFERENCES account(id);
 
 ALTER TABLE ONLY transaction
     ADD CONSTRAINT ${ns.foreignKeyName("transaction", ["category_id"])}
         FOREIGN KEY (category_id) REFERENCES category(id);
 
 ALTER TABLE ONLY transaction
-    ADD CONSTRAINT ${ns.foreignKeyName("transaction", ["account_id"])}
-        FOREIGN KEY (account_id) REFERENCES account(id);
+    ADD CONSTRAINT ${ns.foreignKeyName("transaction", ["profile_id"])}
+        FOREIGN KEY (profile_id) REFERENCES profile(id);
 
 
 
