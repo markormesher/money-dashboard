@@ -1,6 +1,7 @@
 import { startOfMonth, endOfMonth } from "date-fns";
-import { ICategory, mapCategoryFromApi } from "./ICategory";
-import { IProfile, mapProfileFromApi } from "./IProfile";
+import { convertUtcDateToLocal, convertLocalDateToUtc } from "../utils/dates";
+import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "./ICategory";
+import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 
 interface IBudget {
   readonly id: string;
@@ -33,10 +34,27 @@ function mapBudgetFromApi(budget?: IBudget): IBudget {
 
   return {
     ...budget,
+    startDate: convertUtcDateToLocal(budget.startDate),
+    endDate: convertUtcDateToLocal(budget.endDate),
 
     category: mapCategoryFromApi(budget.category),
     profile: mapProfileFromApi(budget.profile),
   };
 }
 
-export { IBudget, DEFAULT_BUDGET, mapBudgetFromApi };
+function mapBudgetForApi(budget?: IBudget): IBudget {
+  if (!budget) {
+    return undefined;
+  }
+
+  return {
+    ...budget,
+    startDate: convertLocalDateToUtc(budget.startDate),
+    endDate: convertLocalDateToUtc(budget.endDate),
+
+    category: mapCategoryForApi(budget.category), // TODO
+    profile: mapProfileForApi(budget.profile), // TODO
+  };
+}
+
+export { IBudget, DEFAULT_BUDGET, mapBudgetFromApi, mapBudgetForApi };

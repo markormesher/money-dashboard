@@ -1,9 +1,9 @@
-import { mapEntitiesFromApi } from "../utils/entities";
-import { IAccount, mapAccountFromApi } from "./IAccount";
-import { IBudget, mapBudgetFromApi } from "./IBudget";
-import { ICategory, mapCategoryFromApi } from "./ICategory";
-import { ITransaction, mapTransactionFromApi } from "./ITransaction";
-import { IUser, mapUserFromApi } from "./IUser";
+import { mapEntities } from "../utils/entities";
+import { IAccount, mapAccountFromApi, mapAccountForApi } from "./IAccount";
+import { IBudget, mapBudgetFromApi, mapBudgetForApi } from "./IBudget";
+import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "./ICategory";
+import { ITransaction, mapTransactionFromApi, mapTransactionForApi } from "./ITransaction";
+import { IUser, mapUserFromApi, mapUserForApi } from "./IUser";
 
 interface IProfile {
   readonly id: string;
@@ -39,13 +39,30 @@ function mapProfileFromApi(profile: IProfile): IProfile {
   return {
     ...profile,
 
-    accounts: mapEntitiesFromApi(mapAccountFromApi, profile.accounts),
-    budgets: mapEntitiesFromApi(mapBudgetFromApi, profile.budgets),
-    categories: mapEntitiesFromApi(mapCategoryFromApi, profile.categories),
-    transactions: mapEntitiesFromApi(mapTransactionFromApi, profile.transactions),
-    users: mapEntitiesFromApi(mapUserFromApi, profile.users),
-    usersWithProfileActivated: mapEntitiesFromApi(mapUserFromApi, profile.usersWithProfileActivated),
+    accounts: mapEntities(mapAccountFromApi, profile.accounts),
+    budgets: mapEntities(mapBudgetFromApi, profile.budgets),
+    categories: mapEntities(mapCategoryFromApi, profile.categories),
+    transactions: mapEntities(mapTransactionFromApi, profile.transactions),
+    users: mapEntities(mapUserFromApi, profile.users),
+    usersWithProfileActivated: mapEntities(mapUserFromApi, profile.usersWithProfileActivated),
   };
 }
 
-export { IProfile, DEFAULT_PROFILE, mapProfileFromApi };
+function mapProfileForApi(profile: IProfile): IProfile {
+  if (!profile) {
+    return undefined;
+  }
+
+  return {
+    ...profile,
+
+    accounts: mapEntities(mapAccountForApi, profile.accounts),
+    budgets: mapEntities(mapBudgetForApi, profile.budgets),
+    categories: mapEntities(mapCategoryForApi, profile.categories),
+    transactions: mapEntities(mapTransactionForApi, profile.transactions),
+    users: mapEntities(mapUserForApi, profile.users),
+    usersWithProfileActivated: mapEntities(mapUserForApi, profile.usersWithProfileActivated),
+  };
+}
+
+export { IProfile, DEFAULT_PROFILE, mapProfileFromApi, mapProfileForApi };

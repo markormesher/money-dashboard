@@ -1,6 +1,7 @@
-import { IAccount, mapAccountFromApi } from "./IAccount";
-import { ICategory, mapCategoryFromApi } from "./ICategory";
-import { IProfile, mapProfileFromApi } from "./IProfile";
+import { convertLocalDateToUtc, convertUtcDateToLocal } from "../utils/dates";
+import { IAccount, mapAccountFromApi, mapAccountForApi } from "./IAccount";
+import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "./ICategory";
+import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 
 type DateModeOption = "effective" | "transaction";
 
@@ -40,10 +41,28 @@ function mapTransactionFromApi(transaction?: ITransaction): ITransaction {
 
   return {
     ...transaction,
+    transactionDate: convertUtcDateToLocal(transaction.transactionDate),
+    effectiveDate: convertUtcDateToLocal(transaction.effectiveDate),
 
     account: mapAccountFromApi(transaction.account),
     category: mapCategoryFromApi(transaction.category),
     profile: mapProfileFromApi(transaction.profile),
+  };
+}
+
+function mapTransactionForApi(transaction?: ITransaction): ITransaction {
+  if (!transaction) {
+    return undefined;
+  }
+
+  return {
+    ...transaction,
+    transactionDate: convertLocalDateToUtc(transaction.transactionDate),
+    effectiveDate: convertLocalDateToUtc(transaction.effectiveDate),
+
+    account: mapAccountForApi(transaction.account),
+    category: mapCategoryForApi(transaction.category),
+    profile: mapProfileForApi(transaction.profile),
   };
 }
 
@@ -61,5 +80,6 @@ export {
   ITransaction,
   DEFAULT_TRANSACTION,
   mapTransactionFromApi,
+  mapTransactionForApi,
   getNextTransactionForContinuousCreation,
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { ICategory, mapCategoryFromApi } from "../../commons/models/ICategory";
+import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "../../commons/models/ICategory";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
@@ -89,7 +89,7 @@ function* deleteCategorySaga(): Generator {
 function* saveCategorySaga(): Generator {
   yield takeEvery(CategoryActions.START_SAVE_CATEGORY, function*(action: PayloadAction): Generator {
     try {
-      const category: Partial<ICategory> = action.payload.category;
+      const category: Partial<ICategory> = mapCategoryForApi(action.payload.category);
       const categoryId = category.id || "";
       yield all([put(setEditorBusy(true)), call(() => axios.post(`/api/categories/edit/${categoryId}`, category))]);
       yield all([

@@ -5,6 +5,7 @@ import {
   DateModeOption,
   getNextTransactionForContinuousCreation,
   ITransaction,
+  mapTransactionForApi,
 } from "../../commons/models/ITransaction";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -103,7 +104,7 @@ function* deleteTransactionSaga(): Generator {
 function* saveTransactionSaga(): Generator {
   yield takeEvery(TransactionActions.START_SAVE_TRANSACTION, function*(action: PayloadAction): Generator {
     try {
-      const transaction: Partial<ITransaction> = action.payload.transaction;
+      const transaction: Partial<ITransaction> = mapTransactionForApi(action.payload.transaction);
       const transactionId = transaction.id || "";
       yield all([
         put(setEditorBusy(true)),

@@ -9,6 +9,7 @@ import {
   getNextTransactionForContinuousCreation,
   ITransaction,
   mapTransactionFromApi,
+  mapTransactionForApi,
 } from "./ITransaction";
 
 describe(__filename, () => {
@@ -24,6 +25,21 @@ describe(__filename, () => {
 
     it("should not mutate the input", () => {
       mapTransactionFromApi(DEFAULT_TRANSACTION).should.not.equal(DEFAULT_TRANSACTION);
+    });
+  });
+
+  describe("mapTransactionForApi()", () => {
+    it("should return undefined for null/undefined/empty-string inputs", () => {
+      expect(mapTransactionForApi(null)).to.equal(undefined);
+      expect(mapTransactionForApi(undefined)).to.equal(undefined);
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      expect(mapTransactionForApi("")).to.equal(undefined);
+    });
+
+    it("should not mutate the input", () => {
+      mapTransactionForApi(DEFAULT_TRANSACTION).should.not.equal(DEFAULT_TRANSACTION);
     });
   });
 

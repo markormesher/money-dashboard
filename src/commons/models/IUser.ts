@@ -1,5 +1,5 @@
-import { mapEntitiesFromApi } from "../utils/entities";
-import { IProfile, mapProfileFromApi } from "./IProfile";
+import { mapEntities } from "../utils/entities";
+import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 
 interface IUser {
   readonly id: string;
@@ -19,9 +19,22 @@ function mapUserFromApi(user?: IUser): IUser {
   return {
     ...user,
 
-    profiles: mapEntitiesFromApi(mapProfileFromApi, user.profiles),
+    profiles: mapEntities(mapProfileFromApi, user.profiles),
     activeProfile: mapProfileFromApi(user.activeProfile),
   };
 }
 
-export { IUser, mapUserFromApi };
+function mapUserForApi(user?: IUser): IUser {
+  if (!user) {
+    return undefined;
+  }
+
+  return {
+    ...user,
+
+    profiles: mapEntities(mapProfileForApi, user.profiles),
+    activeProfile: mapProfileForApi(user.activeProfile),
+  };
+}
+
+export { IUser, mapUserFromApi, mapUserForApi };

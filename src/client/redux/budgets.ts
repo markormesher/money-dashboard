@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { IBudget } from "../../commons/models/IBudget";
+import { IBudget, mapBudgetForApi } from "../../commons/models/IBudget";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 
@@ -120,7 +120,7 @@ function* deleteBudgetSaga(): Generator {
 function* saveBudgetSaga(): Generator {
   yield takeEvery(BudgetActions.START_SAVE_BUDGET, function*(action: PayloadAction): Generator {
     try {
-      const budget: Partial<IBudget> = action.payload.budget;
+      const budget: Partial<IBudget> = mapBudgetForApi(action.payload.budget);
       const budgetId = budget.id || "";
       yield all([put(setEditorBusy(true)), call(() => axios.post(`/api/budgets/edit/${budgetId}`, budget))]);
       yield all([
