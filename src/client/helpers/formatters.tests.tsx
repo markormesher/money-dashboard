@@ -199,19 +199,43 @@ describe(__filename, () => {
   });
 
   describe("getBudgetPeriodType()", () => {
-    it("should determine month periods", () => {
+    it("should detect normal month periods", () => {
       getBudgetPeriodType(parseISO("2018-01-01").getTime(), parseISO("2018-01-31").getTime()).should.equal("month");
-      getBudgetPeriodType(parseISO("2018-02-01").getTime(), parseISO("2018-02-28").getTime()).should.equal("month");
     });
 
-    it("should determine calendar year periods", () => {
+    it("should detect leap year month periods", () => {
+      // non-leap
+      getBudgetPeriodType(parseISO("2019-02-01").getTime(), parseISO("2019-02-28").getTime()).should.equal("month");
+
+      // leap
+      getBudgetPeriodType(parseISO("2020-02-01").getTime(), parseISO("2020-02-29").getTime()).should.equal("month");
+      getBudgetPeriodType(parseISO("2020-02-01").getTime(), parseISO("2020-02-28").getTime()).should.not.equal("month");
+    });
+
+    it("should not detect month periods when the year does not match", () => {
+      getBudgetPeriodType(parseISO("2018-01-01").getTime(), parseISO("2019-01-31").getTime()).should.not.equal("month");
+    });
+
+    it("should detect calendar year periods", () => {
       getBudgetPeriodType(parseISO("2018-01-01").getTime(), parseISO("2018-12-31").getTime()).should.equal(
         "calendar year",
       );
     });
 
-    it("should determine tax year periods", () => {
+    it("should not detect calendar year periods when the year does not match", () => {
+      getBudgetPeriodType(parseISO("2018-01-01").getTime(), parseISO("2019-12-31").getTime()).should.not.equal(
+        "calendar year",
+      );
+    });
+
+    it("should detect tax year periods", () => {
       getBudgetPeriodType(parseISO("2017-04-06").getTime(), parseISO("2018-04-05").getTime()).should.equal("tax year");
+    });
+
+    it("should not detect tax year periods when the year does not match", () => {
+      getBudgetPeriodType(parseISO("2017-04-06").getTime(), parseISO("2019-04-05").getTime()).should.not.equal(
+        "tax year",
+      );
     });
 
     it("should return 'other' if the period is not month/year/tax year", () => {
