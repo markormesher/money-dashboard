@@ -1,5 +1,3 @@
-// TODO: move to client utils to avoid ever calling from server code
-
 // shifts a local timestamp to UTC without changing the actual time
 function convertLocalDateToUtc(input: number): number {
   const localDate = new Date(input);
