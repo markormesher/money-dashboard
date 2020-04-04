@@ -148,6 +148,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
       </div>
     );
   }
+
   private renderInfoPanel(): ReactNode {
     const { loading, failed, data } = this.state;
 
