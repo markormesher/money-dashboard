@@ -61,6 +61,7 @@ describe(__filename, () => {
     });
 
     it("should return false when running on unknown server", () => {
+      process.env.IS_PRIMARY_SERVER = null;
       isPrimaryServer().should.equal(false);
     });
   });
