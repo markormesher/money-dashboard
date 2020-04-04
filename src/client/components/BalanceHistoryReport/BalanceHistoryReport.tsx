@@ -4,7 +4,7 @@ import { merge } from "lodash";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
-import { subYears } from "date-fns";
+import { subYears, startOfDay, endOfDay } from "date-fns";
 import { IBalanceHistoryData } from "../../../commons/models/IBalanceHistoryData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
@@ -46,8 +46,8 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      startDate: subYears(new Date(), 1).getTime(),
-      endDate: new Date().getTime(),
+      startDate: startOfDay(subYears(new Date(), 1)).getTime(),
+      endDate: endOfDay(new Date()).getTime(),
       dateMode: "transaction",
       data: undefined,
       loading: true,

@@ -8,7 +8,7 @@ import { Component, ReactNode } from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { subYears } from "date-fns";
+import { subYears, startOfDay, endOfDay } from "date-fns";
 import { IAccount } from "../../../commons/models/IAccount";
 import { IAssetPerformanceData } from "../../../commons/models/IAssetPerformanceData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
@@ -74,8 +74,8 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
   constructor(props: IAssetPerformanceReportProps) {
     super(props);
     this.state = {
-      startDate: subYears(new Date(), 1).getTime(),
-      endDate: new Date().getTime(),
+      startDate: startOfDay(subYears(new Date(), 1)).getTime(),
+      endDate: endOfDay(new Date()).getTime(),
       dateMode: "transaction",
       zeroBasis: true,
       showAsPercent: false,
