@@ -68,7 +68,12 @@ function generateBudgetTypeBadge(budget: IBudget): ReactElement<void> {
 }
 
 function getBudgetPeriodType(start: number, end: number): BudgetPeriod {
-  if (getDate(start) === 1 && getMonth(start) === getMonth(end) && getDate(end) === getDate(endOfMonth(start))) {
+  if (
+    getDate(start) === 1 &&
+    getMonth(start) === getMonth(end) &&
+    getDate(end) === getDate(endOfMonth(end)) &&
+    getYear(start) === getYear(end)
+  ) {
     return "month";
   } else if (
     getDate(start) === 1 &&
