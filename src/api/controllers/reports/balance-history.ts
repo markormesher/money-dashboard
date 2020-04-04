@@ -89,14 +89,16 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
         changeAbsolute = data[data.length - 1].y - data[0].y;
       }
 
-      res.json({
+      const result: IBalanceHistoryData = {
         balanceDataPoints: data,
         minTotal,
         minDate,
         maxTotal,
         maxDate,
         changeAbsolute,
-      } as IBalanceHistoryData);
+      };
+
+      res.json(result);
     })
     .catch(next);
 });
