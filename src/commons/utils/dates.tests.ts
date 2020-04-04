@@ -5,16 +5,6 @@ import { convertLocalDateToUtc, convertUtcDateToLocal } from "./dates";
 // (just overriding getTimezoneOffset isn't enough)
 
 describe(__filename, () => {
-  let originalMethod: () => number;
-
-  beforeEach(() => {
-    originalMethod = Date.prototype.getTimezoneOffset;
-  });
-
-  afterEach(() => {
-    Date.prototype.getTimezoneOffset = originalMethod;
-  });
-
   describe("convertLocalDateToUtc()", () => {
     it("should shift the time by the amount of the local timezone offset", () => {
       const date = new Date();
