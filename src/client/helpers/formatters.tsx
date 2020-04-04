@@ -31,7 +31,7 @@ function formatDate(date: number, toFormat: "user" | "system" = "user"): string 
   if (toFormat === "user") {
     return format(date, "dd MMM yyyy");
   } else if (toFormat === "system") {
-    return format(date, "yyy-MM-dd");
+    return format(date, "yyyy-MM-dd");
   }
 }
 
