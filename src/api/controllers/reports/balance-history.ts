@@ -90,7 +90,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
       }
 
       res.json({
-        datasets: [{ label: "Balance", data }],
+        balanceDataPoints: data,
         minTotal,
         minDate,
         maxTotal,

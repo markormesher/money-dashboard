@@ -1,11 +1,8 @@
 import { faPiggyBank } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosResponse } from "axios";
-import { ChartDataSets } from "chart.js";
-import { merge } from "lodash";
 import * as React from "react";
 import { Component, ReactNode } from "react";
-import { Line, LinearComponentProps } from "react-chartjs-2";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { subYears, startOfDay, endOfDay } from "date-fns";
@@ -15,11 +12,10 @@ import { DateModeOption } from "../../../commons/models/ITransaction";
 import { NULL_UUID } from "../../../commons/utils/entities";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatCurrency, formatPercent } from "../../helpers/formatters";
+import { formatCurrency, formatPercent, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { startLoadAccountList } from "../../redux/accounts";
 import { IRootState } from "../../redux/root";
-import { chartColours, defaultDatasetProps, defaultLinearChartOverTimeProps } from "../_commons/reports/ReportDefaults";
 import * as styles from "../_commons/reports/Reports.scss";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { ControlledRadioInput } from "../_ui/ControlledInputs/ControlledRadioInput";
@@ -27,6 +23,7 @@ import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
+import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/LineChart";
 
 interface IAssetPerformanceReportProps {
   readonly accountList?: IAccount[];
@@ -65,8 +62,6 @@ function mapDispatchToProps(dispatch: Dispatch, props: IAssetPerformanceReportPr
 }
 
 class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, IAssetPerformanceReportState> {
-  private static seriesColours = [chartColours.red, chartColours.blue];
-
   // give each remote request an increasing "frame" number so that late arrivals will be dropped
   private frameCounter = 0;
   private lastFrameReceived = 0;
@@ -181,48 +176,59 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       return <p>Chart failed to load. Please try again.</p>;
     }
 
-    let datasets: ChartDataSets[] = [
+    const exclGrowthSeriesProps: Omit<ILineChartSeries, "dataPoints"> = {
+      label: "Excluding Growth",
+      strokeClass: styles.seriesStrokeBlue,
+    };
+    const inclGrowthSeriesProps: Omit<ILineChartSeries, "dataPoints"> = {
+      label: "Excluding Growth",
+      strokeClass: styles.seriesStrokeRed,
+    };
+
+    let series: ILineChartSeries[] = [
       {
-        data: [
-          // dummy values to show a blank chart
+        ...exclGrowthSeriesProps,
+        dataPoints: [
+          { x: startDate, y: 0 },
+          { x: endDate, y: 0 },
+        ],
+      },
+      {
+        ...inclGrowthSeriesProps,
+        dataPoints: [
           { x: startDate, y: 0 },
           { x: endDate, y: 0 },
         ],
       },
     ];
+
     if (data) {
-      datasets = data.datasets.map((ds, i) => {
-        return {
-          ...defaultDatasetProps,
-          borderColor: UCAssetPerformanceReport.seriesColours[i],
-          ...ds,
-        };
-      });
+      series = [
+        {
+          ...exclGrowthSeriesProps,
+          dataPoints: data.dataExclGrowth,
+        },
+        {
+          ...inclGrowthSeriesProps,
+          dataPoints: data.dataInclGrowth,
+        },
+      ];
     }
 
-    const chartProps: Partial<LinearComponentProps> = merge({}, defaultLinearChartOverTimeProps, {
-      options: {
-        elements: {
-          line: {
-            fill: false,
-          },
-        },
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                callback: (val: number): string =>
-                  zeroBasis && showAsPercent ? formatPercent(val * 100) : formatCurrency(val),
-              },
-            },
-          ],
-        },
+    const chartProps: ILineChartProps = {
+      series,
+      yAxisProperties: {
+        forcedValues: [0],
+        valueRenderer: zeroBasis && showAsPercent ? formatPercent : formatCurrency,
       },
-    });
+      xAxisProperties: {
+        valueRenderer: formatDate,
+      },
+    };
 
     return (
       <div className={combine(styles.chartContainer, loading && gs.loading)}>
-        <Line {...chartProps} data={{ datasets }} />
+        <LineChart {...chartProps} />
       </div>
     );
   }
@@ -382,7 +388,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
           showAsPercent,
         },
       })
-      .then((res: AxiosResponse<ChartDataSets[]>) => res.data)
+      .then((res: AxiosResponse<IAssetPerformanceData>) => res.data)
       .then((res) => this.onDataLoaded(frame, res))
       .catch(() => this.onDataLoadFailed(frame));
   }
@@ -391,9 +397,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
   }
 
-  // TODO: figure out what type rawData should be
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private onDataLoaded(frame: number, rawData: any): void {
+  private onDataLoaded(frame: number, data: IAssetPerformanceData): void {
     if (frame <= this.lastFrameReceived) {
       return;
     }
@@ -403,7 +407,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     this.setState({
       loading: false,
       failed: false,
-      data: rawData,
+      data,
     });
   }
 

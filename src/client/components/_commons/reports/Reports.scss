@@ -2,3 +2,25 @@
   height: 400px;
   position: relative;
 }
+
+.series-stroke-blue {
+  stroke: rgba(14, 90, 138, 1);
+  stroke-width: 2px;
+  fill: none;
+}
+
+.series-stroke-red {
+  stroke: rgba(168, 42, 42, 1);
+  stroke-width: 2px;
+  fill: none;
+}
+
+.series-fill-blue {
+  stroke: none;
+  fill: rgba(14, 90, 138, 0.3);
+}
+
+.series-fill-red {
+  stroke: none;
+  fill: rgba(168, 42, 42, 0.3);
+}

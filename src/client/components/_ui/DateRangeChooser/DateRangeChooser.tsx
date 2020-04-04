@@ -63,7 +63,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
       },
       includeYearToDatePreset !== false && {
         label: "Year to Date",
-        startDate: subYears(new Date(), 1),
+        startDate: subYears(new Date(), 1).getTime(),
         endDate: new Date().getTime(),
       },
       includeAllTimePreset !== false && {

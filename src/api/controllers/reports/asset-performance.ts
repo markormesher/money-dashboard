@@ -117,14 +117,14 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
         takeValues();
       }
 
-      res.json({
-        datasets: [
-          { label: "Including Growth", data: dataInclGrowth },
-          { label: "Excluding Growth", data: dataExclGrowth },
-        ],
+      const result: IAssetPerformanceData = {
+        dataExclGrowth,
+        dataInclGrowth,
         totalChangeInclGrowth,
         totalChangeExclGrowth,
-      } as IAssetPerformanceData);
+      };
+
+      res.json(result);
     })
     .catch(next);
 });
