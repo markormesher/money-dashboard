@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PureComponent, ReactNode, RefObject, CSSProperties } from "react";
+import { PureComponent, ReactNode, RefObject } from "react";
 import { combine } from "../../../helpers/style-helpers";
 import * as style from "./LineChart.scss";
 
@@ -55,6 +55,10 @@ interface ILineChartExtents {
 interface ILineChartDrawingBounds {
   readonly totalWidth: number;
   readonly totalHeight: number;
+  readonly topGutter: number;
+  readonly bottomGutter: number;
+  readonly leftGutter: number;
+  readonly rightGutter: number;
   readonly chartAreaWidth: number;
   readonly chartAreaHeight: number;
   readonly xAxisLabelMockBounds: DOMRect[];
@@ -74,7 +78,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   private windowResizeDebounceTimeout: NodeJS.Timer;
 
-  private chartAreaMargin = 10;
+  private gridLineBleed = 10;
 
   constructor(props: ILineChartProps) {
     super(props);
@@ -101,6 +105,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   public componentDidMount(): void {
     window.addEventListener("resize", this.handleResize);
+    global.setTimeout(this.triggerRerender, 100);
   }
 
   public componentWillUnmount(): void {
@@ -214,8 +219,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   private calculateDrawingBounds(): ILineChartDrawingBounds {
-    const svgWidth = this.svgRef.current?.width.baseVal.value || 0;
-    const svgHeight = this.svgRef.current?.height.baseVal.value || 0;
+    const totalWidth = this.svgRef.current?.width.baseVal.value || 0;
+    const totalHeight = this.svgRef.current?.height.baseVal.value || 0;
 
     const xAxisLabelMocks = this.xAxisLabelSizingRef.current?.children;
     const xAxisLabelMockBounds: DOMRect[] = [];
@@ -235,26 +240,38 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
     const maxXAxisLabelWidth = Math.max(0, ...xAxisLabelMockBounds.map((b) => b.width));
     const maxXAxisLabelHeight = Math.max(0, ...xAxisLabelMockBounds.map((b) => b.height));
+    const maxXAxisLabelRotatedWidth = Math.max(
+      0,
+      ...xAxisLabelMockBounds.map((b) => Math.sqrt(Math.pow(b.width, 2) / 2)),
+    );
+    const maxXAxisLabelRotatedHeight = Math.max(
+      0,
+      ...xAxisLabelMockBounds.map((b) => Math.sqrt(Math.pow(b.height, 2) / 2)),
+    );
     const maxYAxisLabelWidth = Math.max(0, ...yAxisLabelMockBounds.map((b) => b.width));
     const maxYAxisLabelHeight = Math.max(0, ...yAxisLabelMockBounds.map((b) => b.height));
 
     const topGutter = maxYAxisLabelHeight * 0.5;
-    const bottomGutter = maxXAxisLabelHeight * 1.1;
-    const leftGutter = maxYAxisLabelWidth;
-    const rightGutter = 0;
+    const bottomGutter = maxXAxisLabelRotatedWidth + maxXAxisLabelRotatedHeight;
+    const leftGutter = Math.max(maxYAxisLabelWidth, maxXAxisLabelRotatedWidth - maxXAxisLabelRotatedHeight);
+    const rightGutter = maxXAxisLabelRotatedHeight;
 
     return {
-      totalWidth: svgWidth,
-      totalHeight: svgHeight,
+      totalWidth,
+      totalHeight,
+      topGutter,
+      bottomGutter,
+      leftGutter,
+      rightGutter,
       xAxisLabelMockBounds,
       yAxisLabelMockBounds,
       maxXAxisLabelWidth,
       maxXAxisLabelHeight,
       maxYAxisLabelWidth,
       maxYAxisLabelHeight,
-      chartAreaWidth: svgWidth - leftGutter - rightGutter - this.chartAreaMargin,
-      chartAreaHeight: svgHeight - topGutter - bottomGutter - this.chartAreaMargin,
-      xOffsetFromLeft: leftGutter + this.chartAreaMargin,
+      chartAreaWidth: totalWidth - leftGutter - rightGutter - this.gridLineBleed,
+      chartAreaHeight: totalHeight - topGutter - bottomGutter - this.gridLineBleed,
+      xOffsetFromLeft: leftGutter + this.gridLineBleed,
       yOffsetFromTop: topGutter,
     };
   }
@@ -320,7 +337,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
           x1={topCoord.x}
           y1={topCoord.y}
           x2={bottomCoord.x}
-          y2={bottomCoord.y + this.chartAreaMargin}
+          y2={bottomCoord.y + this.gridLineBleed}
         />,
       );
     });
@@ -333,7 +350,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
         <line
           key={`y-grid-line-${idx}`}
           className={combine(style.gridLine, gridLineClass)}
-          x1={leftCoord.x - this.chartAreaMargin}
+          x1={leftCoord.x - this.gridLineBleed}
           y1={leftCoord.y}
           x2={rightCoord.x}
           y2={rightCoord.y}
@@ -358,16 +375,21 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     extents.xAxisTickValues.values.forEach((xValue, idx) => {
       const position = renderForSizing ? { x: 0, y: 0 } : this.convertDataPointToPixelCoordinate({ x: xValue, y: 0 });
       const mockBounds = drawingBounds.xAxisLabelMockBounds[idx] || { width: 0, height: 0 };
-      const x = renderForSizing ? 0 : position.x - mockBounds.width / 2;
+      const rotatedWidth = Math.sqrt(Math.pow(mockBounds.width, 2) / 2);
+      const rotatedHeight = Math.sqrt(Math.pow(mockBounds.height, 2) / 2);
+      const x = renderForSizing ? 0 : position.x - rotatedWidth - rotatedHeight / 2;
       const y = renderForSizing
         ? 0
-        : drawingBounds.chartAreaHeight + drawingBounds.yOffsetFromTop + this.chartAreaMargin;
+        : drawingBounds.chartAreaHeight + drawingBounds.yOffsetFromTop + this.gridLineBleed + rotatedWidth / 2;
+      const centreX = x + mockBounds.width / 2;
+      const centreY = y + mockBounds.height / 2;
 
       output.push(
         <text
           key={`x-axis-label-${idx}`}
           className={combine(style.axisLabel, xAxisProperties.axisLabelClass)}
           dominantBaseline={"hanging"}
+          transform={`rotate(-45 ${centreX} ${centreY})`}
           x={x}
           y={y}
         >
@@ -393,7 +415,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     extents.yAxisTickValues.values.forEach((yValue, idx) => {
       const position = renderForSizing ? { x: 0, y: 0 } : this.convertDataPointToPixelCoordinate({ x: 0, y: yValue });
       const mockBounds = drawingBounds.yAxisLabelMockBounds[idx] || { width: 0, height: 0 };
-      const x = renderForSizing ? 0 : drawingBounds.maxYAxisLabelWidth - mockBounds.width;
+      const x = renderForSizing ? 0 : drawingBounds.leftGutter - mockBounds.width;
       const y = renderForSizing ? 0 : position.y;
 
       output.push(
