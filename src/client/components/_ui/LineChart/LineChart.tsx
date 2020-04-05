@@ -297,7 +297,6 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       <svg
         key={"chart"}
         ref={this.svgRef}
-        onClick={this.triggerRerender}
         width={"100%"}
         height={"100%"}
         className={combine(style.totalArea, svgClass)}

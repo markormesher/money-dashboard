@@ -122,6 +122,8 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
         dataInclGrowth,
         totalChangeInclGrowth,
         totalChangeExclGrowth,
+        zeroBasis,
+        showAsPercent,
       };
 
       res.json(result);

@@ -170,7 +170,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
   }
 
   private renderChart(): ReactNode {
-    const { loading, failed, data, startDate, endDate, zeroBasis, showAsPercent } = this.state;
+    const { loading, failed, data, startDate, endDate, showAsPercent } = this.state;
 
     if (failed) {
       return <p>Chart failed to load. Please try again.</p>;
@@ -221,7 +221,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       series,
       yAxisProperties: {
         forcedValues: [0],
-        valueRenderer: zeroBasis && showAsPercent ? (v): string => formatPercent(v * 100) : formatCurrency,
+        valueRenderer: data?.zeroBasis && data?.showAsPercent ? (v): string => formatPercent(v * 100) : formatCurrency,
       },
       xAxisProperties: {
         valueRenderer: formatDate,
