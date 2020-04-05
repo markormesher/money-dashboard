@@ -21,6 +21,8 @@ interface IAxisProperties {
   readonly valueRenderer?: (value: number) => string;
   readonly forcedValues?: number[];
   readonly axisLabelClass?: string;
+  readonly approxTickCount?: number;
+  readonly forceAxisRangeToBeExact?: boolean;
 }
 
 interface ILineChartSeries {
@@ -79,6 +81,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   private windowResizeDebounceTimeout: NodeJS.Timer;
 
   private gridLineBleed = 10;
+  private approxPxPerXAxisTick = 80;
+  private approxPxPerYAxisTick = 30;
 
   constructor(props: ILineChartProps) {
     super(props);
@@ -185,6 +189,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   private calculateExtents(): ILineChartExtents {
     const { series, xAxisProperties, yAxisProperties } = this.props;
+    const drawingBounds = this.calculateDrawingBounds();
+
     // compute the min/max x/y points across all series
     const allDataPoints: ILineChartDataPoint[] = [];
     series.map((s) => s.dataPoints).forEach((dps) => allDataPoints.push(...dps));
@@ -205,8 +211,20 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       minYValue = Math.min(minYValue, ...yAxisProperties.forcedValues);
     }
 
-    const xAxisTickValues = LineChart.calculateAxisTickValues(minXValue, maxXValue, 10, true);
-    const yAxisTickValues = LineChart.calculateAxisTickValues(minYValue, maxYValue);
+    const xAxisTickValues = LineChart.calculateAxisTickValues(
+      minXValue,
+      maxXValue,
+      xAxisProperties.approxTickCount ||
+        Math.max(2, Math.floor(drawingBounds.chartAreaWidth / this.approxPxPerXAxisTick)),
+      xAxisProperties.forceAxisRangeToBeExact,
+    );
+    const yAxisTickValues = LineChart.calculateAxisTickValues(
+      minYValue,
+      maxYValue,
+      yAxisProperties.approxTickCount ||
+        Math.max(2, Math.floor(drawingBounds.chartAreaHeight / this.approxPxPerYAxisTick)),
+      yAxisProperties.forceAxisRangeToBeExact,
+    );
 
     return {
       minXValue,
@@ -296,7 +314,6 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   public render(): ReactNode {
-    // TODO: can we detect whether this is the first pass? if so, should we do something differently?
     const { series, svgClass } = this.props;
 
     return [

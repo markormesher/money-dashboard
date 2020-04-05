@@ -225,6 +225,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       },
       xAxisProperties: {
         valueRenderer: formatDate,
+        forceAxisRangeToBeExact: true,
       },
     };
 
