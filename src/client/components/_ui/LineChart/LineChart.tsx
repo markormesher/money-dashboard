@@ -4,7 +4,6 @@ import { combine } from "../../../helpers/style-helpers";
 import * as style from "./LineChart.scss";
 
 // TODO: tidy up these interfaces
-// TODO: implement 2-pass rendering
 
 interface ILineChartDataPoint {
   readonly x: number;
@@ -72,9 +71,10 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   private svgRef: RefObject<SVGSVGElement>;
   private xAxisLabelSizingRef: RefObject<SVGSVGElement>;
   private yAxisLabelSizingRef: RefObject<SVGSVGElement>;
-  private windowResizeDebounceTimeout: NodeJS.Timer = undefined;
 
-  private CHART_AREA_MARGIN = 10;
+  private windowResizeDebounceTimeout: NodeJS.Timer;
+
+  private chartAreaMargin = 10;
 
   private svgMockStyle: CSSProperties = {
     position: "fixed",
@@ -105,14 +105,17 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   public componentDidMount(): void {
     window.addEventListener("resize", this.handleResize);
-    global.setTimeout(() => {
-      console.log("---- TIMED RE-RENDER ----");
-      this.triggerRerender();
-    }, 100);
   }
 
   public componentWillUnmount(): void {
     window.removeEventListener("resize", this.handleResize);
+  }
+
+  public componentDidUpdate(prevProps: ILineChartProps): void {
+    if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
+      // trigger a second-pass re-render
+      this.triggerRerender();
+    }
   }
 
   private handleResize(): void {
@@ -121,7 +124,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   private triggerRerender(): void {
-    this.setState({ triggerRender: new Date().getTime() });
+    this.setState({ triggerRender: Math.random() });
   }
 
   private static calculateAxisTickValues(
@@ -135,7 +138,6 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     }
 
     if (max === min) {
-      // create an artificial range if there's no actual range
       max += 1;
       min -= 1;
     }
@@ -240,8 +242,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     const maxYAxisLabelWidth = Math.max(0, ...yAxisLabelMockBounds.map((b) => b.width));
     const maxYAxisLabelHeight = Math.max(0, ...yAxisLabelMockBounds.map((b) => b.height));
 
-    const topGutter = maxYAxisLabelHeight ? maxYAxisLabelHeight / 2 : 0;
-    const bottomGutter = maxXAxisLabelHeight * 1.5;
+    const topGutter = maxYAxisLabelHeight * 0.5;
+    const bottomGutter = maxXAxisLabelHeight * 1.1;
     const leftGutter = maxYAxisLabelWidth;
     const rightGutter = 0;
 
@@ -254,9 +256,9 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       maxXAxisLabelHeight,
       maxYAxisLabelWidth,
       maxYAxisLabelHeight,
-      chartAreaWidth: svgWidth - leftGutter - rightGutter - this.CHART_AREA_MARGIN,
-      chartAreaHeight: svgHeight - topGutter - bottomGutter - this.CHART_AREA_MARGIN,
-      xOffsetFromLeft: leftGutter + this.CHART_AREA_MARGIN,
+      chartAreaWidth: svgWidth - leftGutter - rightGutter - this.chartAreaMargin,
+      chartAreaHeight: svgHeight - topGutter - bottomGutter - this.chartAreaMargin,
+      xOffsetFromLeft: leftGutter + this.chartAreaMargin,
       yOffsetFromTop: topGutter,
     };
   }
@@ -282,8 +284,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   public render(): ReactNode {
-    console.log("---- RENDER ----");
-    console.log(this.calculateDrawingBounds());
+    console.log(`---- RENDER ----`);
 
     const { series, svgClass } = this.props;
 
@@ -300,7 +301,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
         onClick={this.triggerRerender}
         width={"100%"}
         height={"100%"}
-        className={svgClass}
+        className={combine(style.totalArea, svgClass)}
       >
         {this.renderGridLines()}
         {this.renderYAxisLabels()}
@@ -340,7 +341,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
           x1={topCoord.x}
           y1={topCoord.y}
           x2={bottomCoord.x}
-          y2={bottomCoord.y + this.CHART_AREA_MARGIN}
+          y2={bottomCoord.y + this.chartAreaMargin}
         />,
       );
     });
@@ -361,7 +362,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
         <line
           key={`y-grid-line-${idx}`}
           className={combine(style.gridLine, gridLineClass)}
-          x1={leftCoord.x - this.CHART_AREA_MARGIN}
+          x1={leftCoord.x - this.chartAreaMargin}
           y1={leftCoord.y}
           x2={rightCoord.x}
           y2={rightCoord.y}
@@ -392,12 +393,13 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       const x = renderForSizing ? 0 : position.x - mockBounds.width / 2;
       const y = renderForSizing
         ? 0
-        : drawingBounds.chartAreaHeight + drawingBounds.yOffsetFromTop + this.CHART_AREA_MARGIN + mockBounds.height;
+        : drawingBounds.chartAreaHeight + drawingBounds.yOffsetFromTop + this.chartAreaMargin;
 
       output.push(
         <text
           key={`x-axis-label-${idx}`}
           className={combine(style.axisLabel, xAxisProperties.axisLabelClass)}
+          dominantBaseline={"hanging"}
           x={x}
           y={y}
         >
@@ -427,12 +429,13 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
       const mockBounds = drawingBounds.yAxisLabelMockBounds[idx] || { width: 0, height: 0 };
       const x = renderForSizing ? 0 : drawingBounds.maxYAxisLabelWidth - mockBounds.width;
-      const y = renderForSizing ? 0 : position.y + mockBounds.height / 4;
+      const y = renderForSizing ? 0 : position.y;
 
       output.push(
         <text
           key={`y-axis-label-${idx}`}
           className={combine(style.axisLabel, yAxisProperties.axisLabelClass)}
+          dominantBaseline={"central"}
           x={x}
           y={y}
         >
@@ -445,7 +448,6 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   private renderSeriesPath(idx: number, series: ILineChartSeries): ReactNode {
-    // TODO: make fill optional
     const drawingBounds = this.calculateDrawingBounds();
     const extents = this.calculateExtents();
 
@@ -463,7 +465,9 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     if (!series.fillEnabled) {
       return strokeElement;
     } else {
-      const yAnchorPoint = extents.minYValue > 0 ? extents.minYValue : extents.maxYValue < 0 ? extents.maxYValue : 0;
+      const yMin = extents.yAxisTickValues.min;
+      const yMax = extents.yAxisTickValues.max;
+      const yAnchorPoint = yMin > 0 ? yMin : yMax < 0 ? yMax : 0;
       const fillAnchorPoints = [
         { x: extents.maxXValue, y: yAnchorPoint },
         { x: extents.minXValue, y: yAnchorPoint },
