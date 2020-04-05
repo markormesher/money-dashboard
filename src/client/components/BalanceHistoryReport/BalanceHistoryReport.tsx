@@ -141,6 +141,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
       },
       xAxisProperties: {
         valueRenderer: formatDate,
+        forceAxisRangeToBeExact: true,
       },
     };
 
