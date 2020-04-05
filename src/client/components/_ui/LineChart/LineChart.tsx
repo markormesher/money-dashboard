@@ -430,7 +430,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
         x = 0;
         y = 0;
       } else {
-        const mockBounds = axisMockBounds[idx] || new DOMRect(0, 0, 0, 0);
+        const mockBounds = axisMockBounds[idx] || axisMockBounds[0] || new DOMRect(0, 0, 0, 0);
 
         if (axis === "x") {
           const dataPosition = this.convertDataPointToPixelCoord({ x: value, y: this.extents.yAxisTickValues.min });
