@@ -181,7 +181,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       strokeClass: styles.seriesStrokeBlue,
     };
     const inclGrowthSeriesProps: Omit<ILineChartSeries, "dataPoints"> = {
-      label: "Excluding Growth",
+      label: "Including Growth",
       strokeClass: styles.seriesStrokeRed,
     };
 
@@ -219,7 +219,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       series,
       yAxisProperties: {
         forcedValues: [0],
-        valueRenderer: zeroBasis && showAsPercent ? formatPercent : formatCurrency,
+        valueRenderer: zeroBasis && showAsPercent ? (v): string => formatPercent(v * 100) : formatCurrency,
       },
       xAxisProperties: {
         valueRenderer: formatDate,
