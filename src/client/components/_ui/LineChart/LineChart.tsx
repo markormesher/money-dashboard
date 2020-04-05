@@ -78,6 +78,9 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   private windowResizeDebounceTimeout: NodeJS.Timer;
 
+  private drawingBounds: ILineChartDrawingBounds = null;
+  private extents: ILineChartExtents = null;
+
   private gridLineBleed = 5;
   private axisLabelMargin = 3;
   private approxPxPerXAxisTick = 80;
@@ -184,9 +187,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     };
   }
 
-  private calculateExtents(): ILineChartExtents {
+  private calculateExtents(): void {
     const { series, xAxisProperties, yAxisProperties } = this.props;
-    const drawingBounds = this.calculateDrawingBounds();
 
     const allDataPoints: ILineChartDataPoint[] = [];
     series.forEach((s) => allDataPoints.push(...s.dataPoints));
@@ -210,18 +212,18 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       minXValue,
       maxXValue,
       xAxisProperties.approxTickCount ||
-        Math.max(2, Math.floor(drawingBounds.chartAreaWidth / this.approxPxPerXAxisTick)),
+        Math.max(2, Math.floor(this.drawingBounds.chartAreaWidth / this.approxPxPerXAxisTick)),
       xAxisProperties.forceAxisRangeToBeExact,
     );
     const yAxisTickValues = LineChart.calculateAxisTickValues(
       minYValue,
       maxYValue,
       yAxisProperties.approxTickCount ||
-        Math.max(2, Math.floor(drawingBounds.chartAreaHeight / this.approxPxPerYAxisTick)),
+        Math.max(2, Math.floor(this.drawingBounds.chartAreaHeight / this.approxPxPerYAxisTick)),
       yAxisProperties.forceAxisRangeToBeExact,
     );
 
-    return {
+    this.extents = {
       minXValue,
       maxXValue,
       minYValue,
@@ -231,7 +233,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     };
   }
 
-  private calculateDrawingBounds(): ILineChartDrawingBounds {
+  private calculateDrawingBounds(): void {
     const totalWidth = this.svgRef.current?.width.baseVal.value || 0;
     const totalHeight = this.svgRef.current?.height.baseVal.value || 0;
 
@@ -302,7 +304,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     // lines, so we need a gutter of that width to avoid clipping the text
     const rightGutter = maxXAxisLabelRotationSpill;
 
-    return {
+    this.drawingBounds = {
       totalWidth,
       totalHeight,
       topGutter,
@@ -319,25 +321,29 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   private convertDataPointToPixelCoord(dp: ILineChartDataPoint): { x: number; y: number } {
-    const extents = this.calculateExtents();
-    const drawingBounds = this.calculateDrawingBounds();
-
-    const xMin = extents.xAxisTickValues.min;
-    const xMax = extents.xAxisTickValues.max;
+    const xMin = this.extents.xAxisTickValues.min;
+    const xMax = this.extents.xAxisTickValues.max;
     const xRange = xMax - xMin;
-    const yMin = extents.yAxisTickValues.min;
-    const yMax = extents.yAxisTickValues.max;
+    const yMin = this.extents.yAxisTickValues.min;
+    const yMax = this.extents.yAxisTickValues.max;
     const yRange = yMax - yMin;
 
     const xPoint =
-      xRange === 0 ? 0 : ((dp.x - xMin) / xRange) * drawingBounds.chartAreaWidth + drawingBounds.xOffsetFromLeft;
+      xRange === 0
+        ? 0
+        : ((dp.x - xMin) / xRange) * this.drawingBounds.chartAreaWidth + this.drawingBounds.xOffsetFromLeft;
     const yPoint =
-      yRange === 0 ? 0 : ((yMax - dp.y) / yRange) * drawingBounds.chartAreaHeight + drawingBounds.yOffsetFromTop;
+      yRange === 0
+        ? 0
+        : ((yMax - dp.y) / yRange) * this.drawingBounds.chartAreaHeight + this.drawingBounds.yOffsetFromTop;
 
     return { x: xPoint, y: yPoint };
   }
 
   public render(): ReactNode {
+    this.calculateDrawingBounds();
+    this.calculateExtents();
+
     const { series, svgClass } = this.props;
 
     return [
@@ -358,18 +364,16 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   private renderGridLines(): ReactNode {
     const { gridLineClass } = this.props;
-    const drawingBounds = this.calculateDrawingBounds();
-    const extents = this.calculateExtents();
 
-    if (!drawingBounds?.chartAreaHeight || !drawingBounds?.chartAreaWidth) {
+    if (!this.drawingBounds?.chartAreaHeight || !this.drawingBounds?.chartAreaWidth) {
       return null;
     }
 
     const output: ReactNode[] = [];
 
-    extents.xAxisTickValues.values.forEach((xValue, idx) => {
-      const topCoord = this.convertDataPointToPixelCoord({ x: xValue, y: extents.yAxisTickValues.max });
-      const bottomCoord = this.convertDataPointToPixelCoord({ x: xValue, y: extents.yAxisTickValues.min });
+    this.extents.xAxisTickValues.values.forEach((xValue, idx) => {
+      const topCoord = this.convertDataPointToPixelCoord({ x: xValue, y: this.extents.yAxisTickValues.max });
+      const bottomCoord = this.convertDataPointToPixelCoord({ x: xValue, y: this.extents.yAxisTickValues.min });
 
       output.push(
         <line
@@ -383,9 +387,9 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       );
     });
 
-    extents.yAxisTickValues.values.forEach((yValue, idx) => {
-      const leftCoord = this.convertDataPointToPixelCoord({ x: extents.xAxisTickValues.min, y: yValue });
-      const rightCoord = this.convertDataPointToPixelCoord({ x: extents.xAxisTickValues.max, y: yValue });
+    this.extents.yAxisTickValues.values.forEach((yValue, idx) => {
+      const leftCoord = this.convertDataPointToPixelCoord({ x: this.extents.xAxisTickValues.min, y: yValue });
+      const rightCoord = this.convertDataPointToPixelCoord({ x: this.extents.xAxisTickValues.max, y: yValue });
 
       output.push(
         <line
@@ -404,16 +408,14 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   private renderXAxisLabels(renderForSizing = false): ReactNode {
     const { xAxisProperties } = this.props;
-    const drawingBounds = this.calculateDrawingBounds();
-    const extents = this.calculateExtents();
 
-    if (!renderForSizing && (!drawingBounds?.chartAreaHeight || !drawingBounds?.chartAreaWidth)) {
+    if (!renderForSizing && (!this.drawingBounds?.chartAreaHeight || !this.drawingBounds?.chartAreaWidth)) {
       return null;
     }
 
     const output: ReactNode[] = [];
 
-    extents.xAxisTickValues.values.forEach((xValue, idx) => {
+    this.extents.xAxisTickValues.values.forEach((xValue, idx) => {
       let x: number;
       let y: number;
 
@@ -421,8 +423,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
         x = 0;
         y = 0;
       } else {
-        const dataPosition = this.convertDataPointToPixelCoord({ x: xValue, y: extents.yAxisTickValues.min });
-        const mockBounds = drawingBounds.xAxisLabelMockBounds[idx] || new DOMRect(0, 0, 0, 0);
+        const dataPosition = this.convertDataPointToPixelCoord({ x: xValue, y: this.extents.yAxisTickValues.min });
+        const mockBounds = this.drawingBounds.xAxisLabelMockBounds[idx] || new DOMRect(0, 0, 0, 0);
 
         // the mock text is drawn with its left edge at 0, so the position of the left edge of the rotated
         // box tells us how far past 0 the it spills
@@ -451,16 +453,14 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   private renderYAxisLabels(renderForSizing = false): ReactNode {
     const { yAxisProperties } = this.props;
-    const drawingBounds = this.calculateDrawingBounds();
-    const extents = this.calculateExtents();
 
-    if (!renderForSizing && (!drawingBounds?.chartAreaHeight || !drawingBounds?.chartAreaWidth)) {
+    if (!renderForSizing && (!this.drawingBounds?.chartAreaHeight || !this.drawingBounds?.chartAreaWidth)) {
       return null;
     }
 
     const output: ReactNode[] = [];
 
-    extents.yAxisTickValues.values.forEach((yValue, idx) => {
+    this.extents.yAxisTickValues.values.forEach((yValue, idx) => {
       let x: number;
       let y: number;
 
@@ -468,10 +468,10 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
         x = 0;
         y = 0;
       } else {
-        const dataPosition = this.convertDataPointToPixelCoord({ x: extents.xAxisTickValues.min, y: yValue });
-        const mockBounds = drawingBounds.yAxisLabelMockBounds[idx] || new DOMRect(0, 0, 0, 0);
+        const dataPosition = this.convertDataPointToPixelCoord({ x: this.extents.xAxisTickValues.min, y: yValue });
+        const mockBounds = this.drawingBounds.yAxisLabelMockBounds[idx] || new DOMRect(0, 0, 0, 0);
 
-        x = drawingBounds.leftGutter - mockBounds.width - this.axisLabelMargin;
+        x = this.drawingBounds.leftGutter - mockBounds.width - this.axisLabelMargin;
         y = dataPosition.y;
       }
 
@@ -492,10 +492,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   private renderSeriesPath(idx: number, series: ILineChartSeries): ReactNode {
-    const drawingBounds = this.calculateDrawingBounds();
-    const extents = this.calculateExtents();
-
-    if (!drawingBounds?.chartAreaHeight || !drawingBounds?.chartAreaWidth) {
+    if (!this.drawingBounds?.chartAreaHeight || !this.drawingBounds?.chartAreaWidth) {
       return null;
     }
 
@@ -509,12 +506,12 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     if (!series.fillEnabled) {
       return strokeElement;
     } else {
-      const yMin = extents.yAxisTickValues.min;
-      const yMax = extents.yAxisTickValues.max;
+      const yMin = this.extents.yAxisTickValues.min;
+      const yMax = this.extents.yAxisTickValues.max;
       const yAnchorPoint = yMin > 0 ? yMin : yMax < 0 ? yMax : 0;
       const fillAnchorPoints = [
-        { x: extents.maxXValue, y: yAnchorPoint },
-        { x: extents.minXValue, y: yAnchorPoint },
+        { x: this.extents.maxXValue, y: yAnchorPoint },
+        { x: this.extents.minXValue, y: yAnchorPoint },
       ];
       const fillPoints =
         strokePoints +
