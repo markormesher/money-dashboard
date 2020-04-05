@@ -230,19 +230,17 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
   }
 
   private onDataLoaded(frame: number, data: IBalanceHistoryData): void {
-    setTimeout(() => {
-      if (frame <= this.lastFrameReceived) {
-        return;
-      }
+    if (frame <= this.lastFrameReceived) {
+      return;
+    }
 
-      this.onFrameReceived(frame);
+    this.onFrameReceived(frame);
 
-      this.setState({
-        loading: false,
-        failed: false,
-        data,
-      });
-    }, 1000);
+    this.setState({
+      loading: false,
+      failed: false,
+      data,
+    });
   }
 
   private onDataLoadFailed(frame: number): void {
