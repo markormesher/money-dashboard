@@ -170,7 +170,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
   }
 
   private renderChart(): ReactNode {
-    const { loading, failed, data, startDate, endDate, showAsPercent } = this.state;
+    const { loading, failed, data, startDate, endDate } = this.state;
 
     if (failed) {
       return <p>Chart failed to load. Please try again.</p>;
