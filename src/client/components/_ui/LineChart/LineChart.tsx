@@ -76,11 +76,6 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   private chartAreaMargin = 10;
 
-  private svgMockStyle: CSSProperties = {
-    position: "fixed",
-    top: -1000,
-  };
-
   constructor(props: ILineChartProps) {
     super(props);
     this.state = {
@@ -288,19 +283,13 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     const { series, svgClass } = this.props;
 
     return [
-      <svg key={"x-axis-sizing-mock"} ref={this.xAxisLabelSizingRef} style={this.svgMockStyle}>
+      <svg key={"x-axis-sizing-mock"} ref={this.xAxisLabelSizingRef} className={style.svgMock}>
         {this.renderXAxisLabels(true)}
       </svg>,
-      <svg key={"y-axis-sizing-mock"} ref={this.yAxisLabelSizingRef} style={this.svgMockStyle}>
+      <svg key={"y-axis-sizing-mock"} ref={this.yAxisLabelSizingRef} className={style.svgMock}>
         {this.renderYAxisLabels(true)}
       </svg>,
-      <svg
-        key={"chart"}
-        ref={this.svgRef}
-        width={"100%"}
-        height={"100%"}
-        className={combine(style.totalArea, svgClass)}
-      >
+      <svg key={"chart"} ref={this.svgRef} className={combine(style.svg, svgClass)}>
         {this.renderGridLines()}
         {this.renderYAxisLabels()}
         {this.renderXAxisLabels()}
