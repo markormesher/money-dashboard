@@ -96,6 +96,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
     this.calculateExtents = this.calculateExtents.bind(this);
     this.calculateDrawingBounds = this.calculateDrawingBounds.bind(this);
+    this.convertDataPointToPixelCoordinate = this.convertDataPointToPixelCoordinate.bind(this);
 
     this.renderGridLines = this.renderGridLines.bind(this);
     this.renderXAxisLabels = this.renderXAxisLabels.bind(this);
@@ -263,11 +264,10 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     };
   }
 
-  private static convertDataPointToPixelCoordinate(
-    dp: ILineChartDataPoint,
-    extents: ILineChartExtents,
-    drawingBounds: ILineChartDrawingBounds,
-  ): { x: number; y: number } {
+  private convertDataPointToPixelCoordinate(dp: ILineChartDataPoint): { x: number; y: number } {
+    const extents = this.calculateExtents();
+    const drawingBounds = this.calculateDrawingBounds();
+
     const xMin = extents.xAxisTickValues.min;
     const xMax = extents.xAxisTickValues.max;
     const xRange = xMax - xMin;
@@ -284,8 +284,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   public render(): ReactNode {
-    console.log(`---- RENDER ----`);
-
+    // TODO: can we detect whether this is the first pass? if so, should we do something differently?
     const { series, svgClass } = this.props;
 
     return [
@@ -323,16 +322,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     const output: ReactNode[] = [];
 
     extents.xAxisTickValues.values.forEach((xValue, idx) => {
-      const topCoord = LineChart.convertDataPointToPixelCoordinate(
-        { x: xValue, y: extents.yAxisTickValues.max },
-        extents,
-        drawingBounds,
-      );
-      const bottomCoord = LineChart.convertDataPointToPixelCoordinate(
-        { x: xValue, y: extents.yAxisTickValues.min },
-        extents,
-        drawingBounds,
-      );
+      const topCoord = this.convertDataPointToPixelCoordinate({ x: xValue, y: extents.yAxisTickValues.max });
+      const bottomCoord = this.convertDataPointToPixelCoordinate({ x: xValue, y: extents.yAxisTickValues.min });
 
       output.push(
         <line
@@ -347,16 +338,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     });
 
     extents.yAxisTickValues.values.forEach((yValue, idx) => {
-      const leftCoord = LineChart.convertDataPointToPixelCoordinate(
-        { x: extents.xAxisTickValues.min, y: yValue },
-        extents,
-        drawingBounds,
-      );
-      const rightCoord = LineChart.convertDataPointToPixelCoordinate(
-        { x: extents.xAxisTickValues.max, y: yValue },
-        extents,
-        drawingBounds,
-      );
+      const leftCoord = this.convertDataPointToPixelCoordinate({ x: extents.xAxisTickValues.min, y: yValue });
+      const rightCoord = this.convertDataPointToPixelCoordinate({ x: extents.xAxisTickValues.max, y: yValue });
 
       output.push(
         <line
@@ -385,10 +368,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     const output: ReactNode[] = [];
 
     extents.xAxisTickValues.values.forEach((xValue, idx) => {
-      const position = renderForSizing
-        ? { x: 0, y: 0 }
-        : LineChart.convertDataPointToPixelCoordinate({ x: xValue, y: 0 }, extents, drawingBounds);
-
+      const position = renderForSizing ? { x: 0, y: 0 } : this.convertDataPointToPixelCoordinate({ x: xValue, y: 0 });
       const mockBounds = drawingBounds.xAxisLabelMockBounds[idx] || { width: 0, height: 0 };
       const x = renderForSizing ? 0 : position.x - mockBounds.width / 2;
       const y = renderForSizing
@@ -423,10 +403,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     const output: ReactNode[] = [];
 
     extents.yAxisTickValues.values.forEach((yValue, idx) => {
-      const position = renderForSizing
-        ? { x: 0, y: 0 }
-        : LineChart.convertDataPointToPixelCoordinate({ x: 0, y: yValue }, extents, drawingBounds);
-
+      const position = renderForSizing ? { x: 0, y: 0 } : this.convertDataPointToPixelCoordinate({ x: 0, y: yValue });
       const mockBounds = drawingBounds.yAxisLabelMockBounds[idx] || { width: 0, height: 0 };
       const x = renderForSizing ? 0 : drawingBounds.maxYAxisLabelWidth - mockBounds.width;
       const y = renderForSizing ? 0 : position.y;
@@ -456,7 +433,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     }
 
     const strokePoints = series.dataPoints
-      .map((dp) => LineChart.convertDataPointToPixelCoordinate(dp, extents, drawingBounds))
+      .map(this.convertDataPointToPixelCoordinate)
       .map((p) => `${p.x},${p.y}`)
       .join(" ");
 
@@ -476,7 +453,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
         strokePoints +
         " " +
         fillAnchorPoints
-          .map((dp) => LineChart.convertDataPointToPixelCoordinate(dp, extents, drawingBounds))
+          .map(this.convertDataPointToPixelCoordinate)
           .map((p) => `${p.x},${p.y}`)
           .join(" ");
 
