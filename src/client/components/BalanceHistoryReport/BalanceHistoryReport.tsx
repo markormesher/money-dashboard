@@ -112,21 +112,23 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
       fillEnabled: true,
     };
 
-    let series: ILineChartSeries[] = [
-      {
-        ...balanceSeriesProps,
-        dataPoints: [
-          { x: startDate, y: 0 },
-          { x: endDate, y: 0 },
-        ],
-      },
-    ];
+    let series: ILineChartSeries[];
 
     if (data) {
       series = [
         {
           ...balanceSeriesProps,
           dataPoints: data.balanceDataPoints,
+        },
+      ];
+    } else {
+      series = [
+        {
+          ...balanceSeriesProps,
+          dataPoints: [
+            { x: startDate, y: 0 },
+            { x: endDate, y: 0 },
+          ],
         },
       ];
     }

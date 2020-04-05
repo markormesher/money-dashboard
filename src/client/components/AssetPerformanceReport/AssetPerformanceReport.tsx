@@ -185,22 +185,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       strokeClass: styles.seriesStrokeRed,
     };
 
-    let series: ILineChartSeries[] = [
-      {
-        ...exclGrowthSeriesProps,
-        dataPoints: [
-          { x: startDate, y: 0 },
-          { x: endDate, y: 0 },
-        ],
-      },
-      {
-        ...inclGrowthSeriesProps,
-        dataPoints: [
-          { x: startDate, y: 0 },
-          { x: endDate, y: 0 },
-        ],
-      },
-    ];
+    let series: ILineChartSeries[];
 
     if (data) {
       series = [
@@ -211,6 +196,23 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
         {
           ...inclGrowthSeriesProps,
           dataPoints: data.dataInclGrowth,
+        },
+      ];
+    } else {
+      series = [
+        {
+          ...exclGrowthSeriesProps,
+          dataPoints: [
+            { x: startDate, y: 0 },
+            { x: endDate, y: 0 },
+          ],
+        },
+        {
+          ...inclGrowthSeriesProps,
+          dataPoints: [
+            { x: startDate, y: 0 },
+            { x: endDate, y: 0 },
+          ],
         },
       ];
     }
