@@ -104,8 +104,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
     this.triggerRerender = this.triggerRerender.bind(this);
     this.renderGridLines = this.renderGridLines.bind(this);
-    this.renderXAxisLabels = this.renderXAxisLabels.bind(this);
-    this.renderYAxisLabels = this.renderYAxisLabels.bind(this);
+    this.renderAxisLabels = this.renderAxisLabels.bind(this);
     this.renderSeriesPath = this.renderSeriesPath.bind(this);
   }
 
@@ -121,7 +120,12 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   public componentDidUpdate(prevProps: ILineChartProps): void {
     if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
       // trigger a second-pass re-render
-      this.triggerRerender();
+      window.requestAnimationFrame(() => {
+        this.triggerRerender();
+        window.requestAnimationFrame(() => {
+          this.triggerRerender();
+        });
+      });
     }
   }
 
@@ -348,15 +352,15 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
     return [
       <svg key={"x-axis-sizing-mock"} ref={this.xAxisLabelSizingRef} className={style.svgMock}>
-        {this.renderXAxisLabels(true)}
+        {this.renderAxisLabels("x", true)}
       </svg>,
       <svg key={"y-axis-sizing-mock"} ref={this.yAxisLabelSizingRef} className={style.svgMock}>
-        {this.renderYAxisLabels(true)}
+        {this.renderAxisLabels("y", true)}
       </svg>,
       <svg key={"chart"} ref={this.svgRef} className={combine(style.svg, svgClass)}>
         {this.renderGridLines()}
-        {this.renderYAxisLabels()}
-        {this.renderXAxisLabels()}
+        {this.renderAxisLabels("x")}
+        {this.renderAxisLabels("y")}
         {series.map((s, i) => this.renderSeriesPath(i, s))}
       </svg>,
     ];
@@ -406,8 +410,11 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     return output;
   }
 
-  private renderXAxisLabels(renderForSizing = false): ReactNode {
-    const { xAxisProperties } = this.props;
+  private renderAxisLabels(axis: "x" | "y", renderForSizing = false): ReactNode {
+    const axisProperties = axis === "x" ? this.props.xAxisProperties : this.props.yAxisProperties;
+    const axisTickValues = axis === "x" ? this.extents.xAxisTickValues : this.extents.yAxisTickValues;
+    const axisMockBounds =
+      axis === "x" ? this.drawingBounds.xAxisLabelMockBounds : this.drawingBounds.yAxisLabelMockBounds;
 
     if (!renderForSizing && (!this.drawingBounds?.chartAreaHeight || !this.drawingBounds?.chartAreaWidth)) {
       return null;
@@ -415,7 +422,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
     const output: ReactNode[] = [];
 
-    this.extents.xAxisTickValues.values.forEach((xValue, idx) => {
+    axisTickValues.values.forEach((value, idx) => {
       let x: number;
       let y: number;
 
@@ -423,67 +430,34 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
         x = 0;
         y = 0;
       } else {
-        const dataPosition = this.convertDataPointToPixelCoord({ x: xValue, y: this.extents.yAxisTickValues.min });
-        const mockBounds = this.drawingBounds.xAxisLabelMockBounds[idx] || new DOMRect(0, 0, 0, 0);
+        const mockBounds = axisMockBounds[idx] || new DOMRect(0, 0, 0, 0);
 
-        // the mock text is drawn with its left edge at 0, so the position of the left edge of the rotated
-        // box tells us how far past 0 the it spills
-        const rotationSpill = mockBounds.left * -1;
+        if (axis === "x") {
+          const dataPosition = this.convertDataPointToPixelCoord({ x: value, y: this.extents.yAxisTickValues.min });
 
-        x = dataPosition.x - mockBounds.width + 2 * rotationSpill;
-        y = dataPosition.y + mockBounds.height - 2 * rotationSpill + this.gridLineBleed + this.axisLabelMargin;
+          // the mock text is drawn with its left edge at 0, so the position of the left edge of the rotated
+          // box tells us how far past 0 the it spills
+          const rotationSpill = mockBounds.left * -1;
+
+          x = dataPosition.x - mockBounds.width + 2 * rotationSpill;
+          y = dataPosition.y + mockBounds.height - 2 * rotationSpill + this.gridLineBleed + this.axisLabelMargin;
+        } else {
+          const dataPosition = this.convertDataPointToPixelCoord({ x: this.extents.xAxisTickValues.min, y: value });
+          x = this.drawingBounds.leftGutter - mockBounds.width - this.axisLabelMargin;
+          y = dataPosition.y;
+        }
       }
 
       output.push(
         <text
-          key={`x-axis-label-${idx}`}
-          className={combine(style.axisLabel, xAxisProperties.axisLabelClass)}
+          key={`${axis}-axis-label-${idx}`}
+          className={combine(style.axisLabel, axisProperties.axisLabelClass)}
           dominantBaseline={"central"}
-          transform={`rotate(-45 ${x} ${y})`}
+          transform={axis === "x" ? `rotate(-45 ${x} ${y})` : ""}
           x={x}
           y={y}
         >
-          {xAxisProperties?.valueRenderer(xValue) || xValue}
-        </text>,
-      );
-    });
-
-    return output;
-  }
-
-  private renderYAxisLabels(renderForSizing = false): ReactNode {
-    const { yAxisProperties } = this.props;
-
-    if (!renderForSizing && (!this.drawingBounds?.chartAreaHeight || !this.drawingBounds?.chartAreaWidth)) {
-      return null;
-    }
-
-    const output: ReactNode[] = [];
-
-    this.extents.yAxisTickValues.values.forEach((yValue, idx) => {
-      let x: number;
-      let y: number;
-
-      if (renderForSizing) {
-        x = 0;
-        y = 0;
-      } else {
-        const dataPosition = this.convertDataPointToPixelCoord({ x: this.extents.xAxisTickValues.min, y: yValue });
-        const mockBounds = this.drawingBounds.yAxisLabelMockBounds[idx] || new DOMRect(0, 0, 0, 0);
-
-        x = this.drawingBounds.leftGutter - mockBounds.width - this.axisLabelMargin;
-        y = dataPosition.y;
-      }
-
-      output.push(
-        <text
-          key={`y-axis-label-${idx}`}
-          className={combine(style.axisLabel, yAxisProperties.axisLabelClass)}
-          dominantBaseline={"central"}
-          x={x}
-          y={y}
-        >
-          {yAxisProperties?.valueRenderer(yValue) || yValue}
+          {axisProperties?.valueRenderer(value) || value}
         </text>,
       );
     });
