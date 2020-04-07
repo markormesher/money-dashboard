@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as ReactDOMServer from "react-dom/server";
 import { PureComponent, ReactNode, RefObject } from "react";
 import { combine } from "../../../helpers/style-helpers";
 import * as style from "./LineChart.scss";
@@ -73,8 +74,6 @@ interface ILineChartAxisTickValues {
 
 class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   private svgRef: RefObject<SVGSVGElement>;
-  private xAxisLabelSizingRef: RefObject<SVGSVGElement>;
-  private yAxisLabelSizingRef: RefObject<SVGSVGElement>;
 
   private windowResizeDebounceTimeout: NodeJS.Timer;
 
@@ -93,11 +92,10 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     };
 
     this.svgRef = React.createRef();
-    this.xAxisLabelSizingRef = React.createRef();
-    this.yAxisLabelSizingRef = React.createRef();
 
     this.handleResize = this.handleResize.bind(this);
 
+    this.getTotalSvgSize = this.getTotalSvgSize.bind(this);
     this.calculateExtents = this.calculateExtents.bind(this);
     this.calculateDrawingBounds = this.calculateDrawingBounds.bind(this);
     this.convertDataPointToPixelCoord = this.convertDataPointToPixelCoord.bind(this);
@@ -115,18 +113,6 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   public componentWillUnmount(): void {
     window.removeEventListener("resize", this.handleResize);
-  }
-
-  public componentDidUpdate(prevProps: ILineChartProps): void {
-    if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
-      // trigger a second-pass re-render
-      window.requestAnimationFrame(() => {
-        this.triggerRerender();
-        window.requestAnimationFrame(() => {
-          this.triggerRerender();
-        });
-      });
-    }
   }
 
   private handleResize(): void {
@@ -155,8 +141,9 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
     const generateTickValues = (min: number, max: number, step: number): number[] => {
       const output: number[] = [];
-      for (let i = min; i <= max; i += step) {
-        output.push(i);
+      const stepCount = Math.ceil((max - min) / step) + 1;
+      for (let i = 0; i < stepCount; ++i) {
+        output.push(min + step * i);
       }
       return output;
     };
@@ -212,18 +199,21 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       minYValue = Math.min(minYValue, ...yAxisProperties.forcedValues);
     }
 
+    // note: total size is used below rather than chart area size to estimate tick count because the chart area isn't
+    // known until ticks are created
+
     const xAxisTickValues = LineChart.calculateAxisTickValues(
       minXValue,
       maxXValue,
       xAxisProperties.approxTickCount ||
-        Math.max(2, Math.floor(this.drawingBounds.chartAreaWidth / this.approxPxPerXAxisTick)),
+        Math.max(2, Math.floor(this.getTotalSvgSize().totalWidth / this.approxPxPerXAxisTick) - 1),
       xAxisProperties.forceAxisRangeToBeExact,
     );
     const yAxisTickValues = LineChart.calculateAxisTickValues(
       minYValue,
       maxYValue,
       yAxisProperties.approxTickCount ||
-        Math.max(2, Math.floor(this.drawingBounds.chartAreaHeight / this.approxPxPerYAxisTick)),
+        Math.max(2, Math.floor(this.getTotalSvgSize().totalHeight / this.approxPxPerYAxisTick) - 1),
       yAxisProperties.forceAxisRangeToBeExact,
     );
 
@@ -237,9 +227,14 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     };
   }
 
-  private calculateDrawingBounds(): void {
+  private getTotalSvgSize(): { totalWidth: number; totalHeight: number } {
     const totalWidth = this.svgRef.current?.width.baseVal.value || 0;
     const totalHeight = this.svgRef.current?.height.baseVal.value || 0;
+    return { totalWidth, totalHeight };
+  }
+
+  private calculateDrawingBounds(): void {
+    const { totalWidth, totalHeight } = this.getTotalSvgSize();
 
     const matrixXY = (m: DOMMatrix, x: number, y: number): { x: number; y: number } => {
       return {
@@ -264,21 +259,26 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       return new DOMRect(minX, minY, maxX - minX, maxY - minY);
     };
 
-    const xAxisLabelMocks = this.xAxisLabelSizingRef.current?.children;
     const xAxisLabelMockBounds: DOMRect[] = [];
-    if (xAxisLabelMocks) {
-      for (let i = 0; i < xAxisLabelMocks.length; ++i) {
-        xAxisLabelMockBounds.push(getTransformedBBox(xAxisLabelMocks.item(i) as SVGTextElement));
-      }
+    const yAxisLabelMockBounds: DOMRect[] = [];
+
+    const mockHolder = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    mockHolder.setAttribute("class", style.svgMock);
+    document.body.append(mockHolder);
+
+    mockHolder.innerHTML = ReactDOMServer.renderToStaticMarkup(<>{this.renderAxisLabels("x", true)}</>);
+    let mockHolderChildren = mockHolder.children;
+    for (let i = 0; i < mockHolderChildren.length; ++i) {
+      xAxisLabelMockBounds.push(getTransformedBBox(mockHolderChildren.item(i) as SVGTextElement));
     }
 
-    const yAxisLabelMocks = this.yAxisLabelSizingRef.current?.children;
-    const yAxisLabelMockBounds: DOMRect[] = [];
-    if (yAxisLabelMocks) {
-      for (let i = 0; i < yAxisLabelMocks.length; ++i) {
-        yAxisLabelMockBounds.push(getTransformedBBox(yAxisLabelMocks.item(i) as SVGTextElement));
-      }
+    mockHolder.innerHTML = ReactDOMServer.renderToStaticMarkup(<>{this.renderAxisLabels("y", true)}</>);
+    mockHolderChildren = mockHolder.children;
+    for (let i = 0; i < mockHolderChildren.length; ++i) {
+      yAxisLabelMockBounds.push(mockHolderChildren.item(i).getBoundingClientRect());
     }
+
+    document.body.removeChild(mockHolder);
 
     const firstXAxisLabelWidth = xAxisLabelMockBounds.length ? xAxisLabelMockBounds[0].width : 0;
     const firstXAxisLabelRotationSpill = xAxisLabelMockBounds.length ? xAxisLabelMockBounds[0].left * -1 : 0;
@@ -345,18 +345,12 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   public render(): ReactNode {
-    this.calculateDrawingBounds();
     this.calculateExtents();
+    this.calculateDrawingBounds();
 
     const { series, svgClass } = this.props;
 
     return [
-      <svg key={"x-axis-sizing-mock"} ref={this.xAxisLabelSizingRef} className={style.svgMock}>
-        {this.renderAxisLabels("x", true)}
-      </svg>,
-      <svg key={"y-axis-sizing-mock"} ref={this.yAxisLabelSizingRef} className={style.svgMock}>
-        {this.renderAxisLabels("y", true)}
-      </svg>,
       <svg key={"chart"} ref={this.svgRef} className={combine(style.svg, svgClass)}>
         {this.renderGridLines()}
         {this.renderAxisLabels("x")}
@@ -410,15 +404,11 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     return output;
   }
 
-  private renderAxisLabels(axis: "x" | "y", renderForSizing = false): ReactNode {
+  private renderAxisLabels(axis: "x" | "y", renderAsMocks = false): ReactNode {
     const axisProperties = axis === "x" ? this.props.xAxisProperties : this.props.yAxisProperties;
     const axisTickValues = axis === "x" ? this.extents.xAxisTickValues : this.extents.yAxisTickValues;
     const axisMockBounds =
-      axis === "x" ? this.drawingBounds.xAxisLabelMockBounds : this.drawingBounds.yAxisLabelMockBounds;
-
-    if (!renderForSizing && (!this.drawingBounds?.chartAreaHeight || !this.drawingBounds?.chartAreaWidth)) {
-      return null;
-    }
+      axis === "x" ? this.drawingBounds?.xAxisLabelMockBounds : this.drawingBounds?.yAxisLabelMockBounds;
 
     const output: ReactNode[] = [];
 
@@ -426,11 +416,11 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       let x: number;
       let y: number;
 
-      if (renderForSizing) {
+      if (renderAsMocks) {
         x = 0;
         y = 0;
       } else {
-        const mockBounds = axisMockBounds[idx] || axisMockBounds[0] || new DOMRect(0, 0, 0, 0);
+        const mockBounds = axisMockBounds[idx] || new DOMRect(0, 0, 0, 0);
 
         if (axis === "x") {
           const dataPosition = this.convertDataPointToPixelCoord({ x: value, y: this.extents.yAxisTickValues.min });
