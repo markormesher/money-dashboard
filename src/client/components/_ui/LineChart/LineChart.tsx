@@ -108,7 +108,6 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   public componentDidMount(): void {
     window.addEventListener("resize", this.handleResize);
-    global.setTimeout(this.triggerRerender, 100);
   }
 
   public componentWillUnmount(): void {
@@ -117,7 +116,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   private handleResize(): void {
     global.clearTimeout(this.windowResizeDebounceTimeout);
-    this.windowResizeDebounceTimeout = global.setTimeout(this.triggerRerender, 100);
+    this.windowResizeDebounceTimeout = global.setTimeout(this.triggerRerender, 20);
   }
 
   private triggerRerender(): void {
@@ -350,14 +349,14 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
     const { series, svgClass } = this.props;
 
-    return [
+    return (
       <svg key={"chart"} ref={this.svgRef} className={combine(style.svg, svgClass)}>
         {this.renderGridLines()}
         {this.renderAxisLabels("x")}
         {this.renderAxisLabels("y")}
         {series.map((s, i) => this.renderSeriesPath(i, s))}
-      </svg>,
-    ];
+      </svg>
+    );
   }
 
   private renderGridLines(): ReactNode {
