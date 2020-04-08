@@ -256,14 +256,12 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
     document.body.removeChild(mockHolder);
 
-    const firstXAxisLabelWidth = xAxisLabelMockBounds.length ? xAxisLabelMockBounds[0].width : 0;
-    const firstXAxisLabelRotationSpill = xAxisLabelMockBounds.length ? xAxisLabelMockBounds[0].left * -1 : 0;
+    const firstXAxisLabelWidth = xAxisLabelMockBounds[0]?.width ?? 0;
+    const firstXAxisLabelRotationSpill = (xAxisLabelMockBounds[0]?.left ?? 0) * -1;
     const maxXAxisLabelHeight = Math.max(0, ...xAxisLabelMockBounds.map((b) => b.height));
-    const maxXAxisLabelRotationSpill = -1 * Math.min(0, ...xAxisLabelMockBounds.map((b) => b.left));
+    const maxXAxisLabelRotationSpill = Math.max(0, ...xAxisLabelMockBounds.map((b) => b.left * -1));
 
-    const lastYAxisLabelHeight = yAxisLabelMockBounds.length
-      ? yAxisLabelMockBounds[yAxisLabelMockBounds.length - 1].height
-      : 0;
+    const lastYAxisLabelHeight = yAxisLabelMockBounds[yAxisLabelMockBounds.length - 1]?.height ?? 0;
     const maxYAxisLabelWidth = Math.max(0, ...yAxisLabelMockBounds.map((b) => b.width));
 
     // the top y-axis label is vertically centred with the top grid line, so we need half of
