@@ -23,8 +23,9 @@ function getTransformedBBox(el: SVGGraphicsElement): DOMRect {
 
 function generateTickValues(min: number, max: number, step: number): number[] {
   const output: number[] = [];
-  // using the count guarantees we get the right amount of steps, rather than looping from $min to $max in $step increments,
-  // which can result in the last tick being missed because of problems with floating point precision (e.g. 0.1 + 0.2 = 0.30000000000000004)
+  // using the count guarantees we get the right amount of steps, rather than looping from $min to $max in $step
+  // increments, which can result in the last tick being missed because of problems with floating point precision
+  // (i.e. the same problem that causes 0.1 + 0.2 = 0.30000000000000004)
   const stepCount = Math.ceil((max - min) / step) + 1;
   for (let i = 0; i < stepCount; ++i) {
     output.push(min + step * i);
