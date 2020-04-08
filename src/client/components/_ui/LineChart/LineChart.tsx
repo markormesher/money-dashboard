@@ -1,18 +1,11 @@
 import * as React from "react";
 import * as ReactDOMServer from "react-dom/server";
 import { PureComponent, ReactNode, RefObject } from "react";
+import { getTransformedBBox, generateTickValues } from "../../_commons/charts/utils";
 import { combine } from "../../../helpers/style-helpers";
 import * as style from "./LineChart.scss";
 
 // exported interfaces
-
-interface ILineChartAxisProperties {
-  readonly valueRenderer?: (value: number) => string;
-  readonly forcedValues?: number[];
-  readonly axisLabelClass?: string;
-  readonly approxTickCount?: number;
-  readonly forceAxisRangeToBeExact?: boolean;
-}
 
 interface ILineChartProps {
   readonly series: ILineChartSeries[];
@@ -20,6 +13,14 @@ interface ILineChartProps {
   readonly yAxisProperties?: ILineChartAxisProperties;
   readonly svgClass?: string;
   readonly gridLineClass?: string;
+}
+
+interface ILineChartAxisProperties {
+  readonly valueRenderer?: (value: number) => string;
+  readonly forcedValues?: number[];
+  readonly axisLabelClass?: string;
+  readonly approxTickCount?: number;
+  readonly forceAxisRangeToBeExact?: boolean;
 }
 
 interface ILineChartSeries {
@@ -94,19 +95,20 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     this.svgRef = React.createRef();
 
     this.handleResize = this.handleResize.bind(this);
+    this.triggerRerender = this.triggerRerender.bind(this);
 
     this.getTotalSvgSize = this.getTotalSvgSize.bind(this);
     this.calculateExtents = this.calculateExtents.bind(this);
     this.calculateDrawingBounds = this.calculateDrawingBounds.bind(this);
     this.convertDataPointToPixelCoord = this.convertDataPointToPixelCoord.bind(this);
 
-    this.triggerRerender = this.triggerRerender.bind(this);
     this.renderGridLines = this.renderGridLines.bind(this);
     this.renderAxisLabels = this.renderAxisLabels.bind(this);
     this.renderSeriesPath = this.renderSeriesPath.bind(this);
   }
 
   public componentDidMount(): void {
+    // TODO: watch the actual SVG for size changes, not just the window
     window.addEventListener("resize", this.handleResize);
   }
 
@@ -137,15 +139,6 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       max += 1;
       min -= 1;
     }
-
-    const generateTickValues = (min: number, max: number, step: number): number[] => {
-      const output: number[] = [];
-      const stepCount = Math.ceil((max - min) / step) + 1;
-      for (let i = 0; i < stepCount; ++i) {
-        output.push(min + step * i);
-      }
-      return output;
-    };
 
     const range = max - min;
     const roughStep = range / (targetStepCount - 1);
@@ -198,21 +191,28 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       minYValue = Math.min(minYValue, ...yAxisProperties.forcedValues);
     }
 
-    // note: total size is used below rather than chart area size to estimate tick count because the chart area isn't
-    // known until ticks are created
+    // note: default approx tick count is estimated as (SVG size / px per tick) - 1; it would be better to use (chart size / px per tick) but the chart
+    // size isn't known until after ticks are created. the estimate assumes that the gutter will be roughly the size of one tick (hence the -1), which
+    // produces a close enough result. the result is forced to be >= 2 so there is always at least a start and end tick.
+    const defaultXAxisTickCount = Math.max(
+      2,
+      Math.floor(this.getTotalSvgSize().totalWidth / this.approxPxPerXAxisTick) - 1,
+    );
+    const defaultYAxisTickCount = Math.max(
+      2,
+      Math.floor(this.getTotalSvgSize().totalHeight / this.approxPxPerYAxisTick) - 1,
+    );
 
     const xAxisTickValues = LineChart.calculateAxisTickValues(
       minXValue,
       maxXValue,
-      xAxisProperties.approxTickCount ||
-        Math.max(2, Math.floor(this.getTotalSvgSize().totalWidth / this.approxPxPerXAxisTick) - 1),
+      xAxisProperties.approxTickCount || defaultXAxisTickCount,
       xAxisProperties.forceAxisRangeToBeExact,
     );
     const yAxisTickValues = LineChart.calculateAxisTickValues(
       minYValue,
       maxYValue,
-      yAxisProperties.approxTickCount ||
-        Math.max(2, Math.floor(this.getTotalSvgSize().totalHeight / this.approxPxPerYAxisTick) - 1),
+      yAxisProperties.approxTickCount || defaultYAxisTickCount,
       yAxisProperties.forceAxisRangeToBeExact,
     );
 
@@ -235,28 +235,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   private calculateDrawingBounds(): void {
     const { totalWidth, totalHeight } = this.getTotalSvgSize();
 
-    const matrixXY = (m: DOMMatrix, x: number, y: number): { x: number; y: number } => {
-      return {
-        x: x * m.a + y * m.c + m.e,
-        y: x * m.b + y * m.d + m.f,
-      };
-    };
-
-    const getTransformedBBox = (el: SVGGraphicsElement): DOMRect => {
-      const matrix = el.getCTM();
-      const bounds = el.getBBox();
-      const transformedPoints = [
-        matrixXY(matrix, bounds.x, bounds.y),
-        matrixXY(matrix, bounds.x + bounds.width, bounds.y),
-        matrixXY(matrix, bounds.x + bounds.width, bounds.y + bounds.height),
-        matrixXY(matrix, bounds.x, bounds.y + bounds.height),
-      ];
-      const maxX = Math.max(...transformedPoints.map((p) => p.x));
-      const minX = Math.min(...transformedPoints.map((p) => p.x));
-      const maxY = Math.max(...transformedPoints.map((p) => p.y));
-      const minY = Math.min(...transformedPoints.map((p) => p.y));
-      return new DOMRect(minX, minY, maxX - minX, maxY - minY);
-    };
+    // mocks: exact copies of the axis labels that are inserted into the DOM (out of sight), measured and then removed
 
     const xAxisLabelMockBounds: DOMRect[] = [];
     const yAxisLabelMockBounds: DOMRect[] = [];
@@ -266,15 +245,13 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     document.body.append(mockHolder);
 
     mockHolder.innerHTML = ReactDOMServer.renderToStaticMarkup(<>{this.renderAxisLabels("x", true)}</>);
-    let mockHolderChildren = mockHolder.children;
-    for (let i = 0; i < mockHolderChildren.length; ++i) {
-      xAxisLabelMockBounds.push(getTransformedBBox(mockHolderChildren.item(i) as SVGTextElement));
+    for (let i = 0; i < mockHolder.children.length; ++i) {
+      xAxisLabelMockBounds.push(getTransformedBBox(mockHolder.children.item(i) as SVGTextElement));
     }
 
     mockHolder.innerHTML = ReactDOMServer.renderToStaticMarkup(<>{this.renderAxisLabels("y", true)}</>);
-    mockHolderChildren = mockHolder.children;
-    for (let i = 0; i < mockHolderChildren.length; ++i) {
-      yAxisLabelMockBounds.push(mockHolderChildren.item(i).getBoundingClientRect());
+    for (let i = 0; i < mockHolder.children.length; ++i) {
+      yAxisLabelMockBounds.push(getTransformedBBox(mockHolder.children.item(i) as SVGTextElement));
     }
 
     document.body.removeChild(mockHolder);
@@ -283,12 +260,15 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     const firstXAxisLabelRotationSpill = xAxisLabelMockBounds.length ? xAxisLabelMockBounds[0].left * -1 : 0;
     const maxXAxisLabelHeight = Math.max(0, ...xAxisLabelMockBounds.map((b) => b.height));
     const maxXAxisLabelRotationSpill = -1 * Math.min(0, ...xAxisLabelMockBounds.map((b) => b.left));
+
+    const lastYAxisLabelHeight = yAxisLabelMockBounds.length
+      ? yAxisLabelMockBounds[yAxisLabelMockBounds.length - 1].height
+      : 0;
     const maxYAxisLabelWidth = Math.max(0, ...yAxisLabelMockBounds.map((b) => b.width));
-    const maxYAxisLabelHeight = Math.max(0, ...yAxisLabelMockBounds.map((b) => b.height));
 
     // the top y-axis label is vertically centred with the top grid line, so we need half of
     // its height in the top gutter so the top half of the text is visible
-    const topGutter = maxYAxisLabelHeight * 0.5;
+    const topGutter = lastYAxisLabelHeight * 0.5;
 
     // the bottom gutter needs to fit the tallest x-axis label plus the margin applied, minus the spill
     // amount they are shifted up by
@@ -303,8 +283,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       firstXAxisLabelWidth - firstXAxisLabelRotationSpill - this.gridLineBleed,
     );
 
-    // x-axis labels are shifted right by half of their rotated height relative to their grid
-    // lines, so we need a gutter of that width to avoid clipping the text
+    // x-axis labels are shifted right by their rotation spill, so we need that amount of gutter on the
+    // right to avoid clipping
     const rightGutter = maxXAxisLabelRotationSpill;
 
     this.drawingBounds = {
@@ -344,6 +324,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   public render(): ReactNode {
+    // re-calc these every time the component renders, because every update could change the results
     this.calculateExtents();
     this.calculateDrawingBounds();
 
@@ -419,13 +400,13 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
         x = 0;
         y = 0;
       } else {
-        const mockBounds = axisMockBounds[idx] || new DOMRect(0, 0, 0, 0);
+        const mockBounds = axisMockBounds[idx] ?? new DOMRect(0, 0, 0, 0);
 
         if (axis === "x") {
           const dataPosition = this.convertDataPointToPixelCoord({ x: value, y: this.extents.yAxisTickValues.min });
 
           // the mock text is drawn with its left edge at 0, so the position of the left edge of the rotated
-          // box tells us how far past 0 the it spills
+          // box tells us how far past 0 it has spilled
           const rotationSpill = mockBounds.left * -1;
 
           x = dataPosition.x - mockBounds.width + 2 * rotationSpill;
@@ -446,7 +427,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
           x={x}
           y={y}
         >
-          {axisProperties?.valueRenderer(value) || value}
+          {axisProperties?.valueRenderer(value) ?? value}
         </text>,
       );
     });
@@ -469,6 +450,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     if (!series.fillEnabled) {
       return strokeElement;
     } else {
+      // the fill is anchored to the zero-line on the y-axis if it exists, otherwise to the top of the chart
+      // if all data is below zero, otherwise the bottom of the chart if all data is above zero
       const yMin = this.extents.yAxisTickValues.min;
       const yMax = this.extents.yAxisTickValues.max;
       const yAnchorPoint = yMin > 0 ? yMin : yMax < 0 ? yMax : 0;
