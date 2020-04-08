@@ -191,9 +191,10 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       minYValue = Math.min(minYValue, ...yAxisProperties.forcedValues);
     }
 
-    // note: default approx tick count is estimated as (SVG size / px per tick) - 1; it would be better to use (chart size / px per tick) but the chart
-    // size isn't known until after ticks are created. the estimate assumes that the gutter will be roughly the size of one tick (hence the -1), which
-    // produces a close enough result. the result is forced to be >= 2 so there is always at least a start and end tick.
+    // note: default approx tick count is estimated as (SVG size / px per tick) - 1; it would be better to use
+    // (chart size / px per tick) but the chart size isn't known until after ticks are created. the estimate assumes
+    // that the gutter will be roughly the size of one tick (hence the -1), which produces a close enough result.
+    // the result is forced to be >= 2 so there is always at least a start and end tick.
     const defaultXAxisTickCount = Math.max(
       2,
       Math.floor(this.getTotalSvgSize().totalWidth / this.approxPxPerXAxisTick) - 1,
