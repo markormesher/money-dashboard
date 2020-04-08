@@ -136,8 +136,14 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     }
 
     if (max === min) {
+      // guarantee we have some range
       max += 1;
       min -= 1;
+    }
+
+    if (targetStepCount < 2) {
+      // guarantee we have at least a start and end point
+      targetStepCount = 2;
     }
 
     const range = max - min;
@@ -194,15 +200,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     // note: default approx tick count is estimated as (SVG size / px per tick) - 1; it would be better to use
     // (chart size / px per tick) but the chart size isn't known until after ticks are created. the estimate assumes
     // that the gutter will be roughly the size of one tick (hence the -1), which produces a close enough result.
-    // the result is forced to be >= 2 so there is always at least a start and end tick.
-    const defaultXAxisTickCount = Math.max(
-      2,
-      Math.floor(this.getTotalSvgSize().totalWidth / this.approxPxPerXAxisTick) - 1,
-    );
-    const defaultYAxisTickCount = Math.max(
-      2,
-      Math.floor(this.getTotalSvgSize().totalHeight / this.approxPxPerYAxisTick) - 1,
-    );
+    const defaultXAxisTickCount = Math.floor(this.getTotalSvgSize().totalWidth / this.approxPxPerXAxisTick) - 1;
+    const defaultYAxisTickCount = Math.floor(this.getTotalSvgSize().totalHeight / this.approxPxPerYAxisTick) - 1;
 
     const xAxisTickValues = LineChart.calculateAxisTickValues(
       minXValue,
@@ -228,8 +227,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   private getTotalSvgSize(): { totalWidth: number; totalHeight: number } {
-    const totalWidth = this.svgRef.current?.width.baseVal.value || 0;
-    const totalHeight = this.svgRef.current?.height.baseVal.value || 0;
+    const totalWidth = this.svgRef.current?.width.baseVal.value ?? 0;
+    const totalHeight = this.svgRef.current?.height.baseVal.value ?? 0;
     return { totalWidth, totalHeight };
   }
 
