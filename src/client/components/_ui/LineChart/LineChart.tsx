@@ -448,8 +448,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     if (!series.fillEnabled) {
       return strokeElement;
     } else {
-      // the fill is anchored to the zero-line on the y-axis if it exists, otherwise to the top of the chart
-      // if all data is below zero, otherwise the bottom of the chart if all data is above zero
+      // the fill is anchored to the zero-line on the y-axis if it exists, or to the top of the chart
+      // if all data is below zero, or the bottom of the chart if all data is above zero
       const yMin = this.extents.yAxisTickValues.min;
       const yMax = this.extents.yAxisTickValues.max;
       const yAnchorPoint = yMin > 0 ? yMin : yMax < 0 ? yMax : 0;
