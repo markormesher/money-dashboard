@@ -1,7 +1,5 @@
-import { ChartDataSets } from "chart.js";
-
 interface IBalanceHistoryData {
-  readonly datasets: ChartDataSets[];
+  readonly balanceDataPoints: Array<{ x: number; y: number }>;
   readonly minTotal: number;
   readonly maxTotal: number;
   readonly minDate: number;
