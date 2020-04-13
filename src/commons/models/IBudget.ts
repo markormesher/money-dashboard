@@ -1,13 +1,14 @@
-import * as Moment from "moment";
-import { ICategory, mapCategoryFromApi } from "./ICategory";
-import { IProfile, mapProfileFromApi } from "./IProfile";
+import { startOfMonth, endOfMonth } from "date-fns";
+import { convertUtcDateToLocal, convertLocalDateToUtc } from "../utils/dates";
+import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "./ICategory";
+import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 
 interface IBudget {
   readonly id: string;
   readonly type: "budget" | "bill";
   readonly amount: number;
-  readonly startDate: Moment.Moment;
-  readonly endDate: Moment.Moment;
+  readonly startDate: number;
+  readonly endDate: number;
   readonly deleted: boolean;
 
   readonly category: ICategory;
@@ -18,8 +19,8 @@ const DEFAULT_BUDGET: IBudget = {
   id: undefined,
   amount: 0,
   type: "budget",
-  startDate: Moment().startOf("month"),
-  endDate: Moment().endOf("month"),
+  startDate: startOfMonth(new Date()).getTime(),
+  endDate: endOfMonth(new Date()).getTime(),
   deleted: false,
 
   category: undefined,
@@ -33,12 +34,27 @@ function mapBudgetFromApi(budget?: IBudget): IBudget {
 
   return {
     ...budget,
-    startDate: Moment(budget.startDate),
-    endDate: Moment(budget.endDate),
+    startDate: convertUtcDateToLocal(budget.startDate),
+    endDate: convertUtcDateToLocal(budget.endDate),
 
     category: mapCategoryFromApi(budget.category),
     profile: mapProfileFromApi(budget.profile),
   };
 }
 
-export { IBudget, DEFAULT_BUDGET, mapBudgetFromApi };
+function mapBudgetForApi(budget?: IBudget): IBudget {
+  if (!budget) {
+    return undefined;
+  }
+
+  return {
+    ...budget,
+    startDate: convertLocalDateToUtc(budget.startDate),
+    endDate: convertLocalDateToUtc(budget.endDate),
+
+    category: mapCategoryForApi(budget.category), // TODO
+    profile: mapProfileForApi(budget.profile), // TODO
+  };
+}
+
+export { IBudget, DEFAULT_BUDGET, mapBudgetFromApi, mapBudgetForApi };

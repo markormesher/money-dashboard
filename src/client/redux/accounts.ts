@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { IAccount, mapAccountFromApi } from "../../commons/models/IAccount";
+import { IAccount, mapAccountFromApi, mapAccountForApi } from "../../commons/models/IAccount";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
@@ -124,7 +124,7 @@ function* deleteAccountSaga(): Generator {
 function* saveAccountSaga(): Generator {
   yield takeEvery(AccountActions.START_SAVE_ACCOUNT, function*(action: PayloadAction): Generator {
     try {
-      const account: Partial<IAccount> = action.payload.account;
+      const account: Partial<IAccount> = mapAccountForApi(action.payload.account);
       const accountId = account.id || "";
       yield all([put(setEditorBusy(true)), call(() => axios.post(`/api/accounts/edit/${accountId}`, account))]);
       yield all([

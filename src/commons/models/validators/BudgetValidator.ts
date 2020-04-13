@@ -1,4 +1,3 @@
-import * as Moment from "moment";
 import { IBudget } from "../IBudget";
 import { validateDateRange } from "./DateRangeValidator";
 
@@ -65,8 +64,8 @@ function validateBudget(budget: IBudget): IBudgetValidationResult {
   }
 
   const dateRangeValidationResult = validateDateRange({
-    startDate: budget.startDate as Moment.Moment,
-    endDate: budget.endDate as Moment.Moment,
+    startDate: budget.startDate,
+    endDate: budget.endDate,
   });
   if (dateRangeValidationResult.errors.startDate) {
     result = {

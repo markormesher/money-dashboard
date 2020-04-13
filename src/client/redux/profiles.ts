@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { IProfile } from "../../commons/models/IProfile";
+import { IProfile, mapProfileForApi } from "../../commons/models/IProfile";
 import { startLoadCurrentUser } from "./auth";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -100,7 +100,7 @@ function* deleteProfileSaga(): Generator {
 function* saveProfileSaga(): Generator {
   yield takeEvery(ProfileActions.START_SAVE_PROFILE, function*(action: PayloadAction): Generator {
     try {
-      const profile: Partial<IProfile> = action.payload.profile;
+      const profile: Partial<IProfile> = mapProfileForApi(action.payload.profile);
       const profileId = profile.id || "";
       yield all([put(setEditorBusy(true)), call(() => axios.post(`/api/profiles/edit/${profileId}`, profile))]);
       yield all([

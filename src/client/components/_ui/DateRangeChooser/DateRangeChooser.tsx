@@ -1,7 +1,7 @@
 import { faCalendar, faCheck } from "@fortawesome/pro-light-svg-icons";
-import * as Moment from "moment";
 import * as React from "react";
 import { Component, CSSProperties, MouseEvent, ReactNode, RefObject } from "react";
+import { startOfMonth, endOfMonth, addMonths, startOfYear, endOfYear, addYears, subYears, isSameDay } from "date-fns";
 import { IDateRange } from "../../../../commons/models/IDateRange";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../../helpers/formatters";
@@ -11,14 +11,14 @@ import { IconBtn } from "../IconBtn/IconBtn";
 import * as styles from "./DateRangeChooser.scss";
 
 interface IDateRangeChooserProps {
-  readonly startDate?: Moment.Moment;
-  readonly endDate?: Moment.Moment;
+  readonly startDate?: number;
+  readonly endDate?: number;
   readonly includeFuturePresets?: boolean;
   readonly includeCurrentPresets?: boolean;
   readonly includeYearToDatePreset?: boolean;
   readonly includeAllTimePreset?: boolean;
   readonly customPresets?: IDateRange[];
-  readonly onValueChange?: (start: Moment.Moment, end: Moment.Moment) => void;
+  readonly onValueChange?: (start: number, end: number) => void;
   readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
   readonly setPosition?: boolean;
 }
@@ -26,8 +26,8 @@ interface IDateRangeChooserProps {
 interface IDateRangeChooserState {
   readonly chooserOpen: boolean;
   readonly customRangeChooserOpen: boolean;
-  readonly customRangeStart: Moment.Moment;
-  readonly customRangeEnd: Moment.Moment;
+  readonly customRangeStart: number;
+  readonly customRangeEnd: number;
   readonly usingCustomRange: boolean;
 }
 
@@ -43,41 +43,33 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
     return ([
       includeCurrentPresets !== false && {
         label: "This Month",
-        startDate: Moment().startOf("month"),
-        endDate: Moment().endOf("month"),
+        startDate: startOfMonth(new Date()).getTime(),
+        endDate: endOfMonth(new Date()).getTime(),
       },
       includeFuturePresets !== false && {
         label: "Next Month",
-        startDate: Moment()
-          .add(1, "month")
-          .startOf("month"),
-        endDate: Moment()
-          .add(1, "month")
-          .endOf("month"),
+        startDate: startOfMonth(addMonths(new Date(), 1)).getTime(),
+        endDate: endOfMonth(addMonths(new Date(), 1)).getTime(),
       },
       includeCurrentPresets !== false && {
         label: "This Year",
-        startDate: Moment().startOf("year"),
-        endDate: Moment().endOf("year"),
+        startDate: startOfYear(new Date()).getTime(),
+        endDate: endOfYear(new Date()).getTime(),
       },
       includeFuturePresets !== false && {
         label: "Next Year",
-        startDate: Moment()
-          .add(1, "year")
-          .startOf("year"),
-        endDate: Moment()
-          .add(1, "year")
-          .endOf("year"),
+        startDate: startOfYear(addYears(new Date(), 1)).getTime(),
+        endDate: endOfYear(addYears(new Date(), 1)).getTime(),
       },
       includeYearToDatePreset !== false && {
         label: "Year to Date",
-        startDate: Moment().subtract(1, "year"),
-        endDate: Moment(),
+        startDate: subYears(new Date(), 1).getTime(),
+        endDate: new Date().getTime(),
       },
       includeAllTimePreset !== false && {
         label: "All Time",
-        startDate: Moment(new Date(1970, 0, 1)),
-        endDate: Moment(),
+        startDate: 0,
+        endDate: new Date().getTime(),
       },
       ...(customPresets || []),
     ] as Array<boolean | IDateRange>).filter((a) => a !== false) as IDateRange[];
@@ -116,7 +108,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
     const { chooserOpen } = this.state;
 
     const matchingRanges = dateRanges.filter((dr) => {
-      return dr.startDate.isSame(startDate, "day") && dr.endDate.isSame(endDate, "day");
+      return isSameDay(dr.startDate, startDate) && isSameDay(dr.endDate, endDate);
     });
     const label = matchingRanges.length
       ? matchingRanges[0].label
@@ -198,8 +190,8 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
     return (
       <button
         key={`range-${dateRange.label}`}
-        data-start={dateRange.startDate.toISOString()}
-        data-end={dateRange.endDate.toISOString()}
+        data-start={dateRange.startDate}
+        data-end={dateRange.endDate}
         onClick={this.handlePresetSubmit}
         className={combine(bs.btn, bs.btnOutlineDark)}
       >
@@ -223,13 +215,13 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
   }
 
   private handlePresetSubmit(evt: MouseEvent<HTMLButtonElement>): void {
-    const start = evt.currentTarget.attributes.getNamedItem("data-start").value;
-    const end = evt.currentTarget.attributes.getNamedItem("data-end").value;
+    const start = parseInt(evt.currentTarget.attributes.getNamedItem("data-start").value);
+    const end = parseInt(evt.currentTarget.attributes.getNamedItem("data-end").value);
     this.setState({
       usingCustomRange: false,
     });
     if (this.props.onValueChange) {
-      this.props.onValueChange(Moment(start), Moment(end));
+      this.props.onValueChange(start, end);
     }
     this.closeChooser();
   }
@@ -240,11 +232,11 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
     });
   }
 
-  private handleCustomRangeStartChange(value: Moment.Moment): void {
+  private handleCustomRangeStartChange(value: number): void {
     this.setState({ customRangeStart: value });
   }
 
-  private handleCustomRangeEndChange(value: Moment.Moment): void {
+  private handleCustomRangeEndChange(value: number): void {
     this.setState({ customRangeEnd: value });
   }
 
@@ -264,14 +256,11 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 
   private customRangeIsValid(): boolean {
     const { customRangeStart, customRangeEnd } = this.state;
-    if (!customRangeStart || !customRangeEnd) {
+    if ((!customRangeStart && customRangeStart !== 0) || (!customRangeEnd && customRangeEnd !== 0)) {
       return false;
     }
 
-    const startAsMoment = Moment(customRangeStart);
-    const endAsMoment = Moment(customRangeEnd);
-
-    return startAsMoment.isValid() && endAsMoment.isValid() && startAsMoment.isBefore(endAsMoment);
+    return customRangeStart <= customRangeEnd;
   }
 
   private getChooserPosition(): CSSProperties {

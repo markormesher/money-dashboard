@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import * as Moment from "moment";
+import { parseISO } from "date-fns";
 import { DEFAULT_BUDGET } from "../../commons/models/IBudget";
 import {
   BudgetActions,
@@ -42,8 +42,8 @@ describe(__filename, () => {
 
   describe("startCloneBudgets()", () => {
     const ids = ["test-id"];
-    const start = Moment("2018-01-01");
-    const end = Moment("2018-01-02");
+    const start = parseISO("2018-01-01").getTime();
+    const end = parseISO("2018-01-02").getTime();
 
     it("should generate an action with the correct type", () => {
       startCloneBudgets(ids, start, end).type.should.equal(BudgetActions.START_CLONE_BUDGETS);

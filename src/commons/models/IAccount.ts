@@ -1,6 +1,6 @@
-import { mapEntitiesFromApi } from "../utils/entities";
-import { IProfile, mapProfileFromApi } from "./IProfile";
-import { ITransaction, mapTransactionFromApi } from "./ITransaction";
+import { mapEntities } from "../utils/entities";
+import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
+import { ITransaction, mapTransactionFromApi, mapTransactionForApi } from "./ITransaction";
 
 interface IAccount {
   readonly id: string;
@@ -31,9 +31,23 @@ function mapAccountFromApi(account?: IAccount): IAccount {
 
   return {
     ...account,
+
     profile: mapProfileFromApi(account.profile),
-    transactions: mapEntitiesFromApi(mapTransactionFromApi, account.transactions),
+    transactions: mapEntities(mapTransactionFromApi, account.transactions),
   };
 }
 
-export { IAccount, DEFAULT_ACCOUNT, mapAccountFromApi };
+function mapAccountForApi(account?: IAccount): IAccount {
+  if (!account) {
+    return undefined;
+  }
+
+  return {
+    ...account,
+
+    profile: mapProfileForApi(account.profile),
+    transactions: mapEntities(mapTransactionForApi, account.transactions),
+  };
+}
+
+export { IAccount, DEFAULT_ACCOUNT, mapAccountFromApi, mapAccountForApi };

@@ -1,4 +1,3 @@
-import * as Moment from "moment";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -243,14 +242,14 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
     );
   }
 
-  private handleTransactionDateChange(value: Moment.Moment): void {
+  private handleTransactionDateChange(value: number): void {
     this.updateModel({
       transactionDate: value,
       effectiveDate: value,
     });
   }
 
-  private handleEffectiveDateChange(value: Moment.Moment): void {
+  private handleEffectiveDateChange(value: number): void {
     this.updateModel({ effectiveDate: value });
   }
 

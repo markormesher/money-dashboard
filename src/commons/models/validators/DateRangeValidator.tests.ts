@@ -1,13 +1,13 @@
 import { describe } from "mocha";
-import * as Moment from "moment";
+import { parseISO } from "date-fns";
 import { IDateRange } from "../IDateRange";
 import { validateDateRange } from "./DateRangeValidator";
 
 describe(__filename, () => {
   describe("validateDateRange()", () => {
     const VALID_DATE_RANGE: IDateRange = {
-      startDate: Moment("2018-01-01"),
-      endDate: Moment("2018-01-31"),
+      startDate: parseISO("2018-01-01").getTime(),
+      endDate: parseISO("2018-01-31").getTime(),
     };
 
     it("should accept a valid range", () => {
@@ -29,28 +29,20 @@ describe(__filename, () => {
     });
 
     it("should reject a range with no start date", () => {
-      const result = validateDateRange({ ...VALID_DATE_RANGE, startDate: undefined });
-      result.isValid.should.equal(false);
-      result.errors.should.have.keys("startDate");
-      result.errors.startDate.should.not.equal("");
-    });
-
-    it("should reject a range with an invalid start date", () => {
-      const result = validateDateRange({ ...VALID_DATE_RANGE, startDate: Moment("2018-01-40") });
+      const result = validateDateRange({
+        ...VALID_DATE_RANGE,
+        startDate: undefined,
+      });
       result.isValid.should.equal(false);
       result.errors.should.have.keys("startDate");
       result.errors.startDate.should.not.equal("");
     });
 
     it("should reject a range with no end date", () => {
-      const result = validateDateRange({ ...VALID_DATE_RANGE, endDate: undefined });
-      result.isValid.should.equal(false);
-      result.errors.should.have.keys("endDate");
-      result.errors.endDate.should.not.equal("");
-    });
-
-    it("should reject a range with an invalid end date", () => {
-      const result = validateDateRange({ ...VALID_DATE_RANGE, endDate: Moment("2018-01-40") });
+      const result = validateDateRange({
+        ...VALID_DATE_RANGE,
+        endDate: undefined,
+      });
       result.isValid.should.equal(false);
       result.errors.should.have.keys("endDate");
       result.errors.endDate.should.not.equal("");
@@ -59,8 +51,8 @@ describe(__filename, () => {
     it("should reject a range with start == end", () => {
       const result = validateDateRange({
         ...VALID_DATE_RANGE,
-        startDate: Moment("2018-01-01"),
-        endDate: Moment("2018-01-01"),
+        startDate: parseISO("2018-01-01").getTime(),
+        endDate: parseISO("2018-01-01").getTime(),
       });
       result.isValid.should.equal(false);
       result.errors.should.have.keys(["startDate", "endDate"]);
@@ -71,8 +63,8 @@ describe(__filename, () => {
     it("should reject a range with start > end", () => {
       const result = validateDateRange({
         ...VALID_DATE_RANGE,
-        startDate: Moment("2018-01-02"),
-        endDate: Moment("2018-01-01"),
+        startDate: parseISO("2018-01-02").getTime(),
+        endDate: parseISO("2018-01-01").getTime(),
       });
       result.isValid.should.equal(false);
       result.errors.should.have.keys(["startDate", "endDate"]);

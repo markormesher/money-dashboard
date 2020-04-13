@@ -1,7 +1,6 @@
-import * as Moment from "moment";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { IBudget } from "../../../commons/models/IBudget";
-import { MomentDateTransformer } from "../MomentDateTransformer";
+import { BigIntTransformer } from "../BigIntTransformer";
 import { BaseModel } from "./BaseModel";
 import { DbCategory } from "./DbCategory";
 import { DbProfile } from "./DbProfile";
@@ -23,16 +22,16 @@ class DbBudget extends BaseModel implements IBudget {
   public amount: number;
 
   @Column({
-    type: "integer",
-    transformer: new MomentDateTransformer(),
+    type: "bigint",
+    transformer: new BigIntTransformer(),
   })
-  public startDate: Moment.Moment;
+  public startDate: number;
 
   @Column({
-    type: "integer",
-    transformer: new MomentDateTransformer(),
+    type: "bigint",
+    transformer: new BigIntTransformer(),
   })
-  public endDate: Moment.Moment;
+  public endDate: number;
 
   @Column({ default: false })
   public deleted: boolean;

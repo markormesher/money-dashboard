@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { shallow } from "enzyme";
 import { describe, it } from "mocha";
-import * as Moment from "moment";
+import { parseISO } from "date-fns";
 import { DEFAULT_ACCOUNT } from "../../commons/models/IAccount";
 import { DEFAULT_BUDGET } from "../../commons/models/IBudget";
 import { DEFAULT_CATEGORY } from "../../commons/models/ICategory";
@@ -75,22 +75,12 @@ describe(__filename, () => {
       expect(formatDate(undefined, "system")).to.equal(undefined);
     });
 
-    it("should accept string dates", () => {
-      formatDate("2015-04-01", "system").should.equal("2015-04-01");
+    it("should format dates for the system", () => {
+      formatDate(parseISO("2015-04-01").getTime(), "system").should.equal("2015-04-01");
     });
 
-    it("should accept JS dates", () => {
-      // note: months are 0-indexed
-      formatDate(new Date(2015, 3, 1), "system").should.equal("2015-04-01");
-    });
-
-    it("should accept MomentJS dates", () => {
-      // note: months are 0-indexed
-      formatDate(Moment([2015, 3, 1]), "system").should.equal("2015-04-01");
-    });
-
-    it("should be able to format for users", () => {
-      formatDate(Moment("2015-04-01"), "user").should.equal("01 Apr 2015");
+    it("should format dates for users", () => {
+      formatDate(parseISO("2015-04-01").getTime(), "user").should.equal("01 Apr 2015");
     });
   });
 
@@ -209,41 +199,69 @@ describe(__filename, () => {
   });
 
   describe("getBudgetPeriodType()", () => {
-    it("should determine month periods", () => {
-      getBudgetPeriodType(Moment("2018-01-01"), Moment("2018-01-31")).should.equal("month");
-      getBudgetPeriodType(Moment("2018-02-01"), Moment("2018-02-28")).should.equal("month");
+    it("should detect normal month periods", () => {
+      getBudgetPeriodType(parseISO("2018-01-01").getTime(), parseISO("2018-01-31").getTime()).should.equal("month");
     });
 
-    it("should determine calendar year periods", () => {
-      getBudgetPeriodType(Moment("2018-01-01"), Moment("2018-12-31")).should.equal("calendar year");
+    it("should detect leap year month periods", () => {
+      // non-leap
+      getBudgetPeriodType(parseISO("2019-02-01").getTime(), parseISO("2019-02-28").getTime()).should.equal("month");
+
+      // leap
+      getBudgetPeriodType(parseISO("2020-02-01").getTime(), parseISO("2020-02-29").getTime()).should.equal("month");
+      getBudgetPeriodType(parseISO("2020-02-01").getTime(), parseISO("2020-02-28").getTime()).should.not.equal("month");
     });
 
-    it("should determine tax year periods", () => {
-      getBudgetPeriodType(Moment("2017-04-06"), Moment("2018-04-05")).should.equal("tax year");
+    it("should not detect month periods when the year does not match", () => {
+      getBudgetPeriodType(parseISO("2018-01-01").getTime(), parseISO("2019-01-31").getTime()).should.not.equal("month");
+    });
+
+    it("should detect calendar year periods", () => {
+      getBudgetPeriodType(parseISO("2018-01-01").getTime(), parseISO("2018-12-31").getTime()).should.equal(
+        "calendar year",
+      );
+    });
+
+    it("should not detect calendar year periods when the year does not match", () => {
+      getBudgetPeriodType(parseISO("2018-01-01").getTime(), parseISO("2019-12-31").getTime()).should.not.equal(
+        "calendar year",
+      );
+    });
+
+    it("should detect tax year periods", () => {
+      getBudgetPeriodType(parseISO("2017-04-06").getTime(), parseISO("2018-04-05").getTime()).should.equal("tax year");
+    });
+
+    it("should not detect tax year periods when the year does not match", () => {
+      getBudgetPeriodType(parseISO("2017-04-06").getTime(), parseISO("2019-04-05").getTime()).should.not.equal(
+        "tax year",
+      );
     });
 
     it("should return 'other' if the period is not month/year/tax year", () => {
-      getBudgetPeriodType(Moment("2018-01-01"), Moment("2018-01-02")).should.equal("other");
+      getBudgetPeriodType(parseISO("2018-01-01").getTime(), parseISO("2018-01-02").getTime()).should.equal("other");
     });
   });
 
   describe("formatBudgetPeriod()", () => {
     it("should format month periods", () => {
-      formatBudgetPeriod(Moment("2018-01-01"), Moment("2018-01-31")).should.equal("Jan, 2018");
-      formatBudgetPeriod(Moment("2018-02-01"), Moment("2018-02-28")).should.equal("Feb, 2018");
+      formatBudgetPeriod(parseISO("2018-01-01").getTime(), parseISO("2018-01-31").getTime()).should.equal("Jan, 2018");
+      formatBudgetPeriod(parseISO("2018-02-01").getTime(), parseISO("2018-02-28").getTime()).should.equal("Feb, 2018");
     });
 
     it("should format calendar year periods", () => {
-      formatBudgetPeriod(Moment("2018-01-01"), Moment("2018-12-31")).should.equal("2018");
+      formatBudgetPeriod(parseISO("2018-01-01").getTime(), parseISO("2018-12-31").getTime()).should.equal("2018");
     });
 
     it("should format tax year periods", () => {
-      formatBudgetPeriod(Moment("2017-04-06"), Moment("2018-04-05")).should.equal("2017/2018 tax year");
+      formatBudgetPeriod(parseISO("2017-04-06").getTime(), parseISO("2018-04-05").getTime()).should.equal(
+        "2017/2018 tax year",
+      );
     });
 
     it("should return simple format if the period is not month/year/tax year", () => {
-      formatBudgetPeriod(Moment("2018-01-01"), Moment("2018-01-02")).should.equal(
-        `${formatDate(Moment("2018-01-01"))} to ${formatDate(Moment("2018-01-02"))}`,
+      formatBudgetPeriod(parseISO("2018-01-01").getTime(), parseISO("2018-01-02").getTime()).should.equal(
+        `${formatDate(parseISO("2018-01-01").getTime())} to ${formatDate(parseISO("2018-01-02").getTime())}`,
       );
     });
   });

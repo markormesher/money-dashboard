@@ -4,11 +4,6 @@
 			"path": "./build/client/*",
 			"maxSize": "50kb",
 			"compression": "gzip"
-		},
-		{
-			"path": "./build/client/npm~chart.js*",
-			"maxSize": "100kb",
-			"compression": "gzip"
 		}
 	]
 }

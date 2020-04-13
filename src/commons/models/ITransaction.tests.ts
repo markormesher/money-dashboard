@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { describe } from "mocha";
-import * as Moment from "moment";
+import { parseISO } from "date-fns";
 import { DEFAULT_ACCOUNT } from "./IAccount";
 import { DEFAULT_CATEGORY } from "./ICategory";
 import { DEFAULT_PROFILE } from "./IProfile";
@@ -9,6 +9,7 @@ import {
   getNextTransactionForContinuousCreation,
   ITransaction,
   mapTransactionFromApi,
+  mapTransactionForApi,
 } from "./ITransaction";
 
 describe(__filename, () => {
@@ -25,19 +26,20 @@ describe(__filename, () => {
     it("should not mutate the input", () => {
       mapTransactionFromApi(DEFAULT_TRANSACTION).should.not.equal(DEFAULT_TRANSACTION);
     });
+  });
 
-    it("should map string dates to Moment dates", () => {
-      // clone the default transaction and then change the dates without making typescript angry
-      const transaction = { ...DEFAULT_TRANSACTION };
-      Object.defineProperty(transaction, "effectiveDate", { writable: true, value: "2018-01-01" });
-      Object.defineProperty(transaction, "transactionDate", { writable: true, value: "2018-01-31" });
-      const mappedBudget = mapTransactionFromApi(transaction);
+  describe("mapTransactionForApi()", () => {
+    it("should return undefined for null/undefined/empty-string inputs", () => {
+      expect(mapTransactionForApi(null)).to.equal(undefined);
+      expect(mapTransactionForApi(undefined)).to.equal(undefined);
 
-      (mappedBudget.effectiveDate instanceof Moment).should.equal(true);
-      (mappedBudget.transactionDate instanceof Moment).should.equal(true);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      expect(mapTransactionForApi("")).to.equal(undefined);
+    });
 
-      mappedBudget.effectiveDate.isSame(Moment("2018-01-01")).should.equal(true);
-      mappedBudget.transactionDate.isSame(Moment("2018-01-31")).should.equal(true);
+    it("should not mutate the input", () => {
+      mapTransactionForApi(DEFAULT_TRANSACTION).should.not.equal(DEFAULT_TRANSACTION);
     });
   });
 
@@ -49,8 +51,8 @@ describe(__filename, () => {
     it("should overwrite inputs to match the default transactions (excl. dates and account)", () => {
       const input: ITransaction = {
         id: "id",
-        transactionDate: Moment("2018-01-01"),
-        effectiveDate: Moment("2018-01-02"),
+        transactionDate: parseISO("2018-01-01").getTime(),
+        effectiveDate: parseISO("2018-01-02").getTime(),
         account: DEFAULT_ACCOUNT,
         category: DEFAULT_CATEGORY,
         amount: 100,

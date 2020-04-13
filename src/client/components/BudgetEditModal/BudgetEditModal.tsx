@@ -1,4 +1,3 @@
-import * as Moment from "moment";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -146,8 +145,8 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
             <div className={combine(bs.col, bs.formGroup)}>
               <label>Date Range</label>
               <DateRangeChooser
-                startDate={currentValues.startDate ? (currentValues.startDate as Moment.Moment) : undefined}
-                endDate={currentValues.endDate ? (currentValues.endDate as Moment.Moment) : undefined}
+                startDate={currentValues.startDate ? currentValues.startDate : undefined}
+                endDate={currentValues.endDate ? currentValues.endDate : undefined}
                 includeYearToDatePreset={false}
                 includeAllTimePreset={false}
                 onValueChange={this.handleDateRangeSelection}
@@ -202,7 +201,7 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
     this.updateModel({ amount: parseFloat(value) });
   }
 
-  private handleDateRangeSelection(start: Moment.Moment, end: Moment.Moment): void {
+  private handleDateRangeSelection(start: number, end: number): void {
     this.updateModel({
       startDate: start,
       endDate: end,

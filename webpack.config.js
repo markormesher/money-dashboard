@@ -28,7 +28,7 @@ const babelLoader = {
   loader: "babel-loader",
   options: {
     cacheDirectory: true,
-    plugins: [IS_TEST && "istanbul", "@babel/plugin-syntax-dynamic-import"].filter(notFalse),
+    plugins: [IS_TEST && "istanbul", "@babel/plugin-syntax-dynamic-import", "date-fns"].filter(notFalse),
     presets: [
       [
         "@babel/preset-env",

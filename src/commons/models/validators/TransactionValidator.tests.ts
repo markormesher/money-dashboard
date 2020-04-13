@@ -1,6 +1,6 @@
 import { describe } from "mocha";
-import * as Moment from "moment";
 import { v4 } from "uuid";
+import { parseISO } from "date-fns";
 import { DEFAULT_ACCOUNT } from "../IAccount";
 import { DEFAULT_CATEGORY } from "../ICategory";
 import { DEFAULT_PROFILE } from "../IProfile";
@@ -11,8 +11,8 @@ describe(__filename, () => {
   describe("validateTransaction()", () => {
     const VALID_TRANSACTION: ITransaction = {
       id: v4(),
-      transactionDate: Moment("2018-01-01"),
-      effectiveDate: Moment("2018-01-31"),
+      transactionDate: parseISO("2018-01-01").getTime(),
+      effectiveDate: parseISO("2018-01-31").getTime(),
       payee: "Payee",
       note: "Note",
       amount: 100,
@@ -139,7 +139,7 @@ describe(__filename, () => {
     });
 
     it("should reject a transaction with an invalid transaction date", () => {
-      const result = validateTransaction({ ...VALID_TRANSACTION, transactionDate: Moment("2018-01-40") });
+      const result = validateTransaction({ ...VALID_TRANSACTION, transactionDate: parseISO("2018-01-40").getTime() });
       result.isValid.should.equal(false);
       result.errors.should.have.keys("transactionDate");
       result.errors.transactionDate.should.not.equal("");
@@ -153,7 +153,7 @@ describe(__filename, () => {
     });
 
     it("should reject a transaction with an invalid effective date", () => {
-      const result = validateTransaction({ ...VALID_TRANSACTION, effectiveDate: Moment("2018-01-40") });
+      const result = validateTransaction({ ...VALID_TRANSACTION, effectiveDate: parseISO("2018-01-40").getTime() });
       result.isValid.should.equal(false);
       result.errors.should.have.keys("effectiveDate");
       result.errors.effectiveDate.should.not.equal("");

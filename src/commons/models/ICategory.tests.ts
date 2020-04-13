@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { describe } from "mocha";
-import { DEFAULT_CATEGORY, mapCategoryFromApi } from "./ICategory";
+import { DEFAULT_CATEGORY, mapCategoryFromApi, mapCategoryForApi } from "./ICategory";
 
 describe(__filename, () => {
   describe("mapCategoryFromApi()", () => {
@@ -15,6 +15,21 @@ describe(__filename, () => {
 
     it("should not mutate the input", () => {
       mapCategoryFromApi(DEFAULT_CATEGORY).should.not.equal(DEFAULT_CATEGORY);
+    });
+  });
+
+  describe("mapCategoryForApi()", () => {
+    it("should return undefined for null/undefined/empty-string inputs", () => {
+      expect(mapCategoryForApi(null)).to.equal(undefined);
+      expect(mapCategoryForApi(undefined)).to.equal(undefined);
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      expect(mapCategoryForApi("")).to.equal(undefined);
+    });
+
+    it("should not mutate the input", () => {
+      mapCategoryForApi(DEFAULT_CATEGORY).should.not.equal(DEFAULT_CATEGORY);
     });
   });
 });

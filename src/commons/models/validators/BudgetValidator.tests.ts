@@ -1,6 +1,6 @@
 import { describe } from "mocha";
-import * as Moment from "moment";
 import { v4 } from "uuid";
+import { parseISO } from "date-fns";
 import { IBudget } from "../IBudget";
 import { DEFAULT_CATEGORY } from "../ICategory";
 import { DEFAULT_PROFILE } from "../IProfile";
@@ -12,8 +12,8 @@ describe(__filename, () => {
       id: v4(),
       type: "budget",
       amount: 100,
-      startDate: Moment("2018-01-01"),
-      endDate: Moment("2018-01-31"),
+      startDate: parseISO("2018-01-01").getTime(),
+      endDate: parseISO("2018-01-31").getTime(),
       category: { ...DEFAULT_CATEGORY, id: v4() },
       profile: DEFAULT_PROFILE,
       deleted: false,
@@ -118,7 +118,7 @@ describe(__filename, () => {
     });
 
     it("should reject a budget with an invalid start date", () => {
-      const result = validateBudget({ ...VALID_BUDGET, startDate: Moment("2018-01-40") });
+      const result = validateBudget({ ...VALID_BUDGET, startDate: parseISO("2018-01-40").getTime() });
       result.isValid.should.equal(false);
       result.errors.should.have.keys("startDate");
       result.errors.startDate.should.not.equal("");
@@ -132,7 +132,7 @@ describe(__filename, () => {
     });
 
     it("should reject a budget with an invalid end date", () => {
-      const result = validateBudget({ ...VALID_BUDGET, endDate: Moment("2018-01-40") });
+      const result = validateBudget({ ...VALID_BUDGET, endDate: parseISO("2018-01-40").getTime() });
       result.isValid.should.equal(false);
       result.errors.should.have.keys("endDate");
       result.errors.endDate.should.not.equal("");
@@ -141,8 +141,8 @@ describe(__filename, () => {
     it("should reject a budget with start == end", () => {
       const result = validateBudget({
         ...VALID_BUDGET,
-        startDate: Moment("2018-01-01"),
-        endDate: Moment("2018-01-01"),
+        startDate: parseISO("2018-01-01").getTime(),
+        endDate: parseISO("2018-01-01").getTime(),
       });
       result.isValid.should.equal(false);
       result.errors.should.have.keys(["startDate", "endDate"]);
@@ -153,8 +153,8 @@ describe(__filename, () => {
     it("should reject a budget with start > end", () => {
       const result = validateBudget({
         ...VALID_BUDGET,
-        startDate: Moment("2018-01-02"),
-        endDate: Moment("2018-01-01"),
+        startDate: parseISO("2018-01-02").getTime(),
+        endDate: parseISO("2018-01-01").getTime(),
       });
       result.isValid.should.equal(false);
       result.errors.should.have.keys(["startDate", "endDate"]);

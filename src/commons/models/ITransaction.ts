@@ -1,19 +1,19 @@
-import * as Moment from "moment";
-import { IAccount, mapAccountFromApi } from "./IAccount";
-import { ICategory, mapCategoryFromApi } from "./ICategory";
-import { IProfile, mapProfileFromApi } from "./IProfile";
+import { convertLocalDateToUtc, convertUtcDateToLocal } from "../utils/dates";
+import { IAccount, mapAccountFromApi, mapAccountForApi } from "./IAccount";
+import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "./ICategory";
+import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 
 type DateModeOption = "effective" | "transaction";
 
 interface ITransaction {
   readonly id: string;
-  readonly transactionDate: Moment.Moment;
-  readonly effectiveDate: Moment.Moment;
+  readonly transactionDate: number;
+  readonly effectiveDate: number;
   readonly amount: number;
   readonly payee: string;
   readonly note: string;
   readonly deleted: boolean;
-  readonly creationDate?: Moment.Moment;
+  readonly creationDate?: number;
 
   readonly account: IAccount;
   readonly category: ICategory;
@@ -22,8 +22,8 @@ interface ITransaction {
 
 const DEFAULT_TRANSACTION: ITransaction = {
   id: null,
-  transactionDate: Moment(),
-  effectiveDate: Moment(),
+  transactionDate: new Date().getTime(),
+  effectiveDate: new Date().getTime(),
   amount: 0,
   payee: "",
   note: undefined,
@@ -41,13 +41,28 @@ function mapTransactionFromApi(transaction?: ITransaction): ITransaction {
 
   return {
     ...transaction,
-    transactionDate: Moment(transaction.transactionDate),
-    effectiveDate: Moment(transaction.effectiveDate),
-    creationDate: Moment(transaction.creationDate),
+    transactionDate: convertUtcDateToLocal(transaction.transactionDate),
+    effectiveDate: convertUtcDateToLocal(transaction.effectiveDate),
 
     account: mapAccountFromApi(transaction.account),
     category: mapCategoryFromApi(transaction.category),
     profile: mapProfileFromApi(transaction.profile),
+  };
+}
+
+function mapTransactionForApi(transaction?: ITransaction): ITransaction {
+  if (!transaction) {
+    return undefined;
+  }
+
+  return {
+    ...transaction,
+    transactionDate: convertLocalDateToUtc(transaction.transactionDate),
+    effectiveDate: convertLocalDateToUtc(transaction.effectiveDate),
+
+    account: mapAccountForApi(transaction.account),
+    category: mapCategoryForApi(transaction.category),
+    profile: mapProfileForApi(transaction.profile),
   };
 }
 
@@ -65,5 +80,6 @@ export {
   ITransaction,
   DEFAULT_TRANSACTION,
   mapTransactionFromApi,
+  mapTransactionForApi,
   getNextTransactionForContinuousCreation,
 };

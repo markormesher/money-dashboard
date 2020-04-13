@@ -1,25 +1,22 @@
 import axios, { AxiosResponse } from "axios";
-import { ChartDataSets } from "chart.js";
-import { merge } from "lodash";
-import * as Moment from "moment";
 import * as React from "react";
 import { Component, ReactNode } from "react";
-import { Line, LinearComponentProps } from "react-chartjs-2";
+import { subYears, startOfDay, endOfDay } from "date-fns";
 import { IBalanceHistoryData } from "../../../commons/models/IBalanceHistoryData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { chartColours, defaultDatasetProps, defaultLinearChartOverTimeProps } from "../_commons/reports/ReportDefaults";
 import * as styles from "../_commons/reports/Reports.scss";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
+import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/LineChart";
 
 interface IBalanceHistoryReportState {
-  readonly startDate: Moment.Moment;
-  readonly endDate: Moment.Moment;
+  readonly startDate: number;
+  readonly endDate: number;
   readonly dateMode: DateModeOption;
   readonly data: IBalanceHistoryData;
   readonly loading: boolean;
@@ -27,18 +24,6 @@ interface IBalanceHistoryReportState {
 }
 
 class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
-  private static chartProps: Partial<LinearComponentProps> = merge({}, defaultLinearChartOverTimeProps, {
-    options: {
-      elements: {
-        line: {
-          borderColor: chartColours.blue,
-          backgroundColor: chartColours.blueFaded,
-          fill: "zero",
-        },
-      },
-    },
-  });
-
   // give each remote request an increasing "frame" number so that late arrivals will be dropped
   private frameCounter = 0;
   private lastFrameReceived = 0;
@@ -46,8 +31,8 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      startDate: Moment().subtract(1, "year"),
-      endDate: Moment(),
+      startDate: startOfDay(subYears(new Date(), 1)).getTime(),
+      endDate: endOfDay(new Date()).getTime(),
       dateMode: "transaction",
       data: undefined,
       loading: true,
@@ -64,7 +49,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     this.fetchData();
   }
 
-  public componentDidUpdate(nextProps: {}, nextState: IBalanceHistoryReportState): void {
+  public componentDidUpdate(_: {}, nextState: IBalanceHistoryReportState): void {
     if (
       this.state.startDate !== nextState.startDate ||
       this.state.endDate !== nextState.endDate ||
@@ -120,27 +105,49 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
       return <p>Chart failed to load. Please try again.</p>;
     }
 
-    let datasets: ChartDataSets[] = [
-      {
-        data: [
-          // dummy values to show a blank chart
-          { x: startDate.toDate(), y: 0 },
-          { x: endDate.toDate(), y: 0 },
-        ],
-      },
-    ];
+    const balanceSeriesProps: Omit<ILineChartSeries, "dataPoints"> = {
+      label: "Balance",
+      strokeClass: styles.seriesStrokeBlue,
+      fillClass: styles.seriesFillBlue,
+      fillEnabled: true,
+    };
+
+    let series: ILineChartSeries[];
+
     if (data) {
-      datasets = data.datasets.map((ds) => {
-        return {
-          ...defaultDatasetProps,
-          ...ds,
-        };
-      });
+      series = [
+        {
+          ...balanceSeriesProps,
+          dataPoints: data.balanceDataPoints,
+        },
+      ];
+    } else {
+      series = [
+        {
+          ...balanceSeriesProps,
+          dataPoints: [
+            { x: startDate, y: 0 },
+            { x: endDate, y: 0 },
+          ],
+        },
+      ];
     }
+
+    const chartProps: ILineChartProps = {
+      series,
+      yAxisProperties: {
+        forcedValues: [0],
+        valueRenderer: formatCurrency,
+      },
+      xAxisProperties: {
+        valueRenderer: formatDate,
+        forceAxisRangeToBeExact: true,
+      },
+    };
 
     return (
       <div className={combine(styles.chartContainer, loading && gs.loading)}>
-        <Line {...BalanceHistoryReport.chartProps} data={{ datasets }} />
+        <LineChart {...chartProps} />
       </div>
     );
   }
@@ -163,7 +170,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
               <p>
                 {formatCurrency(minTotal)}
                 <br />
-                <span className={bs.textMuted}>{formatDate(new Date(minDate))}</span>
+                <span className={bs.textMuted}>{formatDate(minDate)}</span>
               </p>
             </div>
             <div className={combine(bs.col6, bs.colMd4)}>
@@ -171,7 +178,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
               <p>
                 {formatCurrency(maxTotal)}
                 <br />
-                <span className={bs.textMuted}>{formatDate(new Date(maxDate))}</span>
+                <span className={bs.textMuted}>{formatDate(maxDate)}</span>
               </p>
             </div>
             <div className={combine(bs.col6, bs.colMd4)}>
@@ -196,7 +203,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     this.setState({ dateMode });
   }
 
-  private handleDateRangeChange(startDate: Moment.Moment, endDate: Moment.Moment): void {
+  private handleDateRangeChange(startDate: number, endDate: number): void {
     this.setState({ startDate, endDate });
   }
 
@@ -209,12 +216,12 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     axios
       .get("/api/reports/balance-history/data", {
         params: {
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
+          startDate: startDate,
+          endDate: endDate,
           dateMode,
         },
       })
-      .then((res: AxiosResponse<ChartDataSets[]>) => res.data)
+      .then((res: AxiosResponse<IBalanceHistoryData>) => res.data)
       .then((res) => this.onDataLoaded(frame, res))
       .catch(() => this.onDataLoadFailed(frame));
   }
@@ -223,9 +230,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
   }
 
-  // TODO: figure out what type rawData should be
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private onDataLoaded(frame: number, rawData: any): void {
+  private onDataLoaded(frame: number, data: IBalanceHistoryData): void {
     if (frame <= this.lastFrameReceived) {
       return;
     }
@@ -235,7 +240,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     this.setState({
       loading: false,
       failed: false,
-      data: rawData,
+      data,
     });
   }
 

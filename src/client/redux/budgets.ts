@@ -1,8 +1,8 @@
 import axios from "axios";
-import { Moment } from "moment";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { IBudget } from "../../commons/models/IBudget";
+import { IBudget, mapBudgetForApi } from "../../commons/models/IBudget";
+import { convertLocalDateToUtc } from "../../commons/utils/dates";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 
@@ -53,13 +53,13 @@ function startSaveBudget(budget: Partial<IBudget>): PayloadAction {
   };
 }
 
-function startCloneBudgets(budgetIds: string[], startDate: Moment, endDate: Moment): PayloadAction {
+function startCloneBudgets(budgetIds: string[], startDate: number, endDate: number): PayloadAction {
   return {
     type: BudgetActions.START_CLONE_BUDGETS,
     payload: {
       budgetIds,
-      startDate,
-      endDate,
+      startDate: convertLocalDateToUtc(startDate),
+      endDate: convertLocalDateToUtc(endDate),
     },
   };
 }
@@ -121,7 +121,7 @@ function* deleteBudgetSaga(): Generator {
 function* saveBudgetSaga(): Generator {
   yield takeEvery(BudgetActions.START_SAVE_BUDGET, function*(action: PayloadAction): Generator {
     try {
-      const budget: Partial<IBudget> = action.payload.budget;
+      const budget: Partial<IBudget> = mapBudgetForApi(action.payload.budget);
       const budgetId = budget.id || "";
       yield all([put(setEditorBusy(true)), call(() => axios.post(`/api/budgets/edit/${budgetId}`, budget))]);
       yield all([

@@ -1,7 +1,6 @@
-import * as Moment from "moment";
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ITransaction } from "../../../commons/models/ITransaction";
-import { MomentDateTransformer } from "../MomentDateTransformer";
+import { BigIntTransformer } from "../BigIntTransformer";
 import { DbAccount } from "./DbAccount";
 import { DbCategory } from "./DbCategory";
 import { DbProfile } from "./DbProfile";
@@ -12,22 +11,21 @@ class DbTransaction extends BaseEntity implements ITransaction {
   public id: string;
 
   @Column({
-    type: "integer",
-    transformer: new MomentDateTransformer(),
+    type: "bigint",
+    transformer: new BigIntTransformer(),
   })
-  public transactionDate: Moment.Moment;
+  public transactionDate: number;
 
   @Column({
-    type: "integer",
-    transformer: new MomentDateTransformer(),
+    type: "bigint",
+    transformer: new BigIntTransformer(),
   })
-  public effectiveDate: Moment.Moment;
+  public effectiveDate: number;
 
   @CreateDateColumn({
     type: "timestamp",
-    transformer: new MomentDateTransformer(),
   })
-  public creationDate: Moment.Moment;
+  public creationDate: number;
 
   @Column({ type: "double precision" })
   public amount: number;

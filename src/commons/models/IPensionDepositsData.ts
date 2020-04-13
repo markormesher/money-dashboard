@@ -1,4 +1,4 @@
-import { mapEntitiesFromApi } from "../utils/entities";
+import { mapEntities } from "../utils/entities";
 import { ICategory, mapCategoryFromApi } from "./ICategory";
 import { IDetailedCategoryBalance } from "./IDetailedCategoryBalance";
 
@@ -15,7 +15,7 @@ function mapPensionDepositsDataFromApi(data?: IPensionDepositsData): IPensionDep
 
   return {
     ...data,
-    allCategories: mapEntitiesFromApi(mapCategoryFromApi, data.allCategories),
+    allCategories: mapEntities(mapCategoryFromApi, data.allCategories),
     // TODO: map categories inside nested data
   };
 }

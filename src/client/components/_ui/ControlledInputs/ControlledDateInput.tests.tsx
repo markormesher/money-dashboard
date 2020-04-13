@@ -1,8 +1,8 @@
 import { mount } from "enzyme";
 import { describe, it } from "mocha";
-import * as Moment from "moment";
 import * as React from "react";
 import * as sinon from "sinon";
+import { parseISO } from "date-fns";
 import { testGlobals } from "../../../../test-utils/global.tests";
 import { voidListener } from "../../../../test-utils/test-helpers";
 import * as bs from "../../../global-styles/Bootstrap.scss";
@@ -160,7 +160,7 @@ describe(__filename, () => {
       <ControlledDateInput id={"test-id"} value={"2015-04-01"} label={"Test Label"} onValueChange={spy} />,
     );
     mountWrapper.find("input").simulate("change", { target: { value: "2015-04-02" } });
-    spy.calledOnceWithExactly(Moment("2015-04-02"), "test-id").should.equal(true);
+    spy.calledOnceWithExactly(parseISO("2015-04-02").getTime(), "test-id").should.equal(true);
   });
 
   it("should call the change listener when the value changes to blank", () => {

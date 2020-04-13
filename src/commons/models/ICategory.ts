@@ -1,7 +1,7 @@
-import { mapEntitiesFromApi } from "../utils/entities";
-import { IBudget, mapBudgetFromApi } from "./IBudget";
-import { IProfile, mapProfileFromApi } from "./IProfile";
-import { ITransaction, mapTransactionFromApi } from "./ITransaction";
+import { mapEntities } from "../utils/entities";
+import { IBudget, mapBudgetFromApi, mapBudgetForApi } from "./IBudget";
+import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
+import { ITransaction, mapTransactionFromApi, mapTransactionForApi } from "./ITransaction";
 
 interface ICategory {
   readonly id: string;
@@ -39,10 +39,24 @@ function mapCategoryFromApi(category?: ICategory): ICategory {
   return {
     ...category,
 
-    budgets: mapEntitiesFromApi(mapBudgetFromApi, category.budgets),
-    transactions: mapEntitiesFromApi(mapTransactionFromApi, category.transactions),
+    budgets: mapEntities(mapBudgetFromApi, category.budgets),
+    transactions: mapEntities(mapTransactionFromApi, category.transactions),
     profile: mapProfileFromApi(category.profile),
   };
 }
 
-export { ICategory, DEFAULT_CATEGORY, mapCategoryFromApi };
+function mapCategoryForApi(category?: ICategory): ICategory {
+  if (!category) {
+    return undefined;
+  }
+
+  return {
+    ...category,
+
+    budgets: mapEntities(mapBudgetForApi, category.budgets),
+    transactions: mapEntities(mapTransactionForApi, category.transactions),
+    profile: mapProfileForApi(category.profile),
+  };
+}
+
+export { ICategory, DEFAULT_CATEGORY, mapCategoryFromApi, mapCategoryForApi };
