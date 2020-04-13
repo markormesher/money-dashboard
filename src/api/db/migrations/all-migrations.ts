@@ -1,9 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueryRunner } from "typeorm";
 import { PostgresNamingStrategy } from "../PostgresNamingStrategy";
+import { getTransactionQueryBuilder } from "../../managers/transaction-manager";
+import { DbTransaction } from "../models/DbTransaction";
 import { IDbMigration } from "./IDbMigration";
 
 const ns = new PostgresNamingStrategy();
+
+function dateIsInBst(input: number): boolean {
+  const date = new Date(input);
+  const y = date.getFullYear();
+  const m = date.getMonth() + 1;
+  const d = date.getDate();
+  switch (y) {
+    case 2017:
+      return (m > 3 || (m === 3 && d >= 26)) && (m < 10 || (m === 10 && d < 29));
+    case 2018:
+      return (m > 3 || (m === 3 && d >= 25)) && (m < 10 || (m === 10 && d < 28));
+    case 2019:
+      return (m > 3 || (m === 3 && d >= 31)) && (m < 10 || (m === 10 && d < 27));
+    case 2020:
+      return (m > 3 || (m === 3 && d >= 29)) && (m < 10 || (m === 10 && d < 25));
+  }
+  throw new Error("dateIsInBst() only accepts dates between 2017 and 2020 inclusive.");
+}
 
 const allMigrations: IDbMigration[] = [
   // create initial tables
@@ -224,6 +244,50 @@ ALTER TABLE transaction
     ALTER COLUMN transaction_date TYPE integer,
     ALTER COLUMN effective_date TYPE integer;
         `);
+    },
+  },
+
+  {
+    migrationNumber: 3,
+    up: async (): Promise<any> => {
+      const oneHourInMs = 60 * 60 * 1000;
+      const transactions = await getTransactionQueryBuilder().getMany();
+      const editPromises: Array<Promise<DbTransaction>> = [];
+      transactions.forEach((t) => {
+        let edited = false;
+        if (dateIsInBst(t.transactionDate)) {
+          t.transactionDate += oneHourInMs;
+          edited = true;
+        }
+        if (dateIsInBst(t.effectiveDate)) {
+          t.effectiveDate += oneHourInMs;
+          edited = true;
+        }
+        if (edited) {
+          editPromises.push(t.save());
+        }
+      });
+      return Promise.all(editPromises);
+    },
+    down: async (): Promise<any> => {
+      const oneHourInMs = 60 * 60 * 1000;
+      const transactions = await getTransactionQueryBuilder().getMany();
+      const editPromises: Array<Promise<DbTransaction>> = [];
+      transactions.forEach((t) => {
+        let edited = false;
+        if (dateIsInBst(t.transactionDate - oneHourInMs)) {
+          t.transactionDate -= oneHourInMs;
+          edited = true;
+        }
+        if (dateIsInBst(t.effectiveDate - oneHourInMs)) {
+          t.effectiveDate -= oneHourInMs;
+          edited = true;
+        }
+        if (edited) {
+          editPromises.push(t.save());
+        }
+      });
+      return Promise.all(editPromises);
     },
   },
 ];
