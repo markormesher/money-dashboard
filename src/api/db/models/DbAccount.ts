@@ -15,6 +15,9 @@ class DbAccount extends BaseModel implements IAccount {
   @Column({ default: "current" })
   public type: string;
 
+  @Column()
+  public note: string;
+
   @Column({ default: true })
   public active: boolean;
 

@@ -24,6 +24,7 @@ import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { AccountEditModal } from "../AccountEditModal/AccountEditModal";
+import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 
 interface IAccountsPageProps {
   readonly cacheTime: number;
@@ -140,7 +141,15 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
   private tableRowRenderer(account: IAccount): ReactElement<void> {
     return (
       <tr key={account.id}>
-        <td>{account.name}</td>
+        <td>
+          {account.name}
+          {account.note && (
+            <>
+              {" "}
+              <InfoIcon hoverText={account.note} />
+            </>
+          )}
+        </td>
         <td>{generateAccountTypeBadge(account)}</td>
         <td>{this.generateActionButtons(account)}</td>
       </tr>

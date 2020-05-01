@@ -11,6 +11,8 @@ import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { combine } from "../../helpers/style-helpers";
+import { ControlledTextArea } from "../_ui/ControlledInputs/ControlledTextArea";
 
 interface IAccountEditModalProps {
   readonly accountToEdit?: IAccount;
@@ -56,6 +58,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
 
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleTypeChange = this.handleTypeChange.bind(this);
+    this.handleNoteChange = this.handleNoteChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.updateModel = this.updateModel.bind(this);
@@ -86,34 +89,46 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
         onCloseRequest={this.handleCancel}
       >
         <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.formGroup}>
-            <ControlledTextInput
-              id={"name"}
-              label={"Name"}
-              placeholder={"Account Name"}
-              value={currentValues.name}
-              onValueChange={this.handleNameChange}
-              disabled={editorBusy}
-              error={errors.name}
-              inputProps={{
-                autoFocus: true,
-              }}
-            />
+          <div className={bs.row}>
+            <div className={combine(bs.col, bs.formGroup)}>
+              <ControlledTextInput
+                id={"name"}
+                label={"Name"}
+                placeholder={"Account Name"}
+                value={currentValues.name}
+                onValueChange={this.handleNameChange}
+                disabled={editorBusy}
+                error={errors.name}
+                inputProps={{
+                  autoFocus: true,
+                }}
+              />
+            </div>
+            <div className={combine(bs.col, bs.formGroup)}>
+              <ControlledSelectInput
+                id="type"
+                label={"Type"}
+                value={currentValues.type}
+                onValueChange={this.handleTypeChange}
+                disabled={editorBusy}
+                error={errors.type}
+              >
+                <option value={"current"}>Current Account</option>
+                <option value={"savings"}>Savings Account</option>
+                <option value={"asset"}>Asset</option>
+                <option value={"other"}>Other</option>
+              </ControlledSelectInput>
+            </div>
           </div>
           <div className={bs.formGroup}>
-            <ControlledSelectInput
-              id="type"
-              label={"Type"}
-              value={currentValues.type}
-              onValueChange={this.handleTypeChange}
+            <ControlledTextArea
+              id={"note"}
+              label={"Note"}
+              value={currentValues.note}
               disabled={editorBusy}
-              error={errors.type}
-            >
-              <option value={"current"}>Current Account</option>
-              <option value={"savings"}>Savings Account</option>
-              <option value={"asset"}>Asset</option>
-              <option value={"other"}>Other</option>
-            </ControlledSelectInput>
+              error={errors.note}
+              onValueChange={this.handleNoteChange}
+            />
           </div>
         </ControlledForm>
       </Modal>
@@ -126,6 +141,10 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
 
   private handleTypeChange(value: string): void {
     this.updateModel({ type: value });
+  }
+
+  private handleNoteChange(value: string): void {
+    this.updateModel({ note: value });
   }
 
   private handleSave(): void {

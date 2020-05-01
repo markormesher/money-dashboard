@@ -290,6 +290,16 @@ ALTER TABLE transaction
       return Promise.all(editPromises);
     },
   },
+
+  {
+    migrationNumber: 4,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account ADD COLUMN note character varying;`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account DROP COLUMN note;`);
+    },
+  },
 ];
 
 export { allMigrations };

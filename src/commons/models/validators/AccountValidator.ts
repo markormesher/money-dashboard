@@ -5,6 +5,7 @@ interface IAccountValidationResult {
   readonly errors: {
     readonly name?: string;
     readonly type?: string;
+    readonly note?: string;
   };
 }
 
