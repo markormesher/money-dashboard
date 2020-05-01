@@ -10,6 +10,7 @@ describe(__filename, () => {
       id: v4(),
       name: "Account",
       type: "current",
+      note: "note",
       active: true,
       transactions: [],
       profile: DEFAULT_PROFILE,

@@ -6,6 +6,7 @@ interface IAccount {
   readonly id: string;
   readonly name: string;
   readonly type: string;
+  readonly note: string;
   readonly active: boolean;
   readonly deleted: boolean;
 
@@ -17,6 +18,7 @@ const DEFAULT_ACCOUNT: IAccount = {
   id: null,
   name: "",
   type: "current",
+  note: "",
   active: true,
   deleted: false,
 

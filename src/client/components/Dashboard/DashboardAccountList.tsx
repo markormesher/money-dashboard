@@ -8,6 +8,7 @@ import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
+import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import * as styles from "./DashboardAccountList.scss";
 
 interface IDashboardAccountListProps {
@@ -71,6 +72,12 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
     return (
       <p key={balance.account.id}>
         {balance.account.name}
+        {balance.account.note && (
+          <>
+            {" "}
+            <InfoIcon hoverText={balance.account.note} />
+          </>
+        )}
         <span className={bs.floatRight}>{formatCurrencyStyled(balance.balance)}</span>
       </p>
     );
