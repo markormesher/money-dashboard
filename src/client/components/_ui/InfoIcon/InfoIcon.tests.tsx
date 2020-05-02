@@ -22,7 +22,7 @@ describe(__filename, () => {
     mountWrapper = mount(<InfoIcon hoverText={"hello"} />);
     mountWrapper
       .find("span")
-      .prop("data-tooltip")
+      .prop("data-tip")
       .should.equal("hello");
   });
 });
