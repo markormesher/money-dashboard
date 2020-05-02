@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ErrorInfo, PureComponent, ReactElement, ReactNode } from "react";
-import * as Loadable from "react-loadable";
+import ReactTooltip from "react-tooltip";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { IUser } from "../../../commons/models/IUser";
@@ -18,6 +18,7 @@ import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { Header } from "../Header/Header";
 import { KeyShortcutModal } from "../KeyShortcutModal/KeyShortcutModal";
 import { Nav } from "../Nav/Nav";
+import { LoginPage } from "../LoginPage/LoginPage";
 import { PensionDepositsReport } from "../PensionDepositsReport/PensionDepositsReport";
 import { ProfilesPage } from "../ProfilesPage/ProfilesPage";
 import { TransactionsPage } from "../TransactionsPage/TransactionsPage";
@@ -45,12 +46,6 @@ function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
     currentPath: state.router.location.pathname,
   };
 }
-
-// most sessions will never see this, so lazy load it
-const LoadableLogin = Loadable({
-  loader: () => import(/* webpackChunkName: "login" */ "../LoginPage/LoginPage").then((result) => result.LoginPage),
-  loading: () => <FullPageSpinner />, // eslint-disable-line react/display-name
-});
 
 class UCApp extends PureComponent<IAppProps, IAppState> {
   constructor(props: IAppProps) {
@@ -91,7 +86,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
     if (!activeUser) {
       return (
         <Switch>
-          <Route exact={true} path="/auth/login" component={LoadableLogin} />
+          <Route exact={true} path="/auth/login" component={LoginPage} />
           <Redirect to="/auth/login" />
         </Switch>
       );
@@ -121,6 +116,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
             </Switch>
           </AppContentWrapper>
         </AppRootWrapper>
+        <ReactTooltip effect={"solid"} multiline={true} />
       </div>
     );
   }

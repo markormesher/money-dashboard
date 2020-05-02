@@ -27,7 +27,9 @@ function getDataForTable<T extends BaseModel>(
   }
 
   filteredQuery = filteredQuery.skip(start).take(length);
-  order.forEach((o) => (filteredQuery = filteredQuery.addOrderBy(o[0], o[1])));
+  order.forEach((o) => {
+    filteredQuery = filteredQuery.addOrderBy(o[0], o[1]);
+  });
 
   return Promise.all([totalQuery.getCount(), filteredQuery.getManyAndCount()]).then(
     ([totalRowCount, [data, filteredRowCount]]) => ({

@@ -13,7 +13,6 @@ import { rootReducers, rootSaga } from "./redux/root";
 
 // "require" forces webpack to include entire stylesheets; "import" only works for named exports
 require("./global-styles/Bootstrap.scss"); // tslint:disable-line:no-var-requires
-require("./global-styles/Cuetip.scss"); // tslint:disable-line:no-var-requires
 require("./global-styles/Global.scss"); // tslint:disable-line:no-var-requires
 
 const history = createBrowserHistory();
