@@ -1,6 +1,7 @@
 import * as React from "react";
 import { ErrorInfo, PureComponent, ReactElement, ReactNode } from "react";
 import * as Loadable from "react-loadable";
+import ReactTooltip from "react-tooltip";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { IUser } from "../../../commons/models/IUser";
@@ -121,6 +122,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
             </Switch>
           </AppContentWrapper>
         </AppRootWrapper>
+        <ReactTooltip effect={"solid"} multiline={true} />
       </div>
     );
   }
