@@ -3,6 +3,7 @@ import { StatusError } from "../../commons/StatusError";
 import { cleanUuid } from "../../commons/utils/entities";
 import { DbTransaction } from "../db/models/DbTransaction";
 import { DbUser } from "../db/models/DbUser";
+import { startOfDay } from "date-fns";
 
 interface ITransactionQueryBuilderOptions {
   readonly withAccount?: boolean;
@@ -56,6 +57,12 @@ function saveTransaction(
   transactionId: string,
   properties: Partial<DbTransaction>,
 ): Promise<DbTransaction> {
+  if (properties.transactionDate) {
+    properties.transactionDate = startOfDay(properties.transactionDate).getTime();
+  }
+  if (properties.effectiveDate) {
+    properties.effectiveDate = startOfDay(properties.effectiveDate).getTime();
+  }
   return getTransaction(user, transactionId).then((transaction) => {
     transaction = DbTransaction.getRepository().merge(transaction || new DbTransaction(), properties);
     transaction.profile = user.activeProfile;

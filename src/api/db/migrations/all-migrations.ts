@@ -300,6 +300,20 @@ ALTER TABLE transaction
       return qr.query(`ALTER TABLE account DROP COLUMN note;`);
     },
   },
+
+  {
+    migrationNumber: 5,
+    up: async (qr): Promise<any> => {
+      // correct all dates to start-of-day
+      return qr.query(
+        `UPDATE transaction SET effective_date = floor(effective_date / 86400000) * 86400000, transaction_date = floor(transaction_date / 86400000) * 86400000;`,
+      );
+    },
+    down: async (): Promise<any> => {
+      // we can't undo this
+      return Promise.resolve();
+    },
+  },
 ];
 
 export { allMigrations };
