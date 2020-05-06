@@ -3,6 +3,7 @@ import { faChartPie, faCheckCircle, faExclamationTriangle } from "@fortawesome/p
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
+import ReactTooltip from "react-tooltip";
 import { IBudgetBalance } from "../../../commons/models/IBudgetBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
@@ -16,6 +17,14 @@ interface IDashboardBudgetListProps {
 }
 
 class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
+  public componentDidMount(): void {
+    ReactTooltip.rebuild();
+  }
+
+  public componentDidUpdate(): void {
+    ReactTooltip.rebuild();
+  }
+
   private static renderGroup(budgetBalances: IBudgetBalance[], title?: string): ReactNode {
     if (budgetBalances.length === 0) {
       return null;
@@ -87,7 +96,7 @@ class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
         <p>
           <strong>{budget.category.name}</strong>
         </p>
-        <div data-tooltip={tooltip}>
+        <div data-tip={tooltip}>
           <div className={bs.progress}>
             <div className={combine(bs.progressBar, barClass)} style={{ width: `${percentSpend * 100}%` }}>
               <span>

@@ -14,6 +14,10 @@ class InfoIcon extends PureComponent<IInfoIconPros> {
     ReactTooltip.rebuild();
   }
 
+  public componentDidUpdate(): void {
+    ReactTooltip.rebuild();
+  }
+
   public render(): ReactNode {
     const { hoverText } = this.props;
     return (
