@@ -5,7 +5,7 @@ import { Component, ReactNode } from "react";
 import { IAccountBalance } from "../../../commons/models/IAccountBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatCurrencyStyled } from "../../helpers/formatters";
+import { formatCurrency, formatCurrencyStyled } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
@@ -45,10 +45,7 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
         {this.renderAccountBalanceList("asset", "Assets")}
         {this.renderAccountBalanceList("other", "Other")}
         <hr />
-        <p>
-          Total
-          <span className={bs.floatRight}>{formatCurrencyStyled(total)}</span>
-        </p>
+        <p className={styles.total}>£{formatCurrency(total)}</p>
       </div>
     );
   }
