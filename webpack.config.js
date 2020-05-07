@@ -188,7 +188,7 @@ const config = {
         minimize: true,
         filename: "[name].css",
       }),
-    IS_PROD &&
+    IS_DEV &&
       new BundleAnalyzerPlugin({
         analyzerMode: "static",
         openAnalyzer: false,
