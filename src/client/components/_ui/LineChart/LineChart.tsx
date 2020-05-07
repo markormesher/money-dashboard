@@ -40,6 +40,7 @@ interface ILineChartDataPoint {
 
 interface ILineChartState {
   readonly triggerRender: number;
+  readonly mouseXOverSvg: number;
 }
 
 interface ILineChartDrawingBounds {
@@ -80,9 +81,12 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
   private drawingBounds: ILineChartDrawingBounds = null;
   private extents: ILineChartExtents = null;
+  private highlightedDataPoints: Array<{ series: ILineChartSeries; dataPoint: ILineChartDataPoint }> = null;
 
   private gridLineBleed = 5;
   private axisLabelMargin = 3;
+  private legendSpacing = 5;
+  private highlightRadius = 3;
   private approxPxPerXAxisTick = 80;
   private approxPxPerYAxisTick = 30;
 
@@ -90,35 +94,52 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     super(props);
     this.state = {
       triggerRender: 0,
+      mouseXOverSvg: -1,
     };
 
     this.svgRef = React.createRef();
 
     this.handleResize = this.handleResize.bind(this);
+    this.handleMouseMoveOverSvg = this.handleMouseMoveOverSvg.bind(this);
+    this.handleMouseLeaveSvg = this.handleMouseLeaveSvg.bind(this);
     this.triggerRerender = this.triggerRerender.bind(this);
 
     this.getTotalSvgSize = this.getTotalSvgSize.bind(this);
     this.calculateExtents = this.calculateExtents.bind(this);
     this.calculateDrawingBounds = this.calculateDrawingBounds.bind(this);
+    this.calculateHighlightedDataPoints = this.calculateHighlightedDataPoints.bind(this);
     this.convertDataPointToPixelCoord = this.convertDataPointToPixelCoord.bind(this);
 
     this.renderGridLines = this.renderGridLines.bind(this);
     this.renderAxisLabels = this.renderAxisLabels.bind(this);
     this.renderSeriesPath = this.renderSeriesPath.bind(this);
+    this.renderHighlightedDataPoints = this.renderHighlightedDataPoints.bind(this);
   }
 
   public componentDidMount(): void {
     // TODO: watch the actual SVG for size changes, not just the window
     window.addEventListener("resize", this.handleResize);
+    this.svgRef.current?.addEventListener("mousemove", this.handleMouseMoveOverSvg);
+    this.svgRef.current?.addEventListener("mouseleave", this.handleMouseLeaveSvg);
   }
 
   public componentWillUnmount(): void {
     window.removeEventListener("resize", this.handleResize);
+    this.svgRef.current?.removeEventListener("mousemove", this.handleMouseMoveOverSvg);
+    this.svgRef.current?.removeEventListener("mouseleave", this.handleMouseLeaveSvg);
   }
 
   private handleResize(): void {
     global.clearTimeout(this.windowResizeDebounceTimeout);
     this.windowResizeDebounceTimeout = global.setTimeout(this.triggerRerender, 20);
+  }
+
+  private handleMouseMoveOverSvg(event: MouseEvent): void {
+    this.setState({ mouseXOverSvg: event.offsetX });
+  }
+
+  private handleMouseLeaveSvg(): void {
+    this.setState({ mouseXOverSvg: -1 });
   }
 
   private triggerRerender(): void {
@@ -301,6 +322,44 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     };
   }
 
+  private calculateHighlightedDataPoints(): void {
+    const { mouseXOverSvg } = this.state;
+    const { series } = this.props;
+
+    if (mouseXOverSvg < 0) {
+      this.highlightedDataPoints = null;
+      return;
+    }
+
+    if (!this.drawingBounds?.chartAreaHeight || !this.drawingBounds?.chartAreaWidth) {
+      this.highlightedDataPoints = null;
+      return;
+    }
+
+    const leftCoord = this.drawingBounds.leftGutter + this.gridLineBleed;
+    const rightCoord = leftCoord + this.drawingBounds.chartAreaWidth;
+
+    const mouseXAsPercentOfDataRange = (mouseXOverSvg - leftCoord) / (rightCoord - leftCoord);
+
+    if (mouseXAsPercentOfDataRange < 0 || mouseXAsPercentOfDataRange > 1) {
+      this.highlightedDataPoints = null;
+      return;
+    }
+
+    this.highlightedDataPoints = [];
+
+    series.forEach((s) => {
+      // find the data point closest to the cursor by looking in terms of % across the X range
+      const minX = Math.min(...s.dataPoints.map((dp) => dp.x));
+      const maxX = Math.max(...s.dataPoints.map((dp) => dp.x));
+      const closestPoint = s.dataPoints
+        .map((dp) => ({ ...dp, p: Math.abs((dp.x - minX) / (maxX - minX) - mouseXAsPercentOfDataRange) }))
+        .sort((a, b) => a.p - b.p)[0];
+
+      this.highlightedDataPoints.push({ series: s, dataPoint: closestPoint });
+    });
+  }
+
   private convertDataPointToPixelCoord(dp: ILineChartDataPoint): { x: number; y: number } {
     const xMin = this.extents.xAxisTickValues.min;
     const xMax = this.extents.xAxisTickValues.max;
@@ -325,6 +384,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     // re-calc these every time the component renders, because every update could change the results
     this.calculateExtents();
     this.calculateDrawingBounds();
+    this.calculateHighlightedDataPoints();
 
     const { series, svgClass } = this.props;
 
@@ -334,6 +394,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
         {this.renderAxisLabels("x")}
         {this.renderAxisLabels("y")}
         {series.map((s, i) => this.renderSeriesPath(i, s))}
+        {this.renderHighlightedDataPoints()}
       </svg>
     );
   }
@@ -469,6 +530,79 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
       return [strokeElement, fillElement];
     }
+  }
+
+  private renderHighlightedDataPoints(): ReactNode {
+    const { yAxisProperties } = this.props;
+
+    if (!this.highlightedDataPoints) {
+      return null;
+    }
+
+    const output: ReactNode[] = [];
+
+    // line height is the height of the tallest y-axis label
+    const legendLineHeight = Math.max(...this.drawingBounds.yAxisLabelMockBounds.map((b) => b.height));
+
+    // width is the gutter width, plus the size of the highlight dot, plus 3 x spacing (left, right, and between the dot and text)
+    const legendWidth = this.drawingBounds.leftGutter + this.legendSpacing * 3 + this.highlightRadius;
+
+    // height is the line height for each line, plus spacing above/below/between them (i.e. num lines + 1)
+    const legendHeight =
+      legendLineHeight * this.highlightedDataPoints.length +
+      this.legendSpacing * (this.highlightedDataPoints.length + 1);
+
+    // position the legend $spacing into the chart area
+    const legendX = this.drawingBounds.leftGutter + this.gridLineBleed + this.legendSpacing;
+    const legendY = this.drawingBounds.topGutter + this.legendSpacing;
+
+    output.push(
+      <rect
+        key={"legend-box"}
+        x={legendX}
+        y={legendY}
+        width={legendWidth}
+        height={legendHeight}
+        className={style.legendBox}
+      />,
+    );
+
+    this.highlightedDataPoints.forEach((h, idx) => {
+      const dataPointCoords = this.convertDataPointToPixelCoord(h.dataPoint);
+
+      const legendDotCX = legendX + this.legendSpacing + this.highlightRadius;
+      const legendDotCY = legendY + this.legendSpacing * (idx + 1) + legendLineHeight * (idx + 0.5);
+      const legendTextX = legendX + this.legendSpacing * 2 + this.highlightRadius * 2;
+      const legendTextY = legendY + this.legendSpacing * (idx + 1) + legendLineHeight * (idx + 0.75);
+
+      output.push(
+        <circle
+          key={`highlight-point-series-${idx}`}
+          cx={dataPointCoords.x}
+          cy={dataPointCoords.y}
+          className={h.series.strokeClass}
+          r={this.highlightRadius}
+        />,
+      );
+
+      output.push(
+        <circle
+          key={`legend-point-series-${idx}`}
+          cx={legendDotCX}
+          cy={legendDotCY}
+          className={h.series.strokeClass}
+          r={this.highlightRadius}
+        />,
+      );
+
+      output.push(
+        <text key={`legend-label-series-${idx}`} x={legendTextX} y={legendTextY} className={style.axisLabel}>
+          {yAxisProperties?.valueRenderer(h.dataPoint.y) ?? h.dataPoint.y}
+        </text>,
+      );
+    });
+
+    return output;
   }
 }
 
