@@ -122,7 +122,10 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   private setStateDebounced(state: Partial<ILineChartState>): void {
     this.pendingSetState = { ...this.pendingSetState, ...state };
     global.clearTimeout(this.setStateDebounceTimeout);
-    global.setTimeout(() => this.setState(this.pendingSetState as ILineChartState), 50);
+    global.setTimeout(() => {
+      this.setState(this.pendingSetState as ILineChartState);
+      this.pendingSetState = {};
+    }, 50);
   }
 
   public componentDidMount(): void {
