@@ -77,6 +77,7 @@ interface ILineChartAxisTickValues {
 
 class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   private svgRef: RefObject<SVGSVGElement>;
+  private svgResizeWatcherTimeout: NodeJS.Timer;
 
   private setStateDebounceTimeout: NodeJS.Timer;
   private pendingSetState: Partial<ILineChartState> = {};
@@ -104,6 +105,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
 
     this.setStateDebounced = this.setStateDebounced.bind(this);
 
+    this.checkSvgForResize = this.checkSvgForResize.bind(this);
     this.handleResize = this.handleResize.bind(this);
     this.handleMouseMoveOverSvg = this.handleMouseMoveOverSvg.bind(this);
     this.handleMouseLeaveSvg = this.handleMouseLeaveSvg.bind(this);
@@ -129,19 +131,24 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   public componentDidMount(): void {
-    // TODO: watch the actual SVG for size changes, not just the window
-    window.addEventListener("resize", this.handleResize);
+    window.requestAnimationFrame(this.checkSvgForResize);
     this.svgRef.current?.addEventListener("mousemove", this.handleMouseMoveOverSvg);
     this.svgRef.current?.addEventListener("mouseleave", this.handleMouseLeaveSvg);
-
-    // get the size on the first render
-    window.requestAnimationFrame(this.handleResize);
   }
 
   public componentWillUnmount(): void {
-    window.removeEventListener("resize", this.handleResize);
+    global.clearTimeout(this.svgResizeWatcherTimeout);
     this.svgRef.current?.removeEventListener("mousemove", this.handleMouseMoveOverSvg);
     this.svgRef.current?.removeEventListener("mouseleave", this.handleMouseLeaveSvg);
+  }
+
+  private checkSvgForResize(): void {
+    const svgWidth = this.svgRef.current?.width.baseVal.value ?? 0;
+    const svgHeight = this.svgRef.current?.height.baseVal.value ?? 0;
+    if (svgWidth !== this.state.svgWidth || svgHeight !== this.state.svgHeight) {
+      this.handleResize();
+    }
+    this.svgResizeWatcherTimeout = global.setTimeout(this.checkSvgForResize, 500);
   }
 
   private handleResize(): void {
