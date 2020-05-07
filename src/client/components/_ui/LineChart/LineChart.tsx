@@ -545,7 +545,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     const legendLineHeight = Math.max(...this.drawingBounds.yAxisLabelMockBounds.map((b) => b.height));
 
     // width is the gutter width, plus the size of the highlight dot, plus 3 x spacing (left, right, and between the dot and text)
-    const legendWidth = this.drawingBounds.leftGutter + this.legendSpacing * 3 + this.highlightRadius;
+    const legendWidth = this.drawingBounds.leftGutter + this.legendSpacing * 3 + this.highlightRadius * 2;
 
     // height is the line height for each line, plus spacing above/below/between them (i.e. num lines + 1)
     const legendHeight =
