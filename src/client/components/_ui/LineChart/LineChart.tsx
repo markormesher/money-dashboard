@@ -39,7 +39,8 @@ interface ILineChartDataPoint {
 // internal interfaces
 
 interface ILineChartState {
-  readonly triggerRender: number;
+  readonly svgWidth: number;
+  readonly svgHeight: number;
   readonly mouseXOverSvg: number;
 }
 
@@ -77,7 +78,8 @@ interface ILineChartAxisTickValues {
 class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   private svgRef: RefObject<SVGSVGElement>;
 
-  private windowResizeDebounceTimeout: NodeJS.Timer;
+  private setStateDebounceTimeout: NodeJS.Timer;
+  private pendingSetState: Partial<ILineChartState> = {};
 
   private drawingBounds: ILineChartDrawingBounds = null;
   private extents: ILineChartExtents = null;
@@ -93,18 +95,19 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   constructor(props: ILineChartProps) {
     super(props);
     this.state = {
-      triggerRender: 0,
+      svgWidth: 0,
+      svgHeight: 0,
       mouseXOverSvg: -1,
     };
 
     this.svgRef = React.createRef();
 
+    this.setStateDebounced = this.setStateDebounced.bind(this);
+
     this.handleResize = this.handleResize.bind(this);
     this.handleMouseMoveOverSvg = this.handleMouseMoveOverSvg.bind(this);
     this.handleMouseLeaveSvg = this.handleMouseLeaveSvg.bind(this);
-    this.triggerRerender = this.triggerRerender.bind(this);
 
-    this.getTotalSvgSize = this.getTotalSvgSize.bind(this);
     this.calculateExtents = this.calculateExtents.bind(this);
     this.calculateDrawingBounds = this.calculateDrawingBounds.bind(this);
     this.calculateHighlightedDataPoints = this.calculateHighlightedDataPoints.bind(this);
@@ -116,11 +119,20 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     this.renderHighlightedDataPoints = this.renderHighlightedDataPoints.bind(this);
   }
 
+  private setStateDebounced(state: Partial<ILineChartState>): void {
+    this.pendingSetState = { ...this.pendingSetState, ...state };
+    global.clearTimeout(this.setStateDebounceTimeout);
+    global.setTimeout(() => this.setState(this.pendingSetState as ILineChartState), 50);
+  }
+
   public componentDidMount(): void {
     // TODO: watch the actual SVG for size changes, not just the window
     window.addEventListener("resize", this.handleResize);
     this.svgRef.current?.addEventListener("mousemove", this.handleMouseMoveOverSvg);
     this.svgRef.current?.addEventListener("mouseleave", this.handleMouseLeaveSvg);
+
+    // get the size on the first render
+    window.requestAnimationFrame(this.handleResize);
   }
 
   public componentWillUnmount(): void {
@@ -130,20 +142,17 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   private handleResize(): void {
-    global.clearTimeout(this.windowResizeDebounceTimeout);
-    this.windowResizeDebounceTimeout = global.setTimeout(this.triggerRerender, 20);
+    const svgWidth = this.svgRef.current?.width.baseVal.value ?? 0;
+    const svgHeight = this.svgRef.current?.height.baseVal.value ?? 0;
+    this.setStateDebounced({ svgWidth, svgHeight });
   }
 
   private handleMouseMoveOverSvg(event: MouseEvent): void {
-    this.setState({ mouseXOverSvg: event.offsetX });
+    this.setStateDebounced({ mouseXOverSvg: event.offsetX });
   }
 
   private handleMouseLeaveSvg(): void {
     this.setState({ mouseXOverSvg: -1 });
-  }
-
-  private triggerRerender(): void {
-    this.setState({ triggerRender: Math.random() });
   }
 
   private static calculateAxisTickValues(
@@ -198,6 +207,7 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
   }
 
   private calculateExtents(): void {
+    const { svgWidth, svgHeight } = this.state;
     const { series, xAxisProperties, yAxisProperties } = this.props;
 
     const allDataPoints: ILineChartDataPoint[] = [];
@@ -221,8 +231,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     // note: default approx tick count is estimated as (SVG size / px per tick) - 1; it would be better to use
     // (chart size / px per tick) but the chart size isn't known until after ticks are created. the estimate assumes
     // that the gutter will be roughly the size of one tick (hence the -1), which produces a close enough result.
-    const defaultXAxisTickCount = Math.floor(this.getTotalSvgSize().totalWidth / this.approxPxPerXAxisTick) - 1;
-    const defaultYAxisTickCount = Math.floor(this.getTotalSvgSize().totalHeight / this.approxPxPerYAxisTick) - 1;
+    const defaultXAxisTickCount = Math.floor(svgWidth / this.approxPxPerXAxisTick) - 1;
+    const defaultYAxisTickCount = Math.floor(svgHeight / this.approxPxPerYAxisTick) - 1;
 
     const xAxisTickValues = LineChart.calculateAxisTickValues(
       minXValue,
@@ -247,14 +257,8 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     };
   }
 
-  private getTotalSvgSize(): { totalWidth: number; totalHeight: number } {
-    const totalWidth = this.svgRef.current?.width.baseVal.value ?? 0;
-    const totalHeight = this.svgRef.current?.height.baseVal.value ?? 0;
-    return { totalWidth, totalHeight };
-  }
-
   private calculateDrawingBounds(): void {
-    const { totalWidth, totalHeight } = this.getTotalSvgSize();
+    const { svgWidth, svgHeight } = this.state;
 
     // mocks: exact copies of the axis labels that are inserted into the DOM (out of sight), measured and then removed
 
@@ -307,16 +311,16 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
     const rightGutter = maxXAxisLabelRotationSpill;
 
     this.drawingBounds = {
-      totalWidth,
-      totalHeight,
+      totalWidth: svgWidth,
+      totalHeight: svgHeight,
       topGutter,
       bottomGutter,
       leftGutter,
       rightGutter,
       xAxisLabelMockBounds,
       yAxisLabelMockBounds,
-      chartAreaWidth: totalWidth - leftGutter - rightGutter - this.gridLineBleed,
-      chartAreaHeight: totalHeight - topGutter - bottomGutter - this.gridLineBleed,
+      chartAreaWidth: svgWidth - leftGutter - rightGutter - this.gridLineBleed,
+      chartAreaHeight: svgHeight - topGutter - bottomGutter - this.gridLineBleed,
       xOffsetFromLeft: leftGutter + this.gridLineBleed,
       yOffsetFromTop: topGutter,
     };
