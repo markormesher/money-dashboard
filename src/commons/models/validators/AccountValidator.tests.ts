@@ -1,6 +1,6 @@
 import { describe } from "mocha";
 import { v4 } from "uuid";
-import { IAccount } from "../IAccount";
+import { IAccount, AccountTag } from "../IAccount";
 import { DEFAULT_PROFILE } from "../IProfile";
 import { validateAccount } from "./AccountValidator";
 
@@ -69,6 +69,13 @@ describe(__filename, () => {
       result.isValid.should.equal(false);
       result.errors.should.have.keys("type");
       result.errors.type.should.not.equal("");
+    });
+
+    it("should reject an account with an invalid tag", () => {
+      const result = validateAccount({ ...VALID_ACCOUNT, tags: ["not a real tag" as AccountTag] }); // force the type here
+      result.isValid.should.equal(false);
+      result.errors.should.have.keys("tags");
+      result.errors.tags.should.not.equal("");
     });
   });
 });
