@@ -43,7 +43,7 @@ function validateAccount(account: IAccount): IAccountValidationResult {
     };
   }
 
-  if (account.tags || !account.tags.every((t) => !!ACCOUNT_TAG_DISPLAY_NAMES[t])) {
+  if (account.tags && !account.tags.every((t) => !!ACCOUNT_TAG_DISPLAY_NAMES[t])) {
     result = {
       isValid: false,
       errors: {
