@@ -83,22 +83,18 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
       },
     ];
 
-    const tagCheckboxes: ReactNode[] = [];
-    Object.entries(ACCOUNT_TAG_DISPLAY_NAMES)
-      .sort((a, b) => a[1].localeCompare(b[1]))
-      .forEach(([tagKey, tagName]) => {
-        tagCheckboxes.push(
-          <div className={bs.col} key={tagKey}>
-            <ControlledCheckboxInput
-              id={`tag-${tagKey}`}
-              label={tagName}
-              checked={currentValues.tags.indexOf(tagKey as AccountTag) >= 0}
-              disabled={editorBusy}
-              onCheckedChange={this.handleTagCheckedChange}
-            />
-          </div>,
-        );
-      });
+    const tags = Object.entries(ACCOUNT_TAG_DISPLAY_NAMES).sort((a, b) => a[1].localeCompare(b[1]));
+    const tagCheckboxes: ReactNode[] = tags.map(([tagKey, tagName]) => (
+      <div className={bs.col} key={tagKey}>
+        <ControlledCheckboxInput
+          id={`tag-${tagKey}`}
+          label={tagName}
+          checked={currentValues.tags.indexOf(tagKey as AccountTag) >= 0}
+          disabled={editorBusy}
+          onCheckedChange={this.handleTagCheckedChange}
+        />
+      </div>
+    ));
 
     return (
       <Modal
