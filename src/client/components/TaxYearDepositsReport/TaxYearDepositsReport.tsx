@@ -212,7 +212,7 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
 
     const validTags: AccountTag[] = ["pension", "isa"];
     const tags = Object.entries(ACCOUNT_TAG_DISPLAY_NAMES)
-      .filter(([key, _]) => validTags.includes(key as AccountTag))
+      .filter(([key]) => validTags.includes(key as AccountTag))
       .sort((a, b) => a[1].localeCompare(b[1]));
 
     return (
