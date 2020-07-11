@@ -2,7 +2,7 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { DEFAULT_ACCOUNT, IAccount } from "../../../commons/models/IAccount";
+import { DEFAULT_ACCOUNT, IAccount, AccountTag, ACCOUNT_TAG_DISPLAY_NAMES } from "../../../commons/models/IAccount";
 import { IAccountValidationResult, validateAccount } from "../../../commons/models/validators/AccountValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { setAccountToEdit, startSaveAccount } from "../../redux/accounts";
@@ -13,6 +13,7 @@ import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { combine } from "../../helpers/style-helpers";
 import { ControlledTextArea } from "../_ui/ControlledInputs/ControlledTextArea";
+import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
 
 interface IAccountEditModalProps {
   readonly accountToEdit?: IAccount;
@@ -58,6 +59,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
 
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleTypeChange = this.handleTypeChange.bind(this);
+    this.handleTagCheckedChange = this.handleTagCheckedChange.bind(this);
     this.handleNoteChange = this.handleNoteChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -80,6 +82,23 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
         onClick: this.handleSave,
       },
     ];
+
+    const tagCheckboxes: ReactNode[] = [];
+    Object.entries(ACCOUNT_TAG_DISPLAY_NAMES)
+      .sort((a, b) => a[1].localeCompare(b[1]))
+      .forEach(([tagKey, tagName]) => {
+        tagCheckboxes.push(
+          <div className={bs.col} key={tagKey}>
+            <ControlledCheckboxInput
+              id={`tag-${tagKey}`}
+              label={tagName}
+              checked={currentValues.tags.indexOf(tagKey as AccountTag) >= 0}
+              disabled={editorBusy}
+              onCheckedChange={this.handleTagCheckedChange}
+            />
+          </div>,
+        );
+      });
 
     return (
       <Modal
@@ -121,6 +140,10 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
             </div>
           </div>
           <div className={bs.formGroup}>
+            <label>Tags</label>
+            <div className={bs.row}>{tagCheckboxes}</div>
+          </div>
+          <div className={bs.formGroup}>
             <ControlledTextArea
               id={"note"}
               label={"Note"}
@@ -141,6 +164,15 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
 
   private handleTypeChange(value: string): void {
     this.updateModel({ type: value });
+  }
+
+  private handleTagCheckedChange(checked: boolean, id: string): void {
+    const tag = id.replace(/^tag-/, "") as AccountTag;
+    if (checked) {
+      this.updateModel({ tags: [...this.state.currentValues.tags, tag] });
+    } else {
+      this.updateModel({ tags: this.state.currentValues.tags.filter((t) => t !== tag) });
+    }
   }
 
   private handleNoteChange(value: string): void {

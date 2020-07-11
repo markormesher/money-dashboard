@@ -1,18 +1,20 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { IDetailedCategoryBalance } from "../../../commons/models/IDetailedCategoryBalance";
-import { IPensionDepositsData } from "../../../commons/models/IPensionDepositsData";
+import { ITaxYearDepositsData } from "../../../commons/models/ITaxYearDepositsData";
 import { DateModeOption, ITransaction } from "../../../commons/models/ITransaction";
 import { getTaxYear, groupBy } from "../../../commons/utils/helpers";
 import { DbUser } from "../../db/models/DbUser";
 import { getTransactionQueryBuilder } from "../../managers/transaction-manager";
 import { requireUser } from "../../middleware/auth-middleware";
+import { AccountTag } from "../../../commons/models/IAccount";
 
 const router = Express.Router();
 
 router.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const dateMode: DateModeOption = req.query.dateMode;
+  const accountTag: AccountTag = req.query.tag as AccountTag;
 
   const getYear = (transaction: ITransaction): number => {
     if (dateMode === "transaction") {
@@ -24,10 +26,11 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 
   getTransactionQueryBuilder({ withAccount: true, withCategory: true })
     .where("transaction.profile_id = :profileId")
-    .andWhere("account.name ILIKE '%pension%'") // TODO: use specific account type
+    .andWhere(":tag = ANY(account.tags)")
     .andWhere("transaction.deleted = FALSE")
     .setParameters({
       profileId: user.activeProfile.id,
+      tag: accountTag,
     })
     .getMany()
     .then((transactions) => {
@@ -59,7 +62,7 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
         allYears,
         allCategories,
         yearData,
-      } as IPensionDepositsData;
+      } as ITaxYearDepositsData;
     })
     .then((data) => res.json(data))
     .catch(next);

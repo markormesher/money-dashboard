@@ -2,10 +2,18 @@ import { mapEntities } from "../utils/entities";
 import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 import { ITransaction, mapTransactionFromApi, mapTransactionForApi } from "./ITransaction";
 
+type AccountTag = "pension" | "isa";
+
+const ACCOUNT_TAG_DISPLAY_NAMES: { [key in AccountTag]: string } = {
+  pension: "Pension",
+  isa: "ISA",
+};
+
 interface IAccount {
   readonly id: string;
   readonly name: string;
   readonly type: string;
+  readonly tags: AccountTag[];
   readonly note: string;
   readonly active: boolean;
   readonly deleted: boolean;
@@ -18,6 +26,7 @@ const DEFAULT_ACCOUNT: IAccount = {
   id: null,
   name: "",
   type: "current",
+  tags: [],
   note: "",
   active: true,
   deleted: false,
@@ -52,4 +61,4 @@ function mapAccountForApi(account?: IAccount): IAccount {
   };
 }
 
-export { IAccount, DEFAULT_ACCOUNT, mapAccountFromApi, mapAccountForApi };
+export { AccountTag, ACCOUNT_TAG_DISPLAY_NAMES, IAccount, DEFAULT_ACCOUNT, mapAccountFromApi, mapAccountForApi };

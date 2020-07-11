@@ -2,8 +2,9 @@ import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { IDetailedCategoryBalance } from "../../../commons/models/IDetailedCategoryBalance";
-import { IPensionDepositsData, mapPensionDepositsDataFromApi } from "../../../commons/models/IPensionDepositsData";
+import { ITaxYearDepositsData, mapTaxYearDepositsDataFromApi } from "../../../commons/models/ITaxYearDepositsData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
+import { AccountTag } from "../../../commons/models/IAccount";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled } from "../../helpers/formatters";
@@ -15,7 +16,7 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 interface IPensionDepositsReportState {
   readonly dateMode: DateModeOption;
   readonly splitValues: boolean;
-  readonly data: IPensionDepositsData;
+  readonly data: ITaxYearDepositsData;
   readonly loading: boolean;
   readonly failed: boolean;
 }
@@ -209,10 +210,10 @@ class PensionDepositsReport extends Component<{}, IPensionDepositsReportState> {
     const frame = ++this.frameCounter;
 
     axios
-      .get("/api/reports/pension-deposits/data", {
-        params: { dateMode },
+      .get("/api/reports/tax-year-deposits/data", {
+        params: { dateMode, tag: "pension" as AccountTag },
       })
-      .then((res: AxiosResponse<IPensionDepositsData>) => mapPensionDepositsDataFromApi(res.data))
+      .then((res: AxiosResponse<ITaxYearDepositsData>) => mapTaxYearDepositsDataFromApi(res.data))
       .then((res) => this.onDataLoaded(frame, res))
       .catch(() => this.onDataLoadFailed(frame));
   }
@@ -221,7 +222,7 @@ class PensionDepositsReport extends Component<{}, IPensionDepositsReportState> {
     this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
   }
 
-  private onDataLoaded(frame: number, rawData: IPensionDepositsData): void {
+  private onDataLoaded(frame: number, rawData: ITaxYearDepositsData): void {
     if (frame <= this.lastFrameReceived) {
       return;
     }

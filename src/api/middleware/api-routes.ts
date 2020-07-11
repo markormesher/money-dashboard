@@ -6,7 +6,7 @@ import { router as CategorySettingsController } from "../controllers/categories"
 import { router as ProfileSettingsController } from "../controllers/profiles";
 import { router as AssetPerformanceReportRouter } from "../controllers/reports/asset-performance";
 import { router as BalanceHistoryReportController } from "../controllers/reports/balance-history";
-import { router as PensionDepositsReportController } from "../controllers/reports/pension-deposits";
+import { router as TaxYearDepositsReportController } from "../controllers/reports/tax-year-deposits";
 import { router as TransactionsController } from "../controllers/transactions";
 
 function setupApiRoutes(app: Express): void {
@@ -17,7 +17,7 @@ function setupApiRoutes(app: Express): void {
   app.use("/api/profiles", ProfileSettingsController);
   app.use("/api/reports/asset-performance", AssetPerformanceReportRouter);
   app.use("/api/reports/balance-history", BalanceHistoryReportController);
-  app.use("/api/reports/pension-deposits", PensionDepositsReportController);
+  app.use("/api/reports/tax-year-deposits", TaxYearDepositsReportController);
   app.use("/api/transactions", TransactionsController);
 }
 
