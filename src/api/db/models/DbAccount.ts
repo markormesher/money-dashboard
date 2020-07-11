@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { IAccount } from "../../../commons/models/IAccount";
+import { IAccount, AccountTag } from "../../../commons/models/IAccount";
 import { BaseModel } from "./BaseModel";
 import { DbProfile } from "./DbProfile";
 import { DbTransaction } from "./DbTransaction";
@@ -14,6 +14,9 @@ class DbAccount extends BaseModel implements IAccount {
 
   @Column({ default: "current" })
   public type: string;
+
+  @Column({ type: "character varying", array: true, default: "{}" })
+  public tags: AccountTag[];
 
   @Column({ nullable: true })
   public note: string;

@@ -1,10 +1,11 @@
-import { IAccount } from "../IAccount";
+import { IAccount, ACCOUNT_TAG_DISPLAY_NAMES } from "../IAccount";
 
 interface IAccountValidationResult {
   readonly isValid: boolean;
   readonly errors: {
     readonly name?: string;
     readonly type?: string;
+    readonly tags?: string;
     readonly note?: string;
   };
 }
@@ -38,6 +39,16 @@ function validateAccount(account: IAccount): IAccountValidationResult {
       errors: {
         ...result.errors,
         type: "A valid account type must be selected",
+      },
+    };
+  }
+
+  if (account.tags && !account.tags.every((t) => !!ACCOUNT_TAG_DISPLAY_NAMES[t])) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        tags: "Only valid tags may be selected",
       },
     };
   }

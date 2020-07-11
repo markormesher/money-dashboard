@@ -314,6 +314,16 @@ ALTER TABLE transaction
       return Promise.resolve();
     },
   },
+
+  {
+    migrationNumber: 6,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account ADD COLUMN tags character varying[] DEFAULT '{}';`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account DROP COLUMN tags;`);
+    },
+  },
 ];
 
 export { allMigrations };

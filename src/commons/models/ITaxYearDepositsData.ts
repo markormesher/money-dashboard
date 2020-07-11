@@ -2,13 +2,13 @@ import { mapEntities } from "../utils/entities";
 import { ICategory, mapCategoryFromApi } from "./ICategory";
 import { IDetailedCategoryBalance } from "./IDetailedCategoryBalance";
 
-interface IPensionDepositsData {
+interface ITaxYearDepositsData {
   readonly allYears: number[];
   readonly allCategories: ICategory[];
   readonly yearData: { readonly [year: number]: { readonly [categoryId: string]: IDetailedCategoryBalance } };
 }
 
-function mapPensionDepositsDataFromApi(data?: IPensionDepositsData): IPensionDepositsData {
+function mapTaxYearDepositsDataFromApi(data?: ITaxYearDepositsData): ITaxYearDepositsData {
   if (!data) {
     return undefined;
   }
@@ -20,4 +20,4 @@ function mapPensionDepositsDataFromApi(data?: IPensionDepositsData): IPensionDep
   };
 }
 
-export { IPensionDepositsData, mapPensionDepositsDataFromApi };
+export { ITaxYearDepositsData, mapTaxYearDepositsDataFromApi };
