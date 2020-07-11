@@ -14,7 +14,7 @@ const router = Express.Router();
 router.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const dateMode: DateModeOption = req.query.dateMode;
-  const accountTag: AccountTag = req.query.tag as AccountTag;
+  const accountTag: AccountTag = req.query.accountTag as AccountTag;
 
   const getYear = (transaction: ITransaction): number => {
     if (dateMode === "transaction") {
@@ -26,11 +26,11 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
 
   getTransactionQueryBuilder({ withAccount: true, withCategory: true })
     .where("transaction.profile_id = :profileId")
-    .andWhere(":tag = ANY(account.tags)")
+    .andWhere(":accountTag = ANY(account.tags)")
     .andWhere("transaction.deleted = FALSE")
     .setParameters({
       profileId: user.activeProfile.id,
-      tag: accountTag,
+      accountTag,
     })
     .getMany()
     .then((transactions) => {

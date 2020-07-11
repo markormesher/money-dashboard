@@ -161,8 +161,8 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
         </div>
 
         <div className={bs.row}>
-          <div className={combine(bs.col12, bs.mb3)}>{this.renderChart()}</div>
           <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderAccountChooser()}</div>
+          <div className={combine(bs.col12, bs.mb3)}>{this.renderChart()}</div>
           {accountId && <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderInfoPanel()}</div>}
         </div>
       </>
