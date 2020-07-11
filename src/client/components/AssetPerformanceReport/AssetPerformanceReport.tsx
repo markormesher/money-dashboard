@@ -1,4 +1,4 @@
-import { faPiggyBank } from "@fortawesome/pro-light-svg-icons";
+import { faWallet } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosResponse } from "axios";
 import * as React from "react";
@@ -161,7 +161,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
         </div>
 
         <div className={bs.row}>
-          <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderAccountChooser()}</div>
+          <div className={combine(bs.col12, bs.mb3)}>{this.renderAccountChooser()}</div>
           <div className={combine(bs.col12, bs.mb3)}>{this.renderChart()}</div>
           {accountId && <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderInfoPanel()}</div>}
         </div>
@@ -297,7 +297,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     return (
       <div className={bs.card}>
         <h5 className={combine(bs.cardHeader, bs.h5)}>
-          <FontAwesomeIcon icon={faPiggyBank} className={bs.mr3} />
+          <FontAwesomeIcon icon={faWallet} className={bs.mr3} />
           Select Account
         </h5>
         <div className={combine(bs.cardBody, gs.cardBody)}>
@@ -320,21 +320,18 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     return (
       <form>
         <div className={bs.row}>
-          <div key={`account-chooser-all`} className={combine(bs.col12, bs.colMd6, bs.mb3)}>
+          <div key={`account-chooser-all`} className={combine(bs.col12, bs.colMd6, bs.colLg3, bs.mb3)}>
             <ControlledRadioInput
               name={"account"}
               id={NULL_UUID}
               value={NULL_UUID}
-              label={"All Accounts"}
+              label={<em>All Accounts</em>}
               checked={accountId === NULL_UUID}
               onValueChange={this.handleAccountChange}
             />
           </div>
-          <div className={combine(bs.col12, bs.mb3)}>
-            <hr className={bs.my0} />
-          </div>
           {accounts.map((ac) => (
-            <div key={`account-chooser-${ac.id}`} className={combine(bs.col12, bs.colMd6, bs.mb3)}>
+            <div key={`account-chooser-${ac.id}`} className={combine(bs.col12, bs.colMd6, bs.colLg3, bs.mb3)}>
               <ControlledRadioInput
                 name={"account"}
                 id={ac.id}
