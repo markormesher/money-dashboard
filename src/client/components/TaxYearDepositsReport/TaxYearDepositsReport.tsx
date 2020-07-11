@@ -210,6 +210,7 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
   private renderAccountTagChooser(): ReactNode {
     const { accountTag } = this.state;
 
+    // tags that are relevant for tax year summaries
     const validTags: AccountTag[] = ["pension", "isa"];
     const tags = Object.entries(ACCOUNT_TAG_DISPLAY_NAMES)
       .filter(([key]) => validTags.includes(key as AccountTag))
