@@ -36,7 +36,12 @@ button {
 
   .header-extras {
     margin-bottom: $spacer * 0.5;
-    overflow-x: scroll;
+  }
+
+  @media (max-width: map-get($grid-breakpoints, "lg")) {
+    .header-extras {
+      overflow-x: scroll;
+    }
   }
 }
 
