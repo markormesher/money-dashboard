@@ -10,20 +10,20 @@ const typeormConf: ConnectionOptions = {
   namingStrategy: new PostgresNamingStrategy(),
   replication: {
     master: {
-      host: "postgres_master",
+      host: "postgres_primary",
       username: "money_dashboard",
       password: getSecret("postgres.password"),
       database: isTest() ? "money_dashboard_test" : "money_dashboard",
     },
     slaves: [
       {
-        host: "postgres_slave_1",
+        host: "postgres_replica_1",
         username: "money_dashboard",
         password: getSecret("postgres.password"),
         database: isTest() ? "money_dashboard_test" : "money_dashboard",
       },
       {
-        host: "postgres_slave_2",
+        host: "postgres_replica_2",
         username: "money_dashboard",
         password: getSecret("postgres.password"),
         database: isTest() ? "money_dashboard_test" : "money_dashboard",
