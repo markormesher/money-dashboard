@@ -160,7 +160,7 @@
     "sinon": "^7.1.0",
     "speed-measure-webpack-plugin": "^1.2.3",
     "style-loader": "^0.23.0",
-    "terser-webpack-plugin": "^1.1.0",
+    "terser-webpack-plugin": "^4.1.0",
     "ts-loader": "^5.0.0",
     "typescript": "^3.8.3",
     "typings-for-css-modules-loader": "^1.7.0",
