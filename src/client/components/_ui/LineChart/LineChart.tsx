@@ -366,11 +366,13 @@ class LineChart extends PureComponent<ILineChartProps, ILineChartState> {
       // find the data point closest to the cursor by looking in terms of % across the X range
       const minX = Math.min(...s.dataPoints.map((dp) => dp.x));
       const maxX = Math.max(...s.dataPoints.map((dp) => dp.x));
-      const closestPoint = s.dataPoints
+      const closestPoints = s.dataPoints
         .map((dp) => ({ ...dp, p: Math.abs((dp.x - minX) / (maxX - minX) - mouseXAsPercentOfDataRange) }))
-        .sort((a, b) => a.p - b.p)[0];
+        .sort((a, b) => a.p - b.p);
 
-      this.highlightedDataPoints.push({ series: s, dataPoint: closestPoint });
+      if (closestPoints.length > 0) {
+        this.highlightedDataPoints.push({ series: s, dataPoint: closestPoints[0] });
+      }
     });
   }
 
