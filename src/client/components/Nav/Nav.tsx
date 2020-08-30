@@ -72,10 +72,11 @@ class UCNav extends PureComponent<INavProps> {
 
   public render(): ReactNode {
     const isOpen = this.props.isOpen;
-    const accounts = this.props.accountList;
 
-    const hasAssetAccounts = accounts && accounts.some((a) => a.type === "asset");
-    const hasTaxYearAccounts = accounts && accounts.some((a) => a.tags.includes("isa") || a.tags.includes("pension"));
+    const accounts = this.props.accountList;
+    const activeAccounts = accounts ? accounts.filter((a) => a.active) : [];
+    const hasAssetAccounts = activeAccounts.some((a) => a.type === "asset");
+    const hasTaxYearAccounts = activeAccounts.some((a) => a.tags.includes("isa") || a.tags.includes("pension"));
 
     const wrapperClasses = combine(
       isOpen || bs.dNone,
