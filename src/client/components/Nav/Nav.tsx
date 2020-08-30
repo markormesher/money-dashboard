@@ -73,9 +73,7 @@ class UCNav extends PureComponent<INavProps> {
   }
 
   public componentDidUpdate(): void {
-    console.log("Did update");
     if (!this.props.accountListIsCached) {
-      console.log("reloading accounts");
       this.props.actions.startLoadAccountList();
     }
   }
