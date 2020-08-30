@@ -40,6 +40,15 @@ enum AccountCacheKeys {
   ACCOUNT_LIST = "AccountCacheKeys.ACCOUNT_LIST",
 }
 
+function accountListIsCached(): boolean {
+  // direct call to library method is deliberately not tested
+  /* istanbul ignore next */
+  return CacheKeyUtil.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [
+    AccountCacheKeys.ACCOUNT_DATA,
+    ProfileCacheKeys.CURRENT_PROFILE,
+  ]);
+}
+
 function startDeleteAccount(account: IAccount): PayloadAction {
   return {
     type: AccountActions.START_DELETE_ACCOUNT,
@@ -160,12 +169,7 @@ function* setAccountActiveSaga(): Generator {
 
 function* loadAccountListSaga(): Generator {
   yield takeEvery(AccountActions.START_LOAD_ACCOUNT_LIST, function*(): Generator {
-    if (
-      CacheKeyUtil.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [
-        AccountCacheKeys.ACCOUNT_DATA,
-        ProfileCacheKeys.CURRENT_PROFILE,
-      ])
-    ) {
+    if (accountListIsCached()) {
       return;
     }
     try {
@@ -250,6 +254,7 @@ export {
   AccountCacheKeys,
   accountsReducer,
   accountsSagas,
+  accountListIsCached,
   startDeleteAccount,
   startSaveAccount,
   startSetAccountActive,
