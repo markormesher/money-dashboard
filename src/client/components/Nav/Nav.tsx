@@ -20,16 +20,20 @@ import { combine } from "../../helpers/style-helpers";
 import { startLogOutCurrentUser } from "../../redux/auth";
 import { IRootState } from "../../redux/root";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
+import { IAccount } from "../../../commons/models/IAccount";
+import { startLoadAccountList } from "../../redux/accounts";
 import * as style from "./Nav.scss";
 import { NavLink } from "./NavLink";
 import { NavSection } from "./NavSection";
 
 interface INavProps {
   readonly isOpen?: boolean;
+  readonly accountList?: IAccount[];
 
   readonly actions?: {
     readonly logout: () => AnyAction;
     readonly pushPath: (path: string) => AnyAction;
+    readonly startLoadAccountList: () => AnyAction;
   };
 }
 
@@ -37,6 +41,7 @@ function mapStateToProps(state: IRootState, props: INavProps): INavProps {
   return {
     ...props,
     isOpen: state.nav.isOpen,
+    accountList: state.accounts.accountList,
   };
 }
 
@@ -46,6 +51,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: INavProps): INavProps {
     actions: {
       logout: (): AnyAction => dispatch(startLogOutCurrentUser()),
       pushPath: (path: string): AnyAction => dispatch(push(path)),
+      startLoadAccountList: (): AnyAction => dispatch(startLoadAccountList()),
     },
   };
 }
@@ -60,8 +66,17 @@ class UCNav extends PureComponent<INavProps> {
     this.handleGoToAssetPerformance = this.handleGoToAssetPerformance.bind(this);
   }
 
+  public componentDidMount(): void {
+    this.props.actions.startLoadAccountList();
+  }
+
   public render(): ReactNode {
     const isOpen = this.props.isOpen;
+    const accounts = this.props.accountList;
+
+    const hasAssetAccounts = accounts && accounts.some((a) => a.type === "asset");
+    const hasTaxYearAccounts = accounts && accounts.some((a) => a.tags.includes("isa") || a.tags.includes("pension"));
+
     const wrapperClasses = combine(
       isOpen || bs.dNone,
       bs.dLgBlock,
@@ -88,8 +103,12 @@ class UCNav extends PureComponent<INavProps> {
 
             <NavSection title="Reports">
               <NavLink to="/reports/balance-history" text="Balance History" icon={faChartLine} />
-              <NavLink to="/reports/asset-performance" text="Asset Performance" icon={faAnalytics} />
-              <NavLink to="/reports/tax-year-deposits" text="Tax Year Deposits" icon={faPiggyBank} />
+              {hasAssetAccounts && (
+                <NavLink to="/reports/asset-performance" text="Asset Performance" icon={faAnalytics} />
+              )}
+              {hasTaxYearAccounts && (
+                <NavLink to="/reports/tax-year-deposits" text="Tax Year Deposits" icon={faPiggyBank} />
+              )}
             </NavSection>
 
             <NavSection title="Settings">
