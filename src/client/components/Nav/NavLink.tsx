@@ -43,7 +43,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: INavLinkProps): INavLinkP
 
 class UCNavLink extends PureComponent<INavLinkProps> {
   private static linkItemClasses = bs.navItem;
-  private static iconClasses = combine(bs.mr2, bs.textMuted);
+  private static iconClasses = combine(bs.mr2, style.navIcon);
 
   constructor(props: INavLinkProps) {
     super(props);

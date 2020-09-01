@@ -16,7 +16,6 @@ export class NavSection extends PureComponent<INavSectionProps> {
     bs.px3,
     bs.mt4,
     bs.mb1,
-    bs.textMuted,
     style.navSectionHeading,
   );
 

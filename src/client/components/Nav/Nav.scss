@@ -3,18 +3,24 @@
 @import "~bootstrap-scss/mixins/breakpoints";
 @import "../Header/Header";
 
-$sidebar-shadow: rgba(0, 0, 0, 0.05);
-$link-colour: #333;
-$active-link-colour: #007bff;
+$nav-bg-gradient: linear-gradient(
+  0deg,
+  rgba(9, 54, 124, 1) 0%,
+  rgba(13, 71, 161, 1) 30%,
+  rgba(66, 133, 244, 1) 100%
+);
+$sidebar-shadow: rgba(0, 0, 0, 0.2);
+$link-colour: #fff;
 
 .sidebar {
   // Collapsed view
   @include media-breakpoint-down(lg) {
     border-bottom: 1px solid $gray-300;
-    box-shadow: 0 5px 20px $sidebar-shadow;
+    box-shadow: 0 0 12px 0 $sidebar-shadow;
     position: static !important;
   }
 
+  background: $nav-bg-gradient;
   bottom: 0;
   left: 0;
   padding: 0;
@@ -39,7 +45,12 @@ $active-link-colour: #007bff;
 
 .nav-section-heading {
   font-size: 0.75rem;
+  color: $link-colour;
   text-transform: uppercase;
+}
+
+.nav-icon {
+  opacity: 0.6;
 }
 
 .nav-link {
@@ -49,7 +60,12 @@ $active-link-colour: #007bff;
   text-overflow: ellipsis;
   white-space: nowrap;
 
+  &:hover,
   &.active {
-    color: $active-link-colour;
+    color: $link-colour;
+
+    .nav-icon {
+      opacity: 1;
+    }
   }
 }

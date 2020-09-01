@@ -1,4 +1,4 @@
-import { faBars, faPoundSign } from "@fortawesome/pro-light-svg-icons";
+import { faBars, faPoundSign, faSack, faMoneyBillWave, faWallet } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
@@ -42,6 +42,9 @@ function mapDispatchToProps(dispatch: Dispatch, props: IHeaderProps): IHeaderPro
 }
 
 class UCHeader extends PureComponent<IHeaderProps> {
+  private static brandIcons = [faPoundSign, faSack, faMoneyBillWave, faWallet];
+  private static icon = UCHeader.brandIcons[Math.floor(Math.random() * UCHeader.brandIcons.length)];
+
   constructor(props: IHeaderProps) {
     super(props);
 
@@ -50,14 +53,14 @@ class UCHeader extends PureComponent<IHeaderProps> {
 
   public render(): ReactNode {
     return (
-      <nav className={combine(bs.navbar, style.navbar, bs.navbarDark, bs.stickyTop, bs.bgDark, bs.flexMdNowrap, bs.p0)}>
-        <Link to="#" onClick={this.toggleNav} className={combine(bs.dInlineBlock, bs.dLgNone, bs.mx2)}>
-          <FontAwesomeIcon icon={faBars} fixedWidth={true} className={style.navToggleIcon} />
+      <nav className={combine(bs.navbar, style.navbar, bs.navbarDark, bs.stickyTop, bs.flexMdNowrap, bs.p0)}>
+        <Link to="/" className={combine(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}>
+          <FontAwesomeIcon icon={UCHeader.icon} fixedWidth={true} className={bs.mr2} />
+          Money Dashboard
         </Link>
 
-        <Link to="/" className={combine(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}>
-          <FontAwesomeIcon icon={faPoundSign} fixedWidth={true} className={combine(bs.textMuted, bs.mr2)} />
-          Money Dashboard
+        <Link to="#" onClick={this.toggleNav} className={combine(bs.dInlineBlock, bs.dLgNone, bs.mx2)}>
+          <FontAwesomeIcon icon={faBars} fixedWidth={true} className={style.navToggleIcon} />
         </Link>
       </nav>
     );
