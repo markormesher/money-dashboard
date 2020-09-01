@@ -1,43 +1,41 @@
 import { faExclamationTriangle } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { PureComponent, ReactElement, ReactNode } from "react";
+import { PureComponent, ReactNode, ReactElement } from "react";
 import { ICategoryBalance } from "../../../commons/models/ICategoryBalance";
-import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatCurrencyStyled } from "../../helpers/formatters";
-import { combine } from "../../helpers/style-helpers";
+import { Card } from "../_ui/Card/Card";
 
 interface IDashboardAlertListProps {
   readonly memoCategoryBalances?: ICategoryBalance[];
 }
 
 class DashboardAlertList extends PureComponent<IDashboardAlertListProps> {
-  private static renderSingleAlert(key: string, msg: string | ReactElement<void>): ReactNode {
-    return (
-      <div key={key} className={combine(bs.alert, bs.alertDanger, bs.mb3)}>
-        <FontAwesomeIcon icon={faExclamationTriangle} className={bs.mr2} />
-        {msg}
-      </div>
-    );
+  private getNonZeroMemos(): ReactElement[] {
+    return (this.props.memoCategoryBalances || [])
+      .filter((mcb) => mcb.balance !== 0)
+      .map((m) => (
+        <>
+          {m.category.name} balance is {formatCurrencyStyled(m.balance)}
+        </>
+      ));
   }
 
   public render(): ReactNode {
-    if (!this.props.memoCategoryBalances) {
+    const allAlerts = [...this.getNonZeroMemos()];
+
+    if (allAlerts.length === 0) {
       return null;
     }
 
-    const nonZeroMemos = this.props.memoCategoryBalances
-      .filter((mcb) => mcb.balance !== 0)
-      .map((m) =>
-        DashboardAlertList.renderSingleAlert(
-          `memo-balance-${m.category.id}`,
-          <>
-            {m.category.name} balance is {formatCurrencyStyled(m.balance)}.
-          </>,
-        ),
-      );
+    const title = `${allAlerts.length} Alert${allAlerts.length === 1 ? "" : "s"}`;
 
-    return <>{nonZeroMemos}</>;
+    return (
+      <Card title={title} icon={faExclamationTriangle}>
+        {allAlerts.map((w, i) => (
+          <p key={i}>{w}</p>
+        ))}
+      </Card>
+    );
   }
 }
 

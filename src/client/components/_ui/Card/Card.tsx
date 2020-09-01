@@ -4,7 +4,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { combine } from "../../../helpers/style-helpers";
 import * as bs from "../../../global-styles/Bootstrap.scss";
-import * as gs from "../../../global-styles/Global.scss";
+import * as style from "./Card.scss";
 
 interface ICardProps {
   readonly title?: string;
@@ -15,14 +15,14 @@ class Card extends PureComponent<ICardProps> {
   public render(): ReactNode {
     const { title, icon, children } = this.props;
     return (
-      <div className={bs.card}>
+      <div className={combine(bs.card, style.card)}>
         {title && (
-          <h5 className={combine(bs.cardHeader, bs.h5)}>
+          <h5 className={combine(bs.cardHeader, style.cardHeader, bs.h5)}>
             {icon && <FontAwesomeIcon icon={icon} className={bs.mr3} />}
             {title}
           </h5>
         )}
-        <div className={combine(bs.cardBody, gs.cardBody)}>{children}</div>
+        <div className={combine(bs.cardBody, style.cardBody)}>{children}</div>
       </div>
     );
   }
