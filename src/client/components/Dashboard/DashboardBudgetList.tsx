@@ -6,10 +6,10 @@ import { PureComponent, ReactNode } from "react";
 import ReactTooltip from "react-tooltip";
 import { IBudgetBalance } from "../../../commons/models/IBudgetBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { formatBudgetPeriod, formatCurrency, getBudgetPeriodType } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
+import { Card } from "../_ui/Card/Card";
 import * as styles from "./DashboardBudgetList.scss";
 
 interface IDashboardBudgetListProps {
@@ -41,19 +41,13 @@ class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
       .sort((a, b) => a.budget.category.name.localeCompare(b.budget.category.name));
 
     return (
-      <div className={combine(bs.card, bs.mb3)}>
-        <h5 className={combine(bs.cardHeader, bs.h5)}>
-          <FontAwesomeIcon icon={faChartPie} className={bs.mr3} />
-          {displayTitle}
-        </h5>
-        <div className={combine(bs.cardBody, gs.cardBody)}>
-          {budgets.length > 0 && (
-            <div className={bs.row}>{budgets.map(DashboardBudgetList.renderSingleBudgetBalance)}</div>
-          )}
-          {budgets.length > 0 && bills.length > 0 && <hr className={combine(bs.mt0, bs.mb3)} />}
-          {bills.length > 0 && <div className={bs.row}>{bills.map(DashboardBudgetList.renderSingleBudgetBalance)}</div>}
-        </div>
-      </div>
+      <Card title={displayTitle} icon={faChartPie}>
+        {budgets.length > 0 && (
+          <div className={bs.row}>{budgets.map(DashboardBudgetList.renderSingleBudgetBalance)}</div>
+        )}
+        {budgets.length > 0 && bills.length > 0 && <hr className={combine(bs.mt0, bs.mb3)} />}
+        {bills.length > 0 && <div className={bs.row}>{bills.map(DashboardBudgetList.renderSingleBudgetBalance)}</div>}
+      </Card>
     );
   }
 

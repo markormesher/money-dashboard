@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { faPiggyBank } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IDetailedCategoryBalance } from "../../../commons/models/IDetailedCategoryBalance";
 import { ITaxYearDepositsData, mapTaxYearDepositsDataFromApi } from "../../../commons/models/ITaxYearDepositsData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
@@ -15,6 +14,7 @@ import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { ControlledRadioInput } from "../_ui/ControlledInputs/ControlledRadioInput";
+import { Card } from "../_ui/Card/Card";
 
 interface ITaxYearDepositsReportState {
   readonly dateMode: DateModeOption;
@@ -217,30 +217,24 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
       .sort((a, b) => a[1].localeCompare(b[1]));
 
     return (
-      <div className={bs.card}>
-        <h5 className={combine(bs.cardHeader, bs.h5)}>
-          <FontAwesomeIcon icon={faPiggyBank} className={bs.mr3} />
-          Select Account Tag
-        </h5>
-        <div className={combine(bs.cardBody, gs.cardBody)}>
-          <form>
-            <div className={bs.row}>
-              {tags.map(([tagKey, tagName]) => (
-                <div key={`account-tag-chooser-${tagKey}`} className={combine(bs.col12, bs.colMd6, bs.mb3)}>
-                  <ControlledRadioInput
-                    name={"account"}
-                    id={tagKey}
-                    value={tagKey}
-                    label={tagName}
-                    checked={accountTag === tagKey}
-                    onValueChange={this.handleAccountTagChange}
-                  />
-                </div>
-              ))}
-            </div>
-          </form>
-        </div>
-      </div>
+      <Card title={"Select Account Tag"} icon={faPiggyBank}>
+        <form>
+          <div className={bs.row}>
+            {tags.map(([tagKey, tagName]) => (
+              <div key={`account-tag-chooser-${tagKey}`} className={combine(bs.col12, bs.colMd6, bs.mb3)}>
+                <ControlledRadioInput
+                  name={"account"}
+                  id={tagKey}
+                  value={tagKey}
+                  label={tagName}
+                  checked={accountTag === tagKey}
+                  onValueChange={this.handleAccountTagChange}
+                />
+              </div>
+            ))}
+          </div>
+        </form>
+      </Card>
     );
   }
 

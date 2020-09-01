@@ -13,6 +13,7 @@ import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/LineChart";
+import { Card } from "../_ui/Card/Card";
 
 interface IBalanceHistoryReportState {
   readonly startDate: number;
@@ -162,40 +163,38 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     const { minTotal, minDate, maxTotal, maxDate, changeAbsolute } = data;
 
     return (
-      <div className={bs.card}>
-        <div className={combine(bs.cardBody, gs.cardBody)}>
-          <div className={combine(bs.row, loading && gs.loading)}>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Minimum:</h6>
-              <p>
-                {formatCurrency(minTotal)}
-                <br />
-                <span className={bs.textMuted}>{formatDate(minDate)}</span>
-              </p>
-            </div>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Maximum:</h6>
-              <p>
-                {formatCurrency(maxTotal)}
-                <br />
-                <span className={bs.textMuted}>{formatDate(maxDate)}</span>
-              </p>
-            </div>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Change:</h6>
-              <p>
-                <RelativeChangeIcon
-                  change={changeAbsolute}
-                  iconProps={{
-                    className: bs.mr2,
-                  }}
-                />
-                {formatCurrency(changeAbsolute)}
-              </p>
-            </div>
+      <Card>
+        <div className={combine(bs.row, loading && gs.loading)}>
+          <div className={combine(bs.col6, bs.colMd4)}>
+            <h6>Minimum:</h6>
+            <p>
+              {formatCurrency(minTotal)}
+              <br />
+              <span className={bs.textMuted}>{formatDate(minDate)}</span>
+            </p>
+          </div>
+          <div className={combine(bs.col6, bs.colMd4)}>
+            <h6>Maximum:</h6>
+            <p>
+              {formatCurrency(maxTotal)}
+              <br />
+              <span className={bs.textMuted}>{formatDate(maxDate)}</span>
+            </p>
+          </div>
+          <div className={combine(bs.col6, bs.colMd4)}>
+            <h6>Change:</h6>
+            <p>
+              <RelativeChangeIcon
+                change={changeAbsolute}
+                iconProps={{
+                  className: bs.mr2,
+                }}
+              />
+              {formatCurrency(changeAbsolute)}
+            </p>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 

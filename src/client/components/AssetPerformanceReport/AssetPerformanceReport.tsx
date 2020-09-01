@@ -1,5 +1,4 @@
 import { faWallet } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
@@ -24,6 +23,7 @@ import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/LineChart";
+import { Card } from "../_ui/Card/Card";
 
 interface IAssetPerformanceReportProps {
   readonly accountList?: IAccount[];
@@ -247,64 +247,56 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     const growthOnlyChange = totalChangeInclGrowth - totalChangeExclGrowth;
 
     return (
-      <div className={bs.card}>
-        <div className={combine(bs.cardBody, gs.cardBody)}>
-          <div className={combine(bs.row, loading && gs.loading)}>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Change Excl. Growth:</h6>
-              <p>
-                <RelativeChangeIcon
-                  change={totalChangeExclGrowth}
-                  iconProps={{
-                    className: bs.mr2,
-                  }}
-                />
-                {formatCurrency(totalChangeExclGrowth)}
-              </p>
-            </div>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Change Incl. Growth:</h6>
-              <p>
-                <RelativeChangeIcon
-                  change={totalChangeInclGrowth}
-                  iconProps={{
-                    className: bs.mr2,
-                  }}
-                />
-                {formatCurrency(totalChangeInclGrowth)}
-              </p>
-            </div>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Net Growth:</h6>
-              <p>
-                <RelativeChangeIcon
-                  change={growthOnlyChange}
-                  iconProps={{
-                    className: bs.mr2,
-                  }}
-                />
-                {formatCurrency(growthOnlyChange)}
-              </p>
-            </div>
+      <Card>
+        <div className={combine(bs.row, loading && gs.loading)}>
+          <div className={combine(bs.col6, bs.colMd4)}>
+            <h6>Change Excl. Growth:</h6>
+            <p>
+              <RelativeChangeIcon
+                change={totalChangeExclGrowth}
+                iconProps={{
+                  className: bs.mr2,
+                }}
+              />
+              {formatCurrency(totalChangeExclGrowth)}
+            </p>
+          </div>
+          <div className={combine(bs.col6, bs.colMd4)}>
+            <h6>Change Incl. Growth:</h6>
+            <p>
+              <RelativeChangeIcon
+                change={totalChangeInclGrowth}
+                iconProps={{
+                  className: bs.mr2,
+                }}
+              />
+              {formatCurrency(totalChangeInclGrowth)}
+            </p>
+          </div>
+          <div className={combine(bs.col6, bs.colMd4)}>
+            <h6>Net Growth:</h6>
+            <p>
+              <RelativeChangeIcon
+                change={growthOnlyChange}
+                iconProps={{
+                  className: bs.mr2,
+                }}
+              />
+              {formatCurrency(growthOnlyChange)}
+            </p>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 
   private renderAccountChooser(): ReactNode {
     const { accountList } = this.props;
     return (
-      <div className={bs.card}>
-        <h5 className={combine(bs.cardHeader, bs.h5)}>
-          <FontAwesomeIcon icon={faWallet} className={bs.mr3} />
-          Select Account
-        </h5>
-        <div className={combine(bs.cardBody, gs.cardBody)}>
-          {!accountList && <LoadingSpinner centre={true} />}
-          {accountList && this.renderAccountInputs()}
-        </div>
-      </div>
+      <Card title={"Select Account"} icon={faWallet}>
+        {!accountList && <LoadingSpinner centre={true} />}
+        {accountList && this.renderAccountInputs()}
+      </Card>
     );
   }
 

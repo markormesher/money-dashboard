@@ -1,14 +1,12 @@
 import { faPiggyBank } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { IAccountBalance } from "../../../commons/models/IAccountBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency, formatCurrencyStyled } from "../../helpers/formatters";
-import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
+import { Card } from "../_ui/Card/Card";
 import * as styles from "./DashboardAccountList.scss";
 
 interface IDashboardAccountListProps {
@@ -23,15 +21,9 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
   public render(): ReactNode {
     const { accountBalances } = this.props;
     return (
-      <div className={bs.card}>
-        <h5 className={combine(bs.cardHeader, bs.h5)}>
-          <FontAwesomeIcon icon={faPiggyBank} className={bs.mr3} />
-          Account Balances
-        </h5>
-        <div className={combine(bs.cardBody, gs.cardBody)}>
-          {(!accountBalances && <LoadingSpinner centre={true} />) || this.renderInner()}
-        </div>
-      </div>
+      <Card title={"Account Balances"} icon={faPiggyBank}>
+        {(!accountBalances && <LoadingSpinner centre={true} />) || this.renderInner()}
+      </Card>
     );
   }
 
