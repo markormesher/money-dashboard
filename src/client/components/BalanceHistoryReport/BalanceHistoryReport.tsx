@@ -14,6 +14,8 @@ import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/LineChart";
 import { Card } from "../_ui/Card/Card";
+import { PageHeader } from "../_ui/PageHeader/PageHeader";
+import { PageOptions } from "../_ui/PageOptions/PageOptions";
 
 interface IBalanceHistoryReportState {
   readonly startDate: number;
@@ -41,7 +43,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     };
 
     this.renderChart = this.renderChart.bind(this);
-    this.renderInfoPanel = this.renderInfoPanel.bind(this);
+    this.renderInfoPanels = this.renderInfoPanels.bind(this);
     this.handleDateModeChange = this.handleDateModeChange.bind(this);
     this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
   }
@@ -61,41 +63,42 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
   }
 
   public render(): ReactNode {
+    return (
+      <>
+        <PageHeader>Balance History</PageHeader>
+        {this.renderOptions()}
+        {this.renderChart()}
+        {this.renderInfoPanels()}
+      </>
+    );
+  }
+
+  private renderOptions(): ReactNode {
     const { startDate, endDate } = this.state;
 
     return (
-      <>
-        <div className={gs.headerWrapper}>
-          <h1 className={bs.h2}>Balance History</h1>
-          <div className={combine(bs.btnGroup, gs.headerExtras)}>
-            <DateModeToggleBtn
-              value={this.state.dateMode}
-              onChange={this.handleDateModeChange}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
+      <PageOptions>
+        <DateModeToggleBtn
+          value={this.state.dateMode}
+          onChange={this.handleDateModeChange}
+          btnProps={{
+            className: combine(bs.btnOutlineInfo, bs.btnSm),
+          }}
+        />
 
-            <DateRangeChooser
-              startDate={startDate}
-              endDate={endDate}
-              onValueChange={this.handleDateRangeChange}
-              includeAllTimePreset={true}
-              includeYearToDatePreset={true}
-              includeFuturePresets={false}
-              setPosition={true}
-              btnProps={{
-                className: combine(bs.btnOutlineDark, bs.btnSm),
-              }}
-            />
-          </div>
-        </div>
-
-        <div className={bs.row}>
-          <div className={combine(bs.col12, bs.mb3)}>{this.renderChart()}</div>
-          <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderInfoPanel()}</div>
-        </div>
-      </>
+        <DateRangeChooser
+          startDate={startDate}
+          endDate={endDate}
+          onValueChange={this.handleDateRangeChange}
+          includeAllTimePreset={true}
+          includeYearToDatePreset={true}
+          includeFuturePresets={false}
+          setPosition={true}
+          btnProps={{
+            className: combine(bs.btnOutlineDark, bs.btnSm),
+          }}
+        />
+      </PageOptions>
     );
   }
 
@@ -147,13 +150,19 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     };
 
     return (
-      <div className={combine(styles.chartContainer, loading && gs.loading)}>
-        <LineChart {...chartProps} />
+      <div className={bs.row}>
+        <div className={combine(bs.col12)}>
+          <Card>
+            <div className={combine(styles.chartContainer, bs.mb3, loading && gs.loading)}>
+              <LineChart {...chartProps} />
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
 
-  private renderInfoPanel(): ReactNode {
+  private renderInfoPanels(): ReactNode {
     const { loading, failed, data } = this.state;
 
     if (failed || !data) {
@@ -162,26 +171,31 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
 
     const { minTotal, minDate, maxTotal, maxDate, changeAbsolute } = data;
 
+    // TODO: apply loading class to text, not wrappers
     return (
-      <Card>
-        <div className={combine(bs.row, loading && gs.loading)}>
-          <div className={combine(bs.col6, bs.colMd4)}>
+      <div className={combine(bs.row, loading && gs.loading)}>
+        <div className={bs.col}>
+          <Card>
             <h6>Minimum:</h6>
             <p>
               {formatCurrency(minTotal)}
               <br />
               <span className={bs.textMuted}>{formatDate(minDate)}</span>
             </p>
-          </div>
-          <div className={combine(bs.col6, bs.colMd4)}>
+          </Card>
+        </div>
+        <div className={bs.col}>
+          <Card>
             <h6>Maximum:</h6>
             <p>
               {formatCurrency(maxTotal)}
               <br />
               <span className={bs.textMuted}>{formatDate(maxDate)}</span>
             </p>
-          </div>
-          <div className={combine(bs.col6, bs.colMd4)}>
+          </Card>
+        </div>
+        <div className={bs.col}>
+          <Card>
             <h6>Change:</h6>
             <p>
               <RelativeChangeIcon
@@ -192,9 +206,9 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
               />
               {formatCurrency(changeAbsolute)}
             </p>
-          </div>
+          </Card>
         </div>
-      </Card>
+      </div>
     );
   }
 

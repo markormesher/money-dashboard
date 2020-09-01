@@ -1,0 +1,12 @@
+@import "~bootstrap-scss/functions";
+@import "~bootstrap-scss/variables";
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  > * {
+    margin: 0 calc(#{$spacer} / 2) $spacer calc(#{$spacer} / 2);
+  }
+}
