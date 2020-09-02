@@ -6,7 +6,7 @@ import { IBalanceHistoryData } from "../../../commons/models/IBalanceHistoryData
 import { DateModeOption } from "../../../commons/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatCurrency, formatDate } from "../../helpers/formatters";
+import { formatCurrency, formatCurrencyForStat, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import * as styles from "../_commons/reports/Reports.scss";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
@@ -16,6 +16,7 @@ import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/L
 import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
+import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 
 interface IBalanceHistoryReportState {
   readonly startDate: number;
@@ -44,6 +45,9 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
 
     this.renderChart = this.renderChart.bind(this);
     this.renderInfoPanels = this.renderInfoPanels.bind(this);
+    this.renderMinimumBalanceInfoPanel = this.renderMinimumBalanceInfoPanel.bind(this);
+    this.renderMaximumBalanceInfoPanel = this.renderMaximumBalanceInfoPanel.bind(this);
+    this.renderOverallChangeInfoPanel = this.renderOverallChangeInfoPanel.bind(this);
     this.handleDateModeChange = this.handleDateModeChange.bind(this);
     this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
   }
@@ -74,12 +78,12 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
   }
 
   private renderOptions(): ReactNode {
-    const { startDate, endDate } = this.state;
+    const { startDate, endDate, dateMode } = this.state;
 
     return (
       <PageOptions>
         <DateModeToggleBtn
-          value={this.state.dateMode}
+          value={dateMode}
           onChange={this.handleDateModeChange}
           btnProps={{
             className: combine(bs.btnOutlineInfo, bs.btnSm),
@@ -163,52 +167,97 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
   }
 
   private renderInfoPanels(): ReactNode {
+    const { failed, data } = this.state;
+
+    if (failed || !data) {
+      return null;
+    }
+
+    return (
+      <div className={bs.row}>
+        <div className={bs.col}>
+          <Card>{this.renderMinimumBalanceInfoPanel()}</Card>
+        </div>
+        <div className={bs.col}>
+          <Card>{this.renderMaximumBalanceInfoPanel()}</Card>
+        </div>
+        <div className={bs.col}>
+          <Card>{this.renderOverallChangeInfoPanel()}</Card>
+        </div>
+      </div>
+    );
+  }
+
+  private renderMinimumBalanceInfoPanel(): ReactNode {
     const { loading, failed, data } = this.state;
 
     if (failed || !data) {
       return null;
     }
 
-    const { minTotal, minDate, maxTotal, maxDate, changeAbsolute } = data;
+    if (loading) {
+      return <LoadingSpinner centre={true} />;
+    }
 
-    // TODO: apply loading class to text, not wrappers
+    const { minTotal, minDate } = data;
+
     return (
-      <div className={combine(bs.row, loading && gs.loading)}>
-        <div className={bs.col}>
-          <Card>
-            <h6>Minimum:</h6>
-            <p>
-              {formatCurrency(minTotal)}
-              <br />
-              <span className={bs.textMuted}>{formatDate(minDate)}</span>
-            </p>
-          </Card>
-        </div>
-        <div className={bs.col}>
-          <Card>
-            <h6>Maximum:</h6>
-            <p>
-              {formatCurrency(maxTotal)}
-              <br />
-              <span className={bs.textMuted}>{formatDate(maxDate)}</span>
-            </p>
-          </Card>
-        </div>
-        <div className={bs.col}>
-          <Card>
-            <h6>Change:</h6>
-            <p>
-              <RelativeChangeIcon
-                change={changeAbsolute}
-                iconProps={{
-                  className: bs.mr2,
-                }}
-              />
-              {formatCurrency(changeAbsolute)}
-            </p>
-          </Card>
-        </div>
-      </div>
+      <>
+        <h6 className={gs.bigStatHeader}>Min Balance</h6>
+        <p className={gs.bigStatValue}>{formatCurrencyForStat(minTotal)}</p>
+        <p className={gs.bigStatContext}>on {formatDate(minDate)}</p>
+      </>
+    );
+  }
+
+  private renderMaximumBalanceInfoPanel(): ReactNode {
+    const { loading, failed, data } = this.state;
+
+    if (failed || !data) {
+      return null;
+    }
+
+    if (loading) {
+      return <LoadingSpinner centre={true} />;
+    }
+
+    const { maxTotal, maxDate } = data;
+
+    return (
+      <>
+        <h6 className={gs.bigStatHeader}>Max Balance</h6>
+        <p className={gs.bigStatValue}>{formatCurrencyForStat(maxTotal)}</p>
+        <p className={gs.bigStatContext}>on {formatDate(maxDate)}</p>
+      </>
+    );
+  }
+
+  private renderOverallChangeInfoPanel(): ReactNode {
+    const { loading, failed, data } = this.state;
+
+    if (failed || !data) {
+      return null;
+    }
+
+    if (loading) {
+      return <LoadingSpinner centre={true} />;
+    }
+
+    const { changeAbsolute } = data;
+
+    return (
+      <>
+        <h6 className={gs.bigStatHeader}>Overall Change</h6>
+        <p className={gs.bigStatValue}>
+          <RelativeChangeIcon
+            change={changeAbsolute}
+            iconProps={{
+              className: bs.mr2,
+            }}
+          />
+          {formatCurrencyForStat(changeAbsolute)}
+        </p>
+      </>
     );
   }
 

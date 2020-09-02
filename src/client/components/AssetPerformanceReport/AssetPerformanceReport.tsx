@@ -1,4 +1,3 @@
-import { faWallet } from "@fortawesome/pro-light-svg-icons";
 import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
@@ -11,7 +10,7 @@ import { DateModeOption } from "../../../commons/models/ITransaction";
 import { NULL_UUID } from "../../../commons/utils/entities";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatCurrency, formatPercent, formatDate } from "../../helpers/formatters";
+import { formatCurrency, formatPercent, formatDate, formatCurrencyForStat } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { startLoadAccountList } from "../../redux/accounts";
 import { IRootState } from "../../redux/root";
@@ -24,6 +23,8 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/LineChart";
 import { Card } from "../_ui/Card/Card";
+import { PageHeader } from "../_ui/PageHeader/PageHeader";
+import { PageOptions } from "../_ui/PageOptions/PageOptions";
 
 interface IAssetPerformanceReportProps {
   readonly accountList?: IAccount[];
@@ -80,8 +81,12 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       failed: false,
     };
 
+    this.renderOptions = this.renderOptions.bind(this);
     this.renderChart = this.renderChart.bind(this);
-    this.renderInfoPanel = this.renderInfoPanel.bind(this);
+    this.renderInfoPanels = this.renderInfoPanels.bind(this);
+    this.renderChangeExclGrowthStatPanel = this.renderChangeExclGrowthStatPanel.bind(this);
+    this.renderChangeInclGrowthStatPanel = this.renderChangeInclGrowthStatPanel.bind(this);
+    this.renderNetGrowthStatPanel = this.renderNetGrowthStatPanel.bind(this);
     this.renderAccountChooser = this.renderAccountChooser.bind(this);
     this.renderAccountInputs = this.renderAccountInputs.bind(this);
     this.handleDateModeChange = this.handleDateModeChange.bind(this);
@@ -110,62 +115,63 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
   }
 
   public render(): ReactNode {
-    const { startDate, endDate, accountId } = this.state;
-
     return (
       <>
-        <div className={gs.headerWrapper}>
-          <h1 className={bs.h2}>Asset Performance</h1>
-          <div className={combine(bs.btnGroup, gs.headerExtras)}>
-            {this.state.zeroBasis && (
-              <CheckboxBtn
-                text={"Show as %"}
-                checked={this.state.showAsPercent}
-                onChange={this.handleShowAsPercentChange}
-                btnProps={{
-                  className: combine(bs.btnOutlineInfo, bs.btnSm),
-                }}
-              />
-            )}
-
-            <CheckboxBtn
-              text={"Zero Basis"}
-              checked={this.state.zeroBasis}
-              onChange={this.handleZeroBasisChange}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
-
-            <DateModeToggleBtn
-              value={this.state.dateMode}
-              onChange={this.handleDateModeChange}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
-
-            <DateRangeChooser
-              startDate={startDate}
-              endDate={endDate}
-              onValueChange={this.handleDateRangeChange}
-              includeAllTimePreset={true}
-              includeYearToDatePreset={true}
-              includeFuturePresets={false}
-              setPosition={true}
-              btnProps={{
-                className: combine(bs.btnOutlineDark, bs.btnSm),
-              }}
-            />
-          </div>
-        </div>
-
-        <div className={bs.row}>
-          <div className={combine(bs.col12, bs.mb3)}>{this.renderAccountChooser()}</div>
-          <div className={combine(bs.col12, bs.mb3)}>{this.renderChart()}</div>
-          {accountId && <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderInfoPanel()}</div>}
-        </div>
+        <PageHeader>Asset Performance</PageHeader>
+        {this.renderOptions()}
+        {this.renderAccountChooser()}
+        {this.renderChart()}
+        {this.renderInfoPanels()}
       </>
+    );
+  }
+
+  private renderOptions(): ReactNode {
+    const { startDate, endDate, dateMode, zeroBasis, showAsPercent } = this.state;
+
+    return (
+      <PageOptions>
+        {zeroBasis && (
+          <CheckboxBtn
+            text={"Show as %"}
+            checked={showAsPercent}
+            onChange={this.handleShowAsPercentChange}
+            btnProps={{
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            }}
+          />
+        )}
+
+        <CheckboxBtn
+          text={"Zero Basis"}
+          checked={zeroBasis}
+          onChange={this.handleZeroBasisChange}
+          btnProps={{
+            className: combine(bs.btnOutlineInfo, bs.btnSm),
+          }}
+        />
+
+        <DateModeToggleBtn
+          value={dateMode}
+          onChange={this.handleDateModeChange}
+          btnProps={{
+            className: combine(bs.btnOutlineInfo, bs.btnSm),
+          }}
+        />
+
+        <DateRangeChooser
+          startDate={startDate}
+          endDate={endDate}
+          onValueChange={this.handleDateRangeChange}
+          includeAllTimePreset={true}
+          includeYearToDatePreset={true}
+          includeFuturePresets={false}
+          setPosition={true}
+          btnProps={{
+            className: combine(bs.btnOutlineDark, bs.btnSm),
+          }}
+        />
+      </PageOptions>
     );
   }
 
@@ -230,73 +236,124 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     };
 
     return (
-      <div className={combine(styles.chartContainer, loading && gs.loading)}>
-        <LineChart {...chartProps} />
+      <div className={bs.row}>
+        <div className={combine(bs.col12)}>
+          <Card>
+            <div className={combine(styles.chartContainer, bs.mb3, loading && gs.loading)}>
+              <LineChart {...chartProps} />
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
 
-  private renderInfoPanel(): ReactNode {
+  private renderInfoPanels(): ReactNode {
+    const { failed, data } = this.state;
+
+    if (failed || !data) {
+      return null;
+    }
+
+    return (
+      <div className={bs.row}>
+        <div className={bs.col}>
+          <Card>{this.renderChangeExclGrowthStatPanel()}</Card>
+        </div>
+        <div className={bs.col}>
+          <Card>{this.renderChangeInclGrowthStatPanel()}</Card>
+        </div>
+        <div className={bs.col}>
+          <Card>{this.renderNetGrowthStatPanel()}</Card>
+        </div>
+      </div>
+    );
+  }
+
+  private renderChangeExclGrowthStatPanel(): ReactNode {
     const { loading, failed, data } = this.state;
 
     if (failed || !data) {
       return null;
     }
 
-    const { totalChangeInclGrowth, totalChangeExclGrowth } = data;
-    const growthOnlyChange = totalChangeInclGrowth - totalChangeExclGrowth;
+    if (loading) {
+      return <LoadingSpinner centre={true} />;
+    }
+
+    const { totalChangeExclGrowth } = data;
 
     return (
-      <Card>
-        <div className={combine(bs.row, loading && gs.loading)}>
-          <div className={combine(bs.col6, bs.colMd4)}>
-            <h6>Change Excl. Growth:</h6>
-            <p>
-              <RelativeChangeIcon
-                change={totalChangeExclGrowth}
-                iconProps={{
-                  className: bs.mr2,
-                }}
-              />
-              {formatCurrency(totalChangeExclGrowth)}
-            </p>
-          </div>
-          <div className={combine(bs.col6, bs.colMd4)}>
-            <h6>Change Incl. Growth:</h6>
-            <p>
-              <RelativeChangeIcon
-                change={totalChangeInclGrowth}
-                iconProps={{
-                  className: bs.mr2,
-                }}
-              />
-              {formatCurrency(totalChangeInclGrowth)}
-            </p>
-          </div>
-          <div className={combine(bs.col6, bs.colMd4)}>
-            <h6>Net Growth:</h6>
-            <p>
-              <RelativeChangeIcon
-                change={growthOnlyChange}
-                iconProps={{
-                  className: bs.mr2,
-                }}
-              />
-              {formatCurrency(growthOnlyChange)}
-            </p>
-          </div>
-        </div>
-      </Card>
+      <>
+        <h6 className={gs.bigStatHeader}>Change Excl. Growth</h6>
+        <p className={gs.bigStatValue}>{formatCurrencyForStat(totalChangeExclGrowth)}</p>
+      </>
+    );
+  }
+
+  private renderChangeInclGrowthStatPanel(): ReactNode {
+    const { loading, failed, data } = this.state;
+
+    if (failed || !data) {
+      return null;
+    }
+
+    if (loading) {
+      return <LoadingSpinner centre={true} />;
+    }
+
+    const { totalChangeInclGrowth } = data;
+
+    return (
+      <>
+        <h6 className={gs.bigStatHeader}>Change Incl. Growth</h6>
+        <p className={gs.bigStatValue}>{formatCurrencyForStat(totalChangeInclGrowth)}</p>
+      </>
+    );
+  }
+
+  private renderNetGrowthStatPanel(): ReactNode {
+    const { loading, failed, data } = this.state;
+
+    if (failed || !data) {
+      return null;
+    }
+
+    if (loading) {
+      return <LoadingSpinner centre={true} />;
+    }
+
+    const { totalChangeExclGrowth, totalChangeInclGrowth } = data;
+    const netGrowth = totalChangeInclGrowth - totalChangeExclGrowth;
+
+    return (
+      <>
+        <h6 className={gs.bigStatHeader}>Net Growth</h6>
+        <p className={gs.bigStatValue}>
+          <RelativeChangeIcon
+            change={netGrowth}
+            iconProps={{
+              className: bs.mr2,
+            }}
+          />
+          {formatCurrencyForStat(netGrowth)}
+        </p>
+      </>
     );
   }
 
   private renderAccountChooser(): ReactNode {
+    // TODO: make each account a toggle on/off
     const { accountList } = this.props;
     return (
-      <Card title={"Select Account"} icon={faWallet}>
-        {!accountList && <LoadingSpinner centre={true} />}
-        {accountList && this.renderAccountInputs()}
-      </Card>
+      <div className={bs.row}>
+        <div className={bs.col}>
+          <Card>
+            {!accountList && <LoadingSpinner centre={true} />}
+            {accountList && this.renderAccountInputs()}
+          </Card>
+        </div>
+      </div>
     );
   }
 

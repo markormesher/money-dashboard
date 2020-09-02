@@ -2,12 +2,13 @@
 @import "~bootstrap-scss/variables";
 @import "~bootstrap-scss/mixins/breakpoints";
 @import "../Header/Header";
+@import "../../global-styles/Branding.scss";
 
 $nav-bg-gradient: linear-gradient(
   0deg,
-  rgba(9, 54, 124, 1) 0%,
-  rgba(13, 71, 161, 1) 30%,
-  rgba(66, 133, 244, 1) 100%
+  $brand-blue-dark 0%,
+  $brand-blue 30%,
+  $brand-blue-light 100%
 );
 $sidebar-shadow: rgba(0, 0, 0, 0.2);
 $link-colour: #fff;

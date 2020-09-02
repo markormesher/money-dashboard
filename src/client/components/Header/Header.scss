@@ -1,10 +1,10 @@
 @import "~bootstrap-scss/functions";
 @import "~bootstrap-scss/variables";
 @import "~bootstrap-scss/mixins/breakpoints";
+@import "../../global-styles/Branding.scss";
 
 $header-height: 48px;
 $header-bg-colour: #fff;
-$header-brand-colour: rgba(13, 71, 161, 1);
 $header-shadow: rgba(0, 0, 0, 0.2);
 $navbar-toggle-icon: #333;
 
@@ -15,7 +15,7 @@ $navbar-toggle-icon: #333;
 }
 
 .navbar-brand {
-  color: $header-brand-colour !important; // Bootstrap override
+  color: $brand-blue !important; // Bootstrap override
   font-size: 1rem;
   font-weight: bold;
   margin-right: 0 !important; // Bootstrap override

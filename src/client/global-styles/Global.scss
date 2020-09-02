@@ -54,7 +54,27 @@ button {
 }
 
 .currency {
-  font-family: monospace, monospace;
+  font-family: monospace;
+}
+
+.currency-pence {
+  font-size: 60%;
+}
+
+.big-stat-header {
+  margin-bottom: $spacer;
+  text-transform: uppercase;
+  font-weight: lighter;
+  color: $gray-500;
+}
+
+.big-stat-value {
+  font-size: 2.5rem;
+}
+
+.big-stat-context {
+  color: $gray-500;
+  font-size: 0.75rem;
 }
 
 .loading {
