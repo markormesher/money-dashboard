@@ -44,10 +44,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     };
 
     this.renderChart = this.renderChart.bind(this);
-    this.renderInfoPanels = this.renderInfoPanels.bind(this);
-    this.renderMinimumBalanceInfoPanel = this.renderMinimumBalanceInfoPanel.bind(this);
-    this.renderMaximumBalanceInfoPanel = this.renderMaximumBalanceInfoPanel.bind(this);
-    this.renderOverallChangeInfoPanel = this.renderOverallChangeInfoPanel.bind(this);
+    this.renderStatCards = this.renderStatCards.bind(this);
     this.handleDateModeChange = this.handleDateModeChange.bind(this);
     this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
   }
@@ -72,7 +69,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
         <PageHeader>Balance History</PageHeader>
         {this.renderOptions()}
         {this.renderChart()}
-        {this.renderInfoPanels()}
+        {this.renderStatCards()}
       </>
     );
   }
@@ -166,98 +163,64 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     );
   }
 
-  private renderInfoPanels(): ReactNode {
-    const { failed, data } = this.state;
+  private renderStatCards(): ReactNode {
+    const { loading, failed, data } = this.state;
 
     if (failed || !data) {
       return null;
+    }
+
+    let minBalanceStat: ReactNode = <LoadingSpinner centre={true} />;
+    let maxBalanceStat: ReactNode = <LoadingSpinner centre={true} />;
+    let overallChangeStat: ReactNode = <LoadingSpinner centre={true} />;
+
+    if (!loading) {
+      const { minTotal, minDate, maxTotal, maxDate, changeAbsolute } = data;
+
+      minBalanceStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Min Balance</h6>
+          <p className={gs.bigStatValue}>{formatCurrencyForStat(minTotal)}</p>
+          <p className={gs.bigStatContext}>on {formatDate(minDate)}</p>
+        </>
+      );
+
+      maxBalanceStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Max Balance</h6>
+          <p className={gs.bigStatValue}>{formatCurrencyForStat(maxTotal)}</p>
+          <p className={gs.bigStatContext}>on {formatDate(maxDate)}</p>
+        </>
+      );
+
+      overallChangeStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Overall Change</h6>
+          <p className={gs.bigStatValue}>
+            <RelativeChangeIcon
+              change={changeAbsolute}
+              iconProps={{
+                className: bs.mr2,
+              }}
+            />
+            {formatCurrencyForStat(minTotal)}
+          </p>
+        </>
+      );
     }
 
     return (
       <div className={bs.row}>
         <div className={bs.col}>
-          <Card>{this.renderMinimumBalanceInfoPanel()}</Card>
+          <Card>{minBalanceStat}</Card>
         </div>
         <div className={bs.col}>
-          <Card>{this.renderMaximumBalanceInfoPanel()}</Card>
+          <Card>{maxBalanceStat}</Card>
         </div>
         <div className={bs.col}>
-          <Card>{this.renderOverallChangeInfoPanel()}</Card>
+          <Card>{overallChangeStat}</Card>
         </div>
       </div>
-    );
-  }
-
-  private renderMinimumBalanceInfoPanel(): ReactNode {
-    const { loading, failed, data } = this.state;
-
-    if (failed || !data) {
-      return null;
-    }
-
-    if (loading) {
-      return <LoadingSpinner centre={true} />;
-    }
-
-    const { minTotal, minDate } = data;
-
-    return (
-      <>
-        <h6 className={gs.bigStatHeader}>Min Balance</h6>
-        <p className={gs.bigStatValue}>{formatCurrencyForStat(minTotal)}</p>
-        <p className={gs.bigStatContext}>on {formatDate(minDate)}</p>
-      </>
-    );
-  }
-
-  private renderMaximumBalanceInfoPanel(): ReactNode {
-    const { loading, failed, data } = this.state;
-
-    if (failed || !data) {
-      return null;
-    }
-
-    if (loading) {
-      return <LoadingSpinner centre={true} />;
-    }
-
-    const { maxTotal, maxDate } = data;
-
-    return (
-      <>
-        <h6 className={gs.bigStatHeader}>Max Balance</h6>
-        <p className={gs.bigStatValue}>{formatCurrencyForStat(maxTotal)}</p>
-        <p className={gs.bigStatContext}>on {formatDate(maxDate)}</p>
-      </>
-    );
-  }
-
-  private renderOverallChangeInfoPanel(): ReactNode {
-    const { loading, failed, data } = this.state;
-
-    if (failed || !data) {
-      return null;
-    }
-
-    if (loading) {
-      return <LoadingSpinner centre={true} />;
-    }
-
-    const { changeAbsolute } = data;
-
-    return (
-      <>
-        <h6 className={gs.bigStatHeader}>Overall Change</h6>
-        <p className={gs.bigStatValue}>
-          <RelativeChangeIcon
-            change={changeAbsolute}
-            iconProps={{
-              className: bs.mr2,
-            }}
-          />
-          {formatCurrencyForStat(changeAbsolute)}
-        </p>
-      </>
     );
   }
 

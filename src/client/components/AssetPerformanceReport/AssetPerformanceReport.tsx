@@ -82,13 +82,10 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     };
 
     this.renderOptions = this.renderOptions.bind(this);
-    this.renderChart = this.renderChart.bind(this);
-    this.renderInfoPanels = this.renderInfoPanels.bind(this);
-    this.renderChangeExclGrowthStatPanel = this.renderChangeExclGrowthStatPanel.bind(this);
-    this.renderChangeInclGrowthStatPanel = this.renderChangeInclGrowthStatPanel.bind(this);
-    this.renderNetGrowthStatPanel = this.renderNetGrowthStatPanel.bind(this);
     this.renderAccountChooser = this.renderAccountChooser.bind(this);
     this.renderAccountInputs = this.renderAccountInputs.bind(this);
+    this.renderChart = this.renderChart.bind(this);
+    this.renderStatCards = this.renderStatCards.bind(this);
     this.handleDateModeChange = this.handleDateModeChange.bind(this);
     this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
     this.handleAccountChange = this.handleAccountChange.bind(this);
@@ -121,7 +118,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
         {this.renderOptions()}
         {this.renderAccountChooser()}
         {this.renderChart()}
-        {this.renderInfoPanels()}
+        {this.renderStatCards()}
       </>
     );
   }
@@ -172,6 +169,60 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
           }}
         />
       </PageOptions>
+    );
+  }
+
+  private renderAccountChooser(): ReactNode {
+    // TODO: make each account a toggle on/off
+    const { accountList } = this.props;
+    return (
+      <div className={bs.row}>
+        <div className={bs.col}>
+          <Card>
+            {!accountList && <LoadingSpinner centre={true} />}
+            {accountList && this.renderAccountInputs()}
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  private renderAccountInputs(): ReactNode {
+    const { accountList } = this.props;
+    const { accountId } = this.state;
+    const accounts = accountList.filter((ac) => ac.type === "asset").sort((a, b) => a.name.localeCompare(b.name));
+
+    if (accounts.length === 0) {
+      return <p>{"You don't have any asset-type accounts."}</p>;
+    }
+
+    return (
+      <form>
+        <div className={bs.row}>
+          <div key={`account-chooser-all`} className={combine(bs.col12, bs.colMd6, bs.colLg3, bs.mb3)}>
+            <ControlledRadioInput
+              name={"account"}
+              id={NULL_UUID}
+              value={NULL_UUID}
+              label={<em>All Accounts</em>}
+              checked={accountId === NULL_UUID}
+              onValueChange={this.handleAccountChange}
+            />
+          </div>
+          {accounts.map((ac) => (
+            <div key={`account-chooser-${ac.id}`} className={combine(bs.col12, bs.colMd6, bs.colLg3, bs.mb3)}>
+              <ControlledRadioInput
+                name={"account"}
+                id={ac.id}
+                value={ac.id}
+                label={ac.name}
+                checked={accountId === ac.id}
+                onValueChange={this.handleAccountChange}
+              />
+            </div>
+          ))}
+        </div>
+      </form>
     );
   }
 
@@ -248,151 +299,63 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     );
   }
 
-  private renderInfoPanels(): ReactNode {
-    const { failed, data } = this.state;
-
-    if (failed || !data) {
-      return null;
-    }
-
-    return (
-      <div className={bs.row}>
-        <div className={bs.col}>
-          <Card>{this.renderChangeExclGrowthStatPanel()}</Card>
-        </div>
-        <div className={bs.col}>
-          <Card>{this.renderChangeInclGrowthStatPanel()}</Card>
-        </div>
-        <div className={bs.col}>
-          <Card>{this.renderNetGrowthStatPanel()}</Card>
-        </div>
-      </div>
-    );
-  }
-
-  private renderChangeExclGrowthStatPanel(): ReactNode {
+  private renderStatCards(): ReactNode {
     const { loading, failed, data } = this.state;
 
     if (failed || !data) {
       return null;
     }
 
-    if (loading) {
-      return <LoadingSpinner centre={true} />;
-    }
+    let changeExclGrowthStat: ReactNode = <LoadingSpinner centre={true} />;
+    let changeInclGrowthStat: ReactNode = <LoadingSpinner centre={true} />;
+    let netGrowthStat: ReactNode = <LoadingSpinner centre={true} />;
 
-    const { totalChangeExclGrowth } = data;
+    if (!loading) {
+      const { totalChangeExclGrowth, totalChangeInclGrowth } = data;
+      const netGrowth = totalChangeInclGrowth - totalChangeExclGrowth;
 
-    return (
-      <>
-        <h6 className={gs.bigStatHeader}>Change Excl. Growth</h6>
-        <p className={gs.bigStatValue}>{formatCurrencyForStat(totalChangeExclGrowth)}</p>
-      </>
-    );
-  }
+      changeExclGrowthStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Change Excl. Growth</h6>
+          <p className={gs.bigStatValue}>{formatCurrencyForStat(totalChangeExclGrowth)}</p>
+        </>
+      );
 
-  private renderChangeInclGrowthStatPanel(): ReactNode {
-    const { loading, failed, data } = this.state;
+      changeInclGrowthStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Change Incl. Growth</h6>
+          <p className={gs.bigStatValue}>{formatCurrencyForStat(totalChangeInclGrowth)}</p>
+        </>
+      );
 
-    if (failed || !data) {
-      return null;
-    }
-
-    if (loading) {
-      return <LoadingSpinner centre={true} />;
-    }
-
-    const { totalChangeInclGrowth } = data;
-
-    return (
-      <>
-        <h6 className={gs.bigStatHeader}>Change Incl. Growth</h6>
-        <p className={gs.bigStatValue}>{formatCurrencyForStat(totalChangeInclGrowth)}</p>
-      </>
-    );
-  }
-
-  private renderNetGrowthStatPanel(): ReactNode {
-    const { loading, failed, data } = this.state;
-
-    if (failed || !data) {
-      return null;
-    }
-
-    if (loading) {
-      return <LoadingSpinner centre={true} />;
-    }
-
-    const { totalChangeExclGrowth, totalChangeInclGrowth } = data;
-    const netGrowth = totalChangeInclGrowth - totalChangeExclGrowth;
-
-    return (
-      <>
-        <h6 className={gs.bigStatHeader}>Net Growth</h6>
-        <p className={gs.bigStatValue}>
-          <RelativeChangeIcon
-            change={netGrowth}
-            iconProps={{
-              className: bs.mr2,
-            }}
-          />
-          {formatCurrencyForStat(netGrowth)}
-        </p>
-      </>
-    );
-  }
-
-  private renderAccountChooser(): ReactNode {
-    // TODO: make each account a toggle on/off
-    const { accountList } = this.props;
-    return (
-      <div className={bs.row}>
-        <div className={bs.col}>
-          <Card>
-            {!accountList && <LoadingSpinner centre={true} />}
-            {accountList && this.renderAccountInputs()}
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  private renderAccountInputs(): ReactNode {
-    const { accountList } = this.props;
-    const { accountId } = this.state;
-    const accounts = accountList.filter((ac) => ac.type === "asset").sort((a, b) => a.name.localeCompare(b.name));
-
-    if (accounts.length === 0) {
-      return <p>{"You don't have any asset-type accounts."}</p>;
-    }
-
-    return (
-      <form>
-        <div className={bs.row}>
-          <div key={`account-chooser-all`} className={combine(bs.col12, bs.colMd6, bs.colLg3, bs.mb3)}>
-            <ControlledRadioInput
-              name={"account"}
-              id={NULL_UUID}
-              value={NULL_UUID}
-              label={<em>All Accounts</em>}
-              checked={accountId === NULL_UUID}
-              onValueChange={this.handleAccountChange}
+      netGrowthStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Net Growth</h6>
+          <p className={gs.bigStatValue}>
+            <RelativeChangeIcon
+              change={netGrowth}
+              iconProps={{
+                className: bs.mr2,
+              }}
             />
-          </div>
-          {accounts.map((ac) => (
-            <div key={`account-chooser-${ac.id}`} className={combine(bs.col12, bs.colMd6, bs.colLg3, bs.mb3)}>
-              <ControlledRadioInput
-                name={"account"}
-                id={ac.id}
-                value={ac.id}
-                label={ac.name}
-                checked={accountId === ac.id}
-                onValueChange={this.handleAccountChange}
-              />
-            </div>
-          ))}
+            {formatCurrencyForStat(netGrowth)}
+          </p>
+        </>
+      );
+    }
+
+    return (
+      <div className={bs.row}>
+        <div className={bs.col}>
+          <Card>{changeExclGrowthStat}</Card>
         </div>
-      </form>
+        <div className={bs.col}>
+          <Card>{changeInclGrowthStat}</Card>
+        </div>
+        <div className={bs.col}>
+          <Card>{netGrowthStat}</Card>
+        </div>
+      </div>
     );
   }
 
