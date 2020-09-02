@@ -92,7 +92,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 
   public componentDidMount(): void {
     this.props.actions.startLoadAccountList();
-    //this.fetchData();
+    this.fetchData();
   }
 
   public componentDidUpdate(_: {}, nextState: IAssetPerformanceReportState): void {
