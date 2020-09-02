@@ -7,7 +7,6 @@ import { subYears, startOfDay, endOfDay } from "date-fns";
 import { IAccount } from "../../../commons/models/IAccount";
 import { IAssetPerformanceData } from "../../../commons/models/IAssetPerformanceData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
-import { NULL_UUID } from "../../../commons/utils/entities";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency, formatPercent, formatDate, formatCurrencyForStat } from "../../helpers/formatters";
@@ -16,7 +15,6 @@ import { startLoadAccountList } from "../../redux/accounts";
 import { IRootState } from "../../redux/root";
 import * as styles from "../_commons/reports/Reports.scss";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
-import { ControlledRadioInput } from "../_ui/ControlledInputs/ControlledRadioInput";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
@@ -40,7 +38,7 @@ interface IAssetPerformanceReportState {
   readonly dateMode: DateModeOption;
   readonly zeroBasis: boolean;
   readonly showAsPercent: boolean;
-  readonly accountId: string;
+  readonly selectedAccounts: string[];
   readonly data: IAssetPerformanceData;
   readonly loading: boolean;
   readonly failed: boolean;
@@ -75,15 +73,14 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       dateMode: "transaction",
       zeroBasis: true,
       showAsPercent: false,
-      accountId: NULL_UUID,
+      selectedAccounts: [],
       data: undefined,
       loading: true,
       failed: false,
     };
 
     this.renderOptions = this.renderOptions.bind(this);
-    this.renderAccountChooser = this.renderAccountChooser.bind(this);
-    this.renderAccountInputs = this.renderAccountInputs.bind(this);
+    this.renderAccountOptions = this.renderAccountOptions.bind(this);
     this.renderChart = this.renderChart.bind(this);
     this.renderStatCards = this.renderStatCards.bind(this);
     this.handleDateModeChange = this.handleDateModeChange.bind(this);
@@ -95,7 +92,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
 
   public componentDidMount(): void {
     this.props.actions.startLoadAccountList();
-    this.fetchData();
+    //this.fetchData();
   }
 
   public componentDidUpdate(_: {}, nextState: IAssetPerformanceReportState): void {
@@ -103,7 +100,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       this.state.startDate !== nextState.startDate ||
       this.state.endDate !== nextState.endDate ||
       this.state.dateMode !== nextState.dateMode ||
-      this.state.accountId !== nextState.accountId ||
+      this.state.selectedAccounts !== nextState.selectedAccounts ||
       this.state.zeroBasis !== nextState.zeroBasis ||
       this.state.showAsPercent !== nextState.showAsPercent
     ) {
@@ -116,7 +113,6 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       <>
         <PageHeader>Asset Performance</PageHeader>
         {this.renderOptions()}
-        {this.renderAccountChooser()}
         {this.renderChart()}
         {this.renderStatCards()}
       </>
@@ -165,64 +161,47 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
           includeFuturePresets={false}
           setPosition={true}
           btnProps={{
-            className: combine(bs.btnOutlineDark, bs.btnSm),
+            className: combine(bs.btnOutlineInfo, bs.btnSm),
           }}
         />
+
+        {this.renderAccountOptions()}
       </PageOptions>
     );
   }
 
-  private renderAccountChooser(): ReactNode {
-    // TODO: make each account a toggle on/off
+  private renderAccountOptions(): ReactNode {
     const { accountList } = this.props;
-    return (
-      <div className={bs.row}>
-        <div className={bs.col}>
-          <Card>
-            {!accountList && <LoadingSpinner centre={true} />}
-            {accountList && this.renderAccountInputs()}
-          </Card>
-        </div>
-      </div>
-    );
-  }
 
-  private renderAccountInputs(): ReactNode {
-    const { accountList } = this.props;
-    const { accountId } = this.state;
-    const accounts = accountList.filter((ac) => ac.type === "asset").sort((a, b) => a.name.localeCompare(b.name));
+    if (!accountList) {
+      return <LoadingSpinner />;
+    }
 
-    if (accounts.length === 0) {
-      return <p>{"You don't have any asset-type accounts."}</p>;
+    const { selectedAccounts } = this.state;
+    const assetAccounts = accountList.filter((ac) => ac.type === "asset").sort((a, b) => a.name.localeCompare(b.name));
+
+    if (assetAccounts.length === 0) {
+      return (
+        <p>{"You don't have any asset-type accounts."}</p>
+      );
     }
 
     return (
-      <form>
-        <div className={bs.row}>
-          <div key={`account-chooser-all`} className={combine(bs.col12, bs.colMd6, bs.colLg3, bs.mb3)}>
-            <ControlledRadioInput
-              name={"account"}
-              id={NULL_UUID}
-              value={NULL_UUID}
-              label={<em>All Accounts</em>}
-              checked={accountId === NULL_UUID}
-              onValueChange={this.handleAccountChange}
-            />
-          </div>
-          {accounts.map((ac) => (
-            <div key={`account-chooser-${ac.id}`} className={combine(bs.col12, bs.colMd6, bs.colLg3, bs.mb3)}>
-              <ControlledRadioInput
-                name={"account"}
-                id={ac.id}
-                value={ac.id}
-                label={ac.name}
-                checked={accountId === ac.id}
-                onValueChange={this.handleAccountChange}
-              />
-            </div>
-          ))}
-        </div>
-      </form>
+      <>
+        <hr />
+        {assetAccounts.map((ac) => (
+          <CheckboxBtn
+            key={`account-chooser-${ac.id}`}
+            text={ac.name}
+            payload={ac.id}
+            checked={selectedAccounts.includes(ac.id)}
+            onChange={this.handleAccountChange}
+            btnProps={{
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            }}
+          />
+        ))}
+      </>
     );
   }
 
@@ -367,8 +346,13 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     this.setState({ startDate, endDate });
   }
 
-  private handleAccountChange(accountId: string): void {
-    this.setState({ accountId });
+  private handleAccountChange(checked: boolean, accountId: string): void {
+    const oldList = this.state.selectedAccounts;
+    if (checked) {
+      this.setState({ selectedAccounts: [...oldList, accountId] });
+    } else {
+      this.setState({ selectedAccounts: oldList.filter((a) => a !== accountId) });
+    }
   }
 
   private handleZeroBasisChange(zeroBasis: boolean): void {
@@ -380,9 +364,9 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
   }
 
   private fetchData(): void {
-    const { startDate, endDate, dateMode, accountId, zeroBasis, showAsPercent } = this.state;
+    const { startDate, endDate, dateMode, selectedAccounts, zeroBasis, showAsPercent } = this.state;
 
-    if (!accountId) {
+    if (!selectedAccounts) {
       return;
     }
 
@@ -395,7 +379,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
           startDate: startDate,
           endDate: endDate,
           dateMode,
-          accountId,
+          selectedAccounts,
           zeroBasis,
           showAsPercent,
         },
