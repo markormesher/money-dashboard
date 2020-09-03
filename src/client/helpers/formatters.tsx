@@ -20,12 +20,13 @@ function formatCurrencyStyled(amount: number): ReactElement {
 }
 
 function formatCurrencyForStat(amount: number): ReactElement {
-  const formatted = formatCurrency(amount);
+  const negative = amount < 0;
+  const formatted = formatCurrency(Math.abs(amount));
   const chunks = formatted.split(".");
   return (
-    <>
-      &pound;{chunks[0]}.<span className={gs.currencyPence}>{chunks[1]}</span>
-    </>
+    <span>
+      {negative && "-"}&pound;{chunks[0]}.<span className={gs.currencyPence}>{chunks[1]}</span>
+    </span>
   );
 }
 

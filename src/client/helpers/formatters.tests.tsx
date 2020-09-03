@@ -11,6 +11,7 @@ import {
   formatBudgetPeriod,
   formatCurrency,
   formatCurrencyStyled,
+  formatCurrencyForStat,
   formatDate,
   formatPercent,
   generateAccountTypeBadge,
@@ -50,9 +51,41 @@ describe(__filename, () => {
       formattedElement.html().should.contain("_currency_");
     });
 
-    it("should preserve the un-styled value", () => {
+    it("should preserve the un-styled value (positive)", () => {
       const formattedElement = shallow(formatCurrencyStyled(1234.56));
       formattedElement.text().should.equal("1,234.56");
+    });
+
+    it("should preserve the un-styled value (negative)", () => {
+      const formattedElement = shallow(formatCurrencyStyled(-1234.56));
+      formattedElement.text().should.equal("-1,234.56");
+    });
+  });
+
+  describe("formatCurrencyForStat()", () => {
+    it("should wrap the whole value and the penny value", () => {
+      const formattedElement = shallow(formatCurrencyForStat(0));
+      formattedElement.find("span").should.have.lengthOf(2);
+    });
+
+    it("should not apply the currency style", () => {
+      const formattedElement = shallow(formatCurrencyForStat(0));
+      formattedElement.html().should.not.contain("_currency_");
+    });
+
+    it("should apply the penny style", () => {
+      const formattedElement = shallow(formatCurrencyForStat(0));
+      formattedElement.html().should.contain("_currency-pence_");
+    });
+
+    it("should preserve the un-styled value (positive)", () => {
+      const formattedElement = shallow(formatCurrencyForStat(1234.56));
+      formattedElement.text().should.equal("£1,234.56");
+    });
+
+    it("should preserve the un-styled value (negative)", () => {
+      const formattedElement = shallow(formatCurrencyForStat(-1234.56));
+      formattedElement.text().should.equal("-£1,234.56");
     });
   });
 
