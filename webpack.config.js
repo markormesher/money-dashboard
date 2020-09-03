@@ -142,6 +142,7 @@ const config = {
   },
   devtool: IS_PROD ? false : "cheap-module-eval-source-map",
   plugins: [
+    new webpack.WatchIgnorePlugin([/LICENSE\.txt$/]),
     new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
     new webpack.EnvironmentPlugin(["NODE_ENV"]),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
