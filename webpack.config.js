@@ -144,7 +144,6 @@ const config = {
   plugins: [
     new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
     new webpack.EnvironmentPlugin(["NODE_ENV"]),
-    new webpack.IgnorePlugin(/.*\.LICENSE\.txt$/, /.*/),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     !IS_TEST &&
       new HtmlWebpackPlugin({
