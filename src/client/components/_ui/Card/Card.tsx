@@ -9,16 +9,17 @@ import * as style from "./Card.scss";
 interface ICardProps {
   readonly title?: string;
   readonly icon?: IconProp;
+  readonly iconClasses?: string;
 }
 
 class Card extends PureComponent<ICardProps> {
   public render(): ReactNode {
-    const { title, icon, children } = this.props;
+    const { title, icon, iconClasses, children } = this.props;
     return (
       <div className={combine(bs.card, style.card)}>
         {title && (
           <h5 className={combine(bs.cardHeader, style.cardHeader, bs.h5)}>
-            {icon && <FontAwesomeIcon icon={icon} className={bs.mr3} />}
+            {icon && <FontAwesomeIcon icon={icon} className={combine(bs.mr3, iconClasses)} />}
             {title}
           </h5>
         )}

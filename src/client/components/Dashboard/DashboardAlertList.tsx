@@ -2,6 +2,7 @@ import { faExclamationTriangle } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode, ReactElement } from "react";
 import { ICategoryBalance } from "../../../commons/models/ICategoryBalance";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatCurrencyStyled } from "../../helpers/formatters";
 import { Card } from "../_ui/Card/Card";
 
@@ -30,7 +31,7 @@ class DashboardAlertList extends PureComponent<IDashboardAlertListProps> {
     const title = `${allAlerts.length} Alert${allAlerts.length === 1 ? "" : "s"}`;
 
     return (
-      <Card title={title} icon={faExclamationTriangle}>
+      <Card title={title} icon={faExclamationTriangle} iconClasses={bs.textDanger}>
         {allAlerts.map((w, i) => (
           <p key={i}>{w}</p>
         ))}

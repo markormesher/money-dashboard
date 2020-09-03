@@ -5,7 +5,10 @@
   h6 {
     border-bottom: 1px solid $gray-200;
     clear: both;
-    margin-top: $spacer;
+    margin-top: $spacer * 1.25;
+    font-weight: normal;
+    text-transform: uppercase;
+    cursor: pointer;
 
     &:first-of-type {
       margin-top: inherit !important;
