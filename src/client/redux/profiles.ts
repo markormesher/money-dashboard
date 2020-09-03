@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { IProfile, mapProfileForApi } from "../../commons/models/IProfile";
+import { IProfile, mapProfileForApi, mapProfileFromApi } from "../../commons/models/IProfile";
 import { startLoadCurrentUser } from "./auth";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -10,6 +10,7 @@ interface IProfilesState {
   readonly activeProfile: IProfile;
   readonly profileToEdit: IProfile;
   readonly editorBusy: boolean;
+  readonly profileList: IProfile[];
   readonly profileSwitchInProgress: boolean;
 }
 
@@ -17,6 +18,7 @@ const initialState: IProfilesState = {
   activeProfile: undefined,
   profileToEdit: undefined,
   editorBusy: false,
+  profileList: undefined,
   profileSwitchInProgress: false,
 };
 
@@ -24,16 +26,25 @@ enum ProfileActions {
   START_DELETE_PROFILE = "ProfileActions.START_DELETE_PROFILE",
   START_SAVE_PROFILE = "ProfileActions.START_SAVE_PROFILE",
   START_SET_CURRENT_PROFILE = "ProfileActions.START_SET_CURRENT_PROFILE",
+  START_LOAD_PROFILE_LIST = "ProfileActions.START_LOAD_PROFILE_LIST",
 
+  SET_ACTIVE_PROFILE = "ProfileActions.SET_ACTIVE_PROFILE",
   SET_PROFILE_TO_EDIT = "ProfileActions.SET_PROFILE_TO_EDIT",
   SET_EDITOR_BUSY = "ProfileActions.SET_EDITOR_BUSY",
-  SET_ACTIVE_PROFILE = "ProfileActions.SET_ACTIVE_PROFILE",
+  SET_PROFILE_LIST = "ProfileActions.SET_PROFILE_LIST",
   SET_PROFILE_SWITCH_IN_PROGRESS = "ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS",
 }
 
 enum ProfileCacheKeys {
   PROFILE_DATA = "ProfileCacheKeys.PROFILE_DATA",
+  PROFILE_LIST = "ProfileCacheKeys.PROFILE_LIST",
   CURRENT_PROFILE = "ProfileCacheKeys.CURRENT_PROFILE",
+}
+
+function profileListIsCached(): boolean {
+  // direct call to library method is deliberately not tested
+  /* istanbul ignore next */
+  return CacheKeyUtil.keyIsValid(ProfileCacheKeys.PROFILE_LIST, [ProfileCacheKeys.PROFILE_DATA]);
 }
 
 function startDeleteProfile(profile: IProfile): PayloadAction {
@@ -57,6 +68,12 @@ function startSetCurrentProfile(profile: IProfile): PayloadAction {
   };
 }
 
+function startLoadProfileList(): PayloadAction {
+  return {
+    type: ProfileActions.START_LOAD_PROFILE_LIST,
+  };
+}
+
 function setProfileToEdit(profile: IProfile): PayloadAction {
   return {
     type: ProfileActions.SET_PROFILE_TO_EDIT,
@@ -68,6 +85,13 @@ function setEditorBusy(editorBusy: boolean): PayloadAction {
   return {
     type: ProfileActions.SET_EDITOR_BUSY,
     payload: { editorBusy },
+  };
+}
+
+function setProfileList(profileList: IProfile[]): PayloadAction {
+  return {
+    type: ProfileActions.SET_PROFILE_LIST,
+    payload: { profileList },
   };
 }
 
@@ -118,7 +142,7 @@ function* setCurrentProfileSaga(): Generator {
   yield takeEvery(ProfileActions.START_SET_CURRENT_PROFILE, function*(action: PayloadAction): Generator {
     try {
       const profile: IProfile = action.payload.profile;
-      put(setProfileSwitchInProgress(true));
+      yield put(setProfileSwitchInProgress(true));
       yield call(() => axios.post(`/api/profiles/select/${profile.id}`));
       yield all([
         put(setActiveProfile(profile)),
@@ -136,8 +160,27 @@ function* setCurrentProfileSaga(): Generator {
   });
 }
 
+function* loadProfileListSaga(): Generator {
+  yield takeEvery(ProfileActions.START_LOAD_PROFILE_LIST, function*(): Generator {
+    if (profileListIsCached()) {
+      return;
+    }
+    try {
+      const profileList: IProfile[] = yield call(() => {
+        return axios.get("/api/profiles/list").then((res) => {
+          const raw: IProfile[] = res.data;
+          return raw.map(mapProfileFromApi);
+        });
+      });
+      yield all([put(setProfileList(profileList)), put(CacheKeyUtil.updateKey(ProfileCacheKeys.PROFILE_LIST))]);
+    } catch (err) {
+      yield put(setError(err));
+    }
+  });
+}
+
 function* profilesSagas(): Generator {
-  yield all([deleteProfileSaga(), saveProfileSaga(), setCurrentProfileSaga()]);
+  yield all([deleteProfileSaga(), saveProfileSaga(), setCurrentProfileSaga(), loadProfileListSaga()]);
 }
 
 function profilesReducer(state = initialState, action: PayloadAction): IProfilesState {
@@ -160,6 +203,12 @@ function profilesReducer(state = initialState, action: PayloadAction): IProfiles
         activeProfile: action.payload.profile,
       };
 
+    case ProfileActions.SET_PROFILE_LIST:
+      return {
+        ...state,
+        profileList: action.payload.profileList,
+      };
+
     case ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS:
       return {
         ...state,
@@ -175,11 +224,13 @@ export {
   IProfilesState,
   ProfileActions,
   ProfileCacheKeys,
+  profileListIsCached,
   profilesReducer,
   profilesSagas,
   startDeleteProfile,
   startSaveProfile,
   startSetCurrentProfile,
+  startLoadProfileList,
   setProfileToEdit,
   setEditorBusy,
   setActiveProfile,

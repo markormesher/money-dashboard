@@ -9,6 +9,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { closeNav, openNav } from "../../redux/nav";
 import { IRootState } from "../../redux/root";
+import { ProfileChooser } from "../_ui/ProfileChooser/ProfileChooser";
 import * as style from "./Header.scss";
 
 interface IHeaderProps {
@@ -54,6 +55,10 @@ class UCHeader extends PureComponent<IHeaderProps> {
           <FontAwesomeIcon icon={UCHeader.icon} fixedWidth={true} className={bs.mr2} />
           Money Dashboard
         </Link>
+
+        <div className={combine(bs.mr4, bs.dNone, bs.dLgBlock)}>
+          <ProfileChooser />
+        </div>
 
         <Link to="#" onClick={this.toggleNav} className={combine(bs.dInlineBlock, bs.dLgNone, bs.mx2)}>
           <FontAwesomeIcon icon={faBars} fixedWidth={true} className={style.navToggleIcon} />
