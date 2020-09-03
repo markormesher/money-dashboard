@@ -66,7 +66,9 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
   public render(): ReactNode {
     return (
       <>
-        <PageHeader>Balance History</PageHeader>
+        <PageHeader>
+          <h2>Balance History</h2>
+        </PageHeader>
         {this.renderOptions()}
         {this.renderChart()}
         {this.renderStatCards()}

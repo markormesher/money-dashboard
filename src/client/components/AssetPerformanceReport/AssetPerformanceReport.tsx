@@ -111,7 +111,9 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
   public render(): ReactNode {
     return (
       <>
-        <PageHeader>Asset Performance</PageHeader>
+        <PageHeader>
+          <h2>Asset Performance</h2>
+        </PageHeader>
         {this.renderOptions()}
         {this.renderChart()}
         {this.renderStatCards()}
