@@ -97,6 +97,7 @@ describe(__filename, () => {
         activeProfile: undefined,
         profileToEdit: undefined,
         editorBusy: false,
+        profileList: undefined,
         profileSwitchInProgress: false,
       });
     });
