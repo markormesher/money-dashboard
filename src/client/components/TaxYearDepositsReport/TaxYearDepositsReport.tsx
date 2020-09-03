@@ -141,76 +141,78 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
     const years = data.allYears.sort((a, b) => a - b);
 
     return (
-      <table className={combine(bs.table, bs.tableStriped, bs.tableSm)}>
-        <thead>
-          <tr>
-            <td>{/* blank top-left corner cell */}</td>
-            {years.map((year) => (
-              <th key={year} className={bs.textRight}>
-                {year}/{year + 1}
-              </th>
+      <div className={bs.tableResponsive}>
+        <table className={combine(bs.table, bs.tableStriped, bs.tableSm)}>
+          <thead>
+            <tr>
+              <td>{/* blank top-left corner cell */}</td>
+              {years.map((year) => (
+                <th key={year} className={bs.textRight}>
+                  {year}/{year + 1}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {nonAssetCategories.map((category) => (
+              <tr key={category.id}>
+                <td>{category.name}</td>
+                {years.map((year) => (
+                  <td key={year} className={bs.textRight}>
+                    {this.renderCategoryBalance(data.yearData[year][category.id])}
+                  </td>
+                ))}
+              </tr>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {nonAssetCategories.map((category) => (
-            <tr key={category.id}>
-              <td>{category.name}</td>
+
+            <tr className={gs.bottomBorder}>
+              <td>
+                <strong>Total Deposits</strong>
+              </td>
               {years.map((year) => (
                 <td key={year} className={bs.textRight}>
-                  {this.renderCategoryBalance(data.yearData[year][category.id])}
+                  <strong>
+                    {formatCurrencyStyled(
+                      Object.values(data.yearData[year])
+                        .filter((b) => !b.category.isAssetGrowthCategory)
+                        .map((b) => b.balanceIn + b.balanceOut)
+                        .reduce((a, b) => a + b, 0),
+                    )}
+                  </strong>
                 </td>
               ))}
             </tr>
-          ))}
 
-          <tr className={gs.bottomBorder}>
-            <td>
-              <strong>Total Deposits</strong>
-            </td>
-            {years.map((year) => (
-              <td key={year} className={bs.textRight}>
-                <strong>
-                  {formatCurrencyStyled(
-                    Object.values(data.yearData[year])
-                      .filter((b) => !b.category.isAssetGrowthCategory)
-                      .map((b) => b.balanceIn + b.balanceOut)
-                      .reduce((a, b) => a + b, 0),
-                  )}
-                </strong>
-              </td>
+            {assetCategories.map((category) => (
+              <tr key={category.id}>
+                <td>{category.name}</td>
+                {years.map((year) => (
+                  <td key={year} className={bs.textRight}>
+                    {this.renderCategoryBalance(data.yearData[year][category.id])}
+                  </td>
+                ))}
+              </tr>
             ))}
-          </tr>
 
-          {assetCategories.map((category) => (
-            <tr key={category.id}>
-              <td>{category.name}</td>
+            <tr className={gs.bottomBorder}>
+              <td>
+                <strong>Total</strong>
+              </td>
               {years.map((year) => (
                 <td key={year} className={bs.textRight}>
-                  {this.renderCategoryBalance(data.yearData[year][category.id])}
+                  <strong>
+                    {formatCurrencyStyled(
+                      Object.values(data.yearData[year])
+                        .map((b) => b.balanceIn + b.balanceOut)
+                        .reduce((a, b) => a + b, 0),
+                    )}
+                  </strong>
                 </td>
               ))}
             </tr>
-          ))}
-
-          <tr className={gs.bottomBorder}>
-            <td>
-              <strong>Total</strong>
-            </td>
-            {years.map((year) => (
-              <td key={year} className={bs.textRight}>
-                <strong>
-                  {formatCurrencyStyled(
-                    Object.values(data.yearData[year])
-                      .map((b) => b.balanceIn + b.balanceOut)
-                      .reduce((a, b) => a + b, 0),
-                  )}
-                </strong>
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     );
   }
 

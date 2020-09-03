@@ -12,9 +12,7 @@ import { IRootState } from "../../redux/root";
 import * as style from "./Header.scss";
 
 interface IHeaderProps {
-  readonly nav?: {
-    readonly isOpen?: boolean;
-  };
+  readonly navIsOpen?: boolean;
 
   readonly actions?: {
     readonly openNav: () => AnyAction;
@@ -25,9 +23,7 @@ interface IHeaderProps {
 function mapStateToProps(state: IRootState, props: IHeaderProps): IHeaderProps {
   return {
     ...props,
-    nav: {
-      isOpen: state.nav.isOpen,
-    },
+    navIsOpen: state.nav.isOpen,
   };
 }
 
@@ -67,7 +63,7 @@ class UCHeader extends PureComponent<IHeaderProps> {
   }
 
   private toggleNav(): void {
-    if (this.props.nav.isOpen) {
+    if (this.props.navIsOpen) {
       this.props.actions.closeNav();
     } else {
       this.props.actions.openNav();
