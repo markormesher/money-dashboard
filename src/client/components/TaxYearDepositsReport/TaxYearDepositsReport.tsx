@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
-import { faPiggyBank } from "@fortawesome/pro-light-svg-icons";
 import { IDetailedCategoryBalance } from "../../../commons/models/IDetailedCategoryBalance";
 import { ITaxYearDepositsData, mapTaxYearDepositsDataFromApi } from "../../../commons/models/ITaxYearDepositsData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
@@ -13,8 +12,9 @@ import { combine } from "../../helpers/style-helpers";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
-import { ControlledRadioInput } from "../_ui/ControlledInputs/ControlledRadioInput";
 import { Card } from "../_ui/Card/Card";
+import { PageHeader } from "../_ui/PageHeader/PageHeader";
+import { PageOptions } from "../_ui/PageOptions/PageOptions";
 
 interface ITaxYearDepositsReportState {
   readonly dateMode: DateModeOption;
@@ -41,9 +41,9 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
       failed: false,
     };
 
+    this.renderAccountTagChooser = this.renderAccountTagChooser.bind(this);
     this.renderResults = this.renderResults.bind(this);
     this.renderCategoryBalance = this.renderCategoryBalance.bind(this);
-    this.renderAccountTagChooser = this.renderAccountTagChooser.bind(this);
     this.handleDateModeChange = this.handleDateModeChange.bind(this);
     this.handleSplitValueChange = this.handleSplitValueChange.bind(this);
     this.handleAccountTagChange = this.handleAccountTagChange.bind(this);
@@ -62,34 +62,59 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
   public render(): ReactNode {
     return (
       <>
-        <div className={gs.headerWrapper}>
-          <h1 className={bs.h2}>Tax Year Deposits</h1>
-          <div className={combine(bs.btnGroup, gs.headerExtras)}>
-            <CheckboxBtn
-              text={"Split Values"}
-              checked={this.state.splitValues}
-              onChange={this.handleSplitValueChange}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
+        <PageHeader>
+          <h2>Tax Year Deposits</h2>
+        </PageHeader>
 
-            <DateModeToggleBtn
-              value={this.state.dateMode}
-              onChange={this.handleDateModeChange}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
-          </div>
-        </div>
+        <PageOptions>
+          <CheckboxBtn
+            text={"Split Values"}
+            checked={this.state.splitValues}
+            onChange={this.handleSplitValueChange}
+            btnProps={{
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            }}
+          />
 
-        <div className={bs.row}>
-          <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderAccountTagChooser()}</div>
-          <div className={bs.col12}>{this.renderResults()}</div>
-        </div>
+          <DateModeToggleBtn
+            value={this.state.dateMode}
+            onChange={this.handleDateModeChange}
+            btnProps={{
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            }}
+          />
+
+          <hr />
+
+          {this.renderAccountTagChooser()}
+        </PageOptions>
+
+        <Card>{this.renderResults()}</Card>
       </>
     );
+  }
+
+  private renderAccountTagChooser(): ReactNode {
+    const { accountTag } = this.state;
+
+    // tags that are relevant for tax year summaries
+    const validTags: AccountTag[] = ["pension", "isa"];
+    const tags = Object.entries(ACCOUNT_TAG_DISPLAY_NAMES)
+      .filter(([key]) => validTags.includes(key as AccountTag))
+      .sort((a, b) => a[1].localeCompare(b[1]));
+
+    return tags.map(([tagKey, tagName]) => (
+      <CheckboxBtn
+        key={`account-tag-${tagKey}`}
+        payload={tagKey}
+        text={tagName}
+        checked={accountTag === tagKey}
+        onChange={this.handleAccountTagChange}
+        btnProps={{
+          className: combine(bs.btnOutlineInfo, bs.btnSm),
+        }}
+      />
+    ));
   }
 
   private renderResults(): ReactNode {
@@ -194,48 +219,20 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
       return null;
     }
 
+    const inc = balance.balanceIn;
+    const dec = balance.balanceOut;
+
     if (this.state.splitValues) {
       return (
         <>
-          {formatCurrencyStyled(balance.balanceIn)}
+          {inc === 0 ? <>&nbsp;</> : formatCurrencyStyled(inc)}
           <br />
-          {formatCurrencyStyled(balance.balanceOut)}
+          {dec === 0 ? <>&nbsp;</> : formatCurrencyStyled(dec)}
         </>
       );
     } else {
       return <>{formatCurrencyStyled(balance.balanceIn + balance.balanceOut)}</>;
     }
-  }
-
-  private renderAccountTagChooser(): ReactNode {
-    const { accountTag } = this.state;
-
-    // tags that are relevant for tax year summaries
-    const validTags: AccountTag[] = ["pension", "isa"];
-    const tags = Object.entries(ACCOUNT_TAG_DISPLAY_NAMES)
-      .filter(([key]) => validTags.includes(key as AccountTag))
-      .sort((a, b) => a[1].localeCompare(b[1]));
-
-    return (
-      <Card title={"Select Account Tag"} icon={faPiggyBank}>
-        <form>
-          <div className={bs.row}>
-            {tags.map(([tagKey, tagName]) => (
-              <div key={`account-tag-chooser-${tagKey}`} className={combine(bs.col12, bs.colMd6, bs.mb3)}>
-                <ControlledRadioInput
-                  name={"account"}
-                  id={tagKey}
-                  value={tagKey}
-                  label={tagName}
-                  checked={accountTag === tagKey}
-                  onValueChange={this.handleAccountTagChange}
-                />
-              </div>
-            ))}
-          </div>
-        </form>
-      </Card>
-    );
   }
 
   private handleDateModeChange(dateMode: DateModeOption): void {
@@ -246,8 +243,10 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
     this.setState({ splitValues });
   }
 
-  private handleAccountTagChange(accountTag: string): void {
-    this.setState({ accountTag: accountTag as AccountTag });
+  private handleAccountTagChange(checked: boolean, accountTag: string): void {
+    if (checked) {
+      this.setState({ accountTag: accountTag as AccountTag });
+    }
   }
 
   private fetchData(): void {
