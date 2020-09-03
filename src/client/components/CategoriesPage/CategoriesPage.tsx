@@ -17,6 +17,8 @@ import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { CategoryEditModal } from "../CategoryEditModal/CategoryEditModal";
+import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
+import { Card } from "../_ui/Card/Card";
 
 interface ICategoriesPageProps {
   readonly cacheTime: number;
@@ -85,9 +87,9 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
       <>
         {categoryToEdit !== undefined && <CategoryEditModal />}
 
-        <div className={gs.headerWrapper}>
-          <h1 className={bs.h2}>Categories</h1>
-          <div className={gs.headerExtras}>
+        <PageHeader>
+          <h2>Categories</h2>
+          <PageHeaderActions>
             <KeyShortcut targetStr={"c"} onTrigger={this.startCategoryCreation}>
               <IconBtn
                 icon={faPlus}
@@ -98,15 +100,17 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
                 }}
               />
             </KeyShortcut>
-          </div>
-        </div>
+          </PageHeaderActions>
+        </PageHeader>
 
-        <DataTable<ICategory>
-          columns={this.tableColumns}
-          dataProvider={this.dataProvider}
-          rowRenderer={this.tableRowRenderer}
-          watchedProps={{ cacheTime }}
-        />
+        <Card>
+          <DataTable<ICategory>
+            columns={this.tableColumns}
+            dataProvider={this.dataProvider}
+            rowRenderer={this.tableRowRenderer}
+            watchedProps={{ cacheTime }}
+          />
+        </Card>
       </>
     );
   }

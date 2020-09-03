@@ -25,6 +25,9 @@ import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { AccountEditModal } from "../AccountEditModal/AccountEditModal";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
+import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
+import { PageOptions } from "../_ui/PageOptions/PageOptions";
+import { Card } from "../_ui/Card/Card";
 
 interface IAccountsPageProps {
   readonly cacheTime: number;
@@ -103,18 +106,9 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
       <>
         {accountToEdit !== undefined && <AccountEditModal />}
 
-        <div className={gs.headerWrapper}>
-          <h1 className={bs.h2}>Accounts</h1>
-          <div className={combine(bs.btnGroup, gs.headerExtras)}>
-            <CheckboxBtn
-              text={"Active Accounts Only"}
-              checked={this.props.displayActiveOnly}
-              onChange={this.props.actions.setDisplayActiveOnly}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
-
+        <PageHeader>
+          <h2>Accounts</h2>
+          <PageHeaderActions>
             <KeyShortcut targetStr={"c"} onTrigger={this.startAccountCreation}>
               <IconBtn
                 icon={faPlus}
@@ -125,15 +119,28 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
                 }}
               />
             </KeyShortcut>
-          </div>
-        </div>
+          </PageHeaderActions>
+        </PageHeader>
 
-        <DataTable<IAccount>
-          columns={this.tableColumns}
-          dataProvider={this.dataProvider}
-          rowRenderer={this.tableRowRenderer}
-          watchedProps={{ cacheTime, displayActiveOnly }}
-        />
+        <PageOptions>
+          <CheckboxBtn
+            text={"Active Accounts Only"}
+            checked={this.props.displayActiveOnly}
+            onChange={this.props.actions.setDisplayActiveOnly}
+            btnProps={{
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            }}
+          />
+        </PageOptions>
+
+        <Card>
+          <DataTable<IAccount>
+            columns={this.tableColumns}
+            dataProvider={this.dataProvider}
+            rowRenderer={this.tableRowRenderer}
+            watchedProps={{ cacheTime, displayActiveOnly }}
+          />
+        </Card>
       </>
     );
   }

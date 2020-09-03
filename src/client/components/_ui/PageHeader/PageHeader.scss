@@ -1,0 +1,23 @@
+@import "~bootstrap-scss/functions";
+@import "~bootstrap-scss/variables";
+
+.page-header {
+  h2 {
+    margin-bottom: 0;
+  }
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: right;
+
+    > * {
+      margin: 0 0 0 calc(#{$spacer} / 2);
+    }
+  }
+}
