@@ -231,7 +231,7 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
         </>
       );
     } else {
-      return <>{formatCurrencyStyled(balance.balanceIn + balance.balanceOut)}</>;
+      return <>{formatCurrencyStyled(inc + dec)}</>;
     }
   }
 

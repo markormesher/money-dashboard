@@ -19,7 +19,6 @@ import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { TransactionEditModal } from "../TransactionEditModal/TransactionEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
-import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { Card } from "../_ui/Card/Card";
 
 interface ITransactionPageProps {
