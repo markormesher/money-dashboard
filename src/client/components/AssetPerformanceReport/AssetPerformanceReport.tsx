@@ -181,9 +181,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     const assetAccounts = accountList.filter((ac) => ac.type === "asset").sort((a, b) => a.name.localeCompare(b.name));
 
     if (assetAccounts.length === 0) {
-      return (
-        <p>{"You don't have any asset-type accounts."}</p>
-      );
+      return <p>{"You don't have any asset-type accounts."}</p>;
     }
 
     return (
