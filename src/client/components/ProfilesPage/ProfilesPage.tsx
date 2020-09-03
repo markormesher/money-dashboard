@@ -18,6 +18,8 @@ import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { ProfileEditModal } from "../ProfileEditModal/ProfileEditModal";
+import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
+import { Card } from "../_ui/Card/Card";
 
 interface IProfilesPageProps {
   readonly cacheTime: number;
@@ -91,9 +93,9 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
       <>
         {profileToEdit !== undefined && <ProfileEditModal />}
 
-        <div className={gs.headerWrapper}>
-          <h1 className={bs.h2}>Profiles</h1>
-          <div className={gs.headerExtras}>
+        <PageHeader>
+          <h2>Profiles</h2>
+          <PageHeaderActions>
             <KeyShortcut targetStr={"c"} onTrigger={this.startProfileCreation}>
               <IconBtn
                 icon={faPlus}
@@ -104,15 +106,17 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
                 }}
               />
             </KeyShortcut>
-          </div>
-        </div>
+          </PageHeaderActions>
+        </PageHeader>
 
-        <DataTable<IProfile>
-          columns={this.tableColumns}
-          dataProvider={this.dataProvider}
-          rowRenderer={this.tableRowRenderer}
-          watchedProps={{ cacheTime }}
-        />
+        <Card>
+          <DataTable<IProfile>
+            columns={this.tableColumns}
+            dataProvider={this.dataProvider}
+            rowRenderer={this.tableRowRenderer}
+            watchedProps={{ cacheTime }}
+          />
+        </Card>
       </>
     );
   }
