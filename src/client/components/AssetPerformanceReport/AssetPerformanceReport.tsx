@@ -161,9 +161,11 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
           includeAllTimePreset={true}
           includeYearToDatePreset={true}
           includeFuturePresets={false}
-          setPosition={true}
-          btnProps={{
-            className: combine(bs.btnOutlineInfo, bs.btnSm),
+          dropDownProps={{
+            btnProps: {
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            },
+            placement: "left",
           }}
         />
 

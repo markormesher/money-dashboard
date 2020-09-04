@@ -1,6 +1,6 @@
 import { faCalendar, faCheck } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { Component, CSSProperties, MouseEvent, ReactNode, RefObject } from "react";
+import { Component, MouseEvent, ReactNode } from "react";
 import { startOfMonth, endOfMonth, addMonths, startOfYear, endOfYear, addYears, subYears, isSameDay } from "date-fns";
 import { IDateRange } from "../../../../commons/models/IDateRange";
 import * as bs from "../../../global-styles/Bootstrap.scss";
@@ -8,7 +8,7 @@ import { formatDate } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
 import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";
 import { IconBtn } from "../IconBtn/IconBtn";
-import * as styles from "./DateRangeChooser.scss";
+import { ButtonDropDown, IButtonDropDownProps } from "../ButtonDropDown/ButtonDropDown";
 
 interface IDateRangeChooserProps {
   readonly startDate?: number;
@@ -19,8 +19,7 @@ interface IDateRangeChooserProps {
   readonly includeAllTimePreset?: boolean;
   readonly customPresets?: IDateRange[];
   readonly onValueChange?: (start: number, end: number) => void;
-  readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
-  readonly setPosition?: boolean;
+  readonly dropDownProps?: Pick<IButtonDropDownProps, "placement" | "btnProps">;
 }
 
 interface IDateRangeChooserState {
@@ -75,8 +74,6 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
     ] as Array<boolean | IDateRange>).filter((a) => a !== false) as IDateRange[];
   }
 
-  private readonly btnRef: RefObject<HTMLButtonElement>;
-
   constructor(props: IDateRangeChooserProps) {
     super(props);
     this.state = {
@@ -87,24 +84,21 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
       usingCustomRange: false,
     };
 
-    this.btnRef = React.createRef();
-
     this.renderChooser = this.renderChooser.bind(this);
     this.renderPresetBtn = this.renderPresetBtn.bind(this);
     this.handlePresetSubmit = this.handlePresetSubmit.bind(this);
     this.handleCustomRangeStartChange = this.handleCustomRangeStartChange.bind(this);
     this.handleCustomRangeEndChange = this.handleCustomRangeEndChange.bind(this);
     this.handleCustomRangeSubmit = this.handleCustomRangeSubmit.bind(this);
-    this.toggleChooser = this.toggleChooser.bind(this);
+    this.handleBtnClick = this.handleBtnClick.bind(this);
     this.closeChooser = this.closeChooser.bind(this);
     this.toggleCustomRangeChooserOpen = this.toggleCustomRangeChooserOpen.bind(this);
     this.customRangeIsValid = this.customRangeIsValid.bind(this);
-    this.getChooserPosition = this.getChooserPosition.bind(this);
   }
 
   public render(): ReactNode {
     const dateRanges = DateRangeChooser.getDateRanges(this.props);
-    const { startDate, endDate, btnProps } = this.props;
+    const { startDate, endDate, dropDownProps } = this.props;
     const { chooserOpen } = this.state;
 
     const matchingRanges = dateRanges.filter((dr) => {
@@ -115,71 +109,63 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
       : `${formatDate(startDate)} to ${formatDate(endDate)}`;
 
     return (
-      <>
-        <IconBtn
-          icon={faCalendar}
-          text={label}
-          btnProps={{
-            ...btnProps,
-            ref: this.btnRef,
-            onClick: this.toggleChooser,
-          }}
-        />
-        {chooserOpen && this.renderChooser()}
-      </>
+      <ButtonDropDown
+        icon={faCalendar}
+        text={label}
+        onBtnClick={this.handleBtnClick}
+        dropDownContents={chooserOpen ? this.renderChooser() : null}
+        {...dropDownProps}
+      />
     );
   }
 
   private renderChooser(): ReactNode {
-    const { setPosition } = this.props;
     const dateRanges = DateRangeChooser.getDateRanges(this.props);
 
     return (
-      <div className={styles.chooser} style={setPosition && this.getChooserPosition()}>
-        <div className={bs.row}>
-          {this.state.customRangeChooserOpen && (
-            <div className={bs.col}>
-              <div className={bs.formGroup}>
-                <ControlledDateInput
-                  id={"custom-from"}
-                  label={"From"}
-                  value={formatDate(this.state.customRangeStart, "system") || ""}
-                  disabled={false}
-                  onValueChange={this.handleCustomRangeStartChange}
-                />
-              </div>
-              <div className={bs.formGroup}>
-                <ControlledDateInput
-                  id={"custom-to"}
-                  label={"To"}
-                  value={formatDate(this.state.customRangeEnd, "system") || ""}
-                  disabled={false}
-                  onValueChange={this.handleCustomRangeEndChange}
-                />
-              </div>
-              <div className={bs.formGroup}>
-                <IconBtn
-                  icon={faCheck}
-                  text={"OK"}
-                  onClick={this.handleCustomRangeSubmit}
-                  btnProps={{
-                    className: bs.btnOutlineDark,
-                    disabled: !this.customRangeIsValid(),
-                  }}
-                />
-              </div>
-            </div>
-          )}
+      <div className={bs.row}>
+        {this.state.customRangeChooserOpen && (
           <div className={bs.col}>
-            <div className={bs.btnGroupVertical}>
-              {dateRanges.map((dr) => this.renderPresetBtn(dr))}
-              <button className={combine(bs.btn, bs.btnOutlineDark)} onClick={this.toggleCustomRangeChooserOpen}>
-                Custom
-              </button>
-              <button className={combine(bs.btn, bs.btnOutlineDark)} onClick={this.closeChooser}>
-                Cancel
-              </button>
+            <div className={bs.formGroup}>
+              <ControlledDateInput
+                id={"custom-from"}
+                label={"From"}
+                value={formatDate(this.state.customRangeStart, "system") || ""}
+                disabled={false}
+                onValueChange={this.handleCustomRangeStartChange}
+              />
             </div>
+            <div className={bs.formGroup}>
+              <ControlledDateInput
+                id={"custom-to"}
+                label={"To"}
+                value={formatDate(this.state.customRangeEnd, "system") || ""}
+                disabled={false}
+                onValueChange={this.handleCustomRangeEndChange}
+              />
+            </div>
+            <div className={bs.formGroup}>
+              <IconBtn
+                icon={faCheck}
+                text={"OK"}
+                onClick={this.handleCustomRangeSubmit}
+                btnProps={{
+                  className: bs.btnOutlineDark,
+                  disabled: !this.customRangeIsValid(),
+                }}
+              />
+            </div>
+          </div>
+        )}
+        <div className={bs.col}>
+          <div className={bs.btnGroupVertical}>
+            {dateRanges.map((dr) => this.renderPresetBtn(dr))}
+            <button className={combine(bs.btn, bs.btnOutlineDark)} onClick={this.toggleCustomRangeChooserOpen}>
+              Custom
+            </button>
+            <button className={combine(bs.btn, bs.btnOutlineDark)} onClick={this.closeChooser}>
+              Cancel
+            </button>
           </div>
         </div>
       </div>
@@ -200,7 +186,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
     );
   }
 
-  private toggleChooser(): void {
+  private handleBtnClick(): void {
     this.setState({
       chooserOpen: !this.state.chooserOpen,
       customRangeChooserOpen: this.state.usingCustomRange,
@@ -261,19 +247,6 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
     }
 
     return customRangeStart <= customRangeEnd;
-  }
-
-  private getChooserPosition(): CSSProperties {
-    /* istanbul ignore if: cannot be simulated with JSDOM/Enzyme */
-    if (!this.btnRef.current) {
-      return null;
-    }
-
-    const bounds = this.btnRef.current.getBoundingClientRect();
-    return {
-      top: `${bounds.bottom}px`,
-      right: `${window.innerWidth - bounds.right}px`,
-    };
   }
 }
 

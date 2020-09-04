@@ -97,8 +97,10 @@ class UCBudgetCloneModal extends PureComponent<IBudgetCloneModalProps, IBudgetCl
               includeYearToDatePreset={false}
               includeAllTimePreset={false}
               onValueChange={this.handleDateRangeSelection}
-              btnProps={{
-                className: combine(bs.btnOutlineDark, bs.btnSm, bs.formControl),
+              dropDownProps={{
+                btnProps: {
+                  className: combine(bs.btnOutlineDark, bs.btnSm, bs.formControl),
+                },
               }}
             />
           </div>

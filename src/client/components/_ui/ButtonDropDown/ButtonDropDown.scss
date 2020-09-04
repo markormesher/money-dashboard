@@ -3,10 +3,10 @@
 
 .chooser {
   background-color: $white;
-  border: 1px solid $gray-500;
   border-radius: 2px;
+  border: 1px solid $gray-500;
+  margin: $spacer * 0.25 0 0 0;
   padding: $spacer * 0.5;
   position: fixed;
   z-index: 9000;
-  margin: $spacer * 0.25 0 0 0;
 }

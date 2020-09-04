@@ -65,19 +65,8 @@ describe(__filename, () => {
     findChooser().length.should.equal(0);
   });
 
-  it("should render the chooser without specific positions by default", () => {
+  it("should render the chooser with specific positions", () => {
     mountWrapper = mount(<DateRangeChooser />);
-    mountWrapper.simulate("click");
-    findChooser()
-      .html()
-      .should.not.contain("top:");
-    findChooser()
-      .html()
-      .should.not.contain("right:");
-  });
-
-  it("should render the chooser with specific positions when specified", () => {
-    mountWrapper = mount(<DateRangeChooser setPosition={true} />);
     mountWrapper.simulate("click");
     findChooser()
       .html()
