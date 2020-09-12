@@ -27,25 +27,6 @@ button {
   }
 }
 
-// TODO: remove when header component is used everywhere
-.header-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  overflow: auto; // allows the div to have height even though it only contains floated elements
-  width: 100%;
-
-  .header-extras {
-    margin-bottom: $spacer * 0.5;
-  }
-
-  @media (max-width: map-get($grid-breakpoints, "lg")) {
-    .header-extras {
-      overflow-x: scroll;
-    }
-  }
-}
-
 .btn-mini {
   // Same as .badge in Bootstrap
   font-size: 75% !important;
