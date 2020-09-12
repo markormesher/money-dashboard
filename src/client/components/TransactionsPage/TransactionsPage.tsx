@@ -134,7 +134,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
 
   private tableRowRenderer(transaction: ITransaction): ReactElement<void> {
     const mainDate = formatDate(transaction.transactionDate);
-    const altDate = formatDate(transaction.transactionDate);
+    const altDate = formatDate(transaction.effectiveDate);
     return (
       <tr key={transaction.id}>
         <td>
