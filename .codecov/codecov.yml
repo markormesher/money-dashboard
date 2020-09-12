@@ -1,5 +1,7 @@
 coverage:
   status:
-    # disable status reports
-    project: off
-    patch: off
+    project:
+      default:
+        target: auto
+        threshold: 5%
+        base: auto
