@@ -221,9 +221,7 @@ export {
   IProfilesState,
   IProfileAwareProps,
   ProfileActions,
-  ProfileCacheKeys,
   mapStateToProfileAwareProps,
-  profileListIsCached,
   profilesReducer,
   profilesSagas,
   startDeleteProfile,
@@ -233,4 +231,5 @@ export {
   setProfileToEdit,
   setEditorBusy,
   setProfileSwitchInProgress,
+  setProfileList,
 };

@@ -10,6 +10,8 @@ import {
   startDeleteProfile,
   startSaveProfile,
   startSetCurrentProfile,
+  startLoadProfileList,
+  setProfileList,
 } from "./profiles";
 
 describe(__filename, () => {
@@ -46,6 +48,12 @@ describe(__filename, () => {
     });
   });
 
+  describe("startLoadProfileList()", () => {
+    it("should generate an action with the correct type", () => {
+      startLoadProfileList().type.should.equal(ProfileActions.START_LOAD_PROFILE_LIST);
+    });
+  });
+
   describe("setProfileToEdit()", () => {
     it("should generate an action with the correct type", () => {
       setProfileToEdit(DEFAULT_PROFILE).type.should.equal(ProfileActions.SET_PROFILE_TO_EDIT);
@@ -76,6 +84,18 @@ describe(__filename, () => {
     it("should add the value to the payload", () => {
       setProfileSwitchInProgress(true).payload.should.have.keys("profileSwitchInProgress");
       setProfileSwitchInProgress(true).payload.profileSwitchInProgress.should.equal(true);
+    });
+  });
+
+  describe("setProfileList()", () => {
+    it("should generate an action with the correct type", () => {
+      setProfileList([DEFAULT_PROFILE]).type.should.equal(ProfileActions.SET_PROFILE_LIST);
+    });
+
+    it("should add the value to the payload", () => {
+      const profiles = [DEFAULT_PROFILE];
+      setProfileList(profiles).payload.should.have.keys("profileList");
+      setProfileList(profiles).payload.profileList.should.equal(profiles);
     });
   });
 

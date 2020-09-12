@@ -19,7 +19,6 @@ import { ButtonDropDown } from "../ButtonDropDown/ButtonDropDown";
 
 interface IProfileChooserProps extends IProfileAwareProps {
   readonly profileList?: IProfile[];
-  readonly profileListIsCached?: boolean;
   readonly profileSwitchInProgress?: boolean;
 
   readonly actions?: {
