@@ -64,7 +64,7 @@ class ButtonDropDown extends PureComponent<IButtonDropDownProps> {
   private getChooserPosition(): CSSProperties {
     /* istanbul ignore if: cannot be simulated with JSDOM/Enzyme */
     if (!this.btnRef.current) {
-      return null;
+      return { display: "none" };
     }
 
     const bounds = this.btnRef.current.getBoundingClientRect();

@@ -40,6 +40,24 @@ describe(__filename, () => {
       .spin.should.equal(true);
   });
 
+  it("should render the chooser at a fixed position", () => {
+    mountWrapper = mount(
+      <ButtonDropDown icon={faRocket} text={"Test"} dropDownContents={testContent} placement={"left"} />,
+    );
+    mountWrapper.instance().forceUpdate(); // makes sure the DOM ref is registered
+    findChooser()
+      .html()
+      .should.contain("left:");
+
+    mountWrapper = mount(
+      <ButtonDropDown icon={faRocket} text={"Test"} dropDownContents={testContent} placement={"right"} />,
+    );
+    mountWrapper.instance().forceUpdate(); // makes sure the DOM ref is registered
+    findChooser()
+      .html()
+      .should.contain("right:");
+  });
+
   it("should call the handler when clicked", () => {
     const spy = sinon.spy();
     mountWrapper = mount(<ButtonDropDown icon={faRocket} text={"Test"} onBtnClick={spy} />);
