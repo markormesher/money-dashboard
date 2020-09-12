@@ -52,6 +52,7 @@ enum ProfileCacheKeys {
   CURRENT_PROFILE = "ProfileCacheKeys.CURRENT_PROFILE",
 }
 
+/* istanbul ignore next */
 function profileListIsCached(): boolean {
   // direct call to library method is deliberately not tested
   /* istanbul ignore next */

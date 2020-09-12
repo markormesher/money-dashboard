@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
 import { DEFAULT_PROFILE } from "../../commons/models/IProfile";
+import { DEFAULT_USER } from "../../commons/models/IUser";
 import {
   ProfileActions,
   profilesReducer,
@@ -12,9 +13,32 @@ import {
   startSetCurrentProfile,
   startLoadProfileList,
   setProfileList,
+  mapStateToProfileAwareProps,
 } from "./profiles";
+import { IRootState } from "./root";
 
 describe(__filename, () => {
+  describe("mapStateToProfileAwareProps()", () => {
+    it("should extract the active profile", () => {
+      const state: IRootState = {
+        auth: {
+          activeUser: {
+            ...DEFAULT_USER,
+            activeProfile: DEFAULT_PROFILE,
+          },
+        },
+      };
+      mapStateToProfileAwareProps(state).activeProfile.should.equal(DEFAULT_PROFILE);
+    });
+
+    it("should not fail if there is no user", () => {
+      const state: IRootState = {
+        auth: {},
+      };
+      expect(mapStateToProfileAwareProps(state).activeProfile).to.equal(undefined);
+    });
+  });
+
   describe("startDeleteProfile()", () => {
     it("should generate an action with the correct type", () => {
       startDeleteProfile(DEFAULT_PROFILE).type.should.equal(ProfileActions.START_DELETE_PROFILE);
