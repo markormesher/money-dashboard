@@ -124,6 +124,14 @@ describe(__filename, () => {
       });
     });
 
+    describe(ProfileActions.SET_PROFILE_LIST, () => {
+      it("should set the profile list", () => {
+        const profiles = [DEFAULT_PROFILE];
+        profilesReducer(undefined, setProfileList([])).profileList.length.should.equal(0);
+        profilesReducer(undefined, setProfileList(profiles)).profileList.should.equal(profiles);
+      });
+    });
+
     describe(ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS, () => {
       it("should set the switch-in-progress flag", () => {
         profilesReducer(undefined, setProfileSwitchInProgress(true)).profileSwitchInProgress.should.equal(true);
