@@ -5,15 +5,19 @@ import { AnyAction, Dispatch } from "redux";
 import { faUsers, faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { IProfile } from "../../../../commons/models/IProfile";
 import { IRootState } from "../../../redux/root";
-import { profileListIsCached, startLoadProfileList, startSetCurrentProfile } from "../../../redux/profiles";
+import {
+  startLoadProfileList,
+  startSetCurrentProfile,
+  IProfileAwareProps,
+  mapStateToProfileAwareProps,
+} from "../../../redux/profiles";
 import { combine } from "../../../helpers/style-helpers";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { ButtonDropDown } from "../ButtonDropDown/ButtonDropDown";
 
-interface IProfileChooserProps {
+interface IProfileChooserProps extends IProfileAwareProps {
   readonly profileList?: IProfile[];
   readonly profileListIsCached?: boolean;
-  readonly activeProfile?: IProfile;
   readonly profileSwitchInProgress?: boolean;
 
   readonly actions?: {
@@ -28,10 +32,9 @@ interface IProfileChooserState {
 
 function mapStateToProps(state: IRootState, props: IProfileChooserProps): IProfileChooserProps {
   return {
+    ...mapStateToProfileAwareProps(state),
     ...props,
     profileList: state.profiles.profileList,
-    profileListIsCached: profileListIsCached(),
-    activeProfile: state.auth.activeUser.activeProfile,
     profileSwitchInProgress: state.profiles.profileSwitchInProgress,
   };
 }
@@ -64,16 +67,14 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChoos
   }
 
   public componentDidUpdate(): void {
-    if (!this.props.profileListIsCached) {
-      this.props.actions.startLoadProfileList();
-    }
+    this.props.actions.startLoadProfileList();
   }
 
   public render(): ReactNode {
     const { activeProfile, profileList, profileSwitchInProgress } = this.props;
     const { chooserOpen } = this.state;
 
-    if (!activeProfile || !profileList) {
+    if (!activeProfile || !profileList || profileList.length == 1) {
       return null;
     }
 
@@ -96,7 +97,7 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChoos
   }
 
   private renderChooser(): ReactNode {
-    const { profileList } = this.props;
+    const { profileList, activeProfile } = this.props;
     return (
       <div className={bs.row}>
         <div className={bs.col}>
@@ -107,6 +108,7 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChoos
                 key={p.id}
                 className={combine(bs.btn, bs.btnOutlineDark)}
                 onClick={this.handleProfileClick}
+                disabled={activeProfile.id == p.id}
               >
                 {p.name}
               </button>
