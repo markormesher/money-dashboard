@@ -21,15 +21,15 @@ import { startLogOutCurrentUser } from "../../redux/auth";
 import { IRootState } from "../../redux/root";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { IAccount } from "../../../commons/models/IAccount";
-import { startLoadAccountList, accountListIsCached } from "../../redux/accounts";
+import { startLoadAccountList } from "../../redux/accounts";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 import * as style from "./Nav.scss";
 import { NavLink } from "./NavLink";
 import { NavSection } from "./NavSection";
 
-interface INavProps {
+interface INavProps extends IProfileAwareProps {
   readonly isOpen?: boolean;
   readonly accountList?: IAccount[];
-  readonly accountListIsCached: boolean;
 
   readonly actions?: {
     readonly logout: () => AnyAction;
@@ -40,10 +40,10 @@ interface INavProps {
 
 function mapStateToProps(state: IRootState, props: INavProps): INavProps {
   return {
+    ...mapStateToProfileAwareProps(state),
     ...props,
     isOpen: state.nav.isOpen,
     accountList: state.accounts.accountList,
-    accountListIsCached: accountListIsCached(),
   };
 }
 
@@ -73,9 +73,7 @@ class UCNav extends PureComponent<INavProps> {
   }
 
   public componentDidUpdate(): void {
-    if (!this.props.accountListIsCached) {
-      this.props.actions.startLoadAccountList();
-    }
+    this.props.actions.startLoadAccountList();
   }
 
   public render(): ReactNode {

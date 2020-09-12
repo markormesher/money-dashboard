@@ -19,8 +19,9 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { CategoryEditModal } from "../CategoryEditModal/CategoryEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { Card } from "../_ui/Card/Card";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 
-interface ICategoriesPageProps {
+interface ICategoriesPageProps extends IProfileAwareProps {
   readonly cacheTime: number;
   readonly categoryToEdit?: ICategory;
   readonly actions?: {
@@ -31,6 +32,7 @@ interface ICategoriesPageProps {
 
 function mapStateToProps(state: IRootState, props: ICategoriesPageProps): ICategoriesPageProps {
   return {
+    ...mapStateToProfileAwareProps(state),
     ...props,
     cacheTime: CacheKeyUtil.getKeyTime(CategoryCacheKeys.CATEGORY_DATA),
     categoryToEdit: state.categories.categoryToEdit,
@@ -81,7 +83,7 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
   }
 
   public render(): ReactNode {
-    const { cacheTime, categoryToEdit } = this.props;
+    const { cacheTime, activeProfile, categoryToEdit } = this.props;
 
     return (
       <>
@@ -108,7 +110,7 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
             columns={this.tableColumns}
             dataProvider={this.dataProvider}
             rowRenderer={this.tableRowRenderer}
-            watchedProps={{ cacheTime }}
+            watchedProps={{ cacheTime, activeProfile }}
           />
         </Card>
       </>

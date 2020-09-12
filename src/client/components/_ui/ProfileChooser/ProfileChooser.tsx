@@ -5,10 +5,10 @@ import { AnyAction, Dispatch } from "redux";
 import { faUsers, faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { IProfile } from "../../../../commons/models/IProfile";
 import { IRootState } from "../../../redux/root";
-import { profileListIsCached, startLoadProfileList } from "../../../redux/profiles";
-import { IconBtn } from "../IconBtn/IconBtn";
+import { profileListIsCached, startLoadProfileList, startSetCurrentProfile } from "../../../redux/profiles";
 import { combine } from "../../../helpers/style-helpers";
 import * as bs from "../../../global-styles/Bootstrap.scss";
+import { ButtonDropDown } from "../ButtonDropDown/ButtonDropDown";
 
 interface IProfileChooserProps {
   readonly profileList?: IProfile[];
@@ -18,7 +18,12 @@ interface IProfileChooserProps {
 
   readonly actions?: {
     readonly startLoadProfileList: () => AnyAction;
+    readonly startSetCurrentProfile: (profile: IProfile) => AnyAction;
   };
+}
+
+interface IProfileChooserState {
+  readonly chooserOpen: boolean;
 }
 
 function mapStateToProps(state: IRootState, props: IProfileChooserProps): IProfileChooserProps {
@@ -36,11 +41,24 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfileChooserProps): IP
     ...props,
     actions: {
       startLoadProfileList: (): AnyAction => dispatch(startLoadProfileList()),
+      startSetCurrentProfile: (profile: IProfile): AnyAction => dispatch(startSetCurrentProfile(profile)),
     },
   };
 }
 
-class UCProfileChooser extends PureComponent<IProfileChooserProps> {
+class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChooserState> {
+  constructor(props: IProfileChooserProps) {
+    super(props);
+
+    this.state = {
+      chooserOpen: false,
+    };
+
+    this.renderChooser = this.renderChooser.bind(this);
+    this.handleBtnClick = this.handleBtnClick.bind(this);
+    this.handleProfileClick = this.handleProfileClick.bind(this);
+  }
+
   public componentDidMount(): void {
     this.props.actions.startLoadProfileList();
   }
@@ -53,6 +71,7 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps> {
 
   public render(): ReactNode {
     const { activeProfile, profileList, profileSwitchInProgress } = this.props;
+    const { chooserOpen } = this.state;
 
     if (!activeProfile || !profileList) {
       return null;
@@ -60,18 +79,53 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps> {
 
     return (
       <>
-        <IconBtn
+        <ButtonDropDown
           icon={profileSwitchInProgress ? faCircleNotch : faUsers}
           text={activeProfile.name}
+          onBtnClick={this.handleBtnClick}
           btnProps={{
             className: combine(bs.btnOutlineInfo),
           }}
           iconProps={{
             spin: profileSwitchInProgress,
           }}
+          dropDownContents={chooserOpen ? this.renderChooser() : null}
         />
       </>
     );
+  }
+
+  private renderChooser(): ReactNode {
+    const { profileList } = this.props;
+    return (
+      <div className={bs.row}>
+        <div className={bs.col}>
+          <div className={bs.btnGroupVertical}>
+            {profileList.map((p) => (
+              <button
+                id={`profile-option-${p.id}`}
+                key={p.id}
+                className={combine(bs.btn, bs.btnOutlineDark)}
+                onClick={this.handleProfileClick}
+              >
+                {p.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  private handleBtnClick(): void {
+    this.setState({ chooserOpen: !this.state.chooserOpen });
+  }
+
+  private handleProfileClick(event: React.MouseEvent<HTMLButtonElement>): void {
+    const profileId = (event.target as HTMLButtonElement).id.replace("profile-option-", "");
+    const profile = this.props.profileList.find((p) => p.id === profileId);
+    this.props.actions.startSetCurrentProfile(profile);
+    this.setState({ chooserOpen: false });
   }
 }
 

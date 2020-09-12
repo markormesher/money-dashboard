@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { subYears, startOfDay, endOfDay } from "date-fns";
+import { connect } from "react-redux";
 import { IBalanceHistoryData } from "../../../commons/models/IBalanceHistoryData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
@@ -17,6 +18,11 @@ import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
+import { IRootState } from "../../redux/root";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface IBalanceHistoryReportProps extends IProfileAwareProps {}
 
 interface IBalanceHistoryReportState {
   readonly startDate: number;
@@ -27,7 +33,14 @@ interface IBalanceHistoryReportState {
   readonly failed: boolean;
 }
 
-class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
+function mapStateToProps(state: IRootState, props?: IBalanceHistoryReportProps): IBalanceHistoryReportProps {
+  return {
+    ...mapStateToProfileAwareProps(state),
+    ...props,
+  };
+}
+
+class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBalanceHistoryReportState> {
   // give each remote request an increasing "frame" number so that late arrivals will be dropped
   private frameCounter = 0;
   private lastFrameReceived = 0;
@@ -53,11 +66,12 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     this.fetchData();
   }
 
-  public componentDidUpdate(_: {}, nextState: IBalanceHistoryReportState): void {
+  public componentDidUpdate(nextProps: IBalanceHistoryReportProps, nextState: IBalanceHistoryReportState): void {
     if (
       this.state.startDate !== nextState.startDate ||
       this.state.endDate !== nextState.endDate ||
-      this.state.dateMode !== nextState.dateMode
+      this.state.dateMode !== nextState.dateMode ||
+      this.props.activeProfile !== nextProps.activeProfile
     ) {
       this.fetchData();
     }
@@ -288,4 +302,4 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
   }
 }
 
-export { BalanceHistoryReport };
+export const BalanceHistoryReport = connect(mapStateToProps)(UCBalanceHistoryReport);

@@ -5,9 +5,12 @@ import { IProfile, mapProfileForApi, mapProfileFromApi } from "../../commons/mod
 import { startLoadCurrentUser } from "./auth";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
+import {IRootState} from "./root";
+
+// TODO: rename current to active
+// TODO: maybe move some of this to auth controller?
 
 interface IProfilesState {
-  readonly activeProfile: IProfile;
   readonly profileToEdit: IProfile;
   readonly editorBusy: boolean;
   readonly profileList: IProfile[];
@@ -15,12 +18,21 @@ interface IProfilesState {
 }
 
 const initialState: IProfilesState = {
-  activeProfile: undefined,
   profileToEdit: undefined,
   editorBusy: false,
   profileList: undefined,
   profileSwitchInProgress: false,
 };
+
+interface IProfileAwareProps {
+  readonly activeProfile?: IProfile;
+}
+
+function mapStateToProfileAwareProps(state: IRootState): IProfileAwareProps {
+  return {
+    activeProfile: state.auth.activeUser?.activeProfile,
+  };
+}
 
 enum ProfileActions {
   START_DELETE_PROFILE = "ProfileActions.START_DELETE_PROFILE",
@@ -28,7 +40,6 @@ enum ProfileActions {
   START_SET_CURRENT_PROFILE = "ProfileActions.START_SET_CURRENT_PROFILE",
   START_LOAD_PROFILE_LIST = "ProfileActions.START_LOAD_PROFILE_LIST",
 
-  SET_ACTIVE_PROFILE = "ProfileActions.SET_ACTIVE_PROFILE",
   SET_PROFILE_TO_EDIT = "ProfileActions.SET_PROFILE_TO_EDIT",
   SET_EDITOR_BUSY = "ProfileActions.SET_EDITOR_BUSY",
   SET_PROFILE_LIST = "ProfileActions.SET_PROFILE_LIST",
@@ -95,13 +106,6 @@ function setProfileList(profileList: IProfile[]): PayloadAction {
   };
 }
 
-function setActiveProfile(profile: IProfile): PayloadAction {
-  return {
-    type: ProfileActions.SET_ACTIVE_PROFILE,
-    payload: { profile },
-  };
-}
-
 function setProfileSwitchInProgress(profileSwitchInProgress: boolean): PayloadAction {
   return {
     type: ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS,
@@ -145,8 +149,7 @@ function* setCurrentProfileSaga(): Generator {
       yield put(setProfileSwitchInProgress(true));
       yield call(() => axios.post(`/api/profiles/select/${profile.id}`));
       yield all([
-        put(setActiveProfile(profile)),
-        put(startLoadCurrentUser()),
+        put(startLoadCurrentUser()), // reload the user to update the activeProfile field
         put(CacheKeyUtil.updateKey(ProfileCacheKeys.CURRENT_PROFILE)),
         put(setProfileSwitchInProgress(false)),
       ]);
@@ -197,12 +200,6 @@ function profilesReducer(state = initialState, action: PayloadAction): IProfiles
         editorBusy: action.payload.editorBusy,
       };
 
-    case ProfileActions.SET_ACTIVE_PROFILE:
-      return {
-        ...state,
-        activeProfile: action.payload.profile,
-      };
-
     case ProfileActions.SET_PROFILE_LIST:
       return {
         ...state,
@@ -222,8 +219,10 @@ function profilesReducer(state = initialState, action: PayloadAction): IProfiles
 
 export {
   IProfilesState,
+  IProfileAwareProps,
   ProfileActions,
   ProfileCacheKeys,
+  mapStateToProfileAwareProps,
   profileListIsCached,
   profilesReducer,
   profilesSagas,
@@ -233,6 +232,5 @@ export {
   startLoadProfileList,
   setProfileToEdit,
   setEditorBusy,
-  setActiveProfile,
   setProfileSwitchInProgress,
 };

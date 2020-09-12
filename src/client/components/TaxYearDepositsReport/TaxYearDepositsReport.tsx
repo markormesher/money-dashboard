@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
+import { connect } from "react-redux";
 import { IDetailedCategoryBalance } from "../../../commons/models/IDetailedCategoryBalance";
 import { ITaxYearDepositsData, mapTaxYearDepositsDataFromApi } from "../../../commons/models/ITaxYearDepositsData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
@@ -15,6 +16,11 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
+import { IRootState } from "../../redux/root";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface ITaxYearDepositsReportProps extends IProfileAwareProps {}
 
 interface ITaxYearDepositsReportState {
   readonly dateMode: DateModeOption;
@@ -25,7 +31,14 @@ interface ITaxYearDepositsReportState {
   readonly failed: boolean;
 }
 
-class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
+function mapStateToProps(state: IRootState, props?: ITaxYearDepositsReportProps): ITaxYearDepositsReportProps {
+  return {
+    ...mapStateToProfileAwareProps(state),
+    ...props,
+  };
+}
+
+class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITaxYearDepositsReportState> {
   // give each remote request an increasing "frame" number so that late arrivals will be dropped
   private frameCounter = 0;
   private lastFrameReceived = 0;
@@ -53,8 +66,12 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
     this.fetchData();
   }
 
-  public componentDidUpdate(nextProps: {}, nextState: ITaxYearDepositsReportState): void {
-    if (this.state.dateMode !== nextState.dateMode || this.state.accountTag !== nextState.accountTag) {
+  public componentDidUpdate(nextProps: ITaxYearDepositsReportProps, nextState: ITaxYearDepositsReportState): void {
+    if (
+      this.state.dateMode !== nextState.dateMode ||
+      this.state.accountTag !== nextState.accountTag ||
+      this.props.activeProfile !== nextProps.activeProfile
+    ) {
       this.fetchData();
     }
   }
@@ -299,4 +316,4 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
   }
 }
 
-export { TaxYearDepositsReport };
+export const TaxYearDepositsReport = connect(mapStateToProps)(UCTaxYearDepositsReport);

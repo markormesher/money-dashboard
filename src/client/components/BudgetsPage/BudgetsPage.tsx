@@ -30,8 +30,9 @@ import { BudgetEditModal } from "../BudgetEditModal/BudgetEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { Card } from "../_ui/Card/Card";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 
-interface IBudgetsPageProps {
+interface IBudgetsPageProps extends IProfileAwareProps {
   readonly cacheTime: number;
   readonly displayCurrentOnly: boolean;
   readonly budgetToEdit?: IBudget;
@@ -48,6 +49,7 @@ interface IBudgetsPageProps {
 
 function mapStateToProps(state: IRootState, props: IBudgetsPageProps): IBudgetsPageProps {
   return {
+    ...mapStateToProfileAwareProps(state),
     ...props,
     cacheTime: CacheKeyUtil.getKeyTime(BudgetCacheKeys.BUDGET_DATA),
     displayCurrentOnly: state.budgets.displayCurrentOnly,
@@ -122,7 +124,14 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
   }
 
   public render(): ReactNode {
-    const { cacheTime, budgetToEdit, budgetIdsToClone, budgetCloneInProgress, displayCurrentOnly } = this.props;
+    const {
+      cacheTime,
+      activeProfile,
+      budgetToEdit,
+      budgetIdsToClone,
+      budgetCloneInProgress,
+      displayCurrentOnly,
+    } = this.props;
 
     return (
       <>
@@ -171,7 +180,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
             columns={this.tableColumns}
             dataProvider={this.dataProvider}
             rowRenderer={this.tableRowRenderer}
-            watchedProps={{ cacheTime, displayCurrentOnly }}
+            watchedProps={{ cacheTime, activeProfile, displayCurrentOnly }}
           />
         </Card>
       </>

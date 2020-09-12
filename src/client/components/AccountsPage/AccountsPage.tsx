@@ -28,8 +28,9 @@ import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { Card } from "../_ui/Card/Card";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 
-interface IAccountsPageProps {
+interface IAccountsPageProps extends IProfileAwareProps {
   readonly cacheTime: number;
   readonly displayActiveOnly?: boolean;
   readonly accountToEdit?: IAccount;
@@ -45,6 +46,7 @@ interface IAccountsPageProps {
 
 function mapStateToProps(state: IRootState, props: IAccountsPageProps): IAccountsPageProps {
   return {
+    ...mapStateToProfileAwareProps(state),
     ...props,
     cacheTime: CacheKeyUtil.getKeyTime(AccountCacheKeys.ACCOUNT_DATA),
     displayActiveOnly: state.accounts.displayActiveOnly,
@@ -100,7 +102,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
   }
 
   public render(): ReactNode {
-    const { cacheTime, displayActiveOnly, accountToEdit } = this.props;
+    const { cacheTime, activeProfile, displayActiveOnly, accountToEdit } = this.props;
 
     return (
       <>
@@ -138,7 +140,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
             columns={this.tableColumns}
             dataProvider={this.dataProvider}
             rowRenderer={this.tableRowRenderer}
-            watchedProps={{ cacheTime, displayActiveOnly }}
+            watchedProps={{ cacheTime, activeProfile, displayActiveOnly }}
           />
         </Card>
       </>

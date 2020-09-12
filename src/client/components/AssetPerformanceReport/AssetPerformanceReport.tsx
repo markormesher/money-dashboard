@@ -23,8 +23,9 @@ import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/L
 import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 
-interface IAssetPerformanceReportProps {
+interface IAssetPerformanceReportProps extends IProfileAwareProps {
   readonly accountList?: IAccount[];
 
   readonly actions?: {
@@ -46,6 +47,7 @@ interface IAssetPerformanceReportState {
 
 function mapStateToProps(state: IRootState, props: IAssetPerformanceReportProps): IAssetPerformanceReportProps {
   return {
+    ...mapStateToProfileAwareProps(state),
     ...props,
     accountList: state.accounts.accountList,
   };
@@ -95,14 +97,15 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     this.fetchData();
   }
 
-  public componentDidUpdate(_: {}, nextState: IAssetPerformanceReportState): void {
+  public componentDidUpdate(nextProps: IAssetPerformanceReportProps, nextState: IAssetPerformanceReportState): void {
     if (
       this.state.startDate !== nextState.startDate ||
       this.state.endDate !== nextState.endDate ||
       this.state.dateMode !== nextState.dateMode ||
       this.state.selectedAccounts !== nextState.selectedAccounts ||
       this.state.zeroBasis !== nextState.zeroBasis ||
-      this.state.showAsPercent !== nextState.showAsPercent
+      this.state.showAsPercent !== nextState.showAsPercent ||
+      this.props.activeProfile !== nextProps.activeProfile
     ) {
       this.fetchData();
     }
@@ -185,7 +188,12 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     const assetAccounts = accountList.filter((ac) => ac.type === "asset").sort((a, b) => a.name.localeCompare(b.name));
 
     if (assetAccounts.length === 0) {
-      return <p>{"You don't have any asset-type accounts."}</p>;
+      return (
+        <>
+          <hr />
+          <p>{"You don't have any asset-type accounts."}</p>
+        </>
+      );
     }
 
     return (
