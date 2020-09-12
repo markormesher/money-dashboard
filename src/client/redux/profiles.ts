@@ -7,7 +7,6 @@ import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { IRootState } from "./root";
 
-// TODO: rename current to active
 // TODO: maybe move some of this to auth controller?
 
 interface IProfilesState {
