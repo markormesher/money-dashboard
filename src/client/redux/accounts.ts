@@ -45,7 +45,7 @@ function accountListIsCached(): boolean {
   /* istanbul ignore next */
   return CacheKeyUtil.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [
     AccountCacheKeys.ACCOUNT_DATA,
-    ProfileCacheKeys.CURRENT_PROFILE,
+    ProfileCacheKeys.ACTIVE_PROFILE,
   ]);
 }
 

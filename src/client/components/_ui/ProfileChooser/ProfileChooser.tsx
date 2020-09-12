@@ -9,7 +9,7 @@ import { IProfile } from "../../../../commons/models/IProfile";
 import { IRootState } from "../../../redux/root";
 import {
   startLoadProfileList,
-  startSetCurrentProfile,
+  startSetActiveProfile,
   IProfileAwareProps,
   mapStateToProfileAwareProps,
 } from "../../../redux/profiles";
@@ -23,7 +23,7 @@ interface IProfileChooserProps extends IProfileAwareProps {
 
   readonly actions?: {
     readonly startLoadProfileList: () => AnyAction;
-    readonly startSetCurrentProfile: (profile: IProfile) => AnyAction;
+    readonly startSetActiveProfile: (profile: IProfile) => AnyAction;
   };
 }
 
@@ -45,7 +45,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfileChooserProps): IP
     ...props,
     actions: {
       startLoadProfileList: (): AnyAction => dispatch(startLoadProfileList()),
-      startSetCurrentProfile: (profile: IProfile): AnyAction => dispatch(startSetCurrentProfile(profile)),
+      startSetActiveProfile: (profile: IProfile): AnyAction => dispatch(startSetActiveProfile(profile)),
     },
   };
 }
@@ -127,7 +127,7 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChoos
   private handleProfileClick(event: React.MouseEvent<HTMLButtonElement>): void {
     const profileId = (event.target as HTMLButtonElement).id.replace("profile-option-", "");
     const profile = this.props.profileList.find((p) => p.id === profileId);
-    this.props.actions.startSetCurrentProfile(profile);
+    this.props.actions.startSetActiveProfile(profile);
     this.setState({ chooserOpen: false });
   }
 }

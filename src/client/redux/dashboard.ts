@@ -84,7 +84,7 @@ function* loadAccountBalancesSaga(): Generator {
       CacheKeyUtil.keyIsValid(DashboardCacheKeys.ACCOUNT_BALANCES, [
         TransactionCacheKeys.TRANSACTION_DATA,
         AccountCacheKeys.ACCOUNT_DATA,
-        ProfileCacheKeys.CURRENT_PROFILE,
+        ProfileCacheKeys.ACTIVE_PROFILE,
       ])
     ) {
       return;
@@ -106,7 +106,7 @@ function* loadBudgetBalancesSaga(): Generator {
       CacheKeyUtil.keyIsValid(DashboardCacheKeys.BUDGET_BALANCES, [
         TransactionCacheKeys.TRANSACTION_DATA,
         BudgetCacheKeys.BUDGET_DATA,
-        ProfileCacheKeys.CURRENT_PROFILE,
+        ProfileCacheKeys.ACTIVE_PROFILE,
       ])
     ) {
       return;
@@ -133,7 +133,7 @@ function* loadMemoCategoryBalancesSaga(): Generator {
     if (
       CacheKeyUtil.keyIsValid(DashboardCacheKeys.MEMO_CATEGORY_BALANCE, [
         TransactionCacheKeys.TRANSACTION_DATA,
-        ProfileCacheKeys.CURRENT_PROFILE,
+        ProfileCacheKeys.ACTIVE_PROFILE,
       ])
     ) {
       return;

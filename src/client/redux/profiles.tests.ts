@@ -10,7 +10,7 @@ import {
   setProfileToEdit,
   startDeleteProfile,
   startSaveProfile,
-  startSetCurrentProfile,
+  startSetActiveProfile,
   startLoadProfileList,
   setProfileList,
   mapStateToProfileAwareProps,
@@ -61,14 +61,14 @@ describe(__filename, () => {
     });
   });
 
-  describe("startSetCurrentProfile()", () => {
+  describe("startSetActiveProfile()", () => {
     it("should generate an action with the correct type", () => {
-      startSetCurrentProfile(DEFAULT_PROFILE).type.should.equal(ProfileActions.START_SET_CURRENT_PROFILE);
+      startSetActiveProfile(DEFAULT_PROFILE).type.should.equal(ProfileActions.START_SET_ACTIVE_PROFILE);
     });
 
     it("should add the profile to the payload", () => {
-      startSetCurrentProfile(DEFAULT_PROFILE).payload.should.have.keys("profile");
-      startSetCurrentProfile(DEFAULT_PROFILE).payload.profile.should.equal(DEFAULT_PROFILE);
+      startSetActiveProfile(DEFAULT_PROFILE).payload.should.have.keys("profile");
+      startSetActiveProfile(DEFAULT_PROFILE).payload.profile.should.equal(DEFAULT_PROFILE);
     });
   });
 

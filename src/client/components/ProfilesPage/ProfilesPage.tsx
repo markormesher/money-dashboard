@@ -9,7 +9,7 @@ import { IUser } from "../../../commons/models/IUser";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
-import { ProfileCacheKeys, setProfileToEdit, startDeleteProfile, startSetCurrentProfile } from "../../redux/profiles";
+import { ProfileCacheKeys, setProfileToEdit, startDeleteProfile, startSetActiveProfile } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
 import { Badge } from "../_ui/Badge/Badge";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
@@ -29,7 +29,7 @@ interface IProfilesPageProps {
   readonly actions?: {
     readonly deleteProfile: (profile: IProfile) => AnyAction;
     readonly setProfileToEdit: (profile: IProfile) => AnyAction;
-    readonly setCurrentProfile: (profile: IProfile) => AnyAction;
+    readonly startSetActiveProfile: (profile: IProfile) => AnyAction;
   };
 }
 
@@ -38,7 +38,7 @@ function mapStateToProps(state: IRootState, props: IProfilesPageProps): IProfile
     ...props,
     cacheTime: Math.max(
       CacheKeyUtil.getKeyTime(ProfileCacheKeys.PROFILE_DATA),
-      CacheKeyUtil.getKeyTime(ProfileCacheKeys.CURRENT_PROFILE),
+      CacheKeyUtil.getKeyTime(ProfileCacheKeys.ACTIVE_PROFILE),
     ),
     profileToEdit: state.profiles.profileToEdit,
     profileSwitchInProgress: state.profiles.profileSwitchInProgress,
@@ -52,7 +52,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfilesPageProps): IPro
     actions: {
       deleteProfile: (profile): AnyAction => dispatch(startDeleteProfile(profile)),
       setProfileToEdit: (profile): AnyAction => dispatch(setProfileToEdit(profile)),
-      setCurrentProfile: (profile): AnyAction => dispatch(startSetCurrentProfile(profile)),
+      startSetActiveProfile: (profile): AnyAction => dispatch(startSetActiveProfile(profile)),
     },
   };
 }
@@ -159,7 +159,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
             icon={faHandPointer}
             text={"Select"}
             payload={profile}
-            onClick={this.props.actions.setCurrentProfile}
+            onClick={this.props.actions.startSetActiveProfile}
             btnProps={{
               className: combine(bs.btnOutlineDark, gs.btnMini),
               disabled: profileSwitchInProgress,

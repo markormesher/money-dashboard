@@ -37,7 +37,7 @@ function mapStateToProfileAwareProps(state: IRootState): IProfileAwareProps {
 enum ProfileActions {
   START_DELETE_PROFILE = "ProfileActions.START_DELETE_PROFILE",
   START_SAVE_PROFILE = "ProfileActions.START_SAVE_PROFILE",
-  START_SET_CURRENT_PROFILE = "ProfileActions.START_SET_CURRENT_PROFILE",
+  START_SET_ACTIVE_PROFILE = "ProfileActions.START_SET_ACTIVE_PROFILE",
   START_LOAD_PROFILE_LIST = "ProfileActions.START_LOAD_PROFILE_LIST",
 
   SET_PROFILE_TO_EDIT = "ProfileActions.SET_PROFILE_TO_EDIT",
@@ -49,7 +49,7 @@ enum ProfileActions {
 enum ProfileCacheKeys {
   PROFILE_DATA = "ProfileCacheKeys.PROFILE_DATA",
   PROFILE_LIST = "ProfileCacheKeys.PROFILE_LIST",
-  CURRENT_PROFILE = "ProfileCacheKeys.CURRENT_PROFILE",
+  ACTIVE_PROFILE = "ProfileCacheKeys.ACTIVE_PROFILE",
 }
 
 /* istanbul ignore next */
@@ -73,9 +73,9 @@ function startSaveProfile(profile: Partial<IProfile>): PayloadAction {
   };
 }
 
-function startSetCurrentProfile(profile: IProfile): PayloadAction {
+function startSetActiveProfile(profile: IProfile): PayloadAction {
   return {
-    type: ProfileActions.START_SET_CURRENT_PROFILE,
+    type: ProfileActions.START_SET_ACTIVE_PROFILE,
     payload: { profile },
   };
 }
@@ -143,21 +143,21 @@ function* saveProfileSaga(): Generator {
   });
 }
 
-function* setCurrentProfileSaga(): Generator {
-  yield takeEvery(ProfileActions.START_SET_CURRENT_PROFILE, function*(action: PayloadAction): Generator {
+function* setActiveProfileSaga(): Generator {
+  yield takeEvery(ProfileActions.START_SET_ACTIVE_PROFILE, function*(action: PayloadAction): Generator {
     try {
       const profile: IProfile = action.payload.profile;
       yield put(setProfileSwitchInProgress(true));
       yield call(() => axios.post(`/api/profiles/select/${profile.id}`));
       yield all([
         put(startLoadCurrentUser()), // reload the user to update the activeProfile field
-        put(CacheKeyUtil.updateKey(ProfileCacheKeys.CURRENT_PROFILE)),
+        put(CacheKeyUtil.updateKey(ProfileCacheKeys.ACTIVE_PROFILE)),
         put(setProfileSwitchInProgress(false)),
       ]);
     } catch (err) {
       yield all([
         put(setError(err)),
-        put(CacheKeyUtil.updateKey(ProfileCacheKeys.CURRENT_PROFILE)),
+        put(CacheKeyUtil.updateKey(ProfileCacheKeys.ACTIVE_PROFILE)),
         put(setProfileSwitchInProgress(false)),
       ]);
     }
@@ -184,7 +184,7 @@ function* loadProfileListSaga(): Generator {
 }
 
 function* profilesSagas(): Generator {
-  yield all([deleteProfileSaga(), saveProfileSaga(), setCurrentProfileSaga(), loadProfileListSaga()]);
+  yield all([deleteProfileSaga(), saveProfileSaga(), setActiveProfileSaga(), loadProfileListSaga()]);
 }
 
 function profilesReducer(state = initialState, action: PayloadAction): IProfilesState {
@@ -222,12 +222,13 @@ export {
   IProfilesState,
   IProfileAwareProps,
   ProfileActions,
+  ProfileCacheKeys,
   mapStateToProfileAwareProps,
   profilesReducer,
   profilesSagas,
   startDeleteProfile,
   startSaveProfile,
-  startSetCurrentProfile,
+  startSetActiveProfile,
   startLoadProfileList,
   setProfileToEdit,
   setEditorBusy,
