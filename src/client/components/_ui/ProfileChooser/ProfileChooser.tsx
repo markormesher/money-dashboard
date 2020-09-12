@@ -80,20 +80,18 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChoos
     }
 
     return (
-      <>
-        <ButtonDropDown
-          icon={profileSwitchInProgress ? faCircleNotch : faUsers}
-          text={activeProfile.name}
-          onBtnClick={this.handleBtnClick}
-          btnProps={{
-            className: combine(bs.btnOutlineInfo),
-          }}
-          iconProps={{
-            spin: profileSwitchInProgress,
-          }}
-          dropDownContents={chooserOpen ? this.renderChooser() : null}
-        />
-      </>
+      <ButtonDropDown
+        icon={profileSwitchInProgress ? faCircleNotch : faUsers}
+        text={activeProfile.name}
+        onBtnClick={this.handleBtnClick}
+        btnProps={{
+          className: combine(bs.btnOutlineInfo),
+        }}
+        iconProps={{
+          spin: profileSwitchInProgress,
+        }}
+        dropDownContents={chooserOpen ? this.renderChooser() : null}
+      />
     );
   }
 
