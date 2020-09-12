@@ -16,11 +16,11 @@ interface IDashboardAccountListProps {
   readonly accountBalances: IAccountBalance[];
 }
 
-interface IDashboardAlertListState {
+interface IDashboardAccountListState {
   readonly sectionOpen: { [key: string]: boolean };
 }
 
-class DashboardAccountList extends Component<IDashboardAccountListProps, IDashboardAlertListState> {
+class DashboardAccountList extends Component<IDashboardAccountListProps, IDashboardAccountListState> {
   private static sortByAbsoluteBalanceComparator(a: IAccountBalance, b: IAccountBalance): number {
     return Math.abs(b.balance) - Math.abs(a.balance);
   }
