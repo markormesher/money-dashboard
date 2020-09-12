@@ -1,5 +1,3 @@
-import { faWallet } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
@@ -9,23 +7,25 @@ import { subYears, startOfDay, endOfDay } from "date-fns";
 import { IAccount } from "../../../commons/models/IAccount";
 import { IAssetPerformanceData } from "../../../commons/models/IAssetPerformanceData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
-import { NULL_UUID } from "../../../commons/utils/entities";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatCurrency, formatPercent, formatDate } from "../../helpers/formatters";
+import { formatCurrency, formatPercent, formatDate, formatCurrencyForStat } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { startLoadAccountList } from "../../redux/accounts";
 import { IRootState } from "../../redux/root";
 import * as styles from "../_commons/reports/Reports.scss";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
-import { ControlledRadioInput } from "../_ui/ControlledInputs/ControlledRadioInput";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/LineChart";
+import { Card } from "../_ui/Card/Card";
+import { PageHeader } from "../_ui/PageHeader/PageHeader";
+import { PageOptions } from "../_ui/PageOptions/PageOptions";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 
-interface IAssetPerformanceReportProps {
+interface IAssetPerformanceReportProps extends IProfileAwareProps {
   readonly accountList?: IAccount[];
 
   readonly actions?: {
@@ -39,7 +39,7 @@ interface IAssetPerformanceReportState {
   readonly dateMode: DateModeOption;
   readonly zeroBasis: boolean;
   readonly showAsPercent: boolean;
-  readonly accountId: string;
+  readonly selectedAccounts: string[];
   readonly data: IAssetPerformanceData;
   readonly loading: boolean;
   readonly failed: boolean;
@@ -47,6 +47,7 @@ interface IAssetPerformanceReportState {
 
 function mapStateToProps(state: IRootState, props: IAssetPerformanceReportProps): IAssetPerformanceReportProps {
   return {
+    ...mapStateToProfileAwareProps(state),
     ...props,
     accountList: state.accounts.accountList,
   };
@@ -74,16 +75,16 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       dateMode: "transaction",
       zeroBasis: true,
       showAsPercent: false,
-      accountId: NULL_UUID,
+      selectedAccounts: [],
       data: undefined,
       loading: true,
       failed: false,
     };
 
+    this.renderOptions = this.renderOptions.bind(this);
+    this.renderAccountOptions = this.renderAccountOptions.bind(this);
     this.renderChart = this.renderChart.bind(this);
-    this.renderInfoPanel = this.renderInfoPanel.bind(this);
-    this.renderAccountChooser = this.renderAccountChooser.bind(this);
-    this.renderAccountInputs = this.renderAccountInputs.bind(this);
+    this.renderStatCards = this.renderStatCards.bind(this);
     this.handleDateModeChange = this.handleDateModeChange.bind(this);
     this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
     this.handleAccountChange = this.handleAccountChange.bind(this);
@@ -96,75 +97,120 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     this.fetchData();
   }
 
-  public componentDidUpdate(_: {}, nextState: IAssetPerformanceReportState): void {
+  public componentDidUpdate(nextProps: IAssetPerformanceReportProps, nextState: IAssetPerformanceReportState): void {
     if (
       this.state.startDate !== nextState.startDate ||
       this.state.endDate !== nextState.endDate ||
       this.state.dateMode !== nextState.dateMode ||
-      this.state.accountId !== nextState.accountId ||
+      this.state.selectedAccounts !== nextState.selectedAccounts ||
       this.state.zeroBasis !== nextState.zeroBasis ||
-      this.state.showAsPercent !== nextState.showAsPercent
+      this.state.showAsPercent !== nextState.showAsPercent ||
+      this.props.activeProfile !== nextProps.activeProfile
     ) {
       this.fetchData();
     }
   }
 
   public render(): ReactNode {
-    const { startDate, endDate, accountId } = this.state;
+    return (
+      <>
+        <PageHeader>
+          <h2>Asset Performance</h2>
+        </PageHeader>
+        {this.renderOptions()}
+        {this.renderChart()}
+        {this.renderStatCards()}
+      </>
+    );
+  }
+
+  private renderOptions(): ReactNode {
+    const { startDate, endDate, dateMode, zeroBasis, showAsPercent } = this.state;
+
+    return (
+      <PageOptions>
+        {zeroBasis && (
+          <CheckboxBtn
+            text={"Show as %"}
+            checked={showAsPercent}
+            onChange={this.handleShowAsPercentChange}
+            btnProps={{
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            }}
+          />
+        )}
+
+        <CheckboxBtn
+          text={"Zero Basis"}
+          checked={zeroBasis}
+          onChange={this.handleZeroBasisChange}
+          btnProps={{
+            className: combine(bs.btnOutlineInfo, bs.btnSm),
+          }}
+        />
+
+        <DateModeToggleBtn
+          value={dateMode}
+          onChange={this.handleDateModeChange}
+          btnProps={{
+            className: combine(bs.btnOutlineInfo, bs.btnSm),
+          }}
+        />
+
+        <DateRangeChooser
+          startDate={startDate}
+          endDate={endDate}
+          onValueChange={this.handleDateRangeChange}
+          includeAllTimePreset={true}
+          includeYearToDatePreset={true}
+          includeFuturePresets={false}
+          dropDownProps={{
+            btnProps: {
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            },
+            placement: "left",
+          }}
+        />
+
+        {this.renderAccountOptions()}
+      </PageOptions>
+    );
+  }
+
+  private renderAccountOptions(): ReactNode {
+    const { accountList } = this.props;
+
+    if (!accountList) {
+      return <LoadingSpinner />;
+    }
+
+    const { selectedAccounts } = this.state;
+    const assetAccounts = accountList.filter((ac) => ac.type === "asset").sort((a, b) => a.name.localeCompare(b.name));
+
+    if (assetAccounts.length === 0) {
+      return (
+        <>
+          <hr />
+          <p>{"You don't have any asset-type accounts."}</p>
+        </>
+      );
+    }
 
     return (
       <>
-        <div className={gs.headerWrapper}>
-          <h1 className={bs.h2}>Asset Performance</h1>
-          <div className={combine(bs.btnGroup, gs.headerExtras)}>
-            {this.state.zeroBasis && (
-              <CheckboxBtn
-                text={"Show as %"}
-                checked={this.state.showAsPercent}
-                onChange={this.handleShowAsPercentChange}
-                btnProps={{
-                  className: combine(bs.btnOutlineInfo, bs.btnSm),
-                }}
-              />
-            )}
-
-            <CheckboxBtn
-              text={"Zero Basis"}
-              checked={this.state.zeroBasis}
-              onChange={this.handleZeroBasisChange}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
-
-            <DateModeToggleBtn
-              value={this.state.dateMode}
-              onChange={this.handleDateModeChange}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
-
-            <DateRangeChooser
-              startDate={startDate}
-              endDate={endDate}
-              onValueChange={this.handleDateRangeChange}
-              includeAllTimePreset={true}
-              includeYearToDatePreset={true}
-              includeFuturePresets={false}
-              setPosition={true}
-              btnProps={{
-                className: combine(bs.btnOutlineDark, bs.btnSm),
-              }}
-            />
-          </div>
-        </div>
-
-        <div className={bs.row}>
-          <div className={combine(bs.col12, bs.mb3)}>{this.renderAccountChooser()}</div>
-          <div className={combine(bs.col12, bs.mb3)}>{this.renderChart()}</div>
-          {accountId && <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderInfoPanel()}</div>}
-        </div>
+        <hr />
+        {assetAccounts.map((ac) => (
+          <CheckboxBtn
+            key={`account-chooser-${ac.id}`}
+            text={ac.name}
+            payload={ac.id}
+            checked={selectedAccounts.includes(ac.id)}
+            onChange={this.handleAccountChange}
+            btnProps={{
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            }}
+          />
+        ))}
       </>
     );
   }
@@ -230,120 +276,75 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     };
 
     return (
-      <div className={combine(styles.chartContainer, loading && gs.loading)}>
-        <LineChart {...chartProps} />
+      <div className={bs.row}>
+        <div className={combine(bs.col12)}>
+          <Card>
+            <div className={combine(styles.chartContainer, bs.mb3, loading && gs.loading)}>
+              <LineChart {...chartProps} />
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
 
-  private renderInfoPanel(): ReactNode {
+  private renderStatCards(): ReactNode {
     const { loading, failed, data } = this.state;
 
     if (failed || !data) {
       return null;
     }
 
-    const { totalChangeInclGrowth, totalChangeExclGrowth } = data;
-    const growthOnlyChange = totalChangeInclGrowth - totalChangeExclGrowth;
+    let changeExclGrowthStat: ReactNode = <LoadingSpinner centre={true} />;
+    let changeInclGrowthStat: ReactNode = <LoadingSpinner centre={true} />;
+    let netGrowthStat: ReactNode = <LoadingSpinner centre={true} />;
 
-    return (
-      <div className={bs.card}>
-        <div className={combine(bs.cardBody, gs.cardBody)}>
-          <div className={combine(bs.row, loading && gs.loading)}>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Change Excl. Growth:</h6>
-              <p>
-                <RelativeChangeIcon
-                  change={totalChangeExclGrowth}
-                  iconProps={{
-                    className: bs.mr2,
-                  }}
-                />
-                {formatCurrency(totalChangeExclGrowth)}
-              </p>
-            </div>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Change Incl. Growth:</h6>
-              <p>
-                <RelativeChangeIcon
-                  change={totalChangeInclGrowth}
-                  iconProps={{
-                    className: bs.mr2,
-                  }}
-                />
-                {formatCurrency(totalChangeInclGrowth)}
-              </p>
-            </div>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Net Growth:</h6>
-              <p>
-                <RelativeChangeIcon
-                  change={growthOnlyChange}
-                  iconProps={{
-                    className: bs.mr2,
-                  }}
-                />
-                {formatCurrency(growthOnlyChange)}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    if (!loading) {
+      const { totalChangeExclGrowth, totalChangeInclGrowth } = data;
+      const netGrowth = totalChangeInclGrowth - totalChangeExclGrowth;
 
-  private renderAccountChooser(): ReactNode {
-    const { accountList } = this.props;
-    return (
-      <div className={bs.card}>
-        <h5 className={combine(bs.cardHeader, bs.h5)}>
-          <FontAwesomeIcon icon={faWallet} className={bs.mr3} />
-          Select Account
-        </h5>
-        <div className={combine(bs.cardBody, gs.cardBody)}>
-          {!accountList && <LoadingSpinner centre={true} />}
-          {accountList && this.renderAccountInputs()}
-        </div>
-      </div>
-    );
-  }
+      changeExclGrowthStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Change Excl. Growth</h6>
+          <p className={gs.bigStatValue}>{formatCurrencyForStat(totalChangeExclGrowth)}</p>
+        </>
+      );
 
-  private renderAccountInputs(): ReactNode {
-    const { accountList } = this.props;
-    const { accountId } = this.state;
-    const accounts = accountList.filter((ac) => ac.type === "asset").sort((a, b) => a.name.localeCompare(b.name));
+      changeInclGrowthStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Change Incl. Growth</h6>
+          <p className={gs.bigStatValue}>{formatCurrencyForStat(totalChangeInclGrowth)}</p>
+        </>
+      );
 
-    if (accounts.length === 0) {
-      return <p>{"You don't have any asset-type accounts."}</p>;
+      netGrowthStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Net Growth</h6>
+          <p className={gs.bigStatValue}>
+            <RelativeChangeIcon
+              change={netGrowth}
+              iconProps={{
+                className: bs.mr2,
+              }}
+            />
+            {formatCurrencyForStat(netGrowth)}
+          </p>
+        </>
+      );
     }
 
     return (
-      <form>
-        <div className={bs.row}>
-          <div key={`account-chooser-all`} className={combine(bs.col12, bs.colMd6, bs.colLg3, bs.mb3)}>
-            <ControlledRadioInput
-              name={"account"}
-              id={NULL_UUID}
-              value={NULL_UUID}
-              label={<em>All Accounts</em>}
-              checked={accountId === NULL_UUID}
-              onValueChange={this.handleAccountChange}
-            />
-          </div>
-          {accounts.map((ac) => (
-            <div key={`account-chooser-${ac.id}`} className={combine(bs.col12, bs.colMd6, bs.colLg3, bs.mb3)}>
-              <ControlledRadioInput
-                name={"account"}
-                id={ac.id}
-                value={ac.id}
-                label={ac.name}
-                checked={accountId === ac.id}
-                onValueChange={this.handleAccountChange}
-              />
-            </div>
-          ))}
+      <div className={bs.row}>
+        <div className={bs.col}>
+          <Card>{changeExclGrowthStat}</Card>
         </div>
-      </form>
+        <div className={bs.col}>
+          <Card>{changeInclGrowthStat}</Card>
+        </div>
+        <div className={bs.col}>
+          <Card>{netGrowthStat}</Card>
+        </div>
+      </div>
     );
   }
 
@@ -355,8 +356,13 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
     this.setState({ startDate, endDate });
   }
 
-  private handleAccountChange(accountId: string): void {
-    this.setState({ accountId });
+  private handleAccountChange(checked: boolean, accountId: string): void {
+    const oldList = this.state.selectedAccounts;
+    if (checked) {
+      this.setState({ selectedAccounts: [...oldList, accountId] });
+    } else {
+      this.setState({ selectedAccounts: oldList.filter((a) => a !== accountId) });
+    }
   }
 
   private handleZeroBasisChange(zeroBasis: boolean): void {
@@ -368,9 +374,9 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
   }
 
   private fetchData(): void {
-    const { startDate, endDate, dateMode, accountId, zeroBasis, showAsPercent } = this.state;
+    const { startDate, endDate, dateMode, selectedAccounts, zeroBasis, showAsPercent } = this.state;
 
-    if (!accountId) {
+    if (!selectedAccounts) {
       return;
     }
 
@@ -383,7 +389,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
           startDate: startDate,
           endDate: endDate,
           dateMode,
-          accountId,
+          selectedAccounts,
           zeroBasis,
           showAsPercent,
         },

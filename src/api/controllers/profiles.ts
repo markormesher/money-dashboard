@@ -8,6 +8,7 @@ import {
   getProfileQueryBuilder,
   saveProfile,
   setActiveProfileForUser,
+  getAllProfiles,
 } from "../managers/profile-manager";
 import { requireUser } from "../middleware/auth-middleware";
 
@@ -35,6 +36,13 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
 
   getDataForTable(DbProfile, req, totalQuery, filteredQuery)
     .then((response) => res.json(response))
+    .catch(next);
+});
+
+router.get("/list", requireUser, (req: Request, res: Response, next: NextFunction) => {
+  const user = req.user as DbUser;
+  getAllProfiles(user)
+    .then((profiles: DbProfile[]) => res.json(profiles))
     .catch(next);
 });
 

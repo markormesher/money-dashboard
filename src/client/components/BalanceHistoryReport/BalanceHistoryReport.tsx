@@ -2,17 +2,27 @@ import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { subYears, startOfDay, endOfDay } from "date-fns";
+import { connect } from "react-redux";
 import { IBalanceHistoryData } from "../../../commons/models/IBalanceHistoryData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatCurrency, formatDate } from "../../helpers/formatters";
+import { formatCurrency, formatCurrencyForStat, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import * as styles from "../_commons/reports/Reports.scss";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
 import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/LineChart";
+import { Card } from "../_ui/Card/Card";
+import { PageHeader } from "../_ui/PageHeader/PageHeader";
+import { PageOptions } from "../_ui/PageOptions/PageOptions";
+import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
+import { IRootState } from "../../redux/root";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface IBalanceHistoryReportProps extends IProfileAwareProps {}
 
 interface IBalanceHistoryReportState {
   readonly startDate: number;
@@ -23,7 +33,14 @@ interface IBalanceHistoryReportState {
   readonly failed: boolean;
 }
 
-class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
+function mapStateToProps(state: IRootState, props?: IBalanceHistoryReportProps): IBalanceHistoryReportProps {
+  return {
+    ...mapStateToProfileAwareProps(state),
+    ...props,
+  };
+}
+
+class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBalanceHistoryReportState> {
   // give each remote request an increasing "frame" number so that late arrivals will be dropped
   private frameCounter = 0;
   private lastFrameReceived = 0;
@@ -40,7 +57,7 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     };
 
     this.renderChart = this.renderChart.bind(this);
-    this.renderInfoPanel = this.renderInfoPanel.bind(this);
+    this.renderStatCards = this.renderStatCards.bind(this);
     this.handleDateModeChange = this.handleDateModeChange.bind(this);
     this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
   }
@@ -49,52 +66,58 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     this.fetchData();
   }
 
-  public componentDidUpdate(_: {}, nextState: IBalanceHistoryReportState): void {
+  public componentDidUpdate(nextProps: IBalanceHistoryReportProps, nextState: IBalanceHistoryReportState): void {
     if (
       this.state.startDate !== nextState.startDate ||
       this.state.endDate !== nextState.endDate ||
-      this.state.dateMode !== nextState.dateMode
+      this.state.dateMode !== nextState.dateMode ||
+      this.props.activeProfile !== nextProps.activeProfile
     ) {
       this.fetchData();
     }
   }
 
   public render(): ReactNode {
-    const { startDate, endDate } = this.state;
-
     return (
       <>
-        <div className={gs.headerWrapper}>
-          <h1 className={bs.h2}>Balance History</h1>
-          <div className={combine(bs.btnGroup, gs.headerExtras)}>
-            <DateModeToggleBtn
-              value={this.state.dateMode}
-              onChange={this.handleDateModeChange}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
-
-            <DateRangeChooser
-              startDate={startDate}
-              endDate={endDate}
-              onValueChange={this.handleDateRangeChange}
-              includeAllTimePreset={true}
-              includeYearToDatePreset={true}
-              includeFuturePresets={false}
-              setPosition={true}
-              btnProps={{
-                className: combine(bs.btnOutlineDark, bs.btnSm),
-              }}
-            />
-          </div>
-        </div>
-
-        <div className={bs.row}>
-          <div className={combine(bs.col12, bs.mb3)}>{this.renderChart()}</div>
-          <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderInfoPanel()}</div>
-        </div>
+        <PageHeader>
+          <h2>Balance History</h2>
+        </PageHeader>
+        {this.renderOptions()}
+        {this.renderChart()}
+        {this.renderStatCards()}
       </>
+    );
+  }
+
+  private renderOptions(): ReactNode {
+    const { startDate, endDate, dateMode } = this.state;
+
+    return (
+      <PageOptions>
+        <DateModeToggleBtn
+          value={dateMode}
+          onChange={this.handleDateModeChange}
+          btnProps={{
+            className: combine(bs.btnOutlineInfo, bs.btnSm),
+          }}
+        />
+
+        <DateRangeChooser
+          startDate={startDate}
+          endDate={endDate}
+          onValueChange={this.handleDateRangeChange}
+          includeAllTimePreset={true}
+          includeYearToDatePreset={true}
+          includeFuturePresets={false}
+          dropDownProps={{
+            btnProps: {
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            },
+            placement: "left",
+          }}
+        />
+      </PageOptions>
     );
   }
 
@@ -146,54 +169,74 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
     };
 
     return (
-      <div className={combine(styles.chartContainer, loading && gs.loading)}>
-        <LineChart {...chartProps} />
+      <div className={bs.row}>
+        <div className={combine(bs.col12)}>
+          <Card>
+            <div className={combine(styles.chartContainer, bs.mb3, loading && gs.loading)}>
+              <LineChart {...chartProps} />
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
 
-  private renderInfoPanel(): ReactNode {
+  private renderStatCards(): ReactNode {
     const { loading, failed, data } = this.state;
 
     if (failed || !data) {
       return null;
     }
 
-    const { minTotal, minDate, maxTotal, maxDate, changeAbsolute } = data;
+    let minBalanceStat: ReactNode = <LoadingSpinner centre={true} />;
+    let maxBalanceStat: ReactNode = <LoadingSpinner centre={true} />;
+    let overallChangeStat: ReactNode = <LoadingSpinner centre={true} />;
+
+    if (!loading) {
+      const { minTotal, minDate, maxTotal, maxDate, changeAbsolute } = data;
+
+      minBalanceStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Min Balance</h6>
+          <p className={gs.bigStatValue}>{formatCurrencyForStat(minTotal)}</p>
+          <p className={gs.bigStatContext}>on {formatDate(minDate)}</p>
+        </>
+      );
+
+      maxBalanceStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Max Balance</h6>
+          <p className={gs.bigStatValue}>{formatCurrencyForStat(maxTotal)}</p>
+          <p className={gs.bigStatContext}>on {formatDate(maxDate)}</p>
+        </>
+      );
+
+      overallChangeStat = (
+        <>
+          <h6 className={gs.bigStatHeader}>Overall Change</h6>
+          <p className={gs.bigStatValue}>
+            <RelativeChangeIcon
+              change={changeAbsolute}
+              iconProps={{
+                className: bs.mr2,
+              }}
+            />
+            {formatCurrencyForStat(minTotal)}
+          </p>
+        </>
+      );
+    }
 
     return (
-      <div className={bs.card}>
-        <div className={combine(bs.cardBody, gs.cardBody)}>
-          <div className={combine(bs.row, loading && gs.loading)}>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Minimum:</h6>
-              <p>
-                {formatCurrency(minTotal)}
-                <br />
-                <span className={bs.textMuted}>{formatDate(minDate)}</span>
-              </p>
-            </div>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Maximum:</h6>
-              <p>
-                {formatCurrency(maxTotal)}
-                <br />
-                <span className={bs.textMuted}>{formatDate(maxDate)}</span>
-              </p>
-            </div>
-            <div className={combine(bs.col6, bs.colMd4)}>
-              <h6>Change:</h6>
-              <p>
-                <RelativeChangeIcon
-                  change={changeAbsolute}
-                  iconProps={{
-                    className: bs.mr2,
-                  }}
-                />
-                {formatCurrency(changeAbsolute)}
-              </p>
-            </div>
-          </div>
+      <div className={bs.row}>
+        <div className={bs.col}>
+          <Card>{minBalanceStat}</Card>
+        </div>
+        <div className={bs.col}>
+          <Card>{maxBalanceStat}</Card>
+        </div>
+        <div className={bs.col}>
+          <Card>{overallChangeStat}</Card>
         </div>
       </div>
     );
@@ -259,4 +302,4 @@ class BalanceHistoryReport extends Component<{}, IBalanceHistoryReportState> {
   }
 }
 
-export { BalanceHistoryReport };
+export const BalanceHistoryReport = connect(mapStateToProps)(UCBalanceHistoryReport);

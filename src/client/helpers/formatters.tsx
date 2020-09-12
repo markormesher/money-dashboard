@@ -14,8 +14,20 @@ function formatCurrency(amount: number): string {
   return amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
 }
 
-function formatCurrencyStyled(amount: number): ReactElement<void> {
-  return <span className={gs.currency}>{formatCurrency(amount)}</span>;
+function formatCurrencyStyled(amount: number): ReactElement {
+  const formatted = formatCurrency(amount);
+  return <span className={gs.currency}>{formatted}</span>;
+}
+
+function formatCurrencyForStat(amount: number): ReactElement {
+  const negative = amount < 0;
+  const formatted = formatCurrency(Math.abs(amount));
+  const chunks = formatted.split(".");
+  return (
+    <span>
+      {negative && "-"}&pound;{chunks[0]}.<span className={gs.currencyPence}>{chunks[1]}</span>
+    </span>
+  );
 }
 
 function formatPercent(amount: number): string {
@@ -157,6 +169,7 @@ function generateCategoryTypeBadge(category: ICategory): Array<ReactElement<void
 export {
   formatCurrency,
   formatCurrencyStyled,
+  formatCurrencyForStat,
   formatPercent,
   formatDate,
   capitaliseFirstLetter,

@@ -1,8 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
-import { faPiggyBank } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { connect } from "react-redux";
 import { IDetailedCategoryBalance } from "../../../commons/models/IDetailedCategoryBalance";
 import { ITaxYearDepositsData, mapTaxYearDepositsDataFromApi } from "../../../commons/models/ITaxYearDepositsData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
@@ -14,7 +13,14 @@ import { combine } from "../../helpers/style-helpers";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
-import { ControlledRadioInput } from "../_ui/ControlledInputs/ControlledRadioInput";
+import { Card } from "../_ui/Card/Card";
+import { PageHeader } from "../_ui/PageHeader/PageHeader";
+import { PageOptions } from "../_ui/PageOptions/PageOptions";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
+import { IRootState } from "../../redux/root";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface ITaxYearDepositsReportProps extends IProfileAwareProps {}
 
 interface ITaxYearDepositsReportState {
   readonly dateMode: DateModeOption;
@@ -25,7 +31,14 @@ interface ITaxYearDepositsReportState {
   readonly failed: boolean;
 }
 
-class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
+function mapStateToProps(state: IRootState, props?: ITaxYearDepositsReportProps): ITaxYearDepositsReportProps {
+  return {
+    ...mapStateToProfileAwareProps(state),
+    ...props,
+  };
+}
+
+class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITaxYearDepositsReportState> {
   // give each remote request an increasing "frame" number so that late arrivals will be dropped
   private frameCounter = 0;
   private lastFrameReceived = 0;
@@ -41,9 +54,9 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
       failed: false,
     };
 
+    this.renderAccountTagChooser = this.renderAccountTagChooser.bind(this);
     this.renderResults = this.renderResults.bind(this);
     this.renderCategoryBalance = this.renderCategoryBalance.bind(this);
-    this.renderAccountTagChooser = this.renderAccountTagChooser.bind(this);
     this.handleDateModeChange = this.handleDateModeChange.bind(this);
     this.handleSplitValueChange = this.handleSplitValueChange.bind(this);
     this.handleAccountTagChange = this.handleAccountTagChange.bind(this);
@@ -53,8 +66,12 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
     this.fetchData();
   }
 
-  public componentDidUpdate(nextProps: {}, nextState: ITaxYearDepositsReportState): void {
-    if (this.state.dateMode !== nextState.dateMode || this.state.accountTag !== nextState.accountTag) {
+  public componentDidUpdate(nextProps: ITaxYearDepositsReportProps, nextState: ITaxYearDepositsReportState): void {
+    if (
+      this.state.dateMode !== nextState.dateMode ||
+      this.state.accountTag !== nextState.accountTag ||
+      this.props.activeProfile !== nextProps.activeProfile
+    ) {
       this.fetchData();
     }
   }
@@ -62,34 +79,59 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
   public render(): ReactNode {
     return (
       <>
-        <div className={gs.headerWrapper}>
-          <h1 className={bs.h2}>Tax Year Deposits</h1>
-          <div className={combine(bs.btnGroup, gs.headerExtras)}>
-            <CheckboxBtn
-              text={"Split Values"}
-              checked={this.state.splitValues}
-              onChange={this.handleSplitValueChange}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
+        <PageHeader>
+          <h2>Tax Year Deposits</h2>
+        </PageHeader>
 
-            <DateModeToggleBtn
-              value={this.state.dateMode}
-              onChange={this.handleDateModeChange}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
-          </div>
-        </div>
+        <PageOptions>
+          <CheckboxBtn
+            text={"Split Values"}
+            checked={this.state.splitValues}
+            onChange={this.handleSplitValueChange}
+            btnProps={{
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            }}
+          />
 
-        <div className={bs.row}>
-          <div className={combine(bs.col12, bs.colLg6, bs.mb3)}>{this.renderAccountTagChooser()}</div>
-          <div className={bs.col12}>{this.renderResults()}</div>
-        </div>
+          <DateModeToggleBtn
+            value={this.state.dateMode}
+            onChange={this.handleDateModeChange}
+            btnProps={{
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            }}
+          />
+
+          <hr />
+
+          {this.renderAccountTagChooser()}
+        </PageOptions>
+
+        <Card>{this.renderResults()}</Card>
       </>
     );
+  }
+
+  private renderAccountTagChooser(): ReactNode {
+    const { accountTag } = this.state;
+
+    // tags that are relevant for tax year summaries
+    const validTags: AccountTag[] = ["pension", "isa"];
+    const tags = Object.entries(ACCOUNT_TAG_DISPLAY_NAMES)
+      .filter(([key]) => validTags.includes(key as AccountTag))
+      .sort((a, b) => a[1].localeCompare(b[1]));
+
+    return tags.map(([tagKey, tagName]) => (
+      <CheckboxBtn
+        key={`account-tag-${tagKey}`}
+        payload={tagKey}
+        text={tagName}
+        checked={accountTag === tagKey}
+        onChange={this.handleAccountTagChange}
+        btnProps={{
+          className: combine(bs.btnOutlineInfo, bs.btnSm),
+        }}
+      />
+    ));
   }
 
   private renderResults(): ReactNode {
@@ -116,76 +158,78 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
     const years = data.allYears.sort((a, b) => a - b);
 
     return (
-      <table className={combine(bs.table, bs.tableStriped, bs.tableSm)}>
-        <thead>
-          <tr>
-            <td>{/* blank top-left corner cell */}</td>
-            {years.map((year) => (
-              <th key={year} className={bs.textRight}>
-                {year}/{year + 1}
-              </th>
+      <div className={bs.tableResponsive}>
+        <table className={combine(bs.table, bs.tableStriped, bs.tableSm)}>
+          <thead>
+            <tr>
+              <td>{/* blank top-left corner cell */}</td>
+              {years.map((year) => (
+                <th key={year} className={bs.textRight}>
+                  {year}/{year + 1}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {nonAssetCategories.map((category) => (
+              <tr key={category.id}>
+                <td>{category.name}</td>
+                {years.map((year) => (
+                  <td key={year} className={bs.textRight}>
+                    {this.renderCategoryBalance(data.yearData[year][category.id])}
+                  </td>
+                ))}
+              </tr>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {nonAssetCategories.map((category) => (
-            <tr key={category.id}>
-              <td>{category.name}</td>
+
+            <tr className={gs.bottomBorder}>
+              <td>
+                <strong>Total Deposits</strong>
+              </td>
               {years.map((year) => (
                 <td key={year} className={bs.textRight}>
-                  {this.renderCategoryBalance(data.yearData[year][category.id])}
+                  <strong>
+                    {formatCurrencyStyled(
+                      Object.values(data.yearData[year])
+                        .filter((b) => !b.category.isAssetGrowthCategory)
+                        .map((b) => b.balanceIn + b.balanceOut)
+                        .reduce((a, b) => a + b, 0),
+                    )}
+                  </strong>
                 </td>
               ))}
             </tr>
-          ))}
 
-          <tr className={gs.bottomBorder}>
-            <td>
-              <strong>Total Deposits</strong>
-            </td>
-            {years.map((year) => (
-              <td key={year} className={bs.textRight}>
-                <strong>
-                  {formatCurrencyStyled(
-                    Object.values(data.yearData[year])
-                      .filter((b) => !b.category.isAssetGrowthCategory)
-                      .map((b) => b.balanceIn + b.balanceOut)
-                      .reduce((a, b) => a + b, 0),
-                  )}
-                </strong>
-              </td>
+            {assetCategories.map((category) => (
+              <tr key={category.id}>
+                <td>{category.name}</td>
+                {years.map((year) => (
+                  <td key={year} className={bs.textRight}>
+                    {this.renderCategoryBalance(data.yearData[year][category.id])}
+                  </td>
+                ))}
+              </tr>
             ))}
-          </tr>
 
-          {assetCategories.map((category) => (
-            <tr key={category.id}>
-              <td>{category.name}</td>
+            <tr className={gs.bottomBorder}>
+              <td>
+                <strong>Total</strong>
+              </td>
               {years.map((year) => (
                 <td key={year} className={bs.textRight}>
-                  {this.renderCategoryBalance(data.yearData[year][category.id])}
+                  <strong>
+                    {formatCurrencyStyled(
+                      Object.values(data.yearData[year])
+                        .map((b) => b.balanceIn + b.balanceOut)
+                        .reduce((a, b) => a + b, 0),
+                    )}
+                  </strong>
                 </td>
               ))}
             </tr>
-          ))}
-
-          <tr className={gs.bottomBorder}>
-            <td>
-              <strong>Total</strong>
-            </td>
-            {years.map((year) => (
-              <td key={year} className={bs.textRight}>
-                <strong>
-                  {formatCurrencyStyled(
-                    Object.values(data.yearData[year])
-                      .map((b) => b.balanceIn + b.balanceOut)
-                      .reduce((a, b) => a + b, 0),
-                  )}
-                </strong>
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     );
   }
 
@@ -194,54 +238,20 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
       return null;
     }
 
+    const inc = balance.balanceIn;
+    const dec = balance.balanceOut;
+
     if (this.state.splitValues) {
       return (
         <>
-          {formatCurrencyStyled(balance.balanceIn)}
+          {inc === 0 ? <>&nbsp;</> : formatCurrencyStyled(inc)}
           <br />
-          {formatCurrencyStyled(balance.balanceOut)}
+          {dec === 0 ? <>&nbsp;</> : formatCurrencyStyled(dec)}
         </>
       );
     } else {
-      return <>{formatCurrencyStyled(balance.balanceIn + balance.balanceOut)}</>;
+      return <>{formatCurrencyStyled(inc + dec)}</>;
     }
-  }
-
-  private renderAccountTagChooser(): ReactNode {
-    const { accountTag } = this.state;
-
-    // tags that are relevant for tax year summaries
-    const validTags: AccountTag[] = ["pension", "isa"];
-    const tags = Object.entries(ACCOUNT_TAG_DISPLAY_NAMES)
-      .filter(([key]) => validTags.includes(key as AccountTag))
-      .sort((a, b) => a[1].localeCompare(b[1]));
-
-    return (
-      <div className={bs.card}>
-        <h5 className={combine(bs.cardHeader, bs.h5)}>
-          <FontAwesomeIcon icon={faPiggyBank} className={bs.mr3} />
-          Select Account Tag
-        </h5>
-        <div className={combine(bs.cardBody, gs.cardBody)}>
-          <form>
-            <div className={bs.row}>
-              {tags.map(([tagKey, tagName]) => (
-                <div key={`account-tag-chooser-${tagKey}`} className={combine(bs.col12, bs.colMd6, bs.mb3)}>
-                  <ControlledRadioInput
-                    name={"account"}
-                    id={tagKey}
-                    value={tagKey}
-                    label={tagName}
-                    checked={accountTag === tagKey}
-                    onValueChange={this.handleAccountTagChange}
-                  />
-                </div>
-              ))}
-            </div>
-          </form>
-        </div>
-      </div>
-    );
   }
 
   private handleDateModeChange(dateMode: DateModeOption): void {
@@ -252,8 +262,10 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
     this.setState({ splitValues });
   }
 
-  private handleAccountTagChange(accountTag: string): void {
-    this.setState({ accountTag: accountTag as AccountTag });
+  private handleAccountTagChange(checked: boolean, accountTag: string): void {
+    if (checked) {
+      this.setState({ accountTag: accountTag as AccountTag });
+    }
   }
 
   private fetchData(): void {
@@ -304,4 +316,4 @@ class TaxYearDepositsReport extends Component<{}, ITaxYearDepositsReportState> {
   }
 }
 
-export { TaxYearDepositsReport };
+export const TaxYearDepositsReport = connect(mapStateToProps)(UCTaxYearDepositsReport);

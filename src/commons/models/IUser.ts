@@ -11,6 +11,17 @@ interface IUser {
   readonly deleted: boolean;
 }
 
+const DEFAULT_USER: IUser = {
+  id: null,
+  googleId: "",
+  displayName: "",
+  image: "",
+  deleted: false,
+
+  profiles: undefined,
+  activeProfile: undefined,
+};
+
 function mapUserFromApi(user?: IUser): IUser {
   if (!user) {
     return undefined;
@@ -37,4 +48,4 @@ function mapUserForApi(user?: IUser): IUser {
   };
 }
 
-export { IUser, mapUserFromApi, mapUserForApi };
+export { IUser, DEFAULT_USER, mapUserFromApi, mapUserForApi };

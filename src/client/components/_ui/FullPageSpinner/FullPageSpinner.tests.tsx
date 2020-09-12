@@ -12,9 +12,10 @@ describe(__filename, () => {
   it("should render the spinner in a wrapper", () => {
     mountWrapper = mount(<FullPageSpinner />);
     mountWrapper.find(LoadingSpinner).length.should.equal(1);
-    mountWrapper.find("div").length.should.equal(1);
+    mountWrapper.find("div").length.should.equal(2);
     mountWrapper
       .find("div")
+      .at(0)
       .props()
       .className.should.equal(styles.spinnerWrapper);
   });

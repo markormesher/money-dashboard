@@ -27,24 +27,6 @@ button {
   }
 }
 
-.header-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  overflow: auto; // allows the div to have height even though it only contains floated elements
-  width: 100%;
-
-  .header-extras {
-    margin-bottom: $spacer * 0.5;
-  }
-
-  @media (max-width: map-get($grid-breakpoints, "lg")) {
-    .header-extras {
-      overflow-x: scroll;
-    }
-  }
-}
-
 .btn-mini {
   // Same as .badge in Bootstrap
   font-size: 75% !important;
@@ -53,12 +35,27 @@ button {
 }
 
 .currency {
-  font-family: monospace, monospace;
+  font-family: monospace;
 }
 
-.card-body {
-  // contents always have margin-bottom: $spacer
-  padding: $spacer $spacer 0 !important; // Bootstrap override; was $spacer on all sides
+.currency-pence {
+  font-size: 60%;
+}
+
+.big-stat-header {
+  margin-bottom: $spacer;
+  text-transform: uppercase;
+  font-weight: lighter;
+  color: $gray-500;
+}
+
+.big-stat-value {
+  font-size: 2.5rem;
+}
+
+.big-stat-context {
+  color: $gray-500;
+  font-size: 0.75rem;
 }
 
 .loading {

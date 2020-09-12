@@ -131,7 +131,7 @@ function* loadPayeeListSaga(): Generator {
     if (
       CacheKeyUtil.keyIsValid(TransactionCacheKeys.PAYEE_LIST, [
         TransactionCacheKeys.TRANSACTION_DATA,
-        ProfileCacheKeys.CURRENT_PROFILE,
+        ProfileCacheKeys.ACTIVE_PROFILE,
       ])
     ) {
       return;

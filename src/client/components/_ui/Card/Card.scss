@@ -1,0 +1,20 @@
+@import "~bootstrap-scss/functions";
+@import "~bootstrap-scss/variables";
+
+$card-header-bg-colour: #fff;
+$card-shadow: rgba(0, 0, 0, 0.1);
+
+.card {
+  border-radius: 2px;
+  box-shadow: 0 10px 12px 0 $card-shadow;
+  margin-bottom: 30px; // 2x Bootstrap column gutter
+}
+
+.card-header {
+  background-color: $card-header-bg-colour;
+}
+
+.card-body {
+  // contents always have margin-bottom: $spacer
+  padding: $spacer $spacer 0 !important; // Bootstrap override; was $spacer on all sides
+}

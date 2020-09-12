@@ -4,43 +4,39 @@ import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { DateModeOption, ITransaction, mapTransactionFromApi } from "../../../commons/models/ITransaction";
+import { ITransaction, mapTransactionFromApi } from "../../../commons/models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
-import {
-  setDateMode,
-  setTransactionToEdit,
-  startDeleteTransaction,
-  TransactionCacheKeys,
-} from "../../redux/transactions";
+import { setTransactionToEdit, startDeleteTransaction, TransactionCacheKeys } from "../../redux/transactions";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
-import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { TransactionEditModal } from "../TransactionEditModal/TransactionEditModal";
+import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
+import { Card } from "../_ui/Card/Card";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 
-interface ITransactionPageProps {
+interface ITransactionPageProps extends IProfileAwareProps {
   readonly cacheTime: number;
-  readonly dateMode: DateModeOption;
   readonly transactionToEdit?: ITransaction;
   readonly actions?: {
     readonly deleteTransaction: (transaction: ITransaction) => AnyAction;
-    readonly setDateMode: (mode: DateModeOption) => AnyAction;
     readonly setTransactionToEdit: (transaction: ITransaction) => AnyAction;
   };
 }
 
 function mapStateToProps(state: IRootState, props: ITransactionPageProps): ITransactionPageProps {
   return {
+    ...mapStateToProfileAwareProps(state),
     ...props,
     cacheTime: CacheKeyUtil.getKeyTime(TransactionCacheKeys.TRANSACTION_DATA),
-    dateMode: state.transactions.dateMode,
+    activeProfile: state.auth.activeUser.activeProfile,
     transactionToEdit: state.transactions.transactionToEdit,
   };
 }
@@ -50,7 +46,6 @@ function mapDispatchToProps(dispatch: Dispatch, props: ITransactionPageProps): I
     ...props,
     actions: {
       deleteTransaction: (transaction): AnyAction => dispatch(startDeleteTransaction(transaction)),
-      setDateMode: (active): AnyAction => dispatch(setDateMode(active)),
       setTransactionToEdit: (transaction): AnyAction => dispatch(setTransactionToEdit(transaction)),
     },
   };
@@ -60,7 +55,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
   private tableColumns: IColumn[] = [
     {
       title: "Date",
-      sortField: "__date__", // this is swapped for effective/transaction date on the server side
+      sortField: "transaction.transactionDate",
       defaultSortDirection: "DESC",
       defaultSortPriority: 0,
     },
@@ -90,7 +85,6 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
     "/api/transactions/table-data",
     () => ({
       cacheTime: this.props.cacheTime,
-      dateMode: this.props.dateMode,
     }),
     mapTransactionFromApi,
   );
@@ -104,23 +98,15 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
   }
 
   public render(): ReactNode {
-    const { cacheTime, dateMode, transactionToEdit } = this.props;
+    const { cacheTime, activeProfile, transactionToEdit } = this.props;
 
     return (
       <>
         {transactionToEdit !== undefined && <TransactionEditModal />}
 
-        <div className={gs.headerWrapper}>
-          <h1 className={bs.h2}>Transactions</h1>
-          <div className={combine(bs.btnGroup, gs.headerExtras)}>
-            <DateModeToggleBtn
-              value={this.props.dateMode}
-              onChange={this.props.actions.setDateMode}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
-
+        <PageHeader>
+          <h2>Transactions</h2>
+          <PageHeaderActions>
             <KeyShortcut targetStr={"c"} onTrigger={this.startTransactionCreation}>
               <IconBtn
                 icon={faPlus}
@@ -131,23 +117,24 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
                 }}
               />
             </KeyShortcut>
-          </div>
-        </div>
+          </PageHeaderActions>
+        </PageHeader>
 
-        <DataTable<ITransaction>
-          columns={this.tableColumns}
-          dataProvider={this.dataProvider}
-          watchedProps={{ cacheTime, dateMode }}
-          rowRenderer={this.tableRowRenderer}
-        />
+        <Card>
+          <DataTable<ITransaction>
+            columns={this.tableColumns}
+            dataProvider={this.dataProvider}
+            watchedProps={{ cacheTime, activeProfile }}
+            rowRenderer={this.tableRowRenderer}
+          />
+        </Card>
       </>
     );
   }
 
   private tableRowRenderer(transaction: ITransaction): ReactElement<void> {
-    const { dateMode } = this.props;
-    const mainDate = formatDate(dateMode === "effective" ? transaction.effectiveDate : transaction.transactionDate);
-    const altDate = formatDate(dateMode === "effective" ? transaction.transactionDate : transaction.effectiveDate);
+    const mainDate = formatDate(transaction.transactionDate);
+    const altDate = formatDate(transaction.effectiveDate);
     return (
       <tr key={transaction.id}>
         <td>

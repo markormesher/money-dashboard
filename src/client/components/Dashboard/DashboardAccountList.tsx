@@ -1,52 +1,64 @@
-import { faPiggyBank } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretRight, faCaretDown, faWallet } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { Component, ReactNode } from "react";
+import { Component, ReactNode, MouseEvent } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IAccountBalance } from "../../../commons/models/IAccountBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatCurrency, formatCurrencyStyled } from "../../helpers/formatters";
+import { formatCurrencyStyled, formatCurrencyForStat } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
+import { Card } from "../_ui/Card/Card";
 import * as styles from "./DashboardAccountList.scss";
 
 interface IDashboardAccountListProps {
   readonly accountBalances: IAccountBalance[];
 }
 
-class DashboardAccountList extends Component<IDashboardAccountListProps> {
+interface IDashboardAccountListState {
+  readonly sectionOpen: { [key: string]: boolean };
+}
+
+class DashboardAccountList extends Component<IDashboardAccountListProps, IDashboardAccountListState> {
   private static sortByAbsoluteBalanceComparator(a: IAccountBalance, b: IAccountBalance): number {
     return Math.abs(b.balance) - Math.abs(a.balance);
   }
 
-  public render(): ReactNode {
-    const { accountBalances } = this.props;
-    return (
-      <div className={bs.card}>
-        <h5 className={combine(bs.cardHeader, bs.h5)}>
-          <FontAwesomeIcon icon={faPiggyBank} className={bs.mr3} />
-          Account Balances
-        </h5>
-        <div className={combine(bs.cardBody, gs.cardBody)}>
-          {(!accountBalances && <LoadingSpinner centre={true} />) || this.renderInner()}
-        </div>
-      </div>
-    );
+  constructor(props: IDashboardAccountListProps) {
+    super(props);
+    this.state = {
+      sectionOpen: {},
+    };
+
+    this.renderAccountBalanceList = this.renderAccountBalanceList.bind(this);
+    this.handleSectionOpenToggle = this.handleSectionOpenToggle.bind(this);
   }
 
-  private renderInner(): ReactNode {
-    const balances = this.props.accountBalances.map((a) => a.balance);
-    const total = balances.length ? balances.reduce((a, b) => a + b) : 0;
+  public render(): ReactNode {
+    const { accountBalances } = this.props;
+
+    if (!accountBalances) {
+      return (
+        <Card title={"Account Balances"} icon={faWallet}>
+          <LoadingSpinner centre={true} />
+        </Card>
+      );
+    }
+
+    const total = accountBalances.length ? accountBalances.map((ab) => ab.balance).reduce((a, b) => a + b) : 0;
+
     return (
-      <div className={styles.accountList}>
-        {this.renderAccountBalanceList("current", "Current Accounts")}
-        {this.renderAccountBalanceList("savings", "Savings Accounts")}
-        {this.renderAccountBalanceList("asset", "Assets")}
-        {this.renderAccountBalanceList("other", "Other")}
-        <hr />
-        <p className={styles.total}>£{formatCurrency(total)}</p>
-      </div>
+      <Card title={"Account Balances"} icon={faWallet}>
+        <div className={styles.accountList}>
+          {this.renderAccountBalanceList("current", "Current Accounts")}
+          {this.renderAccountBalanceList("savings", "Savings Accounts")}
+          {this.renderAccountBalanceList("asset", "Assets")}
+          {this.renderAccountBalanceList("other", "Other")}
+          <hr />
+          <p className={combine(gs.bigStatValue, bs.textRight)}>{formatCurrencyForStat(total)}</p>
+        </div>
+      </Card>
     );
   }
 
@@ -57,12 +69,30 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
       return null;
     }
 
-    return (
-      <>
-        <h6>{title}</h6>
-        {balances.sort(DashboardAccountList.sortByAbsoluteBalanceComparator).map(this.renderSingleAccountBalance)}
-      </>
-    );
+    const sectionOpen = this.state.sectionOpen[type] || false;
+
+    if (sectionOpen) {
+      return (
+        <>
+          <h6 onClick={this.handleSectionOpenToggle} id={`section-header-${type}`}>
+            <FontAwesomeIcon icon={faCaretDown} className={combine(bs.textMuted, bs.mr2)} />
+            {title}
+          </h6>
+          {balances.sort(DashboardAccountList.sortByAbsoluteBalanceComparator).map(this.renderSingleAccountBalance)}
+        </>
+      );
+    } else {
+      const total = balances.map((b) => b.balance).reduce((a, b) => a + b);
+      return (
+        <>
+          <h6 onClick={this.handleSectionOpenToggle} id={`section-header-${type}`}>
+            <FontAwesomeIcon icon={faCaretRight} className={combine(bs.textMuted, bs.mr2)} />
+            {title}
+            <span className={bs.floatRight}>{formatCurrencyStyled(total)}</span>
+          </h6>
+        </>
+      );
+    }
   }
 
   private renderSingleAccountBalance(balance: IAccountBalance): ReactNode {
@@ -78,6 +108,12 @@ class DashboardAccountList extends Component<IDashboardAccountListProps> {
         <span className={bs.floatRight}>{formatCurrencyStyled(balance.balance)}</span>
       </p>
     );
+  }
+
+  private handleSectionOpenToggle(event: MouseEvent<HTMLHeadingElement>): void {
+    const sectionType = (event.target as HTMLHeadingElement).id.replace("section-header-", "");
+    const oldState = this.state.sectionOpen;
+    this.setState({ sectionOpen: { ...oldState, [sectionType]: !oldState[sectionType] } });
   }
 }
 

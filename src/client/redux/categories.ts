@@ -108,7 +108,7 @@ function* loadCategoryListSaga(): Generator {
     if (
       CacheKeyUtil.keyIsValid(CategoryCacheKeys.CATEGORY_LIST, [
         CategoryCacheKeys.CATEGORY_DATA,
-        ProfileCacheKeys.CURRENT_PROFILE,
+        ProfileCacheKeys.ACTIVE_PROFILE,
       ])
     ) {
       return;

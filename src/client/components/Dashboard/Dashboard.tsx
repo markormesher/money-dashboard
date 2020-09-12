@@ -59,6 +59,12 @@ class UCDashboard extends PureComponent<IDashboardProps> {
     this.props.actions.startLoadMemoCategoryBalances();
   }
 
+  public componentDidUpdate(): void {
+    this.props.actions.startLoadAccountBalances();
+    this.props.actions.startLoadBudgetBalances();
+    this.props.actions.startLoadMemoCategoryBalances();
+  }
+
   public render(): ReactNode {
     return (
       <div className={bs.row}>

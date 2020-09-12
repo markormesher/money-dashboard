@@ -4,5 +4,6 @@ export const navToggleIcon: string;
 export const sidebar: string;
 export const sidebarSticky: string;
 export const navSectionHeading: string;
+export const navIcon: string;
 export const navLink: string;
 export const active: string;

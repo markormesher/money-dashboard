@@ -27,8 +27,12 @@ import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { BudgetCloneModal } from "../BudgetCloneModal/BudgetCloneModal";
 import { BudgetEditModal } from "../BudgetEditModal/BudgetEditModal";
+import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
+import { PageOptions } from "../_ui/PageOptions/PageOptions";
+import { Card } from "../_ui/Card/Card";
+import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 
-interface IBudgetsPageProps {
+interface IBudgetsPageProps extends IProfileAwareProps {
   readonly cacheTime: number;
   readonly displayCurrentOnly: boolean;
   readonly budgetToEdit?: IBudget;
@@ -45,6 +49,7 @@ interface IBudgetsPageProps {
 
 function mapStateToProps(state: IRootState, props: IBudgetsPageProps): IBudgetsPageProps {
   return {
+    ...mapStateToProfileAwareProps(state),
     ...props,
     cacheTime: CacheKeyUtil.getKeyTime(BudgetCacheKeys.BUDGET_DATA),
     displayCurrentOnly: state.budgets.displayCurrentOnly,
@@ -119,35 +124,23 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
   }
 
   public render(): ReactNode {
-    const { cacheTime, budgetToEdit, budgetIdsToClone, budgetCloneInProgress, displayCurrentOnly } = this.props;
+    const {
+      cacheTime,
+      activeProfile,
+      budgetToEdit,
+      budgetIdsToClone,
+      budgetCloneInProgress,
+      displayCurrentOnly,
+    } = this.props;
 
     return (
       <>
         {budgetToEdit !== undefined && <BudgetEditModal />}
         {budgetCloneInProgress && <BudgetCloneModal />}
 
-        <div className={gs.headerWrapper}>
-          <h1 className={bs.h2}>Budgets</h1>
-          <div className={combine(bs.btnGroup, gs.headerExtras)}>
-            <CheckboxBtn
-              text={"Current Budgets Only"}
-              checked={this.props.displayCurrentOnly}
-              onChange={this.props.actions.setDisplayCurrentOnly}
-              btnProps={{
-                className: combine(bs.btnOutlineInfo, bs.btnSm),
-              }}
-            />
-
-            <IconBtn
-              icon={faCopy}
-              text={"Clone Selected"}
-              onClick={this.startCloneOnSelectedBudgets}
-              btnProps={{
-                className: combine(bs.btnSm, bs.btnOutlineInfo),
-                disabled: budgetIdsToClone.length === 0,
-              }}
-            />
-
+        <PageHeader>
+          <h2>Budgets</h2>
+          <PageHeaderActions>
             <KeyShortcut targetStr={"c"} onTrigger={this.startBudgetCreation}>
               <IconBtn
                 icon={faPlus}
@@ -158,15 +151,38 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
                 }}
               />
             </KeyShortcut>
-          </div>
-        </div>
+          </PageHeaderActions>
+        </PageHeader>
 
-        <DataTable<IBudget>
-          columns={this.tableColumns}
-          dataProvider={this.dataProvider}
-          rowRenderer={this.tableRowRenderer}
-          watchedProps={{ cacheTime, displayCurrentOnly }}
-        />
+        <PageOptions>
+          <CheckboxBtn
+            text={"Current Budgets Only"}
+            checked={this.props.displayCurrentOnly}
+            onChange={this.props.actions.setDisplayCurrentOnly}
+            btnProps={{
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            }}
+          />
+
+          <IconBtn
+            icon={faCopy}
+            text={"Clone Selected"}
+            onClick={this.startCloneOnSelectedBudgets}
+            btnProps={{
+              className: combine(bs.btnSm, bs.btnOutlineInfo),
+              disabled: budgetIdsToClone.length === 0,
+            }}
+          />
+        </PageOptions>
+
+        <Card>
+          <DataTable<IBudget>
+            columns={this.tableColumns}
+            dataProvider={this.dataProvider}
+            rowRenderer={this.tableRowRenderer}
+            watchedProps={{ cacheTime, activeProfile, displayCurrentOnly }}
+          />
+        </Card>
       </>
     );
   }

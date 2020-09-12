@@ -1,7 +1,6 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Brackets } from "typeorm";
-import { DateModeOption } from "../../commons/models/ITransaction";
 import { DbTransaction } from "../db/models/DbTransaction";
 import { DbUser } from "../db/models/DbUser";
 import { getDataForTable } from "../helpers/datatable-helper";
@@ -18,18 +17,6 @@ const router = Express.Router();
 router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const searchTerm = req.query.searchTerm || "";
-
-  const dateMode: DateModeOption = req.query.dateMode || "transaction";
-  const dateField = `transaction.${dateMode}Date`;
-  if (req.query.order) {
-    const order: Array<[string, string]> = req.query.order;
-    for (const [i, o] of order.entries()) {
-      if (o[0] === "__date__") {
-        order[i][0] = dateField;
-      }
-    }
-    req.query.order = order;
-  }
 
   const totalQuery = getTransactionQueryBuilder()
     .where("transaction.profile_id = :profileId")

@@ -3,7 +3,6 @@ import { NextFunction, Request, Response } from "express";
 import { endOfDay, startOfDay } from "date-fns";
 import { IAssetPerformanceData } from "../../../commons/models/IAssetPerformanceData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
-import { NULL_UUID } from "../../../commons/utils/entities";
 import { DbTransaction } from "../../db/models/DbTransaction";
 import { DbUser } from "../../db/models/DbUser";
 import { getTransactionQueryBuilder } from "../../managers/transaction-manager";
@@ -17,48 +16,34 @@ router.get("/data", requireUser, (req: Request, res: Response, next: NextFunctio
   const endDate = endOfDay(parseInt(req.query.endDate)).getTime();
   const dateMode: DateModeOption = req.query.dateMode;
   const dateField = `${dateMode}Date`;
-  const accountId: string = req.query.accountId || "";
+  const selectedAccounts: string[] = req.query.selectedAccounts || [];
   const zeroBasis: boolean = req.query.zeroBasis === "true";
   const showAsPercent: boolean = req.query.showAsPercent === "true";
 
-  const showAllAssets = accountId === NULL_UUID;
-
-  let getTransactionsBeforeRange = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
+  const getTransactionsBeforeRange = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
     .where("transaction.profile_id = :profileId")
     .andWhere(`transaction.${dateField} < :startDate`)
     .andWhere(`transaction.deleted = FALSE`)
+    .andWhere(`account.id IN (:...selectedAccounts)`)
     .setParameters({
       profileId: user.activeProfile.id,
-      startDate: startDate,
+      startDate,
+      selectedAccounts: [null, ...selectedAccounts], // null fixes issues with empty arrays
     });
 
-  if (showAllAssets) {
-    getTransactionsBeforeRange = getTransactionsBeforeRange.andWhere("account.type = 'asset'");
-  } else {
-    getTransactionsBeforeRange = getTransactionsBeforeRange.andWhere("account.id = :accountId").setParameters({
-      accountId,
-    });
-  }
-
-  let getTransactionsInRange = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
+  const getTransactionsInRange = getTransactionQueryBuilder({ withAccount: true, withCategory: true })
     .where("transaction.profile_id = :profileId")
     .andWhere(`transaction.${dateField} >= :startDate`)
     .andWhere(`transaction.${dateField} <= :endDate`)
     .andWhere(`transaction.deleted = FALSE`)
+    .andWhere(`account.id IN (:...selectedAccounts)`)
     .orderBy(`transaction.${dateField}`, "ASC")
     .setParameters({
       profileId: user.activeProfile.id,
-      startDate: startDate,
-      endDate: endDate,
+      startDate,
+      endDate,
+      selectedAccounts: [null, ...selectedAccounts], // null fixes issues with empty arrays
     });
-
-  if (showAllAssets) {
-    getTransactionsInRange = getTransactionsInRange.andWhere("account.type = 'asset'");
-  } else {
-    getTransactionsInRange = getTransactionsInRange.andWhere("account.id = :accountId").setParameters({
-      accountId,
-    });
-  }
 
   Promise.all([getTransactionsBeforeRange.getMany(), getTransactionsInRange.getMany()])
     .then(([transactionsBeforeRange, transactionsInRange]) => {

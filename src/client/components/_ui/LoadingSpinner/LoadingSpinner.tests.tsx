@@ -29,7 +29,7 @@ describe(__filename, () => {
     mountWrapper
       .find("div")
       .props()
-      .className.should.equal(bs.textCenter);
+      .className.should.contain(bs.textCenter);
     mountWrapper.find(FontAwesomeIcon).should.have.lengthOf(1);
     mountWrapper
       .find(FontAwesomeIcon)

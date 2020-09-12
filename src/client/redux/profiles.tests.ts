@@ -1,19 +1,44 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
 import { DEFAULT_PROFILE } from "../../commons/models/IProfile";
+import { DEFAULT_USER } from "../../commons/models/IUser";
 import {
   ProfileActions,
   profilesReducer,
-  setActiveProfile,
   setEditorBusy,
   setProfileSwitchInProgress,
   setProfileToEdit,
   startDeleteProfile,
   startSaveProfile,
-  startSetCurrentProfile,
+  startSetActiveProfile,
+  startLoadProfileList,
+  setProfileList,
+  mapStateToProfileAwareProps,
 } from "./profiles";
+import { IRootState } from "./root";
 
 describe(__filename, () => {
+  describe("mapStateToProfileAwareProps()", () => {
+    it("should extract the active profile", () => {
+      const state: IRootState = {
+        auth: {
+          activeUser: {
+            ...DEFAULT_USER,
+            activeProfile: DEFAULT_PROFILE,
+          },
+        },
+      };
+      mapStateToProfileAwareProps(state).activeProfile.should.equal(DEFAULT_PROFILE);
+    });
+
+    it("should not fail if there is no user", () => {
+      const state: IRootState = {
+        auth: {},
+      };
+      expect(mapStateToProfileAwareProps(state).activeProfile).to.equal(undefined);
+    });
+  });
+
   describe("startDeleteProfile()", () => {
     it("should generate an action with the correct type", () => {
       startDeleteProfile(DEFAULT_PROFILE).type.should.equal(ProfileActions.START_DELETE_PROFILE);
@@ -36,14 +61,20 @@ describe(__filename, () => {
     });
   });
 
-  describe("startSetCurrentProfile()", () => {
+  describe("startSetActiveProfile()", () => {
     it("should generate an action with the correct type", () => {
-      startSetCurrentProfile(DEFAULT_PROFILE).type.should.equal(ProfileActions.START_SET_CURRENT_PROFILE);
+      startSetActiveProfile(DEFAULT_PROFILE).type.should.equal(ProfileActions.START_SET_ACTIVE_PROFILE);
     });
 
     it("should add the profile to the payload", () => {
-      startSetCurrentProfile(DEFAULT_PROFILE).payload.should.have.keys("profile");
-      startSetCurrentProfile(DEFAULT_PROFILE).payload.profile.should.equal(DEFAULT_PROFILE);
+      startSetActiveProfile(DEFAULT_PROFILE).payload.should.have.keys("profile");
+      startSetActiveProfile(DEFAULT_PROFILE).payload.profile.should.equal(DEFAULT_PROFILE);
+    });
+  });
+
+  describe("startLoadProfileList()", () => {
+    it("should generate an action with the correct type", () => {
+      startLoadProfileList().type.should.equal(ProfileActions.START_LOAD_PROFILE_LIST);
     });
   });
 
@@ -69,17 +100,6 @@ describe(__filename, () => {
     });
   });
 
-  describe("setActiveProfile()", () => {
-    it("should generate an action with the correct type", () => {
-      setActiveProfile(DEFAULT_PROFILE).type.should.equal(ProfileActions.SET_ACTIVE_PROFILE);
-    });
-
-    it("should add the profile to the payload", () => {
-      setActiveProfile(DEFAULT_PROFILE).payload.should.have.keys("profile");
-      setActiveProfile(DEFAULT_PROFILE).payload.profile.should.equal(DEFAULT_PROFILE);
-    });
-  });
-
   describe("setProfileSwitchInProgress()", () => {
     it("should generate an action with the correct type", () => {
       setProfileSwitchInProgress(true).type.should.equal(ProfileActions.SET_PROFILE_SWITCH_IN_PROGRESS);
@@ -91,12 +111,24 @@ describe(__filename, () => {
     });
   });
 
+  describe("setProfileList()", () => {
+    it("should generate an action with the correct type", () => {
+      setProfileList([DEFAULT_PROFILE]).type.should.equal(ProfileActions.SET_PROFILE_LIST);
+    });
+
+    it("should add the value to the payload", () => {
+      const profiles = [DEFAULT_PROFILE];
+      setProfileList(profiles).payload.should.have.keys("profileList");
+      setProfileList(profiles).payload.profileList.should.equal(profiles);
+    });
+  });
+
   describe("profilesReducer()", () => {
     it("should initialise its state correctly", () => {
       profilesReducer(undefined, { type: "@@INIT" }).should.deep.equal({
-        activeProfile: undefined,
         profileToEdit: undefined,
         editorBusy: false,
+        profileList: undefined,
         profileSwitchInProgress: false,
       });
     });
@@ -116,11 +148,11 @@ describe(__filename, () => {
       });
     });
 
-    describe(ProfileActions.SET_ACTIVE_PROFILE, () => {
-      it("should set the active profile", () => {
-        expect(profilesReducer(undefined, setActiveProfile(null)).activeProfile).to.equal(null);
-        expect(profilesReducer(undefined, setActiveProfile(undefined)).activeProfile).to.equal(undefined);
-        profilesReducer(undefined, setActiveProfile(DEFAULT_PROFILE)).activeProfile.should.equal(DEFAULT_PROFILE);
+    describe(ProfileActions.SET_PROFILE_LIST, () => {
+      it("should set the profile list", () => {
+        const profiles = [DEFAULT_PROFILE];
+        profilesReducer(undefined, setProfileList([])).profileList.length.should.equal(0);
+        profilesReducer(undefined, setProfileList(profiles)).profileList.should.equal(profiles);
       });
     });
 

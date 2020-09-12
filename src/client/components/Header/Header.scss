@@ -1,25 +1,23 @@
 @import "~bootstrap-scss/functions";
 @import "~bootstrap-scss/variables";
 @import "~bootstrap-scss/mixins/breakpoints";
+@import "../../global-styles/Branding.scss";
 
 $header-height: 48px;
-$navbar-background: rgba(0, 0, 0, 0.25);
-$navbar-toggle-icon: #fff;
+$header-bg-colour: #fff;
+$header-shadow: rgba(0, 0, 0, 0.2);
+$navbar-toggle-icon: #333;
 
 .navbar {
   height: $header-height; // Bootstrap override
+  background: $header-bg-colour;
+  box-shadow: 0 0 12px 0 $header-shadow;
 }
 
 .navbar-brand {
-  // Collapsed view
-  // sass-lint:disable mixin-name-format
-  @include media-breakpoint-down(lg) {
-    text-align: center;
-  }
-
-  background-color: $navbar-background;
-  box-shadow: inset -1px 0 0 $navbar-background;
+  color: $brand-blue !important; // Bootstrap override
   font-size: 1rem;
+  font-weight: bold;
   margin-right: 0 !important; // Bootstrap override
   overflow: hidden;
   padding-bottom: 0.75rem;

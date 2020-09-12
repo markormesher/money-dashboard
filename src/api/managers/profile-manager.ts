@@ -31,6 +31,16 @@ function getProfile(user: DbUser, profileId: string): Promise<DbProfile> {
     .getOne();
 }
 
+function getAllProfiles(user: DbUser): Promise<DbProfile[]> {
+  return getProfileQueryBuilder({ withUsers: true })
+    .where("profile.deleted = FALSE")
+    .andWhere("user.id = :userId")
+    .setParameters({
+      userId: cleanUuid(user.id),
+    })
+    .getMany();
+}
+
 function createProfileAndAddToUser(user: DbUser, profileName: string): Promise<DbUser> {
   // re-select the user from the DB to make sure we have their existing profiles
   return DbProfile.create({ name: profileName })
@@ -79,6 +89,7 @@ function setActiveProfileForUser(user: DbUser, profileId: string): Promise<DbUse
 export {
   getProfileQueryBuilder,
   getProfile,
+  getAllProfiles,
   createProfileAndAddToUser,
   saveProfile,
   deleteProfile,

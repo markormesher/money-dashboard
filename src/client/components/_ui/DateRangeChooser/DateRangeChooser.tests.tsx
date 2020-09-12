@@ -7,8 +7,8 @@ import { testGlobals } from "../../../../test-utils/global.tests";
 import { formatDate } from "../../../helpers/formatters";
 import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";
 import { IconBtn, IIconBtnProps } from "../IconBtn/IconBtn";
+import * as styles from "../ButtonDropDown/ButtonDropDown.scss";
 import { DateRangeChooser } from "./DateRangeChooser";
-import * as styles from "./DateRangeChooser.scss";
 
 describe(__filename, () => {
   let { mountWrapper } = testGlobals;
@@ -30,8 +30,8 @@ describe(__filename, () => {
     mountWrapper.find(IconBtn).length.should.equal(1);
   });
 
-  it("should pass down additional button props to the HTML button", () => {
-    mountWrapper = mount(<DateRangeChooser btnProps={{ disabled: true }} />);
+  it("should pass down additional props to the button drop down", () => {
+    mountWrapper = mount(<DateRangeChooser dropDownProps={{ btnProps: { disabled: true } }} />);
     mountWrapper
       .find(IconBtn)
       .props()
@@ -54,6 +54,14 @@ describe(__filename, () => {
     findChooser().length.should.equal(1);
   });
 
+  it("should close the chooser when clicked again", () => {
+    mountWrapper = mount(<DateRangeChooser />);
+    mountWrapper.simulate("click");
+    findChooser().length.should.equal(1);
+    mountWrapper.simulate("click");
+    findChooser().length.should.equal(0);
+  });
+
   it("should close the chooser when cancelled", () => {
     mountWrapper = mount(<DateRangeChooser />);
     mountWrapper.simulate("click");
@@ -63,28 +71,6 @@ describe(__filename, () => {
       .filterWhere((w) => w.text() === "Cancel")
       .simulate("click");
     findChooser().length.should.equal(0);
-  });
-
-  it("should render the chooser without specific positions by default", () => {
-    mountWrapper = mount(<DateRangeChooser />);
-    mountWrapper.simulate("click");
-    findChooser()
-      .html()
-      .should.not.contain("top:");
-    findChooser()
-      .html()
-      .should.not.contain("right:");
-  });
-
-  it("should render the chooser with specific positions when specified", () => {
-    mountWrapper = mount(<DateRangeChooser setPosition={true} />);
-    mountWrapper.simulate("click");
-    findChooser()
-      .html()
-      .should.contain("top:");
-    findChooser()
-      .html()
-      .should.contain("right:");
   });
 
   it("should render all presets by default", () => {
