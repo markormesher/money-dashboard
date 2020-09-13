@@ -21,6 +21,9 @@ class DbAccount extends BaseModel implements IAccount {
   @Column({ nullable: true })
   public note: string;
 
+  @Column()
+  public currency: string;
+
   @Column({ default: true })
   public active: boolean;
 

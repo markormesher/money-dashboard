@@ -324,6 +324,16 @@ ALTER TABLE transaction
       return qr.query(`ALTER TABLE account DROP COLUMN tags;`);
     },
   },
+
+  {
+    migrationNumber: 7,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account ADD COLUMN currency character varying DEFAULT 'GBP';`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account DROP COLUMN currency;`);
+    },
+  },
 ];
 
 export { allMigrations };
