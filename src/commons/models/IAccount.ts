@@ -15,6 +15,7 @@ interface IAccount {
   readonly type: string;
   readonly tags: AccountTag[];
   readonly note: string;
+  readonly currency: string;
   readonly active: boolean;
   readonly deleted: boolean;
 
@@ -28,6 +29,7 @@ const DEFAULT_ACCOUNT: IAccount = {
   type: "current",
   tags: [],
   note: "",
+  currency: "GBP",
   active: true,
   deleted: false,
 

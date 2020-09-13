@@ -6,7 +6,8 @@ interface IAccountValidationResult {
     readonly name?: string;
     readonly type?: string;
     readonly tags?: string;
-    readonly note?: string;
+    readonly note?: string; // TODO: remove if unused
+    readonly currency?: string;
   };
 }
 
@@ -49,6 +50,17 @@ function validateAccount(account: IAccount): IAccountValidationResult {
       errors: {
         ...result.errors,
         tags: "Only valid tags may be selected",
+      },
+    };
+  }
+
+  if (account.currency !== "GBP") {
+    // TODO: update once we have multi-currency support
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        currency: "Only GBP accounts are supported at the moment",
       },
     };
   }
