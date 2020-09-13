@@ -162,7 +162,7 @@ class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITa
         <table className={combine(bs.table, bs.tableStriped, bs.tableSm)}>
           <thead>
             <tr>
-              <td>{/* blank top-left corner cell */}</td>
+              <th>{/* blank top-left corner cell */}</th>
               {years.map((year) => (
                 <th key={year} className={bs.textRight}>
                   {year}/{year + 1}
