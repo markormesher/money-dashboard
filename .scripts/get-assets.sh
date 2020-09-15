@@ -9,6 +9,6 @@ assets=(
 )
 
 for asset in ${assets[@]}; do
-    echo "Getting ${asset}"
+  echo "Getting ${asset}"
   rsync -avz "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_ASSET_DIR}/${asset}" "${script_dir}/../assets/."
 done
