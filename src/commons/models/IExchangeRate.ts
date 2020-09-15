@@ -6,4 +6,12 @@ interface IExchangeRate {
   readonly ratePerGbp: number;
 }
 
-export { IExchangeRate };
+type ExchangeRateMap = {
+  [key in CurrencyCode]?: IExchangeRate;
+};
+
+type ExchangeRateMultiMap = {
+  [key in CurrencyCode]?: IExchangeRate[];
+};
+
+export { IExchangeRate, ExchangeRateMap, ExchangeRateMultiMap };

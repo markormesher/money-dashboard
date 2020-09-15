@@ -1,11 +1,10 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn, BaseEntity } from "typeorm";
 import { BigIntTransformer } from "../BigIntTransformer";
 import { IExchangeRate } from "../../../commons/models/IExchangeRate";
 import { CurrencyCode } from "../../../commons/models/ICurrency";
-import { BaseModel } from "./BaseModel";
 
 @Entity("exchange_rate")
-class DbExchangeRate extends BaseModel implements IExchangeRate {
+class DbExchangeRate extends BaseEntity implements IExchangeRate {
   @PrimaryColumn({
     type: String,
   })
