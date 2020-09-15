@@ -10,5 +10,5 @@ assets=(
 
 for asset in ${assets[@]}; do
     echo "Getting ${asset}"
-  rsync -avz "deploy@142.93.47.93:${REMOTE_ASSET_DIR}/${asset}" "${script_dir}/../assets/."
+  rsync -avz "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_ASSET_DIR}/${asset}" "${script_dir}/../assets/."
 done

@@ -108,8 +108,7 @@ jobs:
             mkdir -p ~/.ssh
             touch ~/.ssh/known_hosts
             ssh-keyscan ${REMOTE_HOST} >> ~/.ssh/known_hosts
-            ./.scripts/get-assets.sh
-            ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${REMOTE_DEPLOY_DIR} && git pull && ./.scripts/get-assets.sh && ./.scripts/deploy-remote.sh"
+            ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${REMOTE_DEPLOY_DIR} && git pull && ./.scripts/deploy-remote.sh"
 
 workflows:
   version: 2
