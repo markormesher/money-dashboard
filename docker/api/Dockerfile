@@ -3,8 +3,8 @@ FROM node:dubnium
 WORKDIR /money-dashboard
 
 # dependencies
-ARG NPM_FONT_AWESOME_TOKEN
-COPY package.json .yarnrc yarn.lock .npmrc ./
+COPY ./assets ./assets
+COPY package.json .yarnrc yarn.lock ./
 RUN yarn install
 
 # source
