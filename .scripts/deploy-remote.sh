@@ -40,7 +40,7 @@ fi
 echo
 echo "Getting assets..."
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-sh "${script_dir}/get-assets.sh"
+bash "${script_dir}/get-assets.sh"
 
 echo
 echo "Rebuilding images..."
