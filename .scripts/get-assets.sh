@@ -13,7 +13,7 @@ for asset in ${assets[@]}; do
   if command -v rsync > /dev/null 2>&1; then
     copy_cmd="rsync -avz"
   else
-    copy_cmd="src"
+    copy_cmd="scp"
   fi
   $copy_cmd "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_ASSET_DIR}/${asset}" "${script_dir}/../assets/."
 done
