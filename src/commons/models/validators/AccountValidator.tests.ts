@@ -12,7 +12,7 @@ describe(__filename, () => {
       type: "current",
       tags: [],
       note: "note",
-      currency: "GBP",
+      currencyCode: "GBP",
       active: true,
       transactions: [],
       profile: DEFAULT_PROFILE,
@@ -80,10 +80,10 @@ describe(__filename, () => {
     });
 
     it("should reject an account with an invalid currency", () => {
-      const result = validateAccount({ ...VALID_ACCOUNT, currency: "USD" });
+      const result = validateAccount({ ...VALID_ACCOUNT, currencyCode: "USD" });
       result.isValid.should.equal(false);
       result.errors.should.have.keys("currency");
-      result.errors.currency.should.not.equal("");
+      result.errors.currencyCode.should.not.equal("");
     });
   });
 });

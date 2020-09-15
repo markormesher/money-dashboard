@@ -334,6 +334,16 @@ ALTER TABLE transaction
       return qr.query(`ALTER TABLE account DROP COLUMN currency;`);
     },
   },
+
+  {
+    migrationNumber: 8,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account RENAME currency TO currency_code;`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account RENAME currency_code TO currency;`);
+    },
+  },
 ];
 
 export { allMigrations };
