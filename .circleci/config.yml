@@ -16,6 +16,9 @@ jobs:
             - dependency-cache-{{ checksum "package.json" }}-
             - dependency-cache-
       - run:
+          name: Download assets
+          command: ./.scripts/get-assets.sh
+      - run:
           name: Install dependencies
           command: yarn install
       - save_cache:
@@ -96,8 +99,8 @@ jobs:
             if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
             mkdir -p ~/.ssh
             touch ~/.ssh/known_hosts
-            ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
-            ssh $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_DIR && git pull && ./.scripts/deploy-remote.sh"
+            ssh-keyscan 142.93.47.93 >> ~/.ssh/known_hosts
+            ssh deploy@142.93.47.93 "cd /var/web/money-dashboard.markormesher.co.uk && git pull && ./.scripts/deploy-remote.sh"
 
 workflows:
   version: 2
