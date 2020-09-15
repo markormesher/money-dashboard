@@ -20,7 +20,10 @@ jobs:
       - run:
           name: Download assets
           command: |
-            ssh-keyscan 142.93.47.93 >> ~/.ssh/known_hosts
+            source ./.scripts/remote-settings.sh
+            mkdir -p ~/.ssh
+            touch ~/.ssh/known_hosts
+            ssh-keyscan ${REMOTE_HOST} >> ~/.ssh/known_hosts
             ./.scripts/get-assets.sh
       - run:
           name: Install dependencies
@@ -101,11 +104,12 @@ jobs:
           command: |
             # deploy tagged commits only
             if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
+            source ./.scripts/remote-settings.sh
             mkdir -p ~/.ssh
             touch ~/.ssh/known_hosts
-            ssh-keyscan 142.93.47.93 >> ~/.ssh/known_hosts
+            ssh-keyscan ${REMOTE_HOST} >> ~/.ssh/known_hosts
             ./.scripts/get-assets.sh
-            ssh deploy@142.93.47.93 "cd /var/web/money-dashboard.markormesher.co.uk && git pull && ./.scripts/get-assets.sh && ./.scripts/deploy-remote.sh"
+            ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${REMOTE_DEPLOY_DIR} && git pull && ./.scripts/get-assets.sh && ./.scripts/deploy-remote.sh"
 
 workflows:
   version: 2
