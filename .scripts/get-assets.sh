@@ -9,5 +9,5 @@ assets=(
 
 for asset in ${assets[@]}; do
     echo "Getting ${asset}"
-  scp "deploy@142.93.47.93:/var/web/assets/${asset}" "${script_dir}/../assets/."
+  rsync -avz "deploy@142.93.47.93:/var/web/assets/${asset}" "${script_dir}/../assets/."
 done
