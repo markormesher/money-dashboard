@@ -17,7 +17,9 @@ jobs:
             - dependency-cache-
       - run:
           name: Download assets
-          command: ./.scripts/get-assets.sh
+          command: |
+            ssh-keyscan 142.93.47.93 >> ~/.ssh/known_hosts
+            ./.scripts/get-assets.sh
       - run:
           name: Install dependencies
           command: yarn install
