@@ -23,7 +23,7 @@ function getExchangeRateQueryBuilder(): SelectQueryBuilder<DbExchangeRate> {
 async function getExchangeRatesBetweenDates(fromDate: number, toDate: number): Promise<ExchangeRateMultiMap> {
   const rates = await getExchangeRateQueryBuilder()
     .where("exchange_rate.date >= :fromDate")
-    .andWhere("exchange_rate.date <= :fromDate")
+    .andWhere("exchange_rate.date <= :toDate")
     .setParameters({
       fromDate,
       toDate,
@@ -61,11 +61,11 @@ async function updateHistoricalExchangeRages(days = 2): Promise<void> {
   for (let i = 1; i <= days; ++i) {
     dateStrings.push(format(startOfDay(addDays(today, -i)), "yyyy-MM-dd"));
   }
-  Promise.all(dateStrings.map((str) => updateExchangeRates(str)));
+  await Promise.all(dateStrings.map((str) => updateExchangeRates(str)));
 }
 
 async function updateLatestExchangeRates(): Promise<void> {
-  updateExchangeRates("latest");
+  await updateExchangeRates("latest");
 }
 
 async function updateExchangeRates(date: string): Promise<IExchangeRate[]> {
