@@ -30,7 +30,11 @@ const ALL_CURRENCIES = [gbp, eur, usd];
 const ALL_CURRENCY_CODES = ALL_CURRENCIES.map((c) => c.code);
 
 function getCurrency(currencyCode: CurrencyCode): ICurrency {
-  return ALL_CURRENCIES.find((c) => c.code == currencyCode);
+  const currency = ALL_CURRENCIES.find((c) => c.code == currencyCode);
+  if (!currency) {
+    throw new Error(`No currency found for the code ${currencyCode}`);
+  }
+  return currency;
 }
 
 export {
