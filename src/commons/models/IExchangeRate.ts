@@ -4,6 +4,7 @@ interface IExchangeRate {
   readonly currencyCode: CurrencyCode;
   readonly date: number;
   readonly ratePerGbp: number;
+  readonly updateTime: number;
 }
 
 type ExchangeRateMap = {

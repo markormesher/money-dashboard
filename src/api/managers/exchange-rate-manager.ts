@@ -87,6 +87,7 @@ async function updateExchangeRates(date: string): Promise<IExchangeRate[]> {
         currencyCode: code,
         ratePerGbp: code === DEFAULT_CURRENCY_CODE ? 1 : apiRes.rates[code] * conversionToDefault,
         date: startOfDay(apiRes.timestamp * 1000).getTime(),
+        updateTime: apiRes.timestamp * 1000,
       }),
     );
   }

@@ -366,6 +366,16 @@ ALTER TABLE ONLY exchange_rate
       return qr.query(`DROP TABLE IF EXISTS exchange_rate;`);
     },
   },
+
+  {
+    migrationNumber: 10,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE exchange_rate ADD COLUMN update_time bigint NOT NULL default -1;`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE exchange_rate DROP COLUMN update_time;`);
+    },
+  },
 ];
 
 export { allMigrations };

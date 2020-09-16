@@ -20,6 +20,12 @@ class DbExchangeRate extends BaseEntity implements IExchangeRate {
     type: "double precision",
   })
   public ratePerGbp: number;
+
+  @Column({
+    type: "bigint",
+    transformer: new BigIntTransformer(),
+  })
+  public updateTime: number;
 }
 
 export { DbExchangeRate };
