@@ -16,10 +16,6 @@ const AXIOS_OPTS: AxiosRequestConfig = {
   },
 };
 
-interface ICategoryQueryBuilderOptions {
-  readonly withProfile?: boolean;
-}
-
 function getExchangeRateQueryBuilder(): SelectQueryBuilder<DbExchangeRate> {
   return DbExchangeRate.createQueryBuilder("exchange_rate");
 }
