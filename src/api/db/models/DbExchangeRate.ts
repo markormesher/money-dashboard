@@ -10,12 +10,12 @@ class DbExchangeRate extends BaseEntity implements IExchangeRate {
   })
   public currencyCode: CurrencyCode;
 
-  @PrimaryColumn({
+  @Column({
     type: "double precision",
   })
   public ratePerGbp: number;
 
-  @Column({
+  @PrimaryColumn({
     type: "bigint",
     transformer: new BigIntTransformer(),
   })

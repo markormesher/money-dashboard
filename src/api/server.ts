@@ -20,7 +20,7 @@ import { setupApiRoutes } from "./middleware/api-routes";
 const app = Express();
 
 // db connection
-createConnection({ ...typeormConf, synchronize: true })
+createConnection({ ...typeormConf, synchronize: false })
   .then(() => logger.info("Database connection created successfully"))
   .catch((err) => logger.error("Failed to connect to database", err));
 
