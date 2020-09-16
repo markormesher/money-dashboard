@@ -24,41 +24,55 @@ function getExchangeRateQueryBuilder(): SelectQueryBuilder<DbExchangeRate> {
   return DbExchangeRate.createQueryBuilder("exchange_rate");
 }
 
-function getExchangeRatesBetweenDates(fromDate: number, toDate: number): Promise<ExchangeRateMultiMap> {
-  return getExchangeRateQueryBuilder()
+async function getExchangeRatesBetweenDates(fromDate: number, toDate: number): Promise<ExchangeRateMultiMap> {
+  const rates = await getExchangeRateQueryBuilder()
     .where("exchange_rate.date >= :fromDate")
     .andWhere("exchange_rate.date <= :fromDate")
     .setParameters({
       fromDate,
       toDate,
     })
-    .getMany()
-    .then((rates) => {
-      const output: ExchangeRateMultiMap = {};
-      ALL_CURRENCY_CODES.forEach((code) => (output[code] = []));
-      rates.forEach((rate) => output[rate.currencyCode].push(rate));
-      return output;
-    });
+    .getMany();
+
+  const output: ExchangeRateMultiMap = {};
+  ALL_CURRENCY_CODES.forEach((code) => (output[code] = []));
+  rates.forEach((rate) => output[rate.currencyCode].push(rate));
+  return output;
 }
 
-function getLatestExchangeRates(): Promise<ExchangeRateMap> {
-  return Promise.resolve({});
+async function getLatestExchangeRates(): Promise<ExchangeRateMap> {
+  const latestRates = await Promise.all(
+    ALL_CURRENCY_CODES.map((code) =>
+      getExchangeRateQueryBuilder()
+        .where("exchange_rate.currency_code = :code")
+        .orderBy("date", "DESC")
+        .setParameters({ code })
+        .limit(1)
+        .getOne(),
+    ),
+  );
+
+  const output: ExchangeRateMap = {};
+  latestRates.forEach((rate) => {
+    output[rate.currencyCode] = rate;
+  });
+  return output;
 }
 
-function updateHistoricalExchangeRages(days = 2): Promise<IExchangeRate[]> {
+async function updateHistoricalExchangeRages(days = 2): Promise<void> {
   const dateStrings = [];
   const today = new Date();
   for (let i = 1; i <= days; ++i) {
     dateStrings.push(format(startOfDay(addDays(today, -i)), "yyyy-MM-dd"));
   }
-  return Promise.all(dateStrings.map((str) => updateExchangeRates(str))).then(() => null);
+  Promise.all(dateStrings.map((str) => updateExchangeRates(str)));
 }
 
-function updateLatestExchangeRates(): Promise<IExchangeRate[]> {
-  return updateExchangeRates("latest");
+async function updateLatestExchangeRates(): Promise<void> {
+  updateExchangeRates("latest");
 }
 
-function updateExchangeRates(date: string): Promise<IExchangeRate[]> {
+async function updateExchangeRates(date: string): Promise<IExchangeRate[]> {
   let url: string;
   if (date === "latest") {
     url = `${API_BASE}/latest.json${API_QUERY_STRING}`;
@@ -66,26 +80,22 @@ function updateExchangeRates(date: string): Promise<IExchangeRate[]> {
     url = `${API_BASE}/historical/${date}.json${API_QUERY_STRING}`;
   }
 
-  return axios
-    .get(url, AXIOS_OPTS)
-    .then((res) => res.data as IExchangeRateApiResponse)
-    .then((res) => {
-      const conversionToDefault = 1 / res.rates[DEFAULT_CURRENCY_CODE];
-      const rates: Partial<DbExchangeRate>[] = [];
-      for (const code of ALL_CURRENCY_CODES) {
-        rates.push({
-          currencyCode: code,
-          ratePerGbp: code === DEFAULT_CURRENCY_CODE ? 1 : res.rates[code] * conversionToDefault,
-          date: startOfDay(res.timestamp * 1000).getTime(),
-        });
-      }
-      return rates;
-    })
-    .then((rates) => {
-      const repo = DbExchangeRate.getRepository();
-      const dbRates = rates.map((rate) => repo.merge(new DbExchangeRate(), rate));
-      return repo.save(dbRates);
-    });
+  const apiRes = await axios.get(url, AXIOS_OPTS).then((res) => res.data as IExchangeRateApiResponse);
+
+  const conversionToDefault = 1 / apiRes.rates[DEFAULT_CURRENCY_CODE];
+  const rates: DbExchangeRate[] = [];
+  const repo = DbExchangeRate.getRepository();
+  for (const code of ALL_CURRENCY_CODES) {
+    rates.push(
+      repo.merge(new DbExchangeRate(), {
+        currencyCode: code,
+        ratePerGbp: code === DEFAULT_CURRENCY_CODE ? 1 : apiRes.rates[code] * conversionToDefault,
+        date: startOfDay(apiRes.timestamp * 1000).getTime(),
+      }),
+    );
+  }
+
+  return repo.save(rates);
 }
 
 export {
