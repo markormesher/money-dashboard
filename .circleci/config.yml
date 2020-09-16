@@ -115,17 +115,32 @@ workflows:
   version: 2
   build_test_deploy:
     jobs:
-      - setup
+      - setup:
+          filters:
+            tags:
+              only: /.*/
       - lint:
+          filters:
+            tags:
+              only: /.*/
           requires:
             - setup
       - check-lockfile:
+          filters:
+            tags:
+              only: /.*/
           requires:
             - setup
       - test:
+          filters:
+            tags:
+              only: /.*/
           requires:
             - setup
       - bundlewatch:
+          filters:
+            tags:
+              only: /.*/
           requires:
             - setup
       - maybe_deploy:
