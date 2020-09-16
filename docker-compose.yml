@@ -14,15 +14,12 @@ services:
     build:
       context: .
       dockerfile: docker/client/Dockerfile
-      args:
-        - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     restart: always
     depends_on:
       - api
     environment:
       - NPM_EXECPATH=yarn
       - npm_execpath=yarn
-      - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     volumes:
       - ./logs:/app/logs
 
@@ -30,8 +27,6 @@ services:
     build:
       context: .
       dockerfile: docker/api/Dockerfile
-      args:
-        - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     restart: always
     depends_on:
       - redis
@@ -39,18 +34,27 @@ services:
       - postgres_replica_1
       - postgres_replica_2
     secrets:
+      - cron.secret
       - google.client.id
       - google.client.secret
+      - open-exchange-rates.key
       - postgres.password
       - session.secret
     environment:
       - NPM_EXECPATH=yarn
       - npm_execpath=yarn
       - RUNNING_IN=docker
-      - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
       - IS_PRIMARY_SERVER=yes
     volumes:
       - ./logs:/app/logs
+
+  cron:
+    build: ./docker/cron
+    restart: always
+    depends_on:
+      - api
+    secrets:
+      - cron.secret
 
   postgres_primary:
     build: ./docker/postgres-primary
@@ -111,10 +115,14 @@ volumes:
   redis-data:
 
 secrets:
+  cron.secret:
+    file: ./src/api/config/secrets/cron.secret
   google.client.id:
     file: ./src/api/config/secrets/google.client.id
   google.client.secret:
     file: ./src/api/config/secrets/google.client.secret
+  open-exchange-rates.key:
+    file: ./src/api/config/secrets/open-exchange-rates.key
   postgres.password:
     file: ./src/api/config/secrets/postgres.password
   postgres-rep.password:

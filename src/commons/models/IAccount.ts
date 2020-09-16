@@ -1,6 +1,7 @@
 import { mapEntities } from "../utils/entities";
 import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 import { ITransaction, mapTransactionFromApi, mapTransactionForApi } from "./ITransaction";
+import { CurrencyCode } from "./ICurrency";
 
 type AccountTag = "pension" | "isa";
 
@@ -15,7 +16,7 @@ interface IAccount {
   readonly type: string;
   readonly tags: AccountTag[];
   readonly note: string;
-  readonly currency: string;
+  readonly currencyCode: CurrencyCode;
   readonly active: boolean;
   readonly deleted: boolean;
 
@@ -29,7 +30,7 @@ const DEFAULT_ACCOUNT: IAccount = {
   type: "current",
   tags: [],
   note: "",
-  currency: "GBP",
+  currencyCode: "GBP",
   active: true,
   deleted: false,
 

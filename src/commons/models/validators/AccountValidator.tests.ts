@@ -2,6 +2,7 @@ import { describe } from "mocha";
 import { v4 } from "uuid";
 import { IAccount, AccountTag } from "../IAccount";
 import { DEFAULT_PROFILE } from "../IProfile";
+import { CurrencyCode } from "../ICurrency";
 import { validateAccount } from "./AccountValidator";
 
 describe(__filename, () => {
@@ -12,7 +13,7 @@ describe(__filename, () => {
       type: "current",
       tags: [],
       note: "note",
-      currency: "GBP",
+      currencyCode: "GBP",
       active: true,
       transactions: [],
       profile: DEFAULT_PROFILE,
@@ -80,10 +81,10 @@ describe(__filename, () => {
     });
 
     it("should reject an account with an invalid currency", () => {
-      const result = validateAccount({ ...VALID_ACCOUNT, currency: "USD" });
+      const result = validateAccount({ ...VALID_ACCOUNT, currencyCode: "not a real currecy" as CurrencyCode });
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("currency");
-      result.errors.currency.should.not.equal("");
+      result.errors.should.have.keys("currencyCode");
+      result.errors.currencyCode.should.not.equal("");
     });
   });
 });

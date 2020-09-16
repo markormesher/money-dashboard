@@ -1,4 +1,5 @@
 import { IAccount, ACCOUNT_TAG_DISPLAY_NAMES } from "../IAccount";
+import { ALL_CURRENCY_CODES } from "../ICurrency";
 
 interface IAccountValidationResult {
   readonly isValid: boolean;
@@ -7,7 +8,7 @@ interface IAccountValidationResult {
     readonly type?: string;
     readonly tags?: string;
     readonly note?: string; // TODO: remove if unused
-    readonly currency?: string;
+    readonly currencyCode?: string;
   };
 }
 
@@ -54,13 +55,12 @@ function validateAccount(account: IAccount): IAccountValidationResult {
     };
   }
 
-  if (account.currency !== "GBP") {
-    // TODO: update once we have multi-currency support
+  if (!ALL_CURRENCY_CODES.includes(account.currencyCode)) {
     result = {
       isValid: false,
       errors: {
         ...result.errors,
-        currency: "Only GBP accounts are supported at the moment",
+        currencyCode: "A valid currency must be selected",
       },
     };
   }

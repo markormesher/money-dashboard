@@ -334,6 +334,38 @@ ALTER TABLE transaction
       return qr.query(`ALTER TABLE account DROP COLUMN currency;`);
     },
   },
+
+  {
+    migrationNumber: 8,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account RENAME currency TO currency_code;`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account RENAME currency_code TO currency;`);
+    },
+  },
+
+  {
+    migrationNumber: 9,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
+CREATE TABLE exchange_rate (
+    currency_code character varying NOT NULL,
+    date bigint NOT NULL,
+    rate_per_gbp double precision NOT NULL
+);
+
+ALTER TABLE exchange_rate OWNER TO money_dashboard;
+
+ALTER TABLE ONLY exchange_rate
+    ADD CONSTRAINT ${ns.primaryKeyName("account", ["currency_code", "date"])}
+        PRIMARY KEY (currency_code, date);
+            `);
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`DROP TABLE IF EXISTS exchange_rate;`);
+    },
+  },
 ];
 
 export { allMigrations };
