@@ -29,8 +29,9 @@ jobs:
           name: Install dependencies
           command: yarn install
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+          key: dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           paths:
+            - assets
             - node_modules
       - persist_to_workspace:
           root: .
