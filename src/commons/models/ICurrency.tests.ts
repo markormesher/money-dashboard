@@ -1,35 +1,15 @@
 import { expect } from "chai";
 import { describe } from "mocha";
-import { DEFAULT_CATEGORY, mapCategoryFromApi, mapCategoryForApi } from "./ICategory";
+import { getCurrency, DEFAULT_CURRENCY_CODE, DEFAULT_CURRENCY, CurrencyCode } from "./ICurrency";
 
 describe(__filename, () => {
-  describe("mapCategoryFromApi()", () => {
-    it("should return undefined for null/undefined/empty-string inputs", () => {
-      expect(mapCategoryFromApi(null)).to.equal(undefined);
-      expect(mapCategoryFromApi(undefined)).to.equal(undefined);
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
-      expect(mapCategoryFromApi("")).to.equal(undefined);
+  describe("getCurrency()", () => {
+    it("should return the correct currency", () => {
+      expect(getCurrency(DEFAULT_CURRENCY_CODE)).to.equal(DEFAULT_CURRENCY);
     });
 
-    it("should not mutate the input", () => {
-      mapCategoryFromApi(DEFAULT_CATEGORY).should.not.equal(DEFAULT_CATEGORY);
-    });
-  });
-
-  describe("mapCategoryForApi()", () => {
-    it("should return undefined for null/undefined/empty-string inputs", () => {
-      expect(mapCategoryForApi(null)).to.equal(undefined);
-      expect(mapCategoryForApi(undefined)).to.equal(undefined);
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
-      expect(mapCategoryForApi("")).to.equal(undefined);
-    });
-
-    it("should not mutate the input", () => {
-      mapCategoryForApi(DEFAULT_CATEGORY).should.not.equal(DEFAULT_CATEGORY);
+    it("should throw an error for an invalid currency", () => {
+      expect(() => getCurrency("ABC" as CurrencyCode)).to.throw("No currency found for the code ABC");
     });
   });
 });
