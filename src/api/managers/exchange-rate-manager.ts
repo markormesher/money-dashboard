@@ -85,7 +85,7 @@ function updateExchangeRates(date: string): Promise<IExchangeRate[]> {
       const repo = DbExchangeRate.getRepository();
       const dbRates = rates.map((rate) => repo.merge(new DbExchangeRate(), rate));
       return repo.save(dbRates);
-    }).catch((e)  => { console.log(e); return []; });
+    });
 }
 
 export {
