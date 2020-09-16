@@ -34,6 +34,7 @@ services:
       - postgres_replica_1
       - postgres_replica_2
     secrets:
+      - cron.secret
       - google.client.id
       - google.client.secret
       - open-exchange-rates.key
@@ -46,6 +47,14 @@ services:
       - IS_PRIMARY_SERVER=yes
     volumes:
       - ./logs:/app/logs
+
+  cron:
+    build: ./docker/cron
+    restart: always
+    depends_on:
+      - api
+    secrets:
+      - cron.secret
 
   postgres_primary:
     build: ./docker/postgres-primary
@@ -106,6 +115,8 @@ volumes:
   redis-data:
 
 secrets:
+  cron.secret:
+    file: ./src/api/config/secrets/cron.secret
   google.client.id:
     file: ./src/api/config/secrets/google.client.id
   google.client.secret:
