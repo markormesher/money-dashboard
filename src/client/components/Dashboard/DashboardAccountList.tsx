@@ -1,19 +1,22 @@
-import { faCaretRight, faCaretDown, faWallet } from "@fortawesome/pro-light-svg-icons";
+import { faCaretRight, faCaretDown, faWallet, faSyncAlt } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
-import { Component, ReactNode, MouseEvent } from "react";
+import { Component, ReactNode, MouseEvent, ReactElement } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IAccountBalance } from "../../../commons/models/IAccountBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatCurrencyStyled, formatCurrencyForStat } from "../../helpers/formatters";
+import { formatCurrencyStyled, formatCurrencyForStat, formatCurrency } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import { Card } from "../_ui/Card/Card";
+import { ExchangeRateMap } from "../../../commons/models/IExchangeRate";
+import { DEFAULT_CURRENCY_CODE, getCurrency } from "../../../commons/models/ICurrency";
 import * as styles from "./DashboardAccountList.scss";
 
 interface IDashboardAccountListProps {
   readonly accountBalances: IAccountBalance[];
+  readonly exchangeRates: ExchangeRateMap;
 }
 
 interface IDashboardAccountListState {
@@ -32,13 +35,14 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
     };
 
     this.renderAccountBalanceList = this.renderAccountBalanceList.bind(this);
+    this.renderSingleAccountBalance = this.renderSingleAccountBalance.bind(this);
     this.handleSectionOpenToggle = this.handleSectionOpenToggle.bind(this);
   }
 
   public render(): ReactNode {
-    const { accountBalances } = this.props;
+    const { accountBalances, exchangeRates } = this.props;
 
-    if (!accountBalances) {
+    if (!accountBalances || !exchangeRates) {
       return (
         <Card title={"Account Balances"} icon={faWallet}>
           <LoadingSpinner centre={true} />
@@ -46,7 +50,9 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
       );
     }
 
-    const total = accountBalances.length ? accountBalances.map((ab) => ab.balance).reduce((a, b) => a + b) : 0;
+    const total = accountBalances
+      .map((ab) => ab.balance / exchangeRates[ab.account.currencyCode].ratePerGbp)
+      .reduce((a, b) => a + b, 0);
 
     return (
       <Card title={"Account Balances"} icon={faWallet}>
@@ -63,6 +69,7 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
   }
 
   private renderAccountBalanceList(type: string, title: string): ReactNode {
+    const { exchangeRates } = this.props;
     const balances = this.props.accountBalances.filter((a) => a.account.type === type).filter((a) => a.balance !== 0);
 
     if (balances.length === 0) {
@@ -82,7 +89,9 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
         </>
       );
     } else {
-      const total = balances.map((b) => b.balance).reduce((a, b) => a + b);
+      const total = balances
+        .map((b) => b.balance / exchangeRates[b.account.currencyCode].ratePerGbp)
+        .reduce((a, b) => a + b);
       return (
         <>
           <h6 onClick={this.handleSectionOpenToggle} id={`section-header-${type}`}>
@@ -96,16 +105,38 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
   }
 
   private renderSingleAccountBalance(balance: IAccountBalance): ReactNode {
+    const { exchangeRates } = this.props;
+
+    const account = balance.account;
+    const currency = getCurrency(account.currencyCode);
+    const exchangeRate = exchangeRates[currency.code];
+    const gbpBalance = balance.balance / exchangeRate.ratePerGbp;
+    const icons: ReactElement[] = [];
+
+    if (account.note) {
+      icons.push(
+        <span className={bs.ml2} key={`account-${account.id}-note`}>
+          <InfoIcon hoverText={account.note} />
+        </span>,
+      );
+    }
+
+    if (account.currencyCode !== DEFAULT_CURRENCY_CODE) {
+      const currencyNote =
+        `${currency.htmlSymbol}${formatCurrency(balance.balance)} converted at` +
+        ` 1 ${currency.code} = ${formatCurrency(1 / exchangeRate.ratePerGbp)} ${DEFAULT_CURRENCY_CODE}`;
+      icons.push(
+        <span className={bs.ml2} key={`account-${account.id}-currency`}>
+          <InfoIcon hoverText={currencyNote} customIcon={faSyncAlt} />
+        </span>,
+      );
+    }
+
     return (
-      <p key={balance.account.id}>
-        {balance.account.name}
-        {balance.account.note && (
-          <>
-            {" "}
-            <InfoIcon hoverText={balance.account.note} />
-          </>
-        )}
-        <span className={bs.floatRight}>{formatCurrencyStyled(balance.balance)}</span>
+      <p key={account.id}>
+        {account.name}
+        {icons}
+        <span className={bs.floatRight}>{formatCurrencyStyled(gbpBalance)}</span>
       </p>
     );
   }

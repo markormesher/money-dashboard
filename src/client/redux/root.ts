@@ -10,6 +10,7 @@ import { globalReducer, IGlobalState } from "./global";
 import { INavState, navReducer } from "./nav";
 import { IProfilesState, profilesReducer, profilesSagas } from "./profiles";
 import { ITransactionsState, transactionsReducer, transactionsSagas } from "./transactions";
+import { IExchangeRateState, exchangeRatesReducer, exchangeRatesSagas } from "./exchange-rates";
 
 interface IRootState {
   readonly accounts?: IAccountsState;
@@ -17,6 +18,7 @@ interface IRootState {
   readonly budgets?: IBudgetsState;
   readonly categories?: ICategoriesState;
   readonly dashboard?: IDashboardState;
+  readonly exchangeRates?: IExchangeRateState;
   readonly global?: IGlobalState;
   readonly nav?: INavState;
   readonly profiles?: IProfilesState;
@@ -33,6 +35,7 @@ const rootReducers = {
   budgets: budgetsReducer,
   categories: categoriesReducer,
   dashboard: dashboardReducer,
+  exchangeRates: exchangeRatesReducer,
   global: globalReducer,
   nav: navReducer,
   profiles: profilesReducer,
@@ -46,6 +49,7 @@ function* rootSaga(): Generator {
     budgetsSagas(),
     categoriesSagas(),
     dashboardSagas(),
+    exchangeRatesSagas(),
     profilesSagas(),
     transactionsSagas(),
   ]);
