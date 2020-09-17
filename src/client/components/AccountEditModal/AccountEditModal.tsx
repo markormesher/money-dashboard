@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { DEFAULT_ACCOUNT, IAccount, AccountTag, ACCOUNT_TAG_DISPLAY_NAMES } from "../../../commons/models/IAccount";
 import { IAccountValidationResult, validateAccount } from "../../../commons/models/validators/AccountValidator";
+import { ALL_CURRENCIES, CurrencyCode } from "../../../commons/models/ICurrency";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { setAccountToEdit, startSaveAccount } from "../../redux/accounts";
 import { IRootState } from "../../redux/root";
@@ -59,6 +60,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
 
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleTypeChange = this.handleTypeChange.bind(this);
+    this.handleCurrencyChange = this.handleCurrencyChange.bind(this);
     this.handleTagCheckedChange = this.handleTagCheckedChange.bind(this);
     this.handleNoteChange = this.handleNoteChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
@@ -119,6 +121,8 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
                 }}
               />
             </div>
+          </div>
+          <div className={bs.row}>
             <div className={combine(bs.col, bs.formGroup)}>
               <ControlledSelectInput
                 id="type"
@@ -132,6 +136,22 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
                 <option value={"savings"}>Savings Account</option>
                 <option value={"asset"}>Asset</option>
                 <option value={"other"}>Other</option>
+              </ControlledSelectInput>
+            </div>
+            <div className={combine(bs.col, bs.formGroup)}>
+              <ControlledSelectInput
+                id={"currency"}
+                label={"Currrency"}
+                value={currentValues.currencyCode}
+                onValueChange={this.handleCurrencyChange}
+                disabled={editorBusy}
+                error={errors.currencyCode}
+              >
+                {ALL_CURRENCIES.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
               </ControlledSelectInput>
             </div>
           </div>
@@ -160,6 +180,10 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
 
   private handleTypeChange(value: string): void {
     this.updateModel({ type: value });
+  }
+
+  private handleCurrencyChange(value: string): void {
+    this.updateModel({ currencyCode: value as CurrencyCode });
   }
 
   private handleTagCheckedChange(checked: boolean, id: string): void {

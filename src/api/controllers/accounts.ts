@@ -67,6 +67,7 @@ router.post("/edit/:accountId?", requireUser, (req: Request, res: Response, next
   const properties: Partial<DbAccount> = {
     name: req.body.name,
     type: req.body.type,
+    currencyCode: req.body.currencyCode,
     tags: req.body.tags,
     note: req.body.note,
   };
