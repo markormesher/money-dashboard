@@ -4,7 +4,10 @@ WORKDIR /money-dashboard
 
 # dependencies
 COPY ./assets ./assets
-COPY package.json .yarnrc yarn.lock ./
+COPY package.json-versionless .yarnrc yarn.lock ./
+RUN mv package.json-versionless package.json
+RUN yarn install
+COPY package.json ./
 RUN yarn install
 
 # source

@@ -13,8 +13,8 @@ jobs:
       - restore_cache:
           keys:
             # components are ordered least- to most-often updated
-            - dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-            - dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json" }}
+            - dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json-versionless" }}-{{ checksum "yarn.lock" }}
+            - dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json-versionless" }}
             - dependency-cache-{{ checksum ".scripts/get-assets.sh" }}
             - dependency-cache-
       - run:
@@ -29,7 +29,7 @@ jobs:
           name: Install dependencies
           command: yarn install
       - save_cache:
-          key: dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+          key: dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json-versionless" }}-{{ checksum "yarn.lock" }}
           paths:
             - assets
             - node_modules
@@ -131,18 +131,19 @@ workflows:
               only: /.*/
           requires:
             - setup
-      - test:
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - setup
       - bundlewatch:
           filters:
             tags:
               only: /.*/
           requires:
             - setup
+      - test:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - lint
+            - check-lockfile
       - maybe_deploy:
           filters:
             tags:
@@ -150,7 +151,5 @@ workflows:
             branches:
               ignore: /.*/
           requires:
-            - lint
-            - check-lockfile
             - test
             - bundlewatch
