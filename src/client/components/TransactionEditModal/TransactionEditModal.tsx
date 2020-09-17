@@ -2,8 +2,8 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { DEFAULT_ACCOUNT, IAccount } from "../../../commons/models/IAccount";
-import { DEFAULT_CATEGORY, ICategory } from "../../../commons/models/ICategory";
+import { IAccount } from "../../../commons/models/IAccount";
+import { ICategory } from "../../../commons/models/ICategory";
 import { DEFAULT_TRANSACTION, ITransaction } from "../../../commons/models/ITransaction";
 import {
   ITransactionValidationResult,
@@ -23,6 +23,7 @@ import { ControlledTextArea } from "../_ui/ControlledInputs/ControlledTextArea";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { SuggestionTextInput } from "../_ui/SuggestionTextInput/SuggestionTextInput";
+import { DEFAULT_CURRENCY_CODE } from "../../../commons/models/ICurrency";
 
 interface ITransactionEditModalProps {
   readonly transactionToEdit?: ITransaction;
@@ -115,6 +116,11 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
         onClick: this.handleSave,
       },
     ];
+
+    const currencyNote =
+      currentValues.account && currentValues.account.currencyCode !== DEFAULT_CURRENCY_CODE
+        ? currentValues.account.currencyCode
+        : null;
 
     return (
       <Modal
@@ -214,7 +220,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
             <div className={combine(bs.col, bs.formGroup)}>
               <ControlledTextInput
                 id={"amount"}
-                label={"Amount"}
+                label={"Amount" + (currencyNote ? ` (${currencyNote})` : "")}
                 value={!isNaN(currentValues.amount) ? currentValues.amount : ""}
                 disabled={editorBusy}
                 error={errors.amount}
@@ -254,11 +260,10 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
   }
 
   private handleAccountChange(value: string): void {
+    const { accountList } = this.props;
+    const selectedAccount = accountList.find((a) => a.id === value);
     this.updateModel({
-      account: {
-        ...DEFAULT_ACCOUNT,
-        id: value,
-      },
+      account: selectedAccount,
     });
   }
 
@@ -267,11 +272,10 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
   }
 
   private handleCategoryChange(value: string): void {
+    const { categoryList } = this.props;
+    const selectedCategory = categoryList.find((c) => c.id === value);
     this.updateModel({
-      category: {
-        ...DEFAULT_CATEGORY,
-        id: value,
-      },
+      category: selectedCategory,
     });
   }
 

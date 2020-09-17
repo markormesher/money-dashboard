@@ -21,6 +21,8 @@ import { TransactionEditModal } from "../TransactionEditModal/TransactionEditMod
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { Card } from "../_ui/Card/Card";
 import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
+import { DEFAULT_CURRENCY_CODE } from "../../../commons/models/ICurrency";
+import { Badge } from "../_ui/Badge/Badge";
 
 interface ITransactionPageProps extends IProfileAwareProps {
   readonly cacheTime: number;
@@ -135,6 +137,8 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
   private tableRowRenderer(transaction: ITransaction): ReactElement<void> {
     const mainDate = formatDate(transaction.transactionDate);
     const altDate = formatDate(transaction.effectiveDate);
+    const altCurrencyCode =
+      transaction.account.currencyCode !== DEFAULT_CURRENCY_CODE ? transaction.account.currencyCode : null;
     return (
       <tr key={transaction.id}>
         <td>
@@ -150,13 +154,15 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
         <td>
           {transaction.payee}
           {transaction.note && (
-            <>
-              {" "}
+            <span className={bs.ml2}>
               <InfoIcon hoverText={transaction.note} />
-            </>
+            </span>
           )}
         </td>
-        <td>{formatCurrencyStyled(transaction.amount)}</td>
+        <td>
+          {formatCurrencyStyled(transaction.amount)}
+          {altCurrencyCode && <Badge className={combine(bs.badgeDark, bs.ml2)}>{altCurrencyCode}</Badge>}
+        </td>
         <td>{transaction.category.name}</td>
         <td>{this.generateActionButtons(transaction)}</td>
       </tr>
