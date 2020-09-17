@@ -144,10 +144,9 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
         <td>
           {mainDate}
           {mainDate !== altDate && (
-            <>
-              {" "}
+            <span className={bs.ml2}>
               <InfoIcon hoverText={altDate} />
-            </>
+            </span>
           )}
         </td>
         <td>{transaction.account.name}</td>
