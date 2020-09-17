@@ -3,7 +3,6 @@ import { router as AccountSettingsController } from "../controllers/accounts";
 import { router as AuthRouter } from "../controllers/auth";
 import { router as BudgetSettingsController } from "../controllers/budgets";
 import { router as CategorySettingsController } from "../controllers/categories";
-import { router as CurrenciesController } from "../controllers/currencies";
 import { router as ExchangeRatesController } from "../controllers/exchange-rates";
 import { router as ProfileSettingsController } from "../controllers/profiles";
 import { router as AssetPerformanceReportRouter } from "../controllers/reports/asset-performance";
@@ -16,7 +15,6 @@ function setupApiRoutes(app: Express): void {
   app.use("/api/auth", AuthRouter);
   app.use("/api/budgets", BudgetSettingsController);
   app.use("/api/categories", CategorySettingsController);
-  app.use("/api/currencies", CurrenciesController);
   app.use("/api/exchange-rates", ExchangeRatesController);
   app.use("/api/profiles", ProfileSettingsController);
   app.use("/api/reports/asset-performance", AssetPerformanceReportRouter);
