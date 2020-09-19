@@ -5,8 +5,6 @@ import { ExchangeRateMap } from "../../commons/models/IExchangeRate";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 
-// TODO: tests
-
 interface IExchangeRateState {
   readonly latestExchangeRates: ExchangeRateMap;
 }
