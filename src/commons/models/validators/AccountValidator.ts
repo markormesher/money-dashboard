@@ -7,7 +7,6 @@ interface IAccountValidationResult {
     readonly name?: string;
     readonly type?: string;
     readonly tags?: string;
-    readonly note?: string; // TODO: remove if unused
     readonly currencyCode?: string;
   };
 }

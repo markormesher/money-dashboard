@@ -81,7 +81,7 @@ describe(__filename, () => {
     });
 
     it("should reject an account with an invalid currency", () => {
-      const result = validateAccount({ ...VALID_ACCOUNT, currencyCode: "not a real currecy" as CurrencyCode });
+      const result = validateAccount({ ...VALID_ACCOUNT, currencyCode: "not a real currency" as CurrencyCode });
       result.isValid.should.equal(false);
       result.errors.should.have.keys("currencyCode");
       result.errors.currencyCode.should.not.equal("");

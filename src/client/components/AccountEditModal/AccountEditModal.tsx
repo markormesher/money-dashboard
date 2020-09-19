@@ -141,7 +141,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
             <div className={combine(bs.col, bs.formGroup)}>
               <ControlledSelectInput
                 id={"currency"}
-                label={"Currrency"}
+                label={"Currency"}
                 value={currentValues.currencyCode}
                 onValueChange={this.handleCurrencyChange}
                 disabled={editorBusy}
@@ -165,7 +165,6 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
               label={"Note"}
               value={currentValues.note}
               disabled={editorBusy}
-              error={errors.note}
               onValueChange={this.handleNoteChange}
             />
           </div>
