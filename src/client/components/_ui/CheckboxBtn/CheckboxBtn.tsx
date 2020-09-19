@@ -1,6 +1,7 @@
 import { faCheckSquare, faSquare } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { IconBtn } from "../IconBtn/IconBtn";
 
 interface ICheckboxBtnProps<Payload = {}> {
@@ -9,6 +10,8 @@ interface ICheckboxBtnProps<Payload = {}> {
   readonly payload?: Payload;
   readonly onChange?: (checked: boolean, payload?: Payload) => void;
   readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
+  readonly iconChecked?: IconProp;
+  readonly iconUnchecked?: IconProp;
 }
 
 class CheckboxBtn<Payload = {}> extends PureComponent<ICheckboxBtnProps<Payload>> {
@@ -19,8 +22,8 @@ class CheckboxBtn<Payload = {}> extends PureComponent<ICheckboxBtnProps<Payload>
   }
 
   public render(): ReactNode {
-    const { text, checked, btnProps } = this.props;
-    const icon = checked ? faCheckSquare : faSquare;
+    const { text, checked, btnProps, iconChecked, iconUnchecked } = this.props;
+    const icon = checked ? iconChecked || faCheckSquare : iconUnchecked || faSquare;
 
     return (
       <IconBtn
