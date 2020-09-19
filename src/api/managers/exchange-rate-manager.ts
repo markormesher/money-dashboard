@@ -6,6 +6,7 @@ import { ExchangeRateMultiMap, ExchangeRateMap, IExchangeRate } from "../../comm
 import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "../../commons/models/ICurrency";
 import { IExchangeRateApiResponse } from "../../commons/models/IExchangeRateApiResponse";
 import { getSecret } from "../config/config-loader";
+import { isDev } from "../../commons/utils/env";
 
 const API_BASE = "https://openexchangerates.org/api";
 const API_QUERY_STRING = `?symbols=${ALL_CURRENCY_CODES.join(",")}`;
@@ -69,6 +70,10 @@ async function updateLatestExchangeRates(): Promise<void> {
 }
 
 async function updateExchangeRates(date: string): Promise<IExchangeRate[]> {
+  if (isDev()) {
+    return Promise.resolve([]);
+  }
+
   let url: string;
   if (date === "latest") {
     url = `${API_BASE}/latest.json${API_QUERY_STRING}`;
