@@ -16,6 +16,7 @@ class InfoIcon extends PureComponent<IInfoIconPros> {
     ReactTooltip.rebuild();
   }
 
+  /* istanbul ignore next - hard to reproduce this in tests */
   public componentDidUpdate(): void {
     ReactTooltip.rebuild();
   }
