@@ -17,7 +17,7 @@ interface IDashboardAccountListProps {
 }
 
 interface IDashboardAccountListState {
-  readonly sectionOpen: { [key: string]: boolean };
+  readonly sectionClosed: { [key: string]: boolean };
 }
 
 class DashboardAccountList extends Component<IDashboardAccountListProps, IDashboardAccountListState> {
@@ -28,11 +28,11 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
   constructor(props: IDashboardAccountListProps) {
     super(props);
     this.state = {
-      sectionOpen: {},
+      sectionClosed: {},
     };
 
     this.renderAccountBalanceList = this.renderAccountBalanceList.bind(this);
-    this.handleSectionOpenToggle = this.handleSectionOpenToggle.bind(this);
+    this.handleSectionClosedToggle = this.handleSectionClosedToggle.bind(this);
   }
 
   public render(): ReactNode {
@@ -69,27 +69,27 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
       return null;
     }
 
-    const sectionOpen = this.state.sectionOpen[type] || false;
+    const sectionClosed = this.state.sectionClosed[type] || false;
 
-    if (sectionOpen) {
-      return (
-        <>
-          <h6 onClick={this.handleSectionOpenToggle} id={`section-header-${type}`}>
-            <FontAwesomeIcon icon={faCaretDown} className={combine(bs.textMuted, bs.mr2)} />
-            {title}
-          </h6>
-          {balances.sort(DashboardAccountList.sortByAbsoluteBalanceComparator).map(this.renderSingleAccountBalance)}
-        </>
-      );
-    } else {
+    if (sectionClosed) {
       const total = balances.map((b) => b.balance).reduce((a, b) => a + b);
       return (
         <>
-          <h6 onClick={this.handleSectionOpenToggle} id={`section-header-${type}`}>
-            <FontAwesomeIcon icon={faCaretRight} className={combine(bs.textMuted, bs.mr2)} />
+          <h6 onClick={this.handleSectionClosedToggle} id={`section-header-${type}`}>
+            <FontAwesomeIcon icon={faCaretRight} className={combine(bs.textMuted, bs.mr2)} fixedWidth={true} />
             {title}
             <span className={bs.floatRight}>{formatCurrencyStyled(total)}</span>
           </h6>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <h6 onClick={this.handleSectionClosedToggle} id={`section-header-${type}`}>
+            <FontAwesomeIcon icon={faCaretDown} className={combine(bs.textMuted, bs.mr2)} fixedWidth={true} />
+            {title}
+          </h6>
+          {balances.sort(DashboardAccountList.sortByAbsoluteBalanceComparator).map(this.renderSingleAccountBalance)}
         </>
       );
     }
@@ -110,10 +110,10 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
     );
   }
 
-  private handleSectionOpenToggle(event: MouseEvent<HTMLHeadingElement>): void {
+  private handleSectionClosedToggle(event: MouseEvent<HTMLHeadingElement>): void {
     const sectionType = (event.target as HTMLHeadingElement).id.replace("section-header-", "");
-    const oldState = this.state.sectionOpen;
-    this.setState({ sectionOpen: { ...oldState, [sectionType]: !oldState[sectionType] } });
+    const oldState = this.state.sectionClosed;
+    this.setState({ sectionClosed: { ...oldState, [sectionType]: !oldState[sectionType] } });
   }
 }
 
