@@ -141,7 +141,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
             <div className={combine(bs.col, bs.formGroup)}>
               <ControlledSelectInput
                 id={"currency"}
-                label={"Currrency"}
+                label={"Currency"}
                 value={currentValues.currencyCode}
                 onValueChange={this.handleCurrencyChange}
                 disabled={editorBusy}
@@ -158,6 +158,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
           <div className={bs.formGroup}>
             <label>Tags</label>
             <div className={bs.row}>{tagCheckboxes}</div>
+            {errors.tags && <div className={combine(bs.invalidFeedback, bs.dBlock)}>{errors.tags}</div>}
           </div>
           <div className={bs.formGroup}>
             <ControlledTextArea
@@ -165,7 +166,6 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
               label={"Note"}
               value={currentValues.note}
               disabled={editorBusy}
-              error={errors.note}
               onValueChange={this.handleNoteChange}
             />
           </div>

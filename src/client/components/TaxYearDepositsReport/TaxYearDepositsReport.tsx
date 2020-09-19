@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { connect } from "react-redux";
+import { faCircle, faCheckCircle } from "@fortawesome/pro-light-svg-icons";
 import { IDetailedCategoryBalance } from "../../../commons/models/IDetailedCategoryBalance";
 import { ITaxYearDepositsData, mapTaxYearDepositsDataFromApi } from "../../../commons/models/ITaxYearDepositsData";
 import { DateModeOption } from "../../../commons/models/ITransaction";
@@ -130,6 +131,8 @@ class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITa
         btnProps={{
           className: combine(bs.btnOutlineInfo, bs.btnSm),
         }}
+        iconUnchecked={faCircle}
+        iconChecked={faCheckCircle}
       />
     ));
   }
