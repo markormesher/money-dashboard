@@ -80,6 +80,20 @@ describe(__filename, () => {
       result.errors.tags.should.not.equal("");
     });
 
+    it("should reject the ISA tag with non-default currencies", () => {
+      const result = validateAccount({ ...VALID_ACCOUNT, currencyCode: "USD", tags: ["isa"] });
+      result.isValid.should.equal(false);
+      result.errors.should.have.keys("tags");
+      result.errors.tags.should.not.equal("");
+    });
+
+    it("should reject the pension tag with non-default currencies", () => {
+      const result = validateAccount({ ...VALID_ACCOUNT, currencyCode: "USD", tags: ["pension"] });
+      result.isValid.should.equal(false);
+      result.errors.should.have.keys("tags");
+      result.errors.tags.should.not.equal("");
+    });
+
     it("should reject an account with an invalid currency", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, currencyCode: "not a real currency" as CurrencyCode });
       result.isValid.should.equal(false);

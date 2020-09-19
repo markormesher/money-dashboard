@@ -1,5 +1,5 @@
 import { IAccount, ACCOUNT_TAG_DISPLAY_NAMES } from "../IAccount";
-import { ALL_CURRENCY_CODES } from "../ICurrency";
+import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "../ICurrency";
 
 interface IAccountValidationResult {
   readonly isValid: boolean;
@@ -52,6 +52,28 @@ function validateAccount(account: IAccount): IAccountValidationResult {
         tags: "Only valid tags may be selected",
       },
     };
+  }
+
+  if (account.currencyCode !== DEFAULT_CURRENCY_CODE) {
+    if (account.tags && account.tags.includes("pension")) {
+      result = {
+        isValid: false,
+        errors: {
+          ...result.errors,
+          tags: "The pension tag cannot be used for non-GBP accounts",
+        },
+      };
+    }
+
+    if (account.tags && account.tags.includes("isa")) {
+      result = {
+        isValid: false,
+        errors: {
+          ...result.errors,
+          tags: "The ISA tag cannot be used for non-GBP accounts",
+        },
+      };
+    }
   }
 
   if (!ALL_CURRENCY_CODES.includes(account.currencyCode)) {

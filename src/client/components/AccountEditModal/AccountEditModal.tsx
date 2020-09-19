@@ -158,6 +158,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
           <div className={bs.formGroup}>
             <label>Tags</label>
             <div className={bs.row}>{tagCheckboxes}</div>
+            {errors.tags && <div className={combine(bs.invalidFeedback, bs.dBlock)}>{errors.tags}</div>}
           </div>
           <div className={bs.formGroup}>
             <ControlledTextArea
