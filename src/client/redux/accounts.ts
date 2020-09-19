@@ -40,9 +40,9 @@ enum AccountCacheKeys {
   ACCOUNT_LIST = "AccountCacheKeys.ACCOUNT_LIST",
 }
 
+// direct call to library method is deliberately not tested
+/* istanbul ignore next */
 function accountListIsCached(): boolean {
-  // direct call to library method is deliberately not tested
-  /* istanbul ignore next */
   return CacheKeyUtil.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [
     AccountCacheKeys.ACCOUNT_DATA,
     ProfileCacheKeys.ACTIVE_PROFILE,

@@ -25,9 +25,9 @@ enum ExchangeRateCacheKeys {
   LATEST_RATES = "ExchangeRateCacheKeys.LATEST_RATES",
 }
 
+// direct call to library method is deliberately not tested
+/* istanbul ignore next */
 function latestRatesAreCached(): boolean {
-  // direct call to library method is deliberately not tested
-  /* istanbul ignore next */
   return CacheKeyUtil.keyIsValid(ExchangeRateCacheKeys.LATEST_RATES);
 }
 
