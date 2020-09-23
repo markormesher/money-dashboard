@@ -1,4 +1,4 @@
-import { faCaretRight, faCaretDown, faWallet, faSyncAlt } from "@fortawesome/pro-light-svg-icons";
+import { faCaretRight, faCaretDown, faWallet, faRandom } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { Component, ReactNode, MouseEvent, ReactElement } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -127,7 +127,7 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
         ` 1 ${currency.code} = ${formatCurrency(1 / exchangeRate.ratePerGbp)} ${DEFAULT_CURRENCY_CODE}`;
       icons.push(
         <span className={bs.ml2} key={`account-${account.id}-currency`}>
-          <InfoIcon hoverText={currencyNote} customIcon={faSyncAlt} />
+          <InfoIcon hoverText={currencyNote} customIcon={faRandom} />
         </span>,
       );
     }
