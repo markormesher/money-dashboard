@@ -47,6 +47,12 @@ function formatDate(date: number, toFormat: "user" | "system" = "user"): string 
   }
 }
 
+function formatTimeAgo(timeAgoMs: number): string {
+  const timeAgoS = Math.floor(timeAgoMs / 1000);
+  return "";
+  // TODO
+}
+
 function capitaliseFirstLetter(str?: string): string {
   if (!str) {
     return str;

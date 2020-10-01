@@ -16,18 +16,23 @@ import {
 import { IRootState } from "../../redux/root";
 import { ExchangeRateMap } from "../../../commons/models/IExchangeRate";
 import { startLoadLatestExchangeRates } from "../../redux/exchange-rates";
+import { startLoadAccountList } from "../../redux/accounts";
+import { IAccount } from "../../../commons/models/IAccount";
 import { DashboardAccountList } from "./DashboardAccountList";
 import { DashboardAlertList } from "./DashboardAlertList";
 import { DashboardBudgetList } from "./DashboardBudgetList";
+import { DashboardExchangeRateHistory } from "./DashboardExchangeRateHistory";
 
 interface IDashboardProps {
   readonly activeUser: IUser;
+  readonly accountList?: IAccount[];
   readonly accountBalances?: IAccountBalance[];
   readonly budgetBalances?: IBudgetBalance[];
   readonly memoCategoryBalances?: ICategoryBalance[];
   readonly exchangeRates: ExchangeRateMap;
 
   readonly actions?: {
+    readonly startLoadAccountList: () => AnyAction;
     readonly startLoadAccountBalances: () => AnyAction;
     readonly startLoadBudgetBalances: () => AnyAction;
     readonly startLoadMemoCategoryBalances: () => AnyAction;
@@ -39,6 +44,7 @@ function mapStateToProps(state: IRootState, props: IDashboardProps): IDashboardP
   return {
     ...props,
     activeUser: state.auth.activeUser,
+    accountList: state.accounts.accountList,
     accountBalances: state.dashboard.accountBalances,
     budgetBalances: state.dashboard.budgetBalances,
     memoCategoryBalances: state.dashboard.memoCategoryBalances,
@@ -50,6 +56,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDashboardProps): IDashbo
   return {
     ...props,
     actions: {
+      startLoadAccountList: (): AnyAction => dispatch(startLoadAccountList()),
       startLoadAccountBalances: (): AnyAction => dispatch(startLoadAccountBalances()),
       startLoadBudgetBalances: (): AnyAction => dispatch(startLoadBudgetBalances()),
       startLoadMemoCategoryBalances: (): AnyAction => dispatch(startLoadMemoCategoryBalances()),
@@ -60,6 +67,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDashboardProps): IDashbo
 
 class UCDashboard extends PureComponent<IDashboardProps> {
   public componentDidMount(): void {
+    this.props.actions.startLoadAccountList();
     this.props.actions.startLoadAccountBalances();
     this.props.actions.startLoadBudgetBalances();
     this.props.actions.startLoadMemoCategoryBalances();
@@ -67,6 +75,7 @@ class UCDashboard extends PureComponent<IDashboardProps> {
   }
 
   public componentDidUpdate(): void {
+    this.props.actions.startLoadAccountList();
     this.props.actions.startLoadAccountBalances();
     this.props.actions.startLoadBudgetBalances();
     this.props.actions.startLoadMemoCategoryBalances();
@@ -77,6 +86,9 @@ class UCDashboard extends PureComponent<IDashboardProps> {
       <div className={bs.row}>
         <div className={combine(bs.colSm12, bs.colMd8)}>
           <DashboardBudgetList budgetBalances={this.props.budgetBalances} />
+          <div className={bs.row}>
+            <DashboardExchangeRateHistory accounts={this.props.accountList} exchangeRates={this.props.exchangeRates} />
+          </div>
         </div>
         <div className={combine(bs.colSm12, bs.colMd4)}>
           <DashboardAlertList memoCategoryBalances={this.props.memoCategoryBalances} />
