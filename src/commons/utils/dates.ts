@@ -1,3 +1,5 @@
+const GLOBAL_MIN_DATE = Date.UTC(2015, 0, 1, 0, 0, 0);
+
 // shifts a local timestamp to UTC without changing the actual time
 function convertLocalDateToUtc(input: number): number {
   const localDate = new Date(input);
@@ -26,4 +28,4 @@ function convertUtcDateToLocal(input: number): number {
   ).getTime();
 }
 
-export { convertLocalDateToUtc, convertUtcDateToLocal };
+export { GLOBAL_MIN_DATE, convertLocalDateToUtc, convertUtcDateToLocal };

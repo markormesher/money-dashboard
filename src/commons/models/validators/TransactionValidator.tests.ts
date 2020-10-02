@@ -138,6 +138,13 @@ describe(__filename, () => {
       result.errors.transactionDate.should.not.equal("");
     });
 
+    it("should reject a transaction with transaction date < global minimum", () => {
+      const result = validateTransaction({ ...VALID_TRANSACTION, transactionDate: Date.UTC(2010, 0, 1, 0, 0, 0) });
+      result.isValid.should.equal(false);
+      result.errors.should.have.keys("transactionDate");
+      result.errors.transactionDate.should.not.equal("");
+    });
+
     it("should reject a transaction with an invalid transaction date", () => {
       const result = validateTransaction({ ...VALID_TRANSACTION, transactionDate: parseISO("2018-01-40").getTime() });
       result.isValid.should.equal(false);
@@ -147,6 +154,13 @@ describe(__filename, () => {
 
     it("should reject a transaction with no effective date", () => {
       const result = validateTransaction({ ...VALID_TRANSACTION, effectiveDate: undefined });
+      result.isValid.should.equal(false);
+      result.errors.should.have.keys("effectiveDate");
+      result.errors.effectiveDate.should.not.equal("");
+    });
+
+    it("should reject a transaction with effective date < global minimum", () => {
+      const result = validateTransaction({ ...VALID_TRANSACTION, effectiveDate: Date.UTC(2010, 0, 1, 0, 0, 0) });
       result.isValid.should.equal(false);
       result.errors.should.have.keys("effectiveDate");
       result.errors.effectiveDate.should.not.equal("");

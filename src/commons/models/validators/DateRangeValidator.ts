@@ -1,5 +1,6 @@
 import { isAfter, isSameDay } from "date-fns";
 import { IDateRange } from "../IDateRange";
+import { GLOBAL_MIN_DATE } from "../../utils/dates";
 
 interface IDateRangeValidationResult {
   readonly isValid: boolean;
@@ -38,6 +39,26 @@ function validateDateRange(range: IDateRange): IDateRangeValidationResult {
       errors: {
         ...result.errors,
         endDate: "A valid end date date must be selected",
+      },
+    };
+  }
+
+  if (range.startDate < GLOBAL_MIN_DATE) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        startDate: "The start date must not be before the global minimum",
+      },
+    };
+  }
+
+  if (range.endDate < GLOBAL_MIN_DATE) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        endDate: "The end date must not be before the global minimum",
       },
     };
   }
