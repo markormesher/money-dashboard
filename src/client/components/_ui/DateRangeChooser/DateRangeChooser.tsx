@@ -9,6 +9,10 @@ import { combine } from "../../../helpers/style-helpers";
 import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { ButtonDropDown, IButtonDropDownProps } from "../ButtonDropDown/ButtonDropDown";
+import {
+  validateDateRange,
+  IDateRangeValidationResult,
+} from "../../../../commons/models/validators/DateRangeValidator";
 
 interface IDateRangeChooserProps {
   readonly startDate?: number;
@@ -25,8 +29,8 @@ interface IDateRangeChooserProps {
 interface IDateRangeChooserState {
   readonly chooserOpen: boolean;
   readonly customRangeChooserOpen: boolean;
-  readonly customRangeStart: number;
-  readonly customRangeEnd: number;
+  readonly customRange: IDateRange;
+  readonly customRangeValidationResult: IDateRangeValidationResult;
   readonly usingCustomRange: boolean;
 }
 
@@ -79,8 +83,8 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
     this.state = {
       chooserOpen: false,
       customRangeChooserOpen: false,
-      customRangeStart: undefined,
-      customRangeEnd: undefined,
+      customRange: { startDate: undefined, endDate: undefined },
+      customRangeValidationResult: validateDateRange({ startDate: undefined, endDate: undefined }),
       usingCustomRange: false,
     };
 
@@ -93,7 +97,6 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
     this.handleBtnClick = this.handleBtnClick.bind(this);
     this.closeChooser = this.closeChooser.bind(this);
     this.toggleCustomRangeChooserOpen = this.toggleCustomRangeChooserOpen.bind(this);
-    this.customRangeIsValid = this.customRangeIsValid.bind(this);
   }
 
   public render(): ReactNode {
@@ -130,7 +133,8 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
               <ControlledDateInput
                 id={"custom-from"}
                 label={"From"}
-                value={formatDate(this.state.customRangeStart, "system") || ""}
+                value={formatDate(this.state.customRange.startDate, "system") || ""}
+                error={this.state.customRangeValidationResult.errors.startDate}
                 disabled={false}
                 onValueChange={this.handleCustomRangeStartChange}
               />
@@ -139,7 +143,8 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
               <ControlledDateInput
                 id={"custom-to"}
                 label={"To"}
-                value={formatDate(this.state.customRangeEnd, "system") || ""}
+                value={formatDate(this.state.customRange.endDate, "system") || ""}
+                error={this.state.customRangeValidationResult.errors.endDate}
                 disabled={false}
                 onValueChange={this.handleCustomRangeEndChange}
               />
@@ -151,7 +156,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
                 onClick={this.handleCustomRangeSubmit}
                 btnProps={{
                   className: bs.btnOutlineDark,
-                  disabled: !this.customRangeIsValid(),
+                  disabled: !this.state.customRangeValidationResult.isValid,
                 }}
               />
             </div>
@@ -219,34 +224,43 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
   }
 
   private handleCustomRangeStartChange(value: number): void {
-    this.setState({ customRangeStart: value });
+    this.setState((oldState) => {
+      const newRange: IDateRange = {
+        ...oldState.customRange,
+        startDate: value,
+      };
+      return {
+        customRange: newRange,
+        customRangeValidationResult: validateDateRange(newRange),
+      };
+    });
   }
 
   private handleCustomRangeEndChange(value: number): void {
-    this.setState({ customRangeEnd: value });
+    this.setState((oldState) => {
+      const newRange: IDateRange = {
+        ...oldState.customRange,
+        endDate: value,
+      };
+      return {
+        customRange: newRange,
+        customRangeValidationResult: validateDateRange(newRange),
+      };
+    });
   }
 
   private handleCustomRangeSubmit(): void {
     /* istanbul ignore else: cannot be triggered if invalid */
-    if (this.customRangeIsValid()) {
+    if (this.state.customRangeValidationResult.isValid) {
       this.setState({
         usingCustomRange: true,
       });
       if (this.props.onValueChange) {
-        const { customRangeStart, customRangeEnd } = this.state;
-        this.props.onValueChange(customRangeStart, customRangeEnd);
+        const { startDate, endDate } = this.state.customRange;
+        this.props.onValueChange(startDate, endDate);
       }
       this.closeChooser();
     }
-  }
-
-  private customRangeIsValid(): boolean {
-    const { customRangeStart, customRangeEnd } = this.state;
-    if ((!customRangeStart && customRangeStart !== 0) || (!customRangeEnd && customRangeEnd !== 0)) {
-      return false;
-    }
-
-    return customRangeStart <= customRangeEnd;
   }
 }
 
