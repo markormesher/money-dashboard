@@ -1,27 +1,34 @@
+import * as React from "react";
+import { ReactElement } from "react";
+
 type CurrencyCode = "GBP" | "EUR" | "USD";
 
 interface ICurrency {
   readonly code: CurrencyCode;
   readonly name: string;
-  readonly htmlSymbol: string;
+  readonly stringSymbol: string;
+  readonly htmlSymbol: ReactElement;
 }
 
 const gbp: ICurrency = {
   code: "GBP",
   name: "British Pounds",
-  htmlSymbol: "&pound;",
+  stringSymbol: "£",
+  htmlSymbol: <>&pound;</>,
 };
 
 const eur: ICurrency = {
   code: "EUR",
   name: "Euros",
-  htmlSymbol: "&euro;",
+  stringSymbol: "€",
+  htmlSymbol: <>&euro;</>,
 };
 
 const usd: ICurrency = {
   code: "USD",
   name: "US Dollars",
-  htmlSymbol: "$",
+  stringSymbol: "$",
+  htmlSymbol: <>$</>,
 };
 
 const DEFAULT_CURRENCY = gbp;
