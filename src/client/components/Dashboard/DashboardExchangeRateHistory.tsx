@@ -26,16 +26,16 @@ class DashboardExchangeRateHistory extends PureComponent<IDashboardExchangeRateH
       return null;
     }
 
-    const allNonDefaultCurrencies = this.props.accounts
+    const nonDefaultCurrencyCodes = this.props.accounts
       .map((a) => a.currencyCode)
       .filter((c) => c !== DEFAULT_CURRENCY_CODE)
       .filter((c, i, a) => a.indexOf(c) === i);
 
-    if (!allNonDefaultCurrencies.length) {
+    if (!nonDefaultCurrencyCodes.length) {
       return null;
     }
 
-    return allNonDefaultCurrencies.map((c) => this.renderSingleHistory(c));
+    return nonDefaultCurrencyCodes.map((c) => this.renderSingleHistory(c));
   }
 
   private renderSingleHistory(currencyCode: CurrencyCode): ReactNode {
