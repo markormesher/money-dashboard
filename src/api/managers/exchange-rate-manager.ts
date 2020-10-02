@@ -112,4 +112,5 @@ export {
   getLatestExchangeRates,
   updateHistoricalExchangeRages,
   updateLatestExchangeRates,
+  updateExchangeRates,
 };
