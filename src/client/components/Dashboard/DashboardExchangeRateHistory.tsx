@@ -12,7 +12,7 @@ import { ExchangeRateMap } from "../../../commons/models/IExchangeRate";
 
 interface IDashboardExchangeRateHistoryProps {
   readonly accounts?: IAccount[];
-  readonly exchangeRates: ExchangeRateMap;
+  readonly exchangeRates?: ExchangeRateMap;
 }
 
 class DashboardExchangeRateHistory extends PureComponent<IDashboardExchangeRateHistoryProps> {
