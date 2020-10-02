@@ -6,24 +6,28 @@ type CurrencyCode = "GBP" | "EUR" | "USD";
 interface ICurrency {
   readonly code: CurrencyCode;
   readonly name: string;
+  readonly stringSymbol: string;
   readonly htmlSymbol: ReactElement;
 }
 
 const gbp: ICurrency = {
   code: "GBP",
   name: "British Pounds",
+  stringSymbol: "£",
   htmlSymbol: <>&pound;</>,
 };
 
 const eur: ICurrency = {
   code: "EUR",
   name: "Euros",
+  stringSymbol: "€",
   htmlSymbol: <>&euro;</>,
 };
 
 const usd: ICurrency = {
   code: "USD",
   name: "US Dollars",
+  stringSymbol: "$",
   htmlSymbol: <>$</>,
 };
 

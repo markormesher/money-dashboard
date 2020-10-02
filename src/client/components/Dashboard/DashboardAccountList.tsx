@@ -123,8 +123,8 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
 
     if (account.currencyCode !== DEFAULT_CURRENCY_CODE) {
       const currencyNote =
-        `${currency.htmlSymbol}${formatCurrency(balance.balance)} converted at` +
-        ` 1 ${currency.code} = ${formatCurrency(1 / exchangeRate.ratePerGbp)} ${DEFAULT_CURRENCY_CODE}`;
+        `${currency.stringSymbol}${formatCurrency(balance.balance)} converted at 1 ${currency.code} = ` +
+        `${formatCurrency(1 / exchangeRate.ratePerGbp)} ${DEFAULT_CURRENCY_CODE}`;
       icons.push(
         <span className={bs.ml2} key={`account-${account.id}-currency`}>
           <InfoIcon hoverText={currencyNote} customIcon={faRandom} />

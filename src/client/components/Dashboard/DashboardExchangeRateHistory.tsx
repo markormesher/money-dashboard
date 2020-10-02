@@ -1,6 +1,7 @@
 import { faRandom } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
+import { formatDistanceToNow } from "date-fns";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatCurrency } from "../../helpers/formatters";
 import { Card } from "../_ui/Card/Card";
@@ -8,7 +9,6 @@ import { IAccount } from "../../../commons/models/IAccount";
 import { DEFAULT_CURRENCY_CODE, CurrencyCode, getCurrency, DEFAULT_CURRENCY } from "../../../commons/models/ICurrency";
 import { combine } from "../../helpers/style-helpers";
 import { ExchangeRateMap } from "../../../commons/models/IExchangeRate";
-import { convertLocalDateToUtc } from "../../../commons/utils/dates";
 
 interface IDashboardExchangeRateHistoryProps {
   readonly accounts?: IAccount[];
@@ -42,20 +42,28 @@ class DashboardExchangeRateHistory extends PureComponent<IDashboardExchangeRateH
     const exchangeRate = this.props.exchangeRates[currencyCode];
     const currency = getCurrency(currencyCode);
 
-    const now = convertLocalDateToUtc(new Date().getTime());
-    const rateAgeMs = now - exchangeRate.updateTime;
+    const rateAge = formatDistanceToNow(exchangeRate.updateTime);
 
     return (
       <div key={`history-${currencyCode}`} className={combine(bs.col12, bs.colSm6)}>
-        <Card title={`${currencyCode} - ${DEFAULT_CURRENCY_CODE}`} icon={faRandom}>
+        <Card title={`${DEFAULT_CURRENCY_CODE}/${currencyCode}`} icon={faRandom}>
           <p>
-            {currency.htmlSymbol}
-            {formatCurrency(1)}
-            {" = "}
-            {DEFAULT_CURRENCY.htmlSymbol}
-            {formatCurrency(1 / exchangeRate.ratePerGbp)}{" "}
-            <span className={bs.textMuted}>{rateAgeMs} ago</span>
+            <span>
+              {DEFAULT_CURRENCY.htmlSymbol}
+              {formatCurrency(1)}
+              {" = "}
+              {currency.htmlSymbol}
+              {formatCurrency(exchangeRate.ratePerGbp / 1)}
+            </span>
+            <span className={bs.floatRight}>
+              {currency.htmlSymbol}
+              {formatCurrency(1)}
+              {" = "}
+              {DEFAULT_CURRENCY.htmlSymbol}
+              {formatCurrency(1 / exchangeRate.ratePerGbp)}
+            </span>
           </p>
+          <p className={bs.textMuted}>Updated {rateAge} ago</p>
         </Card>
       </div>
     );
