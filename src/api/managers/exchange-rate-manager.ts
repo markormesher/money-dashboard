@@ -1,12 +1,14 @@
 import { SelectQueryBuilder } from "typeorm";
 import axios, { AxiosRequestConfig } from "axios";
-import { format, startOfDay, addDays } from "date-fns";
+import { format, startOfDay, addDays, parseISO } from "date-fns";
 import { DbExchangeRate } from "../db/models/DbExchangeRate";
 import { ExchangeRateMultiMap, ExchangeRateMap, IExchangeRate } from "../../commons/models/IExchangeRate";
 import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "../../commons/models/ICurrency";
 import { IExchangeRateApiResponse } from "../../commons/models/IExchangeRateApiResponse";
 import { getSecret } from "../config/config-loader";
 import { isDev } from "../../commons/utils/env";
+import { GLOBAL_MIN_DATE } from "../../commons/utils/dates";
+import { StatusError } from "../../commons/StatusError";
 
 const API_BASE = "https://openexchangerates.org/api";
 const API_QUERY_STRING = `?symbols=${ALL_CURRENCY_CODES.join(",")}`;
@@ -72,6 +74,10 @@ async function updateLatestExchangeRates(): Promise<void> {
 async function updateExchangeRates(date: string): Promise<IExchangeRate[]> {
   if (isDev()) {
     return Promise.resolve([]);
+  }
+
+  if (date !== "latest" && parseISO(date).getTime() < GLOBAL_MIN_DATE) {
+    throw new StatusError(403, "Date is below global minimum");
   }
 
   let url: string;

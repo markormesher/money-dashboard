@@ -48,6 +48,26 @@ describe(__filename, () => {
       result.errors.endDate.should.not.equal("");
     });
 
+    it("should reject a range with start < global minimum", () => {
+      const result = validateDateRange({
+        ...VALID_DATE_RANGE,
+        startDate: Date.UTC(2010, 0, 1, 0, 0, 0),
+      });
+      result.isValid.should.equal(false);
+      result.errors.should.have.keys("startDate");
+      result.errors.startDate.should.not.equal("");
+    });
+
+    it("should reject a range with end < global minimum", () => {
+      const result = validateDateRange({
+        ...VALID_DATE_RANGE,
+        endDate: Date.UTC(2010, 0, 1, 0, 0, 0),
+      });
+      result.isValid.should.equal(false);
+      result.errors.should.have.keys("endDate");
+      result.errors.endDate.should.not.equal("");
+    });
+
     it("should reject a range with start == end", () => {
       const result = validateDateRange({
         ...VALID_DATE_RANGE,

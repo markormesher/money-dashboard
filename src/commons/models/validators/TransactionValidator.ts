@@ -1,4 +1,6 @@
 import { ITransaction } from "../ITransaction";
+import { GLOBAL_MIN_DATE } from "../../utils/dates";
+import { formatDate } from "../../../client/helpers/formatters";
 
 interface ITransactionValidationResult {
   readonly isValid: boolean;
@@ -76,12 +78,32 @@ function validateTransaction(transaction: ITransaction): ITransactionValidationR
     };
   }
 
+  if (transaction.transactionDate < GLOBAL_MIN_DATE) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        transactionDate: `The transaction date must be after ${formatDate(GLOBAL_MIN_DATE)}`,
+      },
+    };
+  }
+
   if (!transaction.effectiveDate) {
     result = {
       isValid: false,
       errors: {
         ...result.errors,
         effectiveDate: "A valid effective date must be selected",
+      },
+    };
+  }
+
+  if (transaction.effectiveDate < GLOBAL_MIN_DATE) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        effectiveDate: `The effective date must be after ${formatDate(GLOBAL_MIN_DATE)}`,
       },
     };
   }
