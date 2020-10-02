@@ -61,10 +61,11 @@ describe(__filename, () => {
     it("should reject a range with end < global minimum", () => {
       const result = validateDateRange({
         ...VALID_DATE_RANGE,
-        endDate: Date.UTC(2010, 0, 1, 0, 0, 0),
+        startDate: Date.UTC(2010, 0, 1, 0, 0, 0), // also set to prevent a different error path
+        endDate: Date.UTC(2010, 0, 2, 0, 0, 0),
       });
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("endDate");
+      result.errors.should.include.keys("endDate"); // "include" not "have" because the start is also invalid
       result.errors.endDate.should.not.equal("");
     });
 
