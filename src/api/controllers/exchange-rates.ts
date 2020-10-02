@@ -5,6 +5,7 @@ import {
   getLatestExchangeRates,
   updateLatestExchangeRates,
   updateHistoricalExchangeRages,
+  updateExchangeRates,
 } from "../managers/exchange-rate-manager";
 
 const router = Express.Router();
@@ -24,6 +25,13 @@ router.post("/update-historical", requireCronAuth, (req: Request, res: Response,
 
 router.post("/update-latest", requireCronAuth, (req: Request, res: Response, next: NextFunction) => {
   updateLatestExchangeRates()
+    .then(() => res.status(200).send())
+    .catch(next);
+});
+
+router.post("/update-specific/:date", requireCronAuth, (req: Request, res: Response, next: NextFunction) => {
+  const date = req.params.date;
+  updateExchangeRates(date)
     .then(() => res.status(200).send())
     .catch(next);
 });
