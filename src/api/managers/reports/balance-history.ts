@@ -11,11 +11,14 @@ async function getBalanceHistoryData(
   endDate: number,
   dateMode: DateModeOption,
 ): Promise<IBalanceHistoryData> {
+  const dateField = `${dateMode}Date`;
   const allTransactions = await getTransactionQueryBuilder({ withAccount: true })
     .where("transaction.profile_id = :profileId")
-    .andWhere(`transaction.deleted = FALSE`)
+    .andWhere("transaction.deleted = FALSE")
+    .andWhere(`transaction.${dateField} < :endDate`)
     .setParameters({
       profileId: user.activeProfile.id,
+      endDate,
     })
     .getMany();
 
