@@ -2,7 +2,7 @@ import { SelectQueryBuilder } from "typeorm";
 import axios, { AxiosRequestConfig } from "axios";
 import { format, startOfDay, addDays, parseISO } from "date-fns";
 import { DbExchangeRate } from "../db/models/DbExchangeRate";
-import { ExchangeRateMultiMap, ExchangeRateMap, IExchangeRate } from "../../commons/models/IExchangeRate";
+import { ExchangeRateMap, IExchangeRate } from "../../commons/models/IExchangeRate";
 import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "../../commons/models/ICurrency";
 import { IExchangeRateApiResponse } from "../../commons/models/IExchangeRateApiResponse";
 import { getSecret } from "../config/config-loader";
@@ -23,7 +23,7 @@ function getExchangeRateQueryBuilder(): SelectQueryBuilder<DbExchangeRate> {
   return DbExchangeRate.createQueryBuilder("exchange_rate");
 }
 
-async function getExchangeRatesBetweenDates(fromDate: number, toDate: number): Promise<ExchangeRateMultiMap> {
+async function getExchangeRatesBetweenDates(fromDate: number, toDate: number): Promise<Map<number, ExchangeRateMap>> {
   const rates = await getExchangeRateQueryBuilder()
     .where("exchange_rate.date >= :fromDate")
     .andWhere("exchange_rate.date <= :toDate")
@@ -33,9 +33,10 @@ async function getExchangeRatesBetweenDates(fromDate: number, toDate: number): P
     })
     .getMany();
 
-  const output: ExchangeRateMultiMap = {};
-  ALL_CURRENCY_CODES.forEach((code) => (output[code] = []));
-  rates.forEach((rate) => output[rate.currencyCode].push(rate));
+  const output: Map<number, ExchangeRateMap> = new Map();
+  rates.forEach((rate) => {
+    output.set(rate.date, { ...(output.has(rate.date) ? output.get(rate.date) : {}), [rate.currencyCode]: rate });
+  });
   return output;
 }
 

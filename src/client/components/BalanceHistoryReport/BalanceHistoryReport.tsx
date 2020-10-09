@@ -20,6 +20,7 @@ import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
+import { convertLocalDateToUtc } from "../../../commons/utils/dates";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IBalanceHistoryReportProps extends IProfileAwareProps {}
@@ -259,8 +260,8 @@ class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBala
     axios
       .get("/api/reports/balance-history/data", {
         params: {
-          startDate: startDate,
-          endDate: endDate,
+          startDate: convertLocalDateToUtc(startDate),
+          endDate: convertLocalDateToUtc(endDate),
           dateMode,
         },
       })
