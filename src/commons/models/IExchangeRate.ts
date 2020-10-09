@@ -11,8 +11,4 @@ type ExchangeRateMap = {
   [key in CurrencyCode]?: IExchangeRate;
 };
 
-type ExchangeRateMultiMap = {
-  [key in CurrencyCode]?: IExchangeRate[];
-};
-
-export { IExchangeRate, ExchangeRateMap, ExchangeRateMultiMap };
+export { IExchangeRate, ExchangeRateMap };
