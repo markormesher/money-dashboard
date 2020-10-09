@@ -222,7 +222,7 @@ class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBala
                 className: bs.mr2,
               }}
             />
-            {formatCurrencyForStat(minTotal)}
+            {formatCurrencyForStat(changeAbsolute)}
           </p>
         </>
       );
