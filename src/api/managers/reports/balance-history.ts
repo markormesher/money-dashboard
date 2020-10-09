@@ -34,7 +34,7 @@ async function getBalanceHistoryData(
   // add up the totals of all transactions per date
   allTransactions.forEach((txn) => {
     const date = dateMode === "effective" ? txn.effectiveDate : txn.transactionDate;
-    const txnDate = startOfDay(txn.transactionDate).getTime();
+    const txnDate = txn.transactionDate;
 
     const exchangeRatePerGbp = exchangeRates.has(txnDate)
       ? exchangeRates.get(txnDate)[txn.account.currencyCode].ratePerGbp
