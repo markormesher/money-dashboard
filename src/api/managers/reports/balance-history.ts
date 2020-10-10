@@ -22,6 +22,17 @@ async function getBalanceHistoryReportData(
     })
     .getMany();
 
+  if (allTransactions.length === 0) {
+    return {
+      balanceDataPoints: [],
+      minTotal: 0,
+      maxTotal: 0,
+      minDate: 0,
+      maxDate: 0,
+      changeAbsolute: 0,
+    };
+  }
+
   let initialBalance = 0;
   const dailyTxnTotals: Map<number, number> = new Map();
 

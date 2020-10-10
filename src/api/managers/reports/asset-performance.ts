@@ -27,6 +27,17 @@ async function getAssetPerformanceReportData(
     })
     .getMany();
 
+  if (allTransactions.length === 0) {
+    return {
+      dataInclGrowth: [],
+      dataExclGrowth: [],
+      totalChangeInclGrowth: 0,
+      totalChangeExclGrowth: 0,
+      zeroBasis,
+      showAsPercent,
+    };
+  }
+
   let initialBalanceInclGrowth = 0;
   let initialBalanceExclGrowth = 0;
   const dailyTxnTotalsInclGrowth: Map<number, number> = new Map();
