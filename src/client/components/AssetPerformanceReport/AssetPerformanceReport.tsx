@@ -74,7 +74,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       endDate: endOfDay(new Date()).getTime(),
       dateMode: "transaction",
       zeroBasis: true,
-      showAsPercent: false,
+      showAsPercent: true,
       selectedAccounts: [],
       data: undefined,
       loading: true,
