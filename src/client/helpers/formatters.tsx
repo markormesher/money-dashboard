@@ -10,18 +10,18 @@ import * as gs from "../global-styles/Global.scss";
 
 type BudgetPeriod = "month" | "calendar year" | "tax year" | "other";
 
-function formatCurrency(amount: number): string {
-  return amount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+function formatCurrency(amount: number, places = 2): string {
+  return amount.toFixed(places).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
 }
 
-function formatCurrencyStyled(amount: number): ReactElement {
-  const formatted = formatCurrency(amount);
+function formatCurrencyStyled(amount: number, places = 2): ReactElement {
+  const formatted = formatCurrency(amount, places);
   return <span className={gs.currency}>{formatted}</span>;
 }
 
-function formatCurrencyForStat(amount: number): ReactElement {
+function formatCurrencyForStat(amount: number, places = 2): ReactElement {
   const negative = amount < 0;
-  const formatted = formatCurrency(Math.abs(amount));
+  const formatted = formatCurrency(Math.abs(amount), places);
   const chunks = formatted.split(".");
   return (
     <span>

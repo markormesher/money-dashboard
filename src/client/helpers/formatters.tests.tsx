@@ -22,10 +22,16 @@ import {
 
 describe(__filename, () => {
   describe("formatCurrency()", () => {
-    it("should force two decimal places", () => {
+    it("should use two decimal places by default", () => {
       formatCurrency(0).should.endsWith(".00");
       formatCurrency(0.5).should.endsWith(".50");
       formatCurrency(0.001).should.endsWith(".00");
+    });
+
+    it("should use specified number of decimal places", () => {
+      formatCurrency(0, 4).should.endsWith(".0000");
+      formatCurrency(0.5, 4).should.endsWith(".5000");
+      formatCurrency(0.00123, 4).should.endsWith(".0012");
     });
 
     it("should group thousands", () => {

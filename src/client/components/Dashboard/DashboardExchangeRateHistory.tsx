@@ -53,14 +53,14 @@ class DashboardExchangeRateHistory extends PureComponent<IDashboardExchangeRateH
               {formatCurrency(1)}
               {" = "}
               {currency.htmlSymbol}
-              {formatCurrency(exchangeRate.ratePerGbp / 1)}
+              {formatCurrency(exchangeRate.ratePerGbp / 1, 3)}
             </span>
             <span className={bs.floatRight}>
               {currency.htmlSymbol}
               {formatCurrency(1)}
               {" = "}
               {DEFAULT_CURRENCY.htmlSymbol}
-              {formatCurrency(1 / exchangeRate.ratePerGbp)}
+              {formatCurrency(1 / exchangeRate.ratePerGbp, 3)}
             </span>
           </p>
           <p className={bs.textMuted}>Updated {rateAge} ago</p>
