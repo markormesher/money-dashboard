@@ -5,7 +5,7 @@ import { DateModeOption } from "../../../commons/models/ITransaction";
 import { getExchangeRatesBetweenDates } from "../exchange-rate-manager";
 import { getTransactionQueryBuilder } from "../transaction-manager";
 
-async function getBalanceHistoryData(
+async function getBalanceHistoryReportData(
   user: DbUser,
   startDate: number,
   endDate: number,
@@ -81,4 +81,4 @@ async function getBalanceHistoryData(
   };
 }
 
-export { getBalanceHistoryData };
+export { getBalanceHistoryReportData };

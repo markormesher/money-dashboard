@@ -63,11 +63,11 @@ services:
       - postgres.password
       - postgres-rep.password
     environment:
-      - POSTGRES_DATABASE=money_dashboard
-      - POSTGRES_USER=money_dashboard
-      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres.password
-      - POSTGRES_REP_USER=money_dashboard_rep
-      - POSTGRES_REP_PASSWORD_FILE=/run/secrets/postgres-rep.password
+      - postgres_database=money_dashboard
+      - postgres_user=money_dashboard
+      - postgres_password_file=/run/secrets/postgres.password
+      - postgres_rep_user=money_dashboard_rep
+      - postgres_rep_password_file=/run/secrets/postgres-rep.password
     volumes:
       - postgres-primary-data:/var/lib/postgresql/data
 
