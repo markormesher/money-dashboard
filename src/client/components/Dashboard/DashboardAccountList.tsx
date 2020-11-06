@@ -24,10 +24,6 @@ interface IDashboardAccountListState {
 }
 
 class DashboardAccountList extends Component<IDashboardAccountListProps, IDashboardAccountListState> {
-  private static sortByAbsoluteBalanceComparator(a: IAccountBalance, b: IAccountBalance): number {
-    return Math.abs(b.balance) - Math.abs(a.balance);
-  }
-
   constructor(props: IDashboardAccountListProps) {
     super(props);
     this.state = {
@@ -36,6 +32,7 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
 
     this.renderAccountBalanceList = this.renderAccountBalanceList.bind(this);
     this.renderSingleAccountBalance = this.renderSingleAccountBalance.bind(this);
+    this.compareAbsoluteGbpBalances = this.compareAbsoluteGbpBalances.bind(this);
     this.handleSectionClosedToggle = this.handleSectionClosedToggle.bind(this);
   }
 
@@ -98,7 +95,7 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
             <FontAwesomeIcon icon={faCaretDown} className={combine(bs.textMuted, bs.mr2)} fixedWidth={true} />
             {title}
           </h6>
-          {balances.sort(DashboardAccountList.sortByAbsoluteBalanceComparator).map(this.renderSingleAccountBalance)}
+          {balances.sort(this.compareAbsoluteGbpBalances).map(this.renderSingleAccountBalance)}
         </>
       );
     }
@@ -139,6 +136,13 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
         <span className={bs.floatRight}>{formatCurrencyStyled(gbpBalance)}</span>
       </p>
     );
+  }
+
+  private compareAbsoluteGbpBalances(a: IAccountBalance, b: IAccountBalance): number {
+    const { exchangeRates } = this.props;
+    const aBalance = a.balance / exchangeRates[a.account.currencyCode].ratePerGbp;
+    const bBalance = b.balance / exchangeRates[b.account.currencyCode].ratePerGbp;
+    return Math.abs(bBalance) - Math.abs(aBalance);
   }
 
   private handleSectionClosedToggle(event: MouseEvent<HTMLHeadingElement>): void {
