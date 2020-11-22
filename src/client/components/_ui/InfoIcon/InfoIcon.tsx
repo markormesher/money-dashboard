@@ -36,7 +36,7 @@ class InfoIcon<Payload = {}> extends PureComponent<IInfoIconProps<Payload>> {
     return (
       <span data-tip={hoverText}>
         <FontAwesomeIcon
-          className={combine(bs.textMuted, this.handleClick && gs.clickable)}
+          className={combine(bs.textMuted, !!this.handleClick && gs.clickable)}
           fixedWidth={true}
           icon={icon}
           onClick={this.handleClick}
