@@ -108,8 +108,7 @@ async function updateAssetBalance(user: DbUser, assetBalanceUpdate: IAccountBala
   const account = await getAccount(user, accountId);
   if (!account) {
     throw new StatusError(404, "That account does not exist");
-  }
-  if (account.type !== "asset") {
+  } else if (account.type !== "asset") {
     return "That account is not an asset.";
   }
 
@@ -154,8 +153,7 @@ async function updateAssetBalance(user: DbUser, assetBalanceUpdate: IAccountBala
     category,
   };
 
-  await saveTransaction(user, undefined, transaction);
-  return "done";
+  return saveTransaction(user, undefined, transaction).then(() => "done");
 }
 
 export {
