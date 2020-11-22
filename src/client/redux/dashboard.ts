@@ -5,6 +5,7 @@ import { IAccountBalance } from "../../commons/models/IAccountBalance";
 import { mapBudgetFromApi } from "../../commons/models/IBudget";
 import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
 import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
+import { IAccountBalanceUpdate } from "../../commons/models/IAccountBalanceUpdate";
 import { AccountCacheKeys } from "./accounts";
 import { BudgetCacheKeys } from "./budgets";
 import { setError } from "./global";
@@ -16,21 +17,29 @@ interface IDashboardState {
   readonly accountBalances?: IAccountBalance[];
   readonly budgetBalances?: IBudgetBalance[];
   readonly memoCategoryBalances?: ICategoryBalance[];
+  readonly assetBalanceToUpdate?: IAccountBalance;
+  readonly assetBalanceUpdateEditorBusy?: boolean;
 }
 
 const initialState: IDashboardState = {
   accountBalances: undefined,
   budgetBalances: undefined,
   memoCategoryBalances: undefined,
+  assetBalanceToUpdate: undefined,
+  assetBalanceUpdateEditorBusy: false,
 };
 
 enum DashboardActions {
   START_LOAD_ACCOUNT_BALANCES = "DashboardActions.START_LOAD_ACCOUNT_BALANCES",
   START_LOAD_BUDGET_BALANCES = "DashboardActions.START_LOAD_BUDGET_BALANCES",
   START_LOAD_MEMO_CATEGORY_BALANCES = "DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES",
+  START_SAVE_ASSET_BALANCE_UPDATE = "DashboardActions.START_SAVE_ASSET_BALANCE_UPDATE",
+
   SET_ACCOUNT_BALANCES = "DashboardActions.SET_ACCOUNT_BALANCES",
   SET_BUDGET_BALANCES = "DashboardActions.SET_BUDGET_BALANCES",
   SET_MEMO_CATEGORY_BALANCES = "DashboardActions.SET_MEMO_CATEGORY_BALANCES",
+  SET_ASSET_BALANCE_TO_UPDATE = "DashboardActions.SET_ASSET_BALANCE_TO_UPDATE",
+  SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY = "DashboardActions.SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY",
 }
 
 enum DashboardCacheKeys {
@@ -54,6 +63,27 @@ function startLoadBudgetBalances(): PayloadAction {
 function startLoadMemoCategoryBalances(): PayloadAction {
   return {
     type: DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES,
+  };
+}
+
+function startSaveAssetBalanceUpdate(assetBalanceUpdate: IAccountBalanceUpdate): PayloadAction {
+  return {
+    type: DashboardActions.START_SAVE_ASSET_BALANCE_UPDATE,
+    payload: { assetBalanceUpdate },
+  };
+}
+
+function setAssetBalanceToUpdate(assetBalance: IAccountBalance): PayloadAction {
+  return {
+    type: DashboardActions.SET_ASSET_BALANCE_TO_UPDATE,
+    payload: { assetBalance },
+  };
+}
+
+function setAssetBalanceUpdateEditorBusy(busy: boolean): PayloadAction {
+  return {
+    type: DashboardActions.SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY,
+    payload: { busy },
   };
 }
 
@@ -152,8 +182,34 @@ function* loadMemoCategoryBalancesSaga(): Generator {
   });
 }
 
+function* saveAssetBalanceUpdate(): Generator {
+  yield takeEvery(DashboardActions.START_SAVE_ASSET_BALANCE_UPDATE, function*(action: PayloadAction): Generator {
+    try {
+      const balanceUpdate: IAccountBalanceUpdate = action.payload.assetBalanceUpdate;
+      yield all([
+        put(setAssetBalanceUpdateEditorBusy(true)),
+        call(() => axios.post("/api/accounts/asset-balance-update", { balanceUpdate })),
+        // TODO: handle error
+      ]);
+      yield all([
+        put(setAssetBalanceToUpdate(undefined)),
+        put(setAssetBalanceUpdateEditorBusy(false)),
+        put(CacheKeyUtil.updateKey(TransactionCacheKeys.TRANSACTION_DATA)),
+      ]);
+      yield put(startLoadAccountBalances());
+    } catch (err) {
+      yield all([put(setError(err))]);
+    }
+  });
+}
+
 function* dashboardSagas(): Generator {
-  yield all([loadAccountBalancesSaga(), loadBudgetBalancesSaga(), loadMemoCategoryBalancesSaga()]);
+  yield all([
+    loadAccountBalancesSaga(),
+    loadBudgetBalancesSaga(),
+    loadMemoCategoryBalancesSaga(),
+    saveAssetBalanceUpdate(),
+  ]);
 }
 
 function dashboardReducer(state: IDashboardState = initialState, action: PayloadAction): IDashboardState {
@@ -176,6 +232,18 @@ function dashboardReducer(state: IDashboardState = initialState, action: Payload
         memoCategoryBalances: action.payload.memoCategoryBalances,
       };
 
+    case DashboardActions.SET_ASSET_BALANCE_TO_UPDATE:
+      return {
+        ...state,
+        assetBalanceToUpdate: action.payload.assetBalance,
+      };
+
+    case DashboardActions.SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY:
+      return {
+        ...state,
+        assetBalanceUpdateEditorBusy: action.payload.busy,
+      };
+
     default:
       return state;
   }
@@ -189,6 +257,8 @@ export {
   startLoadAccountBalances,
   startLoadBudgetBalances,
   startLoadMemoCategoryBalances,
+  startSaveAssetBalanceUpdate,
+  setAssetBalanceToUpdate,
   setAccountBalances,
   setBudgetBalances,
   setMemoCategoryBalances,

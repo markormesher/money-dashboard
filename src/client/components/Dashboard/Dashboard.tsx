@@ -22,11 +22,13 @@ import { DashboardAccountList } from "./DashboardAccountList";
 import { DashboardAlertList } from "./DashboardAlertList";
 import { DashboardBudgetList } from "./DashboardBudgetList";
 import { DashboardExchangeRateHistory } from "./DashboardExchangeRateHistory";
+import { DashboardAssetBalanceUpdateModal } from "./DashboardAssetBalanceUpdateModal";
 
 interface IDashboardProps {
   readonly activeUser: IUser;
   readonly accountList?: IAccount[];
   readonly accountBalances?: IAccountBalance[];
+  readonly assetBalanceToUpdate?: IAccountBalance;
   readonly budgetBalances?: IBudgetBalance[];
   readonly memoCategoryBalances?: ICategoryBalance[];
   readonly exchangeRates: ExchangeRateMap;
@@ -46,6 +48,7 @@ function mapStateToProps(state: IRootState, props: IDashboardProps): IDashboardP
     activeUser: state.auth.activeUser,
     accountList: state.accounts.accountList,
     accountBalances: state.dashboard.accountBalances,
+    assetBalanceToUpdate: state.dashboard.assetBalanceToUpdate,
     budgetBalances: state.dashboard.budgetBalances,
     memoCategoryBalances: state.dashboard.memoCategoryBalances,
     exchangeRates: state.exchangeRates.latestExchangeRates,
@@ -82,19 +85,29 @@ class UCDashboard extends PureComponent<IDashboardProps> {
   }
 
   public render(): ReactNode {
+    const { assetBalanceToUpdate } = this.props;
     return (
-      <div className={bs.row}>
-        <div className={combine(bs.colSm12, bs.colMd8)}>
-          <DashboardBudgetList budgetBalances={this.props.budgetBalances} />
-          <div className={bs.row}>
-            <DashboardExchangeRateHistory accounts={this.props.accountList} exchangeRates={this.props.exchangeRates} />
+      <>
+        {assetBalanceToUpdate !== undefined && <DashboardAssetBalanceUpdateModal />}
+        <div className={bs.row}>
+          <div className={combine(bs.colSm12, bs.colMd8)}>
+            <DashboardBudgetList budgetBalances={this.props.budgetBalances} />
+            <div className={bs.row}>
+              <DashboardExchangeRateHistory
+                accounts={this.props.accountList}
+                exchangeRates={this.props.exchangeRates}
+              />
+            </div>
+          </div>
+          <div className={combine(bs.colSm12, bs.colMd4)}>
+            <DashboardAlertList memoCategoryBalances={this.props.memoCategoryBalances} />
+            <DashboardAccountList
+              accountBalances={this.props.accountBalances}
+              exchangeRates={this.props.exchangeRates}
+            />
           </div>
         </div>
-        <div className={combine(bs.colSm12, bs.colMd4)}>
-          <DashboardAlertList memoCategoryBalances={this.props.memoCategoryBalances} />
-          <DashboardAccountList accountBalances={this.props.accountBalances} exchangeRates={this.props.exchangeRates} />
-        </div>
-      </div>
+      </>
     );
   }
 }

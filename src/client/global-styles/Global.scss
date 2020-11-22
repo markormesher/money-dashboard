@@ -62,6 +62,10 @@ button {
   opacity: 0.4;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 tr {
   &.bottom-border {
     td {

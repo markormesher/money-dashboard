@@ -13,7 +13,7 @@ const ACCOUNT_TAG_DISPLAY_NAMES: { [key in AccountTag]: string } = {
 interface IAccount {
   readonly id: string;
   readonly name: string;
-  readonly type: string;
+  readonly type: string; // TODO: strict type
   readonly tags: AccountTag[];
   readonly note: string;
   readonly currencyCode: CurrencyCode;

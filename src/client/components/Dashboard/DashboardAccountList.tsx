@@ -1,7 +1,9 @@
-import { faCaretRight, faCaretDown, faWallet, faRandom } from "@fortawesome/pro-light-svg-icons";
+import { faCaretRight, faCaretDown, faWallet, faRandom, faEdit } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { Component, ReactNode, MouseEvent, ReactElement } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { connect } from "react-redux";
+import { Dispatch, AnyAction } from "redux";
 import { IAccountBalance } from "../../../commons/models/IAccountBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
@@ -12,18 +14,40 @@ import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import { Card } from "../_ui/Card/Card";
 import { ExchangeRateMap } from "../../../commons/models/IExchangeRate";
 import { DEFAULT_CURRENCY_CODE, getCurrency } from "../../../commons/models/ICurrency";
+import { IRootState } from "../../redux/root";
+import { setAssetBalanceToUpdate } from "../../redux/dashboard";
 import * as styles from "./DashboardAccountList.scss";
 
 interface IDashboardAccountListProps {
   readonly accountBalances: IAccountBalance[];
   readonly exchangeRates: ExchangeRateMap;
+
+  readonly actions?: {
+    readonly setAssetBalanceToUpdate: (assetBalance: IAccountBalance) => AnyAction;
+  };
 }
 
 interface IDashboardAccountListState {
   readonly sectionClosed: { [key: string]: boolean };
 }
 
-class DashboardAccountList extends Component<IDashboardAccountListProps, IDashboardAccountListState> {
+function mapStateToProps(_state: IRootState, props: IDashboardAccountListProps): IDashboardAccountListProps {
+  return {
+    ...props,
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch, props: IDashboardAccountListProps): IDashboardAccountListProps {
+  return {
+    ...props,
+    actions: {
+      setAssetBalanceToUpdate: (assetBalance: IAccountBalance): AnyAction =>
+        dispatch(setAssetBalanceToUpdate(assetBalance)),
+    },
+  };
+}
+
+class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDashboardAccountListState> {
   constructor(props: IDashboardAccountListProps) {
     super(props);
     this.state = {
@@ -103,6 +127,7 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
 
   private renderSingleAccountBalance(balance: IAccountBalance): ReactNode {
     const { exchangeRates } = this.props;
+    const setAssetBalanceToUpdate = this.props.actions.setAssetBalanceToUpdate;
 
     const account = balance.account;
     const currency = getCurrency(account.currencyCode);
@@ -125,6 +150,19 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
       icons.push(
         <span className={bs.ml2} key={`account-${account.id}-currency`}>
           <InfoIcon hoverText={currencyNote} customIcon={faRandom} />
+        </span>,
+      );
+    }
+
+    if (account.type === "asset") {
+      icons.push(
+        <span className={combine(bs.ml2, styles.editIcon)} key={`account-${account.id}-update`}>
+          <InfoIcon
+            hoverText={"Update balance"}
+            customIcon={faEdit}
+            payload={balance}
+            onClick={setAssetBalanceToUpdate}
+          />
         </span>,
       );
     }
@@ -152,4 +190,4 @@ class DashboardAccountList extends Component<IDashboardAccountListProps, IDashbo
   }
 }
 
-export { DashboardAccountList };
+export const DashboardAccountList = connect(mapStateToProps, mapDispatchToProps)(UCDashboardAccountList);

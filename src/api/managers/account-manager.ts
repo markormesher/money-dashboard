@@ -2,9 +2,12 @@ import { SelectQueryBuilder } from "typeorm";
 import { IAccountBalance } from "../../commons/models/IAccountBalance";
 import { StatusError } from "../../commons/StatusError";
 import { cleanUuid } from "../../commons/utils/entities";
+import { IAccountBalanceUpdate } from "../../commons/models/IAccountBalanceUpdate";
 import { DbAccount } from "../db/models/DbAccount";
 import { DbUser } from "../db/models/DbUser";
-import { getTransactionQueryBuilder } from "./transaction-manager";
+import { DbTransaction } from "../db/models/DbTransaction";
+import { getTransactionQueryBuilder, saveTransaction } from "./transaction-manager";
+import { getCategoryQueryBuilder } from "./category-manager";
 
 interface IAccountQueryBuilderOptions {
   readonly withProfile?: boolean;
@@ -100,6 +103,60 @@ function deleteAccount(user: DbUser, accountId: string): Promise<DbAccount> {
   });
 }
 
+async function updateAssetBalance(user: DbUser, assetBalanceUpdate: IAccountBalanceUpdate): Promise<void> {
+  const accountId = assetBalanceUpdate.account.id;
+  const account = await getAccount(user, accountId);
+  if (!account) {
+    throw new StatusError(404, "That account does not exist");
+  }
+  if (account.type !== "asset") {
+    throw new StatusError(400, "That account is not an asset");
+  }
+
+  const latestTransaction = await getTransactionQueryBuilder()
+    .where("transaction.account_id = :accountId")
+    .orderBy("transaction_date", "DESC")
+    .setParameters({
+      accountId,
+    })
+    .getOne();
+  if (latestTransaction.transactionDate > assetBalanceUpdate.updateDate) {
+    throw new StatusError(400, "This account already has a more recent update");
+  }
+
+  const currentBalance: { balance: number } = await getTransactionQueryBuilder()
+    .select("SUM(transaction.amount)", "balance")
+    .where("transaction.account_id = :accountId")
+    .andWhere("transaction.deleted = FALSE")
+    .setParameters({
+      accountId,
+    })
+    .getRawOne();
+
+  const diff = Math.round((assetBalanceUpdate.balance - currentBalance.balance) * 100) / 100;
+
+  const category = await getCategoryQueryBuilder()
+    .where("category.is_asset_growth_category = TRUE")
+    .andWhere("category.name ILIKE '%update%'")
+    .andWhere("category.deleted = FALSE")
+    .getOne();
+
+  if (!category) {
+    throw new StatusError(400, "Could not load a suitable asset value update category");
+  }
+
+  const transaction: Partial<DbTransaction> = {
+    transactionDate: assetBalanceUpdate.updateDate,
+    effectiveDate: assetBalanceUpdate.updateDate,
+    payee: "N/A",
+    amount: diff,
+    account,
+    category,
+  };
+
+  await saveTransaction(user, undefined, transaction);
+}
+
 export {
   getAccountQueryBuilder,
   getAccount,
@@ -108,4 +165,5 @@ export {
   saveAccount,
   setAccountActive,
   deleteAccount,
+  updateAssetBalance,
 };
