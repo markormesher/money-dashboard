@@ -22,6 +22,7 @@ import { DEFAULT_CURRENCY_CODE } from "../../../commons/models/ICurrency";
 interface IDashboardAssetBalanceUpdateModalProps {
   readonly assetBalanceToUpdate?: IAccountBalance;
   readonly editorBusy?: boolean;
+  readonly apiError?: string;
 
   readonly actions?: {
     readonly setAssetBalanceToUpdate: (assetBalance: IAccountBalance) => AnyAction;
@@ -42,6 +43,7 @@ function mapStateToProps(
     ...props,
     assetBalanceToUpdate: state.dashboard.assetBalanceToUpdate,
     editorBusy: state.dashboard.assetBalanceUpdateEditorBusy,
+    apiError: state.dashboard.assetBalanceUpdateError,
   };
 }
 
@@ -80,7 +82,7 @@ class UCDashboardAssetBalanceUpdateModal extends PureComponent<
   }
 
   public render(): ReactNode {
-    const { editorBusy } = this.props;
+    const { editorBusy, apiError } = this.props;
     const { currentValues, validationResult } = this.state;
     const errors = validationResult.errors || {};
 
@@ -109,6 +111,13 @@ class UCDashboardAssetBalanceUpdateModal extends PureComponent<
         onCloseRequest={this.handleCancel}
       >
         <ControlledForm onSubmit={this.handleSave}>
+          {apiError && (
+            <div className={bs.row}>
+              <div className={bs.col}>
+                <p className={bs.textDanger}>{apiError}</p>
+              </div>
+            </div>
+          )}
           <div className={bs.row}>
             <div className={combine(bs.col, bs.formGroup)}>
               <ControlledDateInput

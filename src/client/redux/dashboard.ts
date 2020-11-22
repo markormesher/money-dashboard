@@ -19,6 +19,7 @@ interface IDashboardState {
   readonly memoCategoryBalances?: ICategoryBalance[];
   readonly assetBalanceToUpdate?: IAccountBalance;
   readonly assetBalanceUpdateEditorBusy?: boolean;
+  readonly assetBalanceUpdateError?: string;
 }
 
 const initialState: IDashboardState = {
@@ -27,6 +28,7 @@ const initialState: IDashboardState = {
   memoCategoryBalances: undefined,
   assetBalanceToUpdate: undefined,
   assetBalanceUpdateEditorBusy: false,
+  assetBalanceUpdateError: undefined,
 };
 
 enum DashboardActions {
@@ -40,6 +42,7 @@ enum DashboardActions {
   SET_MEMO_CATEGORY_BALANCES = "DashboardActions.SET_MEMO_CATEGORY_BALANCES",
   SET_ASSET_BALANCE_TO_UPDATE = "DashboardActions.SET_ASSET_BALANCE_TO_UPDATE",
   SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY = "DashboardActions.SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY",
+  SET_ASSET_BALANCE_UPDATE_ERROR = "DashboardActions.SET_ASSET_BALANCE_UPDATE_ERROR",
 }
 
 enum DashboardCacheKeys {
@@ -84,6 +87,13 @@ function setAssetBalanceUpdateEditorBusy(busy: boolean): PayloadAction {
   return {
     type: DashboardActions.SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY,
     payload: { busy },
+  };
+}
+
+function setAssetBalanceUpdateError(error: string): PayloadAction {
+  return {
+    type: DashboardActions.SET_ASSET_BALANCE_UPDATE_ERROR,
+    payload: { error },
   };
 }
 
@@ -186,17 +196,21 @@ function* saveAssetBalanceUpdate(): Generator {
   yield takeEvery(DashboardActions.START_SAVE_ASSET_BALANCE_UPDATE, function*(action: PayloadAction): Generator {
     try {
       const balanceUpdate: IAccountBalanceUpdate = action.payload.assetBalanceUpdate;
-      yield all([
-        put(setAssetBalanceUpdateEditorBusy(true)),
-        call(() => axios.post("/api/accounts/asset-balance-update", { balanceUpdate })),
-        // TODO: handle error
-      ]);
-      yield all([
-        put(setAssetBalanceToUpdate(undefined)),
-        put(setAssetBalanceUpdateEditorBusy(false)),
-        put(CacheKeyUtil.updateKey(TransactionCacheKeys.TRANSACTION_DATA)),
-      ]);
-      yield put(startLoadAccountBalances());
+      yield put(setAssetBalanceUpdateEditorBusy(true));
+      const result: string = yield call(() => {
+        return axios.post("/api/accounts/asset-balance-update", { balanceUpdate }).then((res) => res.data);
+      });
+      if (result === "done") {
+        yield all([
+          put(setAssetBalanceToUpdate(undefined)),
+          put(setAssetBalanceUpdateError(undefined)),
+          put(setAssetBalanceUpdateEditorBusy(false)),
+          put(CacheKeyUtil.updateKey(TransactionCacheKeys.TRANSACTION_DATA)),
+        ]);
+        yield put(startLoadAccountBalances());
+      } else {
+        yield all([put(setAssetBalanceUpdateError(result)), put(setAssetBalanceUpdateEditorBusy(false))]);
+      }
     } catch (err) {
       yield all([put(setError(err))]);
     }
@@ -236,12 +250,22 @@ function dashboardReducer(state: IDashboardState = initialState, action: Payload
       return {
         ...state,
         assetBalanceToUpdate: action.payload.assetBalance,
+
+        // also clear any leftover state when setting an asset to update
+        assetBalanceUpdateEditorBusy: false,
+        assetBalanceUpdateError: undefined,
       };
 
     case DashboardActions.SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY:
       return {
         ...state,
         assetBalanceUpdateEditorBusy: action.payload.busy,
+      };
+
+    case DashboardActions.SET_ASSET_BALANCE_UPDATE_ERROR:
+      return {
+        ...state,
+        assetBalanceUpdateError: action.payload.error,
       };
 
     default:

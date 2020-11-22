@@ -110,8 +110,9 @@ router.post("/asset-balance-update", requireUser, (req: Request, res: Response, 
   const user = req.user as DbUser;
   const update: IAccountBalanceUpdate = req.body.balanceUpdate;
 
+  // note: even errors are sent as 200 responses so the front end can handle them
   updateAssetBalance(user, update)
-    .then(() => res.sendStatus(200))
+    .then((result: string) => res.status(200).send(result))
     .catch(next);
 });
 

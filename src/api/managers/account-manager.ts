@@ -103,14 +103,14 @@ function deleteAccount(user: DbUser, accountId: string): Promise<DbAccount> {
   });
 }
 
-async function updateAssetBalance(user: DbUser, assetBalanceUpdate: IAccountBalanceUpdate): Promise<void> {
+async function updateAssetBalance(user: DbUser, assetBalanceUpdate: IAccountBalanceUpdate): Promise<string> {
   const accountId = assetBalanceUpdate.account.id;
   const account = await getAccount(user, accountId);
   if (!account) {
     throw new StatusError(404, "That account does not exist");
   }
   if (account.type !== "asset") {
-    throw new StatusError(400, "That account is not an asset");
+    return "That account is not an asset.";
   }
 
   const latestTransaction = await getTransactionQueryBuilder()
@@ -121,7 +121,7 @@ async function updateAssetBalance(user: DbUser, assetBalanceUpdate: IAccountBala
     })
     .getOne();
   if (latestTransaction.transactionDate > assetBalanceUpdate.updateDate) {
-    throw new StatusError(400, "This account already has a more recent update");
+    return "This account already has a more recent update.";
   }
 
   const currentBalance: { balance: number } = await getTransactionQueryBuilder()
@@ -142,7 +142,7 @@ async function updateAssetBalance(user: DbUser, assetBalanceUpdate: IAccountBala
     .getOne();
 
   if (!category) {
-    throw new StatusError(400, "Could not load a suitable asset value update category");
+    return "Could not load a suitable asset value update category.";
   }
 
   const transaction: Partial<DbTransaction> = {
@@ -155,6 +155,7 @@ async function updateAssetBalance(user: DbUser, assetBalanceUpdate: IAccountBala
   };
 
   await saveTransaction(user, undefined, transaction);
+  return "done";
 }
 
 export {
