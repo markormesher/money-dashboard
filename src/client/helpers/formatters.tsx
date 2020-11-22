@@ -64,8 +64,10 @@ function generateAccountTypeBadge(account: IAccount): ReactElement<void> {
       return <Badge className={bs.badgeSuccess}>Savings Account</Badge>;
     case "asset":
       return <Badge className={bs.badgeWarning}>Asset</Badge>;
-    default:
+    case "other":
       return <Badge className={bs.badgeDanger}>Other</Badge>;
+    default:
+      throw new Error(`Invalid account type: ${account.type}`);
   }
 }
 

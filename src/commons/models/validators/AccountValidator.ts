@@ -1,4 +1,4 @@
-import { IAccount, ACCOUNT_TAG_DISPLAY_NAMES } from "../IAccount";
+import { IAccount, ACCOUNT_TAG_DISPLAY_NAMES, ACCOUNT_TYPES } from "../IAccount";
 import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "../ICurrency";
 
 interface IAccountValidationResult {
@@ -34,7 +34,7 @@ function validateAccount(account: IAccount): IAccountValidationResult {
     };
   }
 
-  if (!account.type || ["current", "savings", "asset", "other"].indexOf(account.type) < 0) {
+  if (!account.type || ACCOUNT_TYPES.indexOf(account.type) < 0) {
     result = {
       isValid: false,
       errors: {

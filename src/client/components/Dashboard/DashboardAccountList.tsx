@@ -12,6 +12,7 @@ import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import { Card } from "../_ui/Card/Card";
+import { AccountType } from "../../../commons/models/IAccount";
 import { ExchangeRateMap } from "../../../commons/models/IExchangeRate";
 import { DEFAULT_CURRENCY_CODE, getCurrency } from "../../../commons/models/ICurrency";
 import { IRootState } from "../../redux/root";
@@ -89,7 +90,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
     );
   }
 
-  private renderAccountBalanceList(type: string, title: string): ReactNode {
+  private renderAccountBalanceList(type: AccountType, title: string): ReactNode {
     const { exchangeRates } = this.props;
     const balances = this.props.accountBalances.filter((a) => a.account.type === type).filter((a) => a.balance !== 0);
 

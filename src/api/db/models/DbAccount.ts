@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { IAccount, AccountTag } from "../../../commons/models/IAccount";
+import { IAccount, AccountTag, AccountType } from "../../../commons/models/IAccount";
 import { CurrencyCode } from "../../../commons/models/ICurrency";
 import { BaseModel } from "./BaseModel";
 import { DbProfile } from "./DbProfile";
@@ -13,8 +13,8 @@ class DbAccount extends BaseModel implements IAccount {
   @Column()
   public name: string;
 
-  @Column({ default: "current" })
-  public type: string;
+  @Column({ type: "character varying", default: "current" })
+  public type: AccountType;
 
   @Column({ type: "character varying", array: true, default: "{}" })
   public tags: AccountTag[];

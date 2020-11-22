@@ -3,7 +3,11 @@ import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 import { ITransaction, mapTransactionFromApi, mapTransactionForApi } from "./ITransaction";
 import { CurrencyCode } from "./ICurrency";
 
-type AccountTag = "pension" | "isa";
+const ACCOUNT_TYPES = ["current", "savings", "asset", "other"] as const;
+type AccountType = typeof ACCOUNT_TYPES[number];
+
+const ACCOUNT_TAGS = ["pension", "isa"] as const;
+type AccountTag = typeof ACCOUNT_TAGS[number];
 
 const ACCOUNT_TAG_DISPLAY_NAMES: { [key in AccountTag]: string } = {
   pension: "Pension",
@@ -13,7 +17,7 @@ const ACCOUNT_TAG_DISPLAY_NAMES: { [key in AccountTag]: string } = {
 interface IAccount {
   readonly id: string;
   readonly name: string;
-  readonly type: string; // TODO: strict type
+  readonly type: AccountType;
   readonly tags: AccountTag[];
   readonly note: string;
   readonly currencyCode: CurrencyCode;
@@ -64,4 +68,14 @@ function mapAccountForApi(account?: IAccount): IAccount {
   };
 }
 
-export { AccountTag, ACCOUNT_TAG_DISPLAY_NAMES, IAccount, DEFAULT_ACCOUNT, mapAccountFromApi, mapAccountForApi };
+export {
+  AccountType,
+  ACCOUNT_TYPES,
+  AccountTag,
+  ACCOUNT_TAGS,
+  ACCOUNT_TAG_DISPLAY_NAMES,
+  IAccount,
+  DEFAULT_ACCOUNT,
+  mapAccountFromApi,
+  mapAccountForApi,
+};
