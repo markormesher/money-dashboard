@@ -5,5 +5,6 @@ export const bigStatHeader: string;
 export const bigStatValue: string;
 export const bigStatContext: string;
 export const loading: string;
+export const clickable: string;
 export const bottomBorder: string;
 export const bottomTop: string;

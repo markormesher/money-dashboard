@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
+import * as sinon from "sinon";
 import { testGlobals } from "../../../../test-utils/global.tests";
 import { InfoIcon } from "./InfoIcon";
 
@@ -33,5 +34,25 @@ describe(__filename, () => {
       .find("span")
       .prop("data-tip")
       .should.equal("hello");
+  });
+
+  it("should call the click listener when clicked", () => {
+    const spy = sinon.spy();
+    mountWrapper = mount(<InfoIcon hoverText={"hello"} onClick={spy} />);
+    mountWrapper.find("svg").simulate("click");
+    spy.calledOnce.should.equal(true);
+  });
+
+  it("should pass the payload to the click listener", () => {
+    const spy = sinon.spy();
+    const payload = { hello: 42 };
+    mountWrapper = mount(<InfoIcon hoverText={"hello"} payload={payload} onClick={spy} />);
+    mountWrapper.find("svg").simulate("click");
+    spy.calledOnceWithExactly(payload).should.equal(true);
+  });
+
+  it("should not fail when clicked without a listener", () => {
+    mountWrapper = mount(<InfoIcon hoverText={"hello"} />);
+    mountWrapper.find("svg").simulate("click");
   });
 });

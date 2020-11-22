@@ -12,8 +12,10 @@ import {
   getAllAccounts,
   saveAccount,
   setAccountActive,
+  updateAssetBalance,
 } from "../managers/account-manager";
 import { requireUser } from "../middleware/auth-middleware";
+import { IAccountBalanceUpdate } from "../../commons/models/IAccountBalanceUpdate";
 
 const router = Express.Router();
 
@@ -101,6 +103,16 @@ router.post("/delete/:accountId", requireUser, (req: Request, res: Response, nex
 
   deleteAccount(user, accountId)
     .then(() => res.status(200).end())
+    .catch(next);
+});
+
+router.post("/asset-balance-update", requireUser, (req: Request, res: Response, next: NextFunction) => {
+  const user = req.user as DbUser;
+  const update: IAccountBalanceUpdate = req.body.balanceUpdate;
+
+  // note: even errors are sent as 200 responses so the front end can handle them
+  updateAssetBalance(user, update)
+    .then((result: string) => res.status(200).send(result))
     .catch(next);
 });
 
