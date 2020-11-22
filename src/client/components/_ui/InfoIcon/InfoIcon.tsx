@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { faInfoCircle } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
@@ -36,7 +35,12 @@ class InfoIcon<Payload = {}> extends PureComponent<IInfoIconProps<Payload>> {
     const icon = customIcon ? customIcon : faInfoCircle;
     return (
       <span data-tip={hoverText}>
-        <FontAwesomeIcon className={combine(bs.textMuted, this.handleClick && gs.clickable)} fixedWidth={true} icon={icon} onClick={this.handleClick} />
+        <FontAwesomeIcon
+          className={combine(bs.textMuted, this.handleClick && gs.clickable)}
+          fixedWidth={true}
+          icon={icon}
+          onClick={this.handleClick}
+        />
       </span>
     );
   }

@@ -16,7 +16,6 @@ import {
 } from "../managers/account-manager";
 import { requireUser } from "../middleware/auth-middleware";
 import { IAccountBalanceUpdate } from "../../commons/models/IAccountBalanceUpdate";
-import { logger } from "../../commons/utils/logging";
 
 const router = Express.Router();
 
@@ -108,11 +107,8 @@ router.post("/delete/:accountId", requireUser, (req: Request, res: Response, nex
 });
 
 router.post("/asset-balance-update", requireUser, (req: Request, res: Response, next: NextFunction) => {
-  logger.info("Calling API");
   const user = req.user as DbUser;
   const update: IAccountBalanceUpdate = req.body.balanceUpdate;
-
-  logger.debug(update);
 
   updateAssetBalance(user, update)
     .then(() => res.sendStatus(200))
