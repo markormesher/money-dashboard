@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { shallow } from "enzyme";
 import { describe, it } from "mocha";
 import { parseISO } from "date-fns";
-import { DEFAULT_ACCOUNT } from "../../commons/models/IAccount";
+import { DEFAULT_ACCOUNT, AccountType } from "../../commons/models/IAccount";
 import { DEFAULT_BUDGET } from "../../commons/models/IBudget";
 import { DEFAULT_CATEGORY } from "../../commons/models/ICategory";
 import * as bs from "../global-styles/Bootstrap.scss";
@@ -200,6 +200,10 @@ describe(__filename, () => {
       shallow(badge)
         .text()
         .should.equal("Other");
+    });
+
+    it("should reject invalid account types", () => {
+      expect(() => generateAccountTypeBadge({ ...DEFAULT_ACCOUNT, type: "invalid type" as AccountType })).to.throw();
     });
   });
 
