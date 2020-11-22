@@ -5,6 +5,7 @@ import { DEFAULT_BUDGET } from "../../commons/models/IBudget";
 import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
 import { DEFAULT_CATEGORY } from "../../commons/models/ICategory";
 import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
+import { IAccountBalanceUpdate } from "../../commons/models/IAccountBalanceUpdate";
 import {
   DashboardActions,
   dashboardReducer,
@@ -14,6 +15,10 @@ import {
   startLoadAccountBalances,
   startLoadBudgetBalances,
   startLoadMemoCategoryBalances,
+  setAssetBalanceToUpdate,
+  setAssetBalanceUpdateEditorBusy,
+  setAssetBalanceUpdateError,
+  startSaveAssetBalanceUpdate,
 } from "./dashboard";
 
 describe(__filename, () => {
@@ -32,6 +37,25 @@ describe(__filename, () => {
   describe("startLoadMemoCategoryBalances()", () => {
     it("should generate an action with the correct type", () => {
       startLoadMemoCategoryBalances().type.should.equal(DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES);
+    });
+  });
+
+  describe("startSaveAssetBalanceUpdate()", () => {
+    const assetBalanceUpdate: IAccountBalanceUpdate = {
+      account: DEFAULT_ACCOUNT,
+      balance: 0,
+      updateDate: 0,
+    };
+
+    it("should generate an action with the correct type", () => {
+      startSaveAssetBalanceUpdate(assetBalanceUpdate).type.should.equal(
+        DashboardActions.START_SAVE_ASSET_BALANCE_UPDATE,
+      );
+    });
+
+    it("should add the balance to the payload", () => {
+      startSaveAssetBalanceUpdate(assetBalanceUpdate).payload.should.have.keys("assetBalanceUpdate");
+      startSaveAssetBalanceUpdate(assetBalanceUpdate).payload.assetBalanceUpdate.should.equal(assetBalanceUpdate);
     });
   });
 
@@ -89,12 +113,53 @@ describe(__filename, () => {
     });
   });
 
+  describe("setAssetBalanceToUpdate()", () => {
+    const assetBalance: IAccountBalance = {
+      account: DEFAULT_ACCOUNT,
+      balance: 0,
+    };
+
+    it("should generate an action with the correct type", () => {
+      setAssetBalanceToUpdate(assetBalance).type.should.equal(DashboardActions.SET_ASSET_BALANCE_TO_UPDATE);
+    });
+
+    it("should add the balance to the payload", () => {
+      setAssetBalanceToUpdate(assetBalance).payload.should.have.keys("assetBalance");
+      setAssetBalanceToUpdate(assetBalance).payload.assetBalance.should.equal(assetBalance);
+    });
+  });
+
+  describe("setAssetBalanceUpdateEditorBusy()", () => {
+    it("should generate an action with the correct type", () => {
+      setAssetBalanceUpdateEditorBusy(true).type.should.equal(DashboardActions.SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY);
+    });
+
+    it("should add the state to the payload", () => {
+      setAssetBalanceUpdateEditorBusy(true).payload.should.have.keys("busy");
+      setAssetBalanceUpdateEditorBusy(true).payload.busy.should.equal(true);
+    });
+  });
+
+  describe("setAssetBalanceUpdateError()", () => {
+    it("should generate an action with the correct type", () => {
+      setAssetBalanceUpdateError("oops").type.should.equal(DashboardActions.SET_ASSET_BALANCE_UPDATE_ERROR);
+    });
+
+    it("should add the error to the payload", () => {
+      setAssetBalanceUpdateError("oops").payload.should.have.keys("error");
+      setAssetBalanceUpdateError("oops").payload.error.should.equal("oops");
+    });
+  });
+
   describe("dashboardReducer()", () => {
     it("should initialise its state correctly", () => {
       dashboardReducer(undefined, { type: "@@INIT" }).should.deep.equal({
         accountBalances: undefined,
         budgetBalances: undefined,
         memoCategoryBalances: undefined,
+        assetBalanceToUpdate: undefined,
+        assetBalanceUpdateEditorBusy: false,
+        assetBalanceUpdateError: undefined,
       });
     });
 
@@ -121,6 +186,33 @@ describe(__filename, () => {
         dashboardReducer(undefined, setMemoCategoryBalances(categoryBalances)).memoCategoryBalances.should.equal(
           categoryBalances,
         );
+      });
+    });
+
+    describe(DashboardActions.SET_ASSET_BALANCE_TO_UPDATE, () => {
+      const assetBalance: IAccountBalance = {
+        account: DEFAULT_ACCOUNT,
+        balance: 0,
+      };
+
+      it("should set the asset balance", () => {
+        dashboardReducer(undefined, setAssetBalanceToUpdate(assetBalance)).assetBalanceToUpdate.should.equal(
+          assetBalance,
+        );
+      });
+    });
+
+    describe(DashboardActions.SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY, () => {
+      it("should set the state", () => {
+        dashboardReducer(undefined, setAssetBalanceUpdateEditorBusy(true)).assetBalanceUpdateEditorBusy.should.equal(
+          true,
+        );
+      });
+    });
+
+    describe(DashboardActions.SET_ASSET_BALANCE_UPDATE_ERROR, () => {
+      it("should set the error", () => {
+        dashboardReducer(undefined, setAssetBalanceUpdateError("oops")).assetBalanceUpdateError.should.equal("oops");
       });
     });
   });

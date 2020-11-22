@@ -283,6 +283,8 @@ export {
   startLoadMemoCategoryBalances,
   startSaveAssetBalanceUpdate,
   setAssetBalanceToUpdate,
+  setAssetBalanceUpdateEditorBusy,
+  setAssetBalanceUpdateError,
   setAccountBalances,
   setBudgetBalances,
   setMemoCategoryBalances,
