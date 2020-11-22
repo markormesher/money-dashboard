@@ -2,7 +2,13 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { DEFAULT_ACCOUNT, IAccount, AccountTag, ACCOUNT_TAG_DISPLAY_NAMES } from "../../../commons/models/IAccount";
+import {
+  DEFAULT_ACCOUNT,
+  IAccount,
+  AccountTag,
+  AccountType,
+  ACCOUNT_TAG_DISPLAY_NAMES,
+} from "../../../commons/models/IAccount";
 import { IAccountValidationResult, validateAccount } from "../../../commons/models/validators/AccountValidator";
 import { ALL_CURRENCIES, CurrencyCode } from "../../../commons/models/ICurrency";
 import * as bs from "../../global-styles/Bootstrap.scss";
@@ -179,7 +185,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
   }
 
   private handleTypeChange(value: string): void {
-    this.updateModel({ type: value });
+    this.updateModel({ type: value as AccountType });
   }
 
   private handleCurrencyChange(value: string): void {

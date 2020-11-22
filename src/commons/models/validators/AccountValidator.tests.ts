@@ -1,6 +1,6 @@
 import { describe } from "mocha";
 import { v4 } from "uuid";
-import { IAccount, AccountTag } from "../IAccount";
+import { IAccount, AccountTag, AccountType } from "../IAccount";
 import { DEFAULT_PROFILE } from "../IProfile";
 import { CurrencyCode } from "../ICurrency";
 import { validateAccount } from "./AccountValidator";
@@ -67,7 +67,7 @@ describe(__filename, () => {
     });
 
     it("should reject an account with an invalid type", () => {
-      const result = validateAccount({ ...VALID_ACCOUNT, type: "invalid type" });
+      const result = validateAccount({ ...VALID_ACCOUNT, type: "invalid type" as AccountType });
       result.isValid.should.equal(false);
       result.errors.should.have.keys("type");
       result.errors.type.should.not.equal("");
