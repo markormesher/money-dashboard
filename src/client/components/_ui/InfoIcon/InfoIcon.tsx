@@ -31,12 +31,12 @@ class InfoIcon<Payload = {}> extends PureComponent<IInfoIconProps<Payload>> {
   }
 
   public render(): ReactNode {
-    const { hoverText, customIcon } = this.props;
+    const { hoverText, customIcon, onClick } = this.props;
     const icon = customIcon ? customIcon : faInfoCircle;
     return (
       <span data-tip={hoverText}>
         <FontAwesomeIcon
-          className={combine(bs.textMuted, !!this.handleClick && gs.clickable)}
+          className={combine(bs.textMuted, onClick && gs.clickable)}
           fixedWidth={true}
           icon={icon}
           onClick={this.handleClick}
