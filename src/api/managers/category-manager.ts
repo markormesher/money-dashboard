@@ -46,9 +46,9 @@ function getAllCategories(user: DbUser): Promise<DbCategory[]> {
 
 async function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]> {
   const balances: Array<{
-    amount: number;
+    amount: string;
     category_id: string;
-    currenct_code: CurrencyCode;
+    currency_code: CurrencyCode;
   }> = await getTransactionQueryBuilder({ withCategory: true, withAccount: true })
     .select("transaction.category_id")
     .addSelect("account.currency_code")
@@ -56,8 +56,8 @@ async function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]
     .where("category.is_memo_category = TRUE")
     .andWhere("transaction.deleted = FALSE")
     .andWhere("category.deleted = FALSE")
-    .groupBy("category_id")
-    .addGroupBy("account_id")
+    .groupBy("transaction.category_id")
+    .addGroupBy("account.currency_code")
     .getRawMany();
 
   const categories = await getAllCategories(user);
@@ -66,7 +66,7 @@ async function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]
   const balanceMap: { [key: string]: number } = {};
 
   balances.forEach((balance) => {
-    const gbpBalance = balance.amount / exchangeRates[balance.currenct_code].ratePerGbp;
+    const gbpBalance = parseFloat(balance.amount) / exchangeRates[balance.currency_code].ratePerGbp;
     balanceMap[balance.category_id] = (balanceMap[balance.category_id] || 0) + gbpBalance;
   });
 
