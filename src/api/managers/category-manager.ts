@@ -4,7 +4,9 @@ import { StatusError } from "../../commons/StatusError";
 import { cleanUuid } from "../../commons/utils/entities";
 import { DbCategory } from "../db/models/DbCategory";
 import { DbUser } from "../db/models/DbUser";
+import { CurrencyCode } from "../../commons/models/ICurrency";
 import { getTransactionQueryBuilder } from "./transaction-manager";
+import { getLatestExchangeRates } from "./exchange-rate-manager";
 
 interface ICategoryQueryBuilderOptions {
   readonly withProfile?: boolean;
@@ -42,32 +44,41 @@ function getAllCategories(user: DbUser): Promise<DbCategory[]> {
     .getMany();
 }
 
-function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]> {
-  const categoryBalanceQuery = getTransactionQueryBuilder({ withCategory: true })
+async function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]> {
+  const balances: Array<{
+    amount: string;
+    category_id: string;
+    currency_code: CurrencyCode;
+  }> = await getTransactionQueryBuilder({ withCategory: true, withAccount: true })
     .select("transaction.category_id")
-    .addSelect("SUM(amount)", "balance")
+    .addSelect("account.currency_code")
+    .addSelect("ROUND(SUM(amount)::numeric, 2)", "amount")
     .where("category.is_memo_category = TRUE")
     .andWhere("transaction.deleted = FALSE")
     .andWhere("category.deleted = FALSE")
-    .groupBy("category_id")
-    .getRawMany() as Promise<Array<{ category_id: string; balance: number }>>;
+    .groupBy("transaction.category_id")
+    .addGroupBy("account.currency_code")
+    .getRawMany();
 
-  return Promise.all([getAllCategories(user), categoryBalanceQuery]).then(([categories, balances]) => {
-    const balanceMap: { [key: string]: number } = {};
-    balances.forEach((sum) => {
-      balanceMap[sum.category_id] = Math.round(sum.balance * 100) / 100;
-    });
+  const categories = await getAllCategories(user);
+  const exchangeRates = await getLatestExchangeRates();
 
-    return categories
-      .filter((category) => category.isMemoCategory)
-      .map((category) => {
-        return {
-          category,
-          balance: balanceMap[category.id] || 0,
-        };
-      })
-      .sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance));
+  const balanceMap: { [key: string]: number } = {};
+
+  balances.forEach((balance) => {
+    const gbpBalance = parseFloat(balance.amount) / exchangeRates[balance.currency_code].ratePerGbp;
+    balanceMap[balance.category_id] = (balanceMap[balance.category_id] || 0) + gbpBalance;
   });
+
+  return categories
+    .filter((category) => category.isMemoCategory)
+    .map((category) => {
+      return {
+        category,
+        balance: balanceMap[category.id] || 0,
+      };
+    })
+    .sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance));
 }
 
 function saveCategory(user: DbUser, categoryId: string, properties: Partial<DbCategory>): Promise<DbCategory> {
