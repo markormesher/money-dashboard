@@ -52,7 +52,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_default
-      - traefik.http.routers.money-dashboard-client.rule=Host(`money-dashboard.markormesher.co.uk`, `www.money-dashboard.markormesher.co.uk`) && PathPrefix(`/api`)
+      - traefik.http.routers.money-dashboard-api.rule=Host(`money-dashboard.markormesher.co.uk`, `www.money-dashboard.markormesher.co.uk`) && PathPrefix(`/api`)
       - traefik.http.routers.money-dashboard-api.tls.certresolver=letsencrypt
 
   cron:
