@@ -114,6 +114,7 @@ async function updateAssetBalance(user: DbUser, assetBalanceUpdate: IAccountBala
 
   const latestTransaction = await getTransactionQueryBuilder()
     .where("transaction.account_id = :accountId")
+    .andWhere("transaction.deleted = FALSE")
     .orderBy("transaction_date", "DESC")
     .setParameters({
       accountId,
