@@ -8,6 +8,8 @@ assets=(
   fortawesome-pro-light-svg-icons-5.14.0.tgz
 )
 
+mkdir -p "${script_dir}/../assets"
+
 for asset in ${assets[@]}; do
   echo "Getting ${asset}"
   if command -v rsync > /dev/null 2>&1; then

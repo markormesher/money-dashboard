@@ -1,20 +1,14 @@
 version: '3.3'
 
 services:
-  nginx:
-    build: ./docker/nginx
-    restart: always
-    depends_on:
-      - api
-      - client
-    ports:
-      - "3006:3006"
-
   client:
     build:
       context: .
       dockerfile: docker/client/Dockerfile
     restart: always
+    networks:
+      - traefik
+      - internal
     depends_on:
       - api
     environment:
@@ -22,12 +16,20 @@ services:
       - npm_execpath=yarn
     volumes:
       - ./logs:/app/logs
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_default
+      - traefik.http.routers.money-dashboard-client.rule=Host(`money-dashboard.markormesher.co.uk`, `www.money-dashboard.markormesher.co.uk`)
+      - traefik.http.routers.money-dashboard-client.tls.certresolver=letsencrypt
 
   api:
     build:
       context: .
       dockerfile: docker/api/Dockerfile
     restart: always
+    networks:
+      - traefik
+      - internal
     depends_on:
       - redis
       - postgres_primary
@@ -47,10 +49,17 @@ services:
       - IS_PRIMARY_SERVER=yes
     volumes:
       - ./logs:/app/logs
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_default
+      - traefik.http.routers.money-dashboard-client.rule=Host(`money-dashboard.markormesher.co.uk`, `www.money-dashboard.markormesher.co.uk`) && PathPrefix(`/api`)
+      - traefik.http.routers.money-dashboard-api.tls.certresolver=letsencrypt
 
   cron:
     build: ./docker/cron
     restart: always
+    networks:
+      - internal
     depends_on:
       - api
     secrets:
@@ -59,6 +68,8 @@ services:
   postgres_primary:
     build: ./docker/postgres-primary
     restart: always
+    networks:
+      - internal
     secrets:
       - postgres.password
       - postgres-rep.password
@@ -74,6 +85,8 @@ services:
   postgres_replica_1:
     build: ./docker/postgres-replica
     restart: always
+    networks:
+      - internal
     secrets:
       - postgres.password
       - postgres-rep.password
@@ -89,6 +102,8 @@ services:
   postgres_replica_2:
     build: ./docker/postgres-replica
     restart: always
+    networks:
+      - internal
     secrets:
       - postgres.password
       - postgres-rep.password
@@ -104,6 +119,8 @@ services:
   redis:
     image: redis:3.2-alpine
     restart: always
+    networks:
+      - internal
     command: redis-server --appendonly yes
     volumes:
       - redis-data:/data
@@ -129,3 +146,10 @@ secrets:
     file: ./src/api/config/secrets/postgres-rep.password
   session.secret:
     file: ./src/api/config/secrets/session.secret
+
+networks:
+  internal:
+    external: false
+  traefik:
+    external:
+      name: traefik_default
