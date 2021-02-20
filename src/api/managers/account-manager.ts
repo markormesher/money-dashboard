@@ -138,7 +138,11 @@ async function updateAssetBalance(user: DbUser, assetBalanceUpdate: IAccountBala
   const category = await getCategoryQueryBuilder()
     .where("category.is_asset_growth_category = TRUE")
     .andWhere("category.name ILIKE '%update%'")
+    .andWhere("category.profile_id = :profileId")
     .andWhere("category.deleted = FALSE")
+    .setParameters({
+      profileId: user.activeProfile.id,
+    })
     .getOne();
 
   if (!category) {
