@@ -39,14 +39,14 @@ async function getBalanceHistoryReportData(
   let lastDateSeen = startDate;
 
   const takeRunningTotalSnapshot = (): void => {
-    dailyBalancePerCurrency.set(lastDateSeen, { ...runningTotalPerCurrency });
+    dailyBalancePerCurrency.set(lastDateSeen, new Map(runningTotalPerCurrency));
   };
 
   // compute the balance per date, keeping different currencies separate
   allTransactions
     .sort((a, b) => compareTransactions(a, b, dateMode))
     .forEach((txn) => {
-      const date = Math.min(startDate, dateMode === "effective" ? txn.effectiveDate : txn.transactionDate);
+      const date = Math.max(startDate, dateMode === "effective" ? txn.effectiveDate : txn.transactionDate);
       const amount = txn.amount;
       const currencyCode = txn.account.currencyCode;
 
@@ -60,6 +60,8 @@ async function getBalanceHistoryReportData(
 
   takeRunningTotalSnapshot();
 
+  console.log(dailyBalancePerCurrency);
+
   // get the exchange rate for every day in the transaction range
   const maxTxnDate = endOfDay(
     allTransactions.map((txn) => txn.transactionDate).reduce((a, b) => Math.max(a, b), -Infinity),
@@ -67,7 +69,6 @@ async function getBalanceHistoryReportData(
   const exchangeRates = await getExchangeRatesBetweenDates(startDate, maxTxnDate);
 
   // convert per-currency balances into the GBP value on that day
-  let minTotal, maxTotal, minDate, maxDate;
   const balanceDataPoints: Array<{ x: number; y: number }> = [];
   dailyBalancePerCurrency.forEach((totals, date) => {
     let total = 0;
@@ -78,6 +79,7 @@ async function getBalanceHistoryReportData(
   });
 
   // track minimum and maximum balances
+  let minTotal, maxTotal, minDate, maxDate;
   for (let i = 0; i < balanceDataPoints.length; i++) {
     const balance = balanceDataPoints[i].y;
 
