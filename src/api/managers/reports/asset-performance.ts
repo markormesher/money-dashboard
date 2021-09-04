@@ -43,7 +43,7 @@ async function getAssetPerformanceReportData(
   const dailyBalancePerCurrencyExclGrowth: Map<number, Map<CurrencyCode, number>> = new Map();
   const runningTotalPerCurrencyInclGrowth: Map<CurrencyCode, number> = new Map();
   const runningTotalPerCurrencyExclGrowth: Map<CurrencyCode, number> = new Map();
-  let lastDateSeen = startDate;
+  let lastDateSeen = -1;
 
   const takeRunningTotalSnapshot = (): void => {
     dailyBalancePerCurrencyInclGrowth.set(lastDateSeen, new Map(runningTotalPerCurrencyInclGrowth));
@@ -58,7 +58,7 @@ async function getAssetPerformanceReportData(
       const amount = txn.amount;
       const currencyCode = txn.account.currencyCode;
 
-      if (date != lastDateSeen) {
+      if (date != lastDateSeen && lastDateSeen > 0) {
         takeRunningTotalSnapshot();
       }
 

@@ -36,7 +36,7 @@ async function getBalanceHistoryReportData(
 
   const dailyBalancePerCurrency: Map<number, Map<CurrencyCode, number>> = new Map();
   const runningTotalPerCurrency: Map<CurrencyCode, number> = new Map();
-  let lastDateSeen = startDate;
+  let lastDateSeen = -1;
 
   const takeRunningTotalSnapshot = (): void => {
     dailyBalancePerCurrency.set(lastDateSeen, new Map(runningTotalPerCurrency));
@@ -50,7 +50,7 @@ async function getBalanceHistoryReportData(
       const amount = txn.amount;
       const currencyCode = txn.account.currencyCode;
 
-      if (date != lastDateSeen) {
+      if (date != lastDateSeen && lastDateSeen > 0) {
         takeRunningTotalSnapshot();
       }
 
