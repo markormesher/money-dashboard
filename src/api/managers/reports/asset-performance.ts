@@ -1,9 +1,10 @@
-import { startOfDay, endOfDay } from "date-fns";
+import { endOfDay } from "date-fns";
 import { DbUser } from "../../db/models/DbUser";
-import { DateModeOption } from "../../../commons/models/ITransaction";
+import { DateModeOption, compareTransactionsByDate } from "../../../commons/models/ITransaction";
 import { getExchangeRatesBetweenDates } from "../exchange-rate-manager";
 import { getTransactionQueryBuilder } from "../transaction-manager";
 import { IAssetPerformanceData } from "../../../commons/models/IAssetPerformanceData";
+import { CurrencyCode } from "../../../commons/models/ICurrency";
 
 async function getAssetPerformanceReportData(
   user: DbUser,
@@ -38,55 +39,65 @@ async function getAssetPerformanceReportData(
     };
   }
 
-  let initialBalanceInclGrowth = 0;
-  let initialBalanceExclGrowth = 0;
-  const dailyTxnTotalsInclGrowth: Map<number, number> = new Map();
-  const dailyTxnTotalsExclGrowth: Map<number, number> = new Map();
+  const dailyBalancePerCurrencyInclGrowth: Map<number, Map<CurrencyCode, number>> = new Map();
+  const dailyBalancePerCurrencyExclGrowth: Map<number, Map<CurrencyCode, number>> = new Map();
+  const runningTotalPerCurrencyInclGrowth: Map<CurrencyCode, number> = new Map();
+  const runningTotalPerCurrencyExclGrowth: Map<CurrencyCode, number> = new Map();
+  let lastDateSeen = startDate;
 
-  const minTxnDate = startOfDay(
-    allTransactions.map((txn) => txn.transactionDate).reduce((a, b) => Math.min(a, b), Infinity),
-  ).getTime();
+  const takeRunningTotalSnapshot = (): void => {
+    dailyBalancePerCurrencyInclGrowth.set(lastDateSeen, new Map(runningTotalPerCurrencyInclGrowth));
+    dailyBalancePerCurrencyExclGrowth.set(lastDateSeen, new Map(runningTotalPerCurrencyExclGrowth));
+  };
+
+  // compute the balance per date, keeping different currencies separate
+  allTransactions
+    .sort((a, b) => compareTransactionsByDate(a, b, dateMode))
+    .forEach((txn) => {
+      const date = Math.max(startDate, dateMode === "effective" ? txn.effectiveDate : txn.transactionDate);
+      const amount = txn.amount;
+      const currencyCode = txn.account.currencyCode;
+
+      if (date != lastDateSeen) {
+        takeRunningTotalSnapshot();
+      }
+
+      runningTotalPerCurrencyInclGrowth.set(
+        currencyCode,
+        (runningTotalPerCurrencyInclGrowth.get(currencyCode) || 0) + amount,
+      );
+      if (txn.category.isAssetGrowthCategory) {
+        runningTotalPerCurrencyExclGrowth.set(
+          currencyCode,
+          (runningTotalPerCurrencyExclGrowth.get(currencyCode) || 0) + amount,
+        );
+      }
+      lastDateSeen = date;
+    });
+
+  // get the exchange rate for every day in the transaction range
   const maxTxnDate = endOfDay(
     allTransactions.map((txn) => txn.transactionDate).reduce((a, b) => Math.max(a, b), -Infinity),
   ).getTime();
+  const exchangeRates = await getExchangeRatesBetweenDates(startDate, maxTxnDate);
 
-  const exchangeRates = await getExchangeRatesBetweenDates(minTxnDate, maxTxnDate);
-
-  // add up the totals of all transactions per date
-  allTransactions.forEach((txn) => {
-    const date = dateMode === "effective" ? txn.effectiveDate : txn.transactionDate;
-    const txnDate = txn.transactionDate;
-
-    const exchangeRatePerGbp = exchangeRates.has(txnDate)
-      ? exchangeRates.get(txnDate)[txn.account.currencyCode].ratePerGbp
-      : 1; // TODO: remove conditional when all rates are back filled
-    const amount = txn.amount / exchangeRatePerGbp;
-
-    if (date < startDate) {
-      initialBalanceInclGrowth += amount;
-      initialBalanceExclGrowth += txn.category.isAssetGrowthCategory ? 0 : amount;
-    } else {
-      dailyTxnTotalsInclGrowth.set(date, (dailyTxnTotalsInclGrowth.get(date) || 0) + amount);
-      dailyTxnTotalsExclGrowth.set(
-        date,
-        (dailyTxnTotalsExclGrowth.get(date) || 0) + (txn.category.isAssetGrowthCategory ? 0 : amount),
-      );
-    }
-  });
-
-  // convert daily txn totals into daily balances
+  // convert per-currency balances into the GBP value on that day
   const dataInclGrowth: Array<{ x: number; y: number }> = [];
   const dataExclGrowth: Array<{ x: number; y: number }> = [];
-  dailyTxnTotalsInclGrowth.forEach((total, date) => dataInclGrowth.push({ x: date, y: total }));
-  dailyTxnTotalsExclGrowth.forEach((total, date) => dataExclGrowth.push({ x: date, y: total }));
-  dataInclGrowth.sort((a, b) => a.x - b.x);
-  dataExclGrowth.sort((a, b) => a.x - b.x);
-  for (let i = 0; i < dataInclGrowth.length; i++) {
-    dataInclGrowth[i].y = dataInclGrowth[i].y + (i === 0 ? initialBalanceInclGrowth : dataInclGrowth[i - 1].y);
-  }
-  for (let i = 0; i < dataExclGrowth.length; i++) {
-    dataExclGrowth[i].y = dataExclGrowth[i].y + (i === 0 ? initialBalanceExclGrowth : dataExclGrowth[i - 1].y);
-  }
+  dailyBalancePerCurrencyInclGrowth.forEach((totals, date) => {
+    let total = 0;
+    totals.forEach((balance, currencyCode) => {
+      total += balance / exchangeRates.get(date)[currencyCode].ratePerGbp;
+    });
+    dataInclGrowth.push({ x: date, y: total });
+  });
+  dailyBalancePerCurrencyExclGrowth.forEach((totals, date) => {
+    let total = 0;
+    totals.forEach((balance, currencyCode) => {
+      total += balance / exchangeRates.get(date)[currencyCode].ratePerGbp;
+    });
+    dataExclGrowth.push({ x: date, y: total });
+  });
 
   // calculate total movement values
   const totalChangeInclGrowth = dataInclGrowth[dataInclGrowth.length - 1].y - dataInclGrowth[0].y;
