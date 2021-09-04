@@ -66,7 +66,7 @@ async function getAssetPerformanceReportData(
         currencyCode,
         (runningTotalPerCurrencyInclGrowth.get(currencyCode) || 0) + amount,
       );
-      if (txn.category.isAssetGrowthCategory) {
+      if (!txn.category.isAssetGrowthCategory) {
         runningTotalPerCurrencyExclGrowth.set(
           currencyCode,
           (runningTotalPerCurrencyExclGrowth.get(currencyCode) || 0) + amount,
