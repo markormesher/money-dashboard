@@ -75,6 +75,8 @@ async function getAssetPerformanceReportData(
       lastDateSeen = date;
     });
 
+  takeRunningTotalSnapshot();
+
   // get the exchange rate for every day in the transaction range
   const maxTxnDate = endOfDay(
     allTransactions.map((txn) => txn.transactionDate).reduce((a, b) => Math.max(a, b), -Infinity),
