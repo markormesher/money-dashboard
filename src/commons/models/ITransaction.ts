@@ -75,6 +75,14 @@ function getNextTransactionForContinuousCreation(prev: Partial<ITransaction>): I
   };
 }
 
+function compareTransactionsByDate(a: ITransaction, b: ITransaction, dateMode: DateModeOption): number {
+  if (dateMode === "effective") {
+    return a.effectiveDate - b.effectiveDate;
+  } else {
+    return a.transactionDate - b.transactionDate;
+  }
+}
+
 export {
   DateModeOption,
   ITransaction,
@@ -82,4 +90,5 @@ export {
   mapTransactionFromApi,
   mapTransactionForApi,
   getNextTransactionForContinuousCreation,
+  compareTransactionsByDate,
 };

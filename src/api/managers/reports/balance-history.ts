@@ -1,9 +1,10 @@
-import { startOfDay, endOfDay } from "date-fns";
+import { endOfDay } from "date-fns";
 import { IBalanceHistoryData } from "../../../commons/models/IBalanceHistoryData";
 import { DbUser } from "../../db/models/DbUser";
-import { DateModeOption } from "../../../commons/models/ITransaction";
+import { DateModeOption, compareTransactionsByDate } from "../../../commons/models/ITransaction";
 import { getExchangeRatesBetweenDates } from "../exchange-rate-manager";
 import { getTransactionQueryBuilder } from "../transaction-manager";
+import { CurrencyCode } from "../../../commons/models/ICurrency";
 
 async function getBalanceHistoryReportData(
   user: DbUser,
@@ -15,7 +16,7 @@ async function getBalanceHistoryReportData(
   const allTransactions = await getTransactionQueryBuilder({ withAccount: true })
     .where("transaction.profile_id = :profileId")
     .andWhere("transaction.deleted = FALSE")
-    .andWhere(`transaction.${dateField} < :endDate`)
+    .andWhere(`transaction.${dateField} <= :endDate`)
     .setParameters({
       profileId: user.activeProfile.id,
       endDate,
@@ -33,43 +34,52 @@ async function getBalanceHistoryReportData(
     };
   }
 
-  let initialBalance = 0;
-  const dailyTxnTotals: Map<number, number> = new Map();
+  const dailyBalancePerCurrency: Map<number, Map<CurrencyCode, number>> = new Map();
+  const runningTotalPerCurrency: Map<CurrencyCode, number> = new Map();
+  let lastDateSeen = -1;
 
-  const minTxnDate = startOfDay(
-    allTransactions.map((txn) => txn.transactionDate).reduce((a, b) => Math.min(a, b), Infinity),
-  ).getTime();
+  const takeRunningTotalSnapshot = (): void => {
+    dailyBalancePerCurrency.set(lastDateSeen, new Map(runningTotalPerCurrency));
+  };
+
+  // compute the balance per date, keeping different currencies separate
+  allTransactions
+    .sort((a, b) => compareTransactionsByDate(a, b, dateMode))
+    .forEach((txn) => {
+      const date = Math.max(startDate, dateMode === "effective" ? txn.effectiveDate : txn.transactionDate);
+      const amount = txn.amount;
+      const currencyCode = txn.account.currencyCode;
+
+      if (date != lastDateSeen && lastDateSeen > 0) {
+        takeRunningTotalSnapshot();
+      }
+
+      runningTotalPerCurrency.set(currencyCode, (runningTotalPerCurrency.get(currencyCode) || 0) + amount);
+      lastDateSeen = date;
+    });
+
+  takeRunningTotalSnapshot();
+
+  // get the exchange rate for every day in the transaction range
   const maxTxnDate = endOfDay(
     allTransactions.map((txn) => txn.transactionDate).reduce((a, b) => Math.max(a, b), -Infinity),
   ).getTime();
+  const exchangeRates = await getExchangeRatesBetweenDates(startDate, maxTxnDate);
 
-  const exchangeRates = await getExchangeRatesBetweenDates(minTxnDate, maxTxnDate);
-
-  // add up the totals of all transactions per date
-  allTransactions.forEach((txn) => {
-    const date = dateMode === "effective" ? txn.effectiveDate : txn.transactionDate;
-    const txnDate = txn.transactionDate;
-
-    const exchangeRatePerGbp = exchangeRates.has(txnDate)
-      ? exchangeRates.get(txnDate)[txn.account.currencyCode].ratePerGbp
-      : 1; // TODO: remove conditional when all rates are back filled
-    const amount = txn.amount / exchangeRatePerGbp;
-
-    if (date < startDate) {
-      initialBalance += amount;
-    } else {
-      dailyTxnTotals.set(date, (dailyTxnTotals.get(date) || 0) + amount);
-    }
+  // convert per-currency balances into the GBP value on that day
+  const balanceDataPoints: Array<{ x: number; y: number }> = [];
+  dailyBalancePerCurrency.forEach((totals, date) => {
+    let total = 0;
+    totals.forEach((balance, currencyCode) => {
+      total += balance / exchangeRates.get(date)[currencyCode].ratePerGbp;
+    });
+    balanceDataPoints.push({ x: date, y: total });
   });
 
-  // convert daily txn totals into daily balances (and track min/max while we're at it)
+  // track minimum and maximum balances
   let minTotal, maxTotal, minDate, maxDate;
-  const balanceDataPoints: Array<{ x: number; y: number }> = [];
-  dailyTxnTotals.forEach((total, date) => balanceDataPoints.push({ x: date, y: total }));
-  balanceDataPoints.sort((a, b) => a.x - b.x);
   for (let i = 0; i < balanceDataPoints.length; i++) {
-    const balance = balanceDataPoints[i].y + (i === 0 ? initialBalance : balanceDataPoints[i - 1].y);
-    balanceDataPoints[i].y = balance;
+    const balance = balanceDataPoints[i].y;
 
     if (!minTotal || minTotal > balance) {
       minTotal = balance;

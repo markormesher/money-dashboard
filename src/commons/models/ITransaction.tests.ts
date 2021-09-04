@@ -10,6 +10,7 @@ import {
   ITransaction,
   mapTransactionFromApi,
   mapTransactionForApi,
+  compareTransactionsByDate,
 } from "./ITransaction";
 
 describe(__filename, () => {
@@ -78,6 +79,15 @@ describe(__filename, () => {
       expect(output.note).to.equal(DEFAULT_TRANSACTION.note);
       expect(output.category).to.equal(DEFAULT_TRANSACTION.category);
       expect(output.profile).to.equal(DEFAULT_TRANSACTION.profile);
+    });
+  });
+
+  describe("compareTransactionsByDate()", () => {
+    it("should return the distance between date fields", () => {
+      const t1 = { ...DEFAULT_TRANSACTION, effectiveDate: 1, transactionDate: 2 };
+      const t2 = { ...DEFAULT_TRANSACTION, effectiveDate: 4, transactionDate: 8 };
+      compareTransactionsByDate(t1, t2, "effective").should.equal(1 - 4);
+      compareTransactionsByDate(t1, t2, "transaction").should.equal(2 - 8);
     });
   });
 });
