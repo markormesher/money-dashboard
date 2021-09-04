@@ -1,7 +1,7 @@
 import { endOfDay } from "date-fns";
 import { IBalanceHistoryData } from "../../../commons/models/IBalanceHistoryData";
 import { DbUser } from "../../db/models/DbUser";
-import { DateModeOption, ITransaction } from "../../../commons/models/ITransaction";
+import { DateModeOption, compareTransactionsByDate } from "../../../commons/models/ITransaction";
 import { getExchangeRatesBetweenDates } from "../exchange-rate-manager";
 import { getTransactionQueryBuilder } from "../transaction-manager";
 import { CurrencyCode } from "../../../commons/models/ICurrency";
@@ -44,7 +44,7 @@ async function getBalanceHistoryReportData(
 
   // compute the balance per date, keeping different currencies separate
   allTransactions
-    .sort((a, b) => compareTransactions(a, b, dateMode))
+    .sort((a, b) => compareTransactionsByDate(a, b, dateMode))
     .forEach((txn) => {
       const date = Math.max(startDate, dateMode === "effective" ? txn.effectiveDate : txn.transactionDate);
       const amount = txn.amount;
@@ -100,14 +100,6 @@ async function getBalanceHistoryReportData(
     maxDate,
     changeAbsolute: balanceDataPoints[balanceDataPoints.length - 1].y - balanceDataPoints[0].y,
   };
-}
-
-function compareTransactions(a: ITransaction, b: ITransaction, dateMode: DateModeOption): number {
-  if (dateMode === "effective") {
-    return a.effectiveDate - b.effectiveDate;
-  } else {
-    return a.transactionDate - b.transactionDate;
-  }
 }
 
 export { getBalanceHistoryReportData };
