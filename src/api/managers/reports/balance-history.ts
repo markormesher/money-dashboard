@@ -15,8 +15,8 @@ async function getBalanceHistoryReportData(
   const dateField = `${dateMode}Date`;
   const allTransactions = await getTransactionQueryBuilder({ withAccount: true })
     .where("transaction.profile_id = :profileId")
-    .andWhere("transaction.deleted = FALSE")
     .andWhere(`transaction.${dateField} <= :endDate`)
+    .andWhere("transaction.deleted = FALSE")
     .setParameters({
       profileId: user.activeProfile.id,
       endDate,
