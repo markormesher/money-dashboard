@@ -55,7 +55,7 @@
     "@dragonlabs/redux-cache-key-util": "^0.0.13",
     "@fortawesome/fontawesome-svg-core": "^1.2.6",
     "@fortawesome/free-brands-svg-icons": "^5.4.1",
-    "@fortawesome/pro-light-svg-icons": "./assets/fortawesome-pro-light-svg-icons-5.14.0.tgz",
+    "@fortawesome/pro-light-svg-icons": "./private-packages/fortawesome-pro-light-svg-icons-5.14.0.tgz",
     "@fortawesome/react-fontawesome": "^0.1.3",
     "async": "^2.6.0",
     "axios": "^0.21.1",
