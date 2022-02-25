@@ -32,13 +32,11 @@ services:
       - traefik
       - internal
     depends_on:
-      - redis
       - postgres_primary
     secrets:
       - cron.secret
       - open-exchange-rates.key
       - postgres.password
-      - session.secret
     environment:
       - NPM_EXECPATH=yarn
       - npm_execpath=yarn
@@ -76,18 +74,8 @@ services:
     volumes:
       - postgres-primary-data:/var/lib/postgresql/data
 
-  redis:
-    image: redis:3.2-alpine
-    restart: always
-    networks:
-      - internal
-    command: redis-server --appendonly yes
-    volumes:
-      - redis-data:/data
-
 volumes:
   postgres-primary-data:
-  redis-data:
 
 secrets:
   cron.secret:
@@ -96,8 +84,6 @@ secrets:
     file: ./src/api/config/secrets/open-exchange-rates.key
   postgres.password:
     file: ./src/api/config/secrets/postgres.password
-  session.secret:
-    file: ./src/api/config/secrets/session.secret
 
 networks:
   internal:

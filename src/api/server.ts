@@ -1,14 +1,10 @@
 import * as BodyParser from "body-parser";
-import * as ConnectRedis from "connect-redis";
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import * as ExpressSession from "express-session";
-import * as Redis from "redis";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { StatusError } from "../commons/StatusError";
 import { logger } from "../commons/utils/logging";
-import { getSecret } from "./config/config-loader";
 import { typeormConf } from "./db/db-config";
 import { MigrationRunner } from "./db/migrations/MigrationRunner";
 import { setupApiRoutes } from "./middleware/api-routes";
@@ -20,21 +16,6 @@ const app = Express();
 createConnection({ ...typeormConf, synchronize: false })
   .then(() => logger.info("Database connection created successfully"))
   .catch((err) => logger.error("Failed to connect to database", err));
-
-// cookies and sessions
-const redisClient = Redis.createClient({
-  host: "redis",
-  port: 6379,
-});
-const RedisSessionStore = ConnectRedis(ExpressSession);
-app.use(
-  ExpressSession({
-    store: new RedisSessionStore({ client: redisClient }),
-    secret: getSecret("session.secret"),
-    resave: false,
-    saveUninitialized: false,
-  }),
-);
 
 // middleware
 app.use(BodyParser.json());
