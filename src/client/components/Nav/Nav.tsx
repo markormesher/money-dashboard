@@ -3,7 +3,6 @@ import {
   faChartLine,
   faHome,
   faPiggyBank,
-  faSignOut,
   faSlidersH,
   faTable,
   faTags,
@@ -17,7 +16,6 @@ import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
-import { startLogOutCurrentUser } from "../../redux/auth";
 import { IRootState } from "../../redux/root";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { IAccount } from "../../../commons/models/IAccount";
@@ -32,7 +30,6 @@ interface INavProps extends IProfileAwareProps {
   readonly accountList?: IAccount[];
 
   readonly actions?: {
-    readonly logout: () => AnyAction;
     readonly pushPath: (path: string) => AnyAction;
     readonly startLoadAccountList: () => AnyAction;
   };
@@ -51,7 +48,6 @@ function mapDispatchToProps(dispatch: Dispatch, props: INavProps): INavProps {
   return {
     ...props,
     actions: {
-      logout: (): AnyAction => dispatch(startLogOutCurrentUser()),
       pushPath: (path: string): AnyAction => dispatch(push(path)),
       startLoadAccountList: (): AnyAction => dispatch(startLoadAccountList()),
     },
@@ -123,10 +119,6 @@ class UCNav extends PureComponent<INavProps> {
               <NavLink to="/budgets" text="Budgets" icon={faSlidersH} />
               <NavLink to="/categories" text="Categories" icon={faTags} />
               <NavLink to="/profiles" text="Profiles" icon={faUsers} />
-            </NavSection>
-
-            <NavSection title="Account">
-              <NavLink to="#" text="Logout" icon={faSignOut} onClick={this.props.actions.logout} />
             </NavSection>
           </div>
         </nav>

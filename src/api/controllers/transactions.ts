@@ -10,11 +10,10 @@ import {
   getTransactionQueryBuilder,
   saveTransaction,
 } from "../managers/transaction-manager";
-import { requireUser } from "../middleware/auth-middleware";
 
 const router = Express.Router();
 
-router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const searchTerm = req.query.searchTerm || "";
 
@@ -48,7 +47,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
     .catch(next);
 });
 
-router.post("/edit/:transactionId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/edit/:transactionId?", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const transactionId = req.params.transactionId;
   const properties: Partial<DbTransaction> = {
@@ -70,7 +69,7 @@ router.post("/edit/:transactionId?", requireUser, (req: Request, res: Response, 
     .catch(next);
 });
 
-router.post("/delete/:transactionId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/delete/:transactionId", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const transactionId = req.params.transactionId;
 
@@ -79,7 +78,7 @@ router.post("/delete/:transactionId", requireUser, (req: Request, res: Response,
     .catch(next);
 });
 
-router.get("/payees", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/payees", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   getAllPayees(user)
     .then((payees: string[]) => res.json(payees))

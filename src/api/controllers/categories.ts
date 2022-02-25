@@ -11,11 +11,10 @@ import {
   getMemoCategoryBalances,
   saveCategory,
 } from "../managers/category-manager";
-import { requireUser } from "../middleware/auth-middleware";
 
 const router = Express.Router();
 
-router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const searchTerm = req.query.searchTerm;
 
@@ -40,14 +39,14 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
     .catch(next);
 });
 
-router.get("/list", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/list", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   getAllCategories(user)
     .then((categories: DbCategory[]) => res.json(categories))
     .catch(next);
 });
 
-router.post("/edit/:categoryId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/edit/:categoryId?", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const categoryId = req.params.categoryId;
   const properties: Partial<DbCategory> = {
@@ -63,7 +62,7 @@ router.post("/edit/:categoryId?", requireUser, (req: Request, res: Response, nex
     .catch(next);
 });
 
-router.post("/delete/:categoryId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/delete/:categoryId", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const categoryId = req.params.categoryId;
 
@@ -72,7 +71,7 @@ router.post("/delete/:categoryId", requireUser, (req: Request, res: Response, ne
     .catch(next);
 });
 
-router.get("/memo-balances", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/memo-balances", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
 
   getMemoCategoryBalances(user)

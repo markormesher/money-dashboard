@@ -10,11 +10,10 @@ import {
   setActiveProfileForUser,
   getAllProfiles,
 } from "../managers/profile-manager";
-import { requireUser } from "../middleware/auth-middleware";
 
 const router = Express.Router();
 
-router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const searchTerm = req.query.searchTerm;
 
@@ -39,14 +38,14 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
     .catch(next);
 });
 
-router.get("/list", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/list", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   getAllProfiles(user)
     .then((profiles: DbProfile[]) => res.json(profiles))
     .catch(next);
 });
 
-router.post("/edit/:profileId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/edit/:profileId?", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const profileId = req.params.profileId;
   const properties: Partial<DbProfile> = {
@@ -58,7 +57,7 @@ router.post("/edit/:profileId?", requireUser, (req: Request, res: Response, next
     .catch(next);
 });
 
-router.post("/delete/:profileId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/delete/:profileId", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const profileId = req.params.profileId;
 
@@ -67,7 +66,7 @@ router.post("/delete/:profileId", requireUser, (req: Request, res: Response, nex
     .catch(next);
 });
 
-router.post("/select/:profileId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/select/:profileId", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const profileId = req.params.profileId;
 

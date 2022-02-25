@@ -376,6 +376,27 @@ ALTER TABLE ONLY exchange_rate
       return qr.query(`ALTER TABLE exchange_rate DROP COLUMN update_time;`);
     },
   },
+
+  // disconnect users from google
+  {
+    migrationNumber: 19,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
+                ALTER TABLE "user"
+                    DROP COLUMN google_id;
+                ALTER TABLE "user"
+                    ADD COLUMN external_username CHARACTER VARYING DEFAULT NULL;
+            `);
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
+                ALTER TABLE "user"
+                    DROP COLUMN external_username;
+                ALTER TABLE "user"
+                    ADD COLUMN google_id CHARACTER VARYING DEFAULT NULL;
+            `);
+    },
+  },
 ];
 
 export { allMigrations };

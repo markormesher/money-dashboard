@@ -19,8 +19,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_default
-      - traefik.http.routers.money-dashboard-client.rule=Host(`money-dashboard.markormesher.co.uk`, `www.money-dashboard.markormesher.co.uk`)
+      - traefik.http.routers.money-dashboard-client.rule=Host(`money-dashboard.tatsu.casa`, `www.money-dashboard.tatsu.casa`)
       - traefik.http.routers.money-dashboard-client.tls.certresolver=letsencrypt
+      - traefik.http.routers.money-dashboard-client.middlewares=strip-www@file,authelia@file
 
   api:
     build:
@@ -35,8 +36,6 @@ services:
       - postgres_primary
     secrets:
       - cron.secret
-      - google.client.id
-      - google.client.secret
       - open-exchange-rates.key
       - postgres.password
       - session.secret
@@ -49,8 +48,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_default
-      - traefik.http.routers.money-dashboard-api.rule=Host(`money-dashboard.markormesher.co.uk`, `www.money-dashboard.markormesher.co.uk`) && PathPrefix(`/api`)
+      - traefik.http.routers.money-dashboard-api.rule=Host(`money-dashboard.tatsu.casa`, `www.money-dashboard.tatsu.casa`) && PathPrefix(`/api`)
       - traefik.http.routers.money-dashboard-api.tls.certresolver=letsencrypt
+      - traefik.http.routers.money-dashboard-api.middlewares=strip-www@file,authelia@file
 
   cron:
     build: ./docker/cron
@@ -92,10 +92,6 @@ volumes:
 secrets:
   cron.secret:
     file: ./src/api/config/secrets/cron.secret
-  google.client.id:
-    file: ./src/api/config/secrets/google.client.id
-  google.client.secret:
-    file: ./src/api/config/secrets/google.client.secret
   open-exchange-rates.key:
     file: ./src/api/config/secrets/open-exchange-rates.key
   postgres.password:

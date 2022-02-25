@@ -8,7 +8,7 @@ class DbUser extends BaseEntity implements IUser {
   public id: string;
 
   @Column()
-  public googleId: string;
+  public externalUsername: string;
 
   @Column()
   public displayName: string;

@@ -1,4 +1,3 @@
-import { Profile } from "passport-google-oauth";
 import { SelectQueryBuilder } from "typeorm";
 import { StatusError } from "../../commons/StatusError";
 import { cleanUuid } from "../../commons/utils/entities";
@@ -24,7 +23,7 @@ function getUserQueryBuilder(options: IUserQueryBuilderOptions = {}): SelectQuer
   return builder;
 }
 
-function getUser(userId: string): Promise<DbUser> {
+async function getUser(userId: string): Promise<DbUser> {
   return getUserQueryBuilder({ withProfiles: true, withActiveProfile: true })
     .where("user.id = :userId")
     .andWhere("user.deleted = FALSE")
@@ -40,19 +39,18 @@ function getUser(userId: string): Promise<DbUser> {
     });
 }
 
-function getOrRegisterUserWithGoogleProfile(googleProfile: Profile): Promise<DbUser> {
-  const googleId = googleProfile.id;
+async function getOrCreateUserWithExternalUsername(externalUsername: string, displayName?: string): Promise<DbUser> {
   return getUserQueryBuilder({ withProfiles: true, withActiveProfile: true })
-    .where("user.googleId = :googleId")
+    .where("user.externalUsername = :externalUsername")
     .andWhere("user.deleted = FALSE")
     .setParameters({
-      googleId,
+      externalUsername,
     })
     .getOne()
     .then((user: DbUser) => {
       // make a user if we didn't find one
       if (!user) {
-        return DbUser.create<DbUser>({ id: null, googleId: googleProfile.id }).save();
+        return DbUser.create<DbUser>({ id: null, externalUsername, displayName }).save();
       } else {
         return user;
       }
@@ -79,11 +77,10 @@ function getOrRegisterUserWithGoogleProfile(googleProfile: Profile): Promise<DbU
       }
     })
     .then((user: DbUser) => {
-      // update details according to google profile
-      user.displayName = googleProfile.displayName;
-      user.image = googleProfile.photos.length > 0 ? googleProfile.photos[0].value : null;
+      // update details
+      user.displayName = displayName;
       return user.save();
     });
 }
 
-export { getUserQueryBuilder, getUser, getOrRegisterUserWithGoogleProfile };
+export { getUserQueryBuilder, getUser, getOrCreateUserWithExternalUsername };

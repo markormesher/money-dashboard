@@ -1,16 +1,16 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import { requireUser, requireCronAuth } from "../middleware/auth-middleware";
 import {
   getLatestExchangeRates,
   updateLatestExchangeRates,
   updateHistoricalExchangeRages,
   updateExchangeRates,
 } from "../managers/exchange-rate-manager";
+import { requireCronAuth } from "../middleware/auth-middleware";
 
 const router = Express.Router();
 
-router.get("/latest", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/latest", (req: Request, res: Response, next: NextFunction) => {
   getLatestExchangeRates()
     .then((rates) => res.json(rates))
     .catch(next);

@@ -14,12 +14,11 @@ import {
   setAccountActive,
   updateAssetBalance,
 } from "../managers/account-manager";
-import { requireUser } from "../middleware/auth-middleware";
 import { IAccountBalanceUpdate } from "../../commons/models/IAccountBalanceUpdate";
 
 const router = Express.Router();
 
-router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const searchTerm = req.query.searchTerm;
   const activeOnly = req.query.activeOnly === "true";
@@ -49,21 +48,21 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
     .catch(next);
 });
 
-router.get("/list", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/list", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   getAllAccounts(user)
     .then((accounts: DbAccount[]) => res.json(accounts))
     .catch(next);
 });
 
-router.get("/balances", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/balances", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   getAccountBalances(user)
     .then((balances: IAccountBalance[]) => res.json(balances))
     .catch(next);
 });
 
-router.post("/edit/:accountId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/edit/:accountId?", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const accountId = req.params.accountId;
   const properties: Partial<DbAccount> = {
@@ -79,7 +78,7 @@ router.post("/edit/:accountId?", requireUser, (req: Request, res: Response, next
     .catch(next);
 });
 
-router.post("/set-active/:accountId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/set-active/:accountId", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const accountId = req.params.accountId;
 
@@ -88,7 +87,7 @@ router.post("/set-active/:accountId", requireUser, (req: Request, res: Response,
     .catch(next);
 });
 
-router.post("/set-inactive/:accountId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/set-inactive/:accountId", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const accountId = req.params.accountId;
 
@@ -97,7 +96,7 @@ router.post("/set-inactive/:accountId", requireUser, (req: Request, res: Respons
     .catch(next);
 });
 
-router.post("/delete/:accountId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/delete/:accountId", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const accountId = req.params.accountId;
 
@@ -106,7 +105,7 @@ router.post("/delete/:accountId", requireUser, (req: Request, res: Response, nex
     .catch(next);
 });
 
-router.post("/asset-balance-update", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/asset-balance-update", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const update: IAccountBalanceUpdate = req.body.balanceUpdate;
 

@@ -6,12 +6,11 @@ import { DateModeOption, ITransaction } from "../../../commons/models/ITransacti
 import { getTaxYear, groupBy } from "../../../commons/utils/helpers";
 import { DbUser } from "../../db/models/DbUser";
 import { getTransactionQueryBuilder } from "../../managers/transaction-manager";
-import { requireUser } from "../../middleware/auth-middleware";
 import { AccountTag } from "../../../commons/models/IAccount";
 
 const router = Express.Router();
 
-router.get("/data", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/data", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const dateMode: DateModeOption = req.query.dateMode;
   const accountTag: AccountTag = req.query.accountTag as AccountTag;

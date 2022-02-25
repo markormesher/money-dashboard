@@ -1,24 +1,29 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { IUser } from "../../commons/models/IUser";
+import { logger } from "../../commons/utils/logging";
 import { StatusError } from "../../commons/StatusError";
 import { getSecret } from "../config/config-loader";
+import { getOrCreateUserWithExternalUsername } from "../managers/user-manager";
+import { DbUser } from "../db/models/DbUser";
+
+declare module "express-serve-static-core" {
+  // eslint-disable-next-line @typescript-eslint/interface-name-prefix
+  interface Request {
+    user: DbUser;
+  }
+}
 
 const loadUser: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as IUser;
-  if (user) {
-    res.locals.user = user;
-  } else {
-    res.locals.user = undefined;
-  }
-  next();
-};
-
-const requireUser: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
-  if (req.user) {
-    loadUser(req, res, next);
-  } else {
+  const username = req.header("remote-user");
+  const name = req.header("remote-name");
+  if (!username || !name) {
+    logger.error("Username or name was missing from request", { headers: req.headers });
     throw new StatusError(401);
   }
+
+  getOrCreateUserWithExternalUsername(username, name).then((user) => {
+    req.user = user;
+    next();
+  });
 };
 
 const requireCronAuth: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
@@ -29,4 +34,4 @@ const requireCronAuth: RequestHandler = (req: Request, res: Response, next: Next
   }
 };
 
-export { loadUser, requireUser, requireCronAuth };
+export { loadUser, requireCronAuth };

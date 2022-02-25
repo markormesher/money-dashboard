@@ -2,7 +2,7 @@ import * as React from "react";
 import { ErrorInfo, PureComponent, ReactElement, ReactNode } from "react";
 import ReactTooltip from "react-tooltip";
 import { connect } from "react-redux";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { IUser } from "../../../commons/models/IUser";
 import { DetailedError } from "../../helpers/errors/DetailedError";
 import { Http404Error } from "../../helpers/errors/Http404Error";
@@ -18,7 +18,6 @@ import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { Header } from "../Header/Header";
 import { KeyShortcutModal } from "../KeyShortcutModal/KeyShortcutModal";
 import { Nav } from "../Nav/Nav";
-import { LoginPage } from "../LoginPage/LoginPage";
 import { TaxYearDepositsReport } from "../TaxYearDepositsReport/TaxYearDepositsReport";
 import { ProfilesPage } from "../ProfilesPage/ProfilesPage";
 import { TransactionsPage } from "../TransactionsPage/TransactionsPage";
@@ -84,12 +83,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
     }
 
     if (!activeUser) {
-      return (
-        <Switch>
-          <Route exact={true} path="/auth/login" component={LoginPage} />
-          <Redirect to="/auth/login" />
-        </Switch>
-      );
+      return <p>No active user.</p>;
     }
 
     return (

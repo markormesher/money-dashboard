@@ -17,7 +17,7 @@ describe(__filename, () => {
     it("should not mutate the input", () => {
       const user: IUser = {
         id: "id",
-        googleId: "google id",
+        externalUsername: "external username",
         displayName: "display name",
         image: "image",
         profiles: [DEFAULT_PROFILE],
@@ -41,7 +41,7 @@ describe(__filename, () => {
     it("should not mutate the input", () => {
       const user: IUser = {
         id: "id",
-        googleId: "google id",
+        externalUsername: "external username",
         displayName: "display name",
         image: "image",
         profiles: [DEFAULT_PROFILE],

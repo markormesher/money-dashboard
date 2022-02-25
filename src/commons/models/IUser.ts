@@ -3,7 +3,7 @@ import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 
 interface IUser {
   readonly id: string;
-  readonly googleId: string;
+  readonly externalUsername: string;
   readonly displayName: string;
   readonly image: string;
   readonly profiles: IProfile[];
@@ -13,7 +13,7 @@ interface IUser {
 
 const DEFAULT_USER: IUser = {
   id: null,
-  googleId: "",
+  externalUsername: "",
   displayName: "",
   image: "",
   deleted: false,

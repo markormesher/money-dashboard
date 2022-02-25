@@ -14,11 +14,10 @@ import {
   getBudgetQueryBuilder,
   saveBudget,
 } from "../managers/budget-manager";
-import { requireUser } from "../middleware/auth-middleware";
 
 const router = Express.Router();
 
-router.get("/table-data", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const searchTerm = req.query.searchTerm;
   const currentOnly = req.query.currentOnly === "true";
@@ -50,7 +49,7 @@ router.get("/table-data", requireUser, (req: Request, res: Response, next: NextF
     .catch(next);
 });
 
-router.post("/edit/:budgetId?", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/edit/:budgetId?", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const budgetId = req.params.budgetId;
   const properties: Partial<DbBudget> = {
@@ -66,7 +65,7 @@ router.post("/edit/:budgetId?", requireUser, (req: Request, res: Response, next:
     .catch(next);
 });
 
-router.post("/delete/:budgetId", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/delete/:budgetId", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const budgetId = req.params.budgetId;
 
@@ -75,7 +74,7 @@ router.post("/delete/:budgetId", requireUser, (req: Request, res: Response, next
     .catch(next);
 });
 
-router.post("/clone", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.post("/clone", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const budgetIds: string[] = req.body.budgetIds;
   const startDate = req.body.startDate;
@@ -86,7 +85,7 @@ router.post("/clone", requireUser, (req: Request, res: Response, next: NextFunct
     .catch(next);
 });
 
-router.get("/balances", requireUser, (req: Request, res: Response, next: NextFunction) => {
+router.get("/balances", (req: Request, res: Response, next: NextFunction) => {
   getBudgetBalances(req.user as DbUser, true)
     .then((balances: IBudgetBalance[]) => res.json(balances))
     .catch(next);
