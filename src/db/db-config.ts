@@ -1,6 +1,6 @@
 import { join } from "path";
 import { ConnectionOptions } from "typeorm";
-import { isDev, isTest } from "../../commons/utils/env";
+import { isDev, isTest } from "../utils/env";
 import { getSecret } from "../config/config-loader";
 import { PostgresNamingStrategy } from "./PostgresNamingStrategy";
 

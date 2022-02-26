@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { DEFAULT_PROFILE } from "../../commons/models/IProfile";
-import { DEFAULT_USER } from "../../commons/models/IUser";
+import { DEFAULT_PROFILE } from "../../models/IProfile";
+import { DEFAULT_USER } from "../../models/IUser";
 import {
   ProfileActions,
   profilesReducer,

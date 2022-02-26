@@ -5,10 +5,10 @@ import { formatDistanceToNow } from "date-fns";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatCurrency } from "../../helpers/formatters";
 import { Card } from "../_ui/Card/Card";
-import { IAccount } from "../../../commons/models/IAccount";
-import { DEFAULT_CURRENCY_CODE, CurrencyCode, getCurrency, DEFAULT_CURRENCY } from "../../../commons/models/ICurrency";
+import { IAccount } from "../../../models/IAccount";
+import { DEFAULT_CURRENCY_CODE, CurrencyCode, getCurrency, DEFAULT_CURRENCY } from "../../../models/ICurrency";
 import { combine } from "../../helpers/style-helpers";
-import { ExchangeRateMap } from "../../../commons/models/IExchangeRate";
+import { ExchangeRateMap } from "../../../models/IExchangeRate";
 
 interface IDashboardExchangeRateHistoryProps {
   readonly accounts?: IAccount[];

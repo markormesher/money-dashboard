@@ -1,6 +1,6 @@
 import { Request } from "express";
 import { SelectQueryBuilder } from "typeorm";
-import { IDataTableResponse } from "../../commons/models/IDataTableResponse";
+import { IDataTableResponse } from "../models/IDataTableResponse";
 import { BaseModel } from "../db/models/BaseModel";
 
 function getDataForTable<T extends BaseModel>(

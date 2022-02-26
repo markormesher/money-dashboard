@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { IUser } from "../../../commons/models/IUser";
+import { IUser } from "../../models/IUser";
 import { DbProfile } from "./DbProfile";
 
 @Entity("user")

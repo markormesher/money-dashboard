@@ -2,7 +2,7 @@ import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Brackets } from "typeorm";
 import { startOfDay } from "date-fns";
-import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
+import { IBudgetBalance } from "../models/IBudgetBalance";
 import { DbBudget } from "../db/models/DbBudget";
 import { DbCategory } from "../db/models/DbCategory";
 import { DbUser } from "../db/models/DbUser";

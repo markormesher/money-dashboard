@@ -1,12 +1,12 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import { IDetailedCategoryBalance } from "../../../commons/models/IDetailedCategoryBalance";
-import { ITaxYearDepositsData } from "../../../commons/models/ITaxYearDepositsData";
-import { DateModeOption, ITransaction } from "../../../commons/models/ITransaction";
-import { getTaxYear, groupBy } from "../../../commons/utils/helpers";
+import { IDetailedCategoryBalance } from "../../models/IDetailedCategoryBalance";
+import { ITaxYearDepositsData } from "../../models/ITaxYearDepositsData";
+import { DateModeOption, ITransaction } from "../../models/ITransaction";
+import { getTaxYear, groupBy } from "../../utils/helpers";
 import { DbUser } from "../../db/models/DbUser";
 import { getTransactionQueryBuilder } from "../../managers/transaction-manager";
-import { AccountTag } from "../../../commons/models/IAccount";
+import { AccountTag } from "../../models/IAccount";
 
 const router = Express.Router();
 

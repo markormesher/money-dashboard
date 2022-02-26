@@ -1,10 +1,10 @@
 import { endOfDay } from "date-fns";
-import { IBalanceHistoryData } from "../../../commons/models/IBalanceHistoryData";
+import { IBalanceHistoryData } from "../../models/IBalanceHistoryData";
 import { DbUser } from "../../db/models/DbUser";
-import { DateModeOption, compareTransactionsByDate } from "../../../commons/models/ITransaction";
+import { DateModeOption, compareTransactionsByDate } from "../../models/ITransaction";
 import { getExchangeRatesBetweenDates } from "../exchange-rate-manager";
 import { getTransactionQueryBuilder } from "../transaction-manager";
-import { CurrencyCode } from "../../../commons/models/ICurrency";
+import { CurrencyCode } from "../../models/ICurrency";
 
 async function getBalanceHistoryReportData(
   user: DbUser,

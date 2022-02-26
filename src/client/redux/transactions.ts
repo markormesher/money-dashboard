@@ -6,7 +6,7 @@ import {
   getNextTransactionForContinuousCreation,
   ITransaction,
   mapTransactionForApi,
-} from "../../commons/models/ITransaction";
+} from "../../models/ITransaction";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";

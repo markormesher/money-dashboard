@@ -2,13 +2,13 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IAccount } from "../../../commons/models/IAccount";
-import { ICategory } from "../../../commons/models/ICategory";
-import { DEFAULT_TRANSACTION, ITransaction } from "../../../commons/models/ITransaction";
+import { IAccount } from "../../../models/IAccount";
+import { ICategory } from "../../../models/ICategory";
+import { DEFAULT_TRANSACTION, ITransaction } from "../../../models/ITransaction";
 import {
   ITransactionValidationResult,
   validateTransaction,
-} from "../../../commons/models/validators/TransactionValidator";
+} from "../../../models/validators/TransactionValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
@@ -23,7 +23,7 @@ import { ControlledTextArea } from "../_ui/ControlledInputs/ControlledTextArea";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { SuggestionTextInput } from "../_ui/SuggestionTextInput/SuggestionTextInput";
-import { DEFAULT_CURRENCY_CODE } from "../../../commons/models/ICurrency";
+import { DEFAULT_CURRENCY_CODE } from "../../../models/ICurrency";
 
 interface ITransactionEditModalProps {
   readonly transactionToEdit?: ITransaction;

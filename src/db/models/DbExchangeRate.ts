@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn, BaseEntity } from "typeorm";
 import { BigIntTransformer } from "../BigIntTransformer";
-import { IExchangeRate } from "../../../commons/models/IExchangeRate";
-import { CurrencyCode } from "../../../commons/models/ICurrency";
+import { IExchangeRate } from "../../models/IExchangeRate";
+import { CurrencyCode } from "../../models/ICurrency";
 
 @Entity("exchange_rate")
 class DbExchangeRate extends BaseEntity implements IExchangeRate {

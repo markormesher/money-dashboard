@@ -1,7 +1,7 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Brackets } from "typeorm";
-import { IAccountBalance } from "../../commons/models/IAccountBalance";
+import { IAccountBalance } from "../models/IAccountBalance";
 import { DbAccount } from "../db/models/DbAccount";
 import { DbUser } from "../db/models/DbUser";
 import { getDataForTable } from "../helpers/datatable-helper";
@@ -14,7 +14,7 @@ import {
   setAccountActive,
   updateAssetBalance,
 } from "../managers/account-manager";
-import { IAccountBalanceUpdate } from "../../commons/models/IAccountBalanceUpdate";
+import { IAccountBalanceUpdate } from "../models/IAccountBalanceUpdate";
 
 const router = Express.Router();
 

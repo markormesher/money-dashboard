@@ -10,6 +10,7 @@ import { delayPromise } from "./utils/utils";
 import { typeormConf } from "./db/db-config";
 import { MigrationRunner } from "./db/migrations/MigrationRunner";
 import { setupApiRoutes } from "./middleware/api-routes";
+import { setupClientRoutes } from "./middleware/client-routes";
 import { loadUser } from "./middleware/auth-middleware";
 
 (async function(): Promise<void> {
@@ -53,7 +54,7 @@ import { loadUser } from "./middleware/auth-middleware";
 
   // routes
   setupApiRoutes(app);
-  // setupClientRoutes(app);
+  setupClientRoutes(app);
 
   // error handlers
   app.use((error: StatusError, req: Request, res: Response) => {

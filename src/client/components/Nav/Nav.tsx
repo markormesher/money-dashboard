@@ -18,7 +18,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
-import { IAccount } from "../../../commons/models/IAccount";
+import { IAccount } from "../../../models/IAccount";
 import { startLoadAccountList } from "../../redux/accounts";
 import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 import * as style from "./Nav.scss";

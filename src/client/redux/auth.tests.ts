@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { DEFAULT_PROFILE } from "../../commons/models/IProfile";
-import { IUser } from "../../commons/models/IUser";
+import { DEFAULT_PROFILE } from "../../models/IProfile";
+import { IUser } from "../../models/IUser";
 import { AuthActions, authReducer, setCurrentUser, startLoadCurrentUser, unsetCurrentUser } from "./auth";
 
 describe(__filename, () => {

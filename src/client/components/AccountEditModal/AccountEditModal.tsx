@@ -8,9 +8,9 @@ import {
   AccountTag,
   AccountType,
   ACCOUNT_TAG_DISPLAY_NAMES,
-} from "../../../commons/models/IAccount";
-import { IAccountValidationResult, validateAccount } from "../../../commons/models/validators/AccountValidator";
-import { ALL_CURRENCIES, CurrencyCode } from "../../../commons/models/ICurrency";
+} from "../../../models/IAccount";
+import { IAccountValidationResult, validateAccount } from "../../../models/validators/AccountValidator";
+import { ALL_CURRENCIES, CurrencyCode } from "../../../models/ICurrency";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { setAccountToEdit, startSaveAccount } from "../../redux/accounts";
 import { IRootState } from "../../redux/root";

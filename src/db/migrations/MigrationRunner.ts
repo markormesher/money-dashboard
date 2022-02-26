@@ -1,6 +1,6 @@
 import { ConnectionOptions, createConnection, QueryRunner } from "typeorm";
-import { logger } from "../../../commons/utils/logging";
-import { delayPromise } from "../../../commons/utils/utils";
+import { logger } from "../../utils/logging";
+import { delayPromise } from "../../utils/utils";
 import { allMigrations } from "./all-migrations";
 
 /*

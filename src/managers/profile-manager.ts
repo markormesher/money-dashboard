@@ -1,6 +1,6 @@
 import { SelectQueryBuilder } from "typeorm";
-import { StatusError } from "../../commons/StatusError";
-import { cleanUuid } from "../../commons/utils/entities";
+import { StatusError } from "../utils/StatusError";
+import { cleanUuid } from "../utils/entities";
 import { DbProfile } from "../db/models/DbProfile";
 import { DbUser } from "../db/models/DbUser";
 import { getUser } from "./user-manager";

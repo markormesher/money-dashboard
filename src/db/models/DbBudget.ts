@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { IBudget } from "../../../commons/models/IBudget";
+import { IBudget } from "../../models/IBudget";
 import { BigIntTransformer } from "../BigIntTransformer";
 import { BaseModel } from "./BaseModel";
 import { DbCategory } from "./DbCategory";

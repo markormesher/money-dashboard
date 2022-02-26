@@ -1,5 +1,4 @@
 const { resolve, join } = require("path");
-const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WebpackNodeExternals = require("webpack-node-externals");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -17,9 +16,7 @@ if (!IS_TEST && !IS_PROD && !IS_DEV) {
 }
 
 const outputDir = resolve(__dirname, "build", "client");
-const entryPoints = IS_TEST
-  ? glob.sync("./src/client/**/*.tests.{ts,tsx}")
-  : resolve(__dirname, "src", "client", "index.tsx");
+const entryPoints = resolve(__dirname, "src", "client", "index.tsx");
 
 const babelLoader = {
   loader: "babel-loader",
@@ -46,7 +43,7 @@ const tsLoader = {
   loader: "ts-loader",
   options: {
     transpileOnly: true,
-    configFile: IS_TEST ? "tsconfig.client-test.json" : "tsconfig.client.json",
+    configFile: IS_TEST ? "tsconfig.test.json" : "tsconfig.json",
     compilerOptions: {
       module: "esnext",
     },

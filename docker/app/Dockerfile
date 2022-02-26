@@ -3,14 +3,15 @@ FROM node:dubnium
 WORKDIR /money-dashboard
 
 # dependencies
-COPY ./private-packages ./private-packages
-COPY package.json .yarnrc yarn.lock ./
+ARG PRIVATE_PACKAGE_REPO PRIVATE_PACKAGE_REPO_TOKEN
+COPY ./.scripts/get-private-packages.sh ./.scripts/
+COPY package.json yarn.lock ./
+RUN yarn get-private-packages
 RUN yarn install
 
 # source
-COPY ./docker ./docker
 COPY ./src ./src
-COPY ./tsconfig.json ./tsconfig.api*.json ./
+COPY ./tsconfig.json ./webpack.config.js ./
 
 # build
 ARG BUILD_TYPE=production

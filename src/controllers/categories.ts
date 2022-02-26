@@ -1,6 +1,6 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
+import { ICategoryBalance } from "../models/ICategoryBalance";
 import { DbCategory } from "../db/models/DbCategory";
 import { DbUser } from "../db/models/DbUser";
 import { getDataForTable } from "../helpers/datatable-helper";

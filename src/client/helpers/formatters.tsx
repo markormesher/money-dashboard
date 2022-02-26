@@ -1,9 +1,9 @@
 import * as React from "react";
 import { ReactElement } from "react";
 import { format, getDate, getMonth, getYear, endOfMonth } from "date-fns";
-import { IAccount } from "../../commons/models/IAccount";
-import { IBudget } from "../../commons/models/IBudget";
-import { ICategory } from "../../commons/models/ICategory";
+import { IAccount } from "../../models/IAccount";
+import { IBudget } from "../../models/IBudget";
+import { ICategory } from "../../models/ICategory";
 import { Badge } from "../components/_ui/Badge/Badge";
 import * as bs from "../global-styles/Bootstrap.scss";
 import * as gs from "../global-styles/Global.scss";

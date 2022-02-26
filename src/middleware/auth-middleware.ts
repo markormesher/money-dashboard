@@ -1,6 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { logger } from "../../commons/utils/logging";
-import { StatusError } from "../../commons/StatusError";
+import { logger } from "../utils/logging";
+import { StatusError } from "../utils/StatusError";
 import { getSecret } from "../config/config-loader";
 import { getOrCreateUserWithExternalUsername } from "../managers/user-manager";
 import { DbUser } from "../db/models/DbUser";

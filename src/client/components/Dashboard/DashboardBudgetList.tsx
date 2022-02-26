@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import ReactTooltip from "react-tooltip";
-import { IBudgetBalance } from "../../../commons/models/IBudgetBalance";
+import { IBudgetBalance } from "../../../models/IBudgetBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatBudgetPeriod, formatCurrency, getBudgetPeriodType } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";

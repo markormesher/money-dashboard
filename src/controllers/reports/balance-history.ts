@@ -1,7 +1,7 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { startOfDay, endOfDay } from "date-fns";
-import { DateModeOption } from "../../../commons/models/ITransaction";
+import { DateModeOption } from "../../models/ITransaction";
 import { DbUser } from "../../db/models/DbUser";
 import { getBalanceHistoryReportData } from "../../managers/reports/balance-history";
 

@@ -1,7 +1,7 @@
 import { SelectQueryBuilder } from "typeorm";
-import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
-import { StatusError } from "../../commons/StatusError";
-import { cleanUuid } from "../../commons/utils/entities";
+import { IBudgetBalance } from "../models/IBudgetBalance";
+import { StatusError } from "../utils/StatusError";
+import { cleanUuid } from "../utils/entities";
 import { DbBudget } from "../db/models/DbBudget";
 import { DbUser } from "../db/models/DbUser";
 import { getTransactionQueryBuilder } from "./transaction-manager";

@@ -3,7 +3,7 @@ import { ErrorInfo, PureComponent, ReactElement, ReactNode } from "react";
 import ReactTooltip from "react-tooltip";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
-import { IUser } from "../../../commons/models/IUser";
+import { IUser } from "../../../models/IUser";
 import { DetailedError } from "../../helpers/errors/DetailedError";
 import { Http404Error } from "../../helpers/errors/Http404Error";
 import { IRootState } from "../../redux/root";

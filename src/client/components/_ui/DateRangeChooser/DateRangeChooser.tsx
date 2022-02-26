@@ -2,7 +2,7 @@ import { faCalendar, faCheck } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { Component, MouseEvent, ReactNode } from "react";
 import { startOfMonth, endOfMonth, addMonths, startOfYear, endOfYear, addYears, subYears, isSameDay } from "date-fns";
-import { IDateRange } from "../../../../commons/models/IDateRange";
+import { IDateRange } from "../../../../models/IDateRange";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
@@ -12,7 +12,7 @@ import { ButtonDropDown, IButtonDropDownProps } from "../ButtonDropDown/ButtonDr
 import {
   validateDateRange,
   IDateRangeValidationResult,
-} from "../../../../commons/models/validators/DateRangeValidator";
+} from "../../../../models/validators/DateRangeValidator";
 
 interface IDateRangeChooserProps {
   readonly startDate?: number;

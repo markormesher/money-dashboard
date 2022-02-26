@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import { isProd, runningInDocker } from "../../commons/utils/env";
+import { isProd, runningInDocker } from "../utils/env";
 
 interface IConstants {
   env: string;

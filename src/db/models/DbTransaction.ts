@@ -1,5 +1,5 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ITransaction } from "../../../commons/models/ITransaction";
+import { ITransaction } from "../../models/ITransaction";
 import { BigIntTransformer } from "../BigIntTransformer";
 import { DbAccount } from "./DbAccount";
 import { DbCategory } from "./DbCategory";

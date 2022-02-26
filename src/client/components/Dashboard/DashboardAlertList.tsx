@@ -1,7 +1,7 @@
 import { faExclamationTriangle } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode, ReactElement } from "react";
-import { ICategoryBalance } from "../../../commons/models/ICategoryBalance";
+import { ICategoryBalance } from "../../../models/ICategoryBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatCurrencyStyled } from "../../helpers/formatters";
 import { Card } from "../_ui/Card/Card";

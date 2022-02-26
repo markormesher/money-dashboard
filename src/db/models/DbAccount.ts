@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { IAccount, AccountTag, AccountType } from "../../../commons/models/IAccount";
-import { CurrencyCode } from "../../../commons/models/ICurrency";
+import { IAccount, AccountTag, AccountType } from "../../models/IAccount";
+import { CurrencyCode } from "../../models/ICurrency";
 import { BaseModel } from "./BaseModel";
 import { DbProfile } from "./DbProfile";
 import { DbTransaction } from "./DbTransaction";

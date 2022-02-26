@@ -1,8 +1,8 @@
 import { SelectQueryBuilder } from "typeorm";
-import { IAccountBalance } from "../../commons/models/IAccountBalance";
-import { StatusError } from "../../commons/StatusError";
-import { cleanUuid } from "../../commons/utils/entities";
-import { IAccountBalanceUpdate } from "../../commons/models/IAccountBalanceUpdate";
+import { IAccountBalance } from "../models/IAccountBalance";
+import { StatusError } from "../utils/StatusError";
+import { cleanUuid } from "../utils/entities";
+import { IAccountBalanceUpdate } from "../models/IAccountBalanceUpdate";
 import { DbAccount } from "../db/models/DbAccount";
 import { DbUser } from "../db/models/DbUser";
 import { DbTransaction } from "../db/models/DbTransaction";

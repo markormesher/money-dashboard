@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "../../commons/models/ICategory";
+import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "../../models/ICategory";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
