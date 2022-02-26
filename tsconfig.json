@@ -1,20 +1,19 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es2018",
-		"jsx": "react",
-		"noImplicitAny": true,
-		"moduleResolution": "node",
-		"outDir": "./build",
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true,
-		"alwaysStrict": true,
-		"baseUrl": "./",
-		"allowJs": true,
-		"removeComments": false,
-		"sourceMap": true
-	},
-	"exclude": [
-		"./node_modules"
-	]
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2018",
+    "jsx": "react",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "outDir": "./build",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "alwaysStrict": true,
+    "baseUrl": "./",
+    "allowJs": true,
+    "removeComments": false,
+    "sourceMap": true
+  },
+  "include": ["./src/server.ts"],
+  "exclude": ["./node_modules"]
 }

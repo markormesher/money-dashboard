@@ -8,4 +8,4 @@ if [[ "${type}" != "latest" ]] && [[ "${type}" != "historical" ]]; then
 fi
 
 echo "Calling /api/exchange-rates/update-${type} @ $(date)"
-curl -XPOST --fail --silent --show-error -H "Authorization: $(cat /run/secrets/cron.secret)" --url "api:3000/api/exchange-rates/update-${type}"
+curl -XPOST --fail --silent --show-error -H "Authorization: $(cat /run/secrets/cron.secret)" --url "app:3000/api/exchange-rates/update-${type}"

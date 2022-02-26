@@ -1,10 +1,10 @@
 import { endOfDay } from "date-fns";
 import { DbUser } from "../../db/models/DbUser";
-import { DateModeOption, compareTransactionsByDate } from "../../../commons/models/ITransaction";
+import { DateModeOption, compareTransactionsByDate } from "../../models/ITransaction";
 import { getExchangeRatesBetweenDates } from "../exchange-rate-manager";
 import { getTransactionQueryBuilder } from "../transaction-manager";
-import { IAssetPerformanceData } from "../../../commons/models/IAssetPerformanceData";
-import { CurrencyCode } from "../../../commons/models/ICurrency";
+import { IAssetPerformanceData } from "../../models/IAssetPerformanceData";
+import { CurrencyCode } from "../../models/ICurrency";
 
 async function getAssetPerformanceReportData(
   user: DbUser,

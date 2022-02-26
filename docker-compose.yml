@@ -1,32 +1,10 @@
 version: "3.3"
 
 services:
-  client:
+  app:
     build:
       context: .
-      dockerfile: docker/client/Dockerfile
-    restart: always
-    networks:
-      - traefik
-      - internal
-    depends_on:
-      - api
-    environment:
-      - NPM_EXECPATH=yarn
-      - npm_execpath=yarn
-    volumes:
-      - ./logs:/logs
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik_default
-      - traefik.http.routers.money-dashboard-client.rule=Host(`money-dashboard.tatsu.casa`, `www.money-dashboard.tatsu.casa`)
-      - traefik.http.routers.money-dashboard-client.tls.certresolver=letsencrypt
-      - traefik.http.routers.money-dashboard-client.middlewares=strip-www@file,authelia@file
-
-  api:
-    build:
-      context: .
-      dockerfile: docker/api/Dockerfile
+      dockerfile: docker/app/Dockerfile
     restart: always
     networks:
       - traefik
@@ -46,17 +24,15 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_default
-      - traefik.http.routers.money-dashboard-api.rule=Host(`money-dashboard.tatsu.casa`, `www.money-dashboard.tatsu.casa`) && PathPrefix(`/api`)
-      - traefik.http.routers.money-dashboard-api.tls.certresolver=letsencrypt
-      - traefik.http.routers.money-dashboard-api.middlewares=strip-www@file,authelia@file
+      - traefik.http.routers.money-dashboard.rule=Host(`money-dashboard.tatsu.casa`, `www.money-dashboard.tatsu.casa`)
+      - traefik.http.routers.money-dashboard.tls.certresolver=letsencrypt
+      - traefik.http.routers.money-dashboard.middlewares=strip-www@file,authelia@file
 
   cron:
     build: ./docker/cron
     restart: always
     networks:
       - internal
-    depends_on:
-      - api
     secrets:
       - cron.secret
 
@@ -79,11 +55,11 @@ volumes:
 
 secrets:
   cron.secret:
-    file: ./src/api/config/secrets/cron.secret
+    file: ./src/config/secrets/cron.secret
   open-exchange-rates.key:
-    file: ./src/api/config/secrets/open-exchange-rates.key
+    file: ./src/config/secrets/open-exchange-rates.key
   postgres.password:
-    file: ./src/api/config/secrets/postgres.password
+    file: ./src/config/secrets/postgres.password
 
 networks:
   internal:
