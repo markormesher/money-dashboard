@@ -4,10 +4,7 @@ WORKDIR /money-dashboard
 
 # dependencies
 COPY ./private-packages ./private-packages
-COPY package.json-versionless .yarnrc yarn.lock ./
-RUN mv package.json-versionless package.json
-RUN yarn install
-COPY package.json ./
+COPY package.json .yarnrc yarn.lock ./
 RUN yarn install
 
 # source
@@ -23,5 +20,4 @@ RUN if [ $BUILD_TYPE = development ]; then yarn build-api-dev; fi
 
 # run
 EXPOSE 3000
-ENTRYPOINT ["./docker/api/docker-entrypoint.sh"]
 CMD yarn start-api

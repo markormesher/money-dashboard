@@ -15,7 +15,7 @@ services:
       - NPM_EXECPATH=yarn
       - npm_execpath=yarn
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/logs
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_default
@@ -42,7 +42,7 @@ services:
       - npm_execpath=yarn
       - RUNNING_IN=docker
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/logs
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_default
