@@ -38,18 +38,16 @@
     "build-client-dev-webpack": "cross-env NODE_ENV=development webpack",
     "build-client-test-webpack": "cross-env NODE_ENV=test webpack",
     "// linters": "//",
-    "lint": "run-s check-cross-refs check-versionless-package lint-src lint-style",
+    "lint": "run-s check-cross-refs lint-src lint-style",
     "lint-fix": "run-s lint-src-fix lint-style-fix",
     "lint-src": "eslint --ext ts,tsx,js,jsx src",
     "lint-src-fix": "eslint --fix --ext ts,tsx,js,jsx src",
     "lint-style": "prettier -c \"src/**/*.{css,scss}\"",
     "lint-style-fix": "prettier --write \"src/**/*.{css,scss}\"",
     "// misc": "//",
-    "bundlewatch": "bundlewatch --config ./.bundlewatch/config.json",
     "clean": "rimraf ./build ./coverage ./.nyc_output",
     "copy-api-config": "copyfiles -u 2 -e \"./**/*.ts\" \"./src/api/config/**\" ./build/api/.",
-    "check-cross-refs": "./.scripts/check-cross-project-references.sh",
-    "check-versionless-package": "./.scripts/check-versionless-package-file.sh"
+    "check-cross-refs": "./.scripts/check-cross-project-references.sh"
   },
   "dependencies": {
     "@dragonlabs/redux-cache-key-util": "^0.0.13",
@@ -121,7 +119,6 @@
     "babel-plugin-date-fns": "^2.0.0",
     "babel-plugin-istanbul": "^5.1.0",
     "browserify": "^16.2.2",
-    "bundlewatch": "^0.3.2",
     "chai": "^4.2.0",
     "chai-string": "^1.5.0",
     "copyfiles": "^2.1.0",
