@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: docker/app/Dockerfile
+      dockerfile: Dockerfile
     restart: always
     networks:
       - traefik
@@ -12,7 +12,6 @@ services:
     depends_on:
       - postgres_primary
     secrets:
-      - cron.secret
       - open-exchange-rates.key
       - postgres.password
     environment:
@@ -27,14 +26,6 @@ services:
       - traefik.http.routers.money-dashboard.rule=Host(`money-dashboard.tatsu.casa`, `www.money-dashboard.tatsu.casa`)
       - traefik.http.routers.money-dashboard.tls.certresolver=letsencrypt
       - traefik.http.routers.money-dashboard.middlewares=strip-www@file,authelia@file
-
-  cron:
-    build: ./docker/cron
-    restart: always
-    networks:
-      - internal
-    secrets:
-      - cron.secret
 
   postgres_primary:
     image: postgres:10.1-alpine
@@ -54,8 +45,6 @@ volumes:
   postgres-primary-data:
 
 secrets:
-  cron.secret:
-    file: ./src/config/secrets/cron.secret
   open-exchange-rates.key:
     file: ./src/config/secrets/open-exchange-rates.key
   postgres.password:

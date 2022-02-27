@@ -1,6 +1,7 @@
 import * as BodyParser from "body-parser";
 import * as Express from "express";
 import { Request, Response } from "express";
+import * as Cron from "node-cron";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { StatusError } from "./utils/StatusError";
@@ -12,6 +13,7 @@ import { MigrationRunner } from "./db/migrations/MigrationRunner";
 import { setupApiRoutes } from "./middleware/api-routes";
 import { setupClientRoutes } from "./middleware/client-routes";
 import { loadUser } from "./middleware/auth-middleware";
+import { updateLatestExchangeRates, updateHistoricalExchangeRages } from "./managers/exchange-rate-manager";
 
 (async function(): Promise<void> {
   const app = Express();
@@ -47,6 +49,10 @@ import { loadUser } from "./middleware/auth-middleware";
   logger.info("Creating database connection");
   await createConnection(typeormConf);
   logger.info("Database connection created successfully");
+
+  // regular tasks
+  Cron.schedule("0 */2 * * *", updateLatestExchangeRates);
+  Cron.schedule("0 2 * * *", () => updateHistoricalExchangeRages(7));
 
   // middleware
   app.use(BodyParser.json());

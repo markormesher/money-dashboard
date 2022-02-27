@@ -1,7 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { logger } from "../utils/logging";
 import { StatusError } from "../utils/StatusError";
-import { getSecret } from "../config/config-loader";
 import { getOrCreateUserWithExternalUsername } from "../managers/user-manager";
 import { DbUser } from "../db/models/DbUser";
 
@@ -26,12 +25,4 @@ const loadUser: RequestHandler = (req: Request, res: Response, next: NextFunctio
   });
 };
 
-const requireCronAuth: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
-  if (req.headers.authorization === getSecret("cron.secret")) {
-    next();
-  } else {
-    throw new StatusError(401);
-  }
-};
-
-export { loadUser, requireCronAuth };
+export { loadUser };

@@ -5,4 +5,4 @@
 
 A web-based record keeper for current accounts, budgets, savings and investments.
 
-*Note:* this is a tool that I've built for personal use; it is **not** something that I'll be releasing for public use at any point in the foreseeable future.
+Feel free to clone it and have a play - see [docker-compose.yml](./docker-compose.yml) for an example setup. Note that this is an opinionated tool that I've built for personal use, not something I intend to formally "release" and support for anyone else.
