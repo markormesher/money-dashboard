@@ -128,7 +128,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
         <td>
           {profile.name}
           {activeProfile && (
-            <Badge className={bs.badgeInfo} marginLeft={true}>
+            <Badge className={bs.bgInfo} marginLeft={true}>
               Active
             </Badge>
           )}

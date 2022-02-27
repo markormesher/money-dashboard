@@ -102,7 +102,7 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
         onCloseRequest={this.handleCancel}
       >
         <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.formGroup}>
+          <div className={bs.mb3}>
             <ControlledSelectInput
               id={"category"}
               label={"Category"}
@@ -127,7 +127,7 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
             </ControlledSelectInput>
           </div>
           <div className={bs.row}>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledTextInput
                 id={"amount"}
                 label={"Amount"}
@@ -142,8 +142,8 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
                 }}
               />
             </div>
-            <div className={combine(bs.col, bs.formGroup)}>
-              <label>Date Range</label>
+            <div className={combine(bs.col, bs.mb3)}>
+              <label className={bs.formLabel}>Date Range</label>
               <DateRangeChooser
                 startDate={currentValues.startDate ? currentValues.startDate : undefined}
                 endDate={currentValues.endDate ? currentValues.endDate : undefined}
@@ -158,15 +158,15 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
               />
             </div>
           </div>
-          <div className={bs.formGroup}>
-            <label>Type</label>
+          <div className={bs.mb3}>
+            <label className={bs.formLabel}>Type</label>
             <div className={bs.row}>
               <div className={bs.col}>
                 <ControlledRadioInput
                   id={"type-budget"}
                   name={"type"}
                   value={"budget"}
-                  label={<Badge className={bs.badgeInfo}>Budget</Badge>}
+                  label={<Badge className={bs.bgInfo}>Budget</Badge>}
                   checked={currentValues.type === "budget"}
                   disabled={editorBusy}
                   onValueChange={this.handleTypeChange}
@@ -177,7 +177,7 @@ class UCBudgetEditModal extends PureComponent<IBudgetEditModalProps, IBudgetEdit
                   id={"type-bill"}
                   name={"type"}
                   value={"bill"}
-                  label={<Badge className={bs.badgeWarning}>Bill</Badge>}
+                  label={<Badge className={bs.bgWarning}>Bill</Badge>}
                   checked={currentValues.type === "bill"}
                   disabled={editorBusy}
                   onValueChange={this.handleTypeChange}

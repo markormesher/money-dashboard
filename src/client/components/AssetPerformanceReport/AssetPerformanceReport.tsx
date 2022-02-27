@@ -324,7 +324,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
             <RelativeChangeIcon
               change={netGrowth}
               iconProps={{
-                className: bs.mr2,
+                className: bs.me2,
               }}
             />
             {formatCurrencyForStat(netGrowth)}

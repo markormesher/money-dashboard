@@ -91,10 +91,10 @@ class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
           <strong>{budget.category.name}</strong>
         </p>
         <div data-tip={tooltip}>
-          <div className={bs.progress}>
-            <div className={combine(bs.progressBar, barClass)} style={{ width: `${percentSpend * 100}%` }}>
+          <div className={bs.peogress}>
+            <div className={combine(bs.peogressBar, barClass)} style={{ width: `${percentSpend * 100}%` }}>
               <span>
-                {barIcon && <FontAwesomeIcon icon={barIcon} className={bs.mr2} />}
+                {barIcon && <FontAwesomeIcon icon={barIcon} className={bs.me2} />}
                 {barMsg}
               </span>
             </div>

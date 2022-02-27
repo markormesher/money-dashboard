@@ -129,7 +129,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
       <div className={bs.row}>
         {this.state.customRangeChooserOpen && (
           <div className={bs.col}>
-            <div className={bs.formGroup}>
+            <div className={bs.mb3}>
               <ControlledDateInput
                 id={"custom-from"}
                 label={"From"}
@@ -139,7 +139,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
                 onValueChange={this.handleCustomRangeStartChange}
               />
             </div>
-            <div className={bs.formGroup}>
+            <div className={bs.mb3}>
               <ControlledDateInput
                 id={"custom-to"}
                 label={"To"}
@@ -149,7 +149,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
                 onValueChange={this.handleCustomRangeEndChange}
               />
             </div>
-            <div className={bs.formGroup}>
+            <div className={bs.mb3}>
               <IconBtn
                 icon={faCheck}
                 text={"OK"}

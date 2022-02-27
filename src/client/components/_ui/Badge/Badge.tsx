@@ -12,7 +12,7 @@ interface IBadgeProps {
 class Badge extends Component<IBadgeProps> {
   public render(): ReactNode {
     const { className, marginRight, marginLeft } = this.props;
-    const classes = combine(bs.badge, className || bs.badgeLight, marginRight && bs.mr1, marginLeft && bs.ml1);
+    const classes = combine(bs.badge, className || bs.bgLight, marginRight && bs.me1, marginLeft && bs.ms1);
     return <span className={classes}>{this.props.children}</span>;
   }
 }

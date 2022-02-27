@@ -59,13 +59,13 @@ function capitaliseFirstLetter(str?: string): string {
 function generateAccountTypeBadge(account: IAccount): ReactElement<void> {
   switch (account.type) {
     case "current":
-      return <Badge className={bs.badgeInfo}>Current Account</Badge>;
+      return <Badge className={bs.bgInfo}>Current Account</Badge>;
     case "savings":
-      return <Badge className={bs.badgeSuccess}>Savings Account</Badge>;
+      return <Badge className={bs.bgSuccess}>Savings Account</Badge>;
     case "asset":
-      return <Badge className={bs.badgeWarning}>Asset</Badge>;
+      return <Badge className={bs.bgWarning}>Asset</Badge>;
     case "other":
-      return <Badge className={bs.badgeDanger}>Other</Badge>;
+      return <Badge className={bs.bgDanger}>Other</Badge>;
     default:
       throw new Error(`Invalid account type: ${account.type}`);
   }
@@ -75,9 +75,9 @@ function generateAccountTypeBadge(account: IAccount): ReactElement<void> {
 
 function generateBudgetTypeBadge(budget: IBudget): ReactElement<void> {
   if (budget.type === "budget") {
-    return <Badge className={bs.badgeInfo}>Budget</Badge>;
+    return <Badge className={bs.bgInfo}>Budget</Badge>;
   } else {
-    return <Badge className={bs.badgeWarning}>Bill</Badge>;
+    return <Badge className={bs.bgWarning}>Bill</Badge>;
   }
 }
 
@@ -130,28 +130,28 @@ function generateCategoryTypeBadge(category: ICategory): Array<ReactElement<void
   const output = [] as Array<ReactElement<void>>;
   if (category.isAssetGrowthCategory) {
     output.push(
-      <Badge key={"category-asset"} className={bs.badgeWarning} marginRight={true}>
+      <Badge key={"category-asset"} className={bs.bgWarning} marginRight={true}>
         Asset Growth
       </Badge>,
     );
   }
   if (category.isExpenseCategory) {
     output.push(
-      <Badge key={"category-expense"} className={bs.badgeDanger} marginRight={true}>
+      <Badge key={"category-expense"} className={bs.bgDanger} marginRight={true}>
         Expense
       </Badge>,
     );
   }
   if (category.isIncomeCategory) {
     output.push(
-      <Badge key={"category-income"} className={bs.badgeSuccess} marginRight={true}>
+      <Badge key={"category-income"} className={bs.bgSuccess} marginRight={true}>
         Income
       </Badge>,
     );
   }
   if (category.isMemoCategory) {
     output.push(
-      <Badge key={"category-memo"} className={bs.badgeInfo} marginRight={true}>
+      <Badge key={"category-memo"} className={bs.bgInfo} marginRight={true}>
         Memo
       </Badge>,
     );

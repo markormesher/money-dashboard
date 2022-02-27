@@ -115,7 +115,7 @@ class Modal extends PureComponent<IModalProps, IModalState> {
               {title && (
                 <div className={bs.modalHeader}>
                   <h5 className={bs.modalTitle}>{title}</h5>
-                  <button className={bs.close} onClick={onCloseRequest}>
+                  <button className={bs.btnClose} onClick={onCloseRequest}>
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>

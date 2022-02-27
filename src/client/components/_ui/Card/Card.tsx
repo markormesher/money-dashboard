@@ -19,7 +19,7 @@ class Card extends PureComponent<ICardProps> {
       <div className={combine(bs.card, style.card)}>
         {title && (
           <h5 className={combine(bs.cardHeader, style.cardHeader, bs.h5)}>
-            {icon && <FontAwesomeIcon icon={icon} className={combine(bs.mr3, iconClasses)} />}
+            {icon && <FontAwesomeIcon icon={icon} className={combine(bs.me3, iconClasses)} />}
             {title}
           </h5>
         )}

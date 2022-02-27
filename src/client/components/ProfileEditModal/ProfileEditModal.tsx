@@ -84,7 +84,7 @@ class UCProfileEditModal extends PureComponent<IProfileEditModalProps, IProfileE
         onCloseRequest={this.handleCancel}
       >
         <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.formGroup}>
+          <div className={bs.mb3}>
             <ControlledTextInput
               id={"name"}
               label={"Name"}

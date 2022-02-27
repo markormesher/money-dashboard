@@ -131,7 +131,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
       >
         <ControlledForm onSubmit={this.handleSave}>
           <div className={bs.row}>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledDateInput
                 id={"transactionDate"}
                 label={"Transaction Date"}
@@ -144,7 +144,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
                 }}
               />
             </div>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledDateInput
                 id={"effectiveDate"}
                 label={"Effective Date"}
@@ -159,7 +159,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
             </div>
           </div>
           <div className={bs.row}>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledSelectInput
                 id={"account"}
                 label={"Account"}
@@ -183,7 +183,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
                 {!accountList && <option>Loading...</option>}
               </ControlledSelectInput>
             </div>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <SuggestionTextInput
                 id={"payee"}
                 label={"Payee"}
@@ -196,7 +196,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
             </div>
           </div>
           <div className={bs.row}>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledSelectInput
                 id={"category"}
                 label={"Category"}
@@ -217,7 +217,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
                 {!categoryList && <option>Loading...</option>}
               </ControlledSelectInput>
             </div>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledTextInput
                 id={"amount"}
                 label={"Amount" + (currencyNote ? ` (${currencyNote})` : "")}
@@ -233,7 +233,7 @@ class UCTransactionEditModal extends PureComponent<ITransactionEditModalProps, I
               />
             </div>
           </div>
-          <div className={bs.formGroup}>
+          <div className={bs.mb3}>
             <ControlledTextArea
               id={"note"}
               label={"Note"}

@@ -219,7 +219,7 @@ class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBala
             <RelativeChangeIcon
               change={changeAbsolute}
               iconProps={{
-                className: bs.mr2,
+                className: bs.me2,
               }}
             />
             {formatCurrencyForStat(changeAbsolute)}

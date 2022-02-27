@@ -87,7 +87,7 @@ class UCCategoryEditModal extends PureComponent<ICategoryEditModalProps, ICatego
         onCloseRequest={this.handleCancel}
       >
         <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.formGroup}>
+          <div className={bs.mb3}>
             <ControlledTextInput
               id={"name"}
               label={"Name"}
@@ -101,13 +101,13 @@ class UCCategoryEditModal extends PureComponent<ICategoryEditModalProps, ICatego
               }}
             />
           </div>
-          <div className={bs.formGroup}>
-            <label>Type</label>
+          <div className={bs.mb3}>
+            <label className={bs.formLabel}>Type</label>
             <div className={bs.row}>
               <div className={bs.col}>
                 <ControlledCheckboxInput
                   id={"type-income"}
-                  label={<Badge className={bs.badgeSuccess}>Income</Badge>}
+                  label={<Badge className={bs.bgSuccess}>Income</Badge>}
                   checked={currentValues.isIncomeCategory}
                   disabled={editorBusy}
                   onCheckedChange={this.handleTypeCheckedChange}
@@ -116,7 +116,7 @@ class UCCategoryEditModal extends PureComponent<ICategoryEditModalProps, ICatego
               <div className={bs.col}>
                 <ControlledCheckboxInput
                   id={"type-expense"}
-                  label={<Badge className={bs.badgeDanger}>Expense</Badge>}
+                  label={<Badge className={bs.bgDanger}>Expense</Badge>}
                   checked={currentValues.isExpenseCategory}
                   disabled={editorBusy}
                   onCheckedChange={this.handleTypeCheckedChange}
@@ -127,7 +127,7 @@ class UCCategoryEditModal extends PureComponent<ICategoryEditModalProps, ICatego
               <div className={bs.col}>
                 <ControlledCheckboxInput
                   id={"type-asset"}
-                  label={<Badge className={bs.badgeWarning}>Asset Growth</Badge>}
+                  label={<Badge className={bs.bgWarning}>Asset Growth</Badge>}
                   checked={currentValues.isAssetGrowthCategory}
                   disabled={editorBusy}
                   onCheckedChange={this.handleTypeCheckedChange}
@@ -136,7 +136,7 @@ class UCCategoryEditModal extends PureComponent<ICategoryEditModalProps, ICatego
               <div className={bs.col}>
                 <ControlledCheckboxInput
                   id={"type-memo"}
-                  label={<Badge className={bs.badgeInfo}>Memo</Badge>}
+                  label={<Badge className={bs.bgInfo}>Memo</Badge>}
                   checked={currentValues.isMemoCategory}
                   disabled={editorBusy}
                   onCheckedChange={this.handleTypeCheckedChange}

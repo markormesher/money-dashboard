@@ -89,8 +89,8 @@ class UCBudgetCloneModal extends PureComponent<IBudgetCloneModalProps, IBudgetCl
         onCloseRequest={this.handleCancel}
       >
         <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.formGroup}>
-            <label>Date Range</label>
+          <div className={bs.mb3}>
+            <label className={bs.formLabel}>Date Range</label>
             <DateRangeChooser
               startDate={currentValues.startDate ? currentValues.startDate : undefined}
               endDate={currentValues.endDate ? currentValues.endDate : undefined}

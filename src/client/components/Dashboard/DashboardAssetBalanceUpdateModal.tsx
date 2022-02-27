@@ -119,7 +119,7 @@ class UCDashboardAssetBalanceUpdateModal extends PureComponent<
             </div>
           )}
           <div className={bs.row}>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledDateInput
                 id={"date"}
                 label={"Date"}
@@ -129,7 +129,7 @@ class UCDashboardAssetBalanceUpdateModal extends PureComponent<
                 onValueChange={this.handleUpdateDateChange}
               />
             </div>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledTextInput
                 id={"balance"}
                 label={"Balance" + (currencyNote ? ` (${currencyNote})` : "")}

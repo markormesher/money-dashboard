@@ -107,9 +107,9 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
       return (
         <>
           <h6 onClick={this.handleSectionClosedToggle} id={`section-header-${type}`}>
-            <FontAwesomeIcon icon={faCaretRight} className={combine(bs.textMuted, bs.mr2)} fixedWidth={true} />
+            <FontAwesomeIcon icon={faCaretRight} className={combine(bs.textMuted, bs.me2)} fixedWidth={true} />
             {title}
-            <span className={bs.floatRight}>{formatCurrencyStyled(total)}</span>
+            <span className={bs.floatEnd}>{formatCurrencyStyled(total)}</span>
           </h6>
         </>
       );
@@ -117,7 +117,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
       return (
         <>
           <h6 onClick={this.handleSectionClosedToggle} id={`section-header-${type}`}>
-            <FontAwesomeIcon icon={faCaretDown} className={combine(bs.textMuted, bs.mr2)} fixedWidth={true} />
+            <FontAwesomeIcon icon={faCaretDown} className={combine(bs.textMuted, bs.me2)} fixedWidth={true} />
             {title}
           </h6>
           {balances.sort(this.compareAbsoluteGbpBalances).map(this.renderSingleAccountBalance)}
@@ -138,7 +138,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
 
     if (account.note) {
       icons.push(
-        <span className={bs.ml2} key={`account-${account.id}-note`}>
+        <span className={bs.ms2} key={`account-${account.id}-note`}>
           <InfoIcon hoverText={account.note} />
         </span>,
       );
@@ -149,7 +149,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
         `${currency.stringSymbol}${formatCurrency(balance.balance)} converted at 1 ${currency.code} = ` +
         `${formatCurrency(1 / exchangeRate.ratePerGbp)} ${DEFAULT_CURRENCY_CODE}`;
       icons.push(
-        <span className={bs.ml2} key={`account-${account.id}-currency`}>
+        <span className={bs.ms2} key={`account-${account.id}-currency`}>
           <InfoIcon hoverText={currencyNote} customIcon={faRandom} />
         </span>,
       );
@@ -157,7 +157,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
 
     if (account.type === "asset") {
       icons.push(
-        <span className={combine(bs.ml2, styles.editIcon)} key={`account-${account.id}-update`}>
+        <span className={combine(bs.ms2, styles.editIcon)} key={`account-${account.id}-update`}>
           <InfoIcon
             hoverText={"Update balance"}
             customIcon={faEdit}
@@ -172,7 +172,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
       <p key={account.id}>
         {account.name}
         {icons}
-        <span className={bs.floatRight}>{formatCurrencyStyled(gbpBalance)}</span>
+        <span className={bs.floatEnd}>{formatCurrencyStyled(gbpBalance)}</span>
       </p>
     );
   }

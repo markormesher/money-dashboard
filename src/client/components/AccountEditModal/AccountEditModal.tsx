@@ -113,7 +113,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
       >
         <ControlledForm onSubmit={this.handleSave}>
           <div className={bs.row}>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledTextInput
                 id={"name"}
                 label={"Name"}
@@ -129,7 +129,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
             </div>
           </div>
           <div className={bs.row}>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledSelectInput
                 id="type"
                 label={"Type"}
@@ -144,7 +144,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
                 <option value={"other"}>Other</option>
               </ControlledSelectInput>
             </div>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledSelectInput
                 id={"currency"}
                 label={"Currency"}
@@ -161,12 +161,12 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
               </ControlledSelectInput>
             </div>
           </div>
-          <div className={bs.formGroup}>
-            <label>Tags</label>
+          <div className={bs.mb3}>
+            <label className={bs.formLabel}>Tags</label>
             <div className={bs.row}>{tagCheckboxes}</div>
             {errors.tags && <div className={combine(bs.invalidFeedback, bs.dBlock)}>{errors.tags}</div>}
           </div>
-          <div className={bs.formGroup}>
+          <div className={bs.mb3}>
             <ControlledTextArea
               id={"note"}
               label={"Note"}

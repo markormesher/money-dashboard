@@ -144,7 +144,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
         <td>
           {mainDate}
           {mainDate !== altDate && (
-            <span className={bs.ml2}>
+            <span className={bs.ms2}>
               <InfoIcon hoverText={altDate} />
             </span>
           )}
@@ -153,14 +153,14 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
         <td>
           {transaction.payee}
           {transaction.note && (
-            <span className={bs.ml2}>
+            <span className={bs.ms2}>
               <InfoIcon hoverText={transaction.note} />
             </span>
           )}
         </td>
         <td>
           {formatCurrencyStyled(transaction.amount)}
-          {altCurrencyCode && <Badge className={combine(bs.badgeDark, bs.ml2)}>{altCurrencyCode}</Badge>}
+          {altCurrencyCode && <Badge className={combine(bs.bgDark, bs.ms2)}>{altCurrencyCode}</Badge>}
         </td>
         <td>{transaction.category.name}</td>
         <td>{this.generateActionButtons(transaction)}</td>

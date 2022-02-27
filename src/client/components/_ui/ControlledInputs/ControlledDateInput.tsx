@@ -34,7 +34,9 @@ class ControlledDateInput extends PureComponent<IControlledDateInputProps, ICont
     const { hasBeenTouched } = this.state;
     return (
       <>
-        <label htmlFor={id}>{label}</label>
+        <label htmlFor={id} className={bs.formLabel}>
+          {label}
+        </label>
         <input
           id={id}
           name={id}

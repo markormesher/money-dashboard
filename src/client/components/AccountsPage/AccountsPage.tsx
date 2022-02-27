@@ -155,12 +155,12 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
         <td>
           {account.name}
           {account.note && (
-            <span className={bs.ml2}>
+            <span className={bs.ms2}>
               <InfoIcon hoverText={account.note} />
             </span>
           )}
           {account.currencyCode !== DEFAULT_CURRENCY_CODE && (
-            <Badge className={combine(bs.badgeDark, bs.ml2)}>{account.currencyCode}</Badge>
+            <Badge className={combine(bs.bgDark, bs.ms2)}>{account.currencyCode}</Badge>
           )}
         </td>
         <td>{generateAccountTypeBadge(account)}</td>
