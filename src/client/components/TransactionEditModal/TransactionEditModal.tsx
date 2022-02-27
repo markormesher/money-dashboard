@@ -5,10 +5,7 @@ import { AnyAction, Dispatch } from "redux";
 import { IAccount } from "../../../models/IAccount";
 import { ICategory } from "../../../models/ICategory";
 import { DEFAULT_TRANSACTION, ITransaction } from "../../../models/ITransaction";
-import {
-  ITransactionValidationResult,
-  validateTransaction,
-} from "../../../models/validators/TransactionValidator";
+import { ITransactionValidationResult, validateTransaction } from "../../../models/validators/TransactionValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";

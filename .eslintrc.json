@@ -1,6 +1,3 @@
 {
-  "extends": "@dragonlabs/eslint-config",
-  "parserOptions": {
-    "project": "./tsconfig.json"
-  }
+  "extends": "@dragonlabs/eslint-config"
 }

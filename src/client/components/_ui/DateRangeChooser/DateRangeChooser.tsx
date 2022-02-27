@@ -9,10 +9,7 @@ import { combine } from "../../../helpers/style-helpers";
 import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { ButtonDropDown, IButtonDropDownProps } from "../ButtonDropDown/ButtonDropDown";
-import {
-  validateDateRange,
-  IDateRangeValidationResult,
-} from "../../../../models/validators/DateRangeValidator";
+import { validateDateRange, IDateRangeValidationResult } from "../../../../models/validators/DateRangeValidator";
 
 interface IDateRangeChooserProps {
   readonly startDate?: number;

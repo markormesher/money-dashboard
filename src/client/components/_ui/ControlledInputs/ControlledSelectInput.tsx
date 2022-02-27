@@ -33,7 +33,9 @@ class ControlledSelectInput extends PureComponent<IControlledSelectInputProps, I
     const { hasBeenTouched } = this.state;
     return (
       <>
-        <label htmlFor={id} className={bs.formLabel}>{label}</label>
+        <label htmlFor={id} className={bs.formLabel}>
+          {label}
+        </label>
         <select
           id={id}
           name={id}
