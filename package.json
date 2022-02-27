@@ -6,6 +6,7 @@
   "scripts": {
     "// root commands": "//",
     "dev": "run-s dc-build-dev dc-up-dev dc-down",
+    "test": "run-s build-test start-test",
     "// docker-compose shortcuts": "//",
     "dc-build-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build",
     "dc-up-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
