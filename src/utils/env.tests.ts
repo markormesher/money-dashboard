@@ -1,4 +1,5 @@
 import { afterEach, describe, it } from "mocha";
+import * as sinon from "sinon";
 import { isDev, isProd, isTest } from "./env";
 
 describe(__filename, () => {
