@@ -5,17 +5,17 @@ import { DbExchangeRate } from "../db/models/DbExchangeRate";
 import { ExchangeRateMap, IExchangeRate } from "../models/IExchangeRate";
 import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "../models/ICurrency";
 import { IExchangeRateApiResponse } from "../models/IExchangeRateApiResponse";
-import { getSecret } from "../config/config-loader";
 import { isDev } from "../utils/env";
 import { GLOBAL_MIN_DATE } from "../utils/dates";
 import { StatusError } from "../utils/StatusError";
+import { getFileConfig, getEnvConfig } from "../config/config-loader";
 
 const API_BASE = "https://openexchangerates.org/api";
 const API_QUERY_STRING = `?symbols=${ALL_CURRENCY_CODES.join(",")}`;
 const AXIOS_OPTS: AxiosRequestConfig = {
   headers: {
     Accept: "application/json",
-    Authorization: `Token ${getSecret("open-exchange-rates.key")}`,
+    Authorization: `Token ${getFileConfig(getEnvConfig("OPEN_EXCHANGE_RATES_TOKEN_FILE"))}`,
   },
 };
 

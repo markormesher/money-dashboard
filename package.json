@@ -16,9 +16,9 @@
     "start-dev": "cross-env NODE_ENV=development node ./build/server.js",
     "start-test": "cross-env NODE_ENV=test nyc mocha -r ./src/test-utils/jsdom-setup.js \"./build/**/*.js\"",
     "// root build jobs": "//",
-    "build": "run-s build-tsc build-webpack copy-config",
-    "build-dev": "run-s build-dev-tsc build-dev-webpack copy-config",
-    "build-test": "run-s build-test-tsc build-test-webpack copy-config",
+    "build": "run-s build-tsc build-webpack",
+    "build-dev": "run-s build-dev-tsc build-dev-webpack",
+    "build-test": "run-s build-test-tsc build-test-webpack",
     "// inner build jobs": "//",
     "build-tsc": "tsc -p ./tsconfig.json",
     "build-dev-tsc": "tsc -p ./tsconfig.json",
@@ -35,7 +35,6 @@
     "lint-style-fix": "prettier --write \"src/**/*.{css,scss}\"",
     "// misc": "//",
     "clean": "rimraf ./build ./coverage ./.nyc_output",
-    "copy-config": "copyfiles -u 1 -e \"./**/*.ts\" \"./src/config/**\" ./build/.",
     "get-private-packages": "./.scripts/get-private-packages.sh"
   },
   "dependencies": {
@@ -109,7 +108,6 @@
     "babel-plugin-istanbul": "^5.1.0",
     "chai": "^4.2.0",
     "chai-string": "^1.5.0",
-    "copyfiles": "^2.1.0",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "enzyme": "^3.7.0",

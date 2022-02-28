@@ -3,7 +3,6 @@ version: "3.3"
 services:
   app:
     build:
-      context: .
       dockerfile: Dockerfile
     restart: always
     networks:
@@ -12,12 +11,14 @@ services:
     depends_on:
       - postgres_primary
     secrets:
-      - open-exchange-rates.key
-      - postgres.password
+      - open-exchange-rates-token
+      - postgres-password
     environment:
-      - NPM_EXECPATH=yarn
-      - npm_execpath=yarn
-      - RUNNING_IN=docker
+      - POSTGRES_HOST=postgres_primary
+      - POSTGRES_DATABASE=money_dashboard
+      - POSTGRES_USER=money_dashboard
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres-password
+      - OPEN_EXCHANGE_RATES_TOKEN_FILE=/run/secrets/open-exchange-rates-token
     volumes:
       - ./logs:/logs
     labels:
@@ -33,11 +34,11 @@ services:
     networks:
       - internal
     secrets:
-      - postgres.password
+      - postgres-password
     environment:
       - POSTGRES_DATABASE=money_dashboard
       - POSTGRES_USER=money_dashboard
-      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres.password
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgrespassword
     volumes:
       - postgres-primary-data:/var/lib/postgresql/data
 
@@ -45,10 +46,10 @@ volumes:
   postgres-primary-data:
 
 secrets:
-  open-exchange-rates.key:
-    file: ./src/config/secrets/open-exchange-rates.key
-  postgres.password:
-    file: ./src/config/secrets/postgres.password
+  open-exchange-rates-token:
+    file: ./secrets/open-exchange-rates-token.txt
+  postgres-password:
+    file: ./secrets/postgres-password.txt
 
 networks:
   internal:

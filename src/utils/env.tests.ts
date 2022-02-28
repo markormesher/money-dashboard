@@ -1,6 +1,6 @@
-import { after, afterEach, before, describe, it } from "mocha";
-import * as sinon from "sinon";
-import { isDev, isProd, isTest, runningInDocker } from "./env";
+import { afterEach, describe, it } from "mocha";
+import sion from "sinon";
+import { isDev, isProd, isTest } from "./env";
 
 describe(__filename, () => {
   const sandbox = sinon.createSandbox();
@@ -46,37 +46,6 @@ describe(__filename, () => {
   });
 
   describe("runningInDocker()", () => {
-    let didAddRunningInEnvVar = false;
-
-    before(() => {
-      if (!process.env.RUNNING_IN) {
-        didAddRunningInEnvVar = true;
-        process.env.RUNNING_IN = "";
-      }
-    });
-
-    after(() => {
-      if (didAddRunningInEnvVar) {
-        delete process.env.RUNNING_IN;
-      }
-    });
-
-    it("should return true when running in docker", () => {
-      sandbox.replace(process.env, "RUNNING_IN", "docker");
-      runningInDocker().should.equal(true);
-    });
-
-    it("should return false when not running in docker", () => {
-      sandbox.replace(process.env, "RUNNING_IN", "not-docker");
-      runningInDocker().should.equal(false);
-    });
-
-    it("should return false 'running in' variable is not defined", () => {
-      // manual stubbing b/c sinon sandbox can't stub a variable to "undefined"
-      const originalVal = process.env.RUNNING_IN;
-      process.env.RUNNING_IN = undefined;
-      runningInDocker().should.equal(false);
-      process.env.RUNNING_IN = originalVal;
-    });
+    // TODO
   });
 });

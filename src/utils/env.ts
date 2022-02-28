@@ -1,3 +1,5 @@
+import { existsSync } from "fs";
+
 function isProd(): boolean {
   return process.env.NODE_ENV.toLowerCase() === "production";
 }
@@ -11,7 +13,7 @@ function isTest(): boolean {
 }
 
 function runningInDocker(): boolean {
-  return process.env.RUNNING_IN === "docker";
+  return existsSync("/.dockerenv");
 }
 
 export { runningInDocker, isTest, isDev, isProd };
