@@ -130,9 +130,10 @@ function* loadAccountBalancesSaga(): Generator {
       return;
     }
     try {
-      const balances: IAccountBalance[] = yield call(() => {
-        return axios.get("/api/accounts/balances").then((res) => res.data);
-      });
+      const balances: IAccountBalance[] = (yield call(async () => {
+        const res = await axios.get("/api/accounts/balances");
+        return res.data;
+      })) as IAccountBalance[];
       yield all([put(setAccountBalances(balances)), put(CacheKeyUtil.updateKey(DashboardCacheKeys.ACCOUNT_BALANCES))]);
     } catch (err) {
       yield all([put(setError(err))]);
@@ -152,15 +153,14 @@ function* loadBudgetBalancesSaga(): Generator {
       return;
     }
     try {
-      const balances: IBudgetBalance[] = yield call(() => {
-        return axios.get("/api/budgets/balances").then((res) => {
-          const raw: IBudgetBalance[] = res.data;
-          return raw.map((rawItem) => ({
-            ...rawItem,
-            budget: mapBudgetFromApi(rawItem.budget),
-          }));
-        });
-      });
+      const balances: IBudgetBalance[] = (yield call(async () => {
+        const res = await axios.get("/api/budgets/balances");
+        const raw: IBudgetBalance[] = res.data;
+        return raw.map((rawItem) => ({
+          ...rawItem,
+          budget: mapBudgetFromApi(rawItem.budget),
+        }));
+      })) as IBudgetBalance[];
       yield all([put(setBudgetBalances(balances)), put(CacheKeyUtil.updateKey(DashboardCacheKeys.BUDGET_BALANCES))]);
     } catch (err) {
       yield all([put(setError(err))]);
@@ -179,9 +179,10 @@ function* loadMemoCategoryBalancesSaga(): Generator {
       return;
     }
     try {
-      const balances: ICategoryBalance[] = yield call(() => {
-        return axios.get("/api/categories/memo-balances").then((res) => res.data);
-      });
+      const balances: ICategoryBalance[] = (yield call(async () => {
+        const res = await axios.get("/api/categories/memo-balances");
+        return res.data;
+      })) as ICategoryBalance[];
       yield all([
         put(setMemoCategoryBalances(balances)),
         put(CacheKeyUtil.updateKey(DashboardCacheKeys.MEMO_CATEGORY_BALANCE)),
@@ -197,9 +198,10 @@ function* saveAssetBalanceUpdate(): Generator {
     try {
       const balanceUpdate: IAccountBalanceUpdate = action.payload.assetBalanceUpdate;
       yield put(setAssetBalanceUpdateEditorBusy(true));
-      const result: string = yield call(() => {
-        return axios.post("/api/accounts/asset-balance-update", { balanceUpdate }).then((res) => res.data);
-      });
+      const result: string = (yield call(async () => {
+        const res = await axios.post("/api/accounts/asset-balance-update", { balanceUpdate });
+        return res.data;
+      })) as string;
       if (result === "done") {
         yield all([
           put(setAssetBalanceToUpdate(undefined)),

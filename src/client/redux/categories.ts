@@ -114,12 +114,11 @@ function* loadCategoryListSaga(): Generator {
       return;
     }
     try {
-      const categoryList: ICategory[] = yield call(() => {
-        return axios.get("/api/categories/list").then((res) => {
-          const raw: ICategory[] = res.data;
-          return raw.map(mapCategoryFromApi);
-        });
-      });
+      const categoryList: ICategory[] = (yield call(async () => {
+        const res = await axios.get("/api/categories/list");
+        const raw: ICategory[] = res.data;
+        return raw.map(mapCategoryFromApi);
+      })) as ICategory[];
       yield all([put(setCategoryList(categoryList)), put(CacheKeyUtil.updateKey(CategoryCacheKeys.CATEGORY_LIST))]);
     } catch (err) {
       yield put(setError(err));

@@ -173,12 +173,11 @@ function* loadAccountListSaga(): Generator {
       return;
     }
     try {
-      const accountList: IAccount[] = yield call(() => {
-        return axios.get("/api/accounts/list").then((res) => {
-          const raw: IAccount[] = res.data;
-          return raw.map(mapAccountFromApi);
-        });
-      });
+      const accountList: IAccount[] = (yield call(async () => {
+        const res = await axios.get("/api/accounts/list");
+        const raw: IAccount[] = res.data;
+        return raw.map(mapAccountFromApi);
+      })) as IAccount[];
       yield all([put(setAccountList(accountList)), put(CacheKeyUtil.updateKey(AccountCacheKeys.ACCOUNT_LIST))]);
     } catch (err) {
       yield put(setError(err));

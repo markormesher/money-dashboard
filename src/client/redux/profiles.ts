@@ -169,12 +169,11 @@ function* loadProfileListSaga(): Generator {
       return;
     }
     try {
-      const profileList: IProfile[] = yield call(() => {
-        return axios.get("/api/profiles/list").then((res) => {
-          const raw: IProfile[] = res.data;
-          return raw.map(mapProfileFromApi);
-        });
-      });
+      const profileList: IProfile[] = (yield call(async () => {
+        const res = await axios.get("/api/profiles/list");
+        const raw: IProfile[] = res.data;
+        return raw.map(mapProfileFromApi);
+      })) as IProfile[];
       yield all([put(setProfileList(profileList)), put(CacheKeyUtil.updateKey(ProfileCacheKeys.PROFILE_LIST))]);
     } catch (err) {
       yield put(setError(err));

@@ -50,10 +50,6 @@ interface IDataTableState<Model> {
 }
 
 class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableState<Model>> {
-  public static defaultProps: Partial<IDataTableProps<Model>> = {
-    pageSize: 15,
-  };
-
   // give each remote request an increasing "frame" number so that late arrivals will be dropped
   private frameCounter = 0;
   private lastFrameReceived = 0;

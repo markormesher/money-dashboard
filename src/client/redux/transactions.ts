@@ -137,9 +137,10 @@ function* loadPayeeListSaga(): Generator {
       return;
     }
     try {
-      const payeeList: string[] = yield call(() => {
-        return axios.get("/api/transactions/payees").then((res) => res.data);
-      });
+      const payeeList: string[] = (yield call(async () => {
+        const res = await axios.get("/api/transactions/payees");
+        return res.data;
+      })) as string[];
       yield all([put(setPayeeList(payeeList)), put(CacheKeyUtil.updateKey(TransactionCacheKeys.PAYEE_LIST))]);
     } catch (err) {
       yield put(setError(err));

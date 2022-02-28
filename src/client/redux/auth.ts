@@ -48,12 +48,11 @@ function* loadUserSaga(): Generator {
       yield put(addWait("auth"));
     }
     try {
-      const user: IUser = yield call(() =>
-        axios.get("/api/auth/current-user").then((res) => {
-          const raw: IUser = res.data;
-          return mapUserFromApi(raw);
-        }),
-      );
+      const user: IUser = (yield call(async () => {
+        const res = await axios.get("/api/auth/current-user");
+        const raw: IUser = res.data;
+        return mapUserFromApi(raw);
+      })) as IUser;
       if (user !== undefined) {
         yield all([put(setCurrentUser(user)), useWaits && put(removeWait("auth"))]);
       } else {
