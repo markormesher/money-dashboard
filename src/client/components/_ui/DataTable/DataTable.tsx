@@ -50,6 +50,10 @@ interface IDataTableState<Model> {
 }
 
 class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableState<Model>> {
+  public static defaultProps: Partial<IDataTableProps<Model>> = {
+    pageSize: 15,
+  };
+
   // give each remote request an increasing "frame" number so that late arrivals will be dropped
   private frameCounter = 0;
   private lastFrameReceived = 0;
@@ -83,7 +87,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
   }
 
   public componentDidUpdate(nextProps: IDataTableProps<Model>, nextState: IDataTableState<Model>): void {
-    // JSON.stringify(...) is a neat hack to do deep comparison of data-only structures
+    // JSON.stringify(...) is a hack to do deep comparison of data-only structures
     if (
       this.state.currentPage !== nextState.currentPage ||
       this.state.searchTerm !== nextState.searchTerm ||
