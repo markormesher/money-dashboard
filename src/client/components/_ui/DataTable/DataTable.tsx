@@ -50,7 +50,7 @@ interface IDataTableState<Model> {
 }
 
 class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableState<Model>> {
-  public static defaultProps: Partial<IDataTableProps<Model>> = {
+  public static defaultProps: Partial<IDataTableProps<unknown>> = {
     pageSize: 15,
   };
 
