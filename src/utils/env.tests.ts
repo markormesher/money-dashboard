@@ -1,6 +1,6 @@
 import { afterEach, describe, it } from "mocha";
 import * as sinon from "sinon";
-import { isDev, isProd, isTest } from "./env";
+import { isDev, isProd, isTest, runningInDocker } from "./env";
 
 describe(__filename, () => {
   const sandbox = sinon.createSandbox();
@@ -46,6 +46,8 @@ describe(__filename, () => {
   });
 
   describe("runningInDocker()", () => {
-    // TODO
+    it("should return false because tests do not run in Docker", () => {
+      runningInDocker().should.equal(false);
+    });
   });
 });
