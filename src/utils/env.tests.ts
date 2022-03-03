@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import { afterEach, describe, it } from "mocha";
 import * as sinon from "sinon";
 import { isDev, isProd, isTest, runningInDocker } from "./env";
@@ -46,8 +47,16 @@ describe(__filename, () => {
   });
 
   describe("runningInDocker()", () => {
-    it("should return false because tests do not run in Docker", () => {
-      runningInDocker().should.equal(false);
+    it("should return true when the docker flag exists", () => {
+      const existsSyncStub = sandbox.stub(fs, "existsSync").callsFake(() => true);
+      runningInDocker().should.equal(true);
+      existsSyncStub.calledOnceWithExactly("/.dockerenv").should.equal(true);
+    });
+
+    it("should return false when the docker flag doesn't exist", () => {
+      const existsSyncStub = sandbox.stub(fs, "existsSync").callsFake(() => true);
+      runningInDocker().should.equal(true);
+      existsSyncStub.calledOnceWithExactly("/.dockerenv").should.equal(true);
     });
   });
 });
