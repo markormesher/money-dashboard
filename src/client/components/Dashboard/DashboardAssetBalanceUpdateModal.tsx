@@ -4,20 +4,20 @@ import { connect } from "react-redux";
 import { Dispatch, AnyAction } from "redux";
 import { combine } from "../../helpers/style-helpers";
 import { formatDate } from "../../helpers/formatters";
-import { IAccountBalance } from "../../../commons/models/IAccountBalance";
+import { IAccountBalance } from "../../../models/IAccountBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { IRootState } from "../../redux/root";
 import { setAssetBalanceToUpdate, startSaveAssetBalanceUpdate } from "../../redux/dashboard";
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
-import { IAccountBalanceUpdate, mapAccountBalanceToUpdate } from "../../../commons/models/IAccountBalanceUpdate";
+import { IAccountBalanceUpdate, mapAccountBalanceToUpdate } from "../../../models/IAccountBalanceUpdate";
 import {
   IAccountBalanceUpdateValidationResult,
   validateAccountBalanceUpdate,
-} from "../../../commons/models/validators/AccountBalanceUpdateValidator";
+} from "../../../models/validators/AccountBalanceUpdateValidator";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
-import { DEFAULT_CURRENCY_CODE } from "../../../commons/models/ICurrency";
+import { DEFAULT_CURRENCY_CODE } from "../../../models/ICurrency";
 
 interface IDashboardAssetBalanceUpdateModalProps {
   readonly assetBalanceToUpdate?: IAccountBalance;
@@ -119,7 +119,7 @@ class UCDashboardAssetBalanceUpdateModal extends PureComponent<
             </div>
           )}
           <div className={bs.row}>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledDateInput
                 id={"date"}
                 label={"Date"}
@@ -129,7 +129,7 @@ class UCDashboardAssetBalanceUpdateModal extends PureComponent<
                 onValueChange={this.handleUpdateDateChange}
               />
             </div>
-            <div className={combine(bs.col, bs.formGroup)}>
+            <div className={combine(bs.col, bs.mb3)}>
               <ControlledTextInput
                 id={"balance"}
                 label={"Balance" + (currencyNote ? ` (${currencyNote})` : "")}

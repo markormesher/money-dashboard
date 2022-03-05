@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { IProfile, mapProfileForApi, mapProfileFromApi } from "../../commons/models/IProfile";
+import { IProfile, mapProfileForApi, mapProfileFromApi } from "../../models/IProfile";
 import { startLoadCurrentUser } from "./auth";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -169,12 +169,11 @@ function* loadProfileListSaga(): Generator {
       return;
     }
     try {
-      const profileList: IProfile[] = yield call(() => {
-        return axios.get("/api/profiles/list").then((res) => {
-          const raw: IProfile[] = res.data;
-          return raw.map(mapProfileFromApi);
-        });
-      });
+      const profileList: IProfile[] = (yield call(async () => {
+        const res = await axios.get("/api/profiles/list");
+        const raw: IProfile[] = res.data;
+        return raw.map(mapProfileFromApi);
+      })) as IProfile[];
       yield all([put(setProfileList(profileList)), put(CacheKeyUtil.updateKey(ProfileCacheKeys.PROFILE_LIST))]);
     } catch (err) {
       yield put(setError(err));

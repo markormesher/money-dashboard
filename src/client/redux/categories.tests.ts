@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { DEFAULT_CATEGORY } from "../../commons/models/ICategory";
+import { DEFAULT_CATEGORY } from "../../models/ICategory";
 import {
   categoriesReducer,
   CategoryActions,

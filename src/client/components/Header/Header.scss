@@ -14,6 +14,10 @@ $navbar-toggle-icon: #333;
   box-shadow: 0 0 12px 0 $header-shadow;
 }
 
+.navbar-container {
+  max-width: 100% !important; // Bootstrap override;
+}
+
 .navbar-brand {
   color: $brand-blue !important; // Bootstrap override
   font-size: 1rem;

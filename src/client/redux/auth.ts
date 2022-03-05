@@ -1,6 +1,6 @@
 import axios from "axios";
-import { all, call, put, select, take, takeEvery } from "redux-saga/effects";
-import { IUser, mapUserFromApi } from "../../commons/models/IUser";
+import { all, call, put, select, takeEvery } from "redux-saga/effects";
+import { IUser, mapUserFromApi } from "../../models/IUser";
 import { addWait, removeWait, setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { IRootState } from "./root";
@@ -15,7 +15,6 @@ const initialState: IAuthState = {
 
 enum AuthActions {
   START_LOAD_CURRENT_USER = "AuthActions.START_LOAD_CURRENT_USER",
-  START_LOGOUT_CURRENT_USER = "AuthActions.START_LOGOUT_CURRENT_USER",
   SET_CURRENT_USER = "AuthActions.SET_CURRENT_USER",
   UNSET_CURRENT_USER = "AuthActions.UNSET_CURRENT_USER",
 }
@@ -23,12 +22,6 @@ enum AuthActions {
 function startLoadCurrentUser(): PayloadAction {
   return {
     type: AuthActions.START_LOAD_CURRENT_USER,
-  };
-}
-
-function startLogOutCurrentUser(): PayloadAction {
-  return {
-    type: AuthActions.START_LOGOUT_CURRENT_USER,
   };
 }
 
@@ -55,12 +48,11 @@ function* loadUserSaga(): Generator {
       yield put(addWait("auth"));
     }
     try {
-      const user: IUser = yield call(() =>
-        axios.get("/api/auth/current-user").then((res) => {
-          const raw: IUser = res.data;
-          return mapUserFromApi(raw);
-        }),
-      );
+      const user: IUser = (yield call(async () => {
+        const res = await axios.get("/api/auth/current-user");
+        const raw: IUser = res.data;
+        return mapUserFromApi(raw);
+      })) as IUser;
       if (user !== undefined) {
         yield all([put(setCurrentUser(user)), useWaits && put(removeWait("auth"))]);
       } else {
@@ -72,19 +64,8 @@ function* loadUserSaga(): Generator {
   });
 }
 
-function* logOutCurrentUserSaga(): Generator {
-  yield take(AuthActions.START_LOGOUT_CURRENT_USER);
-  yield put(addWait("auth"));
-  try {
-    yield call(() => axios.post("/api/auth/logout"));
-    yield all([put(unsetCurrentUser()), put(removeWait("auth"))]);
-  } catch (err) {
-    yield all([put(setError(err)), put(removeWait("auth"))]);
-  }
-}
-
 function* authSagas(): Generator {
-  yield all([loadUserSaga(), logOutCurrentUserSaga()]);
+  yield all([loadUserSaga()]);
 }
 
 function authReducer(state = initialState, action: PayloadAction): IAuthState {
@@ -112,9 +93,7 @@ export {
   authReducer,
   authSagas,
   loadUserSaga,
-  logOutCurrentUserSaga,
   setCurrentUser,
   startLoadCurrentUser,
-  startLogOutCurrentUser,
   unsetCurrentUser,
 };

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import ReactTooltip from "react-tooltip";
-import { IBudgetBalance } from "../../../commons/models/IBudgetBalance";
+import { IBudgetBalance } from "../../../models/IBudgetBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatBudgetPeriod, formatCurrency, getBudgetPeriodType } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
@@ -91,10 +91,10 @@ class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
           <strong>{budget.category.name}</strong>
         </p>
         <div data-tip={tooltip}>
-          <div className={bs.progress}>
-            <div className={combine(bs.progressBar, barClass)} style={{ width: `${percentSpend * 100}%` }}>
+          <div className={bs.peogress}>
+            <div className={combine(bs.peogressBar, barClass)} style={{ width: `${percentSpend * 100}%` }}>
               <span>
-                {barIcon && <FontAwesomeIcon icon={barIcon} className={bs.mr2} />}
+                {barIcon && <FontAwesomeIcon icon={barIcon} className={bs.me2} />}
                 {barMsg}
               </span>
             </div>

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
 import { parseISO } from "date-fns";
-import { DEFAULT_BUDGET } from "../../commons/models/IBudget";
+import { DEFAULT_BUDGET } from "../../models/IBudget";
 import {
   BudgetActions,
   budgetsReducer,

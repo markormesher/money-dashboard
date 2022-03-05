@@ -5,7 +5,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { faUsers, faCircleNotch } from "@fortawesome/pro-light-svg-icons";
-import { IProfile } from "../../../../commons/models/IProfile";
+import { IProfile } from "../../../../models/IProfile";
 import { IRootState } from "../../../redux/root";
 import {
   startLoadProfileList,

@@ -2,9 +2,9 @@ import { expect } from "chai";
 import { shallow } from "enzyme";
 import { describe, it } from "mocha";
 import { parseISO } from "date-fns";
-import { DEFAULT_ACCOUNT, AccountType } from "../../commons/models/IAccount";
-import { DEFAULT_BUDGET } from "../../commons/models/IBudget";
-import { DEFAULT_CATEGORY } from "../../commons/models/ICategory";
+import { DEFAULT_ACCOUNT, AccountType } from "../../models/IAccount";
+import { DEFAULT_BUDGET } from "../../models/IBudget";
+import { DEFAULT_CATEGORY } from "../../models/ICategory";
 import * as bs from "../global-styles/Bootstrap.scss";
 import {
   capitaliseFirstLetter,
@@ -152,25 +152,25 @@ describe(__filename, () => {
       account = { ...account, type: "current" };
       let badge = generateAccountTypeBadge(account);
       shallow(badge)
-        .find(`.${bs.badgeInfo}`)
+        .find(`.${bs.bgInfo}`)
         .should.have.lengthOf(1);
 
       account = { ...account, type: "savings" };
       badge = generateAccountTypeBadge(account);
       shallow(badge)
-        .find(`.${bs.badgeSuccess}`)
+        .find(`.${bs.bgSuccess}`)
         .should.have.lengthOf(1);
 
       account = { ...account, type: "asset" };
       badge = generateAccountTypeBadge(account);
       shallow(badge)
-        .find(`.${bs.badgeWarning}`)
+        .find(`.${bs.bgWarning}`)
         .should.have.lengthOf(1);
 
       account = { ...account, type: "other" };
       badge = generateAccountTypeBadge(account);
       shallow(badge)
-        .find(`.${bs.badgeDanger}`)
+        .find(`.${bs.bgDanger}`)
         .should.have.lengthOf(1);
     });
 
@@ -214,13 +214,13 @@ describe(__filename, () => {
       budget = { ...budget, type: "budget" };
       let badge = generateBudgetTypeBadge(budget);
       shallow(badge)
-        .find(`.${bs.badgeInfo}`)
+        .find(`.${bs.bgInfo}`)
         .should.have.lengthOf(1);
 
       budget = { ...budget, type: "bill" };
       badge = generateBudgetTypeBadge(budget);
       shallow(badge)
-        .find(`.${bs.badgeWarning}`)
+        .find(`.${bs.bgWarning}`)
         .should.have.lengthOf(1);
     });
 
@@ -314,25 +314,25 @@ describe(__filename, () => {
       let category = { ...DEFAULT_CATEGORY, isIncomeCategory: true };
       let badge = generateCategoryTypeBadge(category)[0];
       shallow(badge)
-        .find(`.${bs.badgeSuccess}`)
+        .find(`.${bs.bgSuccess}`)
         .should.have.lengthOf(1);
 
       category = { ...DEFAULT_CATEGORY, isExpenseCategory: true };
       badge = generateCategoryTypeBadge(category)[0];
       shallow(badge)
-        .find(`.${bs.badgeDanger}`)
+        .find(`.${bs.bgDanger}`)
         .should.have.lengthOf(1);
 
       category = { ...DEFAULT_CATEGORY, isAssetGrowthCategory: true };
       badge = generateCategoryTypeBadge(category)[0];
       shallow(badge)
-        .find(`.${bs.badgeWarning}`)
+        .find(`.${bs.bgWarning}`)
         .should.have.lengthOf(1);
 
       category = { ...DEFAULT_CATEGORY, isMemoCategory: true };
       badge = generateCategoryTypeBadge(category)[0];
       shallow(badge)
-        .find(`.${bs.badgeInfo}`)
+        .find(`.${bs.bgInfo}`)
         .should.have.lengthOf(1);
     });
 

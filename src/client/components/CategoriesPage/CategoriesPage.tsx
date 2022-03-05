@@ -4,7 +4,7 @@ import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { ICategory, mapCategoryFromApi } from "../../../commons/models/ICategory";
+import { ICategory, mapCategoryFromApi } from "../../../models/ICategory";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";

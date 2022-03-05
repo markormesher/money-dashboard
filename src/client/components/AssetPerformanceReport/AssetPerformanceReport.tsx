@@ -4,9 +4,9 @@ import { Component, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { subYears, startOfDay, endOfDay } from "date-fns";
-import { IAccount } from "../../../commons/models/IAccount";
-import { IAssetPerformanceData } from "../../../commons/models/IAssetPerformanceData";
-import { DateModeOption } from "../../../commons/models/ITransaction";
+import { IAccount } from "../../../models/IAccount";
+import { IAssetPerformanceData } from "../../../models/IAssetPerformanceData";
+import { DateModeOption } from "../../../models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency, formatPercent, formatDate, formatCurrencyForStat } from "../../helpers/formatters";
@@ -324,7 +324,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
             <RelativeChangeIcon
               change={netGrowth}
               iconProps={{
-                className: bs.mr2,
+                className: bs.me2,
               }}
             />
             {formatCurrencyForStat(netGrowth)}

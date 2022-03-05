@@ -2,7 +2,8 @@ import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
 import { ReactElement } from "react";
-import { IDataTableResponse } from "../../../../commons/models/IDataTableResponse";
+import { delayPromise } from "../../../../utils/utils";
+import { IDataTableResponse } from "../../../../models/IDataTableResponse";
 import { testGlobals } from "../../../../test-utils/global.tests";
 import { BufferedTextInput } from "../BufferedTextInput/BufferedTextInput";
 import { PagerBtns } from "../PagerBtns/PagerBtns";
@@ -44,12 +45,14 @@ class MockDataProvider implements IDataTableDataProvider<IMockData> {
     this.responseShouldBeEmpty = options.responseShouldBeEmpty || false;
   }
 
-  public getData(
+  public async getData(
     start: number,
     length: number,
     searchTerm?: string,
     sortedColumns?: IColumnSortEntry[],
   ): Promise<IDataTableResponse<IMockData>> {
+    console.log("getData called");
+
     ++this.callCount;
     this.lastStart = start;
     this.lastLength = length;
@@ -60,31 +63,28 @@ class MockDataProvider implements IDataTableDataProvider<IMockData> {
     const shouldFail = this.allCallsShouldFail || (this.firstCallShouldFail && this.callCount === 1);
 
     if (shouldFail) {
-      return new Promise((_, reject) => {
-        if (shouldDelay) {
-          setTimeout(reject, 20);
-        } else {
-          reject();
-        }
-      });
-    } else {
-      return Promise.resolve({
-        filteredRowCount: this.responseShouldBeEmpty ? 0 : 80,
-        totalRowCount: this.responseShouldBeEmpty ? 0 : 100,
-        data: this.responseShouldBeEmpty
-          ? []
-          : [
-              { field1: shouldDelay ? "delayed1" : "a1", field2: "b1", field3: "c1" },
-              { field1: shouldDelay ? "delayed2" : "a2", field2: "b2", field3: "c2" },
-            ],
-      }).then((val) => {
-        if (shouldDelay) {
-          return new Promise((resolve) => setTimeout(resolve, 20)).then(() => val);
-        } else {
-          return val;
-        }
-      });
+      if (shouldDelay) {
+        await delayPromise(20);
+      }
+      throw new Error();
     }
+
+    const response = {
+      filteredRowCount: this.responseShouldBeEmpty ? 0 : 80,
+      totalRowCount: this.responseShouldBeEmpty ? 0 : 100,
+      data: this.responseShouldBeEmpty
+        ? []
+        : [
+            { field1: shouldDelay ? "delayed1" : "a1", field2: "b1", field3: "c1" },
+            { field1: shouldDelay ? "delayed2" : "a2", field2: "b2", field3: "c2" },
+          ],
+    };
+
+    if (shouldDelay) {
+      await delayPromise(20);
+    }
+
+    return response;
   }
 }
 
@@ -94,6 +94,7 @@ const mockCol3: IColumn = { title: "col3", sortable: false };
 const mockColumns = [mockCol1, mockCol2, mockCol3];
 
 function mockRowRenderer(data: IMockData): ReactElement<void> {
+  console.log("Rendering row");
   return (
     <tr key={data.field1}>
       <td>{data.field1}</td>
@@ -103,7 +104,10 @@ function mockRowRenderer(data: IMockData): ReactElement<void> {
   );
 }
 
-describe(__filename, () => {
+describe(__filename, function() {
+  // allow faking of API requests
+  this.timeout(500);
+
   let { mountWrapper } = testGlobals;
 
   it("should render headers and footers", () => {
@@ -144,7 +148,7 @@ describe(__filename, () => {
       outerFooter.props().totalRowCount.should.equal(100);
       done();
     }, 30);
-  }).timeout(1000);
+  });
 
   it("should handle an empty response", (done) => {
     const mockProvider = new MockDataProvider({ responseShouldBeEmpty: true });
@@ -167,7 +171,7 @@ describe(__filename, () => {
       outerFooter.props().totalRowCount.should.equal(0);
       done();
     }, 30);
-  }).timeout(1000);
+  });
 
   it("should render each row", (done) => {
     const mockProvider = new MockDataProvider();
@@ -180,7 +184,7 @@ describe(__filename, () => {
       ["a1", "b1", "c1", "a2", "b2", "c2"].forEach((val) => html.should.contain(val));
       done();
     }, 30);
-  }).timeout(1000);
+  });
 
   it("should render a message when there is no data", (done) => {
     mountWrapper = mount(<DataTable<IMockData> columns={mockColumns} rowRenderer={mockRowRenderer} />);
@@ -194,7 +198,7 @@ describe(__filename, () => {
         .colSpan.should.equal(mockColumns.length);
       done();
     }, 30);
-  }).timeout(1000);
+  });
 
   it("should render a message when loading fails", (done) => {
     const mockProvider = new MockDataProvider({ allCallsShouldFail: true });
@@ -211,7 +215,7 @@ describe(__filename, () => {
         .colSpan.should.equal(mockColumns.length);
       done();
     }, 30);
-  }).timeout(1000);
+  });
 
   it("should call the data provider when it renders", () => {
     const mockProvider = new MockDataProvider();
@@ -352,7 +356,7 @@ describe(__filename, () => {
       didRenderDelayedFrame.should.equal(false);
       done();
     }, 30);
-  }).timeout(1000);
+  });
 
   it("should not render an error that arrived late", (done) => {
     let didRenderDelayedFrame = false;
@@ -383,5 +387,5 @@ describe(__filename, () => {
       didRenderDelayedFrame.should.equal(false);
       done();
     }, 30);
-  }).timeout(1000);
+  });
 });

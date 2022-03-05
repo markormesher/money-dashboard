@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { DEFAULT_ACCOUNT, IAccount } from "../../commons/models/IAccount";
+import { DEFAULT_ACCOUNT, IAccount } from "../../models/IAccount";
 import {
   AccountActions,
   accountsReducer,

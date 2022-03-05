@@ -2,17 +2,14 @@ import { faCalendar, faCheck } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { Component, MouseEvent, ReactNode } from "react";
 import { startOfMonth, endOfMonth, addMonths, startOfYear, endOfYear, addYears, subYears, isSameDay } from "date-fns";
-import { IDateRange } from "../../../../commons/models/IDateRange";
+import { IDateRange } from "../../../../models/IDateRange";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
 import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { ButtonDropDown, IButtonDropDownProps } from "../ButtonDropDown/ButtonDropDown";
-import {
-  validateDateRange,
-  IDateRangeValidationResult,
-} from "../../../../commons/models/validators/DateRangeValidator";
+import { validateDateRange, IDateRangeValidationResult } from "../../../../models/validators/DateRangeValidator";
 
 interface IDateRangeChooserProps {
   readonly startDate?: number;
@@ -129,7 +126,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
       <div className={bs.row}>
         {this.state.customRangeChooserOpen && (
           <div className={bs.col}>
-            <div className={bs.formGroup}>
+            <div className={bs.mb3}>
               <ControlledDateInput
                 id={"custom-from"}
                 label={"From"}
@@ -139,7 +136,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
                 onValueChange={this.handleCustomRangeStartChange}
               />
             </div>
-            <div className={bs.formGroup}>
+            <div className={bs.mb3}>
               <ControlledDateInput
                 id={"custom-to"}
                 label={"To"}
@@ -149,7 +146,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
                 onValueChange={this.handleCustomRangeEndChange}
               />
             </div>
-            <div className={bs.formGroup}>
+            <div className={bs.mb3}>
               <IconBtn
                 icon={faCheck}
                 text={"OK"}

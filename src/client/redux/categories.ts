@@ -1,7 +1,7 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "../../commons/models/ICategory";
+import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "../../models/ICategory";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
@@ -114,12 +114,11 @@ function* loadCategoryListSaga(): Generator {
       return;
     }
     try {
-      const categoryList: ICategory[] = yield call(() => {
-        return axios.get("/api/categories/list").then((res) => {
-          const raw: ICategory[] = res.data;
-          return raw.map(mapCategoryFromApi);
-        });
-      });
+      const categoryList: ICategory[] = (yield call(async () => {
+        const res = await axios.get("/api/categories/list");
+        const raw: ICategory[] = res.data;
+        return raw.map(mapCategoryFromApi);
+      })) as ICategory[];
       yield all([put(setCategoryList(categoryList)), put(CacheKeyUtil.updateKey(CategoryCacheKeys.CATEGORY_LIST))]);
     } catch (err) {
       yield put(setError(err));

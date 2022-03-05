@@ -43,7 +43,7 @@ class ControlledCheckboxInput extends PureComponent<IControlledCheckboxInputProp
           onBlur={this.handleBlur}
           {...inputProps}
         />
-        <label className={bs.formCheckLabel} htmlFor={id}>
+        <label className={combine(bs.formCheckLabel, bs.formLabel)} htmlFor={id}>
           {label}
         </label>
         {error && hasBeenTouched && <div className={bs.invalidFeedback}>{error}</div>}

@@ -2,7 +2,7 @@ import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
-import { IDataTableResponse } from "../../../../commons/models/IDataTableResponse";
+import { IDataTableResponse } from "../../../../models/IDataTableResponse";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import { IDataTableDataProvider } from "./DataProvider/IDataTableDataProvider";
@@ -50,7 +50,7 @@ interface IDataTableState<Model> {
 }
 
 class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableState<Model>> {
-  public static defaultProps: Partial<IDataTableProps<Model>> = {
+  public static defaultProps: Partial<IDataTableProps<unknown>> = {
     pageSize: 15,
   };
 
@@ -87,7 +87,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
   }
 
   public componentDidUpdate(nextProps: IDataTableProps<Model>, nextState: IDataTableState<Model>): void {
-    // JSON.stringify(...) is a neat hack to do deep comparison of data-only structures
+    // JSON.stringify(...) is a hack to do deep comparison of data-only structures
     if (
       this.state.currentPage !== nextState.currentPage ||
       this.state.searchTerm !== nextState.searchTerm ||

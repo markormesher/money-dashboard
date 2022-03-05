@@ -2,10 +2,10 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { IAccountBalance } from "../../../commons/models/IAccountBalance";
-import { IBudgetBalance } from "../../../commons/models/IBudgetBalance";
-import { ICategoryBalance } from "../../../commons/models/ICategoryBalance";
-import { IUser } from "../../../commons/models/IUser";
+import { IAccountBalance } from "../../../models/IAccountBalance";
+import { IBudgetBalance } from "../../../models/IBudgetBalance";
+import { ICategoryBalance } from "../../../models/ICategoryBalance";
+import { IUser } from "../../../models/IUser";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import {
@@ -14,10 +14,10 @@ import {
   startLoadMemoCategoryBalances,
 } from "../../redux/dashboard";
 import { IRootState } from "../../redux/root";
-import { ExchangeRateMap } from "../../../commons/models/IExchangeRate";
+import { ExchangeRateMap } from "../../../models/IExchangeRate";
 import { startLoadLatestExchangeRates } from "../../redux/exchange-rates";
 import { startLoadAccountList } from "../../redux/accounts";
-import { IAccount } from "../../../commons/models/IAccount";
+import { IAccount } from "../../../models/IAccount";
 import { DashboardAccountList } from "./DashboardAccountList";
 import { DashboardAlertList } from "./DashboardAlertList";
 import { DashboardBudgetList } from "./DashboardBudgetList";

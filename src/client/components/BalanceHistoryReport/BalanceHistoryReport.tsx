@@ -3,8 +3,8 @@ import * as React from "react";
 import { Component, ReactNode } from "react";
 import { subYears, startOfDay, endOfDay } from "date-fns";
 import { connect } from "react-redux";
-import { IBalanceHistoryData } from "../../../commons/models/IBalanceHistoryData";
-import { DateModeOption } from "../../../commons/models/ITransaction";
+import { IBalanceHistoryData } from "../../../models/IBalanceHistoryData";
+import { DateModeOption } from "../../../models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency, formatCurrencyForStat, formatDate } from "../../helpers/formatters";
@@ -20,7 +20,7 @@ import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
-import { convertLocalDateToUtc } from "../../../commons/utils/dates";
+import { convertLocalDateToUtc } from "../../../utils/dates";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IBalanceHistoryReportProps extends IProfileAwareProps {}
@@ -219,7 +219,7 @@ class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBala
             <RelativeChangeIcon
               change={changeAbsolute}
               iconProps={{
-                className: bs.mr2,
+                className: bs.me2,
               }}
             />
             {formatCurrencyForStat(changeAbsolute)}
