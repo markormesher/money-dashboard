@@ -21,7 +21,7 @@ class DataTableOuterHeader<Model> extends PureComponent<IDataTableOuterHeaderPro
 
     return (
       <div className={styles.tableHeader}>
-        <div className={bs.floatLeft}>
+        <div className={bs.floatStart}>
           <PagerBtns
             disabled={loading}
             currentPage={currentPage}
@@ -29,7 +29,7 @@ class DataTableOuterHeader<Model> extends PureComponent<IDataTableOuterHeaderPro
             onPageChange={this.props.onPageChange}
           />
         </div>
-        <div className={bs.floatRight}>
+        <div className={bs.floatEnd}>
           <BufferedTextInput
             inputProps={{
               placeholder: "Search",

@@ -1,20 +1,13 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { DEFAULT_PROFILE } from "../../commons/models/IProfile";
-import { IUser } from "../../commons/models/IUser";
-import {
-  AuthActions,
-  authReducer,
-  setCurrentUser,
-  startLoadCurrentUser,
-  startLogOutCurrentUser,
-  unsetCurrentUser,
-} from "./auth";
+import { DEFAULT_PROFILE } from "../../models/IProfile";
+import { IUser } from "../../models/IUser";
+import { AuthActions, authReducer, setCurrentUser, startLoadCurrentUser, unsetCurrentUser } from "./auth";
 
 describe(__filename, () => {
   const user: IUser = {
     id: "id",
-    googleId: "google id",
+    externalUsername: "external username",
     displayName: "display name",
     image: "image",
     profiles: [DEFAULT_PROFILE],
@@ -25,12 +18,6 @@ describe(__filename, () => {
   describe("startLoadCurrentUser()", () => {
     it("should generate an action with the correct type", () => {
       startLoadCurrentUser().type.should.equal(AuthActions.START_LOAD_CURRENT_USER);
-    });
-  });
-
-  describe("startLogOutCurrentUser()", () => {
-    it("should generate an action with the correct type", () => {
-      startLogOutCurrentUser().type.should.equal(AuthActions.START_LOGOUT_CURRENT_USER);
     });
   });
 

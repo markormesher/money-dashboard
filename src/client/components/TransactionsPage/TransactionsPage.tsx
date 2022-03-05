@@ -4,7 +4,7 @@ import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { ITransaction, mapTransactionFromApi } from "../../../commons/models/ITransaction";
+import { ITransaction, mapTransactionFromApi } from "../../../models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
@@ -21,7 +21,7 @@ import { TransactionEditModal } from "../TransactionEditModal/TransactionEditMod
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { Card } from "../_ui/Card/Card";
 import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
-import { DEFAULT_CURRENCY_CODE } from "../../../commons/models/ICurrency";
+import { DEFAULT_CURRENCY_CODE } from "../../../models/ICurrency";
 import { Badge } from "../_ui/Badge/Badge";
 
 interface ITransactionPageProps extends IProfileAwareProps {
@@ -144,7 +144,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
         <td>
           {mainDate}
           {mainDate !== altDate && (
-            <span className={bs.ml2}>
+            <span className={bs.ms2}>
               <InfoIcon hoverText={altDate} />
             </span>
           )}
@@ -153,14 +153,14 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
         <td>
           {transaction.payee}
           {transaction.note && (
-            <span className={bs.ml2}>
+            <span className={bs.ms2}>
               <InfoIcon hoverText={transaction.note} />
             </span>
           )}
         </td>
         <td>
           {formatCurrencyStyled(transaction.amount)}
-          {altCurrencyCode && <Badge className={combine(bs.badgeDark, bs.ml2)}>{altCurrencyCode}</Badge>}
+          {altCurrencyCode && <Badge className={combine(bs.bgDark, bs.ms2)}>{altCurrencyCode}</Badge>}
         </td>
         <td>{transaction.category.name}</td>
         <td>{this.generateActionButtons(transaction)}</td>

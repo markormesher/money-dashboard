@@ -4,8 +4,8 @@ import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { IProfile, mapProfileFromApi } from "../../../commons/models/IProfile";
-import { IUser } from "../../../commons/models/IUser";
+import { IProfile, mapProfileFromApi } from "../../../models/IProfile";
+import { IUser } from "../../../models/IUser";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
@@ -128,7 +128,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
         <td>
           {profile.name}
           {activeProfile && (
-            <Badge className={bs.badgeInfo} marginLeft={true}>
+            <Badge className={bs.bgInfo} marginLeft={true}>
               Active
             </Badge>
           )}

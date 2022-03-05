@@ -38,5 +38,5 @@ ReactDOM.render(
       <App />
     </ConnectedRouter>
   </Provider>,
-  document.getElementById("root"),
+  document.getElementById("root") || document.createElement("div"), // div ensures a valid container exists for testing
 );

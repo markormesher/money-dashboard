@@ -1,11 +1,11 @@
 import { describe, it } from "mocha";
-import { DEFAULT_ACCOUNT } from "../../commons/models/IAccount";
-import { IAccountBalance } from "../../commons/models/IAccountBalance";
-import { DEFAULT_BUDGET } from "../../commons/models/IBudget";
-import { IBudgetBalance } from "../../commons/models/IBudgetBalance";
-import { DEFAULT_CATEGORY } from "../../commons/models/ICategory";
-import { ICategoryBalance } from "../../commons/models/ICategoryBalance";
-import { IAccountBalanceUpdate } from "../../commons/models/IAccountBalanceUpdate";
+import { DEFAULT_ACCOUNT } from "../../models/IAccount";
+import { IAccountBalance } from "../../models/IAccountBalance";
+import { DEFAULT_BUDGET } from "../../models/IBudget";
+import { IBudgetBalance } from "../../models/IBudgetBalance";
+import { DEFAULT_CATEGORY } from "../../models/ICategory";
+import { ICategoryBalance } from "../../models/ICategoryBalance";
+import { IAccountBalanceUpdate } from "../../models/IAccountBalanceUpdate";
 import {
   DashboardActions,
   dashboardReducer,

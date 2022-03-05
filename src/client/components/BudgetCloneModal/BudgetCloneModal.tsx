@@ -3,8 +3,8 @@ import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { startOfMonth, endOfMonth } from "date-fns";
-import { IDateRange } from "../../../commons/models/IDateRange";
-import { IDateRangeValidationResult, validateDateRange } from "../../../commons/models/validators/DateRangeValidator";
+import { IDateRange } from "../../../models/IDateRange";
+import { IDateRangeValidationResult, validateDateRange } from "../../../models/validators/DateRangeValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { setBudgetCloneInProgress, startCloneBudgets } from "../../redux/budgets";
@@ -89,8 +89,8 @@ class UCBudgetCloneModal extends PureComponent<IBudgetCloneModalProps, IBudgetCl
         onCloseRequest={this.handleCancel}
       >
         <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.formGroup}>
-            <label>Date Range</label>
+          <div className={bs.mb3}>
+            <label className={bs.formLabel}>Date Range</label>
             <DateRangeChooser
               startDate={currentValues.startDate ? currentValues.startDate : undefined}
               endDate={currentValues.endDate ? currentValues.endDate : undefined}

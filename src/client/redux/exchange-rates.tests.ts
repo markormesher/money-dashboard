@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { IExchangeRate } from "../../commons/models/IExchangeRate";
+import { IExchangeRate } from "../../models/IExchangeRate";
 import {
   startLoadLatestExchangeRates,
   ExchangeRateActions,

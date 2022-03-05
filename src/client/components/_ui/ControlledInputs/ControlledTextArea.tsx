@@ -34,7 +34,9 @@ class ControlledTextArea extends PureComponent<IControlledTextAreaProps, IContro
     const { hasBeenTouched } = this.state;
     return (
       <>
-        <label htmlFor={id}>{label}</label>
+        <label htmlFor={id} className={bs.formLabel}>
+          {label}
+        </label>
         <textarea
           id={id}
           name={id}

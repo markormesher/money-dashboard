@@ -51,18 +51,20 @@ class UCHeader extends PureComponent<IHeaderProps> {
   public render(): ReactNode {
     return (
       <nav className={combine(bs.navbar, style.navbar, bs.navbarDark, bs.stickyTop, bs.flexMdNowrap, bs.p0)}>
-        <Link to="/" className={combine(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}>
-          <FontAwesomeIcon icon={UCHeader.icon} fixedWidth={true} className={bs.mr2} />
-          Money Dashboard
-        </Link>
+        <div className={combine(bs.container, style.navbarContainer)}>
+          <Link to="/" className={combine(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}>
+            <FontAwesomeIcon icon={UCHeader.icon} fixedWidth={true} className={bs.me2} />
+            Money Dashboard
+          </Link>
 
-        <div className={combine(bs.mr4, bs.dNone, bs.dLgBlock)}>
-          <ProfileChooser />
+          <div className={combine(bs.dNone, bs.dLgBlock)}>
+            <ProfileChooser />
+          </div>
+
+          <Link to="#" onClick={this.toggleNav} className={combine(bs.dInlineBlock, bs.dLgNone, bs.ms2)}>
+            <FontAwesomeIcon icon={faBars} fixedWidth={true} className={style.navToggleIcon} />
+          </Link>
         </div>
-
-        <Link to="#" onClick={this.toggleNav} className={combine(bs.dInlineBlock, bs.dLgNone, bs.mx2)}>
-          <FontAwesomeIcon icon={faBars} fixedWidth={true} className={style.navToggleIcon} />
-        </Link>
       </nav>
     );
   }

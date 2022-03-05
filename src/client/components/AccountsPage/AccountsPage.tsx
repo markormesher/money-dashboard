@@ -4,7 +4,7 @@ import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { IAccount, mapAccountFromApi } from "../../../commons/models/IAccount";
+import { IAccount, mapAccountFromApi } from "../../../models/IAccount";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { generateAccountTypeBadge } from "../../helpers/formatters";
@@ -29,7 +29,7 @@ import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { Card } from "../_ui/Card/Card";
 import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
-import { DEFAULT_CURRENCY_CODE } from "../../../commons/models/ICurrency";
+import { DEFAULT_CURRENCY_CODE } from "../../../models/ICurrency";
 import { Badge } from "../_ui/Badge/Badge";
 
 interface IAccountsPageProps extends IProfileAwareProps {
@@ -155,12 +155,12 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
         <td>
           {account.name}
           {account.note && (
-            <span className={bs.ml2}>
+            <span className={bs.ms2}>
               <InfoIcon hoverText={account.note} />
             </span>
           )}
           {account.currencyCode !== DEFAULT_CURRENCY_CODE && (
-            <Badge className={combine(bs.badgeDark, bs.ml2)}>{account.currencyCode}</Badge>
+            <Badge className={combine(bs.bgDark, bs.ms2)}>{account.currencyCode}</Badge>
           )}
         </td>
         <td>{generateAccountTypeBadge(account)}</td>

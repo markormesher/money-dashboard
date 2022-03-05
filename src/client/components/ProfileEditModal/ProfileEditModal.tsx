@@ -2,8 +2,8 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { DEFAULT_PROFILE, IProfile } from "../../../commons/models/IProfile";
-import { IProfileValidationResult, validateProfile } from "../../../commons/models/validators/ProfileValidator";
+import { DEFAULT_PROFILE, IProfile } from "../../../models/IProfile";
+import { IProfileValidationResult, validateProfile } from "../../../models/validators/ProfileValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { setProfileToEdit, startSaveProfile } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
@@ -84,7 +84,7 @@ class UCProfileEditModal extends PureComponent<IProfileEditModalProps, IProfileE
         onCloseRequest={this.handleCancel}
       >
         <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.formGroup}>
+          <div className={bs.mb3}>
             <ControlledTextInput
               id={"name"}
               label={"Name"}

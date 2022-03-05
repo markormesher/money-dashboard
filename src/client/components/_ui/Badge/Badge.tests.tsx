@@ -19,10 +19,10 @@ describe(__filename, () => {
   });
 
   it("should apply the given class", () => {
-    mountWrapper = mount(<Badge className={bs.badgeInfo}>hello</Badge>);
+    mountWrapper = mount(<Badge className={bs.bgInfo}>hello</Badge>);
     mountWrapper
       .find("span")
-      .hasClass(bs.badgeInfo)
+      .hasClass(bs.bgInfo)
       .should.equal(true);
   });
 
@@ -30,7 +30,7 @@ describe(__filename, () => {
     mountWrapper = mount(<Badge marginRight={true}>hello</Badge>);
     mountWrapper
       .find("span")
-      .hasClass(bs.mr1)
+      .hasClass(bs.me1)
       .should.equal(true);
   });
 
@@ -38,7 +38,7 @@ describe(__filename, () => {
     mountWrapper = mount(<Badge marginLeft={true}>hello</Badge>);
     mountWrapper
       .find("span")
-      .hasClass(bs.ml1)
+      .hasClass(bs.ms1)
       .should.equal(true);
   });
 });

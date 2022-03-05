@@ -1,7 +1,0 @@
-# <minute> <hour> <day of month> <month> <day of week>
-
-# update latest exchange rates every 2 hours
-0 */2 * * * /money-dashboard/update-exchange-rates.sh latest >> /var/log/cron.log 2>&1
-
-# update historical exchange rates every day
-30 2 * * * /money-dashboard/update-exchange-rates.sh historical >> /var/log/cron.log 2>&1
