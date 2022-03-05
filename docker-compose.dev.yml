@@ -1,6 +1,7 @@
 version: "3.3"
 
 services:
+  # TODO: add traefik labels here
   app:
     build:
       args:
