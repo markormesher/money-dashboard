@@ -37,7 +37,7 @@ CREATE TABLE account (
     name character varying NOT NULL,
     type character varying DEFAULT 'current'::character varying NOT NULL,
     active boolean DEFAULT true NOT NULL,
-    profile_id uuid
+    profile_id uuid NOT NULL
 );
 
 ALTER TABLE account OWNER TO money_dashboard;
@@ -418,6 +418,16 @@ ALTER TABLE ONLY stock_price
     },
     down: (qr: QueryRunner): Promise<any> => {
       return qr.query(`DROP TABLE IF EXISTS exchange_rate;`);
+    },
+  },
+
+  {
+    migrationNumber: 21,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account ADD COLUMN stock_ticker character varying DEFAULT NULL;`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account DROP COLUMN stock_ticker;`);
     },
   },
 ];

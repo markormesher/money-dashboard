@@ -6,7 +6,7 @@ import { PostgresNamingStrategy } from "./PostgresNamingStrategy";
 
 const typeormConf: ConnectionOptions = {
   type: "postgres",
-  logging: isDev() ? "all" : false,
+  logging: isDev() ? "all" : ["error", "warn"],
   namingStrategy: new PostgresNamingStrategy(),
   host: getEnvConfig("POSTGRES_HOST", "postgres_primary"),
   username: getEnvConfig("POSTGRES_USER", "money_dashboard"),
