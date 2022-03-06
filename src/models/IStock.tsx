@@ -22,7 +22,7 @@ const ALL_STOCK_TICKERS = ALL_STOCKS.map((s) => s.ticker);
 function getStock(ticker: StockTicker): IStock {
   const stock = ALL_STOCKS.find((s) => s.ticker == ticker);
   if (!stock) {
-    throw new Error(`No stock found for the code ${ticker}`);
+    throw new Error(`No stock found for the ticker ${ticker}`);
   }
   return stock;
 }
