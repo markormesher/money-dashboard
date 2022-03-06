@@ -51,8 +51,6 @@ class MockDataProvider implements IDataTableDataProvider<IMockData> {
     searchTerm?: string,
     sortedColumns?: IColumnSortEntry[],
   ): Promise<IDataTableResponse<IMockData>> {
-    console.log("getData called");
-
     ++this.callCount;
     this.lastStart = start;
     this.lastLength = length;
@@ -94,7 +92,6 @@ const mockCol3: IColumn = { title: "col3", sortable: false };
 const mockColumns = [mockCol1, mockCol2, mockCol3];
 
 function mockRowRenderer(data: IMockData): ReactElement<void> {
-  console.log("Rendering row");
   return (
     <tr key={data.field1}>
       <td>{data.field1}</td>
