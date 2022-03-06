@@ -1,5 +1,6 @@
 import { IAccount, ACCOUNT_TAG_DISPLAY_NAMES, ACCOUNT_TYPES } from "../IAccount";
 import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "../ICurrency";
+import { ALL_STOCK_TICKERS } from "../IStock";
 
 interface IAccountValidationResult {
   readonly isValid: boolean;
@@ -8,6 +9,7 @@ interface IAccountValidationResult {
     readonly type?: string;
     readonly tags?: string;
     readonly currencyCode?: string;
+    readonly stockTicker?: string;
   };
 }
 
@@ -82,6 +84,16 @@ function validateAccount(account: IAccount): IAccountValidationResult {
       errors: {
         ...result.errors,
         currencyCode: "A valid currency must be selected",
+      },
+    };
+  }
+
+  if (account.stockTicker !== null && !ALL_STOCK_TICKERS.includes(account.stockTicker)) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        stockTicker: "A valid stock ticker must be selected",
       },
     };
   }

@@ -3,6 +3,7 @@ import { v4 } from "uuid";
 import { IAccount, AccountTag, AccountType } from "../IAccount";
 import { DEFAULT_PROFILE } from "../IProfile";
 import { CurrencyCode } from "../ICurrency";
+import { StockTicker } from "../IStock";
 import { validateAccount } from "./AccountValidator";
 
 describe(__filename, () => {
@@ -14,6 +15,7 @@ describe(__filename, () => {
       tags: [],
       note: "note",
       currencyCode: "GBP",
+      stockTicker: "PLTR",
       active: true,
       transactions: [],
       profile: DEFAULT_PROFILE,
@@ -99,6 +101,19 @@ describe(__filename, () => {
       result.isValid.should.equal(false);
       result.errors.should.have.keys("currencyCode");
       result.errors.currencyCode.should.not.equal("");
+    });
+
+    it("should accept an account with a null stock ticker", () => {
+      const result = validateAccount({ ...VALID_ACCOUNT, stockTicker: null });
+      result.isValid.should.equal(true);
+      result.errors.should.deep.equal({});
+    });
+
+    it("should reject an account with an invalid stock ticker", () => {
+      const result = validateAccount({ ...VALID_ACCOUNT, stockTicker: "not a real ticker" as StockTicker });
+      result.isValid.should.equal(false);
+      result.errors.should.have.keys("stockTicker");
+      result.errors.stockTicker.should.not.equal("");
     });
   });
 });
