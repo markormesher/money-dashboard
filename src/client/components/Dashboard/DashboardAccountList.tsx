@@ -84,7 +84,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
           {this.renderAccountBalanceList("asset", "Assets")}
           {this.renderAccountBalanceList("other", "Other")}
           <hr />
-          <p className={combine(gs.bigStatValue, bs.textRight)}>{formatCurrencyForStat(total)}</p>
+          <p className={combine(gs.bigStatValue, bs.textEnd)}>{formatCurrencyForStat(total)}</p>
         </div>
       </Card>
     );
