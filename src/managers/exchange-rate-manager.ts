@@ -1,14 +1,15 @@
 import { SelectQueryBuilder } from "typeorm";
 import axios, { AxiosRequestConfig } from "axios";
-import { format, startOfDay, addDays, parseISO } from "date-fns";
+import { format, startOfDay, addDays, parseISO, getHours, getMinutes } from "date-fns";
 import { DbExchangeRate } from "../db/models/DbExchangeRate";
 import { ExchangeRateMap, IExchangeRate } from "../models/IExchangeRate";
-import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "../models/ICurrency";
+import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE, ALL_CURRENCIES } from "../models/ICurrency";
 import { IExchangeRateApiResponse } from "../models/IExchangeRateApiResponse";
 import { isDev } from "../utils/env";
 import { GLOBAL_MIN_DATE } from "../utils/dates";
 import { StatusError } from "../utils/StatusError";
 import { getFileConfig, getEnvConfig } from "../config/config-loader";
+import { logger } from "../utils/logging";
 
 const API_BASE = "https://openexchangerates.org/api";
 const API_QUERY_STRING = `?symbols=${ALL_CURRENCY_CODES.join(",")}`;
@@ -59,13 +60,45 @@ async function getLatestExchangeRates(): Promise<ExchangeRateMap> {
   return output;
 }
 
-async function updateHistoricalExchangeRages(days = 2): Promise<void> {
-  const dateStrings = [];
-  const today = new Date();
-  for (let i = 1; i <= days; ++i) {
-    dateStrings.push(format(startOfDay(addDays(today, -i)), "yyyy-MM-dd"));
+async function updateNextMissingExchangeRates(): Promise<IExchangeRate[] | void> {
+  // issues an update if a given date is missing for any currency
+  const yesterday = addDays(startOfDay(new Date()), -1);
+  const perCurrencyTasks = await Promise.all(
+    ALL_CURRENCIES.map(async (currency) => {
+      const datesFilled = (
+        await getExchangeRateQueryBuilder()
+          .where("exchange_rate.currency_code = :code")
+          .setParameters({ code: currency.code })
+          .getMany()
+      )
+        .filter((price) => !(getHours(price.date) == 23 && getMinutes(price.date) == 59)) // filter to non-end-of-day updates
+        .map((price) => price.date);
+
+      const tasks: number[] = [];
+      for (let date = startOfDay(GLOBAL_MIN_DATE); date.getTime() <= yesterday.getTime(); date = addDays(date, 1)) {
+        const dateInt = date.getTime();
+        if (datesFilled.indexOf(dateInt) < 0) {
+          tasks.push(dateInt);
+        }
+      }
+
+      return tasks;
+    }),
+  );
+
+  const allTasks = []
+    .concat(...perCurrencyTasks)
+    .filter((v, i, arr) => arr.indexOf(v) === i)
+    .sort();
+
+  logger.info("Tasks", { allTasks });
+
+  if (allTasks.length === 0) {
+    return;
   }
-  await Promise.all(dateStrings.map((str) => updateExchangeRates(str)));
+
+  const nextTask = allTasks[0];
+  return updateExchangeRates(format(nextTask, "yyyy-MM-dd"));
 }
 
 async function updateLatestExchangeRates(): Promise<void> {
@@ -111,7 +144,7 @@ export {
   getExchangeRateQueryBuilder,
   getExchangeRatesBetweenDates,
   getLatestExchangeRates,
-  updateHistoricalExchangeRages,
+  updateNextMissingExchangeRates,
   updateLatestExchangeRates,
   updateExchangeRates,
 };

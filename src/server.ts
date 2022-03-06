@@ -13,7 +13,7 @@ import { MigrationRunner } from "./db/migrations/MigrationRunner";
 import { setupApiRoutes } from "./middleware/api-routes";
 import { setupClientRoutes } from "./middleware/client-routes";
 import { loadUser } from "./middleware/auth-middleware";
-import { updateLatestExchangeRates, updateHistoricalExchangeRages } from "./managers/exchange-rate-manager";
+import { updateLatestExchangeRates, updateNextMissingExchangeRates } from "./managers/exchange-rate-manager";
 import { updateNextMissingStockPrice } from "./managers/stock-price-manager";
 
 (async function(): Promise<void> {
@@ -51,10 +51,12 @@ import { updateNextMissingStockPrice } from "./managers/stock-price-manager";
   await createConnection(typeormConf);
   logger.info("Database connection created successfully");
 
-  // regular tasks
-  Cron.schedule("0 */2 * * *", updateLatestExchangeRates);
-  Cron.schedule("0 2 * * *", () => updateHistoricalExchangeRages(7));
+  // regular tasks - stocks (max 5 requests per minute)
   Cron.schedule("* * * * *", updateNextMissingStockPrice);
+
+  // regular tasks - exchange rates (max 1000 requests per month)
+  Cron.schedule("0 */2 * * *", updateLatestExchangeRates);
+  Cron.schedule("30 */2 * * *", updateNextMissingExchangeRates);
 
   // middleware
   app.use(BodyParser.json());

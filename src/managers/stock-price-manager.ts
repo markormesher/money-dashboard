@@ -22,6 +22,7 @@ async function getStockPricesBetweenDates(fromDate: number, toDate: number): Pro
   const prices = await getStockPriceQueryBuilder()
     .where("stock_price.date >= :fromDate")
     .andWhere("stock_price.date <= :toDate")
+    .andWhere("stock_price.rate_per_base_currency is not null")
     .setParameters({
       fromDate,
       toDate,
