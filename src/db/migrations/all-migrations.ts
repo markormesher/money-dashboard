@@ -397,6 +397,29 @@ ALTER TABLE ONLY exchange_rate
             `);
     },
   },
+
+  // create stock prices storage
+  {
+    migrationNumber: 20,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
+CREATE TABLE stock_price (
+    ticker character varying NOT NULL,
+    date bigint NOT NULL,
+    rate_per_base_currency double precision
+);
+
+ALTER TABLE stock_price OWNER TO money_dashboard;
+
+ALTER TABLE ONLY stock_price
+    ADD CONSTRAINT ${ns.primaryKeyName("stock_price", ["ticker", "date"])}
+        PRIMARY KEY (ticker, date);
+            `);
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`DROP TABLE IF EXISTS exchange_rate;`);
+    },
+  },
 ];
 
 export { allMigrations };

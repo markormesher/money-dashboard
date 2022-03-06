@@ -14,6 +14,7 @@ import { setupApiRoutes } from "./middleware/api-routes";
 import { setupClientRoutes } from "./middleware/client-routes";
 import { loadUser } from "./middleware/auth-middleware";
 import { updateLatestExchangeRates, updateHistoricalExchangeRages } from "./managers/exchange-rate-manager";
+import { updateNextMissingStockPrice } from "./managers/stock-price-manager";
 
 (async function(): Promise<void> {
   const app = Express();
@@ -53,6 +54,7 @@ import { updateLatestExchangeRates, updateHistoricalExchangeRages } from "./mana
   // regular tasks
   Cron.schedule("0 */2 * * *", updateLatestExchangeRates);
   Cron.schedule("0 2 * * *", () => updateHistoricalExchangeRages(7));
+  Cron.schedule("* * * * *", updateNextMissingStockPrice);
 
   // middleware
   app.use(BodyParser.json());
