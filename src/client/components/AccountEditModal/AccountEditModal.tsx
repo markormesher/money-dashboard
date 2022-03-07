@@ -21,6 +21,7 @@ import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { combine } from "../../helpers/style-helpers";
 import { ControlledTextArea } from "../_ui/ControlledInputs/ControlledTextArea";
 import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
+import { StockTicker, ALL_STOCKS } from "../../../models/IStock";
 
 interface IAccountEditModalProps {
   readonly accountToEdit?: IAccount;
@@ -67,6 +68,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleTypeChange = this.handleTypeChange.bind(this);
     this.handleCurrencyChange = this.handleCurrencyChange.bind(this);
+    this.handleStockTickerChange = this.handleStockTickerChange.bind(this);
     this.handleTagCheckedChange = this.handleTagCheckedChange.bind(this);
     this.handleNoteChange = this.handleNoteChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
@@ -127,8 +129,6 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
                 }}
               />
             </div>
-          </div>
-          <div className={bs.row}>
             <div className={combine(bs.col, bs.mb3)}>
               <ControlledSelectInput
                 id="type"
@@ -144,6 +144,8 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
                 <option value={"other"}>Other</option>
               </ControlledSelectInput>
             </div>
+          </div>
+          <div className={bs.row}>
             <div className={combine(bs.col, bs.mb3)}>
               <ControlledSelectInput
                 id={"currency"}
@@ -155,6 +157,23 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
               >
                 {ALL_CURRENCIES.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
                   <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
+              </ControlledSelectInput>
+            </div>
+            <div className={combine(bs.col, bs.mb3)}>
+              <ControlledSelectInput
+                id={"stockTicker"}
+                label={"Stock Ticker"}
+                value={currentValues.stockTicker}
+                onValueChange={this.handleStockTickerChange}
+                disabled={editorBusy}
+                error={errors.stockTicker}
+              >
+                <option value={null}>None</option>
+                {ALL_STOCKS.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
+                  <option key={c.ticker} value={c.ticker}>
                     {c.name}
                   </option>
                 ))}
@@ -190,6 +209,10 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
 
   private handleCurrencyChange(value: string): void {
     this.updateModel({ currencyCode: value as CurrencyCode });
+  }
+
+  private handleStockTickerChange(value: string): void {
+    this.updateModel({ stockTicker: value as StockTicker });
   }
 
   private handleTagCheckedChange(checked: boolean, id: string): void {

@@ -162,6 +162,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
           {account.currencyCode !== DEFAULT_CURRENCY_CODE && (
             <Badge className={combine(bs.bgDark, bs.ms2)}>{account.currencyCode}</Badge>
           )}
+          {account.stockTicker !== null && <Badge className={combine(bs.bgDark, bs.ms2)}>{account.stockTicker}</Badge>}
         </td>
         <td>{generateAccountTypeBadge(account)}</td>
         <td>{this.generateActionButtons(account)}</td>

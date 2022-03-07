@@ -98,6 +98,16 @@ function validateAccount(account: IAccount): IAccountValidationResult {
     };
   }
 
+  if (account.stockTicker !== null && account.type !== "asset") {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        stockTicker: "Stock tickers can only be selected on asset accounts",
+      },
+    };
+  }
+
   return result;
 }
 

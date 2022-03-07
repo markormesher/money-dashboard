@@ -11,10 +11,10 @@ describe(__filename, () => {
     const VALID_ACCOUNT: IAccount = {
       id: v4(),
       name: "Account",
-      type: "current",
+      type: "asset",
       tags: [],
       note: "note",
-      currencyCode: "GBP",
+      currencyCode: "USD",
       stockTicker: "PLTR",
       active: true,
       transactions: [],
@@ -43,63 +43,63 @@ describe(__filename, () => {
     it("should reject an account with no name", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, name: undefined });
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("name");
+      result.errors.should.include.keys("name");
       result.errors.name.should.not.equal("");
     });
 
     it("should reject an account with a blank name", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, name: "" });
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("name");
+      result.errors.should.include.keys("name");
       result.errors.name.should.not.equal("");
     });
 
     it("should reject an account with an all-whitespace name", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, name: "   " });
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("name");
+      result.errors.should.include.keys("name");
       result.errors.name.should.not.equal("");
     });
 
     it("should reject an account with no type", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, type: undefined });
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("type");
+      result.errors.should.include.keys("type");
       result.errors.type.should.not.equal("");
     });
 
     it("should reject an account with an invalid type", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, type: "invalid type" as AccountType });
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("type");
+      result.errors.should.include.keys("type");
       result.errors.type.should.not.equal("");
     });
 
     it("should reject an account with an invalid tag", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, tags: ["not a real tag" as AccountTag] }); // force the type here
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("tags");
+      result.errors.should.include.keys("tags");
       result.errors.tags.should.not.equal("");
     });
 
     it("should reject the ISA tag with non-default currencies", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, currencyCode: "USD", tags: ["isa"] });
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("tags");
+      result.errors.should.include.keys("tags");
       result.errors.tags.should.not.equal("");
     });
 
     it("should reject the pension tag with non-default currencies", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, currencyCode: "USD", tags: ["pension"] });
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("tags");
+      result.errors.should.include.keys("tags");
       result.errors.tags.should.not.equal("");
     });
 
     it("should reject an account with an invalid currency", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, currencyCode: "not a real currency" as CurrencyCode });
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("currencyCode");
+      result.errors.should.include.keys("currencyCode");
       result.errors.currencyCode.should.not.equal("");
     });
 
@@ -112,7 +112,14 @@ describe(__filename, () => {
     it("should reject an account with an invalid stock ticker", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, stockTicker: "not a real ticker" as StockTicker });
       result.isValid.should.equal(false);
-      result.errors.should.have.keys("stockTicker");
+      result.errors.should.include.keys("stockTicker");
+      result.errors.stockTicker.should.not.equal("");
+    });
+
+    it("should reject a non-asset account with a stock ticker", () => {
+      const result = validateAccount({ ...VALID_ACCOUNT, stockTicker: "PLTR", type: "other" });
+      result.isValid.should.equal(false);
+      result.errors.should.include.keys("stockTicker");
       result.errors.stockTicker.should.not.equal("");
     });
   });
