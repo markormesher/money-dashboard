@@ -69,6 +69,7 @@ router.post("/edit/:accountId?", (req: Request, res: Response, next: NextFunctio
     name: req.body.name,
     type: req.body.type,
     currencyCode: req.body.currencyCode,
+    stockTicker: req.body.stockTicker,
     tags: req.body.tags,
     note: req.body.note,
   };
