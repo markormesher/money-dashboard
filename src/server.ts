@@ -52,7 +52,7 @@ import { updateNextMissingStockPrice } from "./managers/stock-price-manager";
   logger.info("Database connection created successfully");
 
   // regular tasks - stocks (max 5 requests per minute)
-  Cron.schedule("* * * * *", updateNextMissingStockPrice);
+  Cron.schedule("*/5 * * * *", updateNextMissingStockPrice);
 
   // regular tasks - exchange rates (max 1000 requests per month)
   Cron.schedule("0 */2 * * *", updateLatestExchangeRates);

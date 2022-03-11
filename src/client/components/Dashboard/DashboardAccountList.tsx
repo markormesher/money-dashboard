@@ -1,4 +1,4 @@
-import { faCaretRight, faCaretDown, faWallet, faRandom, faEdit } from "@fortawesome/pro-light-svg-icons";
+import { faCaretRight, faCaretDown, faWallet, faRandom, faEdit, faChartLine } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { Component, ReactNode, MouseEvent, ReactElement } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +14,7 @@ import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
 import { Card } from "../_ui/Card/Card";
 import { AccountType } from "../../../models/IAccount";
 import { ExchangeRateMap } from "../../../models/IExchangeRate";
+import { StockPriceMap } from "../../../models/IStockPrice";
 import { DEFAULT_CURRENCY_CODE, getCurrency } from "../../../models/ICurrency";
 import { IRootState } from "../../redux/root";
 import { setAssetBalanceToUpdate } from "../../redux/dashboard";
@@ -22,6 +23,7 @@ import * as styles from "./DashboardAccountList.scss";
 interface IDashboardAccountListProps {
   readonly accountBalances: IAccountBalance[];
   readonly exchangeRates: ExchangeRateMap;
+  readonly stockPrices: StockPriceMap;
 
   readonly actions?: {
     readonly setAssetBalanceToUpdate: (assetBalance: IAccountBalance) => AnyAction;
@@ -57,14 +59,15 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
 
     this.renderAccountBalanceList = this.renderAccountBalanceList.bind(this);
     this.renderSingleAccountBalance = this.renderSingleAccountBalance.bind(this);
+    this.getGbpBalance = this.getGbpBalance.bind(this);
     this.compareAbsoluteGbpBalances = this.compareAbsoluteGbpBalances.bind(this);
     this.handleSectionClosedToggle = this.handleSectionClosedToggle.bind(this);
   }
 
   public render(): ReactNode {
-    const { accountBalances, exchangeRates } = this.props;
+    const { accountBalances, exchangeRates, stockPrices } = this.props;
 
-    if (!accountBalances || !exchangeRates) {
+    if (!accountBalances || !exchangeRates || !stockPrices) {
       return (
         <Card title={"Account Balances"} icon={faWallet}>
           <LoadingSpinner centre={true} />
@@ -72,9 +75,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
       );
     }
 
-    const total = accountBalances
-      .map((ab) => ab.balance / exchangeRates[ab.account.currencyCode].ratePerGbp)
-      .reduce((a, b) => a + b, 0);
+    const total = accountBalances.map(this.getGbpBalance).reduce((a, b) => a + b, 0);
 
     return (
       <Card title={"Account Balances"} icon={faWallet}>
@@ -91,7 +92,6 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
   }
 
   private renderAccountBalanceList(type: AccountType, title: string): ReactNode {
-    const { exchangeRates } = this.props;
     const balances = this.props.accountBalances.filter((a) => a.account.type === type).filter((a) => a.balance !== 0);
 
     if (balances.length === 0) {
@@ -101,9 +101,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
     const sectionClosed = this.state.sectionClosed[type] || false;
 
     if (sectionClosed) {
-      const total = balances
-        .map((b) => b.balance / exchangeRates[b.account.currencyCode].ratePerGbp)
-        .reduce((a, b) => a + b);
+      const total = balances.map(this.getGbpBalance).reduce((a, b) => a + b);
       return (
         <>
           <h6 onClick={this.handleSectionClosedToggle} id={`section-header-${type}`}>
@@ -127,13 +125,14 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
   }
 
   private renderSingleAccountBalance(balance: IAccountBalance): ReactNode {
-    const { exchangeRates } = this.props;
+    const { exchangeRates, stockPrices } = this.props;
     const setAssetBalanceToUpdate = this.props.actions.setAssetBalanceToUpdate;
 
     const account = balance.account;
+    const exchangeRate = exchangeRates[account.currencyCode];
+    const stockPrice = stockPrices[account.stockTicker];
     const currency = getCurrency(account.currencyCode);
-    const exchangeRate = exchangeRates[currency.code];
-    const gbpBalance = balance.balance / exchangeRate.ratePerGbp;
+    const gbpBalance = this.getGbpBalance(balance);
     const icons: ReactElement[] = [];
 
     if (account.note) {
@@ -144,10 +143,24 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
       );
     }
 
-    if (account.currencyCode !== DEFAULT_CURRENCY_CODE) {
+    if (account.stockTicker !== null) {
+      const gbpStockPrice = stockPrice.ratePerBaseCurrency / exchangeRate.ratePerGbp;
+      const stockNote =
+        `${formatCurrency(balance.balance)} ${currency.stringSymbol}${account.stockTicker} @ 1` +
+        (account.currencyCode === DEFAULT_CURRENCY_CODE
+          ? ""
+          : ` = ${formatCurrency(stockPrice.ratePerBaseCurrency)} ${account.currencyCode}`) +
+        ` = ${formatCurrency(gbpStockPrice)} ${DEFAULT_CURRENCY_CODE}`;
+      icons.push(
+        <span className={bs.ms2} key={`account-${account.id}-stock`}>
+          <InfoIcon hoverText={stockNote} customIcon={faChartLine} />
+        </span>,
+      );
+    } else if (account.currencyCode !== DEFAULT_CURRENCY_CODE) {
+      const gbpRate = 1 / exchangeRate.ratePerGbp;
       const currencyNote =
-        `${currency.stringSymbol}${formatCurrency(balance.balance)} converted at 1 ${currency.code} = ` +
-        `${formatCurrency(1 / exchangeRate.ratePerGbp)} ${DEFAULT_CURRENCY_CODE}`;
+        `${currency.stringSymbol}${formatCurrency(balance.balance)} ${account.currencyCode} @ 1` +
+        ` = ${formatCurrency(gbpRate)} ${DEFAULT_CURRENCY_CODE}`;
       icons.push(
         <span className={bs.ms2} key={`account-${account.id}-currency`}>
           <InfoIcon hoverText={currencyNote} customIcon={faRandom} />
@@ -155,7 +168,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
       );
     }
 
-    if (account.type === "asset") {
+    if (account.type === "asset" && account.stockTicker === null) {
       icons.push(
         <span className={combine(bs.ms2, styles.editIcon)} key={`account-${account.id}-update`}>
           <InfoIcon
@@ -177,10 +190,17 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
     );
   }
 
+  private getGbpBalance(ab: IAccountBalance): number {
+    const { exchangeRates, stockPrices } = this.props;
+    const account = ab.account;
+    const stockPrice = account.stockTicker !== null ? stockPrices[account.stockTicker].ratePerBaseCurrency : 1;
+    const exchangeRate = exchangeRates[account.currencyCode].ratePerGbp;
+    return (ab.balance * stockPrice) / exchangeRate;
+  }
+
   private compareAbsoluteGbpBalances(a: IAccountBalance, b: IAccountBalance): number {
-    const { exchangeRates } = this.props;
-    const aBalance = a.balance / exchangeRates[a.account.currencyCode].ratePerGbp;
-    const bBalance = b.balance / exchangeRates[b.account.currencyCode].ratePerGbp;
+    const aBalance = this.getGbpBalance(a);
+    const bBalance = this.getGbpBalance(b);
     return Math.abs(bBalance) - Math.abs(aBalance);
   }
 

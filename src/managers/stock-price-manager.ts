@@ -41,6 +41,7 @@ async function getLatestStockPrices(): Promise<StockPriceMap> {
     ALL_STOCK_TICKERS.map((ticker) =>
       getStockPriceQueryBuilder()
         .where("stock_price.ticker = :ticker")
+        .andWhere("stock_price.rate_per_base_currency is not null")
         .orderBy("date", "DESC")
         .setParameters({ ticker })
         .limit(1)
