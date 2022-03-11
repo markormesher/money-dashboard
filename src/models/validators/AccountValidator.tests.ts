@@ -116,6 +116,13 @@ describe(__filename, () => {
       result.errors.stockTicker.should.not.equal("");
     });
 
+    it("should reject an account with the wrong base currency for a stock", () => {
+      const result = validateAccount({ ...VALID_ACCOUNT, stockTicker: "PLTR", currencyCode: "EUR" });
+      result.isValid.should.equal(false);
+      result.errors.should.include.keys("currencyCode");
+      result.errors.currencyCode.should.not.equal("");
+    });
+
     it("should reject a non-asset account with a stock ticker", () => {
       const result = validateAccount({ ...VALID_ACCOUNT, stockTicker: "PLTR", type: "other" });
       result.isValid.should.equal(false);

@@ -1,6 +1,6 @@
 import { IAccount, ACCOUNT_TAG_DISPLAY_NAMES, ACCOUNT_TYPES } from "../IAccount";
 import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "../ICurrency";
-import { ALL_STOCK_TICKERS } from "../IStock";
+import { ALL_STOCK_TICKERS, getStock } from "../IStock";
 
 interface IAccountValidationResult {
   readonly isValid: boolean;
@@ -94,6 +94,20 @@ function validateAccount(account: IAccount): IAccountValidationResult {
       errors: {
         ...result.errors,
         stockTicker: "A valid stock ticker must be selected",
+      },
+    };
+  }
+
+  if (
+    account.stockTicker !== null &&
+    ALL_STOCK_TICKERS.includes(account.stockTicker) &&
+    account.currencyCode !== getStock(account.stockTicker).baseCurrency
+  ) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        currencyCode: "The account currency must match the base currecy of the stock selected",
       },
     };
   }

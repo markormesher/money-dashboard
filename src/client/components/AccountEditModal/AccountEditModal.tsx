@@ -21,7 +21,7 @@ import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { combine } from "../../helpers/style-helpers";
 import { ControlledTextArea } from "../_ui/ControlledInputs/ControlledTextArea";
 import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
-import { StockTicker, ALL_STOCKS } from "../../../models/IStock";
+import { StockTicker, ALL_STOCKS, getStock } from "../../../models/IStock";
 
 interface IAccountEditModalProps {
   readonly accountToEdit?: IAccount;
@@ -152,7 +152,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
                 label={"Currency"}
                 value={currentValues.currencyCode}
                 onValueChange={this.handleCurrencyChange}
-                disabled={editorBusy}
+                disabled={editorBusy || currentValues.stockTicker !== null}
                 error={errors.currencyCode}
               >
                 {ALL_CURRENCIES.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
@@ -171,7 +171,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
                 disabled={editorBusy}
                 error={errors.stockTicker}
               >
-                <option value={null}>None</option>
+                <option value={""}>-- Select --</option>
                 {ALL_STOCKS.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
                   <option key={c.ticker} value={c.ticker}>
                     {c.name}
@@ -212,7 +212,12 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
   }
 
   private handleStockTickerChange(value: string): void {
-    this.updateModel({ stockTicker: value as StockTicker });
+    if (value !== "") {
+      const stock = getStock(value as StockTicker);
+      this.updateModel({ stockTicker: stock.ticker, currencyCode: stock.baseCurrency });
+    } else {
+      this.updateModel({ stockTicker: null });
+    }
   }
 
   private handleTagCheckedChange(checked: boolean, id: string): void {
