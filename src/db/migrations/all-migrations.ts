@@ -417,7 +417,7 @@ ALTER TABLE ONLY stock_price
             `);
     },
     down: (qr: QueryRunner): Promise<any> => {
-      return qr.query(`DROP TABLE IF EXISTS exchange_rate;`);
+      return qr.query(`DROP TABLE IF EXISTS stock_price;`);
     },
   },
 
