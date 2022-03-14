@@ -1,6 +1,6 @@
 import { SelectQueryBuilder } from "typeorm";
 import axios from "axios";
-import { format, startOfDay, addDays } from "date-fns";
+import { format, startOfDay, addDays, addHours } from "date-fns";
 import { isDev } from "../utils/env";
 import { GLOBAL_MIN_DATE } from "../utils/dates";
 import { StatusError } from "../utils/StatusError";
@@ -57,7 +57,9 @@ async function getLatestStockPrices(): Promise<StockPriceMap> {
 }
 
 async function updateNextMissingStockPrice(): Promise<IStockPrice | void> {
-  const yesterday = addDays(startOfDay(new Date()), -1);
+  // the max date we should query is 1.5 days behind UTC to make sure we're okay with timezones for US exchanges
+  // i.e. yesterday if it's after midday, otherwise the day before that
+  const maxDate = startOfDay(addHours(new Date(), -36));
   const perStockTasks = await Promise.all(
     ALL_STOCKS.map(async (stock) => {
       const datesFilled = (
@@ -68,7 +70,7 @@ async function updateNextMissingStockPrice(): Promise<IStockPrice | void> {
       ).map((price) => price.date);
 
       const tasks: [StockTicker, number][] = [];
-      for (let date = startOfDay(stock.minDate); date.getTime() <= yesterday.getTime(); date = addDays(date, 1)) {
+      for (let date = startOfDay(stock.minDate); date.getTime() <= maxDate.getTime(); date = addDays(date, 1)) {
         const dateInt = date.getTime();
         if (datesFilled.indexOf(dateInt) < 0) {
           tasks.push([stock.ticker, dateInt]);
