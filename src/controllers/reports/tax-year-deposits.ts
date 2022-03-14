@@ -23,6 +23,8 @@ router.get("/data", (req: Request, res: Response, next: NextFunction) => {
     }
   };
 
+  // note: the sums here do not consider exchange rates or stock prices
+
   getTransactionQueryBuilder({ withAccount: true, withCategory: true })
     .where("transaction.profile_id = :profileId")
     .andWhere(":accountTag = ANY(account.tags)")

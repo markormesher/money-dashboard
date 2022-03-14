@@ -129,5 +129,19 @@ describe(__filename, () => {
       result.errors.should.include.keys("stockTicker");
       result.errors.stockTicker.should.not.equal("");
     });
+
+    it("should reject the ISA tag with stock-linked accounts", () => {
+      const result = validateAccount({ ...VALID_ACCOUNT, stockTicker: "PLTR", tags: ["isa"] });
+      result.isValid.should.equal(false);
+      result.errors.should.include.keys("tags");
+      result.errors.tags.should.not.equal("");
+    });
+
+    it("should reject the pension tag with stock-linked accounts", () => {
+      const result = validateAccount({ ...VALID_ACCOUNT, stockTicker: "PLTR", tags: ["pension"] });
+      result.isValid.should.equal(false);
+      result.errors.should.include.keys("tags");
+      result.errors.tags.should.not.equal("");
+    });
   });
 });

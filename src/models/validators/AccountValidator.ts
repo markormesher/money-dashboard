@@ -112,14 +112,36 @@ function validateAccount(account: IAccount): IAccountValidationResult {
     };
   }
 
-  if (account.stockTicker !== null && account.type !== "asset") {
-    result = {
-      isValid: false,
-      errors: {
-        ...result.errors,
-        stockTicker: "Stock tickers can only be selected on asset accounts",
-      },
-    };
+  if (account.stockTicker !== null) {
+    if (account.type !== "asset") {
+      result = {
+        isValid: false,
+        errors: {
+          ...result.errors,
+          stockTicker: "Stock tickers can only be selected on asset accounts",
+        },
+      };
+    }
+
+    if (account.tags && account.tags.includes("pension")) {
+      result = {
+        isValid: false,
+        errors: {
+          ...result.errors,
+          tags: "The pension tag cannot be used for stock-linked accounts",
+        },
+      };
+    }
+
+    if (account.tags && account.tags.includes("isa")) {
+      result = {
+        isValid: false,
+        errors: {
+          ...result.errors,
+          tags: "The ISA tag cannot be used for stock-linked accounts",
+        },
+      };
+    }
   }
 
   return result;
