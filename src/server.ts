@@ -6,7 +6,6 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { StatusError } from "./utils/StatusError";
 import { logger, ensureLogFilesAreCreated } from "./utils/logging";
-import { runningInDocker } from "./utils/env";
 import { delayPromise } from "./utils/utils";
 import { typeormConf } from "./db/db-config";
 import { MigrationRunner } from "./db/migrations/MigrationRunner";
@@ -19,10 +18,6 @@ import { updateNextMissingStockPrice } from "./managers/stock-price-manager";
 (async function(): Promise<void> {
   const app = Express();
 
-  if (!runningInDocker()) {
-    throw new Error("This app is designed to be run in a Docker container");
-  }
-
   // logging
   ensureLogFilesAreCreated();
 
@@ -34,8 +29,8 @@ import { updateNextMissingStockPrice } from "./managers/stock-price-manager";
       logger.info("Database is available");
       await conn.close();
       break;
-    } catch {
-      logger.error("Couldn't connect to database, retrying in 10s");
+    } catch (error) {
+      logger.error("Couldn't connect to database, retrying in 10s", { error });
       await delayPromise(10000);
     }
   }
