@@ -13,7 +13,7 @@ import { setupApiRoutes } from "./middleware/api-routes";
 import { setupClientRoutes } from "./middleware/client-routes";
 import { loadUser } from "./middleware/auth-middleware";
 import { updateLatestExchangeRates, updateNextMissingExchangeRates } from "./managers/exchange-rate-manager";
-import { updateNextMissingStockPrice } from "./managers/stock-price-manager";
+import { updateNextMissingStockPrice, removeRandomNullStockPrices } from "./managers/stock-price-manager";
 
 (async function(): Promise<void> {
   const app = Express();
@@ -47,6 +47,7 @@ import { updateNextMissingStockPrice } from "./managers/stock-price-manager";
   logger.info("Database connection created successfully");
 
   // regular tasks - stocks (max 5 requests per minute)
+  Cron.schedule("0 12 * * *", () => removeRandomNullStockPrices(5));
   Cron.schedule("*/5 * * * *", updateNextMissingStockPrice);
 
   // regular tasks - exchange rates (max 1000 requests per month)

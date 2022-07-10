@@ -107,7 +107,8 @@ async function updateStockPrice(ticker: StockTicker, date: number): Promise<ISto
     const apiRes = await axios.get(url).then((res) => res.data as IStockPriceApiResponse);
     closePrice = apiRes.close;
   } catch (e) {
-    // TODO: what if the API fails but there really was some data here?
+    // note: the API might have actually failed and be hiding data that should be here;
+    // to deal with this, null records are occassionally removed to force a re-try
     closePrice = null;
   }
   const repo = DbStockPrice.getRepository();
@@ -119,10 +120,21 @@ async function updateStockPrice(ticker: StockTicker, date: number): Promise<ISto
   return repo.save(price);
 }
 
+async function removeRandomNullStockPrices(qty: number): Promise<void> {
+  const recordsToRemove = await getStockPriceQueryBuilder()
+    .where("stock_price.rate_per_base_currency IS NULL")
+    .orderBy("random()")
+    .limit(qty)
+    .getMany();
+
+  await DbStockPrice.getRepository().remove(recordsToRemove);
+}
+
 export {
   getStockPriceQueryBuilder,
   getStockPricesBetweenDates,
   getLatestStockPrices,
   updateNextMissingStockPrice,
   updateStockPrice,
+  removeRandomNullStockPrices,
 };
