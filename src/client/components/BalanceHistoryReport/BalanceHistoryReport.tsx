@@ -194,13 +194,13 @@ class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBala
     let overallChangeStat: ReactNode = <LoadingSpinner centre={true} />;
 
     if (!loading) {
-      const { minTotal, minDate, maxTotal, maxDate, changeAbsolute } = data;
+      const { minTotal, minTotalDate, maxTotal, maxTotalDate, changeAbsolute } = data;
 
       minBalanceStat = (
         <>
           <h6 className={gs.bigStatHeader}>Min Balance</h6>
           <p className={gs.bigStatValue}>{formatCurrencyForStat(minTotal)}</p>
-          <p className={gs.bigStatContext}>on {formatDate(minDate)}</p>
+          <p className={gs.bigStatContext}>on {formatDate(minTotalDate)}</p>
         </>
       );
 
@@ -208,7 +208,7 @@ class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBala
         <>
           <h6 className={gs.bigStatHeader}>Max Balance</h6>
           <p className={gs.bigStatValue}>{formatCurrencyForStat(maxTotal)}</p>
-          <p className={gs.bigStatContext}>on {formatDate(maxDate)}</p>
+          <p className={gs.bigStatContext}>on {formatDate(maxTotalDate)}</p>
         </>
       );
 

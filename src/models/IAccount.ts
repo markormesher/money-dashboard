@@ -2,6 +2,7 @@ import { mapEntities } from "../utils/entities";
 import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 import { ITransaction, mapTransactionFromApi, mapTransactionForApi } from "./ITransaction";
 import { CurrencyCode } from "./ICurrency";
+import { StockTicker } from "./IStock";
 
 const ACCOUNT_TYPES = ["current", "savings", "asset", "other"] as const;
 type AccountType = typeof ACCOUNT_TYPES[number];
@@ -21,6 +22,7 @@ interface IAccount {
   readonly tags: AccountTag[];
   readonly note: string;
   readonly currencyCode: CurrencyCode;
+  readonly stockTicker: StockTicker;
   readonly active: boolean;
   readonly deleted: boolean;
 
@@ -35,6 +37,7 @@ const DEFAULT_ACCOUNT: IAccount = {
   tags: [],
   note: "",
   currencyCode: "GBP",
+  stockTicker: null,
   active: true,
   deleted: false,
 
