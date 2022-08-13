@@ -1,4 +1,3 @@
-import { faHandPointer, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -7,7 +6,6 @@ import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IProfile, mapProfileFromApi } from "../../../models/IProfile";
 import { IUser } from "../../../models/IUser";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { ProfileCacheKeys, setProfileToEdit, startDeleteProfile, startSetActiveProfile } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
@@ -98,7 +96,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
           <PageHeaderActions>
             <KeyShortcut targetStr={"c"} onTrigger={this.startProfileCreation}>
               <IconBtn
-                icon={faPlus}
+                icon={"add"}
                 text={"New Profile"}
                 onClick={this.startProfileCreation}
                 btnProps={{
@@ -144,24 +142,24 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
-          icon={faPencil}
+          icon={"edit"}
           text={"Edit"}
           payload={profile}
           onClick={this.props.actions.setProfileToEdit}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
             disabled: profileSwitchInProgress,
           }}
         />
 
         {!activeProfile && (
           <IconBtn
-            icon={faHandPointer}
+            icon={"how_to_reg"}
             text={"Select"}
             payload={profile}
             onClick={this.props.actions.startSetActiveProfile}
             btnProps={{
-              className: combine(bs.btnOutlineDark, gs.btnMini),
+              className: bs.btnOutlineDark,
               disabled: profileSwitchInProgress,
             }}
           />
@@ -172,7 +170,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
             payload={profile}
             onConfirmedClick={this.props.actions.deleteProfile}
             btnProps={{
-              className: combine(bs.btnOutlineDark, gs.btnMini),
+              className: bs.btnOutlineDark,
               disabled: profileSwitchInProgress,
             }}
           />

@@ -1,11 +1,10 @@
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faCheck, faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import { IconBtn } from "../IconBtn/IconBtn";
+import { MaterialIconName } from "../MaterialIcon/MaterialIcon";
+import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 import * as styles from "./Modal.scss";
 
 enum ModalBtnType {
@@ -44,24 +43,24 @@ class Modal extends PureComponent<IModalProps, IModalState> {
   }
 
   private static renderBtn(btn: IModalBtn): ReactElement<void> {
-    let icon: IconProp;
+    let icon: MaterialIconName;
     let label: string;
     let className: string;
     switch (btn.type) {
       case ModalBtnType.SAVE:
-        icon = faSave;
+        icon = "save";
         label = "Save";
         className = bs.btnSuccess;
         break;
 
       case ModalBtnType.CANCEL:
-        icon = faTimes;
+        icon = "close";
         label = "Cancel";
         className = bs.btnOutlineDark;
         break;
 
       case ModalBtnType.OK:
-        icon = faCheck;
+        icon = "check";
         label = "OK";
         className = bs.btnPrimary;
         break;
@@ -123,7 +122,7 @@ class Modal extends PureComponent<IModalProps, IModalState> {
               {this.props.children && <div className={bs.modalBody}>{this.props.children}</div>}
               {buttons && buttons.length > 0 && (
                 <div className={combine(bs.modalFooter, styles.modalFooter)}>
-                  {modalBusy && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"} />}
+                  {modalBusy && <LoadingSpinner />}
                   {!modalBusy && buttons.map(Modal.renderBtn)}
                 </div>
               )}

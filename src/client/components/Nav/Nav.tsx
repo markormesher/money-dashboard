@@ -1,14 +1,3 @@
-import {
-  faAnalytics,
-  faChartLine,
-  faHome,
-  faPiggyBank,
-  faSlidersH,
-  faTable,
-  faTags,
-  faUsers,
-  faWallet,
-} from "@fortawesome/pro-light-svg-icons";
 import { push } from "connected-react-router";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
@@ -100,25 +89,25 @@ class UCNav extends PureComponent<INavProps> {
         <nav className={wrapperClasses}>
           <div className={style.sidebarSticky}>
             <NavSection>
-              <NavLink to="/" text="Dashboard" icon={faHome} />
-              <NavLink to="/transactions" text="Transactions" icon={faTable} />
+              <NavLink to="/" text="Dashboard" icon={"home"} />
+              <NavLink to="/transactions" text="Transactions" icon={"table"} />
             </NavSection>
 
             <NavSection title="Reports">
-              <NavLink to="/reports/balance-history" text="Balance History" icon={faChartLine} />
+              <NavLink to="/reports/balance-history" text="Balance History" icon={"trending_up"} />
               {hasAssetAccounts && (
-                <NavLink to="/reports/asset-performance" text="Asset Performance" icon={faAnalytics} />
+                <NavLink to="/reports/asset-performance" text="Asset Performance" icon={"monitoring"} />
               )}
               {hasTaxYearAccounts && (
-                <NavLink to="/reports/tax-year-deposits" text="Tax Year Deposits" icon={faPiggyBank} />
+                <NavLink to="/reports/tax-year-deposits" text="Tax Year Deposits" icon={"savings"} />
               )}
             </NavSection>
 
             <NavSection title="Settings">
-              <NavLink to="/accounts" text="Accounts" icon={faWallet} />
-              <NavLink to="/budgets" text="Budgets" icon={faSlidersH} />
-              <NavLink to="/categories" text="Categories" icon={faTags} />
-              <NavLink to="/profiles" text="Profiles" icon={faUsers} />
+              <NavLink to="/accounts" text="Accounts" icon={"account_balance_wallet"} />
+              <NavLink to="/budgets" text="Budgets" icon={"tune"} />
+              <NavLink to="/categories" text="Categories" icon={"bookmarks"} />
+              <NavLink to="/profiles" text="Profiles" icon={"group"} />
             </NavSection>
           </div>
         </nav>

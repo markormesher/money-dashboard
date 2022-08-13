@@ -1,4 +1,3 @@
-import { faArrowLeft, faArrowRight } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { Component, ReactElement } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
@@ -32,7 +31,7 @@ class PagerBtns extends Component<IPagerBtnsProps> {
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
-          icon={faArrowLeft}
+          icon={"arrow_back"}
           onClick={this.handlePrevClick}
           btnProps={{
             className: bs.btnOutlineDark,
@@ -43,7 +42,7 @@ class PagerBtns extends Component<IPagerBtnsProps> {
           Page {totalPages === 0 ? 0 : currentPage + 1} of {totalPages}
         </button>
         <IconBtn
-          icon={faArrowRight}
+          icon={"arrow_forward"}
           onClick={this.handleNextClick}
           btnProps={{
             className: bs.btnOutlineDark,

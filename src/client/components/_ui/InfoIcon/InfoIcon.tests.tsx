@@ -1,10 +1,10 @@
-import { faInfoCircle, faRocket } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
 import { testGlobals } from "../../../../test-utils/global.tests";
+import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
+import { icon } from "../MaterialIcon/MaterialIcon.scss";
 import { InfoIcon } from "./InfoIcon";
 
 describe(__filename, () => {
@@ -12,26 +12,27 @@ describe(__filename, () => {
 
   it("should render an info icon by default", () => {
     mountWrapper = mount(<InfoIcon hoverText={"hello"} />);
-    mountWrapper.find(FontAwesomeIcon).should.have.lengthOf(1);
+    mountWrapper.find(MaterialIcon).should.have.lengthOf(1);
     mountWrapper
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
-      .icon.should.equal(faInfoCircle);
+      .icon.should.equal("info");
   });
 
   it("should render a custom icon if specified", () => {
-    mountWrapper = mount(<InfoIcon hoverText={"hello"} customIcon={faRocket} />);
-    mountWrapper.find(FontAwesomeIcon).should.have.lengthOf(1);
+    mountWrapper = mount(<InfoIcon hoverText={"hello"} customIcon={"rocket"} />);
+    mountWrapper.find(MaterialIcon).should.have.lengthOf(1);
     mountWrapper
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
-      .icon.should.equal(faRocket);
+      .icon.should.equal("rocket");
   });
 
   it("should add the tooltip text", () => {
     mountWrapper = mount(<InfoIcon hoverText={"hello"} />);
     mountWrapper
       .find("span")
+      .filterWhere((span) => !span.getDOMNode().className.includes(icon))
       .prop("data-tip")
       .should.equal("hello");
   });
@@ -39,7 +40,7 @@ describe(__filename, () => {
   it("should call the click listener when clicked", () => {
     const spy = sinon.spy();
     mountWrapper = mount(<InfoIcon hoverText={"hello"} onClick={spy} />);
-    mountWrapper.find("svg").simulate("click");
+    mountWrapper.find(`span.${icon}`).simulate("click");
     spy.calledOnce.should.equal(true);
   });
 
@@ -47,12 +48,12 @@ describe(__filename, () => {
     const spy = sinon.spy();
     const payload = { hello: 42 };
     mountWrapper = mount(<InfoIcon hoverText={"hello"} payload={payload} onClick={spy} />);
-    mountWrapper.find("svg").simulate("click");
+    mountWrapper.find(`span.${icon}`).simulate("click");
     spy.calledOnceWithExactly(payload).should.equal(true);
   });
 
   it("should not fail when clicked without a listener", () => {
     mountWrapper = mount(<InfoIcon hoverText={"hello"} />);
-    mountWrapper.find("svg").simulate("click");
+    mountWrapper.find(`span.${icon}`).simulate("click");
   });
 });

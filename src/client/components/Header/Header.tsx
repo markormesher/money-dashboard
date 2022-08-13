@@ -1,5 +1,3 @@
-import { faBars, faPoundSign, faSack, faMoneyBillWave, faWallet } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -10,6 +8,7 @@ import { combine } from "../../helpers/style-helpers";
 import { closeNav, openNav } from "../../redux/nav";
 import { IRootState } from "../../redux/root";
 import { ProfileChooser } from "../_ui/ProfileChooser/ProfileChooser";
+import { MaterialIcon, MaterialIconName } from "../_ui/MaterialIcon/MaterialIcon";
 import * as style from "./Header.scss";
 
 interface IHeaderProps {
@@ -39,7 +38,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IHeaderProps): IHeaderPro
 }
 
 class UCHeader extends PureComponent<IHeaderProps> {
-  private static brandIcons = [faPoundSign, faSack, faMoneyBillWave, faWallet];
+  private static brandIcons: MaterialIconName[] = ["savings", "currency_pound", "account_balance", "payments"];
   private static icon = UCHeader.brandIcons[Math.floor(Math.random() * UCHeader.brandIcons.length)];
 
   constructor(props: IHeaderProps) {
@@ -53,7 +52,7 @@ class UCHeader extends PureComponent<IHeaderProps> {
       <nav className={combine(bs.navbar, style.navbar, bs.navbarDark, bs.stickyTop, bs.flexMdNowrap, bs.p0)}>
         <div className={combine(bs.container, style.navbarContainer)}>
           <Link to="/" className={combine(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}>
-            <FontAwesomeIcon icon={UCHeader.icon} fixedWidth={true} className={bs.me2} />
+            <MaterialIcon icon={UCHeader.icon} className={bs.me2} />
             Money Dashboard
           </Link>
 
@@ -62,7 +61,7 @@ class UCHeader extends PureComponent<IHeaderProps> {
           </div>
 
           <Link to="#" onClick={this.toggleNav} className={combine(bs.dInlineBlock, bs.dLgNone, bs.ms2)}>
-            <FontAwesomeIcon icon={faBars} fixedWidth={true} className={style.navToggleIcon} />
+            <MaterialIcon icon={"menu"} className={style.navToggleIcon} />
           </Link>
         </div>
       </nav>

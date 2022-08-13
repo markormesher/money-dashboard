@@ -1,4 +1,3 @@
-import { faCalendar, faCheck } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { Component, MouseEvent, ReactNode } from "react";
 import { startOfMonth, endOfMonth, addMonths, startOfYear, endOfYear, addYears, subYears, isSameDay } from "date-fns";
@@ -110,7 +109,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
 
     return (
       <ButtonDropDown
-        icon={faCalendar}
+        icon={"today"}
         text={label}
         onBtnClick={this.handleBtnClick}
         dropDownContents={chooserOpen ? this.renderChooser() : null}
@@ -148,7 +147,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
             </div>
             <div className={bs.mb3}>
               <IconBtn
-                icon={faCheck}
+                icon={"check"}
                 text={"OK"}
                 onClick={this.handleCustomRangeSubmit}
                 btnProps={{

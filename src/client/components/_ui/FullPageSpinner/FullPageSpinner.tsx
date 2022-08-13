@@ -7,7 +7,7 @@ class FullPageSpinner extends PureComponent {
   public render(): ReactNode {
     return (
       <div className={styles.spinnerWrapper}>
-        <LoadingSpinner />
+        <LoadingSpinner centre={true} />
       </div>
     );
   }

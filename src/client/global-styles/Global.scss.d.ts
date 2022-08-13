@@ -1,4 +1,3 @@
-export const btnMini: string;
 export const currency: string;
 export const currencyPence: string;
 export const bigStatHeader: string;

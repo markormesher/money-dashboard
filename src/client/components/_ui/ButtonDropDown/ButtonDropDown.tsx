@@ -1,14 +1,13 @@
 import * as React from "react";
 import { PureComponent, CSSProperties, ReactNode, RefObject } from "react";
-import { FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { IconBtn } from "../IconBtn/IconBtn";
+import { MaterialIconName, IMaterialIconProps } from "../MaterialIcon/MaterialIcon";
 import * as styles from "./ButtonDropDown.scss";
 
 interface IButtonDropDownProps {
   readonly text: string;
-  readonly icon: IconProp;
-  readonly iconProps?: Partial<FontAwesomeIconProps>;
+  readonly icon: MaterialIconName;
+  readonly iconProps?: Partial<IMaterialIconProps>;
   readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
   readonly onBtnClick?: () => void;
   readonly dropDownContents?: ReactNode;

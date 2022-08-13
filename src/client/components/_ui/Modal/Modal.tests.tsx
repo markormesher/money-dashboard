@@ -1,5 +1,3 @@
-import { faCheck, faCircleNotch, faSave, faTimes } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mount } from "enzyme";
 import { afterEach, describe, it } from "mocha";
 import * as React from "react";
@@ -7,6 +5,8 @@ import * as sinon from "sinon";
 import { testGlobals } from "../../../../test-utils/global.tests";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { IconBtn } from "../IconBtn/IconBtn";
+import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
+import { removeIconText } from "../../../../test-utils/test-helpers";
 import { IModalBtn, Modal, ModalBtnType } from "./Modal";
 
 describe(__filename, () => {
@@ -115,8 +115,9 @@ describe(__filename, () => {
     const footerClass = bs.modalFooter;
     const btn: IModalBtn = { type: ModalBtnType.CANCEL };
     mountWrapper = mount(<Modal buttons={[btn]} />);
+    removeIconText(mountWrapper);
     const renderedBtn = mountWrapper.find(`.${footerClass}`).find(IconBtn);
-    renderedBtn.props().icon.should.equal(faTimes);
+    renderedBtn.props().icon.should.equal("close");
     renderedBtn.text().should.equal("Cancel");
     renderedBtn
       .find("button")
@@ -128,8 +129,9 @@ describe(__filename, () => {
     const footerClass = bs.modalFooter;
     const btn: IModalBtn = { type: ModalBtnType.SAVE };
     mountWrapper = mount(<Modal buttons={[btn]} />);
+    removeIconText(mountWrapper);
     const renderedBtn = mountWrapper.find(`.${footerClass}`).find(IconBtn);
-    renderedBtn.props().icon.should.equal(faSave);
+    renderedBtn.props().icon.should.equal("save");
     renderedBtn.text().should.equal("Save");
     renderedBtn
       .find("button")
@@ -141,8 +143,9 @@ describe(__filename, () => {
     const footerClass = bs.modalFooter;
     const btn: IModalBtn = { type: ModalBtnType.OK };
     mountWrapper = mount(<Modal buttons={[btn]} />);
+    removeIconText(mountWrapper);
     const renderedBtn = mountWrapper.find(`.${footerClass}`).find(IconBtn);
-    renderedBtn.props().icon.should.equal(faCheck);
+    renderedBtn.props().icon.should.equal("check");
     renderedBtn.text().should.equal("OK");
     renderedBtn
       .find("button")
@@ -177,13 +180,13 @@ describe(__filename, () => {
     mountWrapper = mount(<Modal buttons={[btn]} modalBusy={true} />);
     mountWrapper
       .find(`.${footerClass}`)
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .should.have.lengthOf(1);
     mountWrapper
       .find(`.${footerClass}`)
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
-      .icon.should.equal(faCircleNotch);
+      .icon.should.equal("hourglass_empty");
   });
 
   it("should call the close request listener when the close button is clicked", () => {

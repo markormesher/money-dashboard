@@ -1,9 +1,7 @@
-import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
-import { combine } from "../../../helpers/style-helpers";
+import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
 
 interface ILoadingSpinnerProps {
   readonly centre?: boolean;
@@ -11,11 +9,17 @@ interface ILoadingSpinnerProps {
 
 class LoadingSpinner extends PureComponent<ILoadingSpinnerProps> {
   public render(): ReactNode {
-    return (
-      <div className={combine(bs.mb3, this.props.centre && bs.textCenter)}>
-        <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"} />
-      </div>
+    const spinner = (
+      <span style={{ fontSize: "2rem" }}>
+        <MaterialIcon icon={"hourglass_empty"} spin={true} />
+      </span>
     );
+
+    if (this.props.centre) {
+      return <div className={bs.textCenter}>{spinner}</div>;
+    } else {
+      return spinner;
+    }
   }
 }
 

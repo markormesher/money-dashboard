@@ -1,11 +1,9 @@
-import { faExchange, faSortAmountDown, faSortAmountUp } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { expect } from "chai";
 import { mount } from "enzyme";
 import { afterEach, describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
 import { testGlobals } from "../../../../test-utils/global.tests";
+import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
 import { IColumn, IColumnSortEntry } from "./DataTable";
 import { DataTableInnerHeader } from "./DataTableInnerHeader";
 
@@ -38,7 +36,7 @@ describe(__filename, () => {
         <DataTableInnerHeader columns={[col1, col2, col3]} />
       </table>,
     );
-    mountWrapper.find(FontAwesomeIcon).should.have.lengthOf(2);
+    mountWrapper.find(MaterialIcon).should.have.lengthOf(2);
   });
 
   it("should render an 'small to big' icon for ASC sorted", () => {
@@ -48,14 +46,9 @@ describe(__filename, () => {
       </table>,
     );
     mountWrapper
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
-      .icon.should.equal(faSortAmountUp);
-    mountWrapper
-      .find(FontAwesomeIcon)
-      .props()
-      .flip.should.equal("vertical");
-    expect(mountWrapper.find(FontAwesomeIcon).props().rotation).to.be.oneOf([undefined, null]);
+      .icon.should.equal("arrow_downward");
   });
 
   it("should render a 'big to small' icon for desc sorted", () => {
@@ -65,11 +58,9 @@ describe(__filename, () => {
       </table>,
     );
     mountWrapper
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
-      .icon.should.equal(faSortAmountDown);
-    expect(mountWrapper.find(FontAwesomeIcon).props().flip).to.be.oneOf([undefined, null]);
-    expect(mountWrapper.find(FontAwesomeIcon).props().rotation).to.be.oneOf([undefined, null]);
+      .icon.should.equal("arrow_upward");
   });
 
   it("should render a 'swap' icon for non-sorted", () => {
@@ -79,14 +70,9 @@ describe(__filename, () => {
       </table>,
     );
     mountWrapper
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
-      .icon.should.equal(faExchange);
-    expect(mountWrapper.find(FontAwesomeIcon).props().flip).to.be.oneOf([undefined, null]);
-    mountWrapper
-      .find(FontAwesomeIcon)
-      .props()
-      .rotation.should.equal(90);
+      .icon.should.equal("swap_vert");
   });
 
   it("should call the listener with a different sort order when a sortable column is clicked", () => {

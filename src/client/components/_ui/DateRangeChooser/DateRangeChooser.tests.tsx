@@ -8,6 +8,7 @@ import { formatDate } from "../../../helpers/formatters";
 import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";
 import { IconBtn, IIconBtnProps } from "../IconBtn/IconBtn";
 import * as styles from "../ButtonDropDown/ButtonDropDown.scss";
+import { removeIconText } from "../../../../test-utils/test-helpers";
 import { DateRangeChooser } from "./DateRangeChooser";
 
 describe(__filename, () => {
@@ -22,6 +23,7 @@ describe(__filename, () => {
   }
 
   function findCustomRangeSubmit(): ReactWrapper<IIconBtnProps> {
+    removeIconText(mountWrapper);
     return mountWrapper.find(IconBtn).filterWhere((w) => w.text() === "OK");
   }
 

@@ -1,4 +1,3 @@
-import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -6,7 +5,6 @@ import { AnyAction, Dispatch } from "redux";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { ITransaction, mapTransactionFromApi } from "../../../models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { IRootState } from "../../redux/root";
@@ -111,7 +109,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
           <PageHeaderActions>
             <KeyShortcut targetStr={"c"} onTrigger={this.startTransactionCreation}>
               <IconBtn
-                icon={faPlus}
+                icon={"add"}
                 text={"New Transaction"}
                 onClick={this.startTransactionCreation}
                 btnProps={{
@@ -172,12 +170,12 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
-          icon={faPencil}
+          icon={"edit"}
           text={"Edit"}
           payload={transaction}
           onClick={this.props.actions.setTransactionToEdit}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
             disabled: transaction.account.deleted || transaction.category.deleted,
           }}
         />
@@ -185,7 +183,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
           payload={transaction}
           onConfirmedClick={this.props.actions.deleteTransaction}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
           }}
         />
       </div>

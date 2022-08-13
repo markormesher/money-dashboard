@@ -1,5 +1,3 @@
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -9,12 +7,13 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { closeNav } from "../../redux/nav";
 import { IRootState } from "../../redux/root";
+import { MaterialIcon, MaterialIconName } from "../_ui/MaterialIcon/MaterialIcon";
 import * as style from "./Nav.scss";
 
 interface INavLinkProps {
   readonly to: string;
   readonly text: string;
-  readonly icon: IconProp;
+  readonly icon: MaterialIconName;
   readonly onClick?: () => void;
   readonly navIsOpen?: boolean;
   readonly currentPath?: string;
@@ -58,7 +57,7 @@ class UCNavLink extends PureComponent<INavLinkProps> {
     return (
       <li className={UCNavLink.linkItemClasses}>
         <Link to={this.props.to} title={this.props.text} className={linkClasses} onClick={this.handleOnClick}>
-          <FontAwesomeIcon icon={this.props.icon} fixedWidth={true} className={UCNavLink.iconClasses} />
+          <MaterialIcon icon={this.props.icon} className={UCNavLink.iconClasses} />
           {this.props.text}
         </Link>
       </li>

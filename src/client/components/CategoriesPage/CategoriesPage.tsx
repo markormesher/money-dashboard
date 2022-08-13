@@ -1,4 +1,3 @@
-import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -6,7 +5,6 @@ import { AnyAction, Dispatch } from "redux";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { ICategory, mapCategoryFromApi } from "../../../models/ICategory";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { CategoryCacheKeys, setCategoryToEdit, startDeleteCategory } from "../../redux/categories";
@@ -94,7 +92,7 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
           <PageHeaderActions>
             <KeyShortcut targetStr={"c"} onTrigger={this.startCategoryCreation}>
               <IconBtn
-                icon={faPlus}
+                icon={"add"}
                 text={"New Category"}
                 onClick={this.startCategoryCreation}
                 btnProps={{
@@ -131,19 +129,19 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
-          icon={faPencil}
+          icon={"edit"}
           text={"Edit"}
           payload={category}
           onClick={this.props.actions.setCategoryToEdit}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
           }}
         />
         <DeleteBtn
           payload={category}
           onConfirmedClick={this.props.actions.deleteCategory}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
           }}
         />
       </div>
