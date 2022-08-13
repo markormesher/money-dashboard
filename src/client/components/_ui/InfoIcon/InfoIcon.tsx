@@ -1,16 +1,14 @@
-import { faInfoCircle } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import ReactTooltip from "react-tooltip";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { combine } from "../../../helpers/style-helpers";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import * as gs from "../../../global-styles/Global.scss";
+import { MaterialIcon, MaterialIconName } from "../MaterialIcon/MaterialIcon";
 
 interface IInfoIconProps<Payload> {
   readonly hoverText: string;
-  readonly customIcon?: IconProp;
+  readonly customIcon?: MaterialIconName;
   readonly payload?: Payload;
   readonly onClick?: (payload?: Payload) => void;
 }
@@ -32,12 +30,11 @@ class InfoIcon<Payload = {}> extends PureComponent<IInfoIconProps<Payload>> {
 
   public render(): ReactNode {
     const { hoverText, customIcon, onClick } = this.props;
-    const icon = customIcon ? customIcon : faInfoCircle;
+    const icon = customIcon ? customIcon : "info";
     return (
       <span data-tip={hoverText}>
-        <FontAwesomeIcon
+        <MaterialIcon
           className={combine(bs.textMuted, onClick && gs.clickable)}
-          fixedWidth={true}
           icon={icon}
           onClick={this.handleClick}
         />

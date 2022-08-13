@@ -1,7 +1,5 @@
-import { faCaretRight, faCaretDown, faWallet, faRandom, faEdit, faChartLine } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { Component, ReactNode, MouseEvent, ReactElement } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { connect } from "react-redux";
 import { Dispatch, AnyAction } from "redux";
 import { IAccountBalance } from "../../../models/IAccountBalance";
@@ -18,6 +16,7 @@ import { StockPriceMap } from "../../../models/IStockPrice";
 import { DEFAULT_CURRENCY_CODE, getCurrency } from "../../../models/ICurrency";
 import { IRootState } from "../../redux/root";
 import { setAssetBalanceToUpdate } from "../../redux/dashboard";
+import { MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
 import * as styles from "./DashboardAccountList.scss";
 
 interface IDashboardAccountListProps {
@@ -69,7 +68,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
 
     if (!accountBalances || !exchangeRates || !stockPrices) {
       return (
-        <Card title={"Account Balances"} icon={faWallet}>
+        <Card title={"Account Balances"} icon={"account_balance_wallet"}>
           <LoadingSpinner centre={true} />
         </Card>
       );
@@ -78,7 +77,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
     const total = accountBalances.map(this.getGbpBalance).reduce((a, b) => a + b, 0);
 
     return (
-      <Card title={"Account Balances"} icon={faWallet}>
+      <Card title={"Account Balances"} icon={"account_balance_wallet"}>
         <div className={styles.accountList}>
           {this.renderAccountBalanceList("current", "Current Accounts")}
           {this.renderAccountBalanceList("savings", "Savings Accounts")}
@@ -105,7 +104,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
       return (
         <>
           <h6 onClick={this.handleSectionClosedToggle} id={`section-header-${type}`}>
-            <FontAwesomeIcon icon={faCaretRight} className={combine(bs.textMuted, bs.me2)} fixedWidth={true} />
+            <MaterialIcon icon={"folder"} className={combine(bs.textMuted, bs.me2)} />
             {title}
             <span className={bs.floatEnd}>{formatCurrencyStyled(total)}</span>
           </h6>
@@ -115,7 +114,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
       return (
         <>
           <h6 onClick={this.handleSectionClosedToggle} id={`section-header-${type}`}>
-            <FontAwesomeIcon icon={faCaretDown} className={combine(bs.textMuted, bs.me2)} fixedWidth={true} />
+            <MaterialIcon icon={"folder_open"} className={combine(bs.textMuted, bs.me2)} />
             {title}
           </h6>
           {balances.sort(this.compareAbsoluteGbpBalances).map(this.renderSingleAccountBalance)}
@@ -153,7 +152,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
         ` = ${formatCurrency(gbpStockPrice)} ${DEFAULT_CURRENCY_CODE}`;
       icons.push(
         <span className={bs.ms2} key={`account-${account.id}-stock`}>
-          <InfoIcon hoverText={stockNote} customIcon={faChartLine} />
+          <InfoIcon hoverText={stockNote} customIcon={"trending_up"} />
         </span>,
       );
     } else if (account.currencyCode !== DEFAULT_CURRENCY_CODE) {
@@ -163,7 +162,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
         ` = ${formatCurrency(gbpRate)} ${DEFAULT_CURRENCY_CODE}`;
       icons.push(
         <span className={bs.ms2} key={`account-${account.id}-currency`}>
-          <InfoIcon hoverText={currencyNote} customIcon={faRandom} />
+          <InfoIcon hoverText={currencyNote} customIcon={"shuffle"} />
         </span>,
       );
     }
@@ -173,7 +172,7 @@ class UCDashboardAccountList extends Component<IDashboardAccountListProps, IDash
         <span className={combine(bs.ms2, styles.editIcon)} key={`account-${account.id}-update`}>
           <InfoIcon
             hoverText={"Update balance"}
-            customIcon={faEdit}
+            customIcon={"edit"}
             payload={balance}
             onClick={setAssetBalanceToUpdate}
           />

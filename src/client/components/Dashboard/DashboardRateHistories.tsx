@@ -1,4 +1,3 @@
-import { faRandom, faChartLine } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { formatDistanceToNow } from "date-fns";
@@ -59,7 +58,7 @@ class DashboardRateHistories extends PureComponent<IDashboardRateHistoriesProps>
 
     return (
       <div key={`history-${currencyCode}`} className={combine(bs.col12, bs.colSm6)}>
-        <Card title={`${DEFAULT_CURRENCY_CODE}/${currencyCode}`} icon={faRandom}>
+        <Card title={`${DEFAULT_CURRENCY_CODE}/${currencyCode}`} icon={"shuffle"}>
           <p>
             <span>
               {DEFAULT_CURRENCY.htmlSymbol}
@@ -92,7 +91,7 @@ class DashboardRateHistories extends PureComponent<IDashboardRateHistoriesProps>
 
     return (
       <div key={`history-${stockTicker}`} className={combine(bs.col12, bs.colSm6)}>
-        <Card title={`${stockCurrency.stringSymbol}${stock.ticker}`} icon={faChartLine}>
+        <Card title={`${stockCurrency.stringSymbol}${stock.ticker}`} icon={"trending_up"}>
           <p>
             <span>
               {stockCurrency.htmlSymbol}

@@ -1,6 +1,3 @@
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faChartPie, faCheckCircle, faExclamationTriangle } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import ReactTooltip from "react-tooltip";
@@ -10,6 +7,7 @@ import { formatBudgetPeriod, formatCurrency, getBudgetPeriodType } from "../../h
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { Card } from "../_ui/Card/Card";
+import { MaterialIconName, MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
 import * as styles from "./DashboardBudgetList.scss";
 
 interface IDashboardBudgetListProps {
@@ -41,7 +39,7 @@ class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
       .sort((a, b) => a.budget.category.name.localeCompare(b.budget.category.name));
 
     return (
-      <Card title={displayTitle} icon={faChartPie}>
+      <Card title={displayTitle} icon={"pie_chart"}>
         {budgets.length > 0 && (
           <div className={bs.row}>{budgets.map(DashboardBudgetList.renderSingleBudgetBalance)}</div>
         )}
@@ -57,30 +55,30 @@ class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
     const percentSpend = spend / budget.amount;
 
     let barClass = bs.bgInfo;
-    let barIcon: IconProp;
+    let barIcon: MaterialIconName;
     let barMsg: string;
     const tooltip = `Spent ${formatCurrency(spend)} of ${formatCurrency(budget.amount)}`;
 
     if (budget.type === "budget") {
       if (percentSpend > 1.0) {
         barClass = bs.bgDanger;
-        barIcon = faExclamationTriangle;
+        barIcon = "warning";
       } else if (percentSpend > 0.8) {
         barClass = bs.bgWarning;
-        barIcon = faExclamationTriangle;
+        barIcon = "warning";
       }
     } else {
       if (percentSpend > 1.05) {
         barClass = bs.bgDanger;
-        barIcon = faExclamationTriangle;
+        barIcon = "warning";
         barMsg = `Overpaid: ${formatCurrency(spend)}`;
       } else if (percentSpend > 1) {
         barClass = bs.bgWarning;
-        barIcon = faExclamationTriangle;
+        barIcon = "warning";
         barMsg = `Overpaid: ${formatCurrency(spend)}`;
       } else if (percentSpend > 0.9) {
         barClass = bs.bgSuccess;
-        barIcon = faCheckCircle;
+        barIcon = "check";
         barMsg = `Paid ${formatCurrency(spend)}`;
       }
     }
@@ -94,7 +92,7 @@ class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
           <div className={bs.progress}>
             <div className={combine(bs.progressBar, barClass)} style={{ width: `${percentSpend * 100}%` }}>
               <span>
-                {barIcon && <FontAwesomeIcon icon={barIcon} className={bs.me2} />}
+                {barIcon && <MaterialIcon icon={barIcon} className={bs.me2} />}
                 {barMsg}
               </span>
             </div>

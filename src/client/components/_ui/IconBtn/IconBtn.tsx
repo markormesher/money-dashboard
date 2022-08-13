@@ -1,15 +1,14 @@
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon, Props as FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
+import { MaterialIconName, MaterialIcon, IMaterialIconProps } from "../MaterialIcon/MaterialIcon";
 
 interface IIconBtnProps<Payload = {}> {
-  readonly icon: IconProp;
+  readonly icon: MaterialIconName;
   readonly text?: string;
   readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
-  readonly iconProps?: Partial<FontAwesomeIconProps>;
+  readonly iconProps?: Partial<IMaterialIconProps>;
   readonly onClick?: (payload?: Payload) => void;
   readonly payload?: Payload;
 }
@@ -25,7 +24,7 @@ class IconBtn<Payload = {}> extends PureComponent<IIconBtnProps<Payload>> {
     const { className: btnClassName, ...otherBtnProps } = { ...btnProps };
     return (
       <button className={combine(bs.btn, btnClassName)} onClick={this.handleClick} {...otherBtnProps} type="button">
-        <FontAwesomeIcon icon={icon} fixedWidth={true} className={bs.me1} {...iconProps} />
+        <MaterialIcon icon={icon} className={!!text && bs.me1} {...iconProps} />
         {text}
       </button>
     );

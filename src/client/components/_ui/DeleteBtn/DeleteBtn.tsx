@@ -1,4 +1,3 @@
-import { faCircleNotch, faExclamationTriangle, faTrash } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
@@ -36,7 +35,7 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
     const { btnProps, payload } = this.props;
     const { triggered, running } = this.state;
 
-    const btnIcon = running ? faCircleNotch : triggered ? faExclamationTriangle : faTrash;
+    const btnIcon = running ? "hourglass_empty" : triggered ? "warning" : "delete";
     const btnText = running ? undefined : triggered ? "Sure?" : "Delete";
 
     return (

@@ -4,7 +4,6 @@ import { PureComponent, ReactNode } from "react";
 import * as React from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
-import { faUsers, faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { IProfile } from "../../../../models/IProfile";
 import { IRootState } from "../../../redux/root";
 import {
@@ -81,7 +80,7 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChoos
 
     return (
       <ButtonDropDown
-        icon={profileSwitchInProgress ? faCircleNotch : faUsers}
+        icon={profileSwitchInProgress ? "hourglass_empty" : "group"}
         text={activeProfile.name}
         onBtnClick={this.handleBtnClick}
         btnProps={{

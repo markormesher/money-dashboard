@@ -1,11 +1,10 @@
-import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mount } from "enzyme";
 import { afterEach, describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
 import { testGlobals } from "../../../../test-utils/global.tests";
 import { IconBtn } from "../IconBtn/IconBtn";
+import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
 import { DeleteBtn } from "./DeleteBtn";
 
 describe(__filename, () => {
@@ -68,11 +67,11 @@ describe(__filename, () => {
       .props()
       .disabled.should.equal(true);
     mountWrapper
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
-      .icon.should.equal(faCircleNotch);
+      .icon.should.equal("hourglass_empty");
     mountWrapper
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
       .spin.should.equal(true);
   });
