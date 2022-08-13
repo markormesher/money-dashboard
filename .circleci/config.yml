@@ -3,7 +3,7 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/money-dashboard
   docker:
-    - image: circleci/node:dubnium
+    - image: cimg/node:17.9.0
 
 jobs:
   setup:
@@ -64,6 +64,27 @@ jobs:
       - store_test_results:
           path: test-results
 
+  build:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - setup_remote_docker:
+          docker_layer_caching: true
+          version: 20.10.12
+      - run:
+          name: Build Docker image
+          command: |
+            docker build . -t ghcr.io/markormesher/money-dashboard:$(git describe)
+            docker image ls
+      - run:
+          name: Maybe publish Docker image
+          command: |
+            # publish tagged commits only
+            if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
+            echo "${GHCR_PUBLISH_TOKEN}" | docker login ghcr.io -u markormesher --password-stdin
+            docker push ghcr.io/markormesher/money-dashboard:$(git describe)
+
 workflows:
   version: 2
   build_test:
@@ -91,3 +112,9 @@ workflows:
           requires:
             - lint
             - check-lockfile
+      - build:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - test
