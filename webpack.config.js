@@ -90,6 +90,7 @@ const config = {
     publicPath: "/",
     path: outputDir,
     filename: "[name].js",
+    hashFunction: "sha256",
 
     // used in development mode only
     hotUpdateMainFilename: "hot-update.[hash:6].json",
