@@ -1,5 +1,6 @@
 import { IAccount, ACCOUNT_TAG_DISPLAY_NAMES, ACCOUNT_TYPES } from "../IAccount";
 import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "../ICurrency";
+import { ALL_STOCK_TICKERS, getStock } from "../IStock";
 
 interface IAccountValidationResult {
   readonly isValid: boolean;
@@ -8,6 +9,7 @@ interface IAccountValidationResult {
     readonly type?: string;
     readonly tags?: string;
     readonly currencyCode?: string;
+    readonly stockTicker?: string;
   };
 }
 
@@ -84,6 +86,62 @@ function validateAccount(account: IAccount): IAccountValidationResult {
         currencyCode: "A valid currency must be selected",
       },
     };
+  }
+
+  if (account.stockTicker !== null && !ALL_STOCK_TICKERS.includes(account.stockTicker)) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        stockTicker: "A valid stock ticker must be selected",
+      },
+    };
+  }
+
+  if (
+    account.stockTicker !== null &&
+    ALL_STOCK_TICKERS.includes(account.stockTicker) &&
+    account.currencyCode !== getStock(account.stockTicker).baseCurrency
+  ) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        currencyCode: "The account currency must match the base currecy of the stock selected",
+      },
+    };
+  }
+
+  if (account.stockTicker !== null) {
+    if (account.type !== "asset") {
+      result = {
+        isValid: false,
+        errors: {
+          ...result.errors,
+          stockTicker: "Stock tickers can only be selected on asset accounts",
+        },
+      };
+    }
+
+    if (account.tags && account.tags.includes("pension")) {
+      result = {
+        isValid: false,
+        errors: {
+          ...result.errors,
+          tags: "The pension tag cannot be used for stock-linked accounts",
+        },
+      };
+    }
+
+    if (account.tags && account.tags.includes("isa")) {
+      result = {
+        isValid: false,
+        errors: {
+          ...result.errors,
+          tags: "The ISA tag cannot be used for stock-linked accounts",
+        },
+      };
+    }
   }
 
   return result;

@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IAccount, AccountTag, AccountType } from "../../models/IAccount";
 import { CurrencyCode } from "../../models/ICurrency";
+import { StockTicker } from "../../models/IStock";
 import { BaseModel } from "./BaseModel";
 import { DbProfile } from "./DbProfile";
 import { DbTransaction } from "./DbTransaction";
@@ -24,6 +25,9 @@ class DbAccount extends BaseModel implements IAccount {
 
   @Column({ type: "character varying" })
   public currencyCode: CurrencyCode;
+
+  @Column({ type: "character varying" })
+  public stockTicker: StockTicker;
 
   @Column({ default: true })
   public active: boolean;

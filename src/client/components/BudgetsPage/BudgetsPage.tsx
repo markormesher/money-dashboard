@@ -1,4 +1,3 @@
-import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -6,7 +5,6 @@ import { AnyAction, Dispatch } from "redux";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IBudget, mapBudgetFromApi } from "../../../models/IBudget";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import {
@@ -143,7 +141,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
           <PageHeaderActions>
             <KeyShortcut targetStr={"c"} onTrigger={this.startBudgetCreation}>
               <IconBtn
-                icon={faPlus}
+                icon={"add"}
                 text={"New Budget"}
                 onClick={this.startBudgetCreation}
                 btnProps={{
@@ -165,7 +163,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
           />
 
           <IconBtn
-            icon={faCopy}
+            icon={"content_copy"}
             text={"Clone Selected"}
             onClick={this.startCloneOnSelectedBudgets}
             btnProps={{
@@ -213,12 +211,12 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
-          icon={faPencil}
+          icon={"edit"}
           text={"Edit"}
           payload={budget}
           onClick={this.props.actions.setBudgetToEdit}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
             disabled: budget.category.deleted,
           }}
         />
@@ -226,7 +224,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
           payload={budget}
           onConfirmedClick={this.props.actions.deleteBudget}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
           }}
         />
       </div>

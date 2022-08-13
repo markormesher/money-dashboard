@@ -37,7 +37,7 @@ CREATE TABLE account (
     name character varying NOT NULL,
     type character varying DEFAULT 'current'::character varying NOT NULL,
     active boolean DEFAULT true NOT NULL,
-    profile_id uuid
+    profile_id uuid NOT NULL
 );
 
 ALTER TABLE account OWNER TO money_dashboard;
@@ -395,6 +395,39 @@ ALTER TABLE ONLY exchange_rate
                 ALTER TABLE "user"
                     ADD COLUMN google_id CHARACTER VARYING DEFAULT NULL;
             `);
+    },
+  },
+
+  // create stock prices storage
+  {
+    migrationNumber: 20,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
+CREATE TABLE stock_price (
+    ticker character varying NOT NULL,
+    date bigint NOT NULL,
+    rate_per_base_currency double precision
+);
+
+ALTER TABLE stock_price OWNER TO money_dashboard;
+
+ALTER TABLE ONLY stock_price
+    ADD CONSTRAINT ${ns.primaryKeyName("stock_price", ["ticker", "date"])}
+        PRIMARY KEY (ticker, date);
+            `);
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`DROP TABLE IF EXISTS stock_price;`);
+    },
+  },
+
+  {
+    migrationNumber: 21,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account ADD COLUMN stock_ticker character varying DEFAULT NULL;`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account DROP COLUMN stock_ticker;`);
     },
   },
 ];

@@ -154,7 +154,7 @@ const config = {
         minimize: true,
         filename: "[name].css",
       }),
-    IS_DEV && new webpack.HotModuleReplacementPlugin(),
+    // IS_DEV && new webpack.HotModuleReplacementPlugin(),
   ].filter(notFalse),
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],

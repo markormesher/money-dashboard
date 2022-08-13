@@ -1,4 +1,3 @@
-import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -115,7 +114,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
           <PageHeaderActions>
             <KeyShortcut targetStr={"c"} onTrigger={this.startAccountCreation}>
               <IconBtn
-                icon={faPlus}
+                icon={"add"}
                 text={"New Account"}
                 onClick={this.startAccountCreation}
                 btnProps={{
@@ -162,6 +161,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
           {account.currencyCode !== DEFAULT_CURRENCY_CODE && (
             <Badge className={combine(bs.bgDark, bs.ms2)}>{account.currencyCode}</Badge>
           )}
+          {account.stockTicker !== null && <Badge className={combine(bs.bgDark, bs.ms2)}>{account.stockTicker}</Badge>}
         </td>
         <td>{generateAccountTypeBadge(account)}</td>
         <td>{this.generateActionButtons(account)}</td>
@@ -174,12 +174,12 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
-          icon={faPencil}
+          icon={"edit"}
           text={"Edit"}
           payload={account}
           onClick={actions.setAccountToEdit}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
             disabled: accountEditsInProgress.some((a) => a.id === account.id),
           }}
         />

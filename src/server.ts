@@ -6,21 +6,17 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { StatusError } from "./utils/StatusError";
 import { logger, ensureLogFilesAreCreated } from "./utils/logging";
-import { runningInDocker } from "./utils/env";
 import { delayPromise } from "./utils/utils";
 import { typeormConf } from "./db/db-config";
 import { MigrationRunner } from "./db/migrations/MigrationRunner";
 import { setupApiRoutes } from "./middleware/api-routes";
 import { setupClientRoutes } from "./middleware/client-routes";
 import { loadUser } from "./middleware/auth-middleware";
-import { updateLatestExchangeRates, updateHistoricalExchangeRages } from "./managers/exchange-rate-manager";
+import { updateLatestExchangeRates, updateNextMissingExchangeRates } from "./managers/exchange-rate-manager";
+import { updateNextMissingStockPrice, removeRandomNullStockPrices } from "./managers/stock-price-manager";
 
 (async function(): Promise<void> {
   const app = Express();
-
-  if (!runningInDocker()) {
-    throw new Error("This app is designed to be run in a Docker container");
-  }
 
   // logging
   ensureLogFilesAreCreated();
@@ -33,8 +29,8 @@ import { updateLatestExchangeRates, updateHistoricalExchangeRages } from "./mana
       logger.info("Database is available");
       await conn.close();
       break;
-    } catch {
-      logger.error("Couldn't connect to database, retrying in 10s");
+    } catch (error) {
+      logger.error("Couldn't connect to database, retrying in 10s", { error });
       await delayPromise(10000);
     }
   }
@@ -50,9 +46,13 @@ import { updateLatestExchangeRates, updateHistoricalExchangeRages } from "./mana
   await createConnection(typeormConf);
   logger.info("Database connection created successfully");
 
-  // regular tasks
+  // regular tasks - stocks (max 5 requests per minute)
+  Cron.schedule("0 12 * * *", () => removeRandomNullStockPrices(5));
+  Cron.schedule("*/5 * * * *", updateNextMissingStockPrice);
+
+  // regular tasks - exchange rates (max 1000 requests per month)
   Cron.schedule("0 */2 * * *", updateLatestExchangeRates);
-  Cron.schedule("0 2 * * *", () => updateHistoricalExchangeRages(7));
+  Cron.schedule("30 */2 * * *", updateNextMissingExchangeRates);
 
   // middleware
   app.use(BodyParser.json());

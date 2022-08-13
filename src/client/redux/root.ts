@@ -11,6 +11,7 @@ import { INavState, navReducer } from "./nav";
 import { IProfilesState, profilesReducer, profilesSagas } from "./profiles";
 import { ITransactionsState, transactionsReducer, transactionsSagas } from "./transactions";
 import { IExchangeRateState, exchangeRatesReducer, exchangeRatesSagas } from "./exchange-rates";
+import { IStockPriceState, stockPricesReducer, stockPricesSagas } from "./stock-prices";
 
 interface IRootState {
   readonly accounts?: IAccountsState;
@@ -22,6 +23,7 @@ interface IRootState {
   readonly global?: IGlobalState;
   readonly nav?: INavState;
   readonly profiles?: IProfilesState;
+  readonly stockPrices?: IStockPriceState;
   readonly transactions?: ITransactionsState;
 
   // from connected-react-router
@@ -39,6 +41,7 @@ const rootReducers = {
   global: globalReducer,
   nav: navReducer,
   profiles: profilesReducer,
+  stockPrices: stockPricesReducer,
   transactions: transactionsReducer,
 };
 
@@ -51,6 +54,7 @@ function* rootSaga(): Generator {
     dashboardSagas(),
     exchangeRatesSagas(),
     profilesSagas(),
+    stockPricesSagas(),
     transactionsSagas(),
   ]);
 }

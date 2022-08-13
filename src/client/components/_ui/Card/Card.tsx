@@ -1,14 +1,13 @@
 import { PureComponent, ReactNode } from "react";
 import * as React from "react";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { combine } from "../../../helpers/style-helpers";
 import * as bs from "../../../global-styles/Bootstrap.scss";
+import { MaterialIconName, MaterialIcon } from "../MaterialIcon/MaterialIcon";
 import * as style from "./Card.scss";
 
 interface ICardProps {
   readonly title?: string;
-  readonly icon?: IconProp;
+  readonly icon?: MaterialIconName;
   readonly iconClasses?: string;
 }
 
@@ -19,7 +18,7 @@ class Card extends PureComponent<ICardProps> {
       <div className={combine(bs.card, style.card)}>
         {title && (
           <h5 className={combine(bs.cardHeader, style.cardHeader, bs.h5)}>
-            {icon && <FontAwesomeIcon icon={icon} className={combine(bs.me3, iconClasses)} />}
+            {icon && <MaterialIcon icon={icon} className={combine(bs.me3, iconClasses)} />}
             {title}
           </h5>
         )}

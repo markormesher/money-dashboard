@@ -1,14 +1,12 @@
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faCaretDown, faCaretUp } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon, Props as FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
+import { IMaterialIconProps, MaterialIcon, MaterialIconName } from "../MaterialIcon/MaterialIcon";
 
 interface IRelativeChangeIconProps {
   readonly change: number;
-  readonly iconProps?: Partial<FontAwesomeIconProps>;
+  readonly iconProps?: Partial<IMaterialIconProps>;
 }
 
 class RelativeChangeIcon extends PureComponent<IRelativeChangeIconProps> {
@@ -20,25 +18,18 @@ class RelativeChangeIcon extends PureComponent<IRelativeChangeIconProps> {
       return null;
     }
 
-    let changeIcon: IconProp;
+    let changeIcon: MaterialIconName;
     let changeClass: string;
     if (change < 0) {
-      changeIcon = faCaretDown;
+      changeIcon = "trending_down";
       changeClass = bs.textDanger;
     }
     if (change > 0) {
-      changeIcon = faCaretUp;
+      changeIcon = "trending_up";
       changeClass = bs.textSuccess;
     }
 
-    return (
-      <FontAwesomeIcon
-        icon={changeIcon}
-        fixedWidth={true}
-        className={combine(changeClass, iconClassName)}
-        {...otherIconProps}
-      />
-    );
+    return <MaterialIcon icon={changeIcon} className={combine(changeClass, iconClassName)} {...otherIconProps} />;
   }
 }
 

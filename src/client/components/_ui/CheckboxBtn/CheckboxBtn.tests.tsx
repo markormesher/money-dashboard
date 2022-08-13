@@ -1,62 +1,63 @@
-import { faCheckCircle, faCheckSquare, faCircle, faSquare } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { mount, render } from "enzyme";
+import { mount } from "enzyme";
 import { describe, it } from "mocha";
 import * as React from "react";
 import * as sinon from "sinon";
 import { testGlobals } from "../../../../test-utils/global.tests";
+import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
+import { removeIconText } from "../../../../test-utils/test-helpers";
 import { CheckboxBtn } from "./CheckboxBtn";
 
 describe(__filename, () => {
   let { mountWrapper } = testGlobals;
 
   it("should render the text", () => {
-    const wrapper = render(<CheckboxBtn text={"hello"} />);
-    wrapper.text().should.equal("hello");
+    mountWrapper = mount(<CheckboxBtn text={"hello"} />);
+    removeIconText(mountWrapper);
+    mountWrapper.text().should.equal("hello");
   });
 
   it("should render the checkbox icon by default when checked", () => {
     mountWrapper = mount(<CheckboxBtn checked={true} />);
-    mountWrapper.find(FontAwesomeIcon).should.have.lengthOf(1);
+    mountWrapper.find(MaterialIcon).should.have.lengthOf(1);
     mountWrapper
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
-      .icon.should.equal(faCheckSquare);
+      .icon.should.equal("check_box");
   });
 
   it("should render a custom icon if specified when checked", () => {
-    mountWrapper = mount(<CheckboxBtn checked={true} iconChecked={faCheckCircle} />);
-    mountWrapper.find(FontAwesomeIcon).should.have.lengthOf(1);
+    mountWrapper = mount(<CheckboxBtn checked={true} iconChecked={"check_circle"} />);
+    mountWrapper.find(MaterialIcon).should.have.lengthOf(1);
     mountWrapper
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
-      .icon.should.equal(faCheckCircle);
+      .icon.should.equal("check_circle");
   });
 
   it("should render the empty box icon by default when not checked", () => {
     mountWrapper = mount(<CheckboxBtn checked={false} />);
-    mountWrapper.find(FontAwesomeIcon).should.have.lengthOf(1);
+    mountWrapper.find(MaterialIcon).should.have.lengthOf(1);
     mountWrapper
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
-      .icon.should.equal(faSquare);
+      .icon.should.equal("check_box_outline_blank");
   });
 
   it("should render the empty box icon if specified when not checked", () => {
-    mountWrapper = mount(<CheckboxBtn checked={false} iconUnchecked={faCircle} />);
-    mountWrapper.find(FontAwesomeIcon).should.have.lengthOf(1);
+    mountWrapper = mount(<CheckboxBtn checked={false} iconUnchecked={"circle"} />);
+    mountWrapper.find(MaterialIcon).should.have.lengthOf(1);
     mountWrapper
-      .find(FontAwesomeIcon)
+      .find(MaterialIcon)
       .props()
-      .icon.should.equal(faCircle);
+      .icon.should.equal("circle");
   });
 
   it("should change the icon when new props are given", () => {
     mountWrapper = mount(<CheckboxBtn checked={true} />);
-    const iconBeforeChange = mountWrapper.find(FontAwesomeIcon).props().icon;
+    const iconBeforeChange = mountWrapper.find(MaterialIcon).props().icon;
 
     mountWrapper.setProps({ checked: false });
-    const iconAfterChange = mountWrapper.find(FontAwesomeIcon).props().icon;
+    const iconAfterChange = mountWrapper.find(MaterialIcon).props().icon;
 
     iconBeforeChange.should.not.equal(iconAfterChange);
   });

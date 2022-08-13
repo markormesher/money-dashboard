@@ -1,7 +1,9 @@
 import { existsSync, mkdirSync } from "fs";
 import { format } from "logform";
 import * as Winston from "winston";
-import { isDev, isTest } from "./env";
+import { runningInDocker } from "./env";
+
+const LOG_DIR = runningInDocker() ? "/logs" : "./logs";
 
 const consoleLogFormat = format.combine(
   format.colorize({
@@ -12,7 +14,6 @@ const consoleLogFormat = format.combine(
       info: "green",
       verbose: "cyan",
       debug: "magenta",
-      silly: "white",
     },
   }),
   format.padLevels(),
@@ -25,26 +26,23 @@ const fileLogFormat = format.combine(format.timestamp(), format.json());
 const logger = Winston.createLogger({
   format: fileLogFormat,
   transports: [
-    new Winston.transports.File({ filename: "/logs/error.log", level: "error" }),
-    new Winston.transports.File({ filename: "/logs/all.log", level: "silly" }),
+    new Winston.transports.File({ filename: `${LOG_DIR}/error.log`, level: "error" }),
+    new Winston.transports.File({ filename: `${LOG_DIR}/all.log`, level: "debug" }),
   ],
 });
 
-/* istanbul ignore else: tests never run in prod mode */
-if (isDev() || isTest()) {
-  logger.add(
-    new Winston.transports.Console({
-      format: consoleLogFormat,
-      level: "silly",
-    }),
-  );
-}
+logger.add(
+  new Winston.transports.Console({
+    format: consoleLogFormat,
+    level: "debug",
+  }),
+);
 
 function ensureLogFilesAreCreated(): void {
-  if (!existsSync("/logs")) {
-    mkdirSync("/logs");
+  if (!existsSync(LOG_DIR)) {
+    mkdirSync(LOG_DIR);
 
-    logger.debug("Created /logs for logs");
+    logger.debug(`Created ${LOG_DIR} for logs`);
   }
 }
 

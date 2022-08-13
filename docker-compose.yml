@@ -4,9 +4,6 @@ services:
   app:
     build:
       context: .
-      args:
-        - PRIVATE_PACKAGE_REPO=replace-me
-        - PRIVATE_PACKAGE_REPO_TOKEN=replace-me
     depends_on:
       - postgres
     secrets:

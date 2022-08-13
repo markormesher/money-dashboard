@@ -1,4 +1,3 @@
-import { faCalendar } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { DateModeOption } from "../../../../models/ITransaction";
@@ -24,7 +23,7 @@ class DateModeToggleBtn extends PureComponent<IDateModeToggleBtnProps> {
 
     return (
       <IconBtn
-        icon={faCalendar}
+        icon={"today"}
         text={text}
         btnProps={{
           ...btnProps,

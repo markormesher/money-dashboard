@@ -16,12 +16,14 @@ import {
 import { IRootState } from "../../redux/root";
 import { ExchangeRateMap } from "../../../models/IExchangeRate";
 import { startLoadLatestExchangeRates } from "../../redux/exchange-rates";
+import { startLoadLatestStockPrices } from "../../redux/stock-prices";
 import { startLoadAccountList } from "../../redux/accounts";
 import { IAccount } from "../../../models/IAccount";
+import { StockPriceMap } from "../../../models/IStockPrice";
 import { DashboardAccountList } from "./DashboardAccountList";
 import { DashboardAlertList } from "./DashboardAlertList";
 import { DashboardBudgetList } from "./DashboardBudgetList";
-import { DashboardExchangeRateHistory } from "./DashboardExchangeRateHistory";
+import { DashboardRateHistories } from "./DashboardRateHistories";
 import { DashboardAssetBalanceUpdateModal } from "./DashboardAssetBalanceUpdateModal";
 
 interface IDashboardProps {
@@ -32,6 +34,7 @@ interface IDashboardProps {
   readonly budgetBalances?: IBudgetBalance[];
   readonly memoCategoryBalances?: ICategoryBalance[];
   readonly exchangeRates: ExchangeRateMap;
+  readonly stockPrices: StockPriceMap;
 
   readonly actions?: {
     readonly startLoadAccountList: () => AnyAction;
@@ -39,6 +42,7 @@ interface IDashboardProps {
     readonly startLoadBudgetBalances: () => AnyAction;
     readonly startLoadMemoCategoryBalances: () => AnyAction;
     readonly startLoadLatestExchangeRates: () => AnyAction;
+    readonly startLoadLatestStockPrices: () => AnyAction;
   };
 }
 
@@ -52,6 +56,7 @@ function mapStateToProps(state: IRootState, props: IDashboardProps): IDashboardP
     budgetBalances: state.dashboard.budgetBalances,
     memoCategoryBalances: state.dashboard.memoCategoryBalances,
     exchangeRates: state.exchangeRates.latestExchangeRates,
+    stockPrices: state.stockPrices.latestStockPrices,
   };
 }
 
@@ -64,6 +69,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDashboardProps): IDashbo
       startLoadBudgetBalances: (): AnyAction => dispatch(startLoadBudgetBalances()),
       startLoadMemoCategoryBalances: (): AnyAction => dispatch(startLoadMemoCategoryBalances()),
       startLoadLatestExchangeRates: (): AnyAction => dispatch(startLoadLatestExchangeRates()),
+      startLoadLatestStockPrices: (): AnyAction => dispatch(startLoadLatestStockPrices()),
     },
   };
 }
@@ -75,6 +81,7 @@ class UCDashboard extends PureComponent<IDashboardProps> {
     this.props.actions.startLoadBudgetBalances();
     this.props.actions.startLoadMemoCategoryBalances();
     this.props.actions.startLoadLatestExchangeRates();
+    this.props.actions.startLoadLatestStockPrices();
   }
 
   public componentDidUpdate(): void {
@@ -93,9 +100,10 @@ class UCDashboard extends PureComponent<IDashboardProps> {
           <div className={combine(bs.colSm12, bs.colMd8)}>
             <DashboardBudgetList budgetBalances={this.props.budgetBalances} />
             <div className={bs.row}>
-              <DashboardExchangeRateHistory
+              <DashboardRateHistories
                 accounts={this.props.accountList}
                 exchangeRates={this.props.exchangeRates}
+                stockPrices={this.props.stockPrices}
               />
             </div>
           </div>
@@ -104,6 +112,7 @@ class UCDashboard extends PureComponent<IDashboardProps> {
             <DashboardAccountList
               accountBalances={this.props.accountBalances}
               exchangeRates={this.props.exchangeRates}
+              stockPrices={this.props.stockPrices}
             />
           </div>
         </div>
