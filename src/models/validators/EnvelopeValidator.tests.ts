@@ -11,6 +11,7 @@ describe(__filename, () => {
       name: "Envelope",
       profile: DEFAULT_PROFILE,
       active: true,
+      categoryAllocations: [],
       deleted: false,
     };
 
