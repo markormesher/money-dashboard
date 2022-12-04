@@ -3,6 +3,7 @@ import { IProfile } from "../../models/IProfile";
 import { DbAccount } from "./DbAccount";
 import { DbBudget } from "./DbBudget";
 import { DbCategory } from "./DbCategory";
+import { DbEnvelope } from "./DbEnvelope";
 import { DbTransaction } from "./DbTransaction";
 import { DbUser } from "./DbUser";
 
@@ -40,6 +41,14 @@ class DbProfile extends BaseEntity implements IProfile {
     (c) => c.profile,
   )
   public categories: DbCategory[];
+
+  @OneToMany(
+    /* istanbul ignore next */
+    () => DbEnvelope,
+    /* istanbul ignore next */
+    (e) => e.profile,
+  )
+  public envelopes: DbEnvelope[];
 
   @OneToMany(
     /* istanbul ignore next */

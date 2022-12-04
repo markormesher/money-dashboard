@@ -430,6 +430,47 @@ ALTER TABLE ONLY stock_price
       return qr.query(`ALTER TABLE account DROP COLUMN stock_ticker;`);
     },
   },
+
+  {
+    migrationNumber: 22,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
+CREATE TABLE envelope (
+    id uuid DEFAULT uuid_generate_v4() NOT NULL,
+    deleted boolean DEFAULT false NOT NULL,
+    name character varying NOT NULL,
+    active boolean DEFAULT true NOT NULL,
+    profile_id uuid NOT NULL
+);
+
+ALTER TABLE envelope OWNER TO money_dashboard;
+
+ALTER TABLE ONLY envelope
+    ADD CONSTRAINT ${ns.primaryKeyName("envelope", ["id"])}
+        PRIMARY KEY (id);
+
+
+CREATE TABLE category_to_envelope_allocation (
+    id uuid DEFAULT uuid_generate_v4() NOT NULL,
+    deleted boolean DEFAULT false NOT NULL,
+    start_date integer NOT NULL,
+    category_id uuid NOT NULL,
+    envelope_id uuid NOT NULL,
+    profile_id uuid NOT NULL
+);
+
+ALTER TABLE category_to_envelope_allocation OWNER TO money_dashboard;
+
+ALTER TABLE ONLY category_to_envelope_allocation
+    ADD CONSTRAINT ${ns.primaryKeyName("category_to_envelope_allocation", ["id"])}
+        PRIMARY KEY (id);
+            `);
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`DROP TABLE IF EXISTS envelope;`);
+      return qr.query(`DROP TABLE IF EXISTS category_to_envelope_allocation;`);
+    },
+  },
 ];
 
 export { allMigrations };

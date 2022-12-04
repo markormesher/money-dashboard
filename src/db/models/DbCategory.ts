@@ -1,6 +1,7 @@
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ICategory } from "../../models/ICategory";
 import { DbBudget } from "./DbBudget";
+import { DbCategoryToEnvelopeAllocation } from "./DbCategoryToEnvelopeAllocation";
 import { DbProfile } from "./DbProfile";
 import { DbTransaction } from "./DbTransaction";
 
@@ -42,6 +43,14 @@ class DbCategory extends BaseEntity implements ICategory {
     (t) => t.category,
   )
   public transactions: DbTransaction[];
+
+  @OneToMany(
+    /* istanbul ignore next */
+    () => DbCategoryToEnvelopeAllocation,
+    /* istanbul ignore next */
+    (a) => a.category,
+  )
+  public envelopeAllocations: DbCategoryToEnvelopeAllocation[];
 
   @ManyToOne(
     /* istanbul ignore next */
