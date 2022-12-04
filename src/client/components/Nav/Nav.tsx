@@ -107,6 +107,7 @@ class UCNav extends PureComponent<INavProps> {
               <NavLink to="/accounts" text="Accounts" icon={"account_balance_wallet"} />
               <NavLink to="/budgets" text="Budgets" icon={"tune"} />
               <NavLink to="/categories" text="Categories" icon={"bookmarks"} />
+              <NavLink to="/envelopes" text="Envelopes" icon={"mail"} />
               <NavLink to="/profiles" text="Profiles" icon={"group"} />
             </NavSection>
           </div>

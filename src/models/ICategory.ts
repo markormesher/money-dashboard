@@ -2,6 +2,7 @@ import { mapEntities } from "../utils/entities";
 import { IBudget, mapBudgetFromApi, mapBudgetForApi } from "./IBudget";
 import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 import { ITransaction, mapTransactionFromApi, mapTransactionForApi } from "./ITransaction";
+import { ICategoryToEnvelopeAllocation } from "./ICategoryToEnvelopeAllocation";
 
 interface ICategory {
   readonly id: string;
@@ -14,6 +15,7 @@ interface ICategory {
 
   readonly budgets: IBudget[];
   readonly transactions: ITransaction[];
+  readonly envelopeAllocations: ICategoryToEnvelopeAllocation[];
   readonly profile: IProfile;
 }
 
@@ -28,6 +30,7 @@ const DEFAULT_CATEGORY: ICategory = {
 
   budgets: undefined,
   transactions: undefined,
+  envelopeAllocations: undefined,
   profile: undefined,
 };
 
