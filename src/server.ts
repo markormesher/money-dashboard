@@ -16,7 +16,16 @@ import { updateLatestExchangeRates, updateNextMissingExchangeRates } from "./man
 import { updateNextMissingStockPrice, removeRandomNullStockPrices } from "./managers/stock-price-manager";
 
 (async function(): Promise<void> {
+  let dbReady = false;
   const app = Express();
+
+  // health endpoint (registered here before we block on setting up the DB)
+  app.get("/api/health/live", (req, res) => {
+    res.status(200).end();
+  });
+  app.get("/api/health/ready", (req, res) => {
+    res.status(dbReady ? 200 : 500).end();
+  });
 
   // logging
   ensureLogFilesAreCreated();
@@ -27,6 +36,7 @@ import { updateNextMissingStockPrice, removeRandomNullStockPrices } from "./mana
     try {
       const conn = await createConnection({ ...typeormConf, synchronize: false });
       logger.info("Database is available");
+      dbReady = true;
       await conn.close();
       break;
     } catch (error) {
