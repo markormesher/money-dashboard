@@ -73,6 +73,7 @@ import { updateNextMissingStockPrice, removeRandomNullStockPrices } from "./mana
   setupClientRoutes(app);
 
   // error handlers
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use((error: StatusError, req: Request, res: Response, next: NextFunction) => {
     const status = error.status || 500;
     const name = error.name || "Internal Server Error";
