@@ -453,7 +453,7 @@ ALTER TABLE ONLY envelope
 CREATE TABLE category_to_envelope_allocation (
     id uuid DEFAULT uuid_generate_v4() NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
-    start_date integer NOT NULL,
+    start_date bigint NOT NULL,
     category_id uuid NOT NULL,
     envelope_id uuid NOT NULL,
     profile_id uuid NOT NULL

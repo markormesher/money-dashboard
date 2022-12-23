@@ -30,7 +30,7 @@ function mapStateToProps(state: IRootState, props: IEnvelopeEditModalProps): IEn
   return {
     ...props,
     envelopeToEdit: state.envelopes.envelopeToEdit,
-    editorBusy: state.envelopes.editorBusy,
+    editorBusy: state.envelopes.envelopeEditorBusy,
   };
 }
 

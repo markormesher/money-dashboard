@@ -9,9 +9,12 @@ import { combine } from "../../helpers/style-helpers";
 import {
   EnvelopeCacheKeys,
   setEnvelopeToEdit,
-  setDisplayActiveOnly,
+  setDisplayActiveEnvelopesOnly,
+  setDisplayActiveAllocationsOnly,
   startDeleteEnvelope,
   startSetEnvelopeActive,
+  setAllocationToEdit,
+  startDeleteAllocation,
 } from "../../redux/envelopes";
 import { IRootState } from "../../redux/root";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
@@ -25,18 +28,33 @@ import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { Card } from "../_ui/Card/Card";
 import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
+import {
+  ICategoryToEnvelopeAllocation,
+  mapCategoryToEnvelopeAllocationFromApi,
+} from "../../../models/ICategoryToEnvelopeAllocation";
+import { formatDate } from "../../helpers/formatters";
+import { EnvelopeAllocationEditModal } from "../EnvelopeAllocationEditModal/EnvelopeAllocationEditModal";
 
 interface IEnvelopesPageProps extends IProfileAwareProps {
-  readonly cacheTime: number;
-  readonly displayActiveOnly?: boolean;
+  readonly envelopeCacheTime: number;
+  readonly displayActiveEnvelopesOnly?: boolean;
   readonly envelopeToEdit?: IEnvelope;
   readonly envelopeEditsInProgress?: IEnvelope[];
 
+  readonly allocationCacheTime: number;
+  readonly displayActiveAllocationsOnly?: boolean;
+  readonly allocationToEdit?: ICategoryToEnvelopeAllocation;
+  readonly allocationEditsInProgress?: ICategoryToEnvelopeAllocation[];
+
   readonly actions?: {
-    readonly deleteEnvelope: (envelope: IEnvelope) => AnyAction;
-    readonly setDisplayActiveOnly: (active: boolean) => AnyAction;
+    readonly setDisplayActiveEnvelopesOnly: (active: boolean) => AnyAction;
     readonly setEnvelopeToEdit: (envelope: IEnvelope) => AnyAction;
     readonly setEnvelopeActive: (active: boolean, envelope: IEnvelope) => AnyAction;
+    readonly deleteEnvelope: (envelope: IEnvelope) => AnyAction;
+
+    readonly setDisplayActiveAllocationsOnly: (active: boolean) => AnyAction;
+    readonly setAllocationToEdit: (envelope: ICategoryToEnvelopeAllocation) => AnyAction;
+    readonly deleteAllocation: (envelope: ICategoryToEnvelopeAllocation) => AnyAction;
   };
 }
 
@@ -44,10 +62,15 @@ function mapStateToProps(state: IRootState, props: IEnvelopesPageProps): IEnvelo
   return {
     ...mapStateToProfileAwareProps(state),
     ...props,
-    cacheTime: CacheKeyUtil.getKeyTime(EnvelopeCacheKeys.ENVELOPE_DATA),
-    displayActiveOnly: state.envelopes.displayActiveOnly,
+    envelopeCacheTime: CacheKeyUtil.getKeyTime(EnvelopeCacheKeys.ENVELOPE_DATA),
+    displayActiveEnvelopesOnly: state.envelopes.displayActiveEnvelopesOnly,
     envelopeToEdit: state.envelopes.envelopeToEdit,
     envelopeEditsInProgress: state.envelopes.envelopeEditsInProgress,
+
+    allocationCacheTime: CacheKeyUtil.getKeyTime(EnvelopeCacheKeys.ALLOCATION_DATA),
+    displayActiveAllocationsOnly: state.envelopes.displayActiveAllocationsOnly,
+    allocationToEdit: state.envelopes.allocationToEdit,
+    allocationEditsInProgress: state.envelopes.allocationEditsInProgress,
   };
 }
 
@@ -55,16 +78,20 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEnvelopesPageProps): IEn
   return {
     ...props,
     actions: {
-      deleteEnvelope: (envelope): AnyAction => dispatch(startDeleteEnvelope(envelope)),
-      setDisplayActiveOnly: (active): AnyAction => dispatch(setDisplayActiveOnly(active)),
+      setDisplayActiveEnvelopesOnly: (active): AnyAction => dispatch(setDisplayActiveEnvelopesOnly(active)),
       setEnvelopeToEdit: (envelope): AnyAction => dispatch(setEnvelopeToEdit(envelope)),
       setEnvelopeActive: (active, envelope): AnyAction => dispatch(startSetEnvelopeActive(envelope, active)),
+      deleteEnvelope: (envelope): AnyAction => dispatch(startDeleteEnvelope(envelope)),
+
+      setDisplayActiveAllocationsOnly: (active): AnyAction => dispatch(setDisplayActiveAllocationsOnly(active)),
+      setAllocationToEdit: (allocation): AnyAction => dispatch(setAllocationToEdit(allocation)),
+      deleteAllocation: (allocation): AnyAction => dispatch(startDeleteAllocation(allocation)),
     },
   };
 }
 
 class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
-  private tableColumns: IColumn[] = [
+  private envelopeTableColumns: IColumn[] = [
     {
       title: "Name",
       sortField: "envelope.name",
@@ -76,29 +103,68 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
     },
   ];
 
-  private dataProvider = new ApiDataTableDataProvider<IEnvelope>(
+  private envelopeDataProvider = new ApiDataTableDataProvider<IEnvelope>(
     "/api/envelopes/table-data",
     () => ({
-      cacheTime: this.props.cacheTime,
-      activeOnly: this.props.displayActiveOnly,
+      envelopeCacheTime: this.props.envelopeCacheTime,
+      activeOnly: this.props.displayActiveEnvelopesOnly,
     }),
     mapEnvelopeFromApi,
+  );
+
+  private allocationTableColumns: IColumn[] = [
+    {
+      title: "Start Date",
+      sortField: "allocation.startDate",
+      defaultSortDirection: "DESC",
+    },
+    {
+      title: "Allocation",
+      sortField: "category.name",
+      defaultSortDirection: "ASC",
+    },
+    {
+      title: "Actions",
+      sortable: false,
+    },
+  ];
+
+  private allocationDataProvider = new ApiDataTableDataProvider<ICategoryToEnvelopeAllocation>(
+    "/api/envelope-allocations/table-data",
+    () => ({
+      allocationCacheTime: this.props.allocationCacheTime,
+      activeOnly: this.props.displayActiveAllocationsOnly,
+    }),
+    mapCategoryToEnvelopeAllocationFromApi,
   );
 
   constructor(props: IEnvelopesPageProps) {
     super(props);
 
-    this.tableRowRenderer = this.tableRowRenderer.bind(this);
-    this.generateActionButtons = this.generateActionButtons.bind(this);
+    this.envelopeTableRowRenderer = this.envelopeTableRowRenderer.bind(this);
+    this.generateEnvelopeActionButtons = this.generateEnvelopeActionButtons.bind(this);
     this.startEnvelopeCreation = this.startEnvelopeCreation.bind(this);
+
+    this.allocationTableRowRenderer = this.allocationTableRowRenderer.bind(this);
+    this.generateAllocationActionButtons = this.generateAllocationActionButtons.bind(this);
+    this.startAllocationCreation = this.startAllocationCreation.bind(this);
   }
 
   public render(): ReactNode {
-    const { cacheTime, activeProfile, displayActiveOnly, envelopeToEdit } = this.props;
+    const {
+      envelopeCacheTime,
+      allocationCacheTime,
+      activeProfile,
+      displayActiveEnvelopesOnly,
+      displayActiveAllocationsOnly,
+      envelopeToEdit,
+      allocationToEdit,
+    } = this.props;
 
     return (
       <>
         {envelopeToEdit !== undefined && <EnvelopeEditModal />}
+        {allocationToEdit !== undefined && <EnvelopeAllocationEditModal />}
 
         <PageHeader>
           <h2>Envelopes</h2>
@@ -119,8 +185,8 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
         <PageOptions>
           <CheckboxBtn
             text={"Active Envelopes Only"}
-            checked={this.props.displayActiveOnly}
-            onChange={this.props.actions.setDisplayActiveOnly}
+            checked={this.props.displayActiveEnvelopesOnly}
+            onChange={this.props.actions.setDisplayActiveEnvelopesOnly}
             btnProps={{
               className: combine(bs.btnOutlineInfo, bs.btnSm),
             }}
@@ -129,26 +195,62 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
 
         <Card>
           <DataTable<IEnvelope>
-            columns={this.tableColumns}
-            dataProvider={this.dataProvider}
-            rowRenderer={this.tableRowRenderer}
-            watchedProps={{ cacheTime, activeProfile, displayActiveOnly }}
+            columns={this.envelopeTableColumns}
+            dataProvider={this.envelopeDataProvider}
+            rowRenderer={this.envelopeTableRowRenderer}
+            watchedProps={{ envelopeCacheTime, activeProfile, displayActiveEnvelopesOnly }}
+          />
+        </Card>
+
+        <hr />
+
+        <PageHeader>
+          <h2>Envelope &harr; Category Allocations</h2>
+          <PageHeaderActions>
+            <IconBtn
+              icon={"add"}
+              text={"New Allocation"}
+              onClick={this.startAllocationCreation}
+              btnProps={{
+                className: combine(bs.btnSm, bs.btnSuccess),
+              }}
+            />
+          </PageHeaderActions>
+        </PageHeader>
+
+        <PageOptions>
+          <CheckboxBtn
+            text={"Active Allocations Only"}
+            checked={this.props.displayActiveEnvelopesOnly}
+            onChange={this.props.actions.setDisplayActiveAllocationsOnly}
+            btnProps={{
+              className: combine(bs.btnOutlineInfo, bs.btnSm),
+            }}
+          />
+        </PageOptions>
+
+        <Card>
+          <DataTable<ICategoryToEnvelopeAllocation>
+            columns={this.allocationTableColumns}
+            dataProvider={this.allocationDataProvider}
+            rowRenderer={this.allocationTableRowRenderer}
+            watchedProps={{ allocationCacheTime, activeProfile, displayActiveAllocationsOnly }}
           />
         </Card>
       </>
     );
   }
 
-  private tableRowRenderer(envelope: IEnvelope): ReactElement<void> {
+  private envelopeTableRowRenderer(envelope: IEnvelope): ReactElement<void> {
     return (
       <tr key={envelope.id}>
         <td>{envelope.name}</td>
-        <td>{this.generateActionButtons(envelope)}</td>
+        <td>{this.generateEnvelopeActionButtons(envelope)}</td>
       </tr>
     );
   }
 
-  private generateActionButtons(envelope: IEnvelope): ReactElement<void> {
+  private generateEnvelopeActionButtons(envelope: IEnvelope): ReactElement<void> {
     const { actions, envelopeEditsInProgress } = this.props;
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
@@ -186,8 +288,51 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
     );
   }
 
+  private allocationTableRowRenderer(allocation: ICategoryToEnvelopeAllocation): ReactElement<void> {
+    return (
+      <tr key={allocation.id}>
+        <td>{formatDate(allocation.startDate)}</td>
+        <td>
+          {allocation.category.name} &rarr; {allocation.envelope.name}
+        </td>
+        <td>{this.generateAllocationActionButtons(allocation)}</td>
+      </tr>
+    );
+  }
+
+  private generateAllocationActionButtons(allocation: ICategoryToEnvelopeAllocation): ReactElement<void> {
+    const { actions, allocationEditsInProgress } = this.props;
+    return (
+      <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
+        <IconBtn
+          icon={"edit"}
+          text={"Edit"}
+          payload={allocation}
+          onClick={actions.setAllocationToEdit}
+          btnProps={{
+            className: bs.btnOutlineDark,
+            disabled: allocationEditsInProgress.some((a) => a.id === allocation.id),
+          }}
+        />
+
+        <DeleteBtn
+          payload={allocation}
+          onConfirmedClick={actions.deleteAllocation}
+          btnProps={{
+            className: bs.btnOutlineDark,
+            disabled: allocationEditsInProgress.some((a) => a.id === allocation.id),
+          }}
+        />
+      </div>
+    );
+  }
+
   private startEnvelopeCreation(): void {
     this.props.actions.setEnvelopeToEdit(null);
+  }
+
+  private startAllocationCreation(): void {
+    this.props.actions.setAllocationToEdit(null);
   }
 }
 

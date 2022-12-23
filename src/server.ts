@@ -1,6 +1,6 @@
 import * as BodyParser from "body-parser";
 import * as Express from "express";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import * as Cron from "node-cron";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
@@ -73,7 +73,7 @@ import { updateNextMissingStockPrice, removeRandomNullStockPrices } from "./mana
   setupClientRoutes(app);
 
   // error handlers
-  app.use((error: StatusError, req: Request, res: Response) => {
+  app.use((error: StatusError, req: Request, res: Response, next: NextFunction) => {
     const status = error.status || 500;
     const name = error.name || "Internal Server Error";
     const message = error.message || undefined;
