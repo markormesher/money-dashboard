@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, OneToMany } from "ty
 import { IEnvelope } from "../../models/IEnvelope";
 import { BaseModel } from "./BaseModel";
 import { DbProfile } from "./DbProfile";
-import { DbCategoryToEnvelopeAllocation } from "./DbCategoryToEnvelopeAllocation";
+import { DbEnvelopeAllocation } from "./DbEnvelopeAllocation";
 
 @Entity("envelope")
 class DbEnvelope extends BaseModel implements IEnvelope {
@@ -20,11 +20,11 @@ class DbEnvelope extends BaseModel implements IEnvelope {
 
   @OneToMany(
     /* istanbul ignore next */
-    () => DbCategoryToEnvelopeAllocation,
+    () => DbEnvelopeAllocation,
     /* istanbul ignore next */
     (a) => a.envelope,
   )
-  public categoryAllocations: DbCategoryToEnvelopeAllocation[];
+  public categoryAllocations: DbEnvelopeAllocation[];
 
   @ManyToOne(
     /* istanbul ignore next */

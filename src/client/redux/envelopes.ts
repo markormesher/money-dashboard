@@ -3,10 +3,10 @@ import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IEnvelope, mapEnvelopeFromApi, mapEnvelopeForApi } from "../../models/IEnvelope";
 import {
-  ICategoryToEnvelopeAllocation,
-  mapCategoryToEnvelopeAllocationFromApi,
-  mapCategoryToEnvelopeAllocationForApi,
-} from "../../models/ICategoryToEnvelopeAllocation";
+  IEnvelopeAllocation,
+  mapEnvelopeAllocationFromApi,
+  mapEnvelopeAllocationForApi,
+} from "../../models/IEnvelopeAllocation";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
@@ -19,10 +19,10 @@ interface IEnvelopesState {
   readonly envelopeEditsInProgress: IEnvelope[];
 
   readonly displayActiveAllocationsOnly: boolean;
-  readonly allocationToEdit: ICategoryToEnvelopeAllocation;
+  readonly allocationToEdit: IEnvelopeAllocation;
   readonly allocationEditorBusy: boolean;
-  readonly allocationList: ICategoryToEnvelopeAllocation[];
-  readonly allocationEditsInProgress: ICategoryToEnvelopeAllocation[];
+  readonly allocationList: IEnvelopeAllocation[];
+  readonly allocationEditsInProgress: IEnvelopeAllocation[];
 }
 
 const initialState: IEnvelopesState = {
@@ -230,14 +230,14 @@ function* loadEnvelopeListSaga(): Generator {
 
 // allocation actions and sagas
 
-function startDeleteAllocation(allocation: ICategoryToEnvelopeAllocation): PayloadAction {
+function startDeleteAllocation(allocation: IEnvelopeAllocation): PayloadAction {
   return {
     type: EnvelopeActions.START_DELETE_ALLOCATION,
     payload: { allocation },
   };
 }
 
-function startSaveAllocation(allocation: Partial<ICategoryToEnvelopeAllocation>): PayloadAction {
+function startSaveAllocation(allocation: Partial<IEnvelopeAllocation>): PayloadAction {
   return {
     type: EnvelopeActions.START_SAVE_ALLOCATION,
     payload: { allocation },
@@ -257,7 +257,7 @@ function setDisplayActiveAllocationsOnly(activeOnly: boolean): PayloadAction {
   };
 }
 
-function setAllocationToEdit(allocation: ICategoryToEnvelopeAllocation): PayloadAction {
+function setAllocationToEdit(allocation: IEnvelopeAllocation): PayloadAction {
   return {
     type: EnvelopeActions.SET_ALLOCATION_TO_EDIT,
     payload: { allocation },
@@ -271,21 +271,21 @@ function setAllocationEditorBusy(editorBusy: boolean): PayloadAction {
   };
 }
 
-function setAllocationList(allocationList: ICategoryToEnvelopeAllocation[]): PayloadAction {
+function setAllocationList(allocationList: IEnvelopeAllocation[]): PayloadAction {
   return {
     type: EnvelopeActions.SET_ALLOCATION_LIST,
     payload: { allocationList },
   };
 }
 
-function addAllocationEditInProgress(allocation: ICategoryToEnvelopeAllocation): PayloadAction {
+function addAllocationEditInProgress(allocation: IEnvelopeAllocation): PayloadAction {
   return {
     type: EnvelopeActions.ADD_ALLOCATION_EDIT_IN_PROGRESS,
     payload: { allocation },
   };
 }
 
-function removeAllocationEditInProgress(allocation: ICategoryToEnvelopeAllocation): PayloadAction {
+function removeAllocationEditInProgress(allocation: IEnvelopeAllocation): PayloadAction {
   return {
     type: EnvelopeActions.REMOVE_ALLOCATION_EDIT_IN_PROGRESS,
     payload: { allocation },
@@ -295,7 +295,7 @@ function removeAllocationEditInProgress(allocation: ICategoryToEnvelopeAllocatio
 function* deleteAllocationSaga(): Generator {
   yield takeEvery(EnvelopeActions.START_DELETE_ALLOCATION, function*(action: PayloadAction): Generator {
     try {
-      const allocation: ICategoryToEnvelopeAllocation = action.payload.allocation;
+      const allocation: IEnvelopeAllocation = action.payload.allocation;
       yield call(() => axios.post(`/api/envelope-allocations/delete/${allocation.id}`));
       yield put(CacheKeyUtil.updateKey(EnvelopeCacheKeys.ALLOCATION_DATA));
     } catch (err) {
@@ -307,9 +307,7 @@ function* deleteAllocationSaga(): Generator {
 function* saveAllocationSaga(): Generator {
   yield takeEvery(EnvelopeActions.START_SAVE_ALLOCATION, function*(action: PayloadAction): Generator {
     try {
-      const allocation: Partial<ICategoryToEnvelopeAllocation> = mapCategoryToEnvelopeAllocationForApi(
-        action.payload.allocation,
-      );
+      const allocation: Partial<IEnvelopeAllocation> = mapEnvelopeAllocationForApi(action.payload.allocation);
       const allocationId = allocation.id || "";
       yield all([
         put(setAllocationEditorBusy(true)),
@@ -332,11 +330,11 @@ function* loadAllocationListSaga(): Generator {
       return;
     }
     try {
-      const allocationList: ICategoryToEnvelopeAllocation[] = (yield call(async () => {
+      const allocationList: IEnvelopeAllocation[] = (yield call(async () => {
         const res = await axios.get("/api/envelope-allocations/list");
-        const raw: ICategoryToEnvelopeAllocation[] = res.data;
-        return raw.map(mapCategoryToEnvelopeAllocationFromApi);
-      })) as ICategoryToEnvelopeAllocation[];
+        const raw: IEnvelopeAllocation[] = res.data;
+        return raw.map(mapEnvelopeAllocationFromApi);
+      })) as IEnvelopeAllocation[];
       yield all([
         put(setAllocationList(allocationList)),
         put(CacheKeyUtil.updateKey(EnvelopeCacheKeys.ALLOCATION_LIST)),
@@ -442,7 +440,7 @@ function envelopesReducer(state = initialState, action: PayloadAction): IEnvelop
 
     case EnvelopeActions.ADD_ALLOCATION_EDIT_IN_PROGRESS:
       return ((): IEnvelopesState => {
-        const allocation = action.payload.allocation as ICategoryToEnvelopeAllocation;
+        const allocation = action.payload.allocation as IEnvelopeAllocation;
         const arrCopy = [...state.allocationEditsInProgress];
         arrCopy.push(allocation);
         return {
@@ -453,7 +451,7 @@ function envelopesReducer(state = initialState, action: PayloadAction): IEnvelop
 
     case EnvelopeActions.REMOVE_ALLOCATION_EDIT_IN_PROGRESS:
       return ((): IEnvelopesState => {
-        const allocation = action.payload.allocation as ICategoryToEnvelopeAllocation;
+        const allocation = action.payload.allocation as IEnvelopeAllocation;
         const idx = state.allocationEditsInProgress.findIndex((a) => a.id === allocation.id);
         if (idx >= 0) {
           const arrCopy = [...state.allocationEditsInProgress];

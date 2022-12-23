@@ -2,14 +2,11 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { AnyAction, Dispatch } from "redux";
+import { IEnvelopeAllocation, DEFAULT_CATEGORY_TO_ENVELOPE_ALLOCATION } from "../../../models/IEnvelopeAllocation";
 import {
-  ICategoryToEnvelopeAllocation,
-  DEFAULT_CATEGORY_TO_ENVELOPE_ALLOCATION,
-} from "../../../models/ICategoryToEnvelopeAllocation";
-import {
-  ICategoryToEnvelopeAllocationValidationResult,
+  IEnvelopeAllocationValidationResult,
   validateEnvelopeAllocation,
-} from "../../../models/validators/CategoryToEnvelopeAllocationValidator";
+} from "../../../models/validators/EnvelopeAllocationValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { setAllocationToEdit, startSaveAllocation, startLoadEnvelopeList } from "../../redux/envelopes";
 import { IRootState } from "../../redux/root";
@@ -24,22 +21,22 @@ import { ICategory } from "../../../models/ICategory";
 import { startLoadCategoryList } from "../../redux/categories";
 
 interface IEnvelopeAllocationEditModalProps {
-  readonly allocationToEdit?: ICategoryToEnvelopeAllocation;
+  readonly allocationToEdit?: IEnvelopeAllocation;
   readonly editorBusy?: boolean;
   readonly categoryList?: ICategory[];
   readonly envelopeList?: IEnvelope[];
 
   readonly actions?: {
-    readonly setAllocationToEdit: (envelope: ICategoryToEnvelopeAllocation) => AnyAction;
-    readonly startSaveAllocation: (envelope: Partial<ICategoryToEnvelopeAllocation>) => AnyAction;
+    readonly setAllocationToEdit: (envelope: IEnvelopeAllocation) => AnyAction;
+    readonly startSaveAllocation: (envelope: Partial<IEnvelopeAllocation>) => AnyAction;
     readonly startLoadCategoryList: () => AnyAction;
     readonly startLoadEnvelopeList: () => AnyAction;
   };
 }
 
 interface IEnvelopeAllocationEditModalState {
-  readonly currentValues: ICategoryToEnvelopeAllocation;
-  readonly validationResult: ICategoryToEnvelopeAllocationValidationResult;
+  readonly currentValues: IEnvelopeAllocation;
+  readonly validationResult: IEnvelopeAllocationValidationResult;
 }
 
 function mapStateToProps(
@@ -212,7 +209,7 @@ class UCEnvelopeAllocationEditModal extends PureComponent<
     this.props.actions.setAllocationToEdit(undefined);
   }
 
-  private updateModel(envelope: Partial<ICategoryToEnvelopeAllocation>): void {
+  private updateModel(envelope: Partial<IEnvelopeAllocation>): void {
     const updatedEnvelopeAllocation = {
       ...this.state.currentValues,
       ...envelope,

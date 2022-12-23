@@ -1,7 +1,7 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { Brackets } from "typeorm";
-import { DbCategoryToEnvelopeAllocation } from "../db/models/DbCategoryToEnvelopeAllocation";
+import { DbEnvelopeAllocation } from "../db/models/DbEnvelopeAllocation";
 import { DbUser } from "../db/models/DbUser";
 import { getDataForTable } from "../helpers/datatable-helper";
 import {
@@ -38,7 +38,7 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
     // TODO: active = newest for that category
   }
 
-  getDataForTable(DbCategoryToEnvelopeAllocation, req, totalQuery, filteredQuery)
+  getDataForTable(DbEnvelopeAllocation, req, totalQuery, filteredQuery)
     .then((response) => res.json(response))
     .catch(next);
 });
@@ -46,14 +46,14 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
 router.get("/list", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   getAllEnvelopeAllocations(user)
-    .then((envelopes: DbCategoryToEnvelopeAllocation[]) => res.json(envelopes))
+    .then((envelopes: DbEnvelopeAllocation[]) => res.json(envelopes))
     .catch(next);
 });
 
 router.post("/edit/:allocationId?", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const allocationId = req.params.allocationId;
-  const properties: Partial<DbCategoryToEnvelopeAllocation> = {
+  const properties: Partial<DbEnvelopeAllocation> = {
     startDate: req.body.startDate,
     category: req.body.category,
     envelope: req.body.envelope,

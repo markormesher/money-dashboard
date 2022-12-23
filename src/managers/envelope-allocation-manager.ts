@@ -1,7 +1,7 @@
 import { SelectQueryBuilder } from "typeorm";
 import { StatusError } from "../utils/StatusError";
 import { cleanUuid } from "../utils/entities";
-import { DbCategoryToEnvelopeAllocation } from "../db/models/DbCategoryToEnvelopeAllocation";
+import { DbEnvelopeAllocation } from "../db/models/DbEnvelopeAllocation";
 import { DbUser } from "../db/models/DbUser";
 import { logger } from "../utils/logging";
 
@@ -11,8 +11,8 @@ interface IEnvelopeAllocationQueryBuilderOptions {
 
 function getEnvelopeAllocationQueryBuilder(
   options: IEnvelopeAllocationQueryBuilderOptions = {},
-): SelectQueryBuilder<DbCategoryToEnvelopeAllocation> {
-  let builder = DbCategoryToEnvelopeAllocation.createQueryBuilder("allocation")
+): SelectQueryBuilder<DbEnvelopeAllocation> {
+  let builder = DbEnvelopeAllocation.createQueryBuilder("allocation")
     .leftJoinAndSelect("allocation.envelope", "envelope")
     .leftJoinAndSelect("allocation.category", "category");
 
@@ -23,7 +23,7 @@ function getEnvelopeAllocationQueryBuilder(
   return builder;
 }
 
-function getEnvelopeAllocation(user: DbUser, allocationId?: string): Promise<DbCategoryToEnvelopeAllocation> {
+function getEnvelopeAllocation(user: DbUser, allocationId?: string): Promise<DbEnvelopeAllocation> {
   return getEnvelopeAllocationQueryBuilder()
     .where("allocation.id = :allocationId")
     .andWhere("allocation.profile_id = :profileId")
@@ -35,7 +35,7 @@ function getEnvelopeAllocation(user: DbUser, allocationId?: string): Promise<DbC
     .getOne();
 }
 
-function getAllEnvelopeAllocations(user: DbUser, activeOnly = true): Promise<DbCategoryToEnvelopeAllocation[]> {
+function getAllEnvelopeAllocations(user: DbUser, activeOnly = true): Promise<DbEnvelopeAllocation[]> {
   const query = getEnvelopeAllocationQueryBuilder()
     .where("allocation.profile_id = :profileId")
     .andWhere("allocation.deleted = FALSE")
@@ -53,20 +53,17 @@ function getAllEnvelopeAllocations(user: DbUser, activeOnly = true): Promise<DbC
 function saveEnvelopeAllocation(
   user: DbUser,
   allocationId: string,
-  properties: Partial<DbCategoryToEnvelopeAllocation>,
-): Promise<DbCategoryToEnvelopeAllocation> {
+  properties: Partial<DbEnvelopeAllocation>,
+): Promise<DbEnvelopeAllocation> {
   return getEnvelopeAllocation(user, allocationId).then((allocation) => {
     logger.info("Editing allocation", { allocation });
-    allocation = DbCategoryToEnvelopeAllocation.getRepository().merge(
-      allocation || new DbCategoryToEnvelopeAllocation(),
-      properties,
-    );
+    allocation = DbEnvelopeAllocation.getRepository().merge(allocation || new DbEnvelopeAllocation(), properties);
     allocation.profile = user.activeProfile;
     return allocation.save();
   });
 }
 
-function deleteEnvelopeAllocation(user: DbUser, allocationId: string): Promise<DbCategoryToEnvelopeAllocation> {
+function deleteEnvelopeAllocation(user: DbUser, allocationId: string): Promise<DbEnvelopeAllocation> {
   return getEnvelopeAllocation(user, allocationId).then((allocation) => {
     if (!allocation) {
       throw new StatusError(404, "That envelope allocation does not exist");

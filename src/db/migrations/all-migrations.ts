@@ -450,7 +450,7 @@ ALTER TABLE ONLY envelope
         PRIMARY KEY (id);
 
 
-CREATE TABLE category_to_envelope_allocation (
+CREATE TABLE envelope_allocation (
     id uuid DEFAULT uuid_generate_v4() NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
     start_date bigint NOT NULL,
@@ -459,16 +459,16 @@ CREATE TABLE category_to_envelope_allocation (
     profile_id uuid NOT NULL
 );
 
-ALTER TABLE category_to_envelope_allocation OWNER TO money_dashboard;
+ALTER TABLE envelope_allocation OWNER TO money_dashboard;
 
-ALTER TABLE ONLY category_to_envelope_allocation
-    ADD CONSTRAINT ${ns.primaryKeyName("category_to_envelope_allocation", ["id"])}
+ALTER TABLE ONLY envelope_allocation
+    ADD CONSTRAINT ${ns.primaryKeyName("envelope_allocation", ["id"])}
         PRIMARY KEY (id);
             `);
     },
     down: (qr: QueryRunner): Promise<any> => {
       return qr.query(`DROP TABLE IF EXISTS envelope;`);
-      return qr.query(`DROP TABLE IF EXISTS category_to_envelope_allocation;`);
+      return qr.query(`DROP TABLE IF EXISTS envelope_allocation;`);
     },
   },
 ];

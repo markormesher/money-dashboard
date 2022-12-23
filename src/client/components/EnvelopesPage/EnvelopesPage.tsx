@@ -28,10 +28,7 @@ import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { Card } from "../_ui/Card/Card";
 import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
-import {
-  ICategoryToEnvelopeAllocation,
-  mapCategoryToEnvelopeAllocationFromApi,
-} from "../../../models/ICategoryToEnvelopeAllocation";
+import { IEnvelopeAllocation, mapEnvelopeAllocationFromApi } from "../../../models/IEnvelopeAllocation";
 import { formatDate } from "../../helpers/formatters";
 import { EnvelopeAllocationEditModal } from "../EnvelopeAllocationEditModal/EnvelopeAllocationEditModal";
 
@@ -43,8 +40,8 @@ interface IEnvelopesPageProps extends IProfileAwareProps {
 
   readonly allocationCacheTime: number;
   readonly displayActiveAllocationsOnly?: boolean;
-  readonly allocationToEdit?: ICategoryToEnvelopeAllocation;
-  readonly allocationEditsInProgress?: ICategoryToEnvelopeAllocation[];
+  readonly allocationToEdit?: IEnvelopeAllocation;
+  readonly allocationEditsInProgress?: IEnvelopeAllocation[];
 
   readonly actions?: {
     readonly setDisplayActiveEnvelopesOnly: (active: boolean) => AnyAction;
@@ -53,8 +50,8 @@ interface IEnvelopesPageProps extends IProfileAwareProps {
     readonly deleteEnvelope: (envelope: IEnvelope) => AnyAction;
 
     readonly setDisplayActiveAllocationsOnly: (active: boolean) => AnyAction;
-    readonly setAllocationToEdit: (envelope: ICategoryToEnvelopeAllocation) => AnyAction;
-    readonly deleteAllocation: (envelope: ICategoryToEnvelopeAllocation) => AnyAction;
+    readonly setAllocationToEdit: (envelope: IEnvelopeAllocation) => AnyAction;
+    readonly deleteAllocation: (envelope: IEnvelopeAllocation) => AnyAction;
   };
 }
 
@@ -129,13 +126,13 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
     },
   ];
 
-  private allocationDataProvider = new ApiDataTableDataProvider<ICategoryToEnvelopeAllocation>(
+  private allocationDataProvider = new ApiDataTableDataProvider<IEnvelopeAllocation>(
     "/api/envelope-allocations/table-data",
     () => ({
       allocationCacheTime: this.props.allocationCacheTime,
       activeOnly: this.props.displayActiveAllocationsOnly,
     }),
-    mapCategoryToEnvelopeAllocationFromApi,
+    mapEnvelopeAllocationFromApi,
   );
 
   constructor(props: IEnvelopesPageProps) {
@@ -230,7 +227,7 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
         </PageOptions>
 
         <Card>
-          <DataTable<ICategoryToEnvelopeAllocation>
+          <DataTable<IEnvelopeAllocation>
             columns={this.allocationTableColumns}
             dataProvider={this.allocationDataProvider}
             rowRenderer={this.allocationTableRowRenderer}
@@ -288,7 +285,7 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
     );
   }
 
-  private allocationTableRowRenderer(allocation: ICategoryToEnvelopeAllocation): ReactElement<void> {
+  private allocationTableRowRenderer(allocation: IEnvelopeAllocation): ReactElement<void> {
     return (
       <tr key={allocation.id}>
         <td>{formatDate(allocation.startDate)}</td>
@@ -300,7 +297,7 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
     );
   }
 
-  private generateAllocationActionButtons(allocation: ICategoryToEnvelopeAllocation): ReactElement<void> {
+  private generateAllocationActionButtons(allocation: IEnvelopeAllocation): ReactElement<void> {
     const { actions, allocationEditsInProgress } = this.props;
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>

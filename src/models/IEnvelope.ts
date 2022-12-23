@@ -1,5 +1,5 @@
 import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
-import { ICategoryToEnvelopeAllocation } from "./ICategoryToEnvelopeAllocation";
+import { IEnvelopeAllocation } from "./IEnvelopeAllocation";
 
 interface IEnvelope {
   readonly id: string;
@@ -7,7 +7,7 @@ interface IEnvelope {
   readonly active: boolean;
   readonly deleted: boolean;
 
-  readonly categoryAllocations: ICategoryToEnvelopeAllocation[];
+  readonly categoryAllocations: IEnvelopeAllocation[];
   readonly profile: IProfile;
 }
 

@@ -2,7 +2,7 @@ import { mapEntities } from "../utils/entities";
 import { IBudget, mapBudgetFromApi, mapBudgetForApi } from "./IBudget";
 import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 import { ITransaction, mapTransactionFromApi, mapTransactionForApi } from "./ITransaction";
-import { ICategoryToEnvelopeAllocation } from "./ICategoryToEnvelopeAllocation";
+import { IEnvelopeAllocation } from "./IEnvelopeAllocation";
 
 interface ICategory {
   readonly id: string;
@@ -15,7 +15,7 @@ interface ICategory {
 
   readonly budgets: IBudget[];
   readonly transactions: ITransaction[];
-  readonly envelopeAllocations: ICategoryToEnvelopeAllocation[];
+  readonly envelopeAllocations: IEnvelopeAllocation[];
   readonly profile: IProfile;
 }
 
