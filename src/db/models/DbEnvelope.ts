@@ -12,9 +12,6 @@ class DbEnvelope extends BaseModel implements IEnvelope {
   @Column()
   public name: string;
 
-  @Column({ default: true })
-  public active: boolean;
-
   @Column({ default: false })
   public deleted: boolean;
 

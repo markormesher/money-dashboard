@@ -8,7 +8,6 @@ import {
   getAllEnvelopes,
   getEnvelopeQueryBuilder,
   saveEnvelope,
-  setEnvelopeActive,
   getEnvelopeBalances,
 } from "../managers/envelope-manager";
 import { IEnvelopeBalance } from "../models/IEnvelopeBalance";
@@ -18,7 +17,6 @@ const router = Express.Router();
 router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
   const searchTerm = req.query.searchTerm;
-  const activeOnly = req.query.activeOnly === "true";
 
   const totalQuery = getEnvelopeQueryBuilder()
     .where("envelope.profile_id = :profileId")
@@ -27,7 +25,7 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
       profileId: user.activeProfile.id,
     });
 
-  let filteredQuery = getEnvelopeQueryBuilder()
+  const filteredQuery = getEnvelopeQueryBuilder()
     .where("envelope.profile_id = :profileId")
     .andWhere("envelope.deleted = FALSE")
     .andWhere("envelope.name ILIKE :searchTerm")
@@ -35,10 +33,6 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
       profileId: user.activeProfile.id,
       searchTerm: `%${searchTerm}%`,
     });
-
-  if (activeOnly) {
-    filteredQuery = filteredQuery.andWhere("active = TRUE");
-  }
 
   getDataForTable(DbEnvelope, req, totalQuery, filteredQuery)
     .then((response) => res.json(response))
@@ -60,24 +54,6 @@ router.post("/edit/:envelopeId?", (req: Request, res: Response, next: NextFuncti
   };
 
   saveEnvelope(user, envelopeId, properties)
-    .then(() => res.status(200).end())
-    .catch(next);
-});
-
-router.post("/set-active/:envelopeId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
-  const envelopeId = req.params.envelopeId;
-
-  setEnvelopeActive(user, envelopeId, true)
-    .then(() => res.status(200).end())
-    .catch(next);
-});
-
-router.post("/set-inactive/:envelopeId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
-  const envelopeId = req.params.envelopeId;
-
-  setEnvelopeActive(user, envelopeId, false)
     .then(() => res.status(200).end())
     .catch(next);
 });

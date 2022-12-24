@@ -36,17 +36,13 @@ function getEnvelope(user: DbUser, envelopeId?: string): Promise<DbEnvelope> {
     .getOne();
 }
 
-function getAllEnvelopes(user: DbUser, activeOnly = true): Promise<DbEnvelope[]> {
-  let query = getEnvelopeQueryBuilder()
+function getAllEnvelopes(user: DbUser): Promise<DbEnvelope[]> {
+  const query = getEnvelopeQueryBuilder()
     .where("envelope.profile_id = :profileId")
     .andWhere("envelope.deleted = FALSE")
     .setParameters({
       profileId: user.activeProfile.id,
     });
-
-  if (activeOnly) {
-    query = query.andWhere("envelope.active = TRUE");
-  }
 
   return query.getMany();
 }
@@ -80,7 +76,7 @@ async function getEnvelopeBalances(user: DbUser): Promise<IEnvelopeBalance[]> {
   const transactions = await getTransactionQueryBuilder({ withCategory: true, withAccount: true })
     .where("transaction.profile_id = :profileId")
     .andWhere("transaction.deleted = FALSE")
-    .andWhere("account.type != 'asset'")
+    .andWhere("account.include_in_envelopes = TRUE")
     .setParameters({
       profileId: user.activeProfile.id,
     })
@@ -109,13 +105,6 @@ function saveEnvelope(user: DbUser, envelopeId: string, properties: Partial<DbEn
   });
 }
 
-function setEnvelopeActive(user: DbUser, envelopeId: string, active: boolean): Promise<DbEnvelope> {
-  return getEnvelope(user, envelopeId).then((envelope) => {
-    envelope.active = active;
-    return envelope.save();
-  });
-}
-
 function deleteEnvelope(user: DbUser, envelopeId: string): Promise<DbEnvelope> {
   return getEnvelope(user, envelopeId).then((envelope) => {
     if (!envelope) {
@@ -127,12 +116,4 @@ function deleteEnvelope(user: DbUser, envelopeId: string): Promise<DbEnvelope> {
   });
 }
 
-export {
-  getEnvelopeQueryBuilder,
-  getEnvelope,
-  getAllEnvelopes,
-  getEnvelopeBalances,
-  saveEnvelope,
-  setEnvelopeActive,
-  deleteEnvelope,
-};
+export { getEnvelopeQueryBuilder, getEnvelope, getAllEnvelopes, getEnvelopeBalances, saveEnvelope, deleteEnvelope };

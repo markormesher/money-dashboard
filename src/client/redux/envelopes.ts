@@ -12,7 +12,6 @@ import { PayloadAction } from "./helpers/PayloadAction";
 import { ProfileCacheKeys } from "./profiles";
 
 interface IEnvelopesState {
-  readonly displayActiveEnvelopesOnly: boolean;
   readonly envelopeToEdit: IEnvelope;
   readonly envelopeEditorBusy: boolean;
   readonly envelopeList: IEnvelope[];
@@ -26,7 +25,6 @@ interface IEnvelopesState {
 }
 
 const initialState: IEnvelopesState = {
-  displayActiveEnvelopesOnly: true,
   envelopeToEdit: undefined,
   envelopeEditorBusy: false,
   envelopeList: undefined,
@@ -42,9 +40,7 @@ const initialState: IEnvelopesState = {
 enum EnvelopeActions {
   START_DELETE_ENVELOPE = "EnvelopeActions.START_DELETE_ENVELOPE",
   START_SAVE_ENVELOPE = "EnvelopeActions.START_SAVE_ENVELOPE",
-  START_SET_ENVELOPE_ACTIVE = "EnvelopeActions.START_SET_ENVELOPE_ACTIVE",
   START_LOAD_ENVELOPE_LIST = "EnvelopeActions.START_LOAD_ENVELOPE_LIST",
-  SET_DISPLAY_ACTIVE_ENVELOPES_ONLY = "EnvelopeActions.SET_DISPLAY_ACTIVE_ENVELOPES_ONLY",
   SET_ENVELOPE_TO_EDIT = "EnvelopeActions.SET_ENVELOPE_TO_EDIT",
   SET_ENVELOPE_EDITOR_BUSY = "EnvelopeActions.SET_ENVELOPE_EDITOR_BUSY",
   SET_ENVELOPE_LIST = "EnvelopeActions.SET_ENVELOPE_LIST",
@@ -103,23 +99,9 @@ function startSaveEnvelope(envelope: Partial<IEnvelope>): PayloadAction {
   };
 }
 
-function startSetEnvelopeActive(envelope: IEnvelope, active: boolean): PayloadAction {
-  return {
-    type: EnvelopeActions.START_SET_ENVELOPE_ACTIVE,
-    payload: { envelope, active },
-  };
-}
-
 function startLoadEnvelopeList(): PayloadAction {
   return {
     type: EnvelopeActions.START_LOAD_ENVELOPE_LIST,
-  };
-}
-
-function setDisplayActiveEnvelopesOnly(activeOnly: boolean): PayloadAction {
-  return {
-    type: EnvelopeActions.SET_DISPLAY_ACTIVE_ENVELOPES_ONLY,
-    payload: { activeOnly },
   };
 }
 
@@ -183,26 +165,6 @@ function* saveEnvelopeSaga(): Generator {
         put(CacheKeyUtil.updateKey(EnvelopeCacheKeys.ENVELOPE_DATA)),
         put(setEnvelopeEditorBusy(false)),
         put(setEnvelopeToEdit(undefined)),
-      ]);
-    } catch (err) {
-      yield put(setError(err));
-    }
-  });
-}
-
-function* setEnvelopeActiveSaga(): Generator {
-  yield takeEvery(EnvelopeActions.START_SET_ENVELOPE_ACTIVE, function*(action: PayloadAction): Generator {
-    try {
-      const envelope: IEnvelope = action.payload.envelope;
-      const active: boolean = action.payload.active;
-      const apiRoute = active ? "set-active" : "set-inactive";
-      yield all([
-        put(addEnvelopeEditInProgress(envelope)),
-        call(() => axios.post(`/api/envelopes/${apiRoute}/${envelope.id}`)),
-      ]);
-      yield all([
-        put(CacheKeyUtil.updateKey(EnvelopeCacheKeys.ENVELOPE_DATA)),
-        put(removeEnvelopeEditInProgress(envelope)),
       ]);
     } catch (err) {
       yield put(setError(err));
@@ -349,7 +311,6 @@ function* envelopesSagas(): Generator {
   yield all([
     deleteEnvelopeSaga(),
     saveEnvelopeSaga(),
-    setEnvelopeActiveSaga(),
     loadEnvelopeListSaga(),
     deleteAllocationSaga(),
     saveAllocationSaga(),
@@ -360,12 +321,6 @@ function* envelopesSagas(): Generator {
 function envelopesReducer(state = initialState, action: PayloadAction): IEnvelopesState {
   switch (action.type) {
     // envelopes
-
-    case EnvelopeActions.SET_DISPLAY_ACTIVE_ENVELOPES_ONLY:
-      return {
-        ...state,
-        displayActiveEnvelopesOnly: action.payload.activeOnly,
-      };
 
     case EnvelopeActions.SET_ENVELOPE_TO_EDIT:
       return {
@@ -480,9 +435,7 @@ export {
   allocationListIsCached,
   startDeleteEnvelope,
   startSaveEnvelope,
-  startSetEnvelopeActive,
   startLoadEnvelopeList,
-  setDisplayActiveEnvelopesOnly,
   setEnvelopeToEdit,
   setEnvelopeEditorBusy,
   setEnvelopeList,

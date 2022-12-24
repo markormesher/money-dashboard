@@ -4,7 +4,6 @@ import { IEnvelopeAllocation } from "./IEnvelopeAllocation";
 interface IEnvelope {
   readonly id: string;
   readonly name: string;
-  readonly active: boolean;
   readonly deleted: boolean;
 
   readonly categoryAllocations: IEnvelopeAllocation[];
@@ -14,7 +13,6 @@ interface IEnvelope {
 const DEFAULT_ENVELOPE: IEnvelope = {
   id: undefined,
   name: undefined,
-  active: true,
   deleted: false,
 
   categoryAllocations: undefined,

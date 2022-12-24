@@ -421,6 +421,7 @@ ALTER TABLE ONLY stock_price
     },
   },
 
+  // add stock ticker to accunts
   {
     migrationNumber: 21,
     up: async (qr): Promise<any> => {
@@ -431,6 +432,7 @@ ALTER TABLE ONLY stock_price
     },
   },
 
+  // create envelopes and envelope allocations
   {
     migrationNumber: 22,
     up: (qr: QueryRunner): Promise<any> => {
@@ -448,7 +450,6 @@ ALTER TABLE envelope OWNER TO money_dashboard;
 ALTER TABLE ONLY envelope
     ADD CONSTRAINT ${ns.primaryKeyName("envelope", ["id"])}
         PRIMARY KEY (id);
-
 
 CREATE TABLE envelope_allocation (
     id uuid DEFAULT uuid_generate_v4() NOT NULL,
@@ -469,6 +470,28 @@ ALTER TABLE ONLY envelope_allocation
     down: (qr: QueryRunner): Promise<any> => {
       return qr.query(`DROP TABLE IF EXISTS envelope;`);
       return qr.query(`DROP TABLE IF EXISTS envelope_allocation;`);
+    },
+  },
+
+  // remove active column from envelopes
+  {
+    migrationNumber: 23,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE envelope DROP COLUMN active;`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE envelope ADD COLUMN active boolean DEFAULT true;`);
+    },
+  },
+
+  // add column to allow accounts to opt in/out of envelope calculations
+  {
+    migrationNumber: 24,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account ADD COLUMN include_in_envelopes boolean DEFAULT true;`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account DROP COLUMN include_in_envelopes;`);
     },
   },
 ];

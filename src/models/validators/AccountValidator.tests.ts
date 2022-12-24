@@ -16,6 +16,7 @@ describe(__filename, () => {
       note: "note",
       currencyCode: "USD",
       stockTicker: "PLTR",
+      includeInEnvelopes: true,
       active: true,
       transactions: [],
       profile: DEFAULT_PROFILE,

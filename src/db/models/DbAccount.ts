@@ -30,6 +30,9 @@ class DbAccount extends BaseModel implements IAccount {
   public stockTicker: StockTicker;
 
   @Column({ default: true })
+  public includeInEnvelopes: boolean;
+
+  @Column({ default: true })
   public active: boolean;
 
   @Column({ default: false })

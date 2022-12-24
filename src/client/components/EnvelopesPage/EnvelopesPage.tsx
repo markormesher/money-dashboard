@@ -9,10 +9,8 @@ import { combine } from "../../helpers/style-helpers";
 import {
   EnvelopeCacheKeys,
   setEnvelopeToEdit,
-  setDisplayActiveEnvelopesOnly,
   setDisplayActiveAllocationsOnly,
   startDeleteEnvelope,
-  startSetEnvelopeActive,
   setAllocationToEdit,
   startDeleteAllocation,
 } from "../../redux/envelopes";
@@ -44,9 +42,7 @@ interface IEnvelopesPageProps extends IProfileAwareProps {
   readonly allocationEditsInProgress?: IEnvelopeAllocation[];
 
   readonly actions?: {
-    readonly setDisplayActiveEnvelopesOnly: (active: boolean) => AnyAction;
     readonly setEnvelopeToEdit: (envelope: IEnvelope) => AnyAction;
-    readonly setEnvelopeActive: (active: boolean, envelope: IEnvelope) => AnyAction;
     readonly deleteEnvelope: (envelope: IEnvelope) => AnyAction;
 
     readonly setDisplayActiveAllocationsOnly: (active: boolean) => AnyAction;
@@ -60,7 +56,6 @@ function mapStateToProps(state: IRootState, props: IEnvelopesPageProps): IEnvelo
     ...mapStateToProfileAwareProps(state),
     ...props,
     envelopeCacheTime: CacheKeyUtil.getKeyTime(EnvelopeCacheKeys.ENVELOPE_DATA),
-    displayActiveEnvelopesOnly: state.envelopes.displayActiveEnvelopesOnly,
     envelopeToEdit: state.envelopes.envelopeToEdit,
     envelopeEditsInProgress: state.envelopes.envelopeEditsInProgress,
 
@@ -75,9 +70,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEnvelopesPageProps): IEn
   return {
     ...props,
     actions: {
-      setDisplayActiveEnvelopesOnly: (active): AnyAction => dispatch(setDisplayActiveEnvelopesOnly(active)),
       setEnvelopeToEdit: (envelope): AnyAction => dispatch(setEnvelopeToEdit(envelope)),
-      setEnvelopeActive: (active, envelope): AnyAction => dispatch(startSetEnvelopeActive(envelope, active)),
       deleteEnvelope: (envelope): AnyAction => dispatch(startDeleteEnvelope(envelope)),
 
       setDisplayActiveAllocationsOnly: (active): AnyAction => dispatch(setDisplayActiveAllocationsOnly(active)),
@@ -129,6 +122,7 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
   private allocationDataProvider = new ApiDataTableDataProvider<IEnvelopeAllocation>(
     "/api/envelope-allocations/table-data",
     () => ({
+      envelopeCacheTime: this.props.envelopeCacheTime,
       allocationCacheTime: this.props.allocationCacheTime,
       activeOnly: this.props.displayActiveAllocationsOnly,
     }),
@@ -179,17 +173,6 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
           </PageHeaderActions>
         </PageHeader>
 
-        <PageOptions>
-          <CheckboxBtn
-            text={"Active Envelopes Only"}
-            checked={this.props.displayActiveEnvelopesOnly}
-            onChange={this.props.actions.setDisplayActiveEnvelopesOnly}
-            btnProps={{
-              className: combine(bs.btnOutlineInfo, bs.btnSm),
-            }}
-          />
-        </PageOptions>
-
         <Card>
           <DataTable<IEnvelope>
             columns={this.envelopeTableColumns}
@@ -231,7 +214,7 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
             columns={this.allocationTableColumns}
             dataProvider={this.allocationDataProvider}
             rowRenderer={this.allocationTableRowRenderer}
-            watchedProps={{ allocationCacheTime, activeProfile, displayActiveAllocationsOnly }}
+            watchedProps={{ envelopeCacheTime, allocationCacheTime, activeProfile, displayActiveAllocationsOnly }}
           />
         </Card>
       </>
@@ -256,17 +239,6 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
           text={"Edit"}
           payload={envelope}
           onClick={actions.setEnvelopeToEdit}
-          btnProps={{
-            className: bs.btnOutlineDark,
-            disabled: envelopeEditsInProgress.some((a) => a.id === envelope.id),
-          }}
-        />
-
-        <CheckboxBtn
-          text={"Active?"}
-          payload={envelope}
-          checked={envelope.active}
-          onChange={actions.setEnvelopeActive}
           btnProps={{
             className: bs.btnOutlineDark,
             disabled: envelopeEditsInProgress.some((a) => a.id === envelope.id),
