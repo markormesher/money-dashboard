@@ -9,7 +9,9 @@ import {
   getEnvelopeQueryBuilder,
   saveEnvelope,
   setEnvelopeActive,
+  getEnvelopeBalances,
 } from "../managers/envelope-manager";
+import { IEnvelopeBalance } from "../models/IEnvelopeBalance";
 
 const router = Express.Router();
 
@@ -86,6 +88,12 @@ router.post("/delete/:envelopeId", (req: Request, res: Response, next: NextFunct
 
   deleteEnvelope(user, envelopeId)
     .then(() => res.status(200).end())
+    .catch(next);
+});
+
+router.get("/balances", (req: Request, res: Response, next: NextFunction) => {
+  getEnvelopeBalances(req.user as DbUser)
+    .then((balances: IEnvelopeBalance[]) => res.json(balances))
     .catch(next);
 });
 
