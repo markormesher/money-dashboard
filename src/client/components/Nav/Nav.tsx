@@ -93,6 +93,11 @@ class UCNav extends PureComponent<INavProps> {
               <NavLink to="/transactions" text="Transactions" icon={"table"} />
             </NavSection>
 
+            <NavSection title="Planning">
+              <NavLink to="/budgets" text="Budgets" icon={"tune"} />
+              <NavLink to="/envelopes" text="Envelopes" icon={"mail"} />
+            </NavSection>
+
             <NavSection title="Reports">
               <NavLink to="/reports/balance-history" text="Balance History" icon={"trending_up"} />
               {hasAssetAccounts && (
@@ -105,9 +110,7 @@ class UCNav extends PureComponent<INavProps> {
 
             <NavSection title="Settings">
               <NavLink to="/accounts" text="Accounts" icon={"account_balance_wallet"} />
-              <NavLink to="/budgets" text="Budgets" icon={"tune"} />
               <NavLink to="/categories" text="Categories" icon={"bookmarks"} />
-              <NavLink to="/envelopes" text="Envelopes" icon={"mail"} />
               <NavLink to="/profiles" text="Profiles" icon={"group"} />
             </NavSection>
           </div>
