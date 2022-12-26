@@ -25,6 +25,7 @@ import { DashboardAlertList } from "./DashboardAlertList";
 import { DashboardBudgetList } from "./DashboardBudgetList";
 import { DashboardRateHistories } from "./DashboardRateHistories";
 import { DashboardAssetBalanceUpdateModal } from "./DashboardAssetBalanceUpdateModal";
+import { DashboardEnvelopeList } from "./DashboardEnvelopeList";
 
 interface IDashboardProps {
   readonly activeUser: IUser;
@@ -98,6 +99,7 @@ class UCDashboard extends PureComponent<IDashboardProps> {
         {assetBalanceToUpdate !== undefined && <DashboardAssetBalanceUpdateModal />}
         <div className={bs.row}>
           <div className={combine(bs.colSm12, bs.colMd8)}>
+            <DashboardEnvelopeList />
             <DashboardBudgetList budgetBalances={this.props.budgetBalances} />
             <div className={bs.row}>
               <DashboardRateHistories
