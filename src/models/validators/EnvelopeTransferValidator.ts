@@ -25,22 +25,16 @@ function validateEnvelopeTransfer(transfer: IEnvelopeTransfer): IEnvelopeTransfe
     errors: {},
   };
 
-  if (!transfer.fromEnvelope || !transfer.fromEnvelope.id || transfer.fromEnvelope.id.trim() === "") {
+  if (
+    (!transfer.fromEnvelope || !transfer.fromEnvelope.id || transfer.fromEnvelope.id.trim() === "") &&
+    (!transfer.toEnvelope || !transfer.toEnvelope.id || transfer.toEnvelope.id.trim() === "")
+  ) {
     result = {
       isValid: false,
       errors: {
         ...result.errors,
-        fromEnvelope: "A source envelope must be selected",
-      },
-    };
-  }
-
-  if (!transfer.toEnvelope || !transfer.toEnvelope.id || transfer.toEnvelope.id.trim() === "") {
-    result = {
-      isValid: false,
-      errors: {
-        ...result.errors,
-        toEnvelope: "A source envelope must be selected",
+        fromEnvelope: "At one source or destination envelope must be selected",
+        toEnvelope: "At one source or destination envelope must be selected",
       },
     };
   }

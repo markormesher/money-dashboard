@@ -29,6 +29,7 @@ class DbEnvelopeTransfer extends BaseEntity implements IEnvelopeTransfer {
     () => DbEnvelope,
     /* istanbul ignore next */
     (e) => e.envelopeTransfersOut,
+    { nullable: true },
   )
   public fromEnvelope: DbEnvelope;
 
@@ -37,6 +38,7 @@ class DbEnvelopeTransfer extends BaseEntity implements IEnvelopeTransfer {
     () => DbEnvelope,
     /* istanbul ignore next */
     (e) => e.envelopeTransfersIn,
+    { nullable: true },
   )
   public toEnvelope: DbEnvelope;
 

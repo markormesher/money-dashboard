@@ -3,7 +3,6 @@ import { StatusError } from "../utils/StatusError";
 import { cleanUuid } from "../utils/entities";
 import { DbEnvelopeAllocation } from "../db/models/DbEnvelopeAllocation";
 import { DbUser } from "../db/models/DbUser";
-import { logger } from "../utils/logging";
 
 interface IEnvelopeAllocationQueryBuilderOptions {
   readonly withProfile?: boolean;
@@ -56,7 +55,6 @@ function saveEnvelopeAllocation(
   properties: Partial<DbEnvelopeAllocation>,
 ): Promise<DbEnvelopeAllocation> {
   return getEnvelopeAllocation(user, allocationId).then((allocation) => {
-    logger.info("Editing allocation", { allocation });
     allocation = DbEnvelopeAllocation.getRepository().merge(allocation || new DbEnvelopeAllocation(), properties);
     allocation.profile = user.activeProfile;
     return allocation.save();

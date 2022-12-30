@@ -503,11 +503,11 @@ ALTER TABLE ONLY envelope_allocation
 CREATE TABLE envelope_transfer (
     id uuid DEFAULT uuid_generate_v4() NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
-    date integer NOT NULL,
+    date bigint NOT NULL,
     amount double precision NOT NULL,
     note character varying,
-    from_envelope uuid NOT NULL,
-    to_envelope uuid NOT NULL,
+    from_envelope_id uuid,
+    to_envelope_id uuid,
     profile_id uuid NOT NULL
 );
 

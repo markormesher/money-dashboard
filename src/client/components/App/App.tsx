@@ -22,6 +22,7 @@ import { TaxYearDepositsReport } from "../TaxYearDepositsReport/TaxYearDepositsR
 import { ProfilesPage } from "../ProfilesPage/ProfilesPage";
 import { TransactionsPage } from "../TransactionsPage/TransactionsPage";
 import { EnvelopesPage } from "../EnvelopesPage/EnvelopesPage";
+import { EnvelopeTransfersPage } from "../EnvelopeTransfersPage/EnvelopeTransfersPage";
 import { AppContentWrapper } from "./AppContentWrapper";
 import { AppRootWrapper } from "./AppRootWrapper";
 
@@ -100,6 +101,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
               <Route path="/budgets" component={BudgetsPage} />
               <Route path="/categories" component={CategoriesPage} />
               <Route path="/envelopes" component={EnvelopesPage} />
+              <Route path="/envelope-transfers" component={EnvelopeTransfersPage} />
               <Route path="/profiles" component={ProfilesPage} />
               <Route path="/transactions" component={TransactionsPage} />
 
