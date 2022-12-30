@@ -94,7 +94,7 @@ class EnvelopeTransfersPage extends Component<unknown, EnvelopeTransfersPageStat
         )}
 
         <PageHeader>
-          <h2>EnvelopeTransfers</h2>
+          <h2>Envelope Transfers</h2>
           <PageHeaderActions>
             <KeyShortcut targetStr={"c"} onTrigger={this.createEnvelopeTransfer}>
               <IconBtn
@@ -125,16 +125,16 @@ class EnvelopeTransfersPage extends Component<unknown, EnvelopeTransfersPageStat
     return (
       <tr key={transfer.id}>
         <td>{formatDate(transfer.date)}</td>
+        <td>{transfer.fromEnvelope ? transfer.fromEnvelope.name : <i>Unallocated funds</i>}</td>
+        <td>{transfer.toEnvelope ? transfer.toEnvelope.name : <i>Unallocated funds</i>}</td>
         <td>
-          {transfer.fromEnvelope ? transfer.fromEnvelope.name : <i>Unallocated funds</i>}
+          {formatCurrencyStyled(transfer.amount)}
           {transfer.note && (
             <span className={bs.ms2}>
               <InfoIcon hoverText={transfer.note} />
             </span>
           )}
         </td>
-        <td>{transfer.toEnvelope ? transfer.toEnvelope.name : <i>Unallocated funds</i>}</td>
-        <td>{formatCurrencyStyled(transfer.amount)}</td>
         <td>{this.generateActionButtons(transfer)}</td>
       </tr>
     );
