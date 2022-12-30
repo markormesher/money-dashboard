@@ -40,8 +40,11 @@ class DashboardEnvelopeList extends PureComponent<unknown, DashboardEnvelopeList
 
   public render(): ReactNode {
     const { envelopeBalances } = this.state;
-    if (!envelopeBalances) {
+    if (envelopeBalances == null) {
       return <LoadingSpinner centre={true} />;
+    } else if (envelopeBalances.length == 1) {
+      // just 1 = only unallocated funds
+      return null;
     }
 
     const allocatedBalances = envelopeBalances.filter((b) => b.envelope != null);

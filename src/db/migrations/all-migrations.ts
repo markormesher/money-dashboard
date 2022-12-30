@@ -494,6 +494,34 @@ ALTER TABLE ONLY envelope_allocation
       return qr.query(`ALTER TABLE account DROP COLUMN include_in_envelopes;`);
     },
   },
+
+  // create envelope transfers
+  {
+    migrationNumber: 25,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
+CREATE TABLE envelope_transfer (
+    id uuid DEFAULT uuid_generate_v4() NOT NULL,
+    deleted boolean DEFAULT false NOT NULL,
+    date integer NOT NULL,
+    amount double precision NOT NULL,
+    note character varying,
+    from_envelope uuid NOT NULL,
+    to_envelope uuid NOT NULL,
+    profile_id uuid NOT NULL
+);
+
+ALTER TABLE envelope_transfer OWNER TO money_dashboard;
+
+ALTER TABLE ONLY envelope_transfer
+    ADD CONSTRAINT ${ns.primaryKeyName("envelope_transfer", ["id"])}
+        PRIMARY KEY (id);
+            `);
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`DROP TABLE IF EXISTS envelope_transfer;`);
+    },
+  },
 ];
 
 export { allMigrations };

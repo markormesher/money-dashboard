@@ -1,12 +1,11 @@
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BigIntTransformer } from "../BigIntTransformer";
-import { IEnvelopeAllocation } from "../../models/IEnvelopeAllocation";
-import { DbCategory } from "./DbCategory";
+import { IEnvelopeTransfer } from "../../models/IEnvelopeTransfer";
 import { DbProfile } from "./DbProfile";
 import { DbEnvelope } from "./DbEnvelope";
 
-@Entity("envelope_allocation")
-class DbEnvelopeAllocation extends BaseEntity implements IEnvelopeAllocation {
+@Entity("envelope_transfer")
+class DbEnvelopeTransfer extends BaseEntity implements IEnvelopeTransfer {
   @PrimaryGeneratedColumn("uuid")
   public id: string;
 
@@ -14,26 +13,32 @@ class DbEnvelopeAllocation extends BaseEntity implements IEnvelopeAllocation {
     type: "bigint",
     transformer: new BigIntTransformer(),
   })
-  public startDate: number;
+  public date: number;
+
+  @Column({ type: "double precision" })
+  public amount: number;
+
+  @Column({ nullable: true })
+  public note: string;
 
   @Column({ default: false })
   public deleted: boolean;
 
   @ManyToOne(
     /* istanbul ignore next */
-    () => DbCategory,
+    () => DbEnvelope,
     /* istanbul ignore next */
-    (c) => c.envelopeAllocations,
+    (e) => e.envelopeTransfersOut,
   )
-  public category: DbCategory;
+  public fromEnvelope: DbEnvelope;
 
   @ManyToOne(
     /* istanbul ignore next */
     () => DbEnvelope,
     /* istanbul ignore next */
-    (a) => a.categoryAllocations,
+    (e) => e.envelopeTransfersIn,
   )
-  public envelope: DbEnvelope;
+  public toEnvelope: DbEnvelope;
 
   @ManyToOne(
     /* istanbul ignore next */
@@ -44,4 +49,4 @@ class DbEnvelopeAllocation extends BaseEntity implements IEnvelopeAllocation {
   public profile: DbProfile;
 }
 
-export { DbEnvelopeAllocation };
+export { DbEnvelopeTransfer };

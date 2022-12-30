@@ -6,6 +6,8 @@ import { DbCategory } from "./DbCategory";
 import { DbEnvelope } from "./DbEnvelope";
 import { DbTransaction } from "./DbTransaction";
 import { DbUser } from "./DbUser";
+import { DbEnvelopeAllocation } from "./DbEnvelopeAllocation";
+import { DbEnvelopeTransfer } from "./DbEnvelopeTransfer";
 
 @Entity("profile")
 class DbProfile extends BaseEntity implements IProfile {
@@ -49,6 +51,22 @@ class DbProfile extends BaseEntity implements IProfile {
     (e) => e.profile,
   )
   public envelopes: DbEnvelope[];
+
+  @OneToMany(
+    /* istanbul ignore next */
+    () => DbEnvelopeAllocation,
+    /* istanbul ignore next */
+    (a) => a.profile,
+  )
+  public envelopeAllocations: DbEnvelopeAllocation[];
+
+  @OneToMany(
+    /* istanbul ignore next */
+    () => DbEnvelopeTransfer,
+    /* istanbul ignore next */
+    (t) => t.profile,
+  )
+  public envelopeTransfers: DbEnvelopeTransfer[];
 
   @OneToMany(
     /* istanbul ignore next */

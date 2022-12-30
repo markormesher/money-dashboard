@@ -3,6 +3,7 @@ import { IEnvelope } from "../../models/IEnvelope";
 import { BaseModel } from "./BaseModel";
 import { DbProfile } from "./DbProfile";
 import { DbEnvelopeAllocation } from "./DbEnvelopeAllocation";
+import { DbEnvelopeTransfer } from "./DbEnvelopeTransfer";
 
 @Entity("envelope")
 class DbEnvelope extends BaseModel implements IEnvelope {
@@ -22,6 +23,22 @@ class DbEnvelope extends BaseModel implements IEnvelope {
     (a) => a.envelope,
   )
   public categoryAllocations: DbEnvelopeAllocation[];
+
+  @OneToMany(
+    /* istanbul ignore next */
+    () => DbEnvelopeTransfer,
+    /* istanbul ignore next */
+    (t) => t.fromEnvelope,
+  )
+  public envelopeTransfersOut: DbEnvelopeTransfer[];
+
+  @OneToMany(
+    /* istanbul ignore next */
+    () => DbEnvelopeTransfer,
+    /* istanbul ignore next */
+    (t) => t.toEnvelope,
+  )
+  public envelopeTransfersIn: DbEnvelopeTransfer[];
 
   @ManyToOne(
     /* istanbul ignore next */
