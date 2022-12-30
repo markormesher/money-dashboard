@@ -9,6 +9,7 @@ import { ITransaction } from "../models/ITransaction";
 import { IEnvelope } from "../models/IEnvelope";
 import { getAllEnvelopeAllocations } from "./envelope-allocation-manager";
 import { getTransactionQueryBuilder } from "./transaction-manager";
+import { getEnvelopeTransferQueryBuilder } from "./envelope-transfer-manager";
 
 interface IEnvelopeQueryBuilderOptions {
   readonly withProfile?: boolean;
@@ -62,7 +63,7 @@ function getEnvelopeForTransaction(envelopeAllocations: IEnvelopeAllocation[], t
 }
 
 async function getEnvelopeBalances(user: DbUser): Promise<IEnvelopeBalance[]> {
-  // TODO: currencies :(
+  // AFTER-REFACTOR: currencies
 
   // get all envelopes and set up zero balances for them
   const envelopes = await getAllEnvelopes(user);
@@ -88,6 +89,30 @@ async function getEnvelopeBalances(user: DbUser): Promise<IEnvelopeBalance[]> {
       unallocatedBalance += transaction.amount;
     } else {
       balances[envelope.id] += transaction.amount;
+    }
+  });
+
+  // get all transfers between envelopes and update balances accordingly
+  const envelopeTransfers = await getEnvelopeTransferQueryBuilder()
+    .where("transfer.profile_id = :profileId")
+    .andWhere("transfer.deleted = FALSE")
+    .setParameters({
+      profileId: user.activeProfile.id,
+    })
+    .getMany();
+  envelopeTransfers.forEach((transfer) => {
+    const { fromEnvelope, toEnvelope } = transfer;
+
+    if (!fromEnvelope) {
+      unallocatedBalance -= transfer.amount;
+    } else {
+      balances[fromEnvelope.id] -= transfer.amount;
+    }
+
+    if (!toEnvelope) {
+      unallocatedBalance += transfer.amount;
+    } else {
+      balances[toEnvelope.id] += transfer.amount;
     }
   });
 

@@ -50,6 +50,7 @@ function saveEnvelopeTransfer(
   transferId: string,
   properties: Partial<DbEnvelopeTransfer>,
 ): Promise<DbEnvelopeTransfer> {
+  // TODO: updating an envelope to null after previously being set does not work
   return getEnvelopeTransfer(user, transferId).then((transfer) => {
     transfer = DbEnvelopeTransfer.getRepository().merge(transfer || new DbEnvelopeTransfer(), properties);
     transfer.profile = user.activeProfile;
