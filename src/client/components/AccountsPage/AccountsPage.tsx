@@ -5,7 +5,6 @@ import { AnyAction, Dispatch } from "redux";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IAccount, mapAccountFromApi } from "../../../models/IAccount";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { generateAccountTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import {
@@ -190,7 +189,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
           checked={account.active}
           onChange={actions.setAccountActive}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
             disabled: accountEditsInProgress.some((a) => a.id === account.id),
           }}
         />
@@ -199,7 +198,7 @@ class UCAccountsPage extends PureComponent<IAccountsPageProps> {
           payload={account}
           onConfirmedClick={actions.deleteAccount}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
             disabled: accountEditsInProgress.some((a) => a.id === account.id),
           }}
         />

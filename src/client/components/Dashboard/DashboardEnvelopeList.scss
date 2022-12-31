@@ -1,0 +1,10 @@
+@import "~bootstrap-scss/functions";
+@import "~bootstrap-scss/variables";
+
+.envelope-balance {
+  margin-bottom: $spacer;
+
+  p {
+    margin-bottom: $spacer * 0.25;
+  }
+}

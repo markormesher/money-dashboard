@@ -70,6 +70,7 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
     this.handleCurrencyChange = this.handleCurrencyChange.bind(this);
     this.handleStockTickerChange = this.handleStockTickerChange.bind(this);
     this.handleTagCheckedChange = this.handleTagCheckedChange.bind(this);
+    this.handleIncludeInEnvelopesChange = this.handleIncludeInEnvelopesChange.bind(this);
     this.handleNoteChange = this.handleNoteChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -186,6 +187,20 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
             {errors.tags && <div className={combine(bs.invalidFeedback, bs.dBlock)}>{errors.tags}</div>}
           </div>
           <div className={bs.mb3}>
+            <label className={bs.formLabel}>Options</label>
+            <div className={bs.row}>
+              <div className={bs.col}>
+                <ControlledCheckboxInput
+                  id={"includeInEnvelopes"}
+                  label={"Include in envelope calculations?"}
+                  checked={currentValues.includeInEnvelopes}
+                  disabled={editorBusy}
+                  onCheckedChange={this.handleIncludeInEnvelopesChange}
+                />
+              </div>
+            </div>
+          </div>
+          <div className={bs.mb3}>
             <ControlledTextArea
               id={"note"}
               label={"Note"}
@@ -227,6 +242,10 @@ class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountE
     } else {
       this.updateModel({ tags: this.state.currentValues.tags.filter((t) => t !== tag) });
     }
+  }
+
+  private handleIncludeInEnvelopesChange(checked: boolean): void {
+    this.updateModel({ includeInEnvelopes: checked });
   }
 
   private handleNoteChange(value: string): void {

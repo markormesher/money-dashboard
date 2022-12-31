@@ -153,6 +153,9 @@ function* setActiveProfileSaga(): Generator {
         put(CacheKeyUtil.updateKey(ProfileCacheKeys.ACTIVE_PROFILE)),
         put(setProfileSwitchInProgress(false)),
       ]);
+
+      // hack: while we're in the middle of thinning out redux usage, not everything respects the redux-defined profile anymore
+      yield call(() => window.location.reload());
     } catch (err) {
       yield all([
         put(setError(err)),

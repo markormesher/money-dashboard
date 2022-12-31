@@ -6,6 +6,7 @@ import { authReducer, authSagas, IAuthState } from "./auth";
 import { budgetsReducer, budgetsSagas, IBudgetsState } from "./budgets";
 import { categoriesReducer, categoriesSagas, ICategoriesState } from "./categories";
 import { dashboardReducer, dashboardSagas, IDashboardState } from "./dashboard";
+import { envelopesReducer, envelopesSagas, IEnvelopesState } from "./envelopes";
 import { globalReducer, IGlobalState } from "./global";
 import { INavState, navReducer } from "./nav";
 import { IProfilesState, profilesReducer, profilesSagas } from "./profiles";
@@ -19,6 +20,7 @@ interface IRootState {
   readonly budgets?: IBudgetsState;
   readonly categories?: ICategoriesState;
   readonly dashboard?: IDashboardState;
+  readonly envelopes?: IEnvelopesState;
   readonly exchangeRates?: IExchangeRateState;
   readonly global?: IGlobalState;
   readonly nav?: INavState;
@@ -37,6 +39,7 @@ const rootReducers = {
   budgets: budgetsReducer,
   categories: categoriesReducer,
   dashboard: dashboardReducer,
+  envelopes: envelopesReducer,
   exchangeRates: exchangeRatesReducer,
   global: globalReducer,
   nav: navReducer,
@@ -52,6 +55,7 @@ function* rootSaga(): Generator {
     budgetsSagas(),
     categoriesSagas(),
     dashboardSagas(),
+    envelopesSagas(),
     exchangeRatesSagas(),
     profilesSagas(),
     stockPricesSagas(),

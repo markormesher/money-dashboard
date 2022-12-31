@@ -421,6 +421,7 @@ ALTER TABLE ONLY stock_price
     },
   },
 
+  // add stock ticker to accunts
   {
     migrationNumber: 21,
     up: async (qr): Promise<any> => {
@@ -428,6 +429,97 @@ ALTER TABLE ONLY stock_price
     },
     down: async (qr): Promise<any> => {
       return qr.query(`ALTER TABLE account DROP COLUMN stock_ticker;`);
+    },
+  },
+
+  // create envelopes and envelope allocations
+  {
+    migrationNumber: 22,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
+CREATE TABLE envelope (
+    id uuid DEFAULT uuid_generate_v4() NOT NULL,
+    deleted boolean DEFAULT false NOT NULL,
+    name character varying NOT NULL,
+    active boolean DEFAULT true NOT NULL,
+    profile_id uuid NOT NULL
+);
+
+ALTER TABLE envelope OWNER TO money_dashboard;
+
+ALTER TABLE ONLY envelope
+    ADD CONSTRAINT ${ns.primaryKeyName("envelope", ["id"])}
+        PRIMARY KEY (id);
+
+CREATE TABLE envelope_allocation (
+    id uuid DEFAULT uuid_generate_v4() NOT NULL,
+    deleted boolean DEFAULT false NOT NULL,
+    start_date bigint NOT NULL,
+    category_id uuid NOT NULL,
+    envelope_id uuid NOT NULL,
+    profile_id uuid NOT NULL
+);
+
+ALTER TABLE envelope_allocation OWNER TO money_dashboard;
+
+ALTER TABLE ONLY envelope_allocation
+    ADD CONSTRAINT ${ns.primaryKeyName("envelope_allocation", ["id"])}
+        PRIMARY KEY (id);
+            `);
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`DROP TABLE IF EXISTS envelope;`);
+      return qr.query(`DROP TABLE IF EXISTS envelope_allocation;`);
+    },
+  },
+
+  // remove active column from envelopes
+  {
+    migrationNumber: 23,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE envelope DROP COLUMN active;`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE envelope ADD COLUMN active boolean DEFAULT true;`);
+    },
+  },
+
+  // add column to allow accounts to opt in/out of envelope calculations
+  {
+    migrationNumber: 24,
+    up: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account ADD COLUMN include_in_envelopes boolean DEFAULT true;`);
+    },
+    down: async (qr): Promise<any> => {
+      return qr.query(`ALTER TABLE account DROP COLUMN include_in_envelopes;`);
+    },
+  },
+
+  // create envelope transfers
+  {
+    migrationNumber: 25,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
+CREATE TABLE envelope_transfer (
+    id uuid DEFAULT uuid_generate_v4() NOT NULL,
+    deleted boolean DEFAULT false NOT NULL,
+    date bigint NOT NULL,
+    amount double precision NOT NULL,
+    note character varying,
+    from_envelope_id uuid,
+    to_envelope_id uuid,
+    profile_id uuid NOT NULL
+);
+
+ALTER TABLE envelope_transfer OWNER TO money_dashboard;
+
+ALTER TABLE ONLY envelope_transfer
+    ADD CONSTRAINT ${ns.primaryKeyName("envelope_transfer", ["id"])}
+        PRIMARY KEY (id);
+            `);
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`DROP TABLE IF EXISTS envelope_transfer;`);
     },
   },
 ];

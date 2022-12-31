@@ -23,6 +23,7 @@ interface IAccount {
   readonly note: string;
   readonly currencyCode: CurrencyCode;
   readonly stockTicker: StockTicker;
+  readonly includeInEnvelopes: boolean;
   readonly active: boolean;
   readonly deleted: boolean;
 
@@ -38,6 +39,7 @@ const DEFAULT_ACCOUNT: IAccount = {
   note: "",
   currencyCode: "GBP",
   stockTicker: null,
+  includeInEnvelopes: true,
   active: true,
   deleted: false,
 

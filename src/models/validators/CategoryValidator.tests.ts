@@ -15,6 +15,7 @@ describe(__filename, () => {
       isMemoCategory: false,
       budgets: [],
       transactions: [],
+      envelopeAllocations: [],
       profile: DEFAULT_PROFILE,
       deleted: false,
     };
