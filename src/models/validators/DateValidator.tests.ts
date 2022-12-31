@@ -15,13 +15,15 @@ describe(__filename, () => {
     it("should reject a null date", () => {
       const result = validateDate(null);
       result.isValid.should.equal(false);
-      result.errors.should.deep.equal({});
+      result.errors.should.have.keys("date");
+      result.errors.date.should.not.equal("");
     });
 
     it("should reject an undefined date", () => {
       const result = validateDate(undefined);
       result.isValid.should.equal(false);
-      result.errors.should.deep.equal({});
+      result.errors.should.have.keys("date");
+      result.errors.date.should.not.equal("");
     });
 
     it("should reject a date < global minimum", () => {
