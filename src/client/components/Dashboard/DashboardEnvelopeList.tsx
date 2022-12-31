@@ -68,15 +68,19 @@ class DashboardEnvelopeList extends PureComponent<unknown, DashboardEnvelopeList
               </p>
             </div>
           ))}
+          {unallocatedBalance.balance == 0 ? null : (
+            <div className={combine(bs.col12, bs.colSm6, bs.colMd4, styles.envelopeBalance)}>
+              <p>
+                <strong>
+                  <i>Unallocated funds</i>
+                </strong>
+              </p>
+              <p className={combine(unallocatedBalance.balance < 0 && bs.textDanger)}>
+                <i>{formatCurrency(unallocatedBalance.balance)}</i>
+              </p>
+            </div>
+          )}
         </div>
-        {unallocatedBalance.balance == 0 ? null : (
-          <>
-            <hr />
-            <p>
-              <strong>Unallocated funds:</strong> {formatCurrency(unallocatedBalance.balance)}
-            </p>
-          </>
-        )}
       </Card>
     );
   }
