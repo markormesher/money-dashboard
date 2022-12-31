@@ -22,8 +22,12 @@ function getEnvelopeTransferQueryBuilder(
   return builder;
 }
 
-function getEnvelopeTransfer(user: DbUser, transferId?: string): Promise<DbEnvelopeTransfer> {
-  return getEnvelopeTransferQueryBuilder()
+function getEnvelopeTransfer(
+  user: DbUser,
+  transferId: string,
+  options?: IEnvelopeTransferQueryBuilderOptions,
+): Promise<DbEnvelopeTransfer> {
+  return getEnvelopeTransferQueryBuilder(options)
     .where("transfer.id = :transferId")
     .andWhere("transfer.profile_id = :profileId")
     .andWhere("transfer.deleted = FALSE")
@@ -69,10 +73,32 @@ function deleteEnvelopeTransfer(user: DbUser, transferId: string): Promise<DbEnv
   });
 }
 
+function cloneEnvelopeTransfers(user: DbUser, transfersIds: string[], date: number): Promise<DbEnvelopeTransfer[]> {
+  return Promise.all(transfersIds.map((id) => getEnvelopeTransfer(user, id, { withProfile: true })))
+    .then((transfers: DbEnvelopeTransfer[]) => {
+      if (transfers.some((b) => !b)) {
+        throw new StatusError(404, "One or more transfers did not exist");
+      } else {
+        return transfers;
+      }
+    })
+    .then((envelopeTransfers: DbEnvelopeTransfer[]) => {
+      return envelopeTransfers.map((envelopeTransfer) => {
+        const clonedEnvelopeTransfer = envelopeTransfer.clone();
+        clonedEnvelopeTransfer.date = date;
+        return clonedEnvelopeTransfer;
+      });
+    })
+    .then((clonedEnvelopeTransfers: DbEnvelopeTransfer[]) => {
+      return Promise.all(clonedEnvelopeTransfers.map((b) => b.save()));
+    });
+}
+
 export {
   getEnvelopeTransferQueryBuilder,
   getEnvelopeTransfer,
   getAllEnvelopeTransfers,
   saveEnvelopeTransfer,
   deleteEnvelopeTransfer,
+  cloneEnvelopeTransfers,
 };

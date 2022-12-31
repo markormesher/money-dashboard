@@ -15,7 +15,6 @@ import {
   startDeleteAllocation,
 } from "../../redux/envelopes";
 import { IRootState } from "../../redux/root";
-import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
@@ -23,7 +22,6 @@ import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { EnvelopeEditModal } from "../EnvelopeEditModal/EnvelopeEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
-import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { Card } from "../_ui/Card/Card";
 import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 import { IEnvelopeAllocation, mapEnvelopeAllocationFromApi } from "../../../models/IEnvelopeAllocation";
@@ -198,16 +196,18 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
           </PageHeaderActions>
         </PageHeader>
 
+        {/* TODO: active-only status on allocations
         <PageOptions>
           <CheckboxBtn
             text={"Active Allocations Only"}
             checked={this.props.displayActiveEnvelopesOnly}
             onChange={this.props.actions.setDisplayActiveAllocationsOnly}
             btnProps={{
-              className: combine(bs.btnOutlineInfo, bs.btnSm),
+             className: combine(bs.btnOutlineInfo, bs.btnSm),
             }}
           />
         </PageOptions>
+        */}
 
         <Card>
           <DataTable<IEnvelopeAllocation>

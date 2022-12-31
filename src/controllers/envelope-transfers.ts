@@ -9,6 +9,7 @@ import {
   getAllEnvelopeTransfers,
   getEnvelopeTransferQueryBuilder,
   saveEnvelopeTransfer,
+  cloneEnvelopeTransfers,
 } from "../managers/envelope-transfer-manager";
 
 const router = Express.Router();
@@ -68,6 +69,16 @@ router.post("/delete/:transferId", (req: Request, res: Response, next: NextFunct
   const transferId = req.params.transferId;
 
   deleteEnvelopeTransfer(user, transferId)
+    .then(() => res.status(200).end())
+    .catch(next);
+});
+
+router.post("/clone", (req: Request, res: Response, next: NextFunction) => {
+  const user = req.user as DbUser;
+  const envelopeTransferIds: string[] = req.body.envelopeTransferIds;
+  const date = req.body.date;
+
+  cloneEnvelopeTransfers(user, envelopeTransferIds, date)
     .then(() => res.status(200).end())
     .catch(next);
 });

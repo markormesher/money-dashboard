@@ -49,6 +49,18 @@ class DbEnvelopeTransfer extends BaseEntity implements IEnvelopeTransfer {
     (p) => p.envelopeTransfers,
   )
   public profile: DbProfile;
+
+  public clone(): DbEnvelopeTransfer {
+    const output = new DbEnvelopeTransfer();
+    output.date = this.date;
+    output.amount = this.amount;
+    output.note = this.note;
+    output.fromEnvelope = this.fromEnvelope;
+    output.toEnvelope = this.toEnvelope;
+    output.profile = this.profile;
+    output.deleted = this.deleted;
+    return output;
+  }
 }
 
 export { DbEnvelopeTransfer };

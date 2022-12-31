@@ -19,6 +19,8 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { EnvelopeTransferEditModal } from "../EnvelopeTransferEditModal/EnvelopeTransferEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { Card } from "../_ui/Card/Card";
+import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
+import { EnvelopeTransferCloneModal } from "../EnvelopeTransferCloneModal/EnvelopeTransferCloneModal";
 
 /*
  * NOTE: this component works very differently to the other components (i.e. gets rid of most of the Redux nonsense).
@@ -29,6 +31,8 @@ import { Card } from "../_ui/Card/Card";
 type EnvelopeTransfersPageState = {
   readonly nonce: number;
   readonly transferToEdit?: IEnvelopeTransfer;
+  readonly transferIdsToClone: string[];
+  readonly transferCloneInProgress: boolean;
 };
 
 class EnvelopeTransfersPage extends Component<unknown, EnvelopeTransfersPageState> {
@@ -55,6 +59,10 @@ class EnvelopeTransfersPage extends Component<unknown, EnvelopeTransfersPageStat
       title: "Actions",
       sortable: false,
     },
+    {
+      title: "Clone",
+      sortable: false,
+    },
   ];
 
   private dataProvider = new ApiDataTableDataProvider<IEnvelopeTransfer>(
@@ -71,17 +79,22 @@ class EnvelopeTransfersPage extends Component<unknown, EnvelopeTransfersPageStat
     this.state = {
       nonce: 0,
       transferToEdit: null,
+      transferIdsToClone: [],
+      transferCloneInProgress: false,
     };
 
     this.tableRowRenderer = this.tableRowRenderer.bind(this);
     this.generateActionButtons = this.generateActionButtons.bind(this);
+
     this.createEnvelopeTransfer = this.createEnvelopeTransfer.bind(this);
     this.editEnvelopeTransfer = this.editEnvelopeTransfer.bind(this);
     this.deleteEnvelopeTransfer = this.deleteEnvelopeTransfer.bind(this);
+    this.handleCloneCheckedChange = this.handleCloneCheckedChange.bind(this);
+    this.startCloneSelectedTransfers = this.startCloneSelectedTransfers.bind(this);
   }
 
   public render(): ReactNode {
-    const { nonce, transferToEdit } = this.state;
+    const { nonce, transferToEdit, transferIdsToClone, transferCloneInProgress } = this.state;
 
     return (
       <>
@@ -93,9 +106,30 @@ class EnvelopeTransfersPage extends Component<unknown, EnvelopeTransfersPageStat
           />
         )}
 
+        {transferIdsToClone.length > 0 && transferCloneInProgress && (
+          <EnvelopeTransferCloneModal
+            transferIdsToClone={transferIdsToClone}
+            onCancel={(): void => this.setState({ transferCloneInProgress: false })}
+            onSave={(): void =>
+              this.setState({ transferCloneInProgress: false, transferIdsToClone: [], nonce: new Date().getTime() })
+            }
+          />
+        )}
+
         <PageHeader>
           <h2>Envelope Transfers</h2>
           <PageHeaderActions>
+            {transferIdsToClone.length == 0 ? null : (
+              <IconBtn
+                icon={"content_copy"}
+                text={"Clone Selected"}
+                onClick={this.startCloneSelectedTransfers}
+                btnProps={{
+                  className: combine(bs.btnSm, bs.btnOutlineInfo),
+                }}
+              />
+            )}
+
             <KeyShortcut targetStr={"c"} onTrigger={this.createEnvelopeTransfer}>
               <IconBtn
                 icon={"add"}
@@ -122,6 +156,8 @@ class EnvelopeTransfersPage extends Component<unknown, EnvelopeTransfersPageStat
   }
 
   private tableRowRenderer(transfer: IEnvelopeTransfer): ReactElement<void> {
+    const { transferIdsToClone } = this.state;
+
     return (
       <tr key={transfer.id}>
         <td>{formatDate(transfer.date)}</td>
@@ -136,6 +172,15 @@ class EnvelopeTransfersPage extends Component<unknown, EnvelopeTransfersPageStat
           )}
         </td>
         <td>{this.generateActionButtons(transfer)}</td>
+        <td className={bs.textCenter}>
+          <ControlledCheckboxInput
+            id={transfer.id}
+            label={undefined}
+            disabled={false}
+            checked={transferIdsToClone.indexOf(transfer.id) >= 0}
+            onCheckedChange={this.handleCloneCheckedChange}
+          />
+        </td>
       </tr>
     );
   }
@@ -175,6 +220,22 @@ class EnvelopeTransfersPage extends Component<unknown, EnvelopeTransfersPageStat
     // AFTER-REFACTOR: error handling
     await axios.post(`/api/envelope-transfers/delete/${transfer.id}`);
     this.setState({ nonce: new Date().getTime() });
+  }
+
+  private handleCloneCheckedChange(checked: boolean, id: string): void {
+    this.setState((oldState) => {
+      let transferIdsToClone = [...oldState.transferIdsToClone];
+      if (checked) {
+        transferIdsToClone.push(id);
+      } else {
+        transferIdsToClone = transferIdsToClone.filter((i) => i != id);
+      }
+      return { transferIdsToClone };
+    });
+  }
+
+  private startCloneSelectedTransfers(): void {
+    this.setState({ transferCloneInProgress: true });
   }
 }
 

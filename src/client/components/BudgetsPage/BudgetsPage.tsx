@@ -73,10 +73,6 @@ function mapDispatchToProps(dispatch: Dispatch, props: IBudgetsPageProps): IBudg
 class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
   private tableColumns: IColumn[] = [
     {
-      title: "",
-      sortable: false,
-    },
-    {
       title: "Name",
       sortField: "category.name",
       defaultSortDirection: "ASC",
@@ -98,6 +94,10 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
     },
     {
       title: "Actions",
+      sortable: false,
+    },
+    {
+      title: "Clone",
       sortable: false,
     },
   ];
@@ -139,6 +139,18 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
         <PageHeader>
           <h2>Budgets</h2>
           <PageHeaderActions>
+            {budgetIdsToClone.length == 0 ? null : (
+              <IconBtn
+                icon={"content_copy"}
+                text={"Clone Selected"}
+                onClick={this.startCloneOnSelectedBudgets}
+                btnProps={{
+                  className: combine(bs.btnSm, bs.btnOutlineInfo),
+                  disabled: budgetIdsToClone.length === 0,
+                }}
+              />
+            )}
+
             <KeyShortcut targetStr={"c"} onTrigger={this.startBudgetCreation}>
               <IconBtn
                 icon={"add"}
@@ -161,16 +173,6 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
               className: combine(bs.btnOutlineInfo, bs.btnSm),
             }}
           />
-
-          <IconBtn
-            icon={"content_copy"}
-            text={"Clone Selected"}
-            onClick={this.startCloneOnSelectedBudgets}
-            btnProps={{
-              className: combine(bs.btnSm, bs.btnOutlineInfo),
-              disabled: budgetIdsToClone.length === 0,
-            }}
-          />
         </PageOptions>
 
         <Card>
@@ -189,7 +191,12 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
     const { budgetIdsToClone } = this.props;
     return (
       <tr key={budget.id}>
-        <td>
+        <td>{budget.category.name}</td>
+        <td>{generateBudgetTypeBadge(budget)}</td>
+        <td>{formatBudgetPeriod(budget.startDate, budget.endDate)}</td>
+        <td>{formatCurrencyStyled(budget.amount)}</td>
+        <td>{this.generateActionButtons(budget)}</td>
+        <td className={bs.textCenter}>
           <ControlledCheckboxInput
             id={budget.id}
             label={undefined}
@@ -198,11 +205,6 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
             onCheckedChange={this.handleCloneCheckedChange}
           />
         </td>
-        <td>{budget.category.name}</td>
-        <td>{generateBudgetTypeBadge(budget)}</td>
-        <td>{formatBudgetPeriod(budget.startDate, budget.endDate)}</td>
-        <td>{formatCurrencyStyled(budget.amount)}</td>
-        <td>{this.generateActionButtons(budget)}</td>
       </tr>
     );
   }
