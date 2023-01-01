@@ -3,6 +3,7 @@ import { PureComponent, ReactNode } from "react";
 import axios from "axios";
 import { IEnvelopeBalance } from "../../../models/IEnvelopeBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
+import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
@@ -63,7 +64,7 @@ class DashboardEnvelopeList extends PureComponent<unknown, DashboardEnvelopeList
               <p>
                 <strong>{envelopeBalance.envelope.name}</strong>
               </p>
-              <p className={combine(envelopeBalance.balance < 0 && bs.textDanger)}>
+              <p className={combine(gs.currency, envelopeBalance.balance < 0 && bs.textDanger)}>
                 {formatCurrency(envelopeBalance.balance)}
               </p>
             </div>
@@ -75,7 +76,7 @@ class DashboardEnvelopeList extends PureComponent<unknown, DashboardEnvelopeList
                   <i>Unallocated funds</i>
                 </strong>
               </p>
-              <p className={combine(unallocatedBalance.balance < 0 && bs.textDanger)}>
+              <p className={combine(gs.currency, unallocatedBalance.balance < 0 && bs.textDanger)}>
                 <i>{formatCurrency(unallocatedBalance.balance)}</i>
               </p>
             </div>
