@@ -13,9 +13,14 @@ if (!IS_TEST && !IS_PROD && !IS_DEV) {
   throw new Error("NODE_ENV was not set to one of test, production or development (it was '" + nodeEnv + "'");
 }
 
-const entryPoints = IS_TEST
-  ? glob.sync("./src/client/**/*.tests.{ts,tsx}")
-  : resolve(__dirname, "src", "client", "index.tsx");
+let entryPoints;
+if (IS_TEST) {
+  entryPoints = glob.sync("./src/client/**/*.tests.{ts,tsx}");
+} else if (IS_DEV) {
+  entryPoints = ["webpack-hot-middleware/client?reload=true", resolve(__dirname, "src", "client", "index.tsx")];
+} else {
+  entryPoints = resolve(__dirname, "src", "client", "index.tsx");
+}
 
 const babelLoader = {
   loader: "babel-loader",
@@ -126,6 +131,7 @@ const config = {
       new HtmlWebpackPlugin({
         template: resolve(__dirname, "src", "client", "index.html"),
       }),
+    IS_DEV && new webpack.HotModuleReplacementPlugin(),
   ].filter(notFalse),
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
