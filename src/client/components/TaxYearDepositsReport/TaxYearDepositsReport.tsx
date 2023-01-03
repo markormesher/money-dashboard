@@ -166,7 +166,7 @@ class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITa
             <tr>
               <th>{/* blank top-left corner cell */}</th>
               {years.map((year) => (
-                <th key={year} className={bs.textRight}>
+                <th key={year} className={bs.textEnd}>
                   {year}/{year + 1}
                 </th>
               ))}
@@ -177,7 +177,7 @@ class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITa
               <tr key={category.id}>
                 <td>{category.name}</td>
                 {years.map((year) => (
-                  <td key={year} className={bs.textRight}>
+                  <td key={year} className={bs.textEnd}>
                     {this.renderCategoryBalance(data.yearData[year][category.id])}
                   </td>
                 ))}
@@ -189,7 +189,7 @@ class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITa
                 <strong>Total Deposits</strong>
               </td>
               {years.map((year) => (
-                <td key={year} className={bs.textRight}>
+                <td key={year} className={bs.textEnd}>
                   <strong>
                     {formatCurrencyStyled(
                       Object.values(data.yearData[year])
@@ -206,7 +206,7 @@ class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITa
               <tr key={category.id}>
                 <td>{category.name}</td>
                 {years.map((year) => (
-                  <td key={year} className={bs.textRight}>
+                  <td key={year} className={bs.textEnd}>
                     {this.renderCategoryBalance(data.yearData[year][category.id])}
                   </td>
                 ))}
@@ -218,7 +218,7 @@ class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITa
                 <strong>Total</strong>
               </td>
               {years.map((year) => (
-                <td key={year} className={bs.textRight}>
+                <td key={year} className={bs.textEnd}>
                   <strong>
                     {formatCurrencyStyled(
                       Object.values(data.yearData[year])

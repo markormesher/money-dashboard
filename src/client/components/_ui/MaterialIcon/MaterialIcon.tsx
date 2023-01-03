@@ -1,4 +1,5 @@
-import React, { PureComponent, ReactNode } from "react";
+import * as React from "react";
+import { PureComponent, ReactNode } from "react";
 import { combine } from "../../../helpers/style-helpers";
 import * as style from "./MaterialIcon.scss";
 
