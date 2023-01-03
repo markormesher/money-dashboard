@@ -43,7 +43,7 @@ class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITa
   private frameCounter = 0;
   private lastFrameReceived = 0;
 
-  constructor(props: {}) {
+  constructor(props: ITaxYearDepositsReportProps) {
     super(props);
     this.state = {
       dateMode: "transaction",

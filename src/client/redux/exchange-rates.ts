@@ -43,7 +43,7 @@ function setLatestExchangeRates(latestExchangeRates: ExchangeRateMap): PayloadAc
 }
 
 function* loadLatestExchangeRatesSaga(): Generator {
-  yield takeEvery(ExchangeRateActions.START_LOAD_LATEST_EXCHANGE_RATES, function*(): Generator {
+  yield takeEvery(ExchangeRateActions.START_LOAD_LATEST_EXCHANGE_RATES, function* (): Generator {
     if (latestRatesAreCached()) {
       return;
     }

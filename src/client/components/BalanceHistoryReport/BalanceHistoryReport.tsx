@@ -46,7 +46,7 @@ class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBala
   private frameCounter = 0;
   private lastFrameReceived = 0;
 
-  constructor(props: {}) {
+  constructor(props: IBalanceHistoryReportProps) {
     super(props);
     this.state = {
       startDate: startOfDay(subYears(new Date(), 1)).getTime(),

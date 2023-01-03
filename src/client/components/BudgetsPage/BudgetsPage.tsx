@@ -122,14 +122,8 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
   }
 
   public render(): ReactNode {
-    const {
-      cacheTime,
-      activeProfile,
-      budgetToEdit,
-      budgetIdsToClone,
-      budgetCloneInProgress,
-      displayCurrentOnly,
-    } = this.props;
+    const { cacheTime, activeProfile, budgetToEdit, budgetIdsToClone, budgetCloneInProgress, displayCurrentOnly } =
+      this.props;
 
     return (
       <>

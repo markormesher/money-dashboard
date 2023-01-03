@@ -293,17 +293,17 @@ ALTER TABLE transaction
 
   {
     migrationNumber: 4,
-    up: async (qr): Promise<any> => {
+    up: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account ADD COLUMN note character varying;`);
     },
-    down: async (qr): Promise<any> => {
+    down: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account DROP COLUMN note;`);
     },
   },
 
   {
     migrationNumber: 5,
-    up: async (qr): Promise<any> => {
+    up: async (qr: QueryRunner): Promise<any> => {
       // correct all dates to start-of-day
       return qr.query(
         `UPDATE transaction SET effective_date = floor(effective_date / 86400000) * 86400000, transaction_date = floor(transaction_date / 86400000) * 86400000;`,
@@ -317,30 +317,30 @@ ALTER TABLE transaction
 
   {
     migrationNumber: 6,
-    up: async (qr): Promise<any> => {
+    up: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account ADD COLUMN tags character varying[] DEFAULT '{}';`);
     },
-    down: async (qr): Promise<any> => {
+    down: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account DROP COLUMN tags;`);
     },
   },
 
   {
     migrationNumber: 7,
-    up: async (qr): Promise<any> => {
+    up: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account ADD COLUMN currency character varying DEFAULT 'GBP';`);
     },
-    down: async (qr): Promise<any> => {
+    down: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account DROP COLUMN currency;`);
     },
   },
 
   {
     migrationNumber: 8,
-    up: async (qr): Promise<any> => {
+    up: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account RENAME currency TO currency_code;`);
     },
-    down: async (qr): Promise<any> => {
+    down: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account RENAME currency_code TO currency;`);
     },
   },
@@ -369,10 +369,10 @@ ALTER TABLE ONLY exchange_rate
 
   {
     migrationNumber: 10,
-    up: async (qr): Promise<any> => {
+    up: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE exchange_rate ADD COLUMN update_time bigint NOT NULL default -1;`);
     },
-    down: async (qr): Promise<any> => {
+    down: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE exchange_rate DROP COLUMN update_time;`);
     },
   },
@@ -424,10 +424,10 @@ ALTER TABLE ONLY stock_price
   // add stock ticker to accunts
   {
     migrationNumber: 21,
-    up: async (qr): Promise<any> => {
+    up: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account ADD COLUMN stock_ticker character varying DEFAULT NULL;`);
     },
-    down: async (qr): Promise<any> => {
+    down: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account DROP COLUMN stock_ticker;`);
     },
   },
@@ -476,10 +476,10 @@ ALTER TABLE ONLY envelope_allocation
   // remove active column from envelopes
   {
     migrationNumber: 23,
-    up: async (qr): Promise<any> => {
+    up: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE envelope DROP COLUMN active;`);
     },
-    down: async (qr): Promise<any> => {
+    down: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE envelope ADD COLUMN active boolean DEFAULT true;`);
     },
   },
@@ -487,10 +487,10 @@ ALTER TABLE ONLY envelope_allocation
   // add column to allow accounts to opt in/out of envelope calculations
   {
     migrationNumber: 24,
-    up: async (qr): Promise<any> => {
+    up: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account ADD COLUMN include_in_envelopes boolean DEFAULT true;`);
     },
-    down: async (qr): Promise<any> => {
+    down: async (qr: QueryRunner): Promise<any> => {
       return qr.query(`ALTER TABLE account DROP COLUMN include_in_envelopes;`);
     },
   },

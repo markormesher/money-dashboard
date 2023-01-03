@@ -6,14 +6,14 @@ import * as bs from "../../../global-styles/Bootstrap.scss";
 import * as gs from "../../../global-styles/Global.scss";
 import { MaterialIcon, MaterialIconName } from "../MaterialIcon/MaterialIcon";
 
-interface IInfoIconProps<Payload> {
+interface IInfoIconProps<Payload = unknown> {
   readonly hoverText: string;
   readonly customIcon?: MaterialIconName;
   readonly payload?: Payload;
   readonly onClick?: (payload?: Payload) => void;
 }
 
-class InfoIcon<Payload = {}> extends PureComponent<IInfoIconProps<Payload>> {
+class InfoIcon<Payload = unknown> extends PureComponent<IInfoIconProps<Payload>> {
   constructor(props: IInfoIconProps<Payload>) {
     super(props);
     this.handleClick = this.handleClick.bind(this);

@@ -119,7 +119,7 @@ function removeAccountEditInProgress(account: IAccount): PayloadAction {
 }
 
 function* deleteAccountSaga(): Generator {
-  yield takeEvery(AccountActions.START_DELETE_ACCOUNT, function*(action: PayloadAction): Generator {
+  yield takeEvery(AccountActions.START_DELETE_ACCOUNT, function* (action: PayloadAction): Generator {
     try {
       const account: IAccount = action.payload.account;
       yield call(() => axios.post(`/api/accounts/delete/${account.id}`));
@@ -131,7 +131,7 @@ function* deleteAccountSaga(): Generator {
 }
 
 function* saveAccountSaga(): Generator {
-  yield takeEvery(AccountActions.START_SAVE_ACCOUNT, function*(action: PayloadAction): Generator {
+  yield takeEvery(AccountActions.START_SAVE_ACCOUNT, function* (action: PayloadAction): Generator {
     try {
       const account: Partial<IAccount> = mapAccountForApi(action.payload.account);
       const accountId = account.id || "";
@@ -148,7 +148,7 @@ function* saveAccountSaga(): Generator {
 }
 
 function* setAccountActiveSaga(): Generator {
-  yield takeEvery(AccountActions.START_SET_ACCOUNT_ACTIVE, function*(action: PayloadAction): Generator {
+  yield takeEvery(AccountActions.START_SET_ACCOUNT_ACTIVE, function* (action: PayloadAction): Generator {
     try {
       const account: IAccount = action.payload.account;
       const active: boolean = action.payload.active;
@@ -168,7 +168,7 @@ function* setAccountActiveSaga(): Generator {
 }
 
 function* loadAccountListSaga(): Generator {
-  yield takeEvery(AccountActions.START_LOAD_ACCOUNT_LIST, function*(): Generator {
+  yield takeEvery(AccountActions.START_LOAD_ACCOUNT_LIST, function* (): Generator {
     if (accountListIsCached()) {
       return;
     }

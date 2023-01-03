@@ -114,7 +114,7 @@ function setProfileSwitchInProgress(profileSwitchInProgress: boolean): PayloadAc
 }
 
 function* deleteProfileSaga(): Generator {
-  yield takeEvery(ProfileActions.START_DELETE_PROFILE, function*(action: PayloadAction): Generator {
+  yield takeEvery(ProfileActions.START_DELETE_PROFILE, function* (action: PayloadAction): Generator {
     try {
       const profile: IProfile = action.payload.profile;
       yield call(() => axios.post(`/api/profiles/delete/${profile.id}`).then((res) => res.data));
@@ -126,7 +126,7 @@ function* deleteProfileSaga(): Generator {
 }
 
 function* saveProfileSaga(): Generator {
-  yield takeEvery(ProfileActions.START_SAVE_PROFILE, function*(action: PayloadAction): Generator {
+  yield takeEvery(ProfileActions.START_SAVE_PROFILE, function* (action: PayloadAction): Generator {
     try {
       const profile: Partial<IProfile> = mapProfileForApi(action.payload.profile);
       const profileId = profile.id || "";
@@ -143,7 +143,7 @@ function* saveProfileSaga(): Generator {
 }
 
 function* setActiveProfileSaga(): Generator {
-  yield takeEvery(ProfileActions.START_SET_ACTIVE_PROFILE, function*(action: PayloadAction): Generator {
+  yield takeEvery(ProfileActions.START_SET_ACTIVE_PROFILE, function* (action: PayloadAction): Generator {
     try {
       const profile: IProfile = action.payload.profile;
       yield put(setProfileSwitchInProgress(true));
@@ -167,7 +167,7 @@ function* setActiveProfileSaga(): Generator {
 }
 
 function* loadProfileListSaga(): Generator {
-  yield takeEvery(ProfileActions.START_LOAD_PROFILE_LIST, function*(): Generator {
+  yield takeEvery(ProfileActions.START_LOAD_PROFILE_LIST, function* (): Generator {
     if (profileListIsCached()) {
       return;
     }

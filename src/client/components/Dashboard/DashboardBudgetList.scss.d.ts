@@ -1,5 +1,5 @@
 export interface IDashboardBudgetListScss {
-  'budgetBalance': string;
+  budgetBalance: string;
 }
 declare const styles: IDashboardBudgetListScss;
 export = styles;

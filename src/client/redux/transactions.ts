@@ -90,7 +90,7 @@ function setPayeeList(payeeList: string[]): PayloadAction {
 }
 
 function* deleteTransactionSaga(): Generator {
-  yield takeEvery(TransactionActions.START_DELETE_TRANSACTION, function*(action: PayloadAction): Generator {
+  yield takeEvery(TransactionActions.START_DELETE_TRANSACTION, function* (action: PayloadAction): Generator {
     try {
       const transaction: ITransaction = action.payload.transaction;
       yield call(() => axios.post(`/api/transactions/delete/${transaction.id}`));
@@ -102,7 +102,7 @@ function* deleteTransactionSaga(): Generator {
 }
 
 function* saveTransactionSaga(): Generator {
-  yield takeEvery(TransactionActions.START_SAVE_TRANSACTION, function*(action: PayloadAction): Generator {
+  yield takeEvery(TransactionActions.START_SAVE_TRANSACTION, function* (action: PayloadAction): Generator {
     try {
       const transaction: Partial<ITransaction> = mapTransactionForApi(action.payload.transaction);
       const transactionId = transaction.id || "";
@@ -127,7 +127,7 @@ function* saveTransactionSaga(): Generator {
 }
 
 function* loadPayeeListSaga(): Generator {
-  yield takeEvery(TransactionActions.START_LOAD_PAYEE_LIST, function*(): Generator {
+  yield takeEvery(TransactionActions.START_LOAD_PAYEE_LIST, function* (): Generator {
     if (
       CacheKeyUtil.keyIsValid(TransactionCacheKeys.PAYEE_LIST, [
         TransactionCacheKeys.TRANSACTION_DATA,

@@ -5,7 +5,7 @@ import { getOrCreateUserWithExternalUsername } from "../managers/user-manager";
 import { DbUser } from "../db/models/DbUser";
 
 declare module "express-serve-static-core" {
-  // eslint-disable-next-line @typescript-eslint/interface-name-prefix
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   interface Request {
     user: DbUser;
   }

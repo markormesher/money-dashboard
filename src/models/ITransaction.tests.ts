@@ -19,8 +19,7 @@ describe(__filename, () => {
       expect(mapTransactionFromApi(null)).to.equal(undefined);
       expect(mapTransactionFromApi(undefined)).to.equal(undefined);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
+      // @ts-expect-error testing wrong argument type
       expect(mapTransactionFromApi("")).to.equal(undefined);
     });
 
@@ -34,8 +33,7 @@ describe(__filename, () => {
       expect(mapTransactionForApi(null)).to.equal(undefined);
       expect(mapTransactionForApi(undefined)).to.equal(undefined);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
+      // @ts-expect-error testing wrong argument type
       expect(mapTransactionForApi("")).to.equal(undefined);
     });
 

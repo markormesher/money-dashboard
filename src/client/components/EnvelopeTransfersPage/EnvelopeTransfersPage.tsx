@@ -1,6 +1,5 @@
 import * as React from "react";
 import { ReactElement, ReactNode, Component } from "react";
-import { tr } from "date-fns/locale";
 import axios from "axios";
 import {
   IEnvelopeTransfer,

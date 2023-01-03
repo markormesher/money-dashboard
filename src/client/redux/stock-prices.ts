@@ -43,7 +43,7 @@ function setLatestStockPrices(latestStockPrices: StockPriceMap): PayloadAction {
 }
 
 function* loadLatestStockPricesSaga(): Generator {
-  yield takeEvery(StockPriceActions.START_LOAD_LATEST_STOCK_PRICES, function*(): Generator {
+  yield takeEvery(StockPriceActions.START_LOAD_LATEST_STOCK_PRICES, function* (): Generator {
     if (latestRatesAreCached()) {
       return;
     }

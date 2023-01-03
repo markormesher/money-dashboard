@@ -39,39 +39,41 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
       includeAllTimePreset,
       customPresets,
     } = props;
-    return ([
-      includeCurrentPresets !== false && {
-        label: "This Month",
-        startDate: startOfMonth(new Date()).getTime(),
-        endDate: endOfMonth(new Date()).getTime(),
-      },
-      includeFuturePresets !== false && {
-        label: "Next Month",
-        startDate: startOfMonth(addMonths(new Date(), 1)).getTime(),
-        endDate: endOfMonth(addMonths(new Date(), 1)).getTime(),
-      },
-      includeCurrentPresets !== false && {
-        label: "This Year",
-        startDate: startOfYear(new Date()).getTime(),
-        endDate: endOfYear(new Date()).getTime(),
-      },
-      includeFuturePresets !== false && {
-        label: "Next Year",
-        startDate: startOfYear(addYears(new Date(), 1)).getTime(),
-        endDate: endOfYear(addYears(new Date(), 1)).getTime(),
-      },
-      includeYearToDatePreset !== false && {
-        label: "Year to Date",
-        startDate: subYears(new Date(), 1).getTime(),
-        endDate: new Date().getTime(),
-      },
-      includeAllTimePreset !== false && {
-        label: "All Time",
-        startDate: 0,
-        endDate: new Date().getTime(),
-      },
-      ...(customPresets || []),
-    ] as Array<boolean | IDateRange>).filter((a) => a !== false) as IDateRange[];
+    return (
+      [
+        includeCurrentPresets !== false && {
+          label: "This Month",
+          startDate: startOfMonth(new Date()).getTime(),
+          endDate: endOfMonth(new Date()).getTime(),
+        },
+        includeFuturePresets !== false && {
+          label: "Next Month",
+          startDate: startOfMonth(addMonths(new Date(), 1)).getTime(),
+          endDate: endOfMonth(addMonths(new Date(), 1)).getTime(),
+        },
+        includeCurrentPresets !== false && {
+          label: "This Year",
+          startDate: startOfYear(new Date()).getTime(),
+          endDate: endOfYear(new Date()).getTime(),
+        },
+        includeFuturePresets !== false && {
+          label: "Next Year",
+          startDate: startOfYear(addYears(new Date(), 1)).getTime(),
+          endDate: endOfYear(addYears(new Date(), 1)).getTime(),
+        },
+        includeYearToDatePreset !== false && {
+          label: "Year to Date",
+          startDate: subYears(new Date(), 1).getTime(),
+          endDate: new Date().getTime(),
+        },
+        includeAllTimePreset !== false && {
+          label: "All Time",
+          startDate: 0,
+          endDate: new Date().getTime(),
+        },
+        ...(customPresets || []),
+      ] as Array<boolean | IDateRange>
+    ).filter((a) => a !== false) as IDateRange[];
   }
 
   constructor(props: IDateRangeChooserProps) {

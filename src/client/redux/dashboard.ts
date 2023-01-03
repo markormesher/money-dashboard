@@ -119,7 +119,7 @@ function setMemoCategoryBalances(memoCategoryBalances: ICategoryBalance[]): Payl
 }
 
 function* loadAccountBalancesSaga(): Generator {
-  yield takeEvery(DashboardActions.START_LOAD_ACCOUNT_BALANCES, function*(): Generator {
+  yield takeEvery(DashboardActions.START_LOAD_ACCOUNT_BALANCES, function* (): Generator {
     if (
       CacheKeyUtil.keyIsValid(DashboardCacheKeys.ACCOUNT_BALANCES, [
         TransactionCacheKeys.TRANSACTION_DATA,
@@ -142,7 +142,7 @@ function* loadAccountBalancesSaga(): Generator {
 }
 
 function* loadBudgetBalancesSaga(): Generator {
-  yield takeEvery(DashboardActions.START_LOAD_BUDGET_BALANCES, function*(): Generator {
+  yield takeEvery(DashboardActions.START_LOAD_BUDGET_BALANCES, function* (): Generator {
     if (
       CacheKeyUtil.keyIsValid(DashboardCacheKeys.BUDGET_BALANCES, [
         TransactionCacheKeys.TRANSACTION_DATA,
@@ -169,7 +169,7 @@ function* loadBudgetBalancesSaga(): Generator {
 }
 
 function* loadMemoCategoryBalancesSaga(): Generator {
-  yield takeEvery(DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES, function*(): Generator {
+  yield takeEvery(DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES, function* (): Generator {
     if (
       CacheKeyUtil.keyIsValid(DashboardCacheKeys.MEMO_CATEGORY_BALANCE, [
         TransactionCacheKeys.TRANSACTION_DATA,
@@ -194,7 +194,7 @@ function* loadMemoCategoryBalancesSaga(): Generator {
 }
 
 function* saveAssetBalanceUpdate(): Generator {
-  yield takeEvery(DashboardActions.START_SAVE_ASSET_BALANCE_UPDATE, function*(action: PayloadAction): Generator {
+  yield takeEvery(DashboardActions.START_SAVE_ASSET_BALANCE_UPDATE, function* (action: PayloadAction): Generator {
     try {
       const balanceUpdate: IAccountBalanceUpdate = action.payload.assetBalanceUpdate;
       yield put(setAssetBalanceUpdateEditorBusy(true));

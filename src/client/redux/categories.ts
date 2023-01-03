@@ -75,7 +75,7 @@ function setCategoryList(categoryList: ICategory[]): PayloadAction {
 }
 
 function* deleteCategorySaga(): Generator {
-  yield takeEvery(CategoryActions.START_DELETE_CATEGORY, function*(action: PayloadAction): Generator {
+  yield takeEvery(CategoryActions.START_DELETE_CATEGORY, function* (action: PayloadAction): Generator {
     try {
       const category: ICategory = action.payload.category;
       yield call(() => axios.post(`/api/categories/delete/${category.id}`).then((res) => res.data));
@@ -87,7 +87,7 @@ function* deleteCategorySaga(): Generator {
 }
 
 function* saveCategorySaga(): Generator {
-  yield takeEvery(CategoryActions.START_SAVE_CATEGORY, function*(action: PayloadAction): Generator {
+  yield takeEvery(CategoryActions.START_SAVE_CATEGORY, function* (action: PayloadAction): Generator {
     try {
       const category: Partial<ICategory> = mapCategoryForApi(action.payload.category);
       const categoryId = category.id || "";
@@ -104,7 +104,7 @@ function* saveCategorySaga(): Generator {
 }
 
 function* loadCategoryListSaga(): Generator {
-  yield takeEvery(CategoryActions.START_LOAD_CATEGORY_LIST, function*(): Generator {
+  yield takeEvery(CategoryActions.START_LOAD_CATEGORY_LIST, function* (): Generator {
     if (
       CacheKeyUtil.keyIsValid(CategoryCacheKeys.CATEGORY_LIST, [
         CategoryCacheKeys.CATEGORY_DATA,

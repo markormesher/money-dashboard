@@ -3,7 +3,7 @@ import { PureComponent, ReactNode } from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { MaterialIconName } from "../MaterialIcon/MaterialIcon";
 
-interface ICheckboxBtnProps<Payload = {}> {
+interface ICheckboxBtnProps<Payload = unknown> {
   readonly text?: string;
   readonly checked?: boolean;
   readonly payload?: Payload;
@@ -13,7 +13,7 @@ interface ICheckboxBtnProps<Payload = {}> {
   readonly iconUnchecked?: MaterialIconName;
 }
 
-class CheckboxBtn<Payload = {}> extends PureComponent<ICheckboxBtnProps<Payload>> {
+class CheckboxBtn<Payload = unknown> extends PureComponent<ICheckboxBtnProps<Payload>> {
   constructor(props: ICheckboxBtnProps<Payload>) {
     super(props);
 

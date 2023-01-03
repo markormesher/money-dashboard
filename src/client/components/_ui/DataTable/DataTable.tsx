@@ -28,8 +28,7 @@ interface IColumnSortEntry {
 
 interface IDataTableProps<Model> {
   readonly dataProvider?: IDataTableDataProvider<Model>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly watchedProps?: any;
+  readonly watchedProps?: unknown;
   readonly pageSize?: number;
   readonly columns: IColumn[];
   readonly rowRenderer: (row: Model, index: number) => ReactNode;

@@ -141,7 +141,7 @@ function removeEnvelopeEditInProgress(envelope: IEnvelope): PayloadAction {
 }
 
 function* deleteEnvelopeSaga(): Generator {
-  yield takeEvery(EnvelopeActions.START_DELETE_ENVELOPE, function*(action: PayloadAction): Generator {
+  yield takeEvery(EnvelopeActions.START_DELETE_ENVELOPE, function* (action: PayloadAction): Generator {
     try {
       const envelope: IEnvelope = action.payload.envelope;
       yield call(() => axios.post(`/api/envelopes/delete/${envelope.id}`));
@@ -153,7 +153,7 @@ function* deleteEnvelopeSaga(): Generator {
 }
 
 function* saveEnvelopeSaga(): Generator {
-  yield takeEvery(EnvelopeActions.START_SAVE_ENVELOPE, function*(action: PayloadAction): Generator {
+  yield takeEvery(EnvelopeActions.START_SAVE_ENVELOPE, function* (action: PayloadAction): Generator {
     try {
       const envelope: Partial<IEnvelope> = mapEnvelopeForApi(action.payload.envelope);
       const envelopeId = envelope.id || "";
@@ -173,7 +173,7 @@ function* saveEnvelopeSaga(): Generator {
 }
 
 function* loadEnvelopeListSaga(): Generator {
-  yield takeEvery(EnvelopeActions.START_LOAD_ENVELOPE_LIST, function*(): Generator {
+  yield takeEvery(EnvelopeActions.START_LOAD_ENVELOPE_LIST, function* (): Generator {
     if (envelopeListIsCached()) {
       return;
     }
@@ -255,7 +255,7 @@ function removeAllocationEditInProgress(allocation: IEnvelopeAllocation): Payloa
 }
 
 function* deleteAllocationSaga(): Generator {
-  yield takeEvery(EnvelopeActions.START_DELETE_ALLOCATION, function*(action: PayloadAction): Generator {
+  yield takeEvery(EnvelopeActions.START_DELETE_ALLOCATION, function* (action: PayloadAction): Generator {
     try {
       const allocation: IEnvelopeAllocation = action.payload.allocation;
       yield call(() => axios.post(`/api/envelope-allocations/delete/${allocation.id}`));
@@ -267,7 +267,7 @@ function* deleteAllocationSaga(): Generator {
 }
 
 function* saveAllocationSaga(): Generator {
-  yield takeEvery(EnvelopeActions.START_SAVE_ALLOCATION, function*(action: PayloadAction): Generator {
+  yield takeEvery(EnvelopeActions.START_SAVE_ALLOCATION, function* (action: PayloadAction): Generator {
     try {
       const allocation: Partial<IEnvelopeAllocation> = mapEnvelopeAllocationForApi(action.payload.allocation);
       const allocationId = allocation.id || "";
@@ -287,7 +287,7 @@ function* saveAllocationSaga(): Generator {
 }
 
 function* loadAllocationListSaga(): Generator {
-  yield takeEvery(EnvelopeActions.START_LOAD_ALLOCATION_LIST, function*(): Generator {
+  yield takeEvery(EnvelopeActions.START_LOAD_ALLOCATION_LIST, function* (): Generator {
     if (allocationListIsCached()) {
       return;
     }

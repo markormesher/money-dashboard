@@ -107,7 +107,7 @@ function setEditorBusy(editorBusy: boolean): PayloadAction {
 }
 
 function* deleteBudgetSaga(): Generator {
-  yield takeEvery(BudgetActions.START_DELETE_BUDGET, function*(action: PayloadAction): Generator {
+  yield takeEvery(BudgetActions.START_DELETE_BUDGET, function* (action: PayloadAction): Generator {
     try {
       const budget: IBudget = action.payload.budget;
       yield call(() => axios.post(`/api/budgets/delete/${budget.id}`).then((res) => res.data));
@@ -119,7 +119,7 @@ function* deleteBudgetSaga(): Generator {
 }
 
 function* saveBudgetSaga(): Generator {
-  yield takeEvery(BudgetActions.START_SAVE_BUDGET, function*(action: PayloadAction): Generator {
+  yield takeEvery(BudgetActions.START_SAVE_BUDGET, function* (action: PayloadAction): Generator {
     try {
       const budget: Partial<IBudget> = mapBudgetForApi(action.payload.budget);
       const budgetId = budget.id || "";
@@ -136,7 +136,7 @@ function* saveBudgetSaga(): Generator {
 }
 
 function* cloneBudgetsSaga(): Generator {
-  yield takeEvery(BudgetActions.START_CLONE_BUDGETS, function*(action: PayloadAction): Generator {
+  yield takeEvery(BudgetActions.START_CLONE_BUDGETS, function* (action: PayloadAction): Generator {
     try {
       const budgetIds: string[] = action.payload.budgetIds;
       const startDate: string = action.payload.startDate;
