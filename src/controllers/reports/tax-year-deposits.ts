@@ -12,7 +12,7 @@ const router = Express.Router();
 
 router.get("/data", (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as DbUser;
-  const dateMode: DateModeOption = req.query.dateMode;
+  const dateMode = req.query.dateMode as DateModeOption;
   const accountTag: AccountTag = req.query.accountTag as AccountTag;
 
   const getYear = (transaction: ITransaction): number => {
