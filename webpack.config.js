@@ -1,22 +1,16 @@
 const { resolve, join } = require("path");
-const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 
 const notFalse = (val) => val !== false;
-const nodeEnv = process.env.NODE_ENV.toLowerCase();
-const IS_TEST = nodeEnv === "test";
-const IS_PROD = nodeEnv === "production";
-const IS_DEV = nodeEnv === "development";
 
-if (!IS_TEST && !IS_PROD && !IS_DEV) {
-  throw new Error("NODE_ENV was not set to one of test, production or development (it was '" + nodeEnv + "'");
+const nodeEnv = process.env.NODE_ENV.toLowerCase();
+if (nodeEnv != "production" && nodeEnv != "development") {
+  throw new Error(`NODE_ENV was not set to one of 'production' or 'development' (it was '${nodeEnv}')`);
 }
 
 let entryPoints;
-if (IS_TEST) {
-  entryPoints = glob.sync("./src/client/**/*.tests.{ts,tsx}");
-} else if (IS_DEV) {
+if (nodeEnv == "development") {
   entryPoints = ["webpack-hot-middleware/client?reload=true", resolve(__dirname, "src", "client", "index.tsx")];
 } else {
   entryPoints = resolve(__dirname, "src", "client", "index.tsx");
@@ -26,7 +20,7 @@ const babelLoader = {
   loader: "babel-loader",
   options: {
     cacheDirectory: true,
-    plugins: [IS_TEST && "istanbul", "@babel/plugin-syntax-dynamic-import", "date-fns"].filter(notFalse),
+    plugins: ["@babel/plugin-syntax-dynamic-import", "date-fns"],
     presets: [
       [
         "@babel/preset-env",
@@ -43,19 +37,8 @@ const babelLoader = {
   },
 };
 
-const tsLoader = {
-  loader: "ts-loader",
-  options: {
-    transpileOnly: true,
-    configFile: IS_TEST ? "tsconfig.test-client.json" : "tsconfig.json",
-    compilerOptions: {
-      module: "esnext",
-    },
-  },
-};
-
 const config = {
-  mode: IS_PROD ? "production" : "development",
+  mode: nodeEnv,
   target: "web",
   entry: entryPoints,
   output: {
@@ -63,13 +46,10 @@ const config = {
     path: resolve(__dirname, "build", "client"),
   },
   module: {
-    // in test mode, disable this warning
-    exprContextCritical: !IS_TEST,
-
     rules: [
       {
         test: /\.ts(x?)$/,
-        use: [babelLoader, tsLoader],
+        use: [babelLoader, "ts-loader"],
         exclude: /node_modules/,
       },
       {
@@ -121,17 +101,16 @@ const config = {
       },
     ],
   },
-  devtool: IS_PROD ? false : "source-map",
+  devtool: nodeEnv == "development" ? "source-map" : false,
   plugins: [
     new webpack.IgnorePlugin({
       resourceRegExp: /^\.\/locale$/,
       contextRegExp: /moment$/,
     }),
-    !IS_TEST &&
-      new HtmlWebpackPlugin({
-        template: resolve(__dirname, "src", "client", "index.html"),
-      }),
-    IS_DEV && new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpackPlugin({
+      template: resolve(__dirname, "src", "client", "index.html"),
+    }),
+    nodeEnv == "development" && new webpack.HotModuleReplacementPlugin(),
   ].filter(notFalse),
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
