@@ -1,3 +1,7 @@
-export const card: string;
-export const cardHeader: string;
-export const cardBody: string;
+export interface ICardScss {
+  'card': string;
+  'cardHeader': string;
+  'cardBody': string;
+}
+declare const styles: ICardScss;
+export = styles;

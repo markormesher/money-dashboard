@@ -1,5 +1,9 @@
-export const chartContainer: string;
-export const seriesStrokeBlue: string;
-export const seriesStrokeRed: string;
-export const seriesFillBlue: string;
-export const seriesFillRed: string;
+export interface IReportsScss {
+  'chartContainer': string;
+  'seriesStrokeBlue': string;
+  'seriesStrokeRed': string;
+  'seriesFillBlue': string;
+  'seriesFillRed': string;
+}
+declare const styles: IReportsScss;
+export = styles;

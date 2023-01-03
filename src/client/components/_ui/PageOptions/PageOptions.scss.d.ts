@@ -1,1 +1,5 @@
-export const wrapper: string;
+export interface IPageOptionsScss {
+  'wrapper': string;
+}
+declare const styles: IPageOptionsScss;
+export = styles;

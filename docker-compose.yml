@@ -1,9 +1,14 @@
 version: "3.3"
 
+# Note: this compose file is intended for development use only, not as a strict guide for production deployment
+
 services:
   app:
     build:
       context: .
+      args:
+        - BUILD_TYPE=development
+    command: yarn start-dev
     depends_on:
       - postgres
     ports:
@@ -20,6 +25,7 @@ services:
       - OPEN_EXCHANGE_RATES_TOKEN_FILE=/run/secrets/open-exchange-rates-token
       - POLYGON_TOKEN_FILE=/run/secrets/polygon-api-token
     volumes:
+      - ./src:/money-dashboard/src
       - ./logs:/logs
 
   postgres:

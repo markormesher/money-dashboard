@@ -1,5 +1,9 @@
-export const svg: string;
-export const svgMock: string;
-export const axisLabel: string;
-export const gridLine: string;
-export const legendBox: string;
+export interface ILineChartScss {
+  'svg': string;
+  'svgMock': string;
+  'axisLabel': string;
+  'gridLine': string;
+  'legendBox': string;
+}
+declare const styles: ILineChartScss;
+export = styles;

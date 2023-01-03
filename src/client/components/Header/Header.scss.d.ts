@@ -1,4 +1,8 @@
-export const navbar: string;
-export const navbarContainer: string;
-export const navbarBrand: string;
-export const navToggleIcon: string;
+export interface IHeaderScss {
+  'navbar': string;
+  'navbarContainer': string;
+  'navbarBrand': string;
+  'navToggleIcon': string;
+}
+declare const styles: IHeaderScss;
+export = styles;

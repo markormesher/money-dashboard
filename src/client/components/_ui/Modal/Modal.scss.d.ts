@@ -1,2 +1,6 @@
-export const modalDialog: string;
-export const modalFooter: string;
+export interface IModalScss {
+  'modalDialog': string;
+  'modalFooter': string;
+}
+declare const styles: IModalScss;
+export = styles;

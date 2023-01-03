@@ -1,3 +1,7 @@
-export const accountList: string;
-export const editIcon: string;
-export const total: string;
+export interface IDashboardAccountListScss {
+  'accountList': string;
+  'editIcon': string;
+  'total': string;
+}
+declare const styles: IDashboardAccountListScss;
+export = styles;
