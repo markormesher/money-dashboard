@@ -1,59 +1,24 @@
-// TODO: testing for connected components like this
-
-import { PureComponent, ReactNode } from "react";
+import { Component, ReactNode } from "react";
 import * as React from "react";
-import { connect } from "react-redux";
-import { AnyAction, Dispatch } from "redux";
-import { IProfile } from "../../../../models/IProfile";
-import { IRootState } from "../../../redux/root";
-import {
-  startLoadProfileList,
-  startSetActiveProfile,
-  IProfileAwareProps,
-  mapStateToProfileAwareProps,
-} from "../../../redux/profiles";
 import { combine } from "../../../helpers/style-helpers";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { ButtonDropDown } from "../ButtonDropDown/ButtonDropDown";
+import { IProfile } from "../../../../models/IProfile";
+import { setActiveProfile, getAllProfiles, getCurrentUser } from "../../../api/users-and-profiles";
 
-interface IProfileChooserProps extends IProfileAwareProps {
-  readonly profileList?: IProfile[];
-  readonly profileSwitchInProgress?: boolean;
-
-  readonly actions?: {
-    readonly startLoadProfileList: () => AnyAction;
-    readonly startSetActiveProfile: (profile: IProfile) => AnyAction;
-  };
-}
-
-interface IProfileChooserState {
+type ProfileChooserState = {
+  readonly activeProfile: IProfile;
+  readonly allProfiles: IProfile[];
   readonly chooserOpen: boolean;
-}
+};
 
-function mapStateToProps(state: IRootState, props: IProfileChooserProps): IProfileChooserProps {
-  return {
-    ...mapStateToProfileAwareProps(state),
-    ...props,
-    profileList: state.profiles.profileList,
-    profileSwitchInProgress: state.profiles.profileSwitchInProgress,
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch, props: IProfileChooserProps): IProfileChooserProps {
-  return {
-    ...props,
-    actions: {
-      startLoadProfileList: (): AnyAction => dispatch(startLoadProfileList()),
-      startSetActiveProfile: (profile: IProfile): AnyAction => dispatch(startSetActiveProfile(profile)),
-    },
-  };
-}
-
-class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChooserState> {
-  constructor(props: IProfileChooserProps) {
+class ProfileChooser extends Component<unknown, ProfileChooserState> {
+  constructor(props: unknown) {
     super(props);
 
     this.state = {
+      activeProfile: null,
+      allProfiles: null,
       chooserOpen: false,
     };
 
@@ -62,32 +27,26 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChoos
     this.handleProfileClick = this.handleProfileClick.bind(this);
   }
 
-  public componentDidMount(): void {
-    this.props.actions.startLoadProfileList();
-  }
-
-  public componentDidUpdate(): void {
-    this.props.actions.startLoadProfileList();
+  public async componentDidMount(): Promise<void> {
+    const allProfiles = await getAllProfiles();
+    const currentUser = await getCurrentUser();
+    this.setState({ allProfiles, activeProfile: currentUser.activeProfile });
   }
 
   public render(): ReactNode {
-    const { activeProfile, profileList, profileSwitchInProgress } = this.props;
-    const { chooserOpen } = this.state;
+    const { chooserOpen, activeProfile } = this.state;
 
-    if (!activeProfile || !profileList || profileList.length == 1) {
+    if (!activeProfile) {
       return null;
     }
 
     return (
       <ButtonDropDown
-        icon={profileSwitchInProgress ? "hourglass_empty" : "group"}
+        icon={"group"}
         text={activeProfile.name}
         onBtnClick={this.handleBtnClick}
         btnProps={{
           className: combine(bs.btnOutlineInfo),
-        }}
-        iconProps={{
-          spin: profileSwitchInProgress,
         }}
         dropDownContents={chooserOpen ? this.renderChooser() : null}
       />
@@ -95,12 +54,27 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChoos
   }
 
   private renderChooser(): ReactNode {
-    const { profileList, activeProfile } = this.props;
+    const { activeProfile, allProfiles } = this.state;
+
+    if (!allProfiles) {
+      return (
+        <div className={bs.row}>
+          <div className={bs.col}>
+            <div className={bs.btnGroupVertical}>
+              <button className={combine(bs.btn, bs.btnOutlineDark)} disabled={true}>
+                Loading...
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className={bs.row}>
         <div className={bs.col}>
           <div className={bs.btnGroupVertical}>
-            {profileList.map((p) => (
+            {allProfiles.map((p) => (
               <button
                 id={`profile-option-${p.id}`}
                 key={p.id}
@@ -121,12 +95,16 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChoos
     this.setState({ chooserOpen: !this.state.chooserOpen });
   }
 
-  private handleProfileClick(event: React.MouseEvent<HTMLButtonElement>): void {
-    const profileId = (event.target as HTMLButtonElement).id.replace("profile-option-", "");
-    const profile = this.props.profileList.find((p) => p.id === profileId);
-    this.props.actions.startSetActiveProfile(profile);
+  private async handleProfileClick(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     this.setState({ chooserOpen: false });
+    const profileId = (event.target as HTMLButtonElement).id.replace("profile-option-", "");
+    try {
+      await setActiveProfile(profileId);
+      window.location.reload();
+    } catch (error) {
+      // TODO: error handling
+    }
   }
 }
 
-export const ProfileChooser = connect(mapStateToProps, mapDispatchToProps)(UCProfileChooser);
+export { ProfileChooser };

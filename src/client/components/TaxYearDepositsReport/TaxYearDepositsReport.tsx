@@ -16,11 +16,10 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
-import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface ITaxYearDepositsReportProps extends IProfileAwareProps {}
+interface ITaxYearDepositsReportProps {}
 
 interface ITaxYearDepositsReportState {
   readonly dateMode: DateModeOption;
@@ -33,7 +32,6 @@ interface ITaxYearDepositsReportState {
 
 function mapStateToProps(state: IRootState, props?: ITaxYearDepositsReportProps): ITaxYearDepositsReportProps {
   return {
-    ...mapStateToProfileAwareProps(state),
     ...props,
   };
 }
@@ -67,11 +65,7 @@ class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITa
   }
 
   public componentDidUpdate(nextProps: ITaxYearDepositsReportProps, nextState: ITaxYearDepositsReportState): void {
-    if (
-      this.state.dateMode !== nextState.dateMode ||
-      this.state.accountTag !== nextState.accountTag ||
-      this.props.activeProfile !== nextProps.activeProfile
-    ) {
+    if (this.state.dateMode !== nextState.dateMode || this.state.accountTag !== nextState.accountTag) {
       this.fetchData();
     }
   }

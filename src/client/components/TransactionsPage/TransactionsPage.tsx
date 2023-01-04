@@ -18,11 +18,10 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { TransactionEditModal } from "../TransactionEditModal/TransactionEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { Card } from "../_ui/Card/Card";
-import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 import { DEFAULT_CURRENCY_CODE } from "../../../models/ICurrency";
 import { Badge } from "../_ui/Badge/Badge";
 
-interface ITransactionPageProps extends IProfileAwareProps {
+interface ITransactionPageProps {
   readonly cacheTime: number;
   readonly transactionToEdit?: ITransaction;
   readonly actions?: {
@@ -33,10 +32,8 @@ interface ITransactionPageProps extends IProfileAwareProps {
 
 function mapStateToProps(state: IRootState, props: ITransactionPageProps): ITransactionPageProps {
   return {
-    ...mapStateToProfileAwareProps(state),
     ...props,
     cacheTime: CacheKeyUtil.getKeyTime(TransactionCacheKeys.TRANSACTION_DATA),
-    activeProfile: state.auth.activeUser.activeProfile,
     transactionToEdit: state.transactions.transactionToEdit,
   };
 }
@@ -98,7 +95,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
   }
 
   public render(): ReactNode {
-    const { cacheTime, activeProfile, transactionToEdit } = this.props;
+    const { cacheTime, transactionToEdit } = this.props;
 
     return (
       <>
@@ -124,7 +121,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
           <DataTable<ITransaction>
             columns={this.tableColumns}
             dataProvider={this.dataProvider}
-            watchedProps={{ cacheTime, activeProfile }}
+            watchedProps={{ cacheTime }}
             rowRenderer={this.tableRowRenderer}
           />
         </Card>

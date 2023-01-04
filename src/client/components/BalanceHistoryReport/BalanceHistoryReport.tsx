@@ -18,12 +18,11 @@ import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
-import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
 import { convertLocalDateToUtc } from "../../../utils/dates";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface IBalanceHistoryReportProps extends IProfileAwareProps {}
+interface IBalanceHistoryReportProps {}
 
 interface IBalanceHistoryReportState {
   readonly startDate: number;
@@ -36,7 +35,6 @@ interface IBalanceHistoryReportState {
 
 function mapStateToProps(state: IRootState, props?: IBalanceHistoryReportProps): IBalanceHistoryReportProps {
   return {
-    ...mapStateToProfileAwareProps(state),
     ...props,
   };
 }
@@ -71,8 +69,7 @@ class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBala
     if (
       this.state.startDate !== nextState.startDate ||
       this.state.endDate !== nextState.endDate ||
-      this.state.dateMode !== nextState.dateMode ||
-      this.props.activeProfile !== nextProps.activeProfile
+      this.state.dateMode !== nextState.dateMode
     ) {
       this.fetchData();
     }

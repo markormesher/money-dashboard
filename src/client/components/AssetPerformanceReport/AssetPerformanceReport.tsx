@@ -23,9 +23,8 @@ import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/L
 import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
-import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 
-interface IAssetPerformanceReportProps extends IProfileAwareProps {
+interface IAssetPerformanceReportProps {
   readonly accountList?: IAccount[];
 
   readonly actions?: {
@@ -47,7 +46,6 @@ interface IAssetPerformanceReportState {
 
 function mapStateToProps(state: IRootState, props: IAssetPerformanceReportProps): IAssetPerformanceReportProps {
   return {
-    ...mapStateToProfileAwareProps(state),
     ...props,
     accountList: state.accounts.accountList,
   };
@@ -104,8 +102,7 @@ class UCAssetPerformanceReport extends Component<IAssetPerformanceReportProps, I
       this.state.dateMode !== nextState.dateMode ||
       this.state.selectedAccounts !== nextState.selectedAccounts ||
       this.state.zeroBasis !== nextState.zeroBasis ||
-      this.state.showAsPercent !== nextState.showAsPercent ||
-      this.props.activeProfile !== nextProps.activeProfile
+      this.state.showAsPercent !== nextState.showAsPercent
     ) {
       this.fetchData();
     }

@@ -23,12 +23,11 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { EnvelopeEditModal } from "../EnvelopeEditModal/EnvelopeEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { Card } from "../_ui/Card/Card";
-import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 import { IEnvelopeAllocation, mapEnvelopeAllocationFromApi } from "../../../models/IEnvelopeAllocation";
 import { formatDate } from "../../helpers/formatters";
 import { EnvelopeAllocationEditModal } from "../EnvelopeAllocationEditModal/EnvelopeAllocationEditModal";
 
-interface IEnvelopesPageProps extends IProfileAwareProps {
+interface IEnvelopesPageProps {
   readonly envelopeCacheTime: number;
   readonly displayActiveEnvelopesOnly?: boolean;
   readonly envelopeToEdit?: IEnvelope;
@@ -51,7 +50,6 @@ interface IEnvelopesPageProps extends IProfileAwareProps {
 
 function mapStateToProps(state: IRootState, props: IEnvelopesPageProps): IEnvelopesPageProps {
   return {
-    ...mapStateToProfileAwareProps(state),
     ...props,
     envelopeCacheTime: CacheKeyUtil.getKeyTime(EnvelopeCacheKeys.ENVELOPE_DATA),
     envelopeToEdit: state.envelopes.envelopeToEdit,
@@ -143,7 +141,6 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
     const {
       envelopeCacheTime,
       allocationCacheTime,
-      activeProfile,
       displayActiveEnvelopesOnly,
       displayActiveAllocationsOnly,
       envelopeToEdit,
@@ -176,7 +173,7 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
             columns={this.envelopeTableColumns}
             dataProvider={this.envelopeDataProvider}
             rowRenderer={this.envelopeTableRowRenderer}
-            watchedProps={{ envelopeCacheTime, activeProfile, displayActiveEnvelopesOnly }}
+            watchedProps={{ envelopeCacheTime, displayActiveEnvelopesOnly }}
           />
         </Card>
 
@@ -214,7 +211,7 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
             columns={this.allocationTableColumns}
             dataProvider={this.allocationDataProvider}
             rowRenderer={this.allocationTableRowRenderer}
-            watchedProps={{ envelopeCacheTime, allocationCacheTime, activeProfile, displayActiveAllocationsOnly }}
+            watchedProps={{ envelopeCacheTime, allocationCacheTime, displayActiveAllocationsOnly }}
           />
         </Card>
       </>

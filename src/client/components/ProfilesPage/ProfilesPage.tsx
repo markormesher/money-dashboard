@@ -7,7 +7,7 @@ import { IProfile, mapProfileFromApi } from "../../../models/IProfile";
 import { IUser } from "../../../models/IUser";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
-import { ProfileCacheKeys, setProfileToEdit, startDeleteProfile, startSetActiveProfile } from "../../redux/profiles";
+import { ProfileCacheKeys, setProfileToEdit, startDeleteProfile } from "../../redux/profiles";
 import { IRootState } from "../../redux/root";
 import { Badge } from "../_ui/Badge/Badge";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
@@ -18,28 +18,23 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { ProfileEditModal } from "../ProfileEditModal/ProfileEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { Card } from "../_ui/Card/Card";
+import { setActiveProfile } from "../../api/users-and-profiles";
 
 interface IProfilesPageProps {
   readonly cacheTime: number;
   readonly profileToEdit?: IProfile;
-  readonly profileSwitchInProgress: boolean;
   readonly activeUser?: IUser;
   readonly actions?: {
     readonly deleteProfile: (profile: IProfile) => AnyAction;
     readonly setProfileToEdit: (profile: IProfile) => AnyAction;
-    readonly startSetActiveProfile: (profile: IProfile) => AnyAction;
   };
 }
 
 function mapStateToProps(state: IRootState, props: IProfilesPageProps): IProfilesPageProps {
   return {
     ...props,
-    cacheTime: Math.max(
-      CacheKeyUtil.getKeyTime(ProfileCacheKeys.PROFILE_DATA),
-      CacheKeyUtil.getKeyTime(ProfileCacheKeys.ACTIVE_PROFILE),
-    ),
+    cacheTime: Math.max(CacheKeyUtil.getKeyTime(ProfileCacheKeys.PROFILE_DATA)),
     profileToEdit: state.profiles.profileToEdit,
-    profileSwitchInProgress: state.profiles.profileSwitchInProgress,
     activeUser: state.auth.activeUser,
   };
 }
@@ -50,7 +45,6 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfilesPageProps): IPro
     actions: {
       deleteProfile: (profile): AnyAction => dispatch(startDeleteProfile(profile)),
       setProfileToEdit: (profile): AnyAction => dispatch(setProfileToEdit(profile)),
-      startSetActiveProfile: (profile): AnyAction => dispatch(startSetActiveProfile(profile)),
     },
   };
 }
@@ -137,7 +131,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
   }
 
   private generateActionButtons(profile: IProfile): ReactElement<void> {
-    const { profileSwitchInProgress, activeUser } = this.props;
+    const { activeUser } = this.props;
     const activeProfile = profile.id === activeUser.activeProfile.id;
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
@@ -148,39 +142,43 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
           onClick={this.props.actions.setProfileToEdit}
           btnProps={{
             className: bs.btnOutlineDark,
-            disabled: profileSwitchInProgress,
           }}
         />
 
-        {!activeProfile && (
-          <IconBtn
-            icon={"how_to_reg"}
-            text={"Select"}
-            payload={profile}
-            onClick={this.props.actions.startSetActiveProfile}
-            btnProps={{
-              className: bs.btnOutlineDark,
-              disabled: profileSwitchInProgress,
-            }}
-          />
-        )}
+        <IconBtn
+          icon={"how_to_reg"}
+          text={"Select"}
+          payload={profile.id}
+          onClick={activeProfile ? null : this.setActiveProfile}
+          btnProps={{
+            className: bs.btnOutlineDark,
+            disabled: activeProfile,
+          }}
+        />
 
-        {!activeProfile && (
-          <DeleteBtn
-            payload={profile}
-            onConfirmedClick={this.props.actions.deleteProfile}
-            btnProps={{
-              className: bs.btnOutlineDark,
-              disabled: profileSwitchInProgress,
-            }}
-          />
-        )}
+        <DeleteBtn
+          payload={profile}
+          onConfirmedClick={activeProfile ? null : this.props.actions.deleteProfile}
+          btnProps={{
+            className: bs.btnOutlineDark,
+            disabled: activeProfile,
+          }}
+        />
       </div>
     );
   }
 
   private startProfileCreation(): void {
     this.props.actions.setProfileToEdit(null);
+  }
+
+  private async setActiveProfile(profileId: string): Promise<void> {
+    try {
+      await setActiveProfile(profileId);
+      window.location.reload();
+    } catch (error) {
+      // TODO: error handling
+    }
   }
 }
 

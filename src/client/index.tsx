@@ -32,11 +32,13 @@ sagaMiddleware.run(rootSaga);
 
 store.dispatch(startLoadCurrentUser());
 
+// NEW: contexts to replace some of the super-global redux state
+
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <App />
     </ConnectedRouter>
   </Provider>,
-  document.getElementById("root") || document.createElement("div"), // div ensures a valid container exists for testing
+  document.getElementById("root"),
 );

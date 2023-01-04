@@ -9,12 +9,11 @@ import { IRootState } from "../../redux/root";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { IAccount } from "../../../models/IAccount";
 import { startLoadAccountList } from "../../redux/accounts";
-import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
 import * as style from "./Nav.scss";
 import { NavLink } from "./NavLink";
 import { NavSection } from "./NavSection";
 
-interface INavProps extends IProfileAwareProps {
+interface INavProps {
   readonly isOpen?: boolean;
   readonly accountList?: IAccount[];
 
@@ -26,7 +25,6 @@ interface INavProps extends IProfileAwareProps {
 
 function mapStateToProps(state: IRootState, props: INavProps): INavProps {
   return {
-    ...mapStateToProfileAwareProps(state),
     ...props,
     isOpen: state.nav.isOpen,
     accountList: state.accounts.accountList,
