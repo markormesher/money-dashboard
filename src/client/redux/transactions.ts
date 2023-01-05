@@ -9,7 +9,6 @@ import {
 } from "../../models/ITransaction";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
-import { ProfileCacheKeys } from "./profiles";
 
 interface ITransactionsState {
   readonly dateMode: DateModeOption;
@@ -128,12 +127,7 @@ function* saveTransactionSaga(): Generator {
 
 function* loadPayeeListSaga(): Generator {
   yield takeEvery(TransactionActions.START_LOAD_PAYEE_LIST, function* (): Generator {
-    if (
-      CacheKeyUtil.keyIsValid(TransactionCacheKeys.PAYEE_LIST, [
-        TransactionCacheKeys.TRANSACTION_DATA,
-        ProfileCacheKeys.ACTIVE_PROFILE,
-      ])
-    ) {
+    if (CacheKeyUtil.keyIsValid(TransactionCacheKeys.PAYEE_LIST, [TransactionCacheKeys.TRANSACTION_DATA])) {
       return;
     }
     try {

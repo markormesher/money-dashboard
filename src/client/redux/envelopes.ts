@@ -9,7 +9,6 @@ import {
 } from "../../models/IEnvelopeAllocation";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
-import { ProfileCacheKeys } from "./profiles";
 
 interface IEnvelopesState {
   readonly envelopeToEdit: IEnvelope;
@@ -68,19 +67,13 @@ enum EnvelopeCacheKeys {
 // direct call to library method is deliberately not tested
 /* istanbul ignore next */
 function envelopeListIsCached(): boolean {
-  return CacheKeyUtil.keyIsValid(EnvelopeCacheKeys.ENVELOPE_LIST, [
-    EnvelopeCacheKeys.ENVELOPE_DATA,
-    ProfileCacheKeys.ACTIVE_PROFILE,
-  ]);
+  return CacheKeyUtil.keyIsValid(EnvelopeCacheKeys.ENVELOPE_LIST, [EnvelopeCacheKeys.ENVELOPE_DATA]);
 }
 
 // direct call to library method is deliberately not tested
 /* istanbul ignore next */
 function allocationListIsCached(): boolean {
-  return CacheKeyUtil.keyIsValid(EnvelopeCacheKeys.ALLOCATION_LIST, [
-    EnvelopeCacheKeys.ALLOCATION_DATA,
-    ProfileCacheKeys.ACTIVE_PROFILE,
-  ]);
+  return CacheKeyUtil.keyIsValid(EnvelopeCacheKeys.ALLOCATION_LIST, [EnvelopeCacheKeys.ALLOCATION_DATA]);
 }
 
 // envelope actions and sagas

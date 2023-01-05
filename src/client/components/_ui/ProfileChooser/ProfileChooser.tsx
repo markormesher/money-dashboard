@@ -4,7 +4,7 @@ import { combine } from "../../../helpers/style-helpers";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { ButtonDropDown } from "../ButtonDropDown/ButtonDropDown";
 import { IProfile } from "../../../../models/IProfile";
-import { setActiveProfile, getAllProfiles, getCurrentUser } from "../../../api/users-and-profiles";
+import { UserApi, ProfileApi } from "../../../api/users-and-profiles";
 import { globalErrorManager } from "../../../helpers/errors/error-manager";
 
 type ProfileChooserState = {
@@ -29,8 +29,8 @@ class ProfileChooser extends Component<unknown, ProfileChooserState> {
   }
 
   public async componentDidMount(): Promise<void> {
-    const allProfiles = await getAllProfiles();
-    const currentUser = await getCurrentUser();
+    const currentUser = await UserApi.getCurrentUser();
+    const allProfiles = await ProfileApi.getAllProfiles();
     this.setState({ allProfiles, activeProfile: currentUser.activeProfile });
   }
 
@@ -100,7 +100,7 @@ class ProfileChooser extends Component<unknown, ProfileChooserState> {
     this.setState({ chooserOpen: false });
     const profileId = (event.target as HTMLButtonElement).id.replace("profile-option-", "");
     try {
-      await setActiveProfile(profileId);
+      await ProfileApi.setActiveProfile(profileId);
       window.location.reload();
     } catch (error) {
       globalErrorManager.emitNonFatalError("Failed to update the active profile", error);

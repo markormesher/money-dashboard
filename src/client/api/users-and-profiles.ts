@@ -13,8 +13,27 @@ async function getAllProfiles(): Promise<IProfile[]> {
   return mapEntities(mapProfileFromApi, res.data as IProfile[]);
 }
 
+async function saveProfile(profile: IProfile): Promise<void> {
+  await axios.post(`/api/profiles/edit/${profile.id || ""}`, profile);
+}
+
+async function deleteProfile(profile: IProfile): Promise<void> {
+  await axios.post(`/api/profiles/delete/${profile.id}`);
+}
+
 async function setActiveProfile(profileId: string): Promise<void> {
   return axios.post(`/api/profiles/select/${profileId}`);
 }
 
-export { getCurrentUser, getAllProfiles, setActiveProfile };
+const UserApi = {
+  getCurrentUser,
+};
+
+const ProfileApi = {
+  getAllProfiles,
+  saveProfile,
+  deleteProfile,
+  setActiveProfile,
+};
+
+export { UserApi, ProfileApi };

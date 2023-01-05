@@ -4,7 +4,6 @@ import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IAccount, mapAccountFromApi, mapAccountForApi } from "../../models/IAccount";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
-import { ProfileCacheKeys } from "./profiles";
 
 interface IAccountsState {
   readonly displayActiveOnly: boolean;
@@ -43,10 +42,7 @@ enum AccountCacheKeys {
 // direct call to library method is deliberately not tested
 /* istanbul ignore next */
 function accountListIsCached(): boolean {
-  return CacheKeyUtil.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [
-    AccountCacheKeys.ACCOUNT_DATA,
-    ProfileCacheKeys.ACTIVE_PROFILE,
-  ]);
+  return CacheKeyUtil.keyIsValid(AccountCacheKeys.ACCOUNT_LIST, [AccountCacheKeys.ACCOUNT_DATA]);
 }
 
 function startDeleteAccount(account: IAccount): PayloadAction {

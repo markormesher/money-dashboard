@@ -10,7 +10,6 @@ import { AccountCacheKeys } from "./accounts";
 import { BudgetCacheKeys } from "./budgets";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
-import { ProfileCacheKeys } from "./profiles";
 import { TransactionCacheKeys } from "./transactions";
 
 interface IDashboardState {
@@ -124,7 +123,6 @@ function* loadAccountBalancesSaga(): Generator {
       CacheKeyUtil.keyIsValid(DashboardCacheKeys.ACCOUNT_BALANCES, [
         TransactionCacheKeys.TRANSACTION_DATA,
         AccountCacheKeys.ACCOUNT_DATA,
-        ProfileCacheKeys.ACTIVE_PROFILE,
       ])
     ) {
       return;
@@ -147,7 +145,6 @@ function* loadBudgetBalancesSaga(): Generator {
       CacheKeyUtil.keyIsValid(DashboardCacheKeys.BUDGET_BALANCES, [
         TransactionCacheKeys.TRANSACTION_DATA,
         BudgetCacheKeys.BUDGET_DATA,
-        ProfileCacheKeys.ACTIVE_PROFILE,
       ])
     ) {
       return;
@@ -170,12 +167,7 @@ function* loadBudgetBalancesSaga(): Generator {
 
 function* loadMemoCategoryBalancesSaga(): Generator {
   yield takeEvery(DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES, function* (): Generator {
-    if (
-      CacheKeyUtil.keyIsValid(DashboardCacheKeys.MEMO_CATEGORY_BALANCE, [
-        TransactionCacheKeys.TRANSACTION_DATA,
-        ProfileCacheKeys.ACTIVE_PROFILE,
-      ])
-    ) {
+    if (CacheKeyUtil.keyIsValid(DashboardCacheKeys.MEMO_CATEGORY_BALANCE, [TransactionCacheKeys.TRANSACTION_DATA])) {
       return;
     }
     try {

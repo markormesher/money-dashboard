@@ -4,7 +4,6 @@ import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "../../models/ICategory";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
-import { ProfileCacheKeys } from "./profiles";
 
 interface ICategoriesState {
   readonly categoryToEdit: ICategory;
@@ -105,12 +104,7 @@ function* saveCategorySaga(): Generator {
 
 function* loadCategoryListSaga(): Generator {
   yield takeEvery(CategoryActions.START_LOAD_CATEGORY_LIST, function* (): Generator {
-    if (
-      CacheKeyUtil.keyIsValid(CategoryCacheKeys.CATEGORY_LIST, [
-        CategoryCacheKeys.CATEGORY_DATA,
-        ProfileCacheKeys.ACTIVE_PROFILE,
-      ])
-    ) {
+    if (CacheKeyUtil.keyIsValid(CategoryCacheKeys.CATEGORY_LIST, [CategoryCacheKeys.CATEGORY_DATA])) {
       return;
     }
     try {
