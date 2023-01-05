@@ -1,14 +1,9 @@
 import * as React from "react";
-import { PureComponent, ReactElement, ReactNode } from "react";
-import { connect } from "react-redux";
-import { AnyAction, Dispatch } from "redux";
-import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { ICategory, mapCategoryFromApi } from "../../../models/ICategory";
+import { ReactElement, useState } from "react";
+import { DEFAULT_CATEGORY, ICategory, mapCategoryFromApi } from "../../../models/ICategory";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { CategoryCacheKeys, setCategoryToEdit, startDeleteCategory } from "../../redux/categories";
-import { IRootState } from "../../redux/root";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
@@ -17,36 +12,17 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { CategoryEditModal } from "../CategoryEditModal/CategoryEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { Card } from "../_ui/Card/Card";
+import { useNonceState } from "../../helpers/state-hooks";
+import { CategoryApi } from "../../api/categories";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
 
-interface ICategoriesPageProps {
-  readonly cacheTime: number;
-  readonly categoryToEdit?: ICategory;
-  readonly actions?: {
-    readonly deleteCategory: (category: ICategory) => AnyAction;
-    readonly setCategoryToEdit: (category: ICategory) => AnyAction;
-  };
-}
+function CategoriesPage(): ReactElement {
+  // state
+  const [nonce, updateNonce] = useNonceState();
+  const [categoryToEdit, setCategoryToEdit] = useState<ICategory>(null);
 
-function mapStateToProps(state: IRootState, props: ICategoriesPageProps): ICategoriesPageProps {
-  return {
-    ...props,
-    cacheTime: CacheKeyUtil.getKeyTime(CategoryCacheKeys.CATEGORY_DATA),
-    categoryToEdit: state.categories.categoryToEdit,
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch, props: ICategoriesPageProps): ICategoriesPageProps {
-  return {
-    ...props,
-    actions: {
-      deleteCategory: (category): AnyAction => dispatch(startDeleteCategory(category)),
-      setCategoryToEdit: (category): AnyAction => dispatch(setCategoryToEdit(category)),
-    },
-  };
-}
-
-class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
-  private tableColumns: IColumn[] = [
+  // data table
+  const tableColumns: IColumn[] = [
     {
       title: "Name",
       sortField: "category.name",
@@ -62,82 +38,37 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
     },
   ];
 
-  private dataProvider = new ApiDataTableDataProvider<ICategory>(
+  const dataProvider = new ApiDataTableDataProvider<ICategory>(
     "/api/categories/table-data",
-    () => ({
-      cacheTime: this.props.cacheTime,
-    }),
+    () => ({ nonce }),
     mapCategoryFromApi,
   );
 
-  constructor(props: ICategoriesPageProps) {
-    super(props);
-
-    this.tableRowRenderer = this.tableRowRenderer.bind(this);
-    this.generateActionButtons = this.generateActionButtons.bind(this);
-    this.startCategoryCreation = this.startCategoryCreation.bind(this);
-  }
-
-  public render(): ReactNode {
-    const { cacheTime, categoryToEdit } = this.props;
-
-    return (
-      <>
-        {categoryToEdit !== undefined && <CategoryEditModal />}
-
-        <PageHeader>
-          <h2>Categories</h2>
-          <PageHeaderActions>
-            <KeyShortcut targetStr={"c"} onTrigger={this.startCategoryCreation}>
-              <IconBtn
-                icon={"add"}
-                text={"New Category"}
-                onClick={this.startCategoryCreation}
-                btnProps={{
-                  className: combine(bs.btnSm, bs.btnSuccess),
-                }}
-              />
-            </KeyShortcut>
-          </PageHeaderActions>
-        </PageHeader>
-
-        <Card>
-          <DataTable<ICategory>
-            columns={this.tableColumns}
-            dataProvider={this.dataProvider}
-            rowRenderer={this.tableRowRenderer}
-            watchedProps={{ cacheTime }}
-          />
-        </Card>
-      </>
-    );
-  }
-
-  private tableRowRenderer(category: ICategory): ReactElement<void> {
+  function tableRowRenderer(category: ICategory): ReactElement<void> {
     return (
       <tr key={category.id}>
         <td>{category.name}</td>
         <td>{generateCategoryTypeBadge(category)}</td>
-        <td>{this.generateActionButtons(category)}</td>
+        <td>{generateActionButtons(category)}</td>
       </tr>
     );
   }
 
-  private generateActionButtons(category: ICategory): ReactElement<void> {
+  function generateActionButtons(category: ICategory): ReactElement<void> {
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
           icon={"edit"}
           text={"Edit"}
           payload={category}
-          onClick={this.props.actions.setCategoryToEdit}
+          onClick={editCategory}
           btnProps={{
             className: bs.btnOutlineDark,
           }}
         />
         <DeleteBtn
           payload={category}
-          onConfirmedClick={this.props.actions.deleteCategory}
+          onConfirmedClick={deleteCategory}
           btnProps={{
             className: bs.btnOutlineDark,
           }}
@@ -146,9 +77,65 @@ class UCCategoriesPage extends PureComponent<ICategoriesPageProps> {
     );
   }
 
-  private startCategoryCreation(): void {
-    this.props.actions.setCategoryToEdit(null);
+  // category actions
+  function createCategory(): void {
+    setCategoryToEdit(DEFAULT_CATEGORY);
   }
+
+  function editCategory(category: ICategory): void {
+    setCategoryToEdit(category);
+  }
+
+  function onEditCancel(): void {
+    setCategoryToEdit(null);
+  }
+
+  function onEditComplete(): void {
+    setCategoryToEdit(null);
+    updateNonce();
+  }
+
+  async function deleteCategory(category: ICategory): Promise<void> {
+    try {
+      await CategoryApi.deleteCategory(category);
+      updateNonce();
+    } catch (error) {
+      globalErrorManager.emitNonFatalError("Failed to delete category", error);
+    }
+  }
+
+  return (
+    <>
+      {categoryToEdit ? (
+        <CategoryEditModal categoryToEdit={categoryToEdit} onCancel={onEditCancel} onComplete={onEditComplete} />
+      ) : null}
+
+      <PageHeader>
+        <h2>Categories</h2>
+        <PageHeaderActions>
+          <KeyShortcut targetStr={"c"} onTrigger={createCategory}>
+            <IconBtn
+              icon={"add"}
+              text={"New Category"}
+              onClick={createCategory}
+              btnProps={{
+                className: combine(bs.btnSm, bs.btnSuccess),
+              }}
+            />
+          </KeyShortcut>
+        </PageHeaderActions>
+      </PageHeader>
+
+      <Card>
+        <DataTable<ICategory>
+          columns={tableColumns}
+          dataProvider={dataProvider}
+          rowRenderer={tableRowRenderer}
+          watchedProps={{ nonce }}
+        />
+      </Card>
+    </>
+  );
 }
 
-export const CategoriesPage = connect(mapStateToProps, mapDispatchToProps)(UCCategoriesPage);
+export { CategoriesPage };

@@ -11,9 +11,9 @@ import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 
 type ProfileEditModalProps = {
+  readonly profileToEdit: IProfile;
   readonly onCancel: () => unknown;
   readonly onComplete: () => unknown;
-  readonly profileToEdit: IProfile;
 };
 
 function ProfileEditModal(props: ProfileEditModalProps): ReactElement {
