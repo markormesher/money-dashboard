@@ -1,3 +1,6 @@
 {
-  "extends": "@dragonlabs/eslint-config"
+  "extends": "@dragonlabs/eslint-config",
+  "ignorePatterns": [
+    "src/client/**/*.scss.d.ts"
+  ]
 }

@@ -8,7 +8,6 @@ import createSagaMiddleware from "redux-saga";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { composeWithDevTools } from "@redux-devtools/extension";
 import { App } from "./components/App/App";
-import { startLoadCurrentUser } from "./redux/auth";
 import { rootReducers, rootSaga } from "./redux/root";
 
 // "require" forces webpack to include entire stylesheets; "import" only works for named exports
@@ -29,10 +28,6 @@ const store = createStore(
 CacheKeyUtil.setStore(store);
 
 sagaMiddleware.run(rootSaga);
-
-store.dispatch(startLoadCurrentUser());
-
-// NEW: contexts to replace some of the super-global redux state
 
 ReactDOM.render(
   <Provider store={store}>

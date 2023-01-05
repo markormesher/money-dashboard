@@ -5,7 +5,6 @@ import { AnyAction, Dispatch } from "redux";
 import { IAccountBalance } from "../../../models/IAccountBalance";
 import { IBudgetBalance } from "../../../models/IBudgetBalance";
 import { ICategoryBalance } from "../../../models/ICategoryBalance";
-import { IUser } from "../../../models/IUser";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import {
@@ -28,7 +27,6 @@ import { DashboardAssetBalanceUpdateModal } from "./DashboardAssetBalanceUpdateM
 import { DashboardEnvelopeList } from "./DashboardEnvelopeList";
 
 interface IDashboardProps {
-  readonly activeUser: IUser;
   readonly accountList?: IAccount[];
   readonly accountBalances?: IAccountBalance[];
   readonly assetBalanceToUpdate?: IAccountBalance;
@@ -50,7 +48,6 @@ interface IDashboardProps {
 function mapStateToProps(state: IRootState, props: IDashboardProps): IDashboardProps {
   return {
     ...props,
-    activeUser: state.auth.activeUser,
     accountList: state.accounts.accountList,
     accountBalances: state.dashboard.accountBalances,
     assetBalanceToUpdate: state.dashboard.assetBalanceToUpdate,

@@ -3,11 +3,9 @@ import { ErrorInfo, PureComponent, ReactElement, ReactNode } from "react";
 import ReactTooltip from "react-tooltip";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
-import { IUser } from "../../../models/IUser";
 import { DetailedError } from "../../helpers/errors/DetailedError";
 import { Http404Error } from "../../helpers/errors/Http404Error";
 import { IRootState } from "../../redux/root";
-import { FullPageSpinner } from "../_ui/FullPageSpinner/FullPageSpinner";
 import { AccountsPage } from "../AccountsPage/AccountsPage";
 import { AssetPerformanceReport } from "../AssetPerformanceReport/AssetPerformanceReport";
 import { BalanceHistoryReport } from "../BalanceHistoryReport/BalanceHistoryReport";
@@ -29,9 +27,7 @@ import { AppContentWrapper } from "./AppContentWrapper";
 import { AppRootWrapper } from "./AppRootWrapper";
 
 interface IAppProps {
-  readonly waitingFor?: string[];
   readonly globalError?: Error;
-  readonly activeUser?: IUser;
   readonly currentPath?: string;
 }
 
@@ -43,9 +39,7 @@ interface IAppState {
 function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
   return {
     ...props,
-    waitingFor: state.global.waitingFor,
     globalError: state.global.error,
-    activeUser: state.auth.activeUser,
     currentPath: state.router.location.pathname,
   };
 }
@@ -72,7 +66,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
   }
 
   public render(): ReactNode {
-    const { waitingFor, globalError, activeUser } = this.props;
+    const { globalError } = this.props;
     const { caughtError, caughtErrorInfo } = this.state;
 
     if (globalError) {
@@ -87,14 +81,6 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
           stacks={[caughtError.stack, `Component stack:${caughtErrorInfo.componentStack}`]}
         />
       );
-    }
-
-    if (waitingFor.length > 0) {
-      return <FullPageSpinner />;
-    }
-
-    if (!activeUser) {
-      return <p>No active user.</p>;
     }
 
     return (

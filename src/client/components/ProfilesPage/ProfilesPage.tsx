@@ -18,25 +18,27 @@ import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { ProfileEditModal } from "../ProfileEditModal/ProfileEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { Card } from "../_ui/Card/Card";
-import { setActiveProfile } from "../../api/users-and-profiles";
+import { getCurrentUser, setActiveProfile } from "../../api/users-and-profiles";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
 
 interface IProfilesPageProps {
   readonly cacheTime: number;
   readonly profileToEdit?: IProfile;
-  readonly activeUser?: IUser;
   readonly actions?: {
     readonly deleteProfile: (profile: IProfile) => AnyAction;
     readonly setProfileToEdit: (profile: IProfile) => AnyAction;
   };
 }
 
+type ProfilesPageState = {
+  readonly currentUser: IUser;
+};
+
 function mapStateToProps(state: IRootState, props: IProfilesPageProps): IProfilesPageProps {
   return {
     ...props,
     cacheTime: Math.max(CacheKeyUtil.getKeyTime(ProfileCacheKeys.PROFILE_DATA)),
     profileToEdit: state.profiles.profileToEdit,
-    activeUser: state.auth.activeUser,
   };
 }
 
@@ -50,7 +52,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IProfilesPageProps): IPro
   };
 }
 
-class UCProfilesPage extends PureComponent<IProfilesPageProps> {
+class UCProfilesPage extends PureComponent<IProfilesPageProps, ProfilesPageState> {
   private tableColumns: IColumn[] = [
     {
       title: "Name",
@@ -74,9 +76,22 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
   constructor(props: IProfilesPageProps) {
     super(props);
 
+    this.state = {
+      currentUser: null,
+    };
+
     this.tableRowRenderer = this.tableRowRenderer.bind(this);
     this.generateActionButtons = this.generateActionButtons.bind(this);
     this.startProfileCreation = this.startProfileCreation.bind(this);
+  }
+
+  public async componentDidMount(): Promise<void> {
+    try {
+      const currentUser = await getCurrentUser();
+      this.setState({ currentUser });
+    } catch (error) {
+      globalErrorManager.emitFatalError("Failed to load current user", error);
+    }
   }
 
   public render(): ReactNode {
@@ -115,12 +130,13 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
   }
 
   private tableRowRenderer(profile: IProfile): ReactElement<void> {
-    const activeProfile = profile.id === this.props.activeUser.activeProfile.id;
+    const { currentUser } = this.state;
+    const isActiveProfile = currentUser?.activeProfile?.id == profile.id;
     return (
       <tr key={profile.id}>
         <td>
           {profile.name}
-          {activeProfile && (
+          {isActiveProfile && (
             <Badge className={bs.bgInfo} marginLeft={true}>
               Active
             </Badge>
@@ -132,8 +148,8 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
   }
 
   private generateActionButtons(profile: IProfile): ReactElement<void> {
-    const { activeUser } = this.props;
-    const activeProfile = profile.id === activeUser.activeProfile.id;
+    const { currentUser } = this.state;
+    const editsDisabled = !currentUser || currentUser.activeProfile.id == profile.id;
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
@@ -150,19 +166,19 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
           icon={"how_to_reg"}
           text={"Select"}
           payload={profile.id}
-          onClick={activeProfile ? null : this.setActiveProfile}
+          onClick={editsDisabled ? null : this.setActiveProfile}
           btnProps={{
             className: bs.btnOutlineDark,
-            disabled: activeProfile,
+            disabled: editsDisabled,
           }}
         />
 
         <DeleteBtn
           payload={profile}
-          onConfirmedClick={activeProfile ? null : this.props.actions.deleteProfile}
+          onConfirmedClick={editsDisabled ? null : this.props.actions.deleteProfile}
           btnProps={{
             className: bs.btnOutlineDark,
-            disabled: activeProfile,
+            disabled: editsDisabled,
           }}
         />
       </div>

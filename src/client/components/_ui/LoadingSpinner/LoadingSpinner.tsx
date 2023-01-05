@@ -1,6 +1,7 @@
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
+import { combine } from "../../../helpers/style-helpers";
 import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
 
 interface ILoadingSpinnerProps {
@@ -15,11 +16,7 @@ class LoadingSpinner extends PureComponent<ILoadingSpinnerProps> {
       </span>
     );
 
-    if (this.props.centre) {
-      return <div className={bs.textCenter}>{spinner}</div>;
-    } else {
-      return spinner;
-    }
+    return <div className={combine(this.props.centre && bs.textCenter, bs.mb3)}>{spinner}</div>;
   }
 }
 
