@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ReactElement, useState } from "react";
 import { IProfile } from "../../../models/IProfile";
-import { IProfileValidationResult, validateProfile } from "../../../models/validators/ProfileValidator";
+import { validateProfile } from "../../../models/validators/ProfileValidator";
 import { ProfileApi } from "../../api/users-and-profiles";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
@@ -19,10 +19,7 @@ type ProfileEditModalProps = {
 function ProfileEditModal(props: ProfileEditModalProps): ReactElement {
   // state
   const { onCancel, onComplete, profileToEdit } = props;
-  const [currentValues, validationResult, updateModel] = useModelEditingState<IProfile, IProfileValidationResult>(
-    profileToEdit,
-    validateProfile,
-  );
+  const [currentValues, validationResult, updateModel] = useModelEditingState<IProfile>(profileToEdit, validateProfile);
   const [editorBusy, setEditorBusy] = useState(false);
 
   // form actions

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IValidationResult } from "../../models/validators/IValidationResult";
 
 function useNonceState(): [number, () => void] {
   const [nonce, setNonce] = useState<number>(0);
@@ -10,12 +11,12 @@ function useNonceState(): [number, () => void] {
   return [nonce, updateNonce];
 }
 
-function useModelEditingState<Model, ValidationResult>(
+function useModelEditingState<Model>(
   initialValue: Model,
-  validator: (values: Model) => ValidationResult,
-): [Model, ValidationResult, (values: Partial<Model>) => void] {
+  validator: (values: Model) => IValidationResult<Model>,
+): [Model, IValidationResult<Model>, (values: Partial<Model>) => void] {
   const [currentValues, setCurrentValues] = useState<Model>(initialValue);
-  const [validationResult, setValidationResult] = useState<ValidationResult>(validator(initialValue));
+  const [validationResult, setValidationResult] = useState<IValidationResult<Model>>(validator(initialValue));
 
   function updateModel(values: Partial<Model>): void {
     const updatedValues = {
