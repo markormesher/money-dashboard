@@ -19,6 +19,7 @@ import { ProfileEditModal } from "../ProfileEditModal/ProfileEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { Card } from "../_ui/Card/Card";
 import { setActiveProfile } from "../../api/users-and-profiles";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
 
 interface IProfilesPageProps {
   readonly cacheTime: number;
@@ -177,7 +178,7 @@ class UCProfilesPage extends PureComponent<IProfilesPageProps> {
       await setActiveProfile(profileId);
       window.location.reload();
     } catch (error) {
-      // TODO: error handling
+      globalErrorManager.emitNonFatalError("Failed to update the active profile", error);
     }
   }
 }

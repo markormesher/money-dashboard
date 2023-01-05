@@ -5,6 +5,7 @@ import * as bs from "../../../global-styles/Bootstrap.scss";
 import { ButtonDropDown } from "../ButtonDropDown/ButtonDropDown";
 import { IProfile } from "../../../../models/IProfile";
 import { setActiveProfile, getAllProfiles, getCurrentUser } from "../../../api/users-and-profiles";
+import { globalErrorManager } from "../../../helpers/errors/error-manager";
 
 type ProfileChooserState = {
   readonly activeProfile: IProfile;
@@ -102,7 +103,7 @@ class ProfileChooser extends Component<unknown, ProfileChooserState> {
       await setActiveProfile(profileId);
       window.location.reload();
     } catch (error) {
-      // TODO: error handling
+      globalErrorManager.emitNonFatalError("Failed to update the active profile", error);
     }
   }
 }

@@ -23,6 +23,8 @@ import { ProfilesPage } from "../ProfilesPage/ProfilesPage";
 import { TransactionsPage } from "../TransactionsPage/TransactionsPage";
 import { EnvelopesPage } from "../EnvelopesPage/EnvelopesPage";
 import { EnvelopeTransfersPage } from "../EnvelopeTransfersPage/EnvelopeTransfersPage";
+import { ErrorToaster } from "../ErrorToaster/ErrorToaster";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { AppContentWrapper } from "./AppContentWrapper";
 import { AppRootWrapper } from "./AppRootWrapper";
 
@@ -59,6 +61,13 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
     this.setState({
       caughtError: error,
       caughtErrorInfo: errorInfo,
+    });
+  }
+
+  public componentDidMount(): void {
+    globalErrorManager.addFatalErrorReceiver((message, error) => {
+      // TODO: use the message when error handling is removed from redux
+      this.setState({ caughtError: error });
     });
   }
 
@@ -115,6 +124,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
           </AppContentWrapper>
         </AppRootWrapper>
         <ReactTooltip effect={"solid"} multiline={true} />
+        <ErrorToaster />
       </div>
     );
   }
