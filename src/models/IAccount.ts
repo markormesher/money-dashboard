@@ -73,6 +73,14 @@ function mapAccountForApi(account?: IAccount): IAccount {
   };
 }
 
+function isAccountTag(tag: string): tag is AccountTag {
+  return ACCOUNT_TAGS.some((t) => t == tag);
+}
+
+function isAccountType(type: string): type is AccountType {
+  return ACCOUNT_TYPES.some((t) => t == type);
+}
+
 export {
   AccountType,
   ACCOUNT_TYPES,
@@ -83,4 +91,6 @@ export {
   DEFAULT_ACCOUNT,
   mapAccountFromApi,
   mapAccountForApi,
+  isAccountTag,
+  isAccountType,
 };

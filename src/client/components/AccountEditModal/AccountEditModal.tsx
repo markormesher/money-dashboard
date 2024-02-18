@@ -1,277 +1,226 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
-import { connect } from "react-redux";
-import { AnyAction, Dispatch } from "redux";
 import {
   DEFAULT_ACCOUNT,
   IAccount,
-  AccountTag,
-  AccountType,
   ACCOUNT_TAG_DISPLAY_NAMES,
+  isAccountTag,
+  isAccountType,
 } from "../../../models/IAccount";
-import { IAccountValidationResult, validateAccount } from "../../../models/validators/AccountValidator";
-import { ALL_CURRENCIES, CurrencyCode } from "../../../models/ICurrency";
+import { validateAccount } from "../../../models/validators/AccountValidator";
+import { ALL_CURRENCIES, DEFAULT_CURRENCY_CODE, isCurrencyCode } from "../../../models/ICurrency";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { setAccountToEdit, startSaveAccount } from "../../redux/accounts";
-import { IRootState } from "../../redux/root";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
+import { AccountApi } from "../../api/accounts";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { combine } from "../../helpers/style-helpers";
 import { ControlledTextArea } from "../_ui/ControlledInputs/ControlledTextArea";
 import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
-import { StockTicker, ALL_STOCKS, getStock } from "../../../models/IStock";
+import { ALL_STOCKS, getStock, isStockTicker } from "../../../models/IStock";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
+import { useModelEditingState } from "../../helpers/state-hooks";
 
-interface IAccountEditModalProps {
+type AccountEditModalProps = {
   readonly accountToEdit?: IAccount;
-  readonly editorBusy?: boolean;
+  readonly onCancel: () => unknown;
+  readonly onComplete: () => unknown;
+};
 
-  readonly actions?: {
-    readonly setAccountToEdit: (account: IAccount) => AnyAction;
-    readonly startSaveAccount: (account: Partial<IAccount>) => AnyAction;
-  };
-}
+function AccountEditModal(props: AccountEditModalProps): React.ReactElement {
+  // state
+  const { onCancel, onComplete, accountToEdit } = props;
+  const [currentValues, validationResult, updateModel] = useModelEditingState<IAccount>(
+    accountToEdit || DEFAULT_ACCOUNT,
+    validateAccount,
+  );
+  const [editorBusy, setEditorBusy] = React.useState(false);
 
-interface IAccountEditModalState {
-  readonly currentValues: IAccount;
-  readonly validationResult: IAccountValidationResult;
-}
-
-function mapStateToProps(state: IRootState, props: IAccountEditModalProps): IAccountEditModalProps {
-  return {
-    ...props,
-    accountToEdit: state.accounts.accountToEdit,
-    editorBusy: state.accounts.editorBusy,
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch, props: IAccountEditModalProps): IAccountEditModalProps {
-  return {
-    ...props,
-    actions: {
-      setAccountToEdit: (account): AnyAction => dispatch(setAccountToEdit(account)),
-      startSaveAccount: (account): AnyAction => dispatch(startSaveAccount(account)),
-    },
-  };
-}
-
-class UCAccountEditModal extends PureComponent<IAccountEditModalProps, IAccountEditModalState> {
-  constructor(props: IAccountEditModalProps) {
-    super(props);
-    const accountToEdit = props.accountToEdit || DEFAULT_ACCOUNT;
-    this.state = {
-      currentValues: accountToEdit,
-      validationResult: validateAccount(accountToEdit),
-    };
-
-    this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleTypeChange = this.handleTypeChange.bind(this);
-    this.handleCurrencyChange = this.handleCurrencyChange.bind(this);
-    this.handleStockTickerChange = this.handleStockTickerChange.bind(this);
-    this.handleTagCheckedChange = this.handleTagCheckedChange.bind(this);
-    this.handleIncludeInEnvelopesChange = this.handleIncludeInEnvelopesChange.bind(this);
-    this.handleNoteChange = this.handleNoteChange.bind(this);
-    this.handleSave = this.handleSave.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
-    this.updateModel = this.updateModel.bind(this);
+  // form actions
+  function handleCurrencyChange(code: string): void {
+    if (isCurrencyCode(code)) {
+      updateModel({ currencyCode: code });
+    } else {
+      updateModel({ currencyCode: DEFAULT_CURRENCY_CODE });
+    }
   }
 
-  public render(): ReactNode {
-    const { editorBusy } = this.props;
-    const { currentValues, validationResult } = this.state;
-    const errors = validationResult.errors || {};
+  function handleStockTickerChange(ticker: string): void {
+    if (!ticker) {
+      updateModel({ stockTicker: null });
+    } else if (isStockTicker(ticker)) {
+      const stock = getStock(ticker);
+      updateModel({ stockTicker: ticker, currencyCode: stock.baseCurrency });
+    }
+  }
 
-    const modalBtns: IModalBtn[] = [
-      {
-        type: ModalBtnType.CANCEL,
-        onClick: this.handleCancel,
-      },
-      {
-        type: ModalBtnType.SAVE,
-        disabled: !validationResult.isValid,
-        onClick: this.handleSave,
-      },
-    ];
+  function handleTagChange(checked: boolean, tag: string): void {
+    if (checked) {
+      if (isAccountTag(tag)) {
+        updateModel({ tags: [...currentValues.tags, tag] });
+      }
+    } else {
+      updateModel({ tags: currentValues.tags.filter((t) => t != tag) });
+    }
+  }
 
-    const tags = Object.entries(ACCOUNT_TAG_DISPLAY_NAMES).sort((a, b) => a[1].localeCompare(b[1]));
-    const tagCheckboxes: ReactNode[] = tags.map(([tagKey, tagName]) => (
-      <div className={bs.col} key={tagKey}>
-        <ControlledCheckboxInput
-          id={`tag-${tagKey}`}
-          label={tagName}
-          checked={currentValues.tags.indexOf(tagKey as AccountTag) >= 0}
-          disabled={editorBusy}
-          onCheckedChange={this.handleTagCheckedChange}
-        />
-      </div>
-    ));
+  async function saveAccount(): Promise<void> {
+    setEditorBusy(true);
+    try {
+      await AccountApi.saveAccount(currentValues);
+      onComplete();
+    } catch (error) {
+      globalErrorManager.emitNonFatalError("Failed to save account", error);
+      setEditorBusy(false);
+    }
+  }
 
-    return (
-      <Modal
-        title={currentValues.id ? "Edit Account" : "Create Account"}
-        buttons={modalBtns}
-        modalBusy={editorBusy}
-        onCloseRequest={this.handleCancel}
-      >
-        <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.row}>
-            <div className={combine(bs.col, bs.mb3)}>
-              <ControlledTextInput
-                id={"name"}
-                label={"Name"}
-                placeholder={"Account Name"}
-                value={currentValues.name}
-                onValueChange={this.handleNameChange}
-                disabled={editorBusy}
-                error={errors.name}
-                inputProps={{
-                  autoFocus: true,
-                }}
-              />
-            </div>
-            <div className={combine(bs.col, bs.mb3)}>
-              <ControlledSelectInput
-                id="type"
-                label={"Type"}
-                value={currentValues.type}
-                onValueChange={this.handleTypeChange}
-                disabled={editorBusy}
-                error={errors.type}
-              >
-                <option value={"current"}>Current Account</option>
-                <option value={"savings"}>Savings Account</option>
-                <option value={"asset"}>Asset</option>
-                <option value={"other"}>Other</option>
-              </ControlledSelectInput>
-            </div>
-          </div>
-          <div className={bs.row}>
-            <div className={combine(bs.col, bs.mb3)}>
-              <ControlledSelectInput
-                id={"currency"}
-                label={"Currency"}
-                value={currentValues.currencyCode}
-                onValueChange={this.handleCurrencyChange}
-                disabled={editorBusy || currentValues.stockTicker !== null}
-                error={errors.currencyCode}
-              >
-                {ALL_CURRENCIES.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {c.name}
-                  </option>
-                ))}
-              </ControlledSelectInput>
-            </div>
-            <div className={combine(bs.col, bs.mb3)}>
-              <ControlledSelectInput
-                id={"stockTicker"}
-                label={"Stock Ticker"}
-                value={currentValues.stockTicker}
-                onValueChange={this.handleStockTickerChange}
-                disabled={editorBusy}
-                error={errors.stockTicker}
-              >
-                <option value={""}>-- Select --</option>
-                {ALL_STOCKS.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
-                  <option key={c.ticker} value={c.ticker}>
-                    {c.name}
-                  </option>
-                ))}
-              </ControlledSelectInput>
-            </div>
-          </div>
-          <div className={bs.mb3}>
-            <label className={bs.formLabel}>Tags</label>
-            <div className={bs.row}>{tagCheckboxes}</div>
-            {errors.tags && <div className={combine(bs.invalidFeedback, bs.dBlock)}>{errors.tags}</div>}
-          </div>
-          <div className={bs.mb3}>
-            <label className={bs.formLabel}>Options</label>
-            <div className={bs.row}>
-              <div className={bs.col}>
-                <ControlledCheckboxInput
-                  id={"includeInEnvelopes"}
-                  label={"Include in envelope calculations?"}
-                  checked={currentValues.includeInEnvelopes}
-                  disabled={editorBusy}
-                  onCheckedChange={this.handleIncludeInEnvelopesChange}
-                />
-              </div>
-            </div>
-          </div>
-          <div className={bs.mb3}>
-            <ControlledTextArea
-              id={"note"}
-              label={"Note"}
-              value={currentValues.note}
+  // ui
+  const modalBtns: IModalBtn[] = [
+    {
+      type: ModalBtnType.CANCEL,
+      onClick: onCancel,
+    },
+    {
+      type: ModalBtnType.SAVE,
+      disabled: !validationResult.isValid,
+      onClick: saveAccount,
+    },
+  ];
+
+  const tags = Object.entries(ACCOUNT_TAG_DISPLAY_NAMES).sort((a, b) => a[1].localeCompare(b[1]));
+  const tagCheckboxes: React.ReactNode[] = tags.map(([tagKey, tagName]) => (
+    <div className={bs.col} key={tagKey}>
+      <ControlledCheckboxInput
+        id={tagKey}
+        label={tagName}
+        checked={currentValues.tags.some((t) => t == tagKey)}
+        disabled={editorBusy}
+        onCheckedChange={(checked, id) => handleTagChange(checked, id)}
+      />
+    </div>
+  ));
+
+  const errors = validationResult.errors || {};
+
+  return (
+    <Modal
+      title={currentValues.id ? "Edit Account" : "Create Account"}
+      buttons={modalBtns}
+      modalBusy={editorBusy}
+      onCloseRequest={onCancel}
+    >
+      <ControlledForm onSubmit={saveAccount}>
+        <div className={bs.row}>
+          <div className={combine(bs.col, bs.mb3)}>
+            <ControlledTextInput
+              id={"name"}
+              label={"Name"}
+              placeholder={"Account Name"}
+              value={currentValues.name}
+              onValueChange={(name) => updateModel({ name })}
               disabled={editorBusy}
-              onValueChange={this.handleNoteChange}
+              error={errors.name}
+              inputProps={{
+                autoFocus: true,
+              }}
             />
           </div>
-        </ControlledForm>
-      </Modal>
-    );
-  }
-
-  private handleNameChange(value: string): void {
-    this.updateModel({ name: value });
-  }
-
-  private handleTypeChange(value: string): void {
-    this.updateModel({ type: value as AccountType });
-  }
-
-  private handleCurrencyChange(value: string): void {
-    this.updateModel({ currencyCode: value as CurrencyCode });
-  }
-
-  private handleStockTickerChange(value: string): void {
-    if (value !== "") {
-      const stock = getStock(value as StockTicker);
-      this.updateModel({ stockTicker: stock.ticker, currencyCode: stock.baseCurrency });
-    } else {
-      this.updateModel({ stockTicker: null });
-    }
-  }
-
-  private handleTagCheckedChange(checked: boolean, id: string): void {
-    const tag = id.replace(/^tag-/, "") as AccountTag;
-    if (checked) {
-      this.updateModel({ tags: [...this.state.currentValues.tags, tag] });
-    } else {
-      this.updateModel({ tags: this.state.currentValues.tags.filter((t) => t !== tag) });
-    }
-  }
-
-  private handleIncludeInEnvelopesChange(checked: boolean): void {
-    this.updateModel({ includeInEnvelopes: checked });
-  }
-
-  private handleNoteChange(value: string): void {
-    this.updateModel({ note: value });
-  }
-
-  private handleSave(): void {
-    if (this.state.validationResult.isValid) {
-      this.props.actions.startSaveAccount(this.state.currentValues);
-    }
-  }
-
-  private handleCancel(): void {
-    this.props.actions.setAccountToEdit(undefined);
-  }
-
-  private updateModel(account: Partial<IAccount>): void {
-    const updatedAccount = {
-      ...this.state.currentValues,
-      ...account,
-    };
-    this.setState({
-      currentValues: updatedAccount,
-      validationResult: validateAccount(updatedAccount),
-    });
-  }
+          <div className={combine(bs.col, bs.mb3)}>
+            <ControlledSelectInput
+              id="type"
+              label={"Type"}
+              value={currentValues.type}
+              onValueChange={(type) => {
+                if (isAccountType(type)) {
+                  updateModel({ type });
+                }
+              }}
+              disabled={editorBusy}
+              error={errors.type}
+            >
+              <option value={"current"}>Current Account</option>
+              <option value={"savings"}>Savings Account</option>
+              <option value={"asset"}>Asset</option>
+              <option value={"other"}>Other</option>
+            </ControlledSelectInput>
+          </div>
+        </div>
+        <div className={bs.row}>
+          <div className={combine(bs.col, bs.mb3)}>
+            <ControlledSelectInput
+              id={"currency"}
+              label={"Currency"}
+              value={currentValues.currencyCode}
+              onValueChange={handleCurrencyChange}
+              disabled={editorBusy || currentValues.stockTicker !== null}
+              error={errors.currencyCode}
+            >
+              {ALL_CURRENCIES.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.name}
+                </option>
+              ))}
+            </ControlledSelectInput>
+          </div>
+          <div className={combine(bs.col, bs.mb3)}>
+            <ControlledSelectInput
+              id={"stockTicker"}
+              label={"Stock Ticker"}
+              value={currentValues.stockTicker ?? ""}
+              onValueChange={handleStockTickerChange}
+              disabled={editorBusy}
+              error={errors.stockTicker}
+            >
+              <option value={""}>-- Select --</option>
+              {ALL_STOCKS.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
+                <option key={c.ticker} value={c.ticker}>
+                  {c.name}
+                </option>
+              ))}
+            </ControlledSelectInput>
+          </div>
+        </div>
+        <div className={bs.mb3}>
+          <label className={bs.formLabel}>Tags</label>
+          <div className={bs.row}>{tagCheckboxes}</div>
+          {errors.tags && <div className={combine(bs.invalidFeedback, bs.dBlock)}>{errors.tags}</div>}
+        </div>
+        <div className={bs.mb3}>
+          <label className={bs.formLabel}>Options</label>
+          <div className={bs.row}>
+            <div className={bs.col}>
+              <ControlledCheckboxInput
+                id={"includeInEnvelopes"}
+                label={"Include in envelope calculations?"}
+                checked={currentValues.includeInEnvelopes}
+                disabled={editorBusy}
+                onCheckedChange={(checked) => updateModel({ includeInEnvelopes: checked })}
+              />
+            </div>
+            <div className={bs.col}>
+              <ControlledCheckboxInput
+                id={"active"}
+                label={"Active?"}
+                checked={currentValues.active}
+                disabled={editorBusy}
+                onCheckedChange={(checked) => updateModel({ active: checked })}
+              />
+            </div>
+          </div>
+        </div>
+        <div className={bs.mb3}>
+          <ControlledTextArea
+            id={"note"}
+            label={"Note"}
+            value={currentValues.note}
+            disabled={editorBusy}
+            onValueChange={(note) => updateModel({ note })}
+          />
+        </div>
+      </ControlledForm>
+    </Modal>
+  );
 }
 
-export const AccountEditModal = connect(mapStateToProps, mapDispatchToProps)(UCAccountEditModal);
+export { AccountEditModal };

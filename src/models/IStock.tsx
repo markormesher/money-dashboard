@@ -27,4 +27,8 @@ function getStock(ticker: StockTicker): IStock {
   return stock;
 }
 
-export { StockTicker, IStock, ALL_STOCKS, ALL_STOCK_TICKERS, getStock };
+function isStockTicker(ticker: string): ticker is StockTicker | undefined {
+  return ticker == undefined || ALL_STOCK_TICKERS.some((t) => t == ticker);
+}
+
+export { StockTicker, IStock, ALL_STOCKS, ALL_STOCK_TICKERS, getStock, isStockTicker };
