@@ -2,19 +2,15 @@ import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IAccountBalance } from "../../models/IAccountBalance";
-import { mapBudgetFromApi } from "../../models/IBudget";
-import { IBudgetBalance } from "../../models/IBudgetBalance";
 import { ICategoryBalance } from "../../models/ICategoryBalance";
 import { IAccountBalanceUpdate } from "../../models/IAccountBalanceUpdate";
 import { AccountCacheKeys } from "./accounts";
-import { BudgetCacheKeys } from "./budgets";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { TransactionCacheKeys } from "./transactions";
 
 interface IDashboardState {
   readonly accountBalances?: IAccountBalance[];
-  readonly budgetBalances?: IBudgetBalance[];
   readonly memoCategoryBalances?: ICategoryBalance[];
   readonly assetBalanceToUpdate?: IAccountBalance;
   readonly assetBalanceUpdateEditorBusy?: boolean;
@@ -23,7 +19,6 @@ interface IDashboardState {
 
 const initialState: IDashboardState = {
   accountBalances: undefined,
-  budgetBalances: undefined,
   memoCategoryBalances: undefined,
   assetBalanceToUpdate: undefined,
   assetBalanceUpdateEditorBusy: false,
@@ -32,12 +27,10 @@ const initialState: IDashboardState = {
 
 enum DashboardActions {
   START_LOAD_ACCOUNT_BALANCES = "DashboardActions.START_LOAD_ACCOUNT_BALANCES",
-  START_LOAD_BUDGET_BALANCES = "DashboardActions.START_LOAD_BUDGET_BALANCES",
   START_LOAD_MEMO_CATEGORY_BALANCES = "DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES",
   START_SAVE_ASSET_BALANCE_UPDATE = "DashboardActions.START_SAVE_ASSET_BALANCE_UPDATE",
 
   SET_ACCOUNT_BALANCES = "DashboardActions.SET_ACCOUNT_BALANCES",
-  SET_BUDGET_BALANCES = "DashboardActions.SET_BUDGET_BALANCES",
   SET_MEMO_CATEGORY_BALANCES = "DashboardActions.SET_MEMO_CATEGORY_BALANCES",
   SET_ASSET_BALANCE_TO_UPDATE = "DashboardActions.SET_ASSET_BALANCE_TO_UPDATE",
   SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY = "DashboardActions.SET_ASSET_BALANCE_UPDATE_EDITOR_BUSY",
@@ -46,19 +39,12 @@ enum DashboardActions {
 
 enum DashboardCacheKeys {
   ACCOUNT_BALANCES = "DashboardCacheKeys.ACCOUNT_BALANCES",
-  BUDGET_BALANCES = "DashboardCacheKeys.BUDGET_BALANCES",
   MEMO_CATEGORY_BALANCE = "DashboardCacheKeys.MEMO_CATEGORY_BALANCE",
 }
 
 function startLoadAccountBalances(): PayloadAction {
   return {
     type: DashboardActions.START_LOAD_ACCOUNT_BALANCES,
-  };
-}
-
-function startLoadBudgetBalances(): PayloadAction {
-  return {
-    type: DashboardActions.START_LOAD_BUDGET_BALANCES,
   };
 }
 
@@ -103,13 +89,6 @@ function setAccountBalances(accountBalances: IAccountBalance[]): PayloadAction {
   };
 }
 
-function setBudgetBalances(budgetBalances: IBudgetBalance[]): PayloadAction {
-  return {
-    type: DashboardActions.SET_BUDGET_BALANCES,
-    payload: { budgetBalances },
-  };
-}
-
 function setMemoCategoryBalances(memoCategoryBalances: ICategoryBalance[]): PayloadAction {
   return {
     type: DashboardActions.SET_MEMO_CATEGORY_BALANCES,
@@ -133,32 +112,6 @@ function* loadAccountBalancesSaga(): Generator {
         return res.data;
       })) as IAccountBalance[];
       yield all([put(setAccountBalances(balances)), put(CacheKeyUtil.updateKey(DashboardCacheKeys.ACCOUNT_BALANCES))]);
-    } catch (err) {
-      yield all([put(setError(err))]);
-    }
-  });
-}
-
-function* loadBudgetBalancesSaga(): Generator {
-  yield takeEvery(DashboardActions.START_LOAD_BUDGET_BALANCES, function* (): Generator {
-    if (
-      CacheKeyUtil.keyIsValid(DashboardCacheKeys.BUDGET_BALANCES, [
-        TransactionCacheKeys.TRANSACTION_DATA,
-        BudgetCacheKeys.BUDGET_DATA,
-      ])
-    ) {
-      return;
-    }
-    try {
-      const balances: IBudgetBalance[] = (yield call(async () => {
-        const res = await axios.get("/api/budgets/balances");
-        const raw: IBudgetBalance[] = res.data;
-        return raw.map((rawItem) => ({
-          ...rawItem,
-          budget: mapBudgetFromApi(rawItem.budget),
-        }));
-      })) as IBudgetBalance[];
-      yield all([put(setBudgetBalances(balances)), put(CacheKeyUtil.updateKey(DashboardCacheKeys.BUDGET_BALANCES))]);
     } catch (err) {
       yield all([put(setError(err))]);
     }
@@ -212,12 +165,7 @@ function* saveAssetBalanceUpdate(): Generator {
 }
 
 function* dashboardSagas(): Generator {
-  yield all([
-    loadAccountBalancesSaga(),
-    loadBudgetBalancesSaga(),
-    loadMemoCategoryBalancesSaga(),
-    saveAssetBalanceUpdate(),
-  ]);
+  yield all([loadAccountBalancesSaga(), loadMemoCategoryBalancesSaga(), saveAssetBalanceUpdate()]);
 }
 
 function dashboardReducer(state: IDashboardState = initialState, action: PayloadAction): IDashboardState {
@@ -226,12 +174,6 @@ function dashboardReducer(state: IDashboardState = initialState, action: Payload
       return {
         ...state,
         accountBalances: action.payload.accountBalances,
-      };
-
-    case DashboardActions.SET_BUDGET_BALANCES:
-      return {
-        ...state,
-        budgetBalances: action.payload.budgetBalances,
       };
 
     case DashboardActions.SET_MEMO_CATEGORY_BALANCES:
@@ -273,13 +215,11 @@ export {
   dashboardReducer,
   dashboardSagas,
   startLoadAccountBalances,
-  startLoadBudgetBalances,
   startLoadMemoCategoryBalances,
   startSaveAssetBalanceUpdate,
   setAssetBalanceToUpdate,
   setAssetBalanceUpdateEditorBusy,
   setAssetBalanceUpdateError,
   setAccountBalances,
-  setBudgetBalances,
   setMemoCategoryBalances,
 };

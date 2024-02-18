@@ -50,7 +50,7 @@ async function getOrCreateUserWithExternalUsername(externalUsername: string, dis
     .then((user: DbUser) => {
       // make a user if we didn't find one
       if (!user) {
-        return DbUser.create<DbUser>({ id: null, externalUsername, displayName }).save();
+        return DbUser.create<DbUser>({ externalUsername, displayName }).save();
       } else {
         return user;
       }

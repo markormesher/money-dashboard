@@ -19,7 +19,7 @@ import { globalErrorManager } from "../../helpers/errors/error-manager";
 function CategoriesPage(): ReactElement {
   // state
   const [nonce, updateNonce] = useNonceState();
-  const [categoryToEdit, setCategoryToEdit] = useState<ICategory>(null);
+  const [categoryToEdit, setCategoryToEdit] = useState<ICategory>();
 
   // data table
   const tableColumns: IColumn[] = [
@@ -82,20 +82,24 @@ function CategoriesPage(): ReactElement {
     setCategoryToEdit(DEFAULT_CATEGORY);
   }
 
-  function editCategory(category: ICategory): void {
+  function editCategory(category?: ICategory): void {
     setCategoryToEdit(category);
   }
 
   function onEditCancel(): void {
-    setCategoryToEdit(null);
+    setCategoryToEdit(undefined);
   }
 
   function onEditComplete(): void {
-    setCategoryToEdit(null);
+    setCategoryToEdit(undefined);
     updateNonce();
   }
 
-  async function deleteCategory(category: ICategory): Promise<void> {
+  async function deleteCategory(category?: ICategory): Promise<void> {
+    if (!category) {
+      return;
+    }
+
     try {
       await CategoryApi.deleteCategory(category);
       updateNonce();

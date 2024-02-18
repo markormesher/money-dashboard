@@ -2,7 +2,6 @@ import { RouterState } from "connected-react-router";
 import { all } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { accountsReducer, accountsSagas, IAccountsState } from "./accounts";
-import { budgetsReducer, budgetsSagas, IBudgetsState } from "./budgets";
 import { categoriesReducer, categoriesSagas, ICategoriesState } from "./categories";
 import { dashboardReducer, dashboardSagas, IDashboardState } from "./dashboard";
 import { envelopesReducer, envelopesSagas, IEnvelopesState } from "./envelopes";
@@ -14,7 +13,6 @@ import { IStockPriceState, stockPricesReducer, stockPricesSagas } from "./stock-
 
 interface IRootState {
   readonly accounts?: IAccountsState;
-  readonly budgets?: IBudgetsState;
   readonly categories?: ICategoriesState;
   readonly dashboard?: IDashboardState;
   readonly envelopes?: IEnvelopesState;
@@ -31,7 +29,6 @@ interface IRootState {
 const rootReducers = {
   [CacheKeyUtil.STATE_KEY]: CacheKeyUtil.reducer,
   accounts: accountsReducer,
-  budgets: budgetsReducer,
   categories: categoriesReducer,
   dashboard: dashboardReducer,
   envelopes: envelopesReducer,
@@ -45,7 +42,6 @@ const rootReducers = {
 function* rootSaga(): Generator {
   yield all([
     accountsSagas(),
-    budgetsSagas(),
     categoriesSagas(),
     dashboardSagas(),
     envelopesSagas(),

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ReactElement, useState } from "react";
-import { ICategory } from "../../../models/ICategory";
+import { DEFAULT_CATEGORY, ICategory } from "../../../models/ICategory";
 import { validateCategory } from "../../../models/validators/CategoryValidator";
 import { CategoryApi } from "../../api/categories";
 import * as bs from "../../global-styles/Bootstrap.scss";
@@ -22,7 +22,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
   // state
   const { onCancel, onComplete, categoryToEdit } = props;
   const [currentValues, validationResult, updateModel] = useModelEditingState<ICategory>(
-    categoryToEdit,
+    categoryToEdit || DEFAULT_CATEGORY,
     validateCategory,
   );
   const [editorBusy, setEditorBusy] = useState(false);

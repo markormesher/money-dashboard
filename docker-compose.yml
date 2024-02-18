@@ -12,7 +12,7 @@ services:
     depends_on:
       - postgres
     ports:
-      - 3000:3000
+      - 3030:3000
     secrets:
       - open-exchange-rates-token
       - polygon-api-token
@@ -29,7 +29,7 @@ services:
       - ./logs:/logs
 
   postgres:
-    image: postgres:10.1-alpine
+    image: postgres:16
     secrets:
       - postgres-password
     environment:

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
+import { ReactNode } from "react";
 import ReactTooltip from "react-tooltip";
 import { IBudgetBalance } from "../../../models/IBudgetBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
@@ -8,22 +8,30 @@ import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { Card } from "../_ui/Card/Card";
 import { MaterialIconName, MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
+import { BudgetApi } from "../../api/budgets";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
 import * as styles from "./DashboardBudgetList.scss";
 
-interface IDashboardBudgetListProps {
-  readonly budgetBalances?: IBudgetBalance[];
-}
+function DashboardBudgetList(): React.ReactElement {
+  const [budgetBalances, setBudgetBalances] = React.useState<IBudgetBalance[]>();
+  React.useEffect(() => {
+    BudgetApi.getBudgetBalances()
+      .then(setBudgetBalances)
+      .catch((err) => {
+        globalErrorManager.emitNonFatalError("Failed to load budget balances", err);
+        setBudgetBalances([]);
+      });
+  }, []);
 
-class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
-  public componentDidMount(): void {
+  React.useEffect(() => {
     ReactTooltip.rebuild();
+  });
+
+  if (!budgetBalances) {
+    return <LoadingSpinner centre={true} />;
   }
 
-  public componentDidUpdate(): void {
-    ReactTooltip.rebuild();
-  }
-
-  private static renderGroup(budgetBalances: IBudgetBalance[], title?: string): ReactNode {
+  function renderGroup(budgetBalances: IBudgetBalance[], title?: string): ReactNode {
     if (budgetBalances.length === 0) {
       return null;
     }
@@ -40,23 +48,21 @@ class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
 
     return (
       <Card title={displayTitle} icon={"pie_chart"}>
-        {budgets.length > 0 && (
-          <div className={bs.row}>{budgets.map(DashboardBudgetList.renderSingleBudgetBalance)}</div>
-        )}
+        {budgets.length > 0 && <div className={bs.row}>{budgets.map(renderSingleBudgetBalance)}</div>}
         {budgets.length > 0 && bills.length > 0 && <hr className={combine(bs.mt0, bs.mb3)} />}
-        {bills.length > 0 && <div className={bs.row}>{bills.map(DashboardBudgetList.renderSingleBudgetBalance)}</div>}
+        {bills.length > 0 && <div className={bs.row}>{bills.map(renderSingleBudgetBalance)}</div>}
       </Card>
     );
   }
 
-  private static renderSingleBudgetBalance(budgetBalance: IBudgetBalance): ReactNode {
+  function renderSingleBudgetBalance(budgetBalance: IBudgetBalance): ReactNode {
     const budget = budgetBalance.budget;
     const spend = budgetBalance.balance * -1;
     const percentSpend = spend / budget.amount;
 
     let barClass = bs.bgInfo;
-    let barIcon: MaterialIconName;
-    let barMsg: string;
+    let barIcon: MaterialIconName = "";
+    let barMsg = "";
     const tooltip = `Spent ${formatCurrency(spend)} of ${formatCurrency(budget.amount)}`;
 
     if (budget.type === "budget") {
@@ -102,30 +108,23 @@ class DashboardBudgetList extends PureComponent<IDashboardBudgetListProps> {
     );
   }
 
-  public render(): ReactNode {
-    const { budgetBalances } = this.props;
-    if (!budgetBalances) {
-      return <LoadingSpinner centre={true} />;
-    }
+  const groupedBudgets = {
+    month: budgetBalances.filter((b) => getBudgetPeriodType(b.budget.startDate, b.budget.endDate) === "month"),
+    calendarYear: budgetBalances.filter(
+      (b) => getBudgetPeriodType(b.budget.startDate, b.budget.endDate) === "calendar year",
+    ),
+    taxYear: budgetBalances.filter((b) => getBudgetPeriodType(b.budget.startDate, b.budget.endDate) === "tax year"),
+    other: budgetBalances.filter((b) => getBudgetPeriodType(b.budget.startDate, b.budget.endDate) === "other"),
+  };
 
-    const groupedBudgets = {
-      month: budgetBalances.filter((b) => getBudgetPeriodType(b.budget.startDate, b.budget.endDate) === "month"),
-      calendarYear: budgetBalances.filter(
-        (b) => getBudgetPeriodType(b.budget.startDate, b.budget.endDate) === "calendar year",
-      ),
-      taxYear: budgetBalances.filter((b) => getBudgetPeriodType(b.budget.startDate, b.budget.endDate) === "tax year"),
-      other: budgetBalances.filter((b) => getBudgetPeriodType(b.budget.startDate, b.budget.endDate) === "other"),
-    };
-
-    return (
-      <>
-        {DashboardBudgetList.renderGroup(groupedBudgets.month)}
-        {DashboardBudgetList.renderGroup(groupedBudgets.calendarYear)}
-        {DashboardBudgetList.renderGroup(groupedBudgets.taxYear)}
-        {DashboardBudgetList.renderGroup(groupedBudgets.other, "Other")}
-      </>
-    );
-  }
+  return (
+    <>
+      {renderGroup(groupedBudgets.month)}
+      {renderGroup(groupedBudgets.calendarYear)}
+      {renderGroup(groupedBudgets.taxYear)}
+      {renderGroup(groupedBudgets.other, "Other")}
+    </>
+  );
 }
 
 export { DashboardBudgetList };

@@ -5,7 +5,7 @@ import { combine } from "../../../helpers/style-helpers";
 
 interface IControlledCheckboxInputProps {
   readonly id: string;
-  readonly label: string | ReactElement<void>;
+  readonly label?: string | ReactElement<void>;
   readonly checked: boolean;
   readonly onCheckedChange: (newValue: boolean, id: string) => void;
   readonly disabled?: boolean;
@@ -43,9 +43,11 @@ class ControlledCheckboxInput extends PureComponent<IControlledCheckboxInputProp
           onBlur={this.handleBlur}
           {...inputProps}
         />
-        <label className={combine(bs.formCheckLabel, bs.formLabel)} htmlFor={id}>
-          {label}
-        </label>
+        {label ? (
+          <label className={combine(bs.formCheckLabel, bs.formLabel)} htmlFor={id}>
+            {label}
+          </label>
+        ) : null}
         {error && hasBeenTouched && <div className={bs.invalidFeedback}>{error}</div>}
       </div>
     );

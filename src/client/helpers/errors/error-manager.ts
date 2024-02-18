@@ -1,4 +1,4 @@
-type ErrorReceiver = (message: string, error: Error) => unknown;
+type ErrorReceiver = (message: string, error?: Error) => unknown;
 
 class ErrorManager {
   private fatalErrorRecevivers: ErrorReceiver[] = [];
