@@ -1,14 +1,14 @@
 import * as React from "react";
-import { PureComponent, ReactElement, ReactNode } from "react";
-import { connect } from "react-redux";
-import { AnyAction, Dispatch } from "redux";
-import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { ITransaction, mapTransactionFromApi } from "../../../models/ITransaction";
+import { ReactElement } from "react";
+import {
+  DEFAULT_TRANSACTION,
+  getNextTransactionForContinuousCreation,
+  ITransaction,
+  mapTransactionFromApi,
+} from "../../../models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { IRootState } from "../../redux/root";
-import { setTransactionToEdit, startDeleteTransaction, TransactionCacheKeys } from "../../redux/transactions";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
@@ -20,36 +20,16 @@ import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { Card } from "../_ui/Card/Card";
 import { DEFAULT_CURRENCY_CODE } from "../../../models/ICurrency";
 import { Badge } from "../_ui/Badge/Badge";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
+import { useNonceState } from "../../helpers/state-hooks";
 
-interface ITransactionPageProps {
-  readonly cacheTime: number;
-  readonly transactionToEdit?: ITransaction;
-  readonly actions?: {
-    readonly deleteTransaction: (transaction: ITransaction) => AnyAction;
-    readonly setTransactionToEdit: (transaction: ITransaction) => AnyAction;
-  };
-}
+function TransactionsPage(): ReactElement {
+  // state
+  const [nonce, updateNonce] = useNonceState();
+  const [transactionToEdit, setTransactionToEdit] = React.useState<ITransaction>();
 
-function mapStateToProps(state: IRootState, props: ITransactionPageProps): ITransactionPageProps {
-  return {
-    ...props,
-    cacheTime: CacheKeyUtil.getKeyTime(TransactionCacheKeys.TRANSACTION_DATA),
-    transactionToEdit: state.transactions.transactionToEdit,
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch, props: ITransactionPageProps): ITransactionPageProps {
-  return {
-    ...props,
-    actions: {
-      deleteTransaction: (transaction): AnyAction => dispatch(startDeleteTransaction(transaction)),
-      setTransactionToEdit: (transaction): AnyAction => dispatch(setTransactionToEdit(transaction)),
-    },
-  };
-}
-
-class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
-  private tableColumns: IColumn[] = [
+  // data table
+  const tableColumns: IColumn[] = [
     {
       title: "Date",
       sortField: "transaction.transactionDate",
@@ -78,58 +58,15 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
     },
   ];
 
-  private dataProvider = new ApiDataTableDataProvider<ITransaction>(
+  const dataProvider = new ApiDataTableDataProvider<ITransaction>(
     "/api/transactions/table-data",
     () => ({
-      cacheTime: this.props.cacheTime,
+      cacheTime: nonce,
     }),
     mapTransactionFromApi,
   );
 
-  constructor(props: ITransactionPageProps) {
-    super(props);
-
-    this.tableRowRenderer = this.tableRowRenderer.bind(this);
-    this.generateActionButtons = this.generateActionButtons.bind(this);
-    this.startTransactionCreation = this.startTransactionCreation.bind(this);
-  }
-
-  public render(): ReactNode {
-    const { cacheTime, transactionToEdit } = this.props;
-
-    return (
-      <>
-        {transactionToEdit !== undefined && <TransactionEditModal />}
-
-        <PageHeader>
-          <h2>Transactions</h2>
-          <PageHeaderActions>
-            <KeyShortcut targetStr={"c"} onTrigger={this.startTransactionCreation}>
-              <IconBtn
-                icon={"add"}
-                text={"New Transaction"}
-                onClick={this.startTransactionCreation}
-                btnProps={{
-                  className: combine(bs.btnSm, bs.btnSuccess),
-                }}
-              />
-            </KeyShortcut>
-          </PageHeaderActions>
-        </PageHeader>
-
-        <Card>
-          <DataTable<ITransaction>
-            columns={this.tableColumns}
-            dataProvider={this.dataProvider}
-            watchedProps={{ cacheTime }}
-            rowRenderer={this.tableRowRenderer}
-          />
-        </Card>
-      </>
-    );
-  }
-
-  private tableRowRenderer(transaction: ITransaction): ReactElement<void> {
+  function tableRowRenderer(transaction: ITransaction): ReactElement<void> {
     const mainDate = formatDate(transaction.transactionDate);
     const altDate = formatDate(transaction.effectiveDate);
     const altCurrencyCode =
@@ -158,19 +95,19 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
           {altCurrencyCode && <Badge className={combine(bs.bgDark, bs.ms2)}>{altCurrencyCode}</Badge>}
         </td>
         <td>{transaction.category.name}</td>
-        <td>{this.generateActionButtons(transaction)}</td>
+        <td>{generateActionButtons(transaction)}</td>
       </tr>
     );
   }
 
-  private generateActionButtons(transaction: ITransaction): ReactElement<void> {
+  function generateActionButtons(transaction: ITransaction): ReactElement<void> {
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
           icon={"edit"}
           text={"Edit"}
           payload={transaction}
-          onClick={this.props.actions.setTransactionToEdit}
+          onClick={editTransaction}
           btnProps={{
             className: bs.btnOutlineDark,
             disabled: transaction.account.deleted || !transaction.account.active || transaction.category.deleted,
@@ -178,7 +115,7 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
         />
         <DeleteBtn
           payload={transaction}
-          onConfirmedClick={this.props.actions.deleteTransaction}
+          onConfirmedClick={deleteTransaction}
           btnProps={{
             className: bs.btnOutlineDark,
           }}
@@ -187,9 +124,80 @@ class UCTransactionsPage extends PureComponent<ITransactionPageProps> {
     );
   }
 
-  private startTransactionCreation(): void {
-    this.props.actions.setTransactionToEdit(null);
+  // transaction actions
+  function createTransaction(): void {
+    setTransactionToEdit(DEFAULT_TRANSACTION);
   }
+
+  function editTransaction(transaction?: ITransaction): void {
+    setTransactionToEdit(transaction);
+  }
+
+  function onEditCancel(): void {
+    setTransactionToEdit(undefined);
+  }
+
+  function onEditComplete(transaction?: ITransaction): void {
+    // always close the modal to reset it
+    setTransactionToEdit(undefined);
+
+    // should we re-open it?
+    if (transaction?.id == DEFAULT_TRANSACTION.id) {
+      editTransaction(getNextTransactionForContinuousCreation(transaction));
+    }
+
+    updateNonce();
+  }
+
+  async function deleteTransaction(transaction?: ITransaction): Promise<void> {
+    if (!transaction) {
+      return;
+    }
+
+    try {
+      // await TransactionApi.deleteTransaction(transaction);
+      updateNonce();
+    } catch (error) {
+      globalErrorManager.emitNonFatalError("Failed to delete transaction", error);
+    }
+  }
+
+  return (
+    <>
+      {transactionToEdit ? (
+        <TransactionEditModal
+          transactionToEdit={transactionToEdit}
+          onCancel={onEditCancel}
+          onComplete={onEditComplete}
+        />
+      ) : null}
+
+      <PageHeader>
+        <h2>Transactions</h2>
+        <PageHeaderActions>
+          <KeyShortcut targetStr={"c"} onTrigger={createTransaction}>
+            <IconBtn
+              icon={"add"}
+              text={"New Transaction"}
+              onClick={createTransaction}
+              btnProps={{
+                className: combine(bs.btnSm, bs.btnSuccess),
+              }}
+            />
+          </KeyShortcut>
+        </PageHeaderActions>
+      </PageHeader>
+
+      <Card>
+        <DataTable<ITransaction>
+          columns={tableColumns}
+          dataProvider={dataProvider}
+          watchedProps={{ nonce }}
+          rowRenderer={tableRowRenderer}
+        />
+      </Card>
+    </>
+  );
 }
 
-export const TransactionsPage = connect(mapStateToProps, mapDispatchToProps)(UCTransactionsPage);
+export { TransactionsPage };

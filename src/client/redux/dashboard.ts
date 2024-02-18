@@ -7,7 +7,6 @@ import { IAccountBalanceUpdate } from "../../models/IAccountBalanceUpdate";
 import { AccountCacheKeys } from "./accounts";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
-import { TransactionCacheKeys } from "./transactions";
 
 interface IDashboardState {
   readonly accountBalances?: IAccountBalance[];
@@ -98,12 +97,7 @@ function setMemoCategoryBalances(memoCategoryBalances: ICategoryBalance[]): Payl
 
 function* loadAccountBalancesSaga(): Generator {
   yield takeEvery(DashboardActions.START_LOAD_ACCOUNT_BALANCES, function* (): Generator {
-    if (
-      CacheKeyUtil.keyIsValid(DashboardCacheKeys.ACCOUNT_BALANCES, [
-        TransactionCacheKeys.TRANSACTION_DATA,
-        AccountCacheKeys.ACCOUNT_DATA,
-      ])
-    ) {
+    if (CacheKeyUtil.keyIsValid(DashboardCacheKeys.ACCOUNT_BALANCES, [AccountCacheKeys.ACCOUNT_DATA])) {
       return;
     }
     try {
@@ -120,7 +114,7 @@ function* loadAccountBalancesSaga(): Generator {
 
 function* loadMemoCategoryBalancesSaga(): Generator {
   yield takeEvery(DashboardActions.START_LOAD_MEMO_CATEGORY_BALANCES, function* (): Generator {
-    if (CacheKeyUtil.keyIsValid(DashboardCacheKeys.MEMO_CATEGORY_BALANCE, [TransactionCacheKeys.TRANSACTION_DATA])) {
+    if (CacheKeyUtil.keyIsValid(DashboardCacheKeys.MEMO_CATEGORY_BALANCE, [])) {
       return;
     }
     try {
@@ -152,7 +146,6 @@ function* saveAssetBalanceUpdate(): Generator {
           put(setAssetBalanceToUpdate(undefined)),
           put(setAssetBalanceUpdateError(undefined)),
           put(setAssetBalanceUpdateEditorBusy(false)),
-          put(CacheKeyUtil.updateKey(TransactionCacheKeys.TRANSACTION_DATA)),
         ]);
         yield put(startLoadAccountBalances());
       } else {

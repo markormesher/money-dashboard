@@ -22,7 +22,7 @@ interface IAccount {
   readonly tags: AccountTag[];
   readonly note: string;
   readonly currencyCode: CurrencyCode;
-  readonly stockTicker: StockTicker;
+  readonly stockTicker: StockTicker | null;
   readonly includeInEnvelopes: boolean;
   readonly active: boolean;
   readonly deleted: boolean;

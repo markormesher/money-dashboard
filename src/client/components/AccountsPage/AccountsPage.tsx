@@ -19,6 +19,7 @@ import { DEFAULT_CURRENCY_CODE } from "../../../models/ICurrency";
 import { Badge } from "../_ui/Badge/Badge";
 import { useNonceState } from "../../helpers/state-hooks";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
+import { AccountApi } from "../../api/accounts";
 
 function AccountsPage(): ReactElement {
   // state
@@ -121,7 +122,7 @@ function AccountsPage(): ReactElement {
     }
 
     try {
-      // await AccountApi.deleteAccount(account);
+      await AccountApi.deleteAccount(account);
       updateNonce();
     } catch (error) {
       globalErrorManager.emitNonFatalError("Failed to delete account", error);

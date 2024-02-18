@@ -1,224 +1,143 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
-import { connect } from "react-redux";
-import { AnyAction, Dispatch } from "redux";
 import { IEnvelopeAllocation, DEFAULT_CATEGORY_TO_ENVELOPE_ALLOCATION } from "../../../models/IEnvelopeAllocation";
-import {
-  IEnvelopeAllocationValidationResult,
-  validateEnvelopeAllocation,
-} from "../../../models/validators/EnvelopeAllocationValidator";
+import { validateEnvelopeAllocation } from "../../../models/validators/EnvelopeAllocationValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { setAllocationToEdit, startSaveAllocation, startLoadEnvelopeList } from "../../redux/envelopes";
-import { IRootState } from "../../redux/root";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
 import { formatDate } from "../../helpers/formatters";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { combine } from "../../helpers/style-helpers";
-import { IEnvelope } from "../../../models/IEnvelope";
-import { ICategory } from "../../../models/ICategory";
-import { startLoadCategoryList } from "../../redux/categories";
+import { useModelEditingState } from "../../helpers/state-hooks";
+import { CategoryApi } from "../../api/categories";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
+import { EnvelopeApi } from "../../api/envelopes";
 
-interface IEnvelopeAllocationEditModalProps {
-  readonly allocationToEdit?: IEnvelopeAllocation;
-  readonly editorBusy?: boolean;
-  readonly categoryList?: ICategory[];
-  readonly envelopeList?: IEnvelope[];
+type EnvelopeAllocationEditModalProps = {
+  readonly envelopeAllocationToEdit?: IEnvelopeAllocation;
+  readonly onCancel: () => unknown;
+  readonly onComplete: () => unknown;
+};
 
-  readonly actions?: {
-    readonly setAllocationToEdit: (envelope: IEnvelopeAllocation) => AnyAction;
-    readonly startSaveAllocation: (envelope: Partial<IEnvelopeAllocation>) => AnyAction;
-    readonly startLoadCategoryList: () => AnyAction;
-    readonly startLoadEnvelopeList: () => AnyAction;
-  };
-}
+function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): React.ReactElement {
+  // state
+  const { onCancel, onComplete, envelopeAllocationToEdit } = props;
+  const [currentValues, validationResult, updateModel] = useModelEditingState<IEnvelopeAllocation>(
+    envelopeAllocationToEdit || DEFAULT_CATEGORY_TO_ENVELOPE_ALLOCATION,
+    validateEnvelopeAllocation,
+  );
+  const [editorBusy, setEditorBusy] = React.useState(false);
 
-interface IEnvelopeAllocationEditModalState {
-  readonly currentValues: IEnvelopeAllocation;
-  readonly validationResult: IEnvelopeAllocationValidationResult;
-}
+  // linked objects
+  const [categoryList, refreshCategoryList] = CategoryApi.useCategoryList();
+  const [envelopeList, refreshEnvelopeList] = EnvelopeApi.useEnvelopeList();
+  React.useEffect(() => {
+    refreshCategoryList();
+    refreshEnvelopeList();
+  }, []);
 
-function mapStateToProps(
-  state: IRootState,
-  props: IEnvelopeAllocationEditModalProps,
-): IEnvelopeAllocationEditModalProps {
-  return {
-    ...props,
-    allocationToEdit: state.envelopes.allocationToEdit,
-    editorBusy: state.envelopes.envelopeEditorBusy,
-    categoryList: state.categories.categoryList,
-    envelopeList: state.envelopes.envelopeList,
-  };
-}
-
-function mapDispatchToProps(
-  dispatch: Dispatch,
-  props: IEnvelopeAllocationEditModalProps,
-): IEnvelopeAllocationEditModalProps {
-  return {
-    ...props,
-    actions: {
-      setAllocationToEdit: (envelope): AnyAction => dispatch(setAllocationToEdit(envelope)),
-      startSaveAllocation: (envelope): AnyAction => dispatch(startSaveAllocation(envelope)),
-      startLoadCategoryList: (): AnyAction => dispatch(startLoadCategoryList()),
-      startLoadEnvelopeList: (): AnyAction => dispatch(startLoadEnvelopeList()),
-    },
-  };
-}
-
-class UCEnvelopeAllocationEditModal extends PureComponent<
-  IEnvelopeAllocationEditModalProps,
-  IEnvelopeAllocationEditModalState
-> {
-  constructor(props: IEnvelopeAllocationEditModalProps) {
-    super(props);
-    const allocationToEdit = props.allocationToEdit || DEFAULT_CATEGORY_TO_ENVELOPE_ALLOCATION;
-    this.state = {
-      currentValues: allocationToEdit,
-      validationResult: validateEnvelopeAllocation(allocationToEdit),
-    };
-
-    this.handleStartDateChange = this.handleStartDateChange.bind(this);
-    this.handleCategoryChange = this.handleCategoryChange.bind(this);
-    this.handleEnvelopeChange = this.handleEnvelopeChange.bind(this);
-
-    this.handleSave = this.handleSave.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
-    this.updateModel = this.updateModel.bind(this);
+  // form actions
+  function handleCategoryChange(id: string): void {
+    const category = categoryList?.find((c) => c.id == id);
+    updateModel({ category });
   }
 
-  public componentDidMount(): void {
-    this.props.actions.startLoadCategoryList();
-    this.props.actions.startLoadEnvelopeList();
+  function handleEnvelopeChange(id: string): void {
+    const envelope = envelopeList?.find((c) => c.id == id);
+    updateModel({ envelope });
   }
 
-  public render(): ReactNode {
-    const { editorBusy, categoryList, envelopeList } = this.props;
-    const { currentValues, validationResult } = this.state;
-    const errors = validationResult.errors || {};
-
-    const modalBtns: IModalBtn[] = [
-      {
-        type: ModalBtnType.CANCEL,
-        onClick: this.handleCancel,
-      },
-      {
-        type: ModalBtnType.SAVE,
-        disabled: !validationResult.isValid,
-        onClick: this.handleSave,
-      },
-    ];
-
-    return (
-      <Modal
-        title={currentValues.id ? "Edit Envelope Allocation" : "Create Envelope Allocation"}
-        buttons={modalBtns}
-        modalBusy={editorBusy}
-        onCloseRequest={this.handleCancel}
-      >
-        <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.mb3}>
-            <ControlledDateInput
-              id={"startDate"}
-              label={"Start Date"}
-              value={formatDate(currentValues.startDate, "system") || ""}
-              disabled={editorBusy}
-              error={errors.startDate}
-              onValueChange={this.handleStartDateChange}
-            />
-          </div>
-          <div className={bs.row}>
-            <div className={combine(bs.col, bs.mb3)}>
-              <ControlledSelectInput
-                id={"category"}
-                label={"Category"}
-                value={currentValues.category ? currentValues.category.id : ""}
-                disabled={editorBusy || !categoryList}
-                error={errors.category}
-                onValueChange={this.handleCategoryChange}
-              >
-                {categoryList && <option value={""}>-- Select --</option>}
-                {categoryList &&
-                  categoryList
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((c) => (
-                      <option value={c.id} key={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                {!categoryList && <option>Loading...</option>}
-              </ControlledSelectInput>
-            </div>
-            <div className={combine(bs.col, bs.mb3)}>
-              <ControlledSelectInput
-                id={"envelope"}
-                label={"Envelope"}
-                value={currentValues.envelope ? currentValues.envelope.id : ""}
-                disabled={editorBusy || !envelopeList}
-                error={errors.envelope}
-                onValueChange={this.handleEnvelopeChange}
-              >
-                {envelopeList && <option value={""}>-- Select --</option>}
-                {envelopeList &&
-                  envelopeList
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((c) => (
-                      <option value={c.id} key={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                {!envelopeList && <option>Loading...</option>}
-              </ControlledSelectInput>
-            </div>
-          </div>
-        </ControlledForm>
-      </Modal>
-    );
-  }
-
-  private handleStartDateChange(value: number): void {
-    this.updateModel({
-      startDate: value,
-    });
-  }
-
-  private handleCategoryChange(value: string): void {
-    const { categoryList } = this.props;
-    const selectedCategory = categoryList.find((c) => c.id === value);
-    this.updateModel({
-      category: selectedCategory,
-    });
-  }
-
-  private handleEnvelopeChange(value: string): void {
-    const { envelopeList } = this.props;
-    const selectedEnvelope = envelopeList.find((c) => c.id === value);
-    this.updateModel({
-      envelope: selectedEnvelope,
-    });
-  }
-
-  private handleSave(): void {
-    if (this.state.validationResult.isValid) {
-      this.props.actions.startSaveAllocation(this.state.currentValues);
+  async function saveEnvelopeAllocation(): Promise<void> {
+    setEditorBusy(true);
+    try {
+      await EnvelopeApi.saveEnvelopeAllocation(currentValues);
+      onComplete();
+    } catch (error) {
+      globalErrorManager.emitNonFatalError("Failed to save envelope allocation", error);
+      setEditorBusy(false);
     }
   }
 
-  private handleCancel(): void {
-    this.props.actions.setAllocationToEdit(undefined);
-  }
+  // ui
+  const modalBtns: IModalBtn[] = [
+    {
+      type: ModalBtnType.CANCEL,
+      onClick: onCancel,
+    },
+    {
+      type: ModalBtnType.SAVE,
+      disabled: !validationResult.isValid,
+      onClick: saveEnvelopeAllocation,
+    },
+  ];
 
-  private updateModel(envelope: Partial<IEnvelopeAllocation>): void {
-    const updatedEnvelopeAllocation = {
-      ...this.state.currentValues,
-      ...envelope,
-    };
-    this.setState({
-      currentValues: updatedEnvelopeAllocation,
-      validationResult: validateEnvelopeAllocation(updatedEnvelopeAllocation),
-    });
-  }
+  const errors = validationResult.errors || {};
+
+  return (
+    <Modal
+      title={currentValues.id ? "Edit Envelope Allocation" : "Create Envelope Allocation"}
+      buttons={modalBtns}
+      modalBusy={editorBusy}
+      onCloseRequest={onCancel}
+    >
+      <ControlledForm onSubmit={saveEnvelopeAllocation}>
+        <div className={bs.mb3}>
+          <ControlledDateInput
+            id={"startDate"}
+            label={"Start Date"}
+            value={formatDate(currentValues.startDate, "system") || ""}
+            disabled={editorBusy}
+            error={errors.startDate}
+            onValueChange={(startDate) => updateModel({ startDate })}
+          />
+        </div>
+        <div className={bs.row}>
+          <div className={combine(bs.col, bs.mb3)}>
+            <ControlledSelectInput
+              id={"category"}
+              label={"Category"}
+              value={currentValues.category ? currentValues.category.id : ""}
+              disabled={editorBusy || !categoryList}
+              error={errors.category}
+              onValueChange={handleCategoryChange}
+            >
+              {categoryList && <option value={""}>-- Select --</option>}
+              {categoryList &&
+                categoryList
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((c) => (
+                    <option value={c.id} key={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+              {!categoryList && <option>Loading...</option>}
+            </ControlledSelectInput>
+          </div>
+          <div className={combine(bs.col, bs.mb3)}>
+            <ControlledSelectInput
+              id={"envelope"}
+              label={"Envelope"}
+              value={currentValues.envelope ? currentValues.envelope.id : ""}
+              disabled={editorBusy || !envelopeList}
+              error={errors.envelope}
+              onValueChange={handleEnvelopeChange}
+            >
+              {envelopeList && <option value={""}>-- Select --</option>}
+              {envelopeList &&
+                envelopeList
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((c) => (
+                    <option value={c.id} key={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+              {!envelopeList && <option>Loading...</option>}
+            </ControlledSelectInput>
+          </div>
+        </div>
+      </ControlledForm>
+    </Modal>
+  );
 }
 
-export const EnvelopeAllocationEditModal = connect(mapStateToProps, mapDispatchToProps)(UCEnvelopeAllocationEditModal);
+export { EnvelopeAllocationEditModal };

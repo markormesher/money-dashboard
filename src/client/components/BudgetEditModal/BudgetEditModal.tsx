@@ -38,7 +38,7 @@ function BudgetEditModal(props: BudgetEditModalProps): ReactElement {
   }, []);
 
   // form actions
-  function handleCateogryChange(id: string): void {
+  function handleCategoryChange(id: string): void {
     const category = categoryList?.find((c) => c.id == id);
     updateModel({ category });
   }
@@ -84,7 +84,7 @@ function BudgetEditModal(props: BudgetEditModalProps): ReactElement {
             value={currentValues.category ? currentValues.category.id : ""}
             disabled={editorBusy || !categoryList}
             error={errors.category}
-            onValueChange={handleCateogryChange}
+            onValueChange={handleCategoryChange}
             selectProps={{
               autoFocus: true,
             }}
