@@ -1,45 +1,42 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { BufferedTextInput } from "../BufferedTextInput/BufferedTextInput";
 import { PagerBtns } from "../PagerBtns/PagerBtns";
 import * as styles from "./DataTable.scss";
 
-interface IDataTableOuterHeaderProps {
+type DataTableOuterHeaderProps = {
   readonly loading: boolean;
   readonly currentPage: number;
   readonly pageSize: number;
   readonly rowCount: number;
   readonly onPageChange?: (page: number) => void;
   readonly onSearchTermChange?: (term: string) => void;
-}
+};
 
-class DataTableOuterHeader extends PureComponent<IDataTableOuterHeaderProps> {
-  public render(): ReactNode {
-    const { pageSize, loading, currentPage, rowCount } = this.props;
-    const totalPages = rowCount === 0 ? 0 : Math.ceil(rowCount / pageSize);
+function DataTableOuterHeader(props: DataTableOuterHeaderProps): React.ReactElement {
+  const { pageSize, loading, currentPage, rowCount } = props;
+  const totalPages = rowCount === 0 ? 0 : Math.ceil(rowCount / pageSize);
 
-    return (
-      <div className={styles.tableHeader}>
-        <div className={bs.floatStart}>
-          <PagerBtns
-            disabled={loading}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={this.props.onPageChange}
-          />
-        </div>
-        <div className={bs.floatEnd}>
-          <BufferedTextInput
-            inputProps={{
-              placeholder: "Search",
-            }}
-            onValueChange={this.props.onSearchTermChange}
-          />
-        </div>
+  return (
+    <div className={styles.tableHeader}>
+      <div className={bs.floatStart}>
+        <PagerBtns
+          disabled={loading}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={props.onPageChange}
+        />
       </div>
-    );
-  }
+      <div className={bs.floatEnd}>
+        <BufferedTextInput
+          inputProps={{
+            placeholder: "Search",
+          }}
+          onValueChange={props.onSearchTermChange}
+        />
+      </div>
+    </div>
+  );
 }
 
 export { DataTableOuterHeader };
