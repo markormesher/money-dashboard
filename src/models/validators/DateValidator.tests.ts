@@ -4,10 +4,8 @@ import { validateDate } from "./DateValidator";
 
 describe(__filename, () => {
   describe("validateDate()", () => {
-    const VALID_DATE = parseISO("2018-01-01").getTime();
-
     it("should accept a valid date", () => {
-      const result = validateDate(VALID_DATE);
+      const result = validateDate({ date: parseISO("2018-01-01").getTime() });
       result.isValid.should.equal(true);
       result.errors.should.deep.equal({});
     });
@@ -27,7 +25,7 @@ describe(__filename, () => {
     });
 
     it("should reject a date < global minimum", () => {
-      const result = validateDate(Date.UTC(2010, 0, 1, 0, 0, 0));
+      const result = validateDate({ date: Date.UTC(2010, 0, 1, 0, 0, 0) });
       result.isValid.should.equal(false);
       result.errors.should.have.keys("date");
       result.errors.date.should.not.equal("");

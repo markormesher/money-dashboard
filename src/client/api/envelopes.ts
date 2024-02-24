@@ -1,9 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
+import { IDate } from "../../models/IDate";
 import { IEnvelope, mapEnvelopeFromApi } from "../../models/IEnvelope";
 import { IEnvelopeAllocation } from "../../models/IEnvelopeAllocation";
 import { IEnvelopeBalance, mapEnvelopeBalanceFromApi } from "../../models/IEnvelopeBalance";
+import { IEnvelopeTransfer } from "../../models/IEnvelopeTransfer";
 import { globalErrorManager } from "../helpers/errors/error-manager";
+
+// envelopes
 
 async function saveEnvelope(envelope: IEnvelope): Promise<void> {
   await axios.post(`/api/envelopes/edit/${envelope.id || ""}`, envelope);
@@ -23,12 +27,31 @@ async function getEnvelopeBalancess(): Promise<IEnvelopeBalance[]> {
   return res.data.map(mapEnvelopeBalanceFromApi);
 }
 
+// envelope allocations
+
 async function saveEnvelopeAllocation(envelopeAllocation: IEnvelopeAllocation): Promise<void> {
   await axios.post(`/api/envelope-allocations/edit/${envelopeAllocation.id || ""}`, envelopeAllocation);
 }
 
 async function deleteEnvelopeAllocation(envelopeAllocation: IEnvelopeAllocation): Promise<void> {
   await axios.post(`/api/envelope-allocations/delete/${envelopeAllocation.id}`);
+}
+
+// envelope transfers
+
+async function saveEnvelopeTransfer(envelopeTransfer: IEnvelopeTransfer): Promise<void> {
+  await axios.post(`/api/envelope-transfers/edit/${envelopeTransfer.id || ""}`, envelopeTransfer);
+}
+
+async function deleteEnvelopeTransfer(envelopeTransfer: IEnvelopeTransfer): Promise<void> {
+  await axios.post(`/api/envelope-transfers/delete/${envelopeTransfer.id}`);
+}
+
+async function cloneEnvelopeTransfers(transferIds: string[], date: IDate): Promise<void> {
+  await axios.post("/api/envelope-transfers/clone", {
+    envelopeTransferIds: transferIds,
+    date: date.date,
+  });
 }
 
 // hooks to access cached values
@@ -59,6 +82,9 @@ const EnvelopeApi = {
   getEnvelopeBalancess,
   saveEnvelopeAllocation,
   deleteEnvelopeAllocation,
+  saveEnvelopeTransfer,
+  deleteEnvelopeTransfer,
+  cloneEnvelopeTransfers,
   useEnvelopeList,
 };
 

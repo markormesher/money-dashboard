@@ -33,7 +33,7 @@ function BudgetCloneModal(props: BudgetCloneModalProps): React.ReactElement {
   async function cloneBudgets(): Promise<void> {
     setEditorBusy(true);
     try {
-      BudgetApi.cloneBudgets(budgetsToClone, currentValues);
+      await BudgetApi.cloneBudgets(budgetsToClone, currentValues);
       onComplete();
     } catch (error) {
       globalErrorManager.emitNonFatalError("Failed to clone budgets", error);
