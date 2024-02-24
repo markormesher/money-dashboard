@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
-import { connect } from "react-redux";
 import { IDetailedCategoryBalance } from "../../../models/IDetailedCategoryBalance";
 import { ITaxYearDepositsData, mapTaxYearDepositsDataFromApi } from "../../../models/ITaxYearDepositsData";
 import { DateModeOption } from "../../../models/ITransaction";
@@ -16,7 +15,6 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
-import { IRootState } from "../../redux/root";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface ITaxYearDepositsReportProps {}
@@ -30,13 +28,7 @@ interface ITaxYearDepositsReportState {
   readonly failed: boolean;
 }
 
-function mapStateToProps(state: IRootState, props?: ITaxYearDepositsReportProps): ITaxYearDepositsReportProps {
-  return {
-    ...props,
-  };
-}
-
-class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITaxYearDepositsReportState> {
+class TaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITaxYearDepositsReportState> {
   // give each remote request an increasing "frame" number so that late arrivals will be dropped
   private frameCounter = 0;
   private lastFrameReceived = 0;
@@ -312,4 +304,4 @@ class UCTaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITa
   }
 }
 
-export const TaxYearDepositsReport = connect(mapStateToProps)(UCTaxYearDepositsReport);
+export { TaxYearDepositsReport };

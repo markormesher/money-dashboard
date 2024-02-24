@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from "axios";
 import * as React from "react";
 import { Component, ReactNode } from "react";
 import { subYears, startOfDay, endOfDay } from "date-fns";
-import { connect } from "react-redux";
 import { IBalanceHistoryData } from "../../../models/IBalanceHistoryData";
 import { DateModeOption } from "../../../models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
@@ -18,7 +17,6 @@ import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
-import { IRootState } from "../../redux/root";
 import { convertLocalDateToUtc } from "../../../utils/dates";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -33,13 +31,7 @@ interface IBalanceHistoryReportState {
   readonly failed: boolean;
 }
 
-function mapStateToProps(state: IRootState, props?: IBalanceHistoryReportProps): IBalanceHistoryReportProps {
-  return {
-    ...props,
-  };
-}
-
-class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBalanceHistoryReportState> {
+class BalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBalanceHistoryReportState> {
   // give each remote request an increasing "frame" number so that late arrivals will be dropped
   private frameCounter = 0;
   private lastFrameReceived = 0;
@@ -300,4 +292,4 @@ class UCBalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBala
   }
 }
 
-export const BalanceHistoryReport = connect(mapStateToProps)(UCBalanceHistoryReport);
+export { BalanceHistoryReport };

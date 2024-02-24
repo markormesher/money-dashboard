@@ -21,12 +21,6 @@ import { Card } from "../_ui/Card/Card";
 import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
 import { EnvelopeTransferCloneModal } from "../EnvelopeTransferCloneModal/EnvelopeTransferCloneModal";
 
-/*
- * NOTE: this component works very differently to the other components (i.e. gets rid of most of the Redux nonsense).
- * The app will gradually be re-written to get rid of some of the over-use of Redux. This component is the first to be written
- * like this because there was no point writing it in the old style only to re-write it shortly after.
- */
-
 type EnvelopeTransfersPageState = {
   readonly nonce: number;
   readonly transferToEdit?: IEnvelopeTransfer;

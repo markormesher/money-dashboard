@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { ICategory, mapCategoryFromApi } from "../../models/ICategory";
+import { ICategoryBalance, mapCategoryBalanceFromApi } from "../../models/ICategoryBalance";
 import { globalErrorManager } from "../helpers/errors/error-manager";
 
 async function saveCategory(category: ICategory): Promise<void> {
@@ -14,6 +15,11 @@ async function deleteCategory(category: ICategory): Promise<void> {
 async function getAllCategories(): Promise<ICategory[]> {
   const res = await axios.get<ICategory[]>("/api/categories/list");
   return res.data.map(mapCategoryFromApi);
+}
+
+async function getMemoCategoryBalances(): Promise<ICategoryBalance[]> {
+  const res = await axios.get<ICategoryBalance[]>("/api/categories/memo-balances");
+  return res.data.map(mapCategoryBalanceFromApi);
 }
 
 // hooks to access cached values
@@ -41,6 +47,7 @@ const CategoryApi = {
   saveCategory,
   deleteCategory,
   getAllCategories,
+  getMemoCategoryBalances,
   useCategoryList,
 };
 
