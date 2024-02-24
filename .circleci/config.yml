@@ -60,7 +60,6 @@ jobs:
           command: |
             mkdir -p ./test-results/mocha
             [[ -e ./test-results.xml ]] && cp ./test-results.xml ./test-results/mocha/test-results.xml
-            bash <(curl -s https://codecov.io/bash)
       - store_test_results:
           path: test-results
 

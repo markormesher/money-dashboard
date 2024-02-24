@@ -1,5 +1,4 @@
 ![CircleCI](https://img.shields.io/circleci/build/github/markormesher/money-dashboard)
-![Codecov](https://img.shields.io/codecov/c/github/markormesher/money-dashboard)
 
 # Money Dashboard
 
