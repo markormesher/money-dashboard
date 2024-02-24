@@ -11,15 +11,17 @@ type CardProps = {
 };
 
 function Card(props: React.PropsWithChildren<CardProps>): React.ReactElement {
+  const { title, icon, iconClasses, children } = props;
+
   return (
     <div className={combine(bs.card, style.card)}>
-      {props.title && (
+      {title && (
         <h5 className={combine(bs.cardHeader, style.cardHeader, bs.h5)}>
-          {props.icon && <MaterialIcon icon={props.icon} className={combine(bs.me3, props.iconClasses)} />}
-          {props.title}
+          {icon && <MaterialIcon icon={icon} className={combine(bs.me3, iconClasses)} />}
+          {title}
         </h5>
       )}
-      <div className={combine(bs.cardBody, style.cardBody)}>{props.children}</div>
+      <div className={combine(bs.cardBody, style.cardBody)}>{children}</div>
     </div>
   );
 }

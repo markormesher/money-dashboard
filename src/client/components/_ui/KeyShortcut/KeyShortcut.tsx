@@ -1,47 +1,39 @@
-import { PureComponent, ReactNode } from "react";
+import * as React from "react";
 
-interface IKeyShortcutProps {
+type KeyShortcutProps = {
   readonly targetStr: string;
   readonly onTrigger: () => void;
-}
+};
 
-class KeyShortcut extends PureComponent<IKeyShortcutProps> {
-  private latestStr = "";
+function KeyShortcut(props: React.PropsWithChildren<KeyShortcutProps>): React.ReactElement {
+  const { targetStr, onTrigger } = props;
 
-  constructor(props: IKeyShortcutProps) {
-    super(props);
+  const latestStr = React.useRef("");
 
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-  }
+  React.useEffect(() => {
+    document.addEventListener("keypress", handleKeyPress);
+    return function cleanup() {
+      document.removeEventListener("keypress", handleKeyPress);
+    };
+  }, []);
 
-  public componentDidMount(): void {
-    document.addEventListener("keypress", this.handleKeyPress);
-  }
-
-  public componentWillUnmount(): void {
-    document.removeEventListener("keypress", this.handleKeyPress);
-  }
-
-  public render(): ReactNode {
-    return this.props.children || null;
-  }
-
-  private handleKeyPress(evt: KeyboardEvent): void {
+  function handleKeyPress(evt: KeyboardEvent): void {
     const target = evt.target;
     const disallowed = [HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement];
     if (disallowed.some((t) => target instanceof t)) {
       return;
     }
 
-    const { targetStr } = this.props;
     const key = evt.key;
-    this.latestStr = (this.latestStr + key).slice(-1 * targetStr.length);
+    latestStr.current = (latestStr.current + key).slice(-1 * targetStr.length);
 
-    if (this.latestStr === targetStr) {
+    if (latestStr.current === targetStr) {
       evt.preventDefault();
-      this.props.onTrigger();
+      onTrigger();
     }
   }
+
+  return <>{props.children}</>;
 }
 
 export { KeyShortcut };

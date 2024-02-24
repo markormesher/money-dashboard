@@ -22,7 +22,7 @@ async function deleteProfile(profile: IProfile): Promise<void> {
 }
 
 async function setActiveProfile(profileId: string): Promise<void> {
-  return axios.post(`/api/profiles/select/${profileId}`);
+  await axios.post(`/api/profiles/select/${profileId}`);
 }
 
 const UserApi = {

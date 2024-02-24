@@ -1,13 +1,13 @@
 import * as React from "react";
 import { PureComponent, CSSProperties, ReactNode, RefObject } from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
-import { MaterialIconName, IMaterialIconProps } from "../MaterialIcon/MaterialIcon";
+import { MaterialIconName, MaterialIconProps } from "../MaterialIcon/MaterialIcon";
 import * as styles from "./ButtonDropDown.scss";
 
 interface IButtonDropDownProps {
   readonly text: string;
   readonly icon: MaterialIconName;
-  readonly iconProps?: Partial<IMaterialIconProps>;
+  readonly iconProps?: Partial<MaterialIconProps>;
   readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
   readonly onBtnClick?: () => void;
   readonly dropDownContents?: ReactNode;

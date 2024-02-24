@@ -1,9 +1,8 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { MaterialIconName } from "../MaterialIcon/MaterialIcon";
 
-interface ICheckboxBtnProps<Payload = unknown> {
+type CheckboxBtnProps<Payload = unknown> = {
   readonly text?: string;
   readonly checked?: boolean;
   readonly payload?: Payload;
@@ -11,42 +10,28 @@ interface ICheckboxBtnProps<Payload = unknown> {
   readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
   readonly iconChecked?: MaterialIconName;
   readonly iconUnchecked?: MaterialIconName;
-}
+};
 
-class CheckboxBtn<Payload = unknown> extends PureComponent<ICheckboxBtnProps<Payload>> {
-  constructor(props: ICheckboxBtnProps<Payload>) {
-    super(props);
+function CheckboxBtn<Payload = unknown>(props: CheckboxBtnProps<Payload>): React.ReactElement {
+  const { text, checked, btnProps, iconChecked, iconUnchecked, payload, onChange } = props;
 
-    this.toggleChecked = this.toggleChecked.bind(this);
-  }
+  const icon = checked ? iconChecked || "check_box" : iconUnchecked || "check_box_outline_blank";
 
-  public render(): ReactNode {
-    const { text, checked, btnProps, iconChecked, iconUnchecked } = this.props;
-    const icon = checked ? iconChecked || "check_box" : iconUnchecked || "check_box_outline_blank";
-
-    return (
-      <IconBtn
-        icon={icon}
-        text={text}
-        btnProps={{
-          ...btnProps,
-          onClick: this.toggleChecked,
-        }}
-      />
-    );
-  }
-
-  private toggleChecked(): void {
-    const { checked, onChange, payload } = this.props;
+  function toggleChecked(): void {
     const newState = !checked;
-    if (onChange) {
-      if (payload) {
-        onChange(newState, payload);
-      } else {
-        onChange(newState);
-      }
-    }
+    onChange?.(newState, payload);
   }
+
+  return (
+    <IconBtn
+      icon={icon}
+      text={text}
+      btnProps={{
+        ...btnProps,
+        onClick: toggleChecked,
+      }}
+    />
+  );
 }
 
 export { CheckboxBtn };
