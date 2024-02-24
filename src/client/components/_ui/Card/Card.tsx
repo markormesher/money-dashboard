@@ -1,31 +1,27 @@
-import { PureComponent, ReactNode } from "react";
 import * as React from "react";
 import { combine } from "../../../helpers/style-helpers";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { MaterialIconName, MaterialIcon } from "../MaterialIcon/MaterialIcon";
 import * as style from "./Card.scss";
 
-interface ICardProps {
+type CardProps = {
   readonly title?: string;
   readonly icon?: MaterialIconName;
   readonly iconClasses?: string;
-}
+};
 
-class Card extends PureComponent<ICardProps> {
-  public render(): ReactNode {
-    const { title, icon, iconClasses, children } = this.props;
-    return (
-      <div className={combine(bs.card, style.card)}>
-        {title && (
-          <h5 className={combine(bs.cardHeader, style.cardHeader, bs.h5)}>
-            {icon && <MaterialIcon icon={icon} className={combine(bs.me3, iconClasses)} />}
-            {title}
-          </h5>
-        )}
-        <div className={combine(bs.cardBody, style.cardBody)}>{children}</div>
-      </div>
-    );
-  }
+function Card(props: React.PropsWithChildren<CardProps>): React.ReactElement {
+  return (
+    <div className={combine(bs.card, style.card)}>
+      {props.title && (
+        <h5 className={combine(bs.cardHeader, style.cardHeader, bs.h5)}>
+          {props.icon && <MaterialIcon icon={props.icon} className={combine(bs.me3, props.iconClasses)} />}
+          {props.title}
+        </h5>
+      )}
+      <div className={combine(bs.cardBody, style.cardBody)}>{props.children}</div>
+    </div>
+  );
 }
 
 export { Card };
