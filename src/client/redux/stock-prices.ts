@@ -2,7 +2,7 @@ import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { StockPriceMap } from "../../models/IStockPrice";
-import { setError } from "./global";
+import { globalErrorManager } from "../helpers/errors/error-manager";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IStockPriceState {
@@ -56,7 +56,7 @@ function* loadLatestStockPricesSaga(): Generator {
         put(CacheKeyUtil.updateKey(StockPriceCacheKeys.LATEST_PRICES)),
       ]);
     } catch (err) {
-      yield put(setError(err));
+      globalErrorManager.emitFatalError(err);
     }
   });
 }

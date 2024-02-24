@@ -2,7 +2,7 @@ import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IAccount, mapAccountFromApi } from "../../models/IAccount";
-import { setError } from "./global";
+import { globalErrorManager } from "../helpers/errors/error-manager";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IAccountsState {
@@ -55,7 +55,7 @@ function* loadAccountListSaga(): Generator {
       })) as IAccount[];
       yield all([put(setAccountList(accountList)), put(CacheKeyUtil.updateKey(AccountCacheKeys.ACCOUNT_LIST))]);
     } catch (err) {
-      yield put(setError(err));
+      globalErrorManager.emitFatalError(err);
     }
   });
 }

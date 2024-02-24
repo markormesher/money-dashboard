@@ -4,15 +4,13 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { sharedHistory } from "../../helpers/history";
+import { NavContext } from "../App/App";
 import * as style from "./Nav.scss";
 import { NavLink } from "./NavLink";
 import { NavSection } from "./NavSection";
 
 function Nav(): React.ReactElement {
-  const [open, setOpen] = React.useState(true);
-
-  // TODO: actually use this
-  console.log(setOpen);
+  const { navState } = React.useContext(NavContext);
 
   const [accountList, refreshAccountList] = AccountApi.useAccountList();
   React.useEffect(() => {
@@ -24,7 +22,15 @@ function Nav(): React.ReactElement {
   const hasAssetAccounts = activeAccounts.some((a) => a.type === "asset");
   const hasTaxYearAccounts = activeAccounts.some((a) => a.tags.includes("isa") || a.tags.includes("pension"));
 
-  const wrapperClasses = combine(!open && bs.dNone, bs.dLgBlock, bs.col12, bs.colLg2, bs.p0, bs.bgLight, style.sidebar);
+  const wrapperClasses = combine(
+    !navState.isOpen && bs.dNone,
+    bs.dLgBlock,
+    bs.col12,
+    bs.colLg2,
+    bs.p0,
+    bs.bgLight,
+    style.sidebar,
+  );
 
   return (
     <>

@@ -109,6 +109,7 @@ const config = {
     }),
     new HtmlWebpackPlugin({
       template: resolve(__dirname, "src", "client", "index.html"),
+      publicPath: "/",
     }),
     nodeEnv == "development" && new webpack.HotModuleReplacementPlugin(),
   ].filter(notFalse),

@@ -7,7 +7,7 @@ require("toastify-js/src/toastify.css");
 
 function ErrorToaster(): ReactElement {
   useEffect(() => {
-    globalErrorManager.addNonFatalErrorReceiver((message: string, error: Error) => {
+    globalErrorManager.addNonFatalErrorReceiver((message: string, error?: Error) => {
       console.log(message, { error });
       Toastify({
         text: message,

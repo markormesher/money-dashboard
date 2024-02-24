@@ -4,8 +4,8 @@ import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IAccountBalance } from "../../models/IAccountBalance";
 import { ICategoryBalance } from "../../models/ICategoryBalance";
 import { IAccountBalanceUpdate } from "../../models/IAccountBalanceUpdate";
+import { globalErrorManager } from "../helpers/errors/error-manager";
 import { AccountCacheKeys } from "./accounts";
-import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IDashboardState {
@@ -107,7 +107,7 @@ function* loadAccountBalancesSaga(): Generator {
       })) as IAccountBalance[];
       yield all([put(setAccountBalances(balances)), put(CacheKeyUtil.updateKey(DashboardCacheKeys.ACCOUNT_BALANCES))]);
     } catch (err) {
-      yield all([put(setError(err))]);
+      globalErrorManager.emitFatalError(err);
     }
   });
 }
@@ -127,7 +127,7 @@ function* loadMemoCategoryBalancesSaga(): Generator {
         put(CacheKeyUtil.updateKey(DashboardCacheKeys.MEMO_CATEGORY_BALANCE)),
       ]);
     } catch (err) {
-      yield all([put(setError(err))]);
+      globalErrorManager.emitFatalError(err);
     }
   });
 }
@@ -152,7 +152,7 @@ function* saveAssetBalanceUpdate(): Generator {
         yield all([put(setAssetBalanceUpdateError(result)), put(setAssetBalanceUpdateEditorBusy(false))]);
       }
     } catch (err) {
-      yield all([put(setError(err))]);
+      globalErrorManager.emitFatalError(err);
     }
   });
 }

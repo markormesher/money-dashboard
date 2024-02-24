@@ -3,22 +3,22 @@ import { Link } from "react-router-dom";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { ProfileChooser } from "../_ui/ProfileChooser/ProfileChooser";
-import { MaterialIcon, MaterialIconName } from "../_ui/MaterialIcon/MaterialIcon";
+import { MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
+import { NavContext } from "../App/App";
 import * as style from "./Header.scss";
 
 function Header(): React.ReactElement {
-  const brandIcons: MaterialIconName[] = ["savings", "currency_pound", "account_balance", "payments"];
-  const icon = brandIcons[Math.floor(Math.random() * brandIcons.length)];
+  const { navState, setNavState } = React.useContext(NavContext);
 
   function toggleNav(): void {
-    // TODO
+    setNavState?.({ ...navState, isOpen: !navState.isOpen });
   }
 
   return (
     <nav className={combine(bs.navbar, style.navbar, bs.navbarDark, bs.stickyTop, bs.flexMdNowrap, bs.p0)}>
       <div className={combine(bs.container, style.navbarContainer)}>
         <Link to="/" className={combine(bs.navbarBrand, style.navbarBrand, bs.colLg2, bs.wAuto, bs.flexGrow1)}>
-          <MaterialIcon icon={icon} className={bs.me2} />
+          <MaterialIcon icon={"account_balance"} className={bs.me2} />
           Money Dashboard
         </Link>
 
