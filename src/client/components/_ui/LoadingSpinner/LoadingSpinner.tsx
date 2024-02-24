@@ -11,7 +11,7 @@ function LoadingSpinner(props: LoadingSpinnerProps): React.ReactElement {
   const { centre } = props;
 
   const spinner = (
-    <span style={{ fontSize: "2rem" }}>
+    <span style={{ fontSize: "2rem" }} className={bs.textMuted}>
       <MaterialIcon icon={"hourglass_empty"} spin={true} />
     </span>
   );
