@@ -5,7 +5,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
-import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
+import { DataTable, Column } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
@@ -22,7 +22,7 @@ function CategoriesPage(): ReactElement {
   const [categoryToEdit, setCategoryToEdit] = useState<ICategory>();
 
   // data table
-  const tableColumns: IColumn[] = [
+  const tableColumns: Column[] = [
     {
       title: "Name",
       sortField: "category.name",

@@ -6,7 +6,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { Badge } from "../_ui/Badge/Badge";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
-import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
+import { DataTable, Column } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
@@ -35,7 +35,7 @@ function ProfilesPage(): ReactElement {
   }, []);
 
   // data table
-  const tableColumns: IColumn[] = [
+  const tableColumns: Column[] = [
     {
       title: "Name",
       sortField: "profile.name",

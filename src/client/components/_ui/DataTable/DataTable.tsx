@@ -11,25 +11,25 @@ import { DataTableOuterHeader } from "./DataTableOuterHeader";
 
 type SortDirection = "ASC" | "DESC";
 
-interface IColumn {
+type Column = {
   readonly title: string;
   readonly lowercaseTitle?: string;
   readonly sortable?: boolean;
   readonly sortField?: string;
   readonly defaultSortDirection?: SortDirection;
   readonly defaultSortPriority?: number;
-}
+};
 
-interface IColumnSortEntry {
-  readonly column: IColumn;
+type ColumnSortEntry = {
+  readonly column: Column;
   readonly dir?: SortDirection;
-}
+};
 
 type DataTableProps<Model> = {
   readonly dataProvider: IDataTableDataProvider<Model>;
   readonly watchedProps?: unknown;
   readonly pageSize?: number;
-  readonly columns: IColumn[];
+  readonly columns: Column[];
   readonly rowRenderer: (row: Model, index: number) => React.ReactNode | React.ReactElement;
 };
 
@@ -43,7 +43,7 @@ function DataTable<Model>(props: DataTableProps<Model>): React.ReactElement {
   const [failed, setFailed] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(0);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [sortedColumns, setSortedColumns] = React.useState<IColumnSortEntry[]>([]);
+  const [sortedColumns, setSortedColumns] = React.useState<ColumnSortEntry[]>([]);
   const [rows, setRows] = React.useState<Model[]>();
   const [filteredRowCount, setFilteredRowCount] = React.useState(0);
   const [totalRowCount, setTotalRowCount] = React.useState(0);
@@ -142,4 +142,4 @@ function DataTable<Model>(props: DataTableProps<Model>): React.ReactElement {
   );
 }
 
-export { IColumn, IColumnSortEntry, SortDirection, DataTable };
+export { Column, ColumnSortEntry, SortDirection, DataTable };

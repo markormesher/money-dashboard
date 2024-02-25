@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
-import { IColumnSortEntry } from "./DataTable";
+import { ColumnSortEntry } from "./DataTable";
 import * as styles from "./DataTable.scss";
 
 type DataTableOuterFooterProps = {
@@ -8,7 +8,7 @@ type DataTableOuterFooterProps = {
   readonly currentPage: number;
   readonly filteredRowCount: number;
   readonly totalRowCount: number;
-  readonly sortedColumns?: IColumnSortEntry[];
+  readonly sortedColumns?: ColumnSortEntry[];
 };
 
 const sortDirectionFull = {
@@ -26,6 +26,10 @@ function DataTableOuterFooter(props: DataTableOuterFooterProps): React.ReactElem
   let sortingOrder = "Sorted by";
   if (sortedColumns) {
     sortedColumns.forEach((entry, i) => {
+      if (!entry.dir) {
+        return;
+      }
+
       if (i === 0) {
         sortingOrder += " ";
       } else {

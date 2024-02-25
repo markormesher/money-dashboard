@@ -2,13 +2,13 @@ import * as React from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
-import { IColumn, IColumnSortEntry, SortDirection } from "./DataTable";
+import { Column, ColumnSortEntry, SortDirection } from "./DataTable";
 import * as styles from "./DataTable.scss";
 
 type DataTableInnerHeaderProps = {
-  readonly columns: IColumn[];
-  readonly sortedColumns?: IColumnSortEntry[];
-  readonly onSortOrderUpdate?: (sortedColumns: IColumnSortEntry[]) => void;
+  readonly columns: Column[];
+  readonly sortedColumns?: ColumnSortEntry[];
+  readonly onSortOrderUpdate?: (sortedColumns: ColumnSortEntry[]) => void;
 };
 
 function getNextSortDirection(dir?: SortDirection): SortDirection | undefined {
@@ -33,14 +33,14 @@ function DataTableInnerHeader(props: DataTableInnerHeaderProps): React.ReactElem
     }
   }, []);
 
-  function generateDefaultSortedColumns(): IColumnSortEntry[] {
+  function generateDefaultSortedColumns(): ColumnSortEntry[] {
     return columns
       .filter((col) => col.defaultSortDirection !== undefined)
       .sort((a, b) => (a.defaultSortPriority || 0) - (b.defaultSortPriority || 0))
       .map((col) => ({ column: col, dir: col.defaultSortDirection }));
   }
 
-  function toggleColumnSortOrder(column: IColumn): void {
+  function toggleColumnSortOrder(column: Column): void {
     // note: always compare columns by key not equality
     const oldSortedColumns = props.sortedColumns ?? [];
     const sortedColumns = oldSortedColumns.slice(0); // work on a copy

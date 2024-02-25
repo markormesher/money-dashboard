@@ -3,7 +3,7 @@ import { DEFAULT_ENVELOPE, IEnvelope, mapEnvelopeFromApi } from "../../../models
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
-import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
+import { DataTable, Column } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
@@ -28,7 +28,7 @@ function EnvelopesPage(): React.ReactElement {
   const [envelopeAllocationToEdit, setEnvelopeAllocationToEdit] = React.useState<IEnvelopeAllocation>();
 
   // data tables
-  const envelopeTableColumns: IColumn[] = [
+  const envelopeTableColumns: Column[] = [
     {
       title: "Name",
       sortField: "envelope.name",
@@ -80,7 +80,7 @@ function EnvelopesPage(): React.ReactElement {
     );
   }
 
-  const allocationTableColumns: IColumn[] = [
+  const allocationTableColumns: Column[] = [
     {
       title: "Start Date",
       sortField: "allocation.startDate",

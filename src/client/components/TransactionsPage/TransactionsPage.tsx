@@ -10,7 +10,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
-import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
+import { DataTable, Column } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { InfoIcon } from "../_ui/InfoIcon/InfoIcon";
@@ -29,7 +29,7 @@ function TransactionsPage(): ReactElement {
   const [transactionToEdit, setTransactionToEdit] = React.useState<ITransaction>();
 
   // data table
-  const tableColumns: IColumn[] = [
+  const tableColumns: Column[] = [
     {
       title: "Date",
       sortField: "transaction.transactionDate",

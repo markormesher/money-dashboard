@@ -7,7 +7,7 @@ import { combine } from "../../helpers/style-helpers";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
-import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
+import { DataTable, Column } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
@@ -29,7 +29,7 @@ function BudgetsPage(): ReactElement {
   const [showCloneModal, setShowCloneModal] = useState(false);
 
   // data table
-  const tableColumns: IColumn[] = [
+  const tableColumns: Column[] = [
     {
       title: "Name",
       sortField: "category.name",

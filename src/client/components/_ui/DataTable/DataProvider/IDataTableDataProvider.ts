@@ -1,12 +1,12 @@
 import { IDataTableResponse } from "../../../../../models/IDataTableResponse";
-import { IColumnSortEntry } from "../DataTable";
+import { ColumnSortEntry } from "../DataTable";
 
 interface IDataTableDataProvider<Model> {
   readonly getData: (
     start: number,
     length: number,
     searchTerm?: string,
-    sortedColumns?: IColumnSortEntry[],
+    sortedColumns?: ColumnSortEntry[],
   ) => Promise<IDataTableResponse<Model>>;
 }
 
