@@ -1,8 +1,8 @@
 import * as React from "react";
-import bs from "../../../global-styles/Bootstrap.scss";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { BufferedTextInput } from "../BufferedTextInput/BufferedTextInput";
 import { PagerBtns } from "../PagerBtns/PagerBtns";
-import styles from "./DataTable.scss";
+import * as styles from "./DataTable.scss";
 
 type DataTableOuterHeaderProps = {
   readonly loading: boolean;

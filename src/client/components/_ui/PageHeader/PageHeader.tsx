@@ -1,7 +1,7 @@
 import * as React from "react";
 import { combine } from "../../../helpers/style-helpers";
-import bs from "../../../global-styles/Bootstrap.scss";
-import style from "./PageHeader.scss";
+import * as bs from "../../../global-styles/Bootstrap.scss";
+import * as style from "./PageHeader.scss";
 
 function PageHeader(props: React.PropsWithChildren<unknown>): React.ReactElement {
   return (

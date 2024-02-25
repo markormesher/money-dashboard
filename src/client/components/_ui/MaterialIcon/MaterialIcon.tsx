@@ -1,6 +1,6 @@
 import * as React from "react";
 import { combine } from "../../../helpers/style-helpers";
-import style from "./MaterialIcon.scss";
+import * as style from "./MaterialIcon.scss";
 
 type MaterialIconName = string;
 

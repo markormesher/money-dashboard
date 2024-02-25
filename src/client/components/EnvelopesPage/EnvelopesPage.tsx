@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DEFAULT_ENVELOPE, IEnvelope, mapEnvelopeFromApi } from "../../../models/IEnvelope";
-import bs from "../../global-styles/Bootstrap.scss";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
 import { DataTable, Column } from "../_ui/DataTable/DataTable";

@@ -2,7 +2,7 @@ import * as React from "react";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { IDateRange } from "../../../models/IDateRange";
 import { validateDateRange } from "../../../models/validators/DateRangeValidator";
-import bs from "../../global-styles/Bootstrap.scss";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";

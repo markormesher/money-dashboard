@@ -1,6 +1,6 @@
 import * as React from "react";
 import { formatDistanceToNow } from "date-fns";
-import bs from "../../global-styles/Bootstrap.scss";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatCurrency, formatDate } from "../../helpers/formatters";
 import { Card } from "../_ui/Card/Card";
 import { DEFAULT_CURRENCY_CODE, CurrencyCode, getCurrency, DEFAULT_CURRENCY } from "../../../models/ICurrency";

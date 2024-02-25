@@ -3,7 +3,7 @@ import { ReactElement, useState } from "react";
 import { DEFAULT_CATEGORY, ICategory } from "../../../models/ICategory";
 import { validateCategory } from "../../../models/validators/CategoryValidator";
 import { CategoryApi } from "../../api/categories";
-import bs from "../../global-styles/Bootstrap.scss";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { useModelEditingState } from "../../helpers/state-hooks";
 import { Badge } from "../_ui/Badge/Badge";

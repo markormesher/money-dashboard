@@ -1,5 +1,5 @@
 import * as React from "react";
-import bs from "../../../global-styles/Bootstrap.scss";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 
 type ControlledCheckboxInputProps = {

@@ -4,8 +4,8 @@ import { IDetailedCategoryBalance } from "../../../models/IDetailedCategoryBalan
 import { ITaxYearDepositsData, mapTaxYearDepositsDataFromApi } from "../../../models/ITaxYearDepositsData";
 import { DateModeOption } from "../../../models/ITransaction";
 import { AccountTag, ACCOUNT_TAG_DISPLAY_NAMES } from "../../../models/IAccount";
-import bs from "../../global-styles/Bootstrap.scss";
-import gs from "../../global-styles/Global.scss";
+import * as bs from "../../global-styles/Bootstrap.scss";
+import * as gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { parseISO } from "date-fns";
-import bs from "../../../global-styles/Bootstrap.scss";
+import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 
 type ControlledDateInputProps = {

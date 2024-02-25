@@ -3,7 +3,7 @@ import { levenshteinDistance } from "../../../helpers/levenshtein-distance";
 import { combine } from "../../../helpers/style-helpers";
 import { UIConstants } from "../../_commons/ui-constants";
 import { ControlledTextInput, ControlledTextInputProps } from "../ControlledInputs/ControlledTextInput";
-import styles from "./SuggestionTextInput.scss";
+import * as styles from "./SuggestionTextInput.scss";
 
 type SuggestionTextInputProps = ControlledTextInputProps & {
   readonly suggestionOptions?: string[];

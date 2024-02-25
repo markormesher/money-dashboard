@@ -1,7 +1,7 @@
 import * as React from "react";
 import { combine } from "../../helpers/style-helpers";
 import { formatDate } from "../../helpers/formatters";
-import bs from "../../global-styles/Bootstrap.scss";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { IAccountBalanceUpdate } from "../../../models/IAccountBalanceUpdate";

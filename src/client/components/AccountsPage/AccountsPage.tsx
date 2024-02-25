@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ReactElement } from "react";
 import { DEFAULT_ACCOUNT, IAccount, mapAccountFromApi } from "../../../models/IAccount";
-import bs from "../../global-styles/Bootstrap.scss";
+import * as bs from "../../global-styles/Bootstrap.scss";
 import { generateAccountTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";

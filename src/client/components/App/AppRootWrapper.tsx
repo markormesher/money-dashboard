@@ -1,5 +1,5 @@
 import * as React from "react";
-import bs from "../../global-styles/Bootstrap.scss";
+import * as bs from "../../global-styles/Bootstrap.scss";
 
 function AppRootWrapper(props: React.PropsWithChildren<unknown>): React.ReactElement {
   return (
