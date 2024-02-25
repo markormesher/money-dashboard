@@ -6,7 +6,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
-import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { useModelEditingState } from "../../helpers/state-hooks";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { BudgetApi } from "../../api/budgets";
@@ -42,7 +42,7 @@ function BudgetCloneModal(props: BudgetCloneModalProps): React.ReactElement {
   }
 
   // ui
-  const modalBtns: IModalBtn[] = [
+  const modalBtns: ModalBtn[] = [
     {
       type: ModalBtnType.CANCEL,
       onClick: onCancel,

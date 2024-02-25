@@ -9,7 +9,7 @@ import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextArea } from "../_ui/ControlledInputs/ControlledTextArea";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
-import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { SuggestionTextInput } from "../_ui/SuggestionTextInput/SuggestionTextInput";
 import { DEFAULT_CURRENCY_CODE } from "../../../models/ICurrency";
 import { useModelEditingState } from "../../helpers/state-hooks";
@@ -66,7 +66,7 @@ function TransactionEditModal(props: TransactionEditModalProps): React.ReactElem
   }
 
   // ui
-  const modalBtns: IModalBtn[] = [
+  const modalBtns: ModalBtn[] = [
     {
       type: ModalBtnType.CANCEL,
       onClick: onCancel,

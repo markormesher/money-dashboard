@@ -13,7 +13,7 @@ import { ControlledRadioInput } from "../_ui/ControlledInputs/ControlledRadioInp
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
-import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { CategoryApi } from "../../api/categories";
 
 type BudgetEditModalProps = {
@@ -55,7 +55,7 @@ function BudgetEditModal(props: BudgetEditModalProps): ReactElement {
   }
 
   // ui
-  const modalBtns: IModalBtn[] = [
+  const modalBtns: ModalBtn[] = [
     {
       type: ModalBtnType.CANCEL,
       onClick: onCancel,

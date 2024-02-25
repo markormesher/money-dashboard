@@ -7,7 +7,7 @@ import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { useModelEditingState } from "../../helpers/state-hooks";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
-import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 
 type EnvelopeEditModalProps = {
   readonly envelopeToEdit?: IEnvelope;
@@ -37,7 +37,7 @@ function EnvelopeEditModal(props: EnvelopeEditModalProps): React.ReactElement {
   }
 
   // ui
-  const modalBtns: IModalBtn[] = [
+  const modalBtns: ModalBtn[] = [
     {
       type: ModalBtnType.CANCEL,
       onClick: onCancel,

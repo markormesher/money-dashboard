@@ -3,7 +3,7 @@ import { DEFAULT_ENVELOPE_TRANSFER, IEnvelopeTransfer } from "../../../models/IE
 import { validateEnvelopeTransfer } from "../../../models/validators/EnvelopeTransferValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
-import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
 import { formatDate } from "../../helpers/formatters";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
@@ -58,7 +58,7 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
   }
 
   // ui
-  const modalBtns: IModalBtn[] = [
+  const modalBtns: ModalBtn[] = [
     {
       type: ModalBtnType.CANCEL,
       onClick: onCancel,

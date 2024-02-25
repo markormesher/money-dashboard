@@ -3,7 +3,7 @@ import { IEnvelopeAllocation, DEFAULT_CATEGORY_TO_ENVELOPE_ALLOCATION } from "..
 import { validateEnvelopeAllocation } from "../../../models/validators/EnvelopeAllocationValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
-import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
 import { formatDate } from "../../helpers/formatters";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
@@ -59,7 +59,7 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
   }
 
   // ui
-  const modalBtns: IModalBtn[] = [
+  const modalBtns: ModalBtn[] = [
     {
       type: ModalBtnType.CANCEL,
       onClick: onCancel,

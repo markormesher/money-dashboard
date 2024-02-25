@@ -10,7 +10,7 @@ import { Badge } from "../_ui/Badge/Badge";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
-import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 
 type CategoryEditModalProps = {
   readonly categoryToEdit?: ICategory;
@@ -60,7 +60,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
   }
 
   // ui
-  const modalBtns: IModalBtn[] = [
+  const modalBtns: ModalBtn[] = [
     {
       type: ModalBtnType.CANCEL,
       onClick: onCancel,

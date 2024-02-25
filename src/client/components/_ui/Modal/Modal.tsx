@@ -1,5 +1,4 @@
 import * as React from "react";
-import { PureComponent, ReactElement, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import { IconBtn } from "../IconBtn/IconBtn";
@@ -13,36 +12,41 @@ enum ModalBtnType {
   OK = "ok",
 }
 
-interface IModalBtn {
+type ModalBtn = {
   readonly type: ModalBtnType;
   readonly disabled?: boolean;
   readonly onClick?: () => void;
-}
+};
 
-interface IModalProps {
+type ModalProps = {
   readonly title?: string;
-  readonly buttons?: IModalBtn[];
+  readonly buttons?: ModalBtn[];
   readonly modalBusy?: boolean;
   readonly onCloseRequest?: () => void;
-}
+};
 
-interface IModalState {
-  readonly shown?: boolean;
-}
+function Modal(props: React.PropsWithChildren<ModalProps>): React.ReactElement {
+  const { title, buttons, modalBusy, onCloseRequest } = props;
 
-class Modal extends PureComponent<IModalProps, IModalState> {
-  public static resetLastClose(): void {
-    this.lastClose = 0;
+  React.useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return function cleanup() {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  function handleKeyDown(evt: KeyboardEvent): void {
+    // abort if this event was already cancelled before it reached us
+    if (evt.defaultPrevented) {
+      return;
+    }
+
+    if (evt.key === "Esc" || evt.key === "Escape") {
+      onCloseRequest?.();
+    }
   }
 
-  private static lastClose = 0;
-
-  private static shouldAnimateEntrance(): boolean {
-    // only animate the entrance if this modal isn't immediately reappearing
-    return new Date().getTime() - Modal.lastClose > 10;
-  }
-
-  private static renderBtn(btn: IModalBtn): ReactElement<void> {
+  function renderBtn(btn: ModalBtn): React.ReactElement {
     let icon: MaterialIconName;
     let label: string;
     let className: string;
@@ -65,6 +69,7 @@ class Modal extends PureComponent<IModalProps, IModalState> {
         className = bs.btnPrimary;
         break;
     }
+
     return (
       <IconBtn
         key={btn.type.toString()}
@@ -79,74 +84,33 @@ class Modal extends PureComponent<IModalProps, IModalState> {
     );
   }
 
-  private animateDelay: NodeJS.Timer = undefined;
-
-  constructor(props: IModalProps) {
-    super(props);
-    this.state = {
-      shown: !Modal.shouldAnimateEntrance(),
-    };
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-  }
-
-  public componentDidMount(): void {
-    document.addEventListener("keydown", this.handleKeyDown);
-    if (Modal.shouldAnimateEntrance()) {
-      this.animateDelay = global.setTimeout(() => this.setState({ shown: true }), 10);
-    }
-  }
-
-  public componentWillUnmount(): void {
-    Modal.lastClose = new Date().getTime();
-    document.removeEventListener("keydown", this.handleKeyDown);
-    global.clearTimeout(this.animateDelay);
-  }
-
-  public render(): ReactNode {
-    const { title, buttons, modalBusy, onCloseRequest } = this.props;
-    const { shown } = this.state;
-
-    return (
-      <>
-        <div className={combine(bs.modal, bs.fade, bs.dBlock, shown && bs.show)}>
-          <div className={combine(bs.modalDialog, styles.modalDialog)}>
-            <div className={bs.modalContent}>
-              {title && (
-                <div className={bs.modalHeader}>
-                  <h5 className={bs.modalTitle}>{title}</h5>
-                  <button className={bs.btnClose} onClick={onCloseRequest}>
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-              )}
-              {this.props.children && <div className={bs.modalBody}>{this.props.children}</div>}
-              {buttons && buttons.length > 0 && (
-                <div className={combine(bs.modalFooter, styles.modalFooter)}>
-                  {modalBusy && <LoadingSpinner />}
-                  {!modalBusy && buttons.map(Modal.renderBtn)}
-                </div>
-              )}
-            </div>
+  return (
+    <>
+      <div className={combine(bs.modal, bs.fade, bs.dBlock, bs.show)}>
+        <div className={combine(bs.modalDialog, styles.modalDialog)}>
+          <div className={bs.modalContent}>
+            {title && (
+              <div className={bs.modalHeader}>
+                <h5 className={bs.modalTitle}>{title}</h5>
+                <button className={bs.btnClose} onClick={onCloseRequest}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            )}
+            {props.children && <div className={bs.modalBody}>{props.children}</div>}
+            {buttons && buttons.length > 0 && (
+              <div className={combine(bs.modalFooter, styles.modalFooter)}>
+                {modalBusy && <LoadingSpinner />}
+                {!modalBusy && buttons.map(renderBtn)}
+              </div>
+            )}
           </div>
         </div>
+      </div>
 
-        <div className={combine(bs.modalBackdrop, bs.fade, shown && bs.show)} />
-      </>
-    );
-  }
-
-  private handleKeyDown(evt: KeyboardEvent): void {
-    // abort if this event was already cancelled before it reached us
-    if (evt.defaultPrevented) {
-      return;
-    }
-
-    if (evt.key === "Esc" || evt.key === "Escape") {
-      if (this.props.onCloseRequest) {
-        this.props.onCloseRequest();
-      }
-    }
-  }
+      <div className={combine(bs.modalBackdrop, bs.fade, bs.show)} />
+    </>
+  );
 }
 
-export { IModalProps, IModalBtn, Modal, ModalBtnType };
+export { ModalProps, ModalBtn, Modal, ModalBtnType };

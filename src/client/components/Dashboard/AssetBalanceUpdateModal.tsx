@@ -2,7 +2,7 @@ import * as React from "react";
 import { combine } from "../../helpers/style-helpers";
 import { formatDate } from "../../helpers/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { IAccountBalanceUpdate } from "../../../models/IAccountBalanceUpdate";
 import { validateAccountBalanceUpdate } from "../../../models/validators/AccountBalanceUpdateValidator";
@@ -41,7 +41,7 @@ function AssetBalanceUpdateModal(props: AssetBalanceUpdateModalProps): React.Rea
   }
 
   // ui
-  const modalBtns: IModalBtn[] = [
+  const modalBtns: ModalBtn[] = [
     {
       type: ModalBtnType.CANCEL,
       onClick: onCancel,
