@@ -7,7 +7,7 @@ import { formatDate } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
 import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";
 import { IconBtn } from "../IconBtn/IconBtn";
-import { ButtonDropDown, IButtonDropDownProps } from "../ButtonDropDown/ButtonDropDown";
+import { ButtonDropDown, ButtonDropDownProps } from "../ButtonDropDown/ButtonDropDown";
 import { validateDateRange, IDateRangeValidationResult } from "../../../../models/validators/DateRangeValidator";
 
 interface IDateRangeChooserProps {
@@ -19,7 +19,7 @@ interface IDateRangeChooserProps {
   readonly includeAllTimePreset?: boolean;
   readonly customPresets?: IDateRange[];
   readonly onValueChange?: (start: number, end: number) => void;
-  readonly dropDownProps?: Pick<IButtonDropDownProps, "placement" | "btnProps">;
+  readonly dropDownProps?: Pick<ButtonDropDownProps, "placement" | "btnProps">;
 }
 
 interface IDateRangeChooserState {
@@ -120,7 +120,7 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
     );
   }
 
-  private renderChooser(): ReactNode {
+  private renderChooser(): React.ReactElement {
     const dateRanges = DateRangeChooser.getDateRanges(this.props);
 
     return (
