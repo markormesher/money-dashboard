@@ -17,7 +17,7 @@ type DateRangeChooserProps = {
   readonly includeYearToDatePreset?: boolean;
   readonly includeAllTimePreset?: boolean;
   readonly customPresets?: IDateRange[];
-  readonly onValueChange?: (start?: number, end?: number) => void;
+  readonly onValueChange?: (start: number, end: number) => void;
   readonly dropDownProps?: Pick<ButtonDropDownProps, "placement" | "btnProps">;
 };
 
@@ -119,7 +119,7 @@ function DateRangeChooser(props: DateRangeChooserProps): React.ReactElement {
                 icon={"check"}
                 text={"OK"}
                 onClick={() => {
-                  if (customRangeValidationResult.isValid) {
+                  if (customRange.startDate && customRange.endDate && customRangeValidationResult.isValid) {
                     setUsingCustomRange(true);
                     setChooserOpen(false);
                     onValueChange?.(customRange.startDate, customRange.endDate);
@@ -142,7 +142,9 @@ function DateRangeChooser(props: DateRangeChooserProps): React.ReactElement {
                 onClick={() => {
                   setUsingCustomRange(false);
                   setChooserOpen(false);
-                  onValueChange?.(dr.startDate, dr.endDate);
+                  if (dr.startDate && dr.endDate) {
+                    onValueChange?.(dr.startDate, dr.endDate);
+                  }
                 }}
                 className={combine(bs.btn, bs.btnOutlineDark)}
               >

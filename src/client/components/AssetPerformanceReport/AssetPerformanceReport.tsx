@@ -21,6 +21,8 @@ import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
 
 function AssetPerformanceReport(): React.ReactElement {
+  const lastFrameRequested = React.useRef(0);
+
   const [startDate, setStartDate] = React.useState(startOfDay(subYears(new Date(), 1)).getTime());
   const [endDate, setEndDate] = React.useState(endOfDay(new Date()).getTime());
   const [dateMode, setDateMode] = React.useState<DateModeOption>("transaction");
@@ -42,6 +44,7 @@ function AssetPerformanceReport(): React.ReactElement {
     }
 
     setLoading(true);
+    const thisFrame = ++lastFrameRequested.current;
 
     axios
       .get<IAssetPerformanceData>("/api/reports/asset-performance/data", {
@@ -55,11 +58,21 @@ function AssetPerformanceReport(): React.ReactElement {
         },
       })
       .then((res) => {
+        if (thisFrame < lastFrameRequested.current) {
+          console.log(`Dropping result for frame ${thisFrame}`);
+          return;
+        }
+
         setData(res.data);
         setLoading(false);
         setFailed(false);
       })
       .catch((err) => {
+        if (thisFrame < lastFrameRequested.current) {
+          console.log(`Dropping result for frame ${thisFrame}`);
+          return;
+        }
+
         setFailed(true);
         setLoading(false);
         globalErrorManager.emitNonFatalError("Failed to load chart data", err);

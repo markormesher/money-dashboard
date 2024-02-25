@@ -1,6 +1,5 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import * as React from "react";
-import { Component, ReactNode } from "react";
 import { subYears, startOfDay, endOfDay } from "date-fns";
 import { IBalanceHistoryData } from "../../../models/IBalanceHistoryData";
 import { DateModeOption } from "../../../models/ITransaction";
@@ -17,77 +16,59 @@ import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
-import { convertLocalDateToUtc } from "../../../utils/dates";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface IBalanceHistoryReportProps {}
+function BalanceHistoryReport(): React.ReactElement {
+  const lastFrameRequested = React.useRef(0);
 
-interface IBalanceHistoryReportState {
-  readonly startDate: number;
-  readonly endDate: number;
-  readonly dateMode: DateModeOption;
-  readonly data: IBalanceHistoryData;
-  readonly loading: boolean;
-  readonly failed: boolean;
-}
+  const [startDate, setStartDate] = React.useState(startOfDay(subYears(new Date(), 1)).getTime());
+  const [endDate, setEndDate] = React.useState(endOfDay(new Date()).getTime());
+  const [dateMode, setDateMode] = React.useState<DateModeOption>("transaction");
+  const [data, setData] = React.useState<IBalanceHistoryData>();
+  const [loading, setLoading] = React.useState(false);
+  const [failed, setFailed] = React.useState(false);
 
-class BalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBalanceHistoryReportState> {
-  // give each remote request an increasing "frame" number so that late arrivals will be dropped
-  private frameCounter = 0;
-  private lastFrameReceived = 0;
+  React.useEffect(() => {
+    setLoading(true);
+    const thisFrame = ++lastFrameRequested.current;
+    axios
+      .get<IBalanceHistoryData>("/api/reports/balance-history/data", {
+        params: {
+          startDate,
+          endDate,
+          dateMode,
+        },
+      })
+      .then((res) => {
+        if (thisFrame < lastFrameRequested.current) {
+          console.log(`Dropping result for frame ${thisFrame}`);
+          return;
+        }
 
-  constructor(props: IBalanceHistoryReportProps) {
-    super(props);
-    this.state = {
-      startDate: startOfDay(subYears(new Date(), 1)).getTime(),
-      endDate: endOfDay(new Date()).getTime(),
-      dateMode: "transaction",
-      data: undefined,
-      loading: true,
-      failed: false,
-    };
+        setData(res.data);
+        setLoading(false);
+        setFailed(false);
+      })
+      .catch((err) => {
+        if (thisFrame < lastFrameRequested.current) {
+          console.log(`Dropping result for frame ${thisFrame}`);
+          return;
+        }
 
-    this.renderChart = this.renderChart.bind(this);
-    this.renderStatCards = this.renderStatCards.bind(this);
-    this.handleDateModeChange = this.handleDateModeChange.bind(this);
-    this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
-  }
+        setFailed(true);
+        setLoading(false);
+        globalErrorManager.emitNonFatalError("Failed to load chart data", err);
+      });
+  }, [startDate, endDate, dateMode]);
 
-  public componentDidMount(): void {
-    this.fetchData();
-  }
+  // ui
 
-  public componentDidUpdate(nextProps: IBalanceHistoryReportProps, nextState: IBalanceHistoryReportState): void {
-    if (
-      this.state.startDate !== nextState.startDate ||
-      this.state.endDate !== nextState.endDate ||
-      this.state.dateMode !== nextState.dateMode
-    ) {
-      this.fetchData();
-    }
-  }
-
-  public render(): ReactNode {
-    return (
-      <>
-        <PageHeader>
-          <h2>Balance History</h2>
-        </PageHeader>
-        {this.renderOptions()}
-        {this.renderChart()}
-        {this.renderStatCards()}
-      </>
-    );
-  }
-
-  private renderOptions(): ReactNode {
-    const { startDate, endDate, dateMode } = this.state;
-
+  function renderOptions(): React.ReactElement {
     return (
       <PageOptions>
         <DateModeToggleBtn
           value={dateMode}
-          onChange={this.handleDateModeChange}
+          onChange={setDateMode}
           btnProps={{
             className: combine(bs.btnOutlineInfo, bs.btnSm),
           }}
@@ -96,7 +77,10 @@ class BalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBalanc
         <DateRangeChooser
           startDate={startDate}
           endDate={endDate}
-          onValueChange={this.handleDateRangeChange}
+          onValueChange={(start, end) => {
+            setStartDate(start);
+            setEndDate(end);
+          }}
           includeAllTimePreset={true}
           includeYearToDatePreset={true}
           includeFuturePresets={false}
@@ -111,9 +95,7 @@ class BalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBalanc
     );
   }
 
-  private renderChart(): ReactNode {
-    const { loading, failed, data, startDate, endDate } = this.state;
-
+  function renderChart(): React.ReactElement {
     if (failed) {
       return <p>Chart failed to load. Please try again.</p>;
     }
@@ -171,16 +153,14 @@ class BalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBalanc
     );
   }
 
-  private renderStatCards(): ReactNode {
-    const { loading, failed, data } = this.state;
-
+  function renderStatCards(): React.ReactElement | null {
     if (failed || !data) {
       return null;
     }
 
-    let minBalanceStat: ReactNode = <LoadingSpinner centre={true} />;
-    let maxBalanceStat: ReactNode = <LoadingSpinner centre={true} />;
-    let overallChangeStat: ReactNode = <LoadingSpinner centre={true} />;
+    let minBalanceStat = <LoadingSpinner centre={true} />;
+    let maxBalanceStat = <LoadingSpinner centre={true} />;
+    let overallChangeStat = <LoadingSpinner centre={true} />;
 
     if (!loading) {
       const { minTotal, minTotalDate, maxTotal, maxTotalDate, changeAbsolute } = data;
@@ -232,64 +212,16 @@ class BalanceHistoryReport extends Component<IBalanceHistoryReportProps, IBalanc
     );
   }
 
-  private handleDateModeChange(dateMode: DateModeOption): void {
-    this.setState({ dateMode });
-  }
-
-  private handleDateRangeChange(startDate: number, endDate: number): void {
-    this.setState({ startDate, endDate });
-  }
-
-  private fetchData(): void {
-    const { startDate, endDate, dateMode } = this.state;
-
-    this.setState({ loading: true });
-    const frame = ++this.frameCounter;
-
-    axios
-      .get("/api/reports/balance-history/data", {
-        params: {
-          startDate: convertLocalDateToUtc(startDate),
-          endDate: convertLocalDateToUtc(endDate),
-          dateMode,
-        },
-      })
-      .then((res: AxiosResponse<IBalanceHistoryData>) => res.data)
-      .then((res) => this.onDataLoaded(frame, res))
-      .catch(() => this.onDataLoadFailed(frame));
-  }
-
-  private onFrameReceived(frame: number): void {
-    this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
-  }
-
-  private onDataLoaded(frame: number, data: IBalanceHistoryData): void {
-    if (frame <= this.lastFrameReceived) {
-      return;
-    }
-
-    this.onFrameReceived(frame);
-
-    this.setState({
-      loading: false,
-      failed: false,
-      data,
-    });
-  }
-
-  private onDataLoadFailed(frame: number): void {
-    if (frame <= this.lastFrameReceived) {
-      return;
-    }
-
-    this.onFrameReceived(frame);
-
-    this.setState({
-      loading: false,
-      failed: true,
-      data: undefined,
-    });
-  }
+  return (
+    <>
+      <PageHeader>
+        <h2>Balance History</h2>
+      </PageHeader>
+      {renderOptions()}
+      {renderChart()}
+      {renderStatCards()}
+    </>
+  );
 }
 
 export { BalanceHistoryReport };
