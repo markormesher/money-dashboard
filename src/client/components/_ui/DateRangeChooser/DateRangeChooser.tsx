@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Component, MouseEvent, ReactNode } from "react";
 import { startOfMonth, endOfMonth, addMonths, startOfYear, endOfYear, addYears, subYears, isSameDay } from "date-fns";
 import { IDateRange } from "../../../../models/IDateRange";
 import * as bs from "../../../global-styles/Bootstrap.scss";
@@ -8,153 +7,127 @@ import { combine } from "../../../helpers/style-helpers";
 import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { ButtonDropDown, ButtonDropDownProps } from "../ButtonDropDown/ButtonDropDown";
-import { validateDateRange, IDateRangeValidationResult } from "../../../../models/validators/DateRangeValidator";
+import { validateDateRange } from "../../../../models/validators/DateRangeValidator";
 
-interface IDateRangeChooserProps {
-  readonly startDate?: number;
-  readonly endDate?: number;
+type DateRangeChooserProps = {
+  readonly startDate: number;
+  readonly endDate: number;
   readonly includeFuturePresets?: boolean;
   readonly includeCurrentPresets?: boolean;
   readonly includeYearToDatePreset?: boolean;
   readonly includeAllTimePreset?: boolean;
   readonly customPresets?: IDateRange[];
-  readonly onValueChange?: (start: number, end: number) => void;
+  readonly onValueChange?: (start?: number, end?: number) => void;
   readonly dropDownProps?: Pick<ButtonDropDownProps, "placement" | "btnProps">;
+};
+
+function getDateRanges(props: DateRangeChooserProps): IDateRange[] {
+  const { includeCurrentPresets, includeFuturePresets, includeYearToDatePreset, includeAllTimePreset, customPresets } =
+    props;
+  return (
+    [
+      includeCurrentPresets !== false && {
+        label: "This Month",
+        startDate: startOfMonth(new Date()).getTime(),
+        endDate: endOfMonth(new Date()).getTime(),
+      },
+      includeFuturePresets !== false && {
+        label: "Next Month",
+        startDate: startOfMonth(addMonths(new Date(), 1)).getTime(),
+        endDate: endOfMonth(addMonths(new Date(), 1)).getTime(),
+      },
+      includeCurrentPresets !== false && {
+        label: "This Year",
+        startDate: startOfYear(new Date()).getTime(),
+        endDate: endOfYear(new Date()).getTime(),
+      },
+      includeFuturePresets !== false && {
+        label: "Next Year",
+        startDate: startOfYear(addYears(new Date(), 1)).getTime(),
+        endDate: endOfYear(addYears(new Date(), 1)).getTime(),
+      },
+      includeYearToDatePreset !== false && {
+        label: "Year to Date",
+        startDate: subYears(new Date(), 1).getTime(),
+        endDate: new Date().getTime(),
+      },
+      includeAllTimePreset !== false && {
+        label: "All Time",
+        startDate: 0,
+        endDate: new Date().getTime(),
+      },
+      ...(customPresets || []),
+    ] as Array<boolean | IDateRange>
+  ).filter((a) => a !== false) as IDateRange[];
 }
 
-interface IDateRangeChooserState {
-  readonly chooserOpen: boolean;
-  readonly customRangeChooserOpen: boolean;
-  readonly customRange: IDateRange;
-  readonly customRangeValidationResult: IDateRangeValidationResult;
-  readonly usingCustomRange: boolean;
-}
+function DateRangeChooser(props: DateRangeChooserProps): React.ReactElement {
+  const { startDate, endDate, dropDownProps, onValueChange } = props;
+  const dateRangeOptions = getDateRanges(props);
 
-class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChooserState> {
-  private static getDateRanges(props: IDateRangeChooserProps): IDateRange[] {
-    const {
-      includeCurrentPresets,
-      includeFuturePresets,
-      includeYearToDatePreset,
-      includeAllTimePreset,
-      customPresets,
-    } = props;
-    return (
-      [
-        includeCurrentPresets !== false && {
-          label: "This Month",
-          startDate: startOfMonth(new Date()).getTime(),
-          endDate: endOfMonth(new Date()).getTime(),
-        },
-        includeFuturePresets !== false && {
-          label: "Next Month",
-          startDate: startOfMonth(addMonths(new Date(), 1)).getTime(),
-          endDate: endOfMonth(addMonths(new Date(), 1)).getTime(),
-        },
-        includeCurrentPresets !== false && {
-          label: "This Year",
-          startDate: startOfYear(new Date()).getTime(),
-          endDate: endOfYear(new Date()).getTime(),
-        },
-        includeFuturePresets !== false && {
-          label: "Next Year",
-          startDate: startOfYear(addYears(new Date(), 1)).getTime(),
-          endDate: endOfYear(addYears(new Date(), 1)).getTime(),
-        },
-        includeYearToDatePreset !== false && {
-          label: "Year to Date",
-          startDate: subYears(new Date(), 1).getTime(),
-          endDate: new Date().getTime(),
-        },
-        includeAllTimePreset !== false && {
-          label: "All Time",
-          startDate: 0,
-          endDate: new Date().getTime(),
-        },
-        ...(customPresets || []),
-      ] as Array<boolean | IDateRange>
-    ).filter((a) => a !== false) as IDateRange[];
-  }
+  const defaultCustomRange: IDateRange = {
+    label: "Custome",
+    startDate: startOfMonth(new Date()).getTime(),
+    endDate: endOfMonth(new Date()).getTime(),
+  };
 
-  constructor(props: IDateRangeChooserProps) {
-    super(props);
-    this.state = {
-      chooserOpen: false,
-      customRangeChooserOpen: false,
-      customRange: { startDate: undefined, endDate: undefined },
-      customRangeValidationResult: validateDateRange({ startDate: undefined, endDate: undefined }),
-      usingCustomRange: false,
-    };
+  const [chooserOpen, setChooserOpen] = React.useState(false);
+  const [customRangeChooserOpen, setCustomRangeChooserOpen] = React.useState(false);
+  const [customRange, setCustomRange] = React.useState(defaultCustomRange);
+  const [customRangeValidationResult, setCustomRangeValidationResult] = React.useState(
+    validateDateRange(defaultCustomRange),
+  );
+  const [usingCustomRange, setUsingCustomRange] = React.useState(false);
 
-    this.renderChooser = this.renderChooser.bind(this);
-    this.renderPresetBtn = this.renderPresetBtn.bind(this);
-    this.handlePresetSubmit = this.handlePresetSubmit.bind(this);
-    this.handleCustomRangeStartChange = this.handleCustomRangeStartChange.bind(this);
-    this.handleCustomRangeEndChange = this.handleCustomRangeEndChange.bind(this);
-    this.handleCustomRangeSubmit = this.handleCustomRangeSubmit.bind(this);
-    this.handleBtnClick = this.handleBtnClick.bind(this);
-    this.closeChooser = this.closeChooser.bind(this);
-    this.toggleCustomRangeChooserOpen = this.toggleCustomRangeChooserOpen.bind(this);
-  }
+  // ui
 
-  public render(): ReactNode {
-    const dateRanges = DateRangeChooser.getDateRanges(this.props);
-    const { startDate, endDate, dropDownProps } = this.props;
-    const { chooserOpen } = this.state;
-
-    const matchingRanges = dateRanges.filter((dr) => {
-      return isSameDay(dr.startDate, startDate) && isSameDay(dr.endDate, endDate);
-    });
-    const label = matchingRanges.length
-      ? matchingRanges[0].label
-      : `${formatDate(startDate)} to ${formatDate(endDate)}`;
-
-    return (
-      <ButtonDropDown
-        icon={"today"}
-        text={label}
-        onBtnClick={this.handleBtnClick}
-        dropDownContents={chooserOpen ? this.renderChooser() : null}
-        {...dropDownProps}
-      />
-    );
-  }
-
-  private renderChooser(): React.ReactElement {
-    const dateRanges = DateRangeChooser.getDateRanges(this.props);
-
+  function renderChooser(): React.ReactElement {
     return (
       <div className={bs.row}>
-        {this.state.customRangeChooserOpen && (
+        {customRangeChooserOpen && (
           <div className={bs.col}>
             <div className={bs.mb3}>
               <ControlledDateInput
                 id={"custom-from"}
                 label={"From"}
-                value={formatDate(this.state.customRange.startDate, "system") || ""}
-                error={this.state.customRangeValidationResult.errors.startDate}
+                value={customRange.startDate ? formatDate(customRange.startDate, "system") : ""}
+                error={customRangeValidationResult?.errors.startDate}
                 disabled={false}
-                onValueChange={this.handleCustomRangeStartChange}
+                onValueChange={(val) => {
+                  const newCustomRange = { ...customRange, startDate: val };
+                  setCustomRange(newCustomRange);
+                  setCustomRangeValidationResult(validateDateRange(newCustomRange));
+                }}
               />
             </div>
             <div className={bs.mb3}>
               <ControlledDateInput
                 id={"custom-to"}
                 label={"To"}
-                value={formatDate(this.state.customRange.endDate, "system") || ""}
-                error={this.state.customRangeValidationResult.errors.endDate}
+                value={customRange.endDate ? formatDate(customRange.endDate, "system") : ""}
+                error={customRangeValidationResult?.errors.endDate}
                 disabled={false}
-                onValueChange={this.handleCustomRangeEndChange}
+                onValueChange={(val) => {
+                  const newCustomRange = { ...customRange, startDate: val };
+                  setCustomRange(newCustomRange);
+                  setCustomRangeValidationResult(validateDateRange(newCustomRange));
+                }}
               />
             </div>
             <div className={bs.mb3}>
               <IconBtn
                 icon={"check"}
                 text={"OK"}
-                onClick={this.handleCustomRangeSubmit}
+                onClick={() => {
+                  if (customRangeValidationResult.isValid) {
+                    setUsingCustomRange(true);
+                    setChooserOpen(false);
+                    onValueChange?.(customRange.startDate, customRange.endDate);
+                  }
+                }}
                 btnProps={{
                   className: bs.btnOutlineDark,
-                  disabled: !this.state.customRangeValidationResult.isValid,
+                  disabled: !customRangeValidationResult?.isValid,
                 }}
               />
             </div>
@@ -162,11 +135,32 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
         )}
         <div className={bs.col}>
           <div className={bs.btnGroupVertical}>
-            {dateRanges.map((dr) => this.renderPresetBtn(dr))}
-            <button className={combine(bs.btn, bs.btnOutlineDark)} onClick={this.toggleCustomRangeChooserOpen}>
+            {dateRangeOptions.map((dr) => (
+              <button
+                key={`range-${dr.label}`}
+                type={"button"}
+                onClick={() => {
+                  setUsingCustomRange(false);
+                  setChooserOpen(false);
+                  onValueChange?.(dr.startDate, dr.endDate);
+                }}
+                className={combine(bs.btn, bs.btnOutlineDark)}
+              >
+                {dr.label}
+              </button>
+            ))}
+            <button
+              className={combine(bs.btn, bs.btnOutlineDark)}
+              type={"button"}
+              onClick={() => setCustomRangeChooserOpen(!customRangeChooserOpen)}
+            >
               Custom
             </button>
-            <button className={combine(bs.btn, bs.btnOutlineDark)} onClick={this.closeChooser}>
+            <button
+              className={combine(bs.btn, bs.btnOutlineDark)}
+              type={"button"}
+              onClick={() => setChooserOpen(false)}
+            >
               Cancel
             </button>
           </div>
@@ -175,91 +169,24 @@ class DateRangeChooser extends Component<IDateRangeChooserProps, IDateRangeChoos
     );
   }
 
-  private renderPresetBtn(dateRange: IDateRange): ReactNode {
-    return (
-      <button
-        key={`range-${dateRange.label}`}
-        data-start={dateRange.startDate}
-        data-end={dateRange.endDate}
-        onClick={this.handlePresetSubmit}
-        className={combine(bs.btn, bs.btnOutlineDark)}
-      >
-        {dateRange.label}
-      </button>
-    );
-  }
+  // show the label of the first range option that matches the actual selection, or the actual dates if none match
+  const matchingRanges = dateRangeOptions.filter((dr) => {
+    return isSameDay(dr.startDate ?? -1, startDate ?? 0) && isSameDay(dr.endDate ?? -1, endDate ?? 0);
+  });
+  const label = matchingRanges.length ? matchingRanges[0].label : `${formatDate(startDate)} to ${formatDate(endDate)}`;
 
-  private handleBtnClick(): void {
-    this.setState({
-      chooserOpen: !this.state.chooserOpen,
-      customRangeChooserOpen: this.state.usingCustomRange,
-    });
-  }
-
-  private closeChooser(): void {
-    this.setState({
-      chooserOpen: false,
-      customRangeChooserOpen: this.state.usingCustomRange,
-    });
-  }
-
-  private handlePresetSubmit(evt: MouseEvent<HTMLButtonElement>): void {
-    const start = parseInt(evt.currentTarget.attributes.getNamedItem("data-start").value);
-    const end = parseInt(evt.currentTarget.attributes.getNamedItem("data-end").value);
-    this.setState({
-      usingCustomRange: false,
-    });
-    if (this.props.onValueChange) {
-      this.props.onValueChange(start, end);
-    }
-    this.closeChooser();
-  }
-
-  private toggleCustomRangeChooserOpen(): void {
-    this.setState({
-      customRangeChooserOpen: !this.state.customRangeChooserOpen,
-    });
-  }
-
-  private handleCustomRangeStartChange(value: number): void {
-    this.setState((oldState) => {
-      const newRange: IDateRange = {
-        ...oldState.customRange,
-        startDate: value,
-      };
-      return {
-        customRange: newRange,
-        customRangeValidationResult: validateDateRange(newRange),
-      };
-    });
-  }
-
-  private handleCustomRangeEndChange(value: number): void {
-    this.setState((oldState) => {
-      const newRange: IDateRange = {
-        ...oldState.customRange,
-        endDate: value,
-      };
-      return {
-        customRange: newRange,
-        customRangeValidationResult: validateDateRange(newRange),
-      };
-    });
-  }
-
-  private handleCustomRangeSubmit(): void {
-    /* istanbul ignore else: cannot be triggered if invalid */
-    if (this.state.customRangeValidationResult.isValid) {
-      this.setState({
-        usingCustomRange: true,
-      });
-      if (this.props.onValueChange) {
-        const { startDate, endDate } = this.state.customRange;
-        this.props.onValueChange(startDate, endDate);
-      }
-      this.closeChooser();
-    }
-  }
+  return (
+    <ButtonDropDown
+      icon={"today"}
+      text={label ?? ""}
+      onBtnClick={() => {
+        setChooserOpen(!chooserOpen);
+        setCustomRangeChooserOpen(usingCustomRange);
+      }}
+      dropDownContents={chooserOpen ? renderChooser() : undefined}
+      {...dropDownProps}
+    />
+  );
 }
 
 export { DateRangeChooser };
