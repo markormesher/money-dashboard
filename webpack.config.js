@@ -79,7 +79,16 @@ const config = {
           {
             loader: "dts-css-modules-loader",
             options: {
-              namedExports: false,
+              customTypings: (classes) => {
+                let content = "type Styles = {\n";
+                for (const c of classes) {
+                  content += `  ${c}: string;\n`;
+                }
+                content += "};\n";
+                content += "declare const styles: Styles;\n";
+                content += "export = styles;\n";
+                return content;
+              },
             },
           },
           {

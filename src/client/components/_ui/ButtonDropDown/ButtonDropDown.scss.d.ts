@@ -1,5 +1,5 @@
-export interface IButtonDropDownScss {
-  'chooser': string;
-}
-declare const styles: IButtonDropDownScss;
+type Styles = {
+  chooser: string;
+};
+declare const styles: Styles;
 export = styles;
