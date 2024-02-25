@@ -1,6 +1,6 @@
 import * as React from "react";
 import { combine } from "../../../helpers/style-helpers";
-import * as bs from "../../../global-styles/Bootstrap.scss";
+import bs from "../../../global-styles/Bootstrap.scss";
 import { ButtonDropDown } from "../ButtonDropDown/ButtonDropDown";
 import { IProfile } from "../../../../models/IProfile";
 import { UserApi, ProfileApi } from "../../../api/users-and-profiles";

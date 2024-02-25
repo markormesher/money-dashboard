@@ -2,7 +2,7 @@ import * as React from "react";
 import { ReactNode } from "react";
 import ReactTooltip from "react-tooltip";
 import { IBudgetBalance } from "../../../models/IBudgetBalance";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { formatBudgetPeriod, formatCurrency, getBudgetPeriodType } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
@@ -10,7 +10,7 @@ import { Card } from "../_ui/Card/Card";
 import { MaterialIconName, MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
 import { BudgetApi } from "../../api/budgets";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
-import * as styles from "./DashboardBudgetList.scss";
+import styles from "./DashboardBudgetList.scss";
 
 function DashboardBudgetList(): React.ReactElement {
   const [budgetBalances, setBudgetBalances] = React.useState<IBudgetBalance[]>();

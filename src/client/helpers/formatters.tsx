@@ -5,8 +5,8 @@ import { IAccount } from "../../models/IAccount";
 import { IBudget } from "../../models/IBudget";
 import { ICategory } from "../../models/ICategory";
 import { Badge } from "../components/_ui/Badge/Badge";
-import * as bs from "../global-styles/Bootstrap.scss";
-import * as gs from "../global-styles/Global.scss";
+import bs from "../global-styles/Bootstrap.scss";
+import gs from "../global-styles/Global.scss";
 
 type BudgetPeriod = "month" | "calendar year" | "tax year" | "other";
 

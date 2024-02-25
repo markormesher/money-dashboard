@@ -1,7 +1,7 @@
 import * as React from "react";
-import * as bs from "../../../global-styles/Bootstrap.scss";
+import bs from "../../../global-styles/Bootstrap.scss";
 import { Card } from "../Card/Card";
-import * as style from "./PageOptions.scss";
+import style from "./PageOptions.scss";
 
 function PageOptions(props: React.PropsWithChildren<unknown>): React.ReactElement {
   return (

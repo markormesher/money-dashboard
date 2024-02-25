@@ -1,8 +1,8 @@
 import * as React from "react";
 import { combine } from "../../../helpers/style-helpers";
-import * as bs from "../../../global-styles/Bootstrap.scss";
+import bs from "../../../global-styles/Bootstrap.scss";
 import { MaterialIconName, MaterialIcon } from "../MaterialIcon/MaterialIcon";
-import * as style from "./Card.scss";
+import style from "./Card.scss";
 
 type CardProps = {
   readonly title?: string;

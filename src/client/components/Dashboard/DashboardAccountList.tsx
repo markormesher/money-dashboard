@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IAccountBalance } from "../../../models/IAccountBalance";
-import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
+import bs from "../../global-styles/Bootstrap.scss";
+import gs from "../../global-styles/Global.scss";
 import { formatCurrencyStyled, formatCurrencyForStat, formatCurrency } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
@@ -15,7 +15,7 @@ import { AccountApi } from "../../api/accounts";
 import { StockPriceApi } from "../../api/stock-prices";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { useNonceState } from "../../helpers/state-hooks";
-import * as styles from "./DashboardAccountList.scss";
+import styles from "./DashboardAccountList.scss";
 import { AssetBalanceUpdateModal } from "./AssetBalanceUpdateModal";
 
 function DashboardAccountList(): React.ReactElement | null {

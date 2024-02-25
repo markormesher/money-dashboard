@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IEnvelopeAllocation, DEFAULT_CATEGORY_TO_ENVELOPE_ALLOCATION } from "../../../models/IEnvelopeAllocation";
 import { validateEnvelopeAllocation } from "../../../models/validators/EnvelopeAllocationValidator";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";

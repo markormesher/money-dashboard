@@ -1,7 +1,7 @@
 import * as React from "react";
 import { DEFAULT_ENVELOPE_TRANSFER, IEnvelopeTransfer } from "../../../models/IEnvelopeTransfer";
 import { validateEnvelopeTransfer } from "../../../models/validators/EnvelopeTransferValidator";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";

@@ -1,10 +1,10 @@
 import * as React from "react";
-import * as bs from "../../../global-styles/Bootstrap.scss";
+import bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 import { globalErrorManager } from "../../../helpers/errors/error-manager";
 import { IDataTableDataProvider } from "./DataProvider/IDataTableDataProvider";
-import * as styles from "./DataTable.scss";
+import styles from "./DataTable.scss";
 import { DataTableInnerHeader } from "./DataTableInnerHeader";
 import { DataTableOuterFooter } from "./DataTableOuterFooter";
 import { DataTableOuterHeader } from "./DataTableOuterHeader";

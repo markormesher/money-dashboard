@@ -4,7 +4,7 @@ import {
   mapEnvelopeTransferFromApi,
   DEFAULT_ENVELOPE_TRANSFER,
 } from "../../../models/IEnvelopeTransfer";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { formatCurrencyStyled, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";

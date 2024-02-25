@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ReactElement, useState } from "react";
 import { DEFAULT_CATEGORY, ICategory, mapCategoryFromApi } from "../../../models/ICategory";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { generateCategoryTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";

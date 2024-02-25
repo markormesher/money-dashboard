@@ -2,7 +2,7 @@ import * as React from "react";
 import { ReactElement, useState } from "react";
 import { DEFAULT_BUDGET, IBudget } from "../../../models/IBudget";
 import { validateBudget } from "../../../models/validators/BudgetValidator";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { useModelEditingState } from "../../helpers/state-hooks";
 import { combine } from "../../helpers/style-helpers";

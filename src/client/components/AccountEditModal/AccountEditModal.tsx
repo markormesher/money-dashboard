@@ -8,7 +8,7 @@ import {
 } from "../../../models/IAccount";
 import { validateAccount } from "../../../models/validators/AccountValidator";
 import { ALL_CURRENCIES, DEFAULT_CURRENCY_CODE, isCurrencyCode } from "../../../models/ICurrency";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { AccountApi } from "../../api/accounts";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";

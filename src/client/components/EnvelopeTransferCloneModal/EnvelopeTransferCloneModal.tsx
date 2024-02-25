@@ -1,6 +1,6 @@
 import * as React from "react";
 import { startOfDay } from "date-fns";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";

@@ -1,11 +1,11 @@
 import * as React from "react";
 import { AccountApi } from "../../api/accounts";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { sharedHistory } from "../../helpers/history";
 import { NavContext } from "../App/App";
-import * as style from "./Nav.scss";
+import style from "./Nav.scss";
 import { NavLink } from "./NavLink";
 import { NavSection } from "./NavSection";
 

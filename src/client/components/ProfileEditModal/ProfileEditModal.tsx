@@ -3,7 +3,7 @@ import { ReactElement, useState } from "react";
 import { IProfile } from "../../../models/IProfile";
 import { validateProfile } from "../../../models/validators/ProfileValidator";
 import { ProfileApi } from "../../api/users-and-profiles";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { useModelEditingState } from "../../helpers/state-hooks";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";

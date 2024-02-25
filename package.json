@@ -14,7 +14,7 @@
     "// entry points": "//",
     "start": "cross-env NODE_ENV=production node ./build/server.js",
     "start-dev": "cross-env NODE_ENV=development node ./build/server.js",
-    "start-test": "cross-env NODE_ENV=test nyc mocha --exit \"./build/**/*.js\"",
+    "start-test": "cross-env NODE_ENV=test nyc mocha --exit \"./build/**/*.tests.js\"",
     "// root build jobs": "//",
     "build": "run-s build-tsc build-webpack",
     "build-dev": "run-s build-tsc build-webpack-dev",

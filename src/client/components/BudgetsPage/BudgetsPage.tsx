@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ReactElement, useState } from "react";
 import { DEFAULT_BUDGET, IBudget, mapBudgetFromApi } from "../../../models/IBudget";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";

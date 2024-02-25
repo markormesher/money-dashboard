@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { MaterialIcon, MaterialIconName } from "../_ui/MaterialIcon/MaterialIcon";
 import { sharedHistory } from "../../helpers/history";
 import { NavContext } from "../App/App";
-import * as style from "./Nav.scss";
+import style from "./Nav.scss";
 
 type NavLinkProps = {
   readonly to: string;

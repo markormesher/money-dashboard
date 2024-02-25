@@ -1,7 +1,7 @@
 import * as React from "react";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
-import * as style from "./Nav.scss";
+import style from "./Nav.scss";
 
 type NavSectionProps = {
   readonly title?: string;

@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { ProfileChooser } from "../_ui/ProfileChooser/ProfileChooser";
 import { MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
 import { NavContext } from "../App/App";
-import * as style from "./Header.scss";
+import style from "./Header.scss";
 
 function Header(): React.ReactElement {
   const { navState, setNavState } = React.useContext(NavContext);

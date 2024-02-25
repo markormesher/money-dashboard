@@ -1,7 +1,7 @@
 import * as React from "react";
 import { DEFAULT_TRANSACTION, ITransaction } from "../../../models/ITransaction";
 import { validateTransaction } from "../../../models/validators/TransactionValidator";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";

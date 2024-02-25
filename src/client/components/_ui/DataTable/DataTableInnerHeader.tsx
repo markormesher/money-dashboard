@@ -1,9 +1,9 @@
 import * as React from "react";
-import * as bs from "../../../global-styles/Bootstrap.scss";
+import bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
 import { Column, ColumnSortEntry, SortDirection } from "./DataTable";
-import * as styles from "./DataTable.scss";
+import styles from "./DataTable.scss";
 
 type DataTableInnerHeaderProps = {
   readonly columns: Column[];

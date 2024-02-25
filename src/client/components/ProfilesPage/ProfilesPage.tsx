@@ -2,7 +2,7 @@ import * as React from "react";
 import { ReactElement, useEffect, useState } from "react";
 import { DEFAULT_PROFILE, IProfile, mapProfileFromApi } from "../../../models/IProfile";
 import { IUser } from "../../../models/IUser";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { Badge } from "../_ui/Badge/Badge";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";

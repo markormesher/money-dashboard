@@ -2,7 +2,7 @@ import * as React from "react";
 import { IEnvelope, DEFAULT_ENVELOPE } from "../../../models/IEnvelope";
 import { validateEnvelope } from "../../../models/validators/EnvelopeValidator";
 import { EnvelopeApi } from "../../api/envelopes";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { useModelEditingState } from "../../helpers/state-hooks";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";

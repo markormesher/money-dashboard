@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { MaterialIconName, MaterialIconProps } from "../MaterialIcon/MaterialIcon";
-import * as styles from "./ButtonDropDown.scss";
+import styles from "./ButtonDropDown.scss";
 
 type ButtonDropDownProps = {
   readonly text: string;

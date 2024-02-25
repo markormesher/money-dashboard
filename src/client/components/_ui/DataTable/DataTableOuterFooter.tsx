@@ -1,7 +1,7 @@
 import * as React from "react";
-import * as bs from "../../../global-styles/Bootstrap.scss";
+import bs from "../../../global-styles/Bootstrap.scss";
 import { ColumnSortEntry } from "./DataTable";
-import * as styles from "./DataTable.scss";
+import styles from "./DataTable.scss";
 
 type DataTableOuterFooterProps = {
   readonly pageSize: number;

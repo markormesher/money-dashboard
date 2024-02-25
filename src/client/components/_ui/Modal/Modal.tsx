@@ -1,10 +1,10 @@
 import * as React from "react";
-import * as bs from "../../../global-styles/Bootstrap.scss";
+import bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { MaterialIconName } from "../MaterialIcon/MaterialIcon";
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
-import * as styles from "./Modal.scss";
+import styles from "./Modal.scss";
 
 enum ModalBtnType {
   SAVE = "save",

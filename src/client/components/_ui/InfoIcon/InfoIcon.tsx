@@ -1,8 +1,8 @@
 import * as React from "react";
 import ReactTooltip from "react-tooltip";
 import { combine } from "../../../helpers/style-helpers";
-import * as bs from "../../../global-styles/Bootstrap.scss";
-import * as gs from "../../../global-styles/Global.scss";
+import bs from "../../../global-styles/Bootstrap.scss";
+import gs from "../../../global-styles/Global.scss";
 import { MaterialIcon, MaterialIconName } from "../MaterialIcon/MaterialIcon";
 
 type InfoIconProps<Payload = unknown> = {

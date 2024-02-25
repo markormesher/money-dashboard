@@ -1,7 +1,7 @@
 import * as React from "react";
 import { startOfMonth, endOfMonth, addMonths, startOfYear, endOfYear, addYears, subYears, isSameDay } from "date-fns";
 import { IDateRange } from "../../../../models/IDateRange";
-import * as bs from "../../../global-styles/Bootstrap.scss";
+import bs from "../../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
 import { ControlledDateInput } from "../ControlledInputs/ControlledDateInput";

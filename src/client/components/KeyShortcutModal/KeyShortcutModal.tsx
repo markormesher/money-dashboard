@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
 import { Modal, ModalBtnType } from "../_ui/Modal/Modal";
 

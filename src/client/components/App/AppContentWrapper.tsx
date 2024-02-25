@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as bs from "../../global-styles/Bootstrap.scss";
+import bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 
 function AppContentWrapper(props: React.PropsWithChildren<unknown>): React.ReactElement {
