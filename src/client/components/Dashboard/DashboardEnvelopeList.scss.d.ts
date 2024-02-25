@@ -1,5 +1,4 @@
-export interface IDashboardEnvelopeListScss {
-  'envelopeBalance': string;
-}
-declare const styles: IDashboardEnvelopeListScss;
+declare const styles: {
+  envelopeBalance: string;
+};
 export = styles;

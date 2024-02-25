@@ -1,8 +1,7 @@
-export interface ISuggestionTextInputScss {
-  'suggestionWrapper': string;
-  'active': string;
-  'overflow': string;
-  'highlight': string;
-}
-declare const styles: ISuggestionTextInputScss;
+declare const styles: {
+  suggestionWrapper: string;
+  active: string;
+  overflow: string;
+  highlight: string;
+};
 export = styles;

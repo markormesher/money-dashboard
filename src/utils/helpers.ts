@@ -37,7 +37,7 @@ function groupBy<T>(
 }
 
 function isObject(item: unknown): boolean {
-  return (item && typeof item === 'object' && !Array.isArray(item));
+  return item && typeof item === "object" && !Array.isArray(item);
 }
 
 function mergeDeep<T>(target: T, ...sources: (Partial<T> | undefined)[]): T {
@@ -50,7 +50,9 @@ function mergeDeep<T>(target: T, ...sources: (Partial<T> | undefined)[]): T {
   if (isObject(target) && isObject(source)) {
     for (const key in source) {
       if (isObject(source[key])) {
-        if (!target[key]) Object.assign(target, { [key]: {} });
+        if (!target[key]) {
+          Object.assign(target, { [key]: {} });
+        }
         mergeDeep(target[key], source[key]);
       } else {
         Object.assign(target, { [key]: source[key] });
@@ -60,6 +62,5 @@ function mergeDeep<T>(target: T, ...sources: (Partial<T> | undefined)[]): T {
 
   return mergeDeep(target, ...sources);
 }
-
 
 export { getTaxYear, getTaxYearStart, getTaxYearEnd, groupBy, mergeDeep };

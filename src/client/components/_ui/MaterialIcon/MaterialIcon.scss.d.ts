@@ -1,6 +1,5 @@
-export interface IMaterialIconScss {
-  'icon': string;
-  'spin': string;
-}
-declare const styles: IMaterialIconScss;
+declare const styles: {
+  icon: string;
+  spin: string;
+};
 export = styles;

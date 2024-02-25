@@ -1,6 +1,5 @@
-export interface IPageHeaderScss {
-  'pageHeader': string;
-  'actions': string;
-}
-declare const styles: IPageHeaderScss;
+declare const styles: {
+  pageHeader: string;
+  actions: string;
+};
 export = styles;

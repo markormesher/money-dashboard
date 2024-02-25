@@ -1,5 +1,4 @@
-export interface IReportsScss {
-  'chartContainer': string;
-}
-declare const styles: IReportsScss;
+declare const styles: {
+  chartContainer: string;
+};
 export = styles;

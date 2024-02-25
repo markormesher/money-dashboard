@@ -15,6 +15,13 @@
     "sourceMap": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["./src/server.ts"],
-  "exclude": ["./node_modules", "./build"]
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.tsx"
+  ],
+  "exclude": [
+    "./src/**/*.d.ts",
+    "./node_modules",
+    "./build"
+  ]
 }
