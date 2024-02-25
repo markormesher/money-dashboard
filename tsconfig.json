@@ -16,8 +16,7 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "./src/**/*.ts",
-    "./src/**/*.tsx"
+    "./src/server.ts"
   ],
   "exclude": [
     "./src/**/*.d.ts",
