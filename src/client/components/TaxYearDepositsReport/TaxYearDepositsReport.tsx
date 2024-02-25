@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
 import * as React from "react";
-import { Component, ReactNode } from "react";
 import { IDetailedCategoryBalance } from "../../../models/IDetailedCategoryBalance";
 import { ITaxYearDepositsData, mapTaxYearDepositsDataFromApi } from "../../../models/ITaxYearDepositsData";
 import { DateModeOption } from "../../../models/ITransaction";
@@ -15,104 +14,72 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface ITaxYearDepositsReportProps {}
+function TaxYearDepositsReport(): React.ReactElement {
+  const lastFrameRequested = React.useRef(0);
 
-interface ITaxYearDepositsReportState {
-  readonly dateMode: DateModeOption;
-  readonly splitValues: boolean;
-  readonly accountTag: AccountTag;
-  readonly data: ITaxYearDepositsData;
-  readonly loading: boolean;
-  readonly failed: boolean;
-}
+  const [dateMode, setDateMode] = React.useState<DateModeOption>("transaction");
+  const [splitValues, setSplitValues] = React.useState(false);
+  const [accountTag, setAccountTag] = React.useState<AccountTag>("isa");
+  const [data, setData] = React.useState<ITaxYearDepositsData>();
+  const [loading, setLoading] = React.useState(false);
+  const [failed, setFailed] = React.useState(false);
 
-class TaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITaxYearDepositsReportState> {
-  // give each remote request an increasing "frame" number so that late arrivals will be dropped
-  private frameCounter = 0;
-  private lastFrameReceived = 0;
+  // data fetching
+  React.useEffect(() => {
+    fetchData();
+  }, [dateMode, accountTag]);
 
-  constructor(props: ITaxYearDepositsReportProps) {
-    super(props);
-    this.state = {
-      dateMode: "transaction",
-      splitValues: false,
-      accountTag: "pension",
-      data: undefined,
-      loading: true,
-      failed: false,
-    };
+  function fetchData(): void {
+    const thisFrame = ++lastFrameRequested.current;
+    setLoading(true);
 
-    this.renderAccountTagChooser = this.renderAccountTagChooser.bind(this);
-    this.renderResults = this.renderResults.bind(this);
-    this.renderCategoryBalance = this.renderCategoryBalance.bind(this);
-    this.handleDateModeChange = this.handleDateModeChange.bind(this);
-    this.handleSplitValueChange = this.handleSplitValueChange.bind(this);
-    this.handleAccountTagChange = this.handleAccountTagChange.bind(this);
+    axios
+      .get<ITaxYearDepositsData>("/api/reports/tax-year-deposits/data", {
+        params: { dateMode, accountTag },
+      })
+      .then((res: AxiosResponse<ITaxYearDepositsData>) => mapTaxYearDepositsDataFromApi(res.data))
+
+      .then((data) => {
+        if (thisFrame < lastFrameRequested.current) {
+          console.log(`Dropping result for frame ${thisFrame}`);
+          return;
+        }
+
+        setLoading(false);
+        setFailed(false);
+        setData(data);
+      })
+      .catch((err) => {
+        if (thisFrame < lastFrameRequested.current) {
+          console.log(`Dropping result for frame ${thisFrame}`);
+          return;
+        }
+
+        globalErrorManager.emitNonFatalError("Failed to load data", err);
+        setLoading(false);
+        setFailed(true);
+        setData(undefined);
+      });
   }
 
-  public componentDidMount(): void {
-    this.fetchData();
-  }
+  // ui
 
-  public componentDidUpdate(nextProps: ITaxYearDepositsReportProps, nextState: ITaxYearDepositsReportState): void {
-    if (this.state.dateMode !== nextState.dateMode || this.state.accountTag !== nextState.accountTag) {
-      this.fetchData();
-    }
-  }
-
-  public render(): ReactNode {
-    return (
-      <>
-        <PageHeader>
-          <h2>Tax Year Deposits</h2>
-        </PageHeader>
-
-        <PageOptions>
-          <CheckboxBtn
-            text={"Split Values"}
-            checked={this.state.splitValues}
-            onChange={this.handleSplitValueChange}
-            btnProps={{
-              className: combine(bs.btnOutlineInfo, bs.btnSm),
-            }}
-          />
-
-          <DateModeToggleBtn
-            value={this.state.dateMode}
-            onChange={this.handleDateModeChange}
-            btnProps={{
-              className: combine(bs.btnOutlineInfo, bs.btnSm),
-            }}
-          />
-
-          <hr />
-
-          {this.renderAccountTagChooser()}
-        </PageOptions>
-
-        <Card>{this.renderResults()}</Card>
-      </>
-    );
-  }
-
-  private renderAccountTagChooser(): ReactNode {
-    const { accountTag } = this.state;
-
+  function renderAccountTagChooser(): React.ReactElement[] {
     // tags that are relevant for tax year summaries
-    const validTags: AccountTag[] = ["pension", "isa"];
-    const tags = Object.entries(ACCOUNT_TAG_DISPLAY_NAMES)
-      .filter(([key]) => validTags.includes(key as AccountTag))
-      .sort((a, b) => a[1].localeCompare(b[1]));
-
-    return tags.map(([tagKey, tagName]) => (
+    const tags: AccountTag[] = ["pension", "isa"];
+    return tags.map((tag) => (
       <CheckboxBtn
-        key={`account-tag-${tagKey}`}
-        payload={tagKey}
-        text={tagName}
-        checked={accountTag === tagKey}
-        onChange={this.handleAccountTagChange}
+        key={`account-tag-${tag}`}
+        payload={tag}
+        text={ACCOUNT_TAG_DISPLAY_NAMES[tag]}
+        checked={accountTag === tag}
+        onChange={(checked) => {
+          if (checked) {
+            setAccountTag(tag);
+          }
+        }}
         btnProps={{
           className: combine(bs.btnOutlineInfo, bs.btnSm),
         }}
@@ -122,9 +89,32 @@ class TaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITaxY
     ));
   }
 
-  private renderResults(): ReactNode {
-    const { loading, failed, data } = this.state;
+  function renderCategoryBalance(balance: IDetailedCategoryBalance): React.ReactElement | null {
+    if (!balance) {
+      return null;
+    }
 
+    const inc = balance.balanceIn;
+    const dec = balance.balanceOut;
+
+    if (splitValues) {
+      return (
+        <>
+          {inc === 0 ? <>&nbsp;</> : formatCurrencyStyled(inc)}
+          <br />
+          {dec === 0 ? <>&nbsp;</> : formatCurrencyStyled(dec)}
+        </>
+      );
+    } else {
+      if (inc + dec == 0) {
+        return null;
+      }
+
+      return <>{formatCurrencyStyled(inc + dec)}</>;
+    }
+  }
+
+  function renderResults(): React.ReactElement {
     if (failed) {
       return <p>Data failed to load. Please try again.</p>;
     }
@@ -164,7 +154,7 @@ class TaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITaxY
                 <td>{category.name}</td>
                 {years.map((year) => (
                   <td key={year} className={bs.textEnd}>
-                    {this.renderCategoryBalance(data.yearData[year][category.id])}
+                    {renderCategoryBalance(data.yearData[year][category.id])}
                   </td>
                 ))}
               </tr>
@@ -193,7 +183,7 @@ class TaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITaxY
                 <td>{category.name}</td>
                 {years.map((year) => (
                   <td key={year} className={bs.textEnd}>
-                    {this.renderCategoryBalance(data.yearData[year][category.id])}
+                    {renderCategoryBalance(data.yearData[year][category.id])}
                   </td>
                 ))}
               </tr>
@@ -221,87 +211,38 @@ class TaxYearDepositsReport extends Component<ITaxYearDepositsReportProps, ITaxY
     );
   }
 
-  private renderCategoryBalance(balance: IDetailedCategoryBalance): ReactNode {
-    if (!balance) {
-      return null;
-    }
+  return (
+    <>
+      <PageHeader>
+        <h2>Tax Year Deposits</h2>
+      </PageHeader>
 
-    const inc = balance.balanceIn;
-    const dec = balance.balanceOut;
+      <PageOptions>
+        <CheckboxBtn
+          text={"Split Values"}
+          checked={splitValues}
+          onChange={setSplitValues}
+          btnProps={{
+            className: combine(bs.btnOutlineInfo, bs.btnSm),
+          }}
+        />
 
-    if (this.state.splitValues) {
-      return (
-        <>
-          {inc === 0 ? <>&nbsp;</> : formatCurrencyStyled(inc)}
-          <br />
-          {dec === 0 ? <>&nbsp;</> : formatCurrencyStyled(dec)}
-        </>
-      );
-    } else {
-      return <>{formatCurrencyStyled(inc + dec)}</>;
-    }
-  }
+        <DateModeToggleBtn
+          value={dateMode}
+          onChange={setDateMode}
+          btnProps={{
+            className: combine(bs.btnOutlineInfo, bs.btnSm),
+          }}
+        />
 
-  private handleDateModeChange(dateMode: DateModeOption): void {
-    this.setState({ dateMode });
-  }
+        <hr />
 
-  private handleSplitValueChange(splitValues: boolean): void {
-    this.setState({ splitValues });
-  }
+        {renderAccountTagChooser()}
+      </PageOptions>
 
-  private handleAccountTagChange(checked: boolean, accountTag: string): void {
-    if (checked) {
-      this.setState({ accountTag: accountTag as AccountTag });
-    }
-  }
-
-  private fetchData(): void {
-    const { dateMode, accountTag } = this.state;
-
-    this.setState({ loading: true });
-    const frame = ++this.frameCounter;
-
-    axios
-      .get("/api/reports/tax-year-deposits/data", {
-        params: { dateMode, accountTag },
-      })
-      .then((res: AxiosResponse<ITaxYearDepositsData>) => mapTaxYearDepositsDataFromApi(res.data))
-      .then((res) => this.onDataLoaded(frame, res))
-      .catch(() => this.onDataLoadFailed(frame));
-  }
-
-  private onFrameReceived(frame: number): void {
-    this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
-  }
-
-  private onDataLoaded(frame: number, rawData: ITaxYearDepositsData): void {
-    if (frame <= this.lastFrameReceived) {
-      return;
-    }
-
-    this.onFrameReceived(frame);
-
-    this.setState({
-      loading: false,
-      failed: false,
-      data: rawData,
-    });
-  }
-
-  private onDataLoadFailed(frame: number): void {
-    if (frame <= this.lastFrameReceived) {
-      return;
-    }
-
-    this.onFrameReceived(frame);
-
-    this.setState({
-      loading: false,
-      failed: true,
-      data: undefined,
-    });
-  }
+      <Card>{renderResults()}</Card>
+    </>
+  );
 }
 
 export { TaxYearDepositsReport };
