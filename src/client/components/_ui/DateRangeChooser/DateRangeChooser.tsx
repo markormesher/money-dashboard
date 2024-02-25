@@ -119,7 +119,11 @@ function DateRangeChooser(props: DateRangeChooserProps): React.ReactElement {
                 icon={"check"}
                 text={"OK"}
                 onClick={() => {
-                  if (customRange.startDate && customRange.endDate && customRangeValidationResult.isValid) {
+                  if (
+                    customRange.startDate !== undefined &&
+                    customRange.endDate !== undefined &&
+                    customRangeValidationResult.isValid
+                  ) {
                     setUsingCustomRange(true);
                     setChooserOpen(false);
                     onValueChange?.(customRange.startDate, customRange.endDate);
@@ -142,7 +146,7 @@ function DateRangeChooser(props: DateRangeChooserProps): React.ReactElement {
                 onClick={() => {
                   setUsingCustomRange(false);
                   setChooserOpen(false);
-                  if (dr.startDate && dr.endDate) {
+                  if (dr.startDate !== undefined && dr.endDate !== undefined) {
                     onValueChange?.(dr.startDate, dr.endDate);
                   }
                 }}

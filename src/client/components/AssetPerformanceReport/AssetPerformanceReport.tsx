@@ -1,11 +1,12 @@
 import axios from "axios";
 import * as React from "react";
 import { subYears, startOfDay, endOfDay } from "date-fns";
+import { Chart } from "chart.js/auto";
 import { IAssetPerformanceData } from "../../../models/IAssetPerformanceData";
 import { DateModeOption } from "../../../models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatCurrency, formatPercent, formatDate, formatCurrencyForStat } from "../../helpers/formatters";
+import { formatCurrency, formatCurrencyForStat, formatPercent } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import * as styles from "../_commons/reports/Reports.scss";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
@@ -13,15 +14,16 @@ import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
-import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/LineChart";
 import { Card } from "../_ui/Card/Card";
 import { AccountApi } from "../../api/accounts";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
+import { ChartCanvas } from "../charts/chart-canvas";
 
 function AssetPerformanceReport(): React.ReactElement {
   const lastFrameRequested = React.useRef(0);
+  const chart = React.useRef<Chart>(null);
 
   const [startDate, setStartDate] = React.useState(startOfDay(subYears(new Date(), 1)).getTime());
   const [endDate, setEndDate] = React.useState(endOfDay(new Date()).getTime());
@@ -66,6 +68,27 @@ function AssetPerformanceReport(): React.ReactElement {
         setData(res.data);
         setLoading(false);
         setFailed(false);
+
+        if (chart.current) {
+          chart.current.data = {
+            labels: res.data.dataInclGrowth.map((d) => d.x),
+            datasets: [
+              {
+                borderWidth: 2,
+                pointStyle: false,
+                label: "Including Growth",
+                data: res.data.dataInclGrowth.map((d) => d.y),
+              },
+              {
+                borderWidth: 2,
+                pointStyle: false,
+                label: "Excluding Growth",
+                data: res.data.dataExclGrowth.map((d) => d.y),
+              },
+            ],
+          };
+          chart.current.update();
+        }
       })
       .catch((err) => {
         if (thisFrame < lastFrameRequested.current) {
@@ -184,65 +207,45 @@ function AssetPerformanceReport(): React.ReactElement {
       return <p>Chart failed to load. Please try again.</p>;
     }
 
-    const exclGrowthSeriesProps: Omit<ILineChartSeries, "dataPoints"> = {
-      label: "Excluding Growth",
-      strokeClass: styles.seriesStrokeBlue,
-    };
-    const inclGrowthSeriesProps: Omit<ILineChartSeries, "dataPoints"> = {
-      label: "Including Growth",
-      strokeClass: styles.seriesStrokeRed,
-    };
-
-    let series: ILineChartSeries[];
-
-    if (data) {
-      series = [
-        {
-          ...exclGrowthSeriesProps,
-          dataPoints: data.dataExclGrowth,
-        },
-        {
-          ...inclGrowthSeriesProps,
-          dataPoints: data.dataInclGrowth,
-        },
-      ];
-    } else {
-      series = [
-        {
-          ...exclGrowthSeriesProps,
-          dataPoints: [
-            { x: startDate, y: 0 },
-            { x: endDate, y: 0 },
-          ],
-        },
-        {
-          ...inclGrowthSeriesProps,
-          dataPoints: [
-            { x: startDate, y: 0 },
-            { x: endDate, y: 0 },
-          ],
-        },
-      ];
-    }
-
-    const chartProps: ILineChartProps = {
-      series,
-      yAxisProperties: {
-        forcedValues: [0],
-        valueRenderer: data?.zeroBasis && data?.showAsPercent ? (v): string => formatPercent(v * 100) : formatCurrency,
-      },
-      xAxisProperties: {
-        valueRenderer: formatDate,
-        forceAxisRangeToBeExact: true,
-      },
-    };
-
     return (
       <div className={bs.row}>
         <div className={combine(bs.col12)}>
           <Card>
             <div className={combine(styles.chartContainer, bs.mb3, loading && gs.loading)}>
-              <LineChart {...chartProps} />
+              <ChartCanvas
+                chartRef={chart}
+                initConfig={{
+                  options: {
+                    scales: {
+                      y: {
+                        ticks: {
+                          callback: (v) =>
+                            zeroBasis && showAsPercent
+                              ? formatPercent(parseFloat("" + v) * 100)
+                              : formatCurrency(parseFloat("" + v)),
+                        },
+                      },
+                    },
+                    plugins: {
+                      legend: {
+                        display: true,
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: (ctx) => {
+                            return (
+                              " " +
+                              (zeroBasis && showAsPercent
+                                ? formatPercent(ctx.parsed.y * 100)
+                                : formatCurrency(ctx.parsed.y))
+                            );
+                          },
+                        },
+                      },
+                    },
+                  },
+                }}
+              />
             </div>
           </Card>
         </div>

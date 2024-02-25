@@ -1,25 +1,27 @@
 import axios from "axios";
 import * as React from "react";
 import { subYears, startOfDay, endOfDay } from "date-fns";
+import { Chart } from "chart.js/auto";
 import { IBalanceHistoryData } from "../../../models/IBalanceHistoryData";
 import { DateModeOption } from "../../../models/ITransaction";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatCurrency, formatCurrencyForStat, formatDate } from "../../helpers/formatters";
+import { formatCurrencyForStat, formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import * as styles from "../_commons/reports/Reports.scss";
 import { DateModeToggleBtn } from "../_ui/DateModeToggleBtn/DateModeToggleBtn";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { RelativeChangeIcon } from "../_ui/RelativeChangeIcon/RelativeChangeIcon";
-import { LineChart, ILineChartSeries, ILineChartProps } from "../_ui/LineChart/LineChart";
 import { Card } from "../_ui/Card/Card";
 import { PageHeader } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
+import { ChartCanvas } from "../charts/chart-canvas";
 
 function BalanceHistoryReport(): React.ReactElement {
   const lastFrameRequested = React.useRef(0);
+  const chart = React.useRef<Chart>(null);
 
   const [startDate, setStartDate] = React.useState(startOfDay(subYears(new Date(), 1)).getTime());
   const [endDate, setEndDate] = React.useState(endOfDay(new Date()).getTime());
@@ -48,6 +50,22 @@ function BalanceHistoryReport(): React.ReactElement {
         setData(res.data);
         setLoading(false);
         setFailed(false);
+
+        if (chart.current) {
+          chart.current.data = {
+            labels: res.data.balanceDataPoints.map((d) => d.x),
+            datasets: [
+              {
+                fill: "origin",
+                borderWidth: 2,
+                pointStyle: false,
+                label: "Balance",
+                data: res.data.balanceDataPoints.map((d) => d.y),
+              },
+            ],
+          };
+          chart.current.update();
+        }
       })
       .catch((err) => {
         if (thisFrame < lastFrameRequested.current) {
@@ -55,6 +73,7 @@ function BalanceHistoryReport(): React.ReactElement {
           return;
         }
 
+        setData(undefined);
         setFailed(true);
         setLoading(false);
         globalErrorManager.emitNonFatalError("Failed to load chart data", err);
@@ -100,52 +119,12 @@ function BalanceHistoryReport(): React.ReactElement {
       return <p>Chart failed to load. Please try again.</p>;
     }
 
-    const balanceSeriesProps: Omit<ILineChartSeries, "dataPoints"> = {
-      label: "Balance",
-      strokeClass: styles.seriesStrokeBlue,
-      fillClass: styles.seriesFillBlue,
-      fillEnabled: true,
-    };
-
-    let series: ILineChartSeries[];
-
-    if (data) {
-      series = [
-        {
-          ...balanceSeriesProps,
-          dataPoints: data.balanceDataPoints,
-        },
-      ];
-    } else {
-      series = [
-        {
-          ...balanceSeriesProps,
-          dataPoints: [
-            { x: startDate, y: 0 },
-            { x: endDate, y: 0 },
-          ],
-        },
-      ];
-    }
-
-    const chartProps: ILineChartProps = {
-      series,
-      yAxisProperties: {
-        forcedValues: [0],
-        valueRenderer: formatCurrency,
-      },
-      xAxisProperties: {
-        valueRenderer: formatDate,
-        forceAxisRangeToBeExact: true,
-      },
-    };
-
     return (
       <div className={bs.row}>
         <div className={combine(bs.col12)}>
           <Card>
             <div className={combine(styles.chartContainer, bs.mb3, loading && gs.loading)}>
-              <LineChart {...chartProps} />
+              <ChartCanvas chartRef={chart} />
             </div>
           </Card>
         </div>
