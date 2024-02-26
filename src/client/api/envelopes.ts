@@ -1,11 +1,10 @@
 import axios from "axios";
-import { useState } from "react";
 import { IDate } from "../../models/IDate";
 import { IEnvelope, mapEnvelopeFromApi } from "../../models/IEnvelope";
 import { IEnvelopeAllocation } from "../../models/IEnvelopeAllocation";
 import { IEnvelopeBalance, mapEnvelopeBalanceFromApi } from "../../models/IEnvelopeBalance";
 import { IEnvelopeTransfer } from "../../models/IEnvelopeTransfer";
-import { globalErrorManager } from "../helpers/errors/error-manager";
+import { cacheWrap } from "./utils";
 
 // envelopes
 
@@ -54,27 +53,6 @@ async function cloneEnvelopeTransfers(transferIds: string[], date: IDate): Promi
   });
 }
 
-// hooks to access cached values
-
-let cachedEnvelopeList: IEnvelope[] | undefined = undefined;
-
-function useEnvelopeList(): [IEnvelope[] | undefined, () => void] {
-  const [envelopeList, setEnvelopeList] = useState<IEnvelope[] | undefined>(cachedEnvelopeList);
-
-  function refreshEnvelopeList(): void {
-    getAllEnvelopes()
-      .then((envelopes) => {
-        setEnvelopeList(envelopes);
-        cachedEnvelopeList = envelopes;
-      })
-      .catch((err) => {
-        globalErrorManager.emitNonFatalError("Failed to reload envelope list", err);
-      });
-  }
-
-  return [envelopeList, refreshEnvelopeList];
-}
-
 const EnvelopeApi = {
   saveEnvelope,
   deleteEnvelope,
@@ -85,7 +63,7 @@ const EnvelopeApi = {
   saveEnvelopeTransfer,
   deleteEnvelopeTransfer,
   cloneEnvelopeTransfers,
-  useEnvelopeList,
+  useEnvelopeList: cacheWrap("envelope-list", getAllEnvelopes),
 };
 
 export { EnvelopeApi };

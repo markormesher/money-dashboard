@@ -1,8 +1,7 @@
 import axios from "axios";
-import { useState } from "react";
 import { ICategory, mapCategoryFromApi } from "../../models/ICategory";
 import { ICategoryBalance, mapCategoryBalanceFromApi } from "../../models/ICategoryBalance";
-import { globalErrorManager } from "../helpers/errors/error-manager";
+import { cacheWrap } from "./utils";
 
 async function saveCategory(category: ICategory): Promise<void> {
   await axios.post(`/api/categories/edit/${category.id || ""}`, category);
@@ -22,33 +21,12 @@ async function getMemoCategoryBalances(): Promise<ICategoryBalance[]> {
   return res.data.map(mapCategoryBalanceFromApi);
 }
 
-// hooks to access cached values
-
-let cachedCategoryList: ICategory[] | undefined = undefined;
-
-function useCategoryList(): [ICategory[] | undefined, () => void] {
-  const [categoryList, setCategoryList] = useState<ICategory[] | undefined>(cachedCategoryList);
-
-  function refreshCategoryList(): void {
-    getAllCategories()
-      .then((categories) => {
-        setCategoryList(categories);
-        cachedCategoryList = categories;
-      })
-      .catch((err) => {
-        globalErrorManager.emitNonFatalError("Failed to reload category list", err);
-      });
-  }
-
-  return [categoryList, refreshCategoryList];
-}
-
 const CategoryApi = {
   saveCategory,
   deleteCategory,
   getAllCategories,
   getMemoCategoryBalances,
-  useCategoryList,
+  useCategoryList: cacheWrap("category-list", getAllCategories),
 };
 
 export { CategoryApi };
