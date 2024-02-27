@@ -7,17 +7,11 @@ import * as webpackHotMiddleware from "webpack-hot-middleware";
 import { isDev } from "../utils/env";
 
 function setupClientRoutes(app: Express): void {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const webpackConfig: Webpack.Configuration = require(resolve(__dirname, "..", "..", "webpack.config.js"));
-  const compiler = Webpack(webpackConfig);
-
   if (isDev()) {
-    app.use(
-      webpackDevMiddleware(compiler, {
-        publicPath: webpackConfig.output.publicPath,
-        logLevel: "warn",
-      }),
-    );
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const webpackConfig: Webpack.Configuration = require(resolve(__dirname, "..", "..", "webpack.config.js"));
+    const compiler = Webpack(webpackConfig);
+    app.use(webpackDevMiddleware(compiler));
     app.use(webpackHotMiddleware(compiler));
   } else {
     app.use(Compression());

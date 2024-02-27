@@ -1,9 +1,13 @@
-export const currency: string;
-export const currencyPence: string;
-export const bigStatHeader: string;
-export const bigStatValue: string;
-export const bigStatContext: string;
-export const loading: string;
-export const clickable: string;
-export const bottomBorder: string;
-export const bottomTop: string;
+type Styles = {
+  currency: string;
+  currencyPence: string;
+  bigStatHeader: string;
+  bigStatValue: string;
+  bigStatContext: string;
+  loading: string;
+  clickable: string;
+  bottomBorder: string;
+  bottomTop: string;
+};
+declare const styles: Styles;
+export = styles;

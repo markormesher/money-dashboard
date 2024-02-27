@@ -1,4 +1,5 @@
 import { GLOBAL_MIN_DATE } from "../../utils/dates";
+import { IDate } from "../IDate";
 
 interface IDateValidationResult {
   readonly isValid: boolean;
@@ -7,13 +8,13 @@ interface IDateValidationResult {
   };
 }
 
-function validateDate(date: number): IDateValidationResult {
+function validateDate(date: IDate): IDateValidationResult {
   let result: IDateValidationResult = {
     isValid: true,
     errors: {},
   };
 
-  if (!date) {
+  if (!date || !date.date) {
     result = {
       isValid: false,
       errors: {
@@ -23,7 +24,7 @@ function validateDate(date: number): IDateValidationResult {
     };
   }
 
-  if (date < GLOBAL_MIN_DATE) {
+  if (date && date.date && date.date < GLOBAL_MIN_DATE) {
     result = {
       isValid: false,
       errors: {

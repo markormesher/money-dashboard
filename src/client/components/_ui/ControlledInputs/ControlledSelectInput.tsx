@@ -1,67 +1,41 @@
 import * as React from "react";
-import { FormEvent, PureComponent, ReactElement, ReactNode, SelectHTMLAttributes } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 
-interface IControlledSelectInputProps {
+type ControlledSelectInputProps = {
   readonly id: string;
-  readonly label: string | ReactElement<void>;
+  readonly label: string | React.ReactElement<void>;
   readonly value: string;
   readonly onValueChange: (newValue: string, id: string) => void;
   readonly disabled?: boolean;
   readonly error?: string;
-  readonly selectProps?: Partial<SelectHTMLAttributes<HTMLSelectElement>>;
-}
+  readonly selectProps?: Partial<React.SelectHTMLAttributes<HTMLSelectElement>>;
+};
 
-interface IControlledSelectInputState {
-  readonly hasBeenTouched: boolean;
-}
+function ControlledSelectInput(props: React.PropsWithChildren<ControlledSelectInputProps>): React.ReactElement {
+  const { id, label, value, onValueChange, disabled, error, selectProps } = props;
+  const [touched, setTouched] = React.useState(false);
 
-class ControlledSelectInput extends PureComponent<IControlledSelectInputProps, IControlledSelectInputState> {
-  public constructor(props: IControlledSelectInputProps) {
-    super(props);
-    this.state = {
-      hasBeenTouched: false,
-    };
-
-    this.handleBlur = this.handleBlur.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  public render(): ReactNode {
-    const { id, label, value, disabled, error, selectProps } = this.props;
-    const { hasBeenTouched } = this.state;
-    return (
-      <>
-        <label htmlFor={id} className={bs.formLabel}>
-          {label}
-        </label>
-        <select
-          id={id}
-          name={id}
-          onChange={this.handleChange}
-          disabled={disabled !== false}
-          className={combine(bs.formControl, hasBeenTouched && error && bs.isInvalid)}
-          value={value}
-          onBlur={this.handleBlur}
-          {...selectProps}
-        >
-          {this.props.children}
-        </select>
-        {error && hasBeenTouched && <div className={bs.invalidFeedback}>{error}</div>}
-      </>
-    );
-  }
-
-  private handleBlur(): void {
-    this.setState({
-      hasBeenTouched: true,
-    });
-  }
-
-  private handleChange(event: FormEvent<HTMLSelectElement>): void {
-    this.props.onValueChange((event.target as HTMLSelectElement).value, this.props.id);
-  }
+  return (
+    <>
+      <label htmlFor={id} className={bs.formLabel}>
+        {label}
+      </label>
+      <select
+        id={id}
+        name={id}
+        onChange={(evt) => onValueChange(evt.target.value, id)}
+        disabled={disabled !== false}
+        className={combine(bs.formControl, touched && error && bs.isInvalid)}
+        value={value}
+        onBlur={() => setTouched(true)}
+        {...selectProps}
+      >
+        {props.children}
+      </select>
+      {error && touched && <div className={bs.invalidFeedback}>{error}</div>}
+    </>
+  );
 }
 
 export { ControlledSelectInput };

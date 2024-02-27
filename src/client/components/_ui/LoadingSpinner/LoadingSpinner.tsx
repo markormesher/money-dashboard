@@ -1,26 +1,22 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
+import { combine } from "../../../helpers/style-helpers";
 import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
 
-interface ILoadingSpinnerProps {
+type LoadingSpinnerProps = {
   readonly centre?: boolean;
-}
+};
 
-class LoadingSpinner extends PureComponent<ILoadingSpinnerProps> {
-  public render(): ReactNode {
-    const spinner = (
-      <span style={{ fontSize: "2rem" }}>
-        <MaterialIcon icon={"hourglass_empty"} spin={true} />
-      </span>
-    );
+function LoadingSpinner(props: LoadingSpinnerProps): React.ReactElement {
+  const { centre } = props;
 
-    if (this.props.centre) {
-      return <div className={bs.textCenter}>{spinner}</div>;
-    } else {
-      return spinner;
-    }
-  }
+  const spinner = (
+    <span style={{ fontSize: "2rem" }} className={bs.textMuted}>
+      <MaterialIcon icon={"hourglass_empty"} spin={true} />
+    </span>
+  );
+
+  return <div className={combine(centre && bs.textCenter, bs.mb3)}>{spinner}</div>;
 }
 
 export { LoadingSpinner };

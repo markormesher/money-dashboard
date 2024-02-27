@@ -1,1 +1,5 @@
-export const chooser: string;
+type Styles = {
+  chooser: string;
+};
+declare const styles: Styles;
+export = styles;

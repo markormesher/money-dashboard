@@ -1,3 +1,7 @@
-export const card: string;
-export const cardHeader: string;
-export const cardBody: string;
+type Styles = {
+  card: string;
+  cardHeader: string;
+  cardBody: string;
+};
+declare const styles: Styles;
+export = styles;

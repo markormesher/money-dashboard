@@ -1,4 +1,8 @@
-export const suggestionWrapper: string;
-export const active: string;
-export const overflow: string;
-export const highlight: string;
+type Styles = {
+  suggestionWrapper: string;
+  active: string;
+  overflow: string;
+  highlight: string;
+};
+declare const styles: Styles;
+export = styles;

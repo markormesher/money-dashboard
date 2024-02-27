@@ -1,15 +1,14 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import * as style from "./Nav.scss";
 
-interface INavSectionProps {
+type NavSectionProps = {
   readonly title?: string;
-}
+};
 
-export class NavSection extends PureComponent<INavSectionProps> {
-  private static sectionHeaderClasses = combine(
+function NavSection(props: React.PropsWithChildren<NavSectionProps>): React.ReactElement {
+  const sectionHeaderClasses = combine(
     bs.alignItemsCenter,
     bs.justifyContentBetween,
     bs.dFlex,
@@ -19,15 +18,14 @@ export class NavSection extends PureComponent<INavSectionProps> {
     style.navSectionHeading,
   );
 
-  private static linkGroupClasses = combine(bs.nav, bs.flexColumn);
+  const linkGroupClasses = combine(bs.nav, bs.flexColumn);
 
-  public render(): ReactNode {
-    return (
-      <div>
-        {this.props.title && <h6 className={NavSection.sectionHeaderClasses}>{this.props.title}</h6>}
-
-        <ul className={NavSection.linkGroupClasses}>{this.props.children}</ul>
-      </div>
-    );
-  }
+  return (
+    <div>
+      {props.title && <h6 className={sectionHeaderClasses}>{props.title}</h6>}
+      <ul className={linkGroupClasses}>{props.children}</ul>
+    </div>
+  );
 }
+
+export { NavSection };

@@ -8,8 +8,7 @@ describe(__filename, () => {
       expect(mapProfileFromApi(null)).to.equal(undefined);
       expect(mapProfileFromApi(undefined)).to.equal(undefined);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
+      // @ts-expect-error testing wrong argument type
       expect(mapProfileFromApi("")).to.equal(undefined);
     });
 
@@ -23,8 +22,7 @@ describe(__filename, () => {
       expect(mapProfileForApi(null)).to.equal(undefined);
       expect(mapProfileForApi(undefined)).to.equal(undefined);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
+      // @ts-expect-error testing wrong argument type
       expect(mapProfileForApi("")).to.equal(undefined);
     });
 

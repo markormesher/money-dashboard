@@ -1,101 +1,82 @@
 import * as React from "react";
-import { ReactNode, Component } from "react";
-import axios from "axios";
+import { startOfDay } from "date-fns";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
-import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { IDateValidationResult, validateDate } from "../../../models/validators/DateValidator";
+import { validateDate } from "../../../models/validators/DateValidator";
+import { useModelEditingState } from "../../helpers/state-hooks";
+import { IDate } from "../../../models/IDate";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
+import { EnvelopeApi } from "../../api/envelopes";
 
 type EnvelopeTransferCloneModalProps = {
-  readonly onCancel: () => void;
-  readonly onSave: () => void;
   readonly transferIdsToClone: string[];
+  readonly onCancel: () => void;
+  readonly onComplete: () => void;
 };
 
-type EnvelopeTransferCloneModalState = {
-  readonly editorBusy: boolean;
+function EnvelopeTransferCloneModal(props: EnvelopeTransferCloneModalProps): React.ReactElement {
+  // state
+  const { onCancel, onComplete, transferIdsToClone } = props;
+  const [currentValues, validationResult, updateModel] = useModelEditingState<IDate>(
+    { date: startOfDay(new Date()).getTime() },
+    validateDate,
+  );
+  const [editorBusy, setEditorBusy] = React.useState(false);
 
-  readonly newDate: number;
-  readonly validationResult: IDateValidationResult;
-};
-
-class EnvelopeTransferCloneModal extends Component<EnvelopeTransferCloneModalProps, EnvelopeTransferCloneModalState> {
-  constructor(props: EnvelopeTransferCloneModalProps) {
-    super(props);
-    const newDate = new Date().getTime();
-    this.state = {
-      editorBusy: false,
-      newDate,
-      validationResult: validateDate(newDate),
-    };
-
-    this.handleDateChange = this.handleDateChange.bind(this);
-    this.handleSave = this.handleSave.bind(this);
-  }
-
-  public render(): ReactNode {
-    const { editorBusy, newDate, validationResult } = this.state;
-    const { transferIdsToClone } = this.props;
-
-    const errors = validationResult.errors || {};
-
-    const modalBtns: IModalBtn[] = [
-      {
-        type: ModalBtnType.CANCEL,
-        onClick: this.props.onCancel,
-      },
-      {
-        type: ModalBtnType.SAVE,
-        disabled: !validationResult.isValid,
-        onClick: this.handleSave,
-      },
-    ];
-
-    return (
-      <Modal
-        title={`Clone ${transferIdsToClone.length} Transfer${transferIdsToClone.length !== 1 ? "s" : ""}`}
-        buttons={modalBtns}
-        modalBusy={editorBusy}
-        onCloseRequest={this.props.onCancel}
-      >
-        <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.row}>
-            <div className={combine(bs.col, bs.mb3)}>
-              <ControlledDateInput
-                id={"date"}
-                label={"Date"}
-                value={formatDate(newDate, "system") || ""}
-                disabled={editorBusy}
-                error={errors.date}
-                onValueChange={this.handleDateChange}
-              />
-            </div>
-          </div>
-        </ControlledForm>
-      </Modal>
-    );
-  }
-
-  private handleDateChange(value: number): void {
-    this.setState({
-      newDate: value,
-      validationResult: validateDate(value),
-    });
-  }
-
-  private async handleSave(): Promise<void> {
-    const { transferIdsToClone } = this.props;
-    const { newDate } = this.state;
-    if (this.state.validationResult.isValid) {
-      // AFTER-REFACTOR: error handling
-      this.setState({ editorBusy: true });
-      await axios.post("/api/envelope-transfers/clone", { envelopeTransferIds: transferIdsToClone, date: newDate });
-      this.props.onSave();
+  // form actions
+  async function cloneTransfers(): Promise<void> {
+    setEditorBusy(true);
+    try {
+      await EnvelopeApi.cloneEnvelopeTransfers(transferIdsToClone, currentValues);
+      onComplete();
+    } catch (error) {
+      globalErrorManager.emitNonFatalError("Failed to clone transfers", error);
+      setEditorBusy(false);
     }
   }
+
+  // ui
+  const modalBtns: ModalBtn[] = [
+    {
+      type: ModalBtnType.CANCEL,
+      onClick: onCancel,
+    },
+    {
+      type: ModalBtnType.SAVE,
+      disabled: !validationResult.isValid,
+      onClick: cloneTransfers,
+    },
+  ];
+
+  const errors = validationResult.errors || {};
+
+  return (
+    <Modal
+      title={`Clone ${transferIdsToClone.length} Transfer${transferIdsToClone.length !== 1 ? "s" : ""}`}
+      buttons={modalBtns}
+      modalBusy={editorBusy}
+      onCloseRequest={onCancel}
+    >
+      <ControlledForm onSubmit={cloneTransfers}>
+        <div className={bs.row}>
+          <div className={combine(bs.col, bs.mb3)}>
+            <ControlledDateInput
+              id={"date"}
+              label={"Date"}
+              value={formatDate(currentValues.date, "system") || ""}
+              disabled={editorBusy}
+              error={errors.date}
+              onValueChange={(date) => updateModel({ date })}
+            />
+          </div>
+        </div>
+      </ControlledForm>
+    </Modal>
+  );
 }
 
 export { EnvelopeTransferCloneModal };

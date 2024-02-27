@@ -1,2 +1,6 @@
-export const modalDialog: string;
-export const modalFooter: string;
+type Styles = {
+  modalDialog: string;
+  modalFooter: string;
+};
+declare const styles: Styles;
+export = styles;

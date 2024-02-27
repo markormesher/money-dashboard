@@ -1,6 +1,4 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
-import axios from "axios";
 import { IEnvelopeBalance } from "../../../models/IEnvelopeBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
@@ -8,83 +6,64 @@ import { formatCurrency } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { Card } from "../_ui/Card/Card";
-import { mapEnvelopeFromApi } from "../../../models/IEnvelope";
+import { EnvelopeApi } from "../../api/envelopes";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
 import * as styles from "./DashboardEnvelopeList.scss";
 
-/*
- * NOTE: this component works very differently to the other components (i.e. gets rid of most of the Redux nonsense).
- * The app will gradually be re-written to get rid of some of the over-use of Redux. This component is the first to be written
- * like this because there was no point writing it in the old style only to re-write it shortly after.
- */
+function DashboardEnvelopeList(): React.ReactElement | null {
+  const [envelopeBalances, setEnvelopeBalances] = React.useState<IEnvelopeBalance[]>();
+  React.useEffect(() => {
+    EnvelopeApi.getEnvelopeBalancess()
+      .then(setEnvelopeBalances)
+      .catch((err) => {
+        globalErrorManager.emitNonFatalError("Failed to load envelope balances", err);
+        setEnvelopeBalances([]);
+      });
+  }, []);
 
-type DashboardEnvelopeListState = {
-  readonly envelopeBalances: IEnvelopeBalance[];
-};
-
-class DashboardEnvelopeList extends PureComponent<unknown, DashboardEnvelopeListState> {
-  constructor(props: unknown) {
-    super(props);
-
-    this.state = { envelopeBalances: null };
+  if (envelopeBalances == undefined) {
+    return <LoadingSpinner centre={true} />;
+  } else if (envelopeBalances.length <= 1) {
+    // just 1 = only unallocated funds
+    return null;
   }
 
-  public async componentDidMount(): Promise<void> {
-    // get data
-    const response = await axios.get("/api/envelopes/balances");
-    const raw: IEnvelopeBalance[] = response.data;
-    const envelopeBalances = raw.map((rawItem) => ({
-      ...rawItem,
-      envelope: mapEnvelopeFromApi(rawItem.envelope),
-    }));
-    this.setState({ envelopeBalances });
-  }
+  const allocatedBalances = envelopeBalances.filter((b) => b.envelope != null);
+  allocatedBalances.sort((a, b) => a.envelope.name.localeCompare(b.envelope.name));
 
-  public render(): ReactNode {
-    const { envelopeBalances } = this.state;
-    if (envelopeBalances == null) {
-      return <LoadingSpinner centre={true} />;
-    } else if (envelopeBalances.length == 1) {
-      // just 1 = only unallocated funds
-      return null;
-    }
+  const unallocatedBalance = envelopeBalances.filter((b) => b.envelope == null)[0];
 
-    const allocatedBalances = envelopeBalances.filter((b) => b.envelope != null);
-    allocatedBalances.sort((a, b) => a.envelope.name.localeCompare(b.envelope.name));
-
-    const unallocatedBalance = envelopeBalances.filter((b) => b.envelope == null)[0];
-
-    return (
-      <Card title={"Envelope Balances"} icon={"mail"}>
-        <div className={bs.row}>
-          {allocatedBalances.map((envelopeBalance) => (
-            <div
-              key={envelopeBalance.envelope.id}
-              className={combine(bs.col12, bs.colSm6, bs.colMd4, styles.envelopeBalance)}
-            >
-              <p>
-                <strong>{envelopeBalance.envelope.name}</strong>
-              </p>
-              <p className={combine(gs.currency, envelopeBalance.balance < 0 && bs.textDanger)}>
-                {formatCurrency(envelopeBalance.balance)}
-              </p>
-            </div>
-          ))}
-          {unallocatedBalance.balance == 0 ? null : (
-            <div className={combine(bs.col12, bs.colSm6, bs.colMd4, styles.envelopeBalance)}>
-              <p>
-                <strong>
-                  <i>Unallocated funds</i>
-                </strong>
-              </p>
-              <p className={combine(gs.currency, unallocatedBalance.balance < 0 && bs.textDanger)}>
-                <i>{formatCurrency(unallocatedBalance.balance)}</i>
-              </p>
-            </div>
-          )}
-        </div>
-      </Card>
-    );
-  }
+  return (
+    <Card title={"Envelope Balances"} icon={"mail"}>
+      <div className={bs.row}>
+        {allocatedBalances.map((envelopeBalance) => (
+          <div
+            key={envelopeBalance.envelope.id}
+            className={combine(bs.col12, bs.colSm6, bs.colMd4, styles.envelopeBalance)}
+          >
+            <p>
+              <strong>{envelopeBalance.envelope.name}</strong>
+            </p>
+            <p className={combine(gs.currency, envelopeBalance.balance < 0 && bs.textDanger)}>
+              {formatCurrency(envelopeBalance.balance)}
+            </p>
+          </div>
+        ))}
+        {unallocatedBalance.balance == 0 ? null : (
+          <div className={combine(bs.col12, bs.colSm6, bs.colMd4, styles.envelopeBalance)}>
+            <p>
+              <strong>
+                <i>Unallocated funds</i>
+              </strong>
+            </p>
+            <p className={combine(gs.currency, unallocatedBalance.balance < 0 && bs.textDanger)}>
+              <i>{formatCurrency(unallocatedBalance.balance)}</i>
+            </p>
+          </div>
+        )}
+      </div>
+    </Card>
+  );
 }
 
 export { DashboardEnvelopeList };

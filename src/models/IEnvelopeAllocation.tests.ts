@@ -12,8 +12,7 @@ describe(__filename, () => {
       expect(mapEnvelopeAllocationFromApi(null)).to.equal(undefined);
       expect(mapEnvelopeAllocationFromApi(undefined)).to.equal(undefined);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
+      // @ts-expect-error testing wrong argument type
       expect(mapEnvelopeAllocationFromApi("")).to.equal(undefined);
     });
 
@@ -29,8 +28,7 @@ describe(__filename, () => {
       expect(mapEnvelopeAllocationForApi(null)).to.equal(undefined);
       expect(mapEnvelopeAllocationForApi(undefined)).to.equal(undefined);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
+      // @ts-expect-error testing wrong argument type
       expect(mapEnvelopeAllocationForApi("")).to.equal(undefined);
     });
 

@@ -1,31 +1,26 @@
 const { resolve, join } = require("path");
-const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const WebpackNodeExternals = require("webpack-node-externals");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const TerserWebpackPlugin = require("terser-webpack-plugin");
 const webpack = require("webpack");
 
 const notFalse = (val) => val !== false;
-const nodeEnv = process.env.NODE_ENV.toLowerCase();
-const IS_TEST = nodeEnv === "test";
-const IS_PROD = nodeEnv === "production";
-const IS_DEV = nodeEnv === "development";
 
-if (!IS_TEST && !IS_PROD && !IS_DEV) {
-  throw new Error("NODE_ENV was not set to one of test, production or development (it was '" + nodeEnv + "'");
+const nodeEnv = process.env.NODE_ENV.toLowerCase();
+if (nodeEnv != "production" && nodeEnv != "development") {
+  throw new Error(`NODE_ENV was not set to one of 'production' or 'development' (it was '${nodeEnv}')`);
 }
 
-const outputDir = resolve(__dirname, "build", "client");
-const entryPoints = IS_TEST
-  ? glob.sync("./src/client/**/*.tests.{ts,tsx}")
-  : resolve(__dirname, "src", "client", "index.tsx");
+let entryPoints;
+if (nodeEnv == "development") {
+  entryPoints = ["webpack-hot-middleware/client?reload=true", resolve(__dirname, "src", "client", "index.tsx")];
+} else {
+  entryPoints = resolve(__dirname, "src", "client", "index.tsx");
+}
 
 const babelLoader = {
   loader: "babel-loader",
   options: {
     cacheDirectory: true,
-    plugins: [IS_TEST && "istanbul", "@babel/plugin-syntax-dynamic-import", "date-fns"].filter(notFalse),
+    plugins: ["@babel/plugin-syntax-dynamic-import", "date-fns"],
     presets: [
       [
         "@babel/preset-env",
@@ -42,73 +37,19 @@ const babelLoader = {
   },
 };
 
-const tsLoader = {
-  loader: "ts-loader",
-  options: {
-    transpileOnly: true,
-    configFile: IS_TEST ? "tsconfig.test-client.json" : "tsconfig.json",
-    compilerOptions: {
-      module: "esnext",
-    },
-  },
-};
-
-const typedCssLoader = {
-  loader: "typings-for-css-modules-loader",
-  options: {
-    camelCase: "only",
-    modules: true,
-    namedExport: true,
-    sourceMap: IS_DEV,
-    localIdentName: IS_PROD ? "[hash:base64:5]" : "[name]_[local]_[hash:base64:5]",
-  },
-};
-
-const terserMinimiser = new TerserWebpackPlugin({
-  parallel: true,
-  terserOptions: {
-    cache: true,
-    ecma: 6,
-    toplevel: true,
-    module: true,
-    sourceMap: false,
-    compress: {
-      drop_console: true,
-    },
-    mangle: {
-      toplevel: true,
-    },
-  },
-});
-
 const config = {
-  mode: IS_PROD ? "production" : "development",
-  cache: false,
+  mode: nodeEnv,
   target: "web",
   entry: entryPoints,
   output: {
-    publicPath: "/",
-    path: outputDir,
-    filename: "[name].js",
-
-    // used in development mode only
-    hotUpdateMainFilename: "hot-update.[hash:6].json",
-    hotUpdateChunkFilename: "hot-update.[hash:6].js",
-  },
-  externals: [IS_TEST && WebpackNodeExternals()].filter(notFalse),
-  node: {
-    fs: "empty",
-    __filename: true,
-    __dirname: true,
+    filename: "main.js",
+    path: resolve(__dirname, "build", "client"),
   },
   module: {
-    // in test mode, disable this warning
-    exprContextCritical: !IS_TEST,
-
     rules: [
       {
         test: /\.ts(x?)$/,
-        use: [babelLoader, tsLoader],
+        use: [babelLoader, "ts-loader"],
         exclude: /node_modules/,
       },
       {
@@ -128,33 +69,58 @@ const config = {
       {
         test: /\.(s?)css$/,
         exclude: /node_modules/,
-        use: [IS_PROD ? MiniCssExtractPlugin.loader : "style-loader", typedCssLoader, "sass-loader"],
+        use: [
+          {
+            loader: "style-loader",
+            options: {
+              esModule: false,
+            },
+          },
+          {
+            loader: "dts-css-modules-loader",
+            options: {
+              customTypings: (classes) => {
+                let content = "type Styles = {\n";
+                for (const c of classes) {
+                  content += `  ${c}: string;\n`;
+                }
+                content += "};\n";
+                content += "declare const styles: Styles;\n";
+                content += "export = styles;\n";
+                return content;
+              },
+            },
+          },
+          {
+            loader: "css-loader",
+            options: {
+              modules: {
+                exportLocalsConvention: "camelCaseOnly",
+                localIdentName: "[name]__[local]",
+              },
+            },
+          },
+          "sass-loader",
+        ],
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2)$/,
-        loader: "file-loader",
+        type: "asset/resource",
+        dependency: { not: ["url"] },
       },
     ],
   },
-  devtool: IS_PROD ? false : "cheap-module-eval-source-map",
+  devtool: nodeEnv == "development" ? "source-map" : false,
   plugins: [
-    new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
-    new webpack.EnvironmentPlugin(["NODE_ENV"]),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    !IS_TEST &&
-      new HtmlWebpackPlugin({
-        template: resolve(__dirname, "src", "client", "index.html"),
-        inject: true,
-        hash: IS_DEV,
-        minify: IS_PROD,
-        alwaysWriteToDisk: IS_DEV,
-      }),
-    IS_PROD &&
-      new MiniCssExtractPlugin({
-        minimize: true,
-        filename: "[name].css",
-      }),
-    // IS_DEV && new webpack.HotModuleReplacementPlugin(),
+    new webpack.IgnorePlugin({
+      resourceRegExp: /^\.\/locale$/,
+      contextRegExp: /moment$/,
+    }),
+    new HtmlWebpackPlugin({
+      template: resolve(__dirname, "src", "client", "index.html"),
+      publicPath: "/",
+    }),
+    nodeEnv == "development" && new webpack.HotModuleReplacementPlugin(),
   ].filter(notFalse),
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
@@ -164,40 +130,6 @@ const config = {
       typeorm: resolve(__dirname, "node_modules/typeorm/typeorm-model-shim"),
     },
   },
-  optimization: {
-    minimize: IS_PROD,
-    minimizer: IS_PROD ? [terserMinimiser] : [],
-    namedModules: IS_DEV,
-    splitChunks: !IS_TEST && {
-      chunks: "all",
-      maxInitialRequests: Infinity,
-      minSize: 0,
-      cacheGroups: {
-        // bundle dependencies and global styles separately so they can be cached for longer
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: (module) =>
-            "npm~" +
-            module
-              .identifier()
-              .match(/\/node_modules\/((@.*?\/.*?)|(.*?))[/]/)[1]
-              .replace("/", "~")
-              .replace("@", ""),
-        },
-        globalStyles: {
-          test: /[\\/]global-styles[\\/]/,
-          name: (m) => {
-            const resource = m.resource || m.issuer.resource;
-            return "style~" + resource.match(/\/global-styles\/(.*?)\.(s?)css/)[1].toLowerCase();
-          },
-        },
-      },
-    },
-  },
-  performance: {
-    hints: false,
-  },
-  stats: "minimal",
 };
 
 module.exports = config;

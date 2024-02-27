@@ -1,13 +1,7 @@
 import { IProfile } from "../IProfile";
+import { IValidationResult } from "./IValidationResult";
 
-interface IProfileValidationResult {
-  readonly isValid: boolean;
-  readonly errors: {
-    readonly name?: string;
-  };
-}
-
-function validateProfile(profile: IProfile): IProfileValidationResult {
+function validateProfile(profile: IProfile): IValidationResult<IProfile> {
   if (!profile) {
     return {
       isValid: false,
@@ -15,7 +9,7 @@ function validateProfile(profile: IProfile): IProfileValidationResult {
     };
   }
 
-  let result: IProfileValidationResult = {
+  let result: IValidationResult<IProfile> = {
     isValid: true,
     errors: {},
   };
@@ -33,4 +27,4 @@ function validateProfile(profile: IProfile): IProfileValidationResult {
   return result;
 }
 
-export { IProfileValidationResult, validateProfile };
+export { validateProfile };

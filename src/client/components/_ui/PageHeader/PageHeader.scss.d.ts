@@ -1,2 +1,6 @@
-export const pageHeader: string;
-export const actions: string;
+type Styles = {
+  pageHeader: string;
+  actions: string;
+};
+declare const styles: Styles;
+export = styles;

@@ -1,8 +1,20 @@
-import { ICategory } from "./ICategory";
+import { ICategory, mapCategoryFromApi } from "./ICategory";
 
 interface ICategoryBalance {
   readonly category: ICategory;
   readonly balance: number;
 }
 
-export { ICategoryBalance };
+function mapCategoryBalanceFromApi(categoryBalance?: ICategoryBalance): ICategoryBalance {
+  if (!categoryBalance) {
+    return undefined;
+  }
+
+  return {
+    ...categoryBalance,
+
+    category: mapCategoryFromApi(categoryBalance.category),
+  };
+}
+
+export { ICategoryBalance, mapCategoryBalanceFromApi };

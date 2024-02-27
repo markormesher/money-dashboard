@@ -1,77 +1,35 @@
 import * as React from "react";
-import { PureComponent, ReactElement, ReactNode } from "react";
-import { connect } from "react-redux";
-import { AnyAction, Dispatch } from "redux";
-import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { IBudget, mapBudgetFromApi } from "../../../models/IBudget";
+import { ReactElement, useState } from "react";
+import { DEFAULT_BUDGET, IBudget, mapBudgetFromApi } from "../../../models/IBudget";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatBudgetPeriod, formatCurrencyStyled, generateBudgetTypeBadge } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import {
-  BudgetCacheKeys,
-  setBudgetCloneInProgress,
-  setBudgetToEdit,
-  setDisplayCurrentOnly,
-  startDeleteBudget,
-  toggleBudgetToClone,
-} from "../../redux/budgets";
-import { IRootState } from "../../redux/root";
 import { CheckboxBtn } from "../_ui/CheckboxBtn/CheckboxBtn";
 import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
 import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataTableDataProvider";
-import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
+import { DataTable, Column } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { KeyShortcut } from "../_ui/KeyShortcut/KeyShortcut";
-import { BudgetCloneModal } from "../BudgetCloneModal/BudgetCloneModal";
 import { BudgetEditModal } from "../BudgetEditModal/BudgetEditModal";
 import { PageHeader, PageHeaderActions } from "../_ui/PageHeader/PageHeader";
 import { PageOptions } from "../_ui/PageOptions/PageOptions";
 import { Card } from "../_ui/Card/Card";
-import { IProfileAwareProps, mapStateToProfileAwareProps } from "../../redux/profiles";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
+import { useNonceState } from "../../helpers/state-hooks";
+import { BudgetApi } from "../../api/budgets";
+import { BudgetCloneModal } from "../BudgetCloneModal/BudgetCloneModal";
 
-interface IBudgetsPageProps extends IProfileAwareProps {
-  readonly cacheTime: number;
-  readonly displayCurrentOnly: boolean;
-  readonly budgetToEdit?: IBudget;
-  readonly budgetIdsToClone?: string[];
-  readonly budgetCloneInProgress?: boolean;
-  readonly actions?: {
-    readonly deleteBudget: (budget: IBudget) => AnyAction;
-    readonly setDisplayCurrentOnly: (active: boolean) => AnyAction;
-    readonly setBudgetToEdit: (budget: IBudget) => AnyAction;
-    readonly toggleBudgetToClone: (budgetId: string) => AnyAction;
-    readonly setBudgetCloneInProgress: (inProgress: boolean) => AnyAction;
-  };
-}
+function BudgetsPage(): ReactElement {
+  // state
+  const [nonce, updateNonce] = useNonceState();
+  const [budgetToEdit, setBudgetToEdit] = useState<IBudget>();
+  const [showCurrentOnly, setShowCurrentOnly] = useState(true);
+  const [budgetIdsToClone, setBudgetIdToClone] = useState<string[]>([]);
+  const [showCloneModal, setShowCloneModal] = useState(false);
 
-function mapStateToProps(state: IRootState, props: IBudgetsPageProps): IBudgetsPageProps {
-  return {
-    ...mapStateToProfileAwareProps(state),
-    ...props,
-    cacheTime: CacheKeyUtil.getKeyTime(BudgetCacheKeys.BUDGET_DATA),
-    displayCurrentOnly: state.budgets.displayCurrentOnly,
-    budgetToEdit: state.budgets.budgetToEdit,
-    budgetIdsToClone: state.budgets.budgetIdsToClone,
-    budgetCloneInProgress: state.budgets.budgetCloneInProgress,
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch, props: IBudgetsPageProps): IBudgetsPageProps {
-  return {
-    ...props,
-    actions: {
-      deleteBudget: (budget): AnyAction => dispatch(startDeleteBudget(budget)),
-      setDisplayCurrentOnly: (active): AnyAction => dispatch(setDisplayCurrentOnly(active)),
-      setBudgetToEdit: (budget): AnyAction => dispatch(setBudgetToEdit(budget)),
-      toggleBudgetToClone: (budgetId): AnyAction => dispatch(toggleBudgetToClone(budgetId)),
-      setBudgetCloneInProgress: (inProgress): AnyAction => dispatch(setBudgetCloneInProgress(inProgress)),
-    },
-  };
-}
-
-class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
-  private tableColumns: IColumn[] = [
+  // data table
+  const tableColumns: Column[] = [
     {
       title: "Name",
       sortField: "category.name",
@@ -102,121 +60,44 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
     },
   ];
 
-  private dataProvider = new ApiDataTableDataProvider<IBudget>(
+  const dataProvider = new ApiDataTableDataProvider<IBudget>(
     "/api/budgets/table-data",
     () => ({
-      cacheTime: this.props.cacheTime,
-      currentOnly: this.props.displayCurrentOnly,
+      nonce,
+      currentOnly: showCurrentOnly,
     }),
     mapBudgetFromApi,
   );
 
-  constructor(props: IBudgetsPageProps) {
-    super(props);
-
-    this.tableRowRenderer = this.tableRowRenderer.bind(this);
-    this.generateActionButtons = this.generateActionButtons.bind(this);
-    this.startBudgetCreation = this.startBudgetCreation.bind(this);
-    this.handleCloneCheckedChange = this.handleCloneCheckedChange.bind(this);
-    this.startCloneOnSelectedBudgets = this.startCloneOnSelectedBudgets.bind(this);
-  }
-
-  public render(): ReactNode {
-    const {
-      cacheTime,
-      activeProfile,
-      budgetToEdit,
-      budgetIdsToClone,
-      budgetCloneInProgress,
-      displayCurrentOnly,
-    } = this.props;
-
-    return (
-      <>
-        {budgetToEdit !== undefined && <BudgetEditModal />}
-        {budgetCloneInProgress && <BudgetCloneModal />}
-
-        <PageHeader>
-          <h2>Budgets</h2>
-          <PageHeaderActions>
-            {budgetIdsToClone.length == 0 ? null : (
-              <IconBtn
-                icon={"content_copy"}
-                text={"Clone Selected"}
-                onClick={this.startCloneOnSelectedBudgets}
-                btnProps={{
-                  className: combine(bs.btnSm, bs.btnOutlineInfo),
-                  disabled: budgetIdsToClone.length === 0,
-                }}
-              />
-            )}
-
-            <KeyShortcut targetStr={"c"} onTrigger={this.startBudgetCreation}>
-              <IconBtn
-                icon={"add"}
-                text={"New Budget"}
-                onClick={this.startBudgetCreation}
-                btnProps={{
-                  className: combine(bs.btnSm, bs.btnSuccess),
-                }}
-              />
-            </KeyShortcut>
-          </PageHeaderActions>
-        </PageHeader>
-
-        <PageOptions>
-          <CheckboxBtn
-            text={"Current Budgets Only"}
-            checked={this.props.displayCurrentOnly}
-            onChange={this.props.actions.setDisplayCurrentOnly}
-            btnProps={{
-              className: combine(bs.btnOutlineInfo, bs.btnSm),
-            }}
-          />
-        </PageOptions>
-
-        <Card>
-          <DataTable<IBudget>
-            columns={this.tableColumns}
-            dataProvider={this.dataProvider}
-            rowRenderer={this.tableRowRenderer}
-            watchedProps={{ cacheTime, activeProfile, displayCurrentOnly }}
-          />
-        </Card>
-      </>
-    );
-  }
-
-  private tableRowRenderer(budget: IBudget): ReactElement<void> {
-    const { budgetIdsToClone } = this.props;
+  function tableRowRenderer(budget: IBudget): ReactElement<void> {
     return (
       <tr key={budget.id}>
         <td>{budget.category.name}</td>
         <td>{generateBudgetTypeBadge(budget)}</td>
         <td>{formatBudgetPeriod(budget.startDate, budget.endDate)}</td>
         <td>{formatCurrencyStyled(budget.amount)}</td>
-        <td>{this.generateActionButtons(budget)}</td>
+        <td>{generateActionButtons(budget)}</td>
         <td className={bs.textCenter}>
           <ControlledCheckboxInput
             id={budget.id}
             label={undefined}
             disabled={false}
-            checked={budgetIdsToClone.indexOf(budget.id) >= 0}
-            onCheckedChange={this.handleCloneCheckedChange}
+            checked={budgetIdsToClone.includes(budget.id)}
+            onCheckedChange={handleCloneCheckedChange}
           />
         </td>
       </tr>
     );
   }
 
-  private generateActionButtons(budget: IBudget): ReactElement<void> {
+  function generateActionButtons(budget: IBudget): ReactElement<void> {
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
           icon={"edit"}
           text={"Edit"}
           payload={budget}
-          onClick={this.props.actions.setBudgetToEdit}
+          onClick={editBudget}
           btnProps={{
             className: bs.btnOutlineDark,
             disabled: budget.category.deleted,
@@ -224,7 +105,7 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
         />
         <DeleteBtn
           payload={budget}
-          onConfirmedClick={this.props.actions.deleteBudget}
+          onConfirmedClick={deleteBudget}
           btnProps={{
             className: bs.btnOutlineDark,
           }}
@@ -233,17 +114,112 @@ class UCBudgetsPage extends PureComponent<IBudgetsPageProps> {
     );
   }
 
-  private startBudgetCreation(): void {
-    this.props.actions.setBudgetToEdit(null);
+  // budget actions
+  function createBudget(): void {
+    setBudgetToEdit(DEFAULT_BUDGET);
   }
 
-  private handleCloneCheckedChange(_: boolean, id: string): void {
-    this.props.actions.toggleBudgetToClone(id);
+  function editBudget(budget?: IBudget): void {
+    setBudgetToEdit(budget);
   }
 
-  private startCloneOnSelectedBudgets(): void {
-    this.props.actions.setBudgetCloneInProgress(true);
+  function onEditCancel(): void {
+    setBudgetToEdit(undefined);
   }
+
+  function onEditComplete(): void {
+    setBudgetToEdit(undefined);
+    updateNonce();
+  }
+
+  function onCloneCancel(): void {
+    setShowCloneModal(false);
+  }
+
+  function onCloneComplete(): void {
+    setShowCloneModal(false);
+    setBudgetIdToClone([]);
+    updateNonce();
+  }
+
+  async function deleteBudget(budget?: IBudget): Promise<void> {
+    if (!budget) {
+      return;
+    }
+
+    try {
+      await BudgetApi.deleteBudget(budget);
+      updateNonce();
+    } catch (error) {
+      globalErrorManager.emitNonFatalError("Failed to delete budget", error);
+    }
+  }
+
+  function handleCloneCheckedChange(checked: boolean, id: string): void {
+    if (checked) {
+      setBudgetIdToClone([...budgetIdsToClone, id]);
+    } else {
+      setBudgetIdToClone(budgetIdsToClone.filter((i) => i != id));
+    }
+  }
+
+  return (
+    <>
+      {budgetToEdit ? (
+        <BudgetEditModal budgetToEdit={budgetToEdit} onCancel={onEditCancel} onComplete={onEditComplete} />
+      ) : null}
+
+      {showCloneModal && budgetIdsToClone.length > 0 ? (
+        <BudgetCloneModal budgetsToClone={budgetIdsToClone} onCancel={onCloneCancel} onComplete={onCloneComplete} />
+      ) : null}
+
+      <PageHeader>
+        <h2>Budgets</h2>
+        <PageHeaderActions>
+          <IconBtn
+            icon={"content_copy"}
+            text={"Clone Selected"}
+            onClick={() => setShowCloneModal(true)}
+            btnProps={{
+              className: combine(bs.btnSm, bs.btnOutlineInfo),
+              disabled: budgetIdsToClone.length === 0,
+            }}
+          />
+
+          <KeyShortcut targetStr={"c"} onTrigger={createBudget}>
+            <IconBtn
+              icon={"add"}
+              text={"New Budget"}
+              onClick={createBudget}
+              btnProps={{
+                className: combine(bs.btnSm, bs.btnSuccess),
+              }}
+            />
+          </KeyShortcut>
+        </PageHeaderActions>
+      </PageHeader>
+
+      <PageOptions>
+        <CheckboxBtn
+          text={"Current Budgets Only"}
+          checked={showCurrentOnly}
+          onChange={(checked) => setShowCurrentOnly(checked)}
+          btnProps={{
+            className: combine(bs.btnOutlineInfo, bs.btnSm),
+          }}
+        />
+      </PageOptions>
+
+      <Card>
+        <DataTable<IBudget>
+          columns={tableColumns}
+          dataProvider={dataProvider}
+          rowRenderer={tableRowRenderer}
+          watchedProps={{ nonce, showCurrentOnly }}
+        />
+      </Card>
+    </>
+  );
 }
 
-export const BudgetsPage = connect(mapStateToProps, mapDispatchToProps)(UCBudgetsPage);
+export { BudgetsPage };

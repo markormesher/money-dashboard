@@ -1,10 +1,14 @@
-export const navbar: string;
-export const navbarContainer: string;
-export const navbarBrand: string;
-export const navToggleIcon: string;
-export const sidebar: string;
-export const sidebarSticky: string;
-export const navSectionHeading: string;
-export const navIcon: string;
-export const navLink: string;
-export const active: string;
+type Styles = {
+  navbar: string;
+  navbarContainer: string;
+  navbarBrand: string;
+  navToggleIcon: string;
+  sidebar: string;
+  sidebarSticky: string;
+  navSectionHeading: string;
+  navIcon: string;
+  navLink: string;
+  active: string;
+};
+declare const styles: Styles;
+export = styles;

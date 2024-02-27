@@ -1,60 +1,49 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
 import { formatDistanceToNow } from "date-fns";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatCurrency, formatDate } from "../../helpers/formatters";
 import { Card } from "../_ui/Card/Card";
-import { IAccount } from "../../../models/IAccount";
 import { DEFAULT_CURRENCY_CODE, CurrencyCode, getCurrency, DEFAULT_CURRENCY } from "../../../models/ICurrency";
 import { combine } from "../../helpers/style-helpers";
-import { ExchangeRateMap } from "../../../models/IExchangeRate";
-import { StockPriceMap } from "../../../models/IStockPrice";
 import { StockTicker, getStock } from "../../../models/IStock";
+import { AccountApi } from "../../api/accounts";
+import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
+import { ExchangeRateApi } from "../../api/exchange-rates";
+import { StockPriceApi } from "../../api/stock-prices";
 
-interface IDashboardRateHistoriesProps {
-  readonly accounts?: IAccount[];
-  readonly exchangeRates?: ExchangeRateMap;
-  readonly stockPrices?: StockPriceMap;
-}
+function DashboardRateHistories(): React.ReactElement | null {
+  const [accountList, refreshAccountList] = AccountApi.useAccountList();
+  const [exchangeRates, refreshExchangeRates] = ExchangeRateApi.useLatestExchangeRates();
+  const [stockPrices, refreshStockPrices] = StockPriceApi.useLatestStockPrices();
+  React.useEffect(() => {
+    refreshAccountList();
+    refreshExchangeRates();
+    refreshStockPrices();
+  }, []);
 
-class DashboardRateHistories extends PureComponent<IDashboardRateHistoriesProps> {
-  constructor(props: IDashboardRateHistoriesProps) {
-    super(props);
-    this.renderSingleCurrencyHistory = this.renderSingleCurrencyHistory.bind(this);
+  if (!accountList || !exchangeRates || !stockPrices) {
+    return <LoadingSpinner centre={true} />;
   }
 
-  public render(): ReactNode {
-    if (!this.props.accounts || !this.props.exchangeRates || !this.props.stockPrices) {
-      return null;
+  const currenciesInUse: Set<CurrencyCode> = new Set();
+  const stocksInUse: Set<StockTicker> = new Set();
+
+  accountList.forEach((a) => {
+    if (a.currencyCode != DEFAULT_CURRENCY_CODE) {
+      currenciesInUse.add(a.currencyCode);
     }
-
-    const currenciesInUse = this.props.accounts
-      .map((a) => a.currencyCode)
-      .filter((c) => c !== DEFAULT_CURRENCY_CODE)
-      .filter((c, i, a) => a.indexOf(c) === i);
-
-    const stocksInUse = this.props.accounts
-      .map((a) => a.stockTicker)
-      .filter((t) => t !== null)
-      .filter((t, i, a) => a.indexOf(t) === i);
-
-    if (!currenciesInUse.length && !stocksInUse.length) {
-      return null;
+    if (a.stockTicker != null) {
+      stocksInUse.add(a.stockTicker);
     }
+  });
 
-    return (
-      <>
-        {currenciesInUse.map((c) => this.renderSingleCurrencyHistory(c))}
-        {stocksInUse.map((s) => this.renderSingleStockHistory(s))}
-      </>
-    );
-  }
-
-  private renderSingleCurrencyHistory(currencyCode: CurrencyCode): ReactNode {
-    const exchangeRate = this.props.exchangeRates[currencyCode];
+  function renderSingleCurrencyHistory(currencyCode: CurrencyCode): React.ReactElement | null {
     const currency = getCurrency(currencyCode);
 
-    const rateAge = formatDistanceToNow(exchangeRate.updateTime);
+    const exchangeRate = exchangeRates?.[currencyCode];
+    if (!exchangeRate) {
+      return null;
+    }
 
     return (
       <div key={`history-${currencyCode}`} className={combine(bs.col12, bs.colSm6)}>
@@ -75,19 +64,25 @@ class DashboardRateHistories extends PureComponent<IDashboardRateHistoriesProps>
               {formatCurrency(1 / exchangeRate.ratePerGbp)}
             </span>
           </p>
-          <p className={bs.textMuted}>Updated {rateAge} ago</p>
+          <p className={bs.textMuted}>Updated {formatDistanceToNow(exchangeRate.updateTime)} ago</p>
         </Card>
       </div>
     );
   }
 
-  private renderSingleStockHistory(stockTicker: StockTicker): ReactNode {
+  function renderSingleStockHistory(stockTicker: StockTicker): React.ReactElement | null {
     const stock = getStock(stockTicker);
-    const stockPrice = this.props.stockPrices[stockTicker];
     const stockCurrency = getCurrency(stock.baseCurrency);
-    const exchangeRate = this.props.exchangeRates[stock.baseCurrency];
 
-    const rateDate = formatDate(stockPrice.date, "user");
+    const exchangeRate = exchangeRates?.[stock.baseCurrency];
+    if (!exchangeRate) {
+      return null;
+    }
+
+    const stockPrice = stockPrices?.[stockTicker];
+    if (!stockPrice) {
+      return null;
+    }
 
     return (
       <div key={`history-${stockTicker}`} className={combine(bs.col12, bs.colSm6)}>
@@ -105,11 +100,22 @@ class DashboardRateHistories extends PureComponent<IDashboardRateHistoriesProps>
               </span>
             )}
           </p>
-          <p className={bs.textMuted}>Close price on {rateDate}</p>
+          <p className={bs.textMuted}>Close price on {formatDate(stockPrice.date, "user")}</p>
         </Card>
       </div>
     );
   }
+
+  if (!currenciesInUse.size && !stocksInUse.size) {
+    return null;
+  }
+
+  return (
+    <div className={bs.row}>
+      {[...currenciesInUse].sort().map((c) => renderSingleCurrencyHistory(c))}
+      {[...stocksInUse].sort().map((s) => renderSingleStockHistory(s))}
+    </div>
+  );
 }
 
 export { DashboardRateHistories };

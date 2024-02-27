@@ -69,9 +69,9 @@ function mapTransactionForApi(transaction?: ITransaction): ITransaction {
 function getNextTransactionForContinuousCreation(prev: Partial<ITransaction>): ITransaction {
   return {
     ...DEFAULT_TRANSACTION,
-    transactionDate: prev.transactionDate || DEFAULT_TRANSACTION.transactionDate,
-    effectiveDate: prev.effectiveDate || DEFAULT_TRANSACTION.effectiveDate,
-    account: prev.account || DEFAULT_TRANSACTION.account,
+    transactionDate: prev.transactionDate ?? DEFAULT_TRANSACTION.transactionDate,
+    effectiveDate: prev.effectiveDate ?? DEFAULT_TRANSACTION.effectiveDate,
+    account: prev.account ?? DEFAULT_TRANSACTION.account,
   };
 }
 

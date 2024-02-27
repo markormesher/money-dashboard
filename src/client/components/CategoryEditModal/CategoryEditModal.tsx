@@ -1,198 +1,147 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
-import { connect } from "react-redux";
-import { AnyAction, Dispatch } from "redux";
+import { ReactElement, useState } from "react";
 import { DEFAULT_CATEGORY, ICategory } from "../../../models/ICategory";
-import { ICategoryValidationResult, validateCategory } from "../../../models/validators/CategoryValidator";
+import { validateCategory } from "../../../models/validators/CategoryValidator";
+import { CategoryApi } from "../../api/categories";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { setCategoryToEdit, startSaveCategory } from "../../redux/categories";
-import { IRootState } from "../../redux/root";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
+import { useModelEditingState } from "../../helpers/state-hooks";
 import { Badge } from "../_ui/Badge/Badge";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
-import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 
-interface ICategoryEditModalProps {
+type CategoryEditModalProps = {
   readonly categoryToEdit?: ICategory;
-  readonly editorBusy?: boolean;
+  readonly onCancel: () => unknown;
+  readonly onComplete: () => unknown;
+};
 
-  readonly actions?: {
-    readonly setCategoryToEdit: (category: ICategory) => AnyAction;
-    readonly startSaveCategory: (category: Partial<ICategory>) => AnyAction;
-  };
-}
+function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
+  // state
+  const { onCancel, onComplete, categoryToEdit } = props;
+  const [currentValues, validationResult, updateModel] = useModelEditingState<ICategory>(
+    categoryToEdit || DEFAULT_CATEGORY,
+    validateCategory,
+  );
+  const [editorBusy, setEditorBusy] = useState(false);
 
-interface ICategoryEditModalState {
-  readonly currentValues: ICategory;
-  readonly validationResult: ICategoryValidationResult;
-}
-
-function mapStateToProps(state: IRootState, props: ICategoryEditModalProps): ICategoryEditModalProps {
-  return {
-    ...props,
-    categoryToEdit: state.categories.categoryToEdit,
-    editorBusy: state.categories.editorBusy,
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch, props: ICategoryEditModalProps): ICategoryEditModalProps {
-  return {
-    ...props,
-    actions: {
-      setCategoryToEdit: (category): AnyAction => dispatch(setCategoryToEdit(category)),
-      startSaveCategory: (category): AnyAction => dispatch(startSaveCategory(category)),
-    },
-  };
-}
-
-class UCCategoryEditModal extends PureComponent<ICategoryEditModalProps, ICategoryEditModalState> {
-  constructor(props: ICategoryEditModalProps) {
-    super(props);
-    const categoryToEdit = props.categoryToEdit || DEFAULT_CATEGORY;
-    this.state = {
-      currentValues: categoryToEdit,
-      validationResult: validateCategory(categoryToEdit),
-    };
-
-    this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleTypeCheckedChange = this.handleTypeCheckedChange.bind(this);
-    this.handleSave = this.handleSave.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
-    this.updateModel = this.updateModel.bind(this);
-  }
-
-  public render(): ReactNode {
-    const { editorBusy } = this.props;
-    const { currentValues, validationResult } = this.state;
-    const errors = validationResult.errors || {};
-
-    const modalBtns: IModalBtn[] = [
-      {
-        type: ModalBtnType.CANCEL,
-        onClick: this.handleCancel,
-      },
-      {
-        type: ModalBtnType.SAVE,
-        disabled: !validationResult.isValid,
-        onClick: this.handleSave,
-      },
-    ];
-
-    return (
-      <Modal
-        title={currentValues.id ? "Edit Category" : "Create Category"}
-        buttons={modalBtns}
-        modalBusy={editorBusy}
-        onCloseRequest={this.handleCancel}
-      >
-        <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.mb3}>
-            <ControlledTextInput
-              id={"name"}
-              label={"Name"}
-              placeholder={"Category Name"}
-              value={currentValues.name}
-              onValueChange={this.handleNameChange}
-              disabled={editorBusy}
-              error={errors.name}
-              inputProps={{
-                autoFocus: true,
-              }}
-            />
-          </div>
-          <div className={bs.mb3}>
-            <label className={bs.formLabel}>Type</label>
-            <div className={bs.row}>
-              <div className={bs.col}>
-                <ControlledCheckboxInput
-                  id={"type-income"}
-                  label={<Badge className={bs.bgSuccess}>Income</Badge>}
-                  checked={currentValues.isIncomeCategory}
-                  disabled={editorBusy}
-                  onCheckedChange={this.handleTypeCheckedChange}
-                />
-              </div>
-              <div className={bs.col}>
-                <ControlledCheckboxInput
-                  id={"type-expense"}
-                  label={<Badge className={bs.bgDanger}>Expense</Badge>}
-                  checked={currentValues.isExpenseCategory}
-                  disabled={editorBusy}
-                  onCheckedChange={this.handleTypeCheckedChange}
-                />
-              </div>
-            </div>
-            <div className={bs.row}>
-              <div className={bs.col}>
-                <ControlledCheckboxInput
-                  id={"type-asset"}
-                  label={<Badge className={bs.bgWarning}>Asset Growth</Badge>}
-                  checked={currentValues.isAssetGrowthCategory}
-                  disabled={editorBusy}
-                  onCheckedChange={this.handleTypeCheckedChange}
-                />
-              </div>
-              <div className={bs.col}>
-                <ControlledCheckboxInput
-                  id={"type-memo"}
-                  label={<Badge className={bs.bgInfo}>Memo</Badge>}
-                  checked={currentValues.isMemoCategory}
-                  disabled={editorBusy}
-                  onCheckedChange={this.handleTypeCheckedChange}
-                />
-              </div>
-            </div>
-          </div>
-        </ControlledForm>
-      </Modal>
-    );
-  }
-
-  private handleNameChange(value: string): void {
-    this.updateModel({ name: value });
-  }
-
-  private handleTypeCheckedChange(checked: boolean, id: string): void {
+  // form actions
+  function handleTypeCheckedChange(checked: boolean, id: string): void {
     switch (id) {
       case "type-income":
-        this.updateModel({ isIncomeCategory: checked });
+        updateModel({ isIncomeCategory: checked });
         break;
 
       case "type-expense":
-        this.updateModel({ isExpenseCategory: checked });
+        updateModel({ isExpenseCategory: checked });
         break;
 
       case "type-asset":
-        this.updateModel({ isAssetGrowthCategory: checked });
+        updateModel({ isAssetGrowthCategory: checked });
         break;
 
       case "type-memo":
-        this.updateModel({ isMemoCategory: checked });
+        updateModel({ isMemoCategory: checked });
         break;
     }
   }
 
-  private handleSave(): void {
-    if (this.state.validationResult.isValid) {
-      this.props.actions.startSaveCategory(this.state.currentValues);
+  async function saveCategory(): Promise<void> {
+    setEditorBusy(true);
+    try {
+      await CategoryApi.saveCategory(currentValues);
+      onComplete();
+    } catch (error) {
+      globalErrorManager.emitNonFatalError("Failed to save category", error);
+      setEditorBusy(false);
     }
   }
 
-  private handleCancel(): void {
-    this.props.actions.setCategoryToEdit(undefined);
-  }
+  // ui
+  const modalBtns: ModalBtn[] = [
+    {
+      type: ModalBtnType.CANCEL,
+      onClick: onCancel,
+    },
+    {
+      type: ModalBtnType.SAVE,
+      disabled: !validationResult.isValid,
+      onClick: saveCategory,
+    },
+  ];
 
-  private updateModel(category: Partial<ICategory>): void {
-    const updatedCategory = {
-      ...this.state.currentValues,
-      ...category,
-    };
-    this.setState({
-      currentValues: updatedCategory,
-      validationResult: validateCategory(updatedCategory),
-    });
-  }
+  const errors = validationResult.errors || {};
+
+  return (
+    <Modal
+      title={currentValues.id ? "Edit Category" : "Create Category"}
+      buttons={modalBtns}
+      modalBusy={editorBusy}
+      onCloseRequest={onCancel}
+    >
+      <ControlledForm onSubmit={saveCategory}>
+        <div className={bs.mb3}>
+          <ControlledTextInput
+            id={"name"}
+            label={"Name"}
+            placeholder={"Category Name"}
+            value={currentValues.name}
+            onValueChange={(name) => updateModel({ name })}
+            disabled={editorBusy}
+            error={errors.name}
+            inputProps={{
+              autoFocus: true,
+            }}
+          />
+        </div>
+        <div className={bs.mb3}>
+          <label className={bs.formLabel}>Type</label>
+          <div className={bs.row}>
+            <div className={bs.col}>
+              <ControlledCheckboxInput
+                id={"type-income"}
+                label={<Badge className={bs.bgSuccess}>Income</Badge>}
+                checked={currentValues.isIncomeCategory}
+                disabled={editorBusy}
+                onCheckedChange={handleTypeCheckedChange}
+              />
+            </div>
+            <div className={bs.col}>
+              <ControlledCheckboxInput
+                id={"type-expense"}
+                label={<Badge className={bs.bgDanger}>Expense</Badge>}
+                checked={currentValues.isExpenseCategory}
+                disabled={editorBusy}
+                onCheckedChange={handleTypeCheckedChange}
+              />
+            </div>
+          </div>
+          <div className={bs.row}>
+            <div className={bs.col}>
+              <ControlledCheckboxInput
+                id={"type-asset"}
+                label={<Badge className={bs.bgWarning}>Asset Growth</Badge>}
+                checked={currentValues.isAssetGrowthCategory}
+                disabled={editorBusy}
+                onCheckedChange={handleTypeCheckedChange}
+              />
+            </div>
+            <div className={bs.col}>
+              <ControlledCheckboxInput
+                id={"type-memo"}
+                label={<Badge className={bs.bgInfo}>Memo</Badge>}
+                checked={currentValues.isMemoCategory}
+                disabled={editorBusy}
+                onCheckedChange={handleTypeCheckedChange}
+              />
+            </div>
+          </div>
+        </div>
+      </ControlledForm>
+    </Modal>
+  );
 }
 
-export const CategoryEditModal = connect(mapStateToProps, mapDispatchToProps)(UCCategoryEditModal);
+export { CategoryEditModal };

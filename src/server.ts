@@ -15,7 +15,7 @@ import { loadUser } from "./middleware/auth-middleware";
 import { updateLatestExchangeRates, updateNextMissingExchangeRates } from "./managers/exchange-rate-manager";
 import { updateNextMissingStockPrice, removeRandomNullStockPrices } from "./managers/stock-price-manager";
 
-(async function(): Promise<void> {
+(async function (): Promise<void> {
   let dbReady = false;
   const app = Express();
 

@@ -1,112 +1,73 @@
-// TODO: testing for connected components like this
-
-import { PureComponent, ReactNode } from "react";
 import * as React from "react";
-import { connect } from "react-redux";
-import { AnyAction, Dispatch } from "redux";
-import { IProfile } from "../../../../models/IProfile";
-import { IRootState } from "../../../redux/root";
-import {
-  startLoadProfileList,
-  startSetActiveProfile,
-  IProfileAwareProps,
-  mapStateToProfileAwareProps,
-} from "../../../redux/profiles";
 import { combine } from "../../../helpers/style-helpers";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { ButtonDropDown } from "../ButtonDropDown/ButtonDropDown";
+import { IProfile } from "../../../../models/IProfile";
+import { UserApi, ProfileApi } from "../../../api/users-and-profiles";
+import { globalErrorManager } from "../../../helpers/errors/error-manager";
+import { IUser } from "../../../../models/IUser";
 
-interface IProfileChooserProps extends IProfileAwareProps {
-  readonly profileList?: IProfile[];
-  readonly profileSwitchInProgress?: boolean;
+function ProfileChooser(): React.ReactElement | null {
+  const [currentUser, setCurrentUser] = React.useState<IUser>();
+  const [allProfiles, setAllProfiles] = React.useState<IProfile[]>();
+  const [switchInProgress, setSwitchInProgress] = React.useState(false);
+  const [chooserOpen, setChooserOpen] = React.useState(false);
 
-  readonly actions?: {
-    readonly startLoadProfileList: () => AnyAction;
-    readonly startSetActiveProfile: (profile: IProfile) => AnyAction;
-  };
-}
+  React.useEffect(() => {
+    UserApi.getCurrentUser()
+      .then(setCurrentUser)
+      .catch((err) => {
+        globalErrorManager.emitFatalError("Failed to load current user", err);
+      });
 
-interface IProfileChooserState {
-  readonly chooserOpen: boolean;
-}
+    ProfileApi.getAllProfiles()
+      .then(setAllProfiles)
+      .catch((err) => {
+        globalErrorManager.emitFatalError("Failed to load user profiles", err);
+      });
+  }, []);
 
-function mapStateToProps(state: IRootState, props: IProfileChooserProps): IProfileChooserProps {
-  return {
-    ...mapStateToProfileAwareProps(state),
-    ...props,
-    profileList: state.profiles.profileList,
-    profileSwitchInProgress: state.profiles.profileSwitchInProgress,
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch, props: IProfileChooserProps): IProfileChooserProps {
-  return {
-    ...props,
-    actions: {
-      startLoadProfileList: (): AnyAction => dispatch(startLoadProfileList()),
-      startSetActiveProfile: (profile: IProfile): AnyAction => dispatch(startSetActiveProfile(profile)),
-    },
-  };
-}
-
-class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChooserState> {
-  constructor(props: IProfileChooserProps) {
-    super(props);
-
-    this.state = {
-      chooserOpen: false,
-    };
-
-    this.renderChooser = this.renderChooser.bind(this);
-    this.handleBtnClick = this.handleBtnClick.bind(this);
-    this.handleProfileClick = this.handleProfileClick.bind(this);
+  if (!currentUser) {
+    return null;
   }
 
-  public componentDidMount(): void {
-    this.props.actions.startLoadProfileList();
+  function handleProfileChange(profileId: string): void {
+    setSwitchInProgress(true);
+    ProfileApi.setActiveProfile(profileId)
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((err) => {
+        globalErrorManager.emitFatalError("Failed to switch user profile", err);
+      });
   }
 
-  public componentDidUpdate(): void {
-    this.props.actions.startLoadProfileList();
-  }
-
-  public render(): ReactNode {
-    const { activeProfile, profileList, profileSwitchInProgress } = this.props;
-    const { chooserOpen } = this.state;
-
-    if (!activeProfile || !profileList || profileList.length == 1) {
-      return null;
+  function renderChooser(): React.ReactElement {
+    if (!allProfiles) {
+      return (
+        <div className={bs.row}>
+          <div className={bs.col}>
+            <div className={bs.btnGroupVertical}>
+              <button className={combine(bs.btn, bs.btnOutlineDark)} disabled={true}>
+                Loading...
+              </button>
+            </div>
+          </div>
+        </div>
+      );
     }
 
-    return (
-      <ButtonDropDown
-        icon={profileSwitchInProgress ? "hourglass_empty" : "group"}
-        text={activeProfile.name}
-        onBtnClick={this.handleBtnClick}
-        btnProps={{
-          className: combine(bs.btnOutlineInfo),
-        }}
-        iconProps={{
-          spin: profileSwitchInProgress,
-        }}
-        dropDownContents={chooserOpen ? this.renderChooser() : null}
-      />
-    );
-  }
-
-  private renderChooser(): ReactNode {
-    const { profileList, activeProfile } = this.props;
     return (
       <div className={bs.row}>
         <div className={bs.col}>
           <div className={bs.btnGroupVertical}>
-            {profileList.map((p) => (
+            {allProfiles.map((p) => (
               <button
                 id={`profile-option-${p.id}`}
                 key={p.id}
                 className={combine(bs.btn, bs.btnOutlineDark)}
-                onClick={this.handleProfileClick}
-                disabled={activeProfile.id == p.id}
+                onClick={() => handleProfileChange(p.id)}
+                disabled={currentUser?.activeProfile?.id == p.id}
               >
                 {p.name}
               </button>
@@ -117,16 +78,18 @@ class UCProfileChooser extends PureComponent<IProfileChooserProps, IProfileChoos
     );
   }
 
-  private handleBtnClick(): void {
-    this.setState({ chooserOpen: !this.state.chooserOpen });
-  }
-
-  private handleProfileClick(event: React.MouseEvent<HTMLButtonElement>): void {
-    const profileId = (event.target as HTMLButtonElement).id.replace("profile-option-", "");
-    const profile = this.props.profileList.find((p) => p.id === profileId);
-    this.props.actions.startSetActiveProfile(profile);
-    this.setState({ chooserOpen: false });
-  }
+  return (
+    <ButtonDropDown
+      icon={switchInProgress ? "hourglass_empty" : "group"}
+      iconProps={{ spin: switchInProgress }}
+      text={switchInProgress ? "Switching..." : currentUser.activeProfile.name}
+      onBtnClick={() => setChooserOpen(!chooserOpen)}
+      btnProps={{
+        className: combine(bs.btnOutlineInfo),
+      }}
+      dropDownContents={!switchInProgress && chooserOpen ? renderChooser() : null}
+    />
+  );
 }
 
-export const ProfileChooser = connect(mapStateToProps, mapDispatchToProps)(UCProfileChooser);
+export { ProfileChooser };

@@ -1,3 +1,7 @@
-export const accountList: string;
-export const editIcon: string;
-export const total: string;
+type Styles = {
+  accountList: string;
+  editIcon: string;
+  total: string;
+};
+declare const styles: Styles;
+export = styles;

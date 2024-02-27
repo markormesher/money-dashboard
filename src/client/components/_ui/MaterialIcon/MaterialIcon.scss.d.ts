@@ -1,2 +1,6 @@
-export const icon: string;
-export const spin: string;
+type Styles = {
+  icon: string;
+  spin: string;
+};
+declare const styles: Styles;
+export = styles;

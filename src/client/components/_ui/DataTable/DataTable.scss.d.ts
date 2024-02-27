@@ -1,9 +1,13 @@
-export const tableWrapper: string;
-export const loading: string;
-export const tableHeader: string;
-export const tableFooter: string;
-export const table: string;
-export const tableBodyWrapper: string;
-export const loadingIconWrapper: string;
-export const sortInactive: string;
-export const sortable: string;
+type Styles = {
+  tableWrapper: string;
+  loading: string;
+  tableHeader: string;
+  tableFooter: string;
+  table: string;
+  tableBodyWrapper: string;
+  loadingIconWrapper: string;
+  sortInactive: string;
+  sortable: string;
+};
+declare const styles: Styles;
+export = styles;

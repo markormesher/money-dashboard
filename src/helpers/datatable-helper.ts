@@ -11,10 +11,10 @@ function getDataForTable<T extends BaseModel>(
   preOrder?: Array<[string, "ASC" | "DESC"]>,
   postOrder?: Array<[string, "ASC" | "DESC"]>,
 ): Promise<IDataTableResponse<T>> {
-  const start = parseInt(req.query.start, 10);
-  const length = parseInt(req.query.length, 10);
+  const start = parseInt(req.query.start as string, 10);
+  const length = parseInt(req.query.length as string, 10);
 
-  const rawOrder: Array<[string, "ASC" | "DESC"]> = req.query.order;
+  const rawOrder = req.query.order as unknown as Array<[string, "ASC" | "DESC"]>;
   const order: Array<[string, "ASC" | "DESC"]> = [];
   if (preOrder) {
     preOrder.forEach((o) => order.push(o));

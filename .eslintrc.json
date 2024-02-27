@@ -1,3 +1,9 @@
 {
-  "extends": "@dragonlabs/eslint-config"
+  "extends": "@dragonlabs/eslint-config",
+  "parserOptions": {
+    "project": "./tsconfig.all.json"
+  },
+  "ignorePatterns": [
+    "src/client/**/*.scss.d.ts"
+  ]
 }

@@ -44,6 +44,10 @@ function getCurrency(currencyCode: CurrencyCode): ICurrency {
   return currency;
 }
 
+function isCurrencyCode(code: string): code is CurrencyCode {
+  return ALL_CURRENCY_CODES.some((c) => c == code);
+}
+
 export {
   CurrencyCode,
   ICurrency,
@@ -52,4 +56,5 @@ export {
   ALL_CURRENCIES,
   ALL_CURRENCY_CODES,
   getCurrency,
+  isCurrencyCode,
 };

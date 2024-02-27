@@ -1,145 +1,89 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
-import { connect } from "react-redux";
-import { AnyAction, Dispatch } from "redux";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { IDateRange } from "../../../models/IDateRange";
-import { IDateRangeValidationResult, validateDateRange } from "../../../models/validators/DateRangeValidator";
+import { validateDateRange } from "../../../models/validators/DateRangeValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
-import { setBudgetCloneInProgress, startCloneBudgets } from "../../redux/budgets";
-import { IRootState } from "../../redux/root";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
-import { IModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
+import { useModelEditingState } from "../../helpers/state-hooks";
+import { globalErrorManager } from "../../helpers/errors/error-manager";
+import { BudgetApi } from "../../api/budgets";
 
-interface IBudgetCloneModalProps {
-  readonly budgetIdsToClone?: string[];
-  readonly editorBusy?: boolean;
+type BudgetCloneModalProps = {
+  readonly budgetsToClone: string[];
+  readonly onCancel: () => unknown;
+  readonly onComplete: () => unknown;
+};
 
-  readonly actions?: {
-    readonly setBudgetCloneInProgress: (inProgress: boolean) => AnyAction;
-    readonly startCloneBudgets: (budgetIds: string[], startDate: number, endDate: number) => AnyAction;
-  };
-}
-
-interface IBudgetCloneModalState {
-  readonly currentValues: IDateRange;
-  readonly validationResult: IDateRangeValidationResult;
-}
-
-function mapStateToProps(state: IRootState, props: IBudgetCloneModalProps): IBudgetCloneModalProps {
-  return {
-    ...props,
-    budgetIdsToClone: state.budgets.budgetIdsToClone,
-    editorBusy: state.budgets.editorBusy,
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch, props: IBudgetCloneModalProps): IBudgetCloneModalProps {
-  return {
-    ...props,
-    actions: {
-      setBudgetCloneInProgress: (inProgress): AnyAction => dispatch(setBudgetCloneInProgress(inProgress)),
-      startCloneBudgets: (budgetIds, startDate, endDate): AnyAction =>
-        dispatch(startCloneBudgets(budgetIds, startDate, endDate)),
-    },
-  };
-}
-
-class UCBudgetCloneModal extends PureComponent<IBudgetCloneModalProps, IBudgetCloneModalState> {
-  constructor(props: IBudgetCloneModalProps) {
-    super(props);
-    const initialRange = {
+function BudgetCloneModal(props: BudgetCloneModalProps): React.ReactElement {
+  // state
+  const { onCancel, onComplete, budgetsToClone } = props;
+  const [currentValues, validationResult, updateModel] = useModelEditingState<IDateRange>(
+    {
       startDate: startOfMonth(new Date()).getTime(),
       endDate: endOfMonth(new Date()).getTime(),
-    };
-    this.state = {
-      currentValues: initialRange,
-      validationResult: validateDateRange(initialRange),
-    };
+    },
+    validateDateRange,
+  );
+  const [editorBusy, setEditorBusy] = React.useState(false);
 
-    this.handleDateRangeSelection = this.handleDateRangeSelection.bind(this);
-    this.handleSave = this.handleSave.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
-    this.updateModel = this.updateModel.bind(this);
-  }
-
-  public render(): ReactNode {
-    const { editorBusy, budgetIdsToClone } = this.props;
-    const { currentValues, validationResult } = this.state;
-
-    const modalBtns: IModalBtn[] = [
-      {
-        type: ModalBtnType.CANCEL,
-        onClick: this.handleCancel,
-      },
-      {
-        type: ModalBtnType.SAVE,
-        disabled: !validationResult.isValid,
-        onClick: this.handleSave,
-      },
-    ];
-
-    return (
-      <Modal
-        title={`Clone ${budgetIdsToClone.length} Budget${budgetIdsToClone.length !== 1 ? "s" : ""}`}
-        buttons={modalBtns}
-        modalBusy={editorBusy}
-        onCloseRequest={this.handleCancel}
-      >
-        <ControlledForm onSubmit={this.handleSave}>
-          <div className={bs.mb3}>
-            <label className={bs.formLabel}>Date Range</label>
-            <DateRangeChooser
-              startDate={currentValues.startDate ? currentValues.startDate : undefined}
-              endDate={currentValues.endDate ? currentValues.endDate : undefined}
-              includeYearToDatePreset={false}
-              includeAllTimePreset={false}
-              onValueChange={this.handleDateRangeSelection}
-              dropDownProps={{
-                btnProps: {
-                  className: combine(bs.btnOutlineDark, bs.btnSm, bs.formControl),
-                },
-              }}
-            />
-          </div>
-        </ControlledForm>
-      </Modal>
-    );
-  }
-
-  private handleDateRangeSelection(start: number, end: number): void {
-    this.updateModel({
-      startDate: start,
-      endDate: end,
-    });
-  }
-
-  private handleSave(): void {
-    if (this.state.validationResult.isValid) {
-      this.props.actions.startCloneBudgets(
-        this.props.budgetIdsToClone,
-        this.state.currentValues.startDate,
-        this.state.currentValues.endDate,
-      );
+  // form actions
+  async function cloneBudgets(): Promise<void> {
+    setEditorBusy(true);
+    try {
+      await BudgetApi.cloneBudgets(budgetsToClone, currentValues);
+      onComplete();
+    } catch (error) {
+      globalErrorManager.emitNonFatalError("Failed to clone budgets", error);
+      setEditorBusy(false);
     }
   }
 
-  private handleCancel(): void {
-    this.props.actions.setBudgetCloneInProgress(false);
-  }
+  // ui
+  const modalBtns: ModalBtn[] = [
+    {
+      type: ModalBtnType.CANCEL,
+      onClick: onCancel,
+    },
+    {
+      type: ModalBtnType.SAVE,
+      disabled: !validationResult.isValid,
+      onClick: cloneBudgets,
+    },
+  ];
 
-  private updateModel(range: Partial<IDateRange>): void {
-    const updatedRange = {
-      ...this.state.currentValues,
-      ...range,
-    };
-    this.setState({
-      currentValues: updatedRange,
-      validationResult: validateDateRange(updatedRange),
-    });
-  }
+  // TODO: validation errors are not shown
+
+  return (
+    <Modal
+      title={`Clone ${budgetsToClone.length} Budget${budgetsToClone.length !== 1 ? "s" : ""}`}
+      buttons={modalBtns}
+      modalBusy={editorBusy}
+      onCloseRequest={onCancel}
+    >
+      <ControlledForm onSubmit={cloneBudgets}>
+        <div className={bs.mb3}>
+          <label className={bs.formLabel}>Date Range</label>
+          <DateRangeChooser
+            startDate={currentValues.startDate ? currentValues.startDate : undefined}
+            endDate={currentValues.endDate ? currentValues.endDate : undefined}
+            includeYearToDatePreset={false}
+            includeAllTimePreset={false}
+            onValueChange={(startDate, endDate) => {
+              updateModel({ startDate, endDate });
+            }}
+            dropDownProps={{
+              btnProps: {
+                className: combine(bs.btnOutlineDark, bs.btnSm, bs.formControl),
+              },
+            }}
+          />
+        </div>
+      </ControlledForm>
+    </Modal>
+  );
 }
 
-export const BudgetCloneModal = connect(mapStateToProps, mapDispatchToProps)(UCBudgetCloneModal);
+export { BudgetCloneModal };

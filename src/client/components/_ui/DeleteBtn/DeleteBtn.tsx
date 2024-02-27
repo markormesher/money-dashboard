@@ -1,79 +1,55 @@
 import * as React from "react";
-import { PureComponent, ReactNode } from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
 
-interface IDeleteBtnProps<Payload> {
+type DeleteBtnProps<Payload> = {
   readonly timeout?: number;
   readonly payload?: Payload;
   readonly onConfirmedClick?: (payload?: Payload) => void;
   readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
-}
+};
 
-interface IDeleteBtnState {
-  readonly triggered: boolean;
-  readonly running: boolean;
-}
+function DeleteBtn<Payload>(props: DeleteBtnProps<Payload>): React.ReactElement {
+  const { btnProps, payload, timeout, onConfirmedClick } = props;
 
-class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDeleteBtnState> {
-  private triggerExpiryTimeout: NodeJS.Timer = undefined;
+  const [triggered, setTriggered] = React.useState(false);
+  const [running, setRunning] = React.useState(false);
+  const timeoutRef = React.useRef<NodeJS.Timer>();
 
-  constructor(props: IDeleteBtnProps<Payload>) {
-    super(props);
-    this.state = {
-      triggered: false,
-      running: false,
+  React.useEffect(() => {
+    return function cleanup() {
+      global.clearTimeout(timeoutRef.current);
     };
+  }, []);
 
-    this.handleClick = this.handleClick.bind(this);
-  }
+  const btnIcon = running ? "hourglass_empty" : triggered ? "warning" : "delete";
+  const btnText = running ? undefined : triggered ? "Sure?" : "Delete";
 
-  public componentWillUnmount(): void {
-    global.clearTimeout(this.triggerExpiryTimeout);
-  }
-
-  public render(): ReactNode {
-    const { btnProps, payload } = this.props;
-    const { triggered, running } = this.state;
-
-    const btnIcon = running ? "hourglass_empty" : triggered ? "warning" : "delete";
-    const btnText = running ? undefined : triggered ? "Sure?" : "Delete";
-
-    return (
-      <IconBtn<Payload>
-        icon={btnIcon}
-        text={btnText}
-        payload={payload}
-        onClick={this.handleClick}
-        btnProps={{
-          ...btnProps,
-          disabled: (btnProps && btnProps.disabled) || running,
-        }}
-        iconProps={{
-          spin: running,
-        }}
-      />
-    );
-  }
-
-  private handleClick(payload: Payload): void {
-    const { timeout, onConfirmedClick } = this.props;
-    const { triggered } = this.state;
-
+  function handleClick(payload?: Payload): void {
     if (!triggered) {
-      this.setState({ triggered: true });
-      this.triggerExpiryTimeout = global.setTimeout(() => this.setState({ triggered: false }), timeout || 2000);
+      setTriggered(true);
+      timeoutRef.current = global.setTimeout(() => setTriggered(false), timeout ?? 2000);
     } else {
-      clearTimeout(this.triggerExpiryTimeout);
-      this.setState({ running: true });
-      if (onConfirmedClick) {
-        if (payload) {
-          onConfirmedClick(payload);
-        } else {
-          onConfirmedClick();
-        }
-      }
+      clearTimeout(timeoutRef.current);
+      setRunning(true);
+      onConfirmedClick?.(payload);
     }
   }
+
+  return (
+    <IconBtn<Payload>
+      icon={btnIcon}
+      text={btnText}
+      payload={payload}
+      onClick={handleClick}
+      btnProps={{
+        ...btnProps,
+        disabled: (btnProps && btnProps.disabled) || running,
+      }}
+      iconProps={{
+        spin: running,
+      }}
+    />
+  );
 }
 
 export { DeleteBtn };

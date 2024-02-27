@@ -36,4 +36,31 @@ function groupBy<T>(
   }, empty);
 }
 
-export { getTaxYear, getTaxYearStart, getTaxYearEnd, groupBy };
+function isObject(item: unknown): boolean {
+  return item && typeof item === "object" && !Array.isArray(item);
+}
+
+function mergeDeep<T>(target: T, ...sources: (Partial<T> | undefined)[]): T {
+  if (!sources.length) {
+    return target;
+  }
+
+  const source = sources.shift();
+
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) {
+          Object.assign(target, { [key]: {} });
+        }
+        mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(target, { [key]: source[key] });
+      }
+    }
+  }
+
+  return mergeDeep(target, ...sources);
+}
+
+export { getTaxYear, getTaxYearStart, getTaxYearEnd, groupBy, mergeDeep };

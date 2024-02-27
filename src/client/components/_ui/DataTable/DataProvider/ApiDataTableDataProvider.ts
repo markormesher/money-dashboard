@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { stringify } from "qs";
 import { IDataTableResponse } from "../../../../../models/IDataTableResponse";
-import { IColumnSortEntry } from "../DataTable";
+import { ColumnSortEntry } from "../DataTable";
 import { IDataTableDataProvider } from "./IDataTableDataProvider";
 
 interface IApiParams {
@@ -9,7 +9,7 @@ interface IApiParams {
 }
 
 class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
-  private static formatOrdering(sortedColumns: IColumnSortEntry[]): string[][] {
+  private static formatOrdering(sortedColumns: ColumnSortEntry[]): string[][] {
     if (!sortedColumns) {
       return [];
     }
@@ -32,7 +32,7 @@ class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
     start: number,
     length: number,
     searchTerm?: string,
-    sortedColumns?: IColumnSortEntry[],
+    sortedColumns?: ColumnSortEntry[],
   ): Promise<IDataTableResponse<Model>> {
     const apiParams = this.apiParamProvider ? this.apiParamProvider() : {};
     return axios
