@@ -12,8 +12,8 @@ declare module "express-serve-static-core" {
 }
 
 const loadUser: RequestHandler = (req: Request, _res: Response, next: NextFunction) => {
-  const username = req.header("remote-user") ?? "mormesher";
-  const name = req.header("remote-name") ?? "Mark Ormesher";
+  const username = req.header("remote-user");
+  const name = req.header("remote-name");
   if (!username || !name) {
     logger.error("Username or name was missing from request", { headers: req.headers });
     throw new StatusError(401);
