@@ -104,7 +104,7 @@ function TransactionEditModal(props: TransactionEditModalProps): React.ReactElem
               value={formatDate(currentValues.transactionDate, "system") || ""}
               disabled={editorBusy}
               error={errors.transactionDate}
-              onValueChange={(date) => updateModel({ transactionDate: date })}
+              onValueChange={(date) => updateModel({ transactionDate: date, effectiveDate: date })}
               inputProps={{
                 autoFocus: !continuousEditing,
               }}

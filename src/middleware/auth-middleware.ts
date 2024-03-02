@@ -3,6 +3,7 @@ import { logger } from "../utils/logging";
 import { StatusError } from "../utils/StatusError";
 import { getOrCreateUserWithExternalUsername } from "../managers/user-manager";
 import { DbUser } from "../db/models/DbUser";
+import { isDev } from "../utils/env";
 
 declare module "express-serve-static-core" {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -12,8 +13,14 @@ declare module "express-serve-static-core" {
 }
 
 const loadUser: RequestHandler = (req: Request, _res: Response, next: NextFunction) => {
-  const username = req.header("remote-user");
-  const name = req.header("remote-name");
+  let username = req.header("remote-user");
+  let name = req.header("remote-name");
+
+  if (isDev()) {
+    username = username ?? "mormesher";
+    name = name ?? "Mark Ormesher";
+  }
+
   if (!username || !name) {
     logger.error("Username or name was missing from request", { headers: req.headers });
     throw new StatusError(401);
