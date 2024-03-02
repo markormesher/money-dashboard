@@ -44,7 +44,13 @@ function DashboardEnvelopeList(): React.ReactElement | null {
             <p>
               <strong>{envelopeBalance.envelope.name}</strong>
             </p>
-            <p className={combine(gs.currency, envelopeBalance.balance < 0 && bs.textDanger)}>
+            <p
+              className={combine(
+                gs.currency,
+                envelopeBalance.balance == 0 && bs.textMuted,
+                envelopeBalance.balance < 0 && bs.textDanger,
+              )}
+            >
               {formatCurrency(envelopeBalance.balance)}
             </p>
           </div>

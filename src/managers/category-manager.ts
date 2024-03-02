@@ -5,6 +5,7 @@ import { cleanUuid } from "../utils/entities";
 import { DbCategory } from "../db/models/DbCategory";
 import { DbUser } from "../db/models/DbUser";
 import { CurrencyCode } from "../models/ICurrency";
+import { roundCurrency } from "../utils/helpers";
 import { getTransactionQueryBuilder } from "./transaction-manager";
 import { getLatestExchangeRates } from "./exchange-rate-manager";
 
@@ -75,7 +76,7 @@ async function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]
     .map((category) => {
       return {
         category,
-        balance: balanceMap[category.id] || 0,
+        balance: roundCurrency(balanceMap[category.id] ?? 0),
       };
     })
     .sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance));

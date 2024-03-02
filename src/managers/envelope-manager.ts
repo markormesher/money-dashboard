@@ -7,6 +7,7 @@ import { IEnvelopeBalance } from "../models/IEnvelopeBalance";
 import { IEnvelopeAllocation } from "../models/IEnvelopeAllocation";
 import { ITransaction } from "../models/ITransaction";
 import { IEnvelope } from "../models/IEnvelope";
+import { roundCurrency } from "../utils/helpers";
 import { getAllEnvelopeAllocations } from "./envelope-allocation-manager";
 import { getTransactionQueryBuilder } from "./transaction-manager";
 import { getEnvelopeTransferQueryBuilder } from "./envelope-transfer-manager";
@@ -117,8 +118,8 @@ async function getEnvelopeBalances(user: DbUser): Promise<IEnvelopeBalance[]> {
   });
 
   // build return values and add an extra record for unallocated funds
-  const returnValue = envelopes.map((envelope) => ({ envelope, balance: balances[envelope.id] }));
-  returnValue.push({ envelope: null, balance: unallocatedBalance });
+  const returnValue = envelopes.map((envelope) => ({ envelope, balance: roundCurrency(balances[envelope.id]) }));
+  returnValue.push({ envelope: null, balance: roundCurrency(unallocatedBalance) });
   return returnValue;
 }
 

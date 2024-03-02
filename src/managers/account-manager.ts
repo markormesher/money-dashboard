@@ -6,6 +6,7 @@ import { IAccountBalanceUpdate } from "../models/IAccountBalanceUpdate";
 import { DbAccount } from "../db/models/DbAccount";
 import { DbUser } from "../db/models/DbUser";
 import { DbTransaction } from "../db/models/DbTransaction";
+import { roundCurrency } from "../utils/helpers";
 import { getTransactionQueryBuilder, saveTransaction } from "./transaction-manager";
 import { getCategoryQueryBuilder } from "./category-manager";
 
@@ -65,13 +66,13 @@ function getAccountBalances(user: DbUser): Promise<IAccountBalance[]> {
   return Promise.all([getAllAccounts(user), accountBalanceQuery]).then(([accounts, balances]) => {
     const balanceMap: { [key: string]: number } = {};
     balances.forEach((sum) => {
-      balanceMap[sum.account_id] = Math.round(sum.balance * 100) / 100;
+      balanceMap[sum.account_id] = roundCurrency(sum.balance);
     });
 
     return accounts.map((account) => {
       return {
         account,
-        balance: balanceMap[account.id] || 0,
+        balance: balanceMap[account.id] ?? 0,
       };
     });
   });

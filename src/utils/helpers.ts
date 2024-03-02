@@ -24,6 +24,10 @@ function getTaxYearEnd(startYear: number): number {
   return endOfDay(new Date(startYear + 1, APRIL_MONTH, 5)).getTime();
 }
 
+function roundCurrency(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
 function groupBy<T>(
   data: T[],
   identifier: (entity: T) => string | number,
@@ -63,4 +67,4 @@ function mergeDeep<T>(target: T, ...sources: (Partial<T> | undefined)[]): T {
   return mergeDeep(target, ...sources);
 }
 
-export { getTaxYear, getTaxYearStart, getTaxYearEnd, groupBy, mergeDeep };
+export { getTaxYear, getTaxYearStart, getTaxYearEnd, roundCurrency, groupBy, mergeDeep };
