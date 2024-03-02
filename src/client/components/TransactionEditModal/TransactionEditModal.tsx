@@ -20,7 +20,7 @@ import { TransactionApi } from "../../api/transactions";
 type TransactionEditModalProps = {
   readonly transactionToEdit?: ITransaction;
   readonly onCancel: () => unknown;
-  readonly onComplete: (transaction?: ITransaction) => unknown;
+  readonly onComplete: (transaction: ITransaction) => unknown;
 };
 
 function TransactionEditModal(props: TransactionEditModalProps): React.ReactElement {

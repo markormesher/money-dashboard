@@ -1,5 +1,6 @@
 import * as React from "react";
 import { ReactElement } from "react";
+import { flushSync } from "react-dom";
 import {
   DEFAULT_TRANSACTION,
   getNextTransactionForContinuousCreation,
@@ -138,12 +139,15 @@ function TransactionsPage(): ReactElement {
     setTransactionToEdit(undefined);
   }
 
-  function onEditComplete(transaction?: ITransaction): void {
+  function onEditComplete(transaction: ITransaction): void {
     // always close the modal to reset it
-    setTransactionToEdit(undefined);
+    // this uses flushSync to avoid the change to undefined being "lost" during batching
+    flushSync(() => {
+      setTransactionToEdit(undefined);
+    });
 
     // re-open the modal if we were creating a new one (but not if we were editing)
-    if (transaction?.id == DEFAULT_TRANSACTION.id) {
+    if (transaction.id == DEFAULT_TRANSACTION.id) {
       editTransaction(getNextTransactionForContinuousCreation(transaction));
     }
 

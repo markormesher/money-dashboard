@@ -11,12 +11,13 @@ function KeyShortcut(props: React.PropsWithChildren<KeyShortcutProps>): React.Re
 
   const latestStr = React.useRef("");
 
+  // important: we need to assign a new handler every time the onTrigger function changes, otherwise we end up calling a stale version of it
   React.useEffect(() => {
     document.addEventListener("keypress", handleKeyPress);
     return function cleanup() {
       document.removeEventListener("keypress", handleKeyPress);
     };
-  }, []);
+  }, [onTrigger]);
 
   function handleKeyPress(evt: KeyboardEvent): void {
     // ignore keypresses in inputs (apart from ctrl+enter - respond to that from anywhere)

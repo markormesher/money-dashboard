@@ -4,6 +4,7 @@ import { combine } from "../../../helpers/style-helpers";
 import { IconBtn } from "../IconBtn/IconBtn";
 import { MaterialIconName } from "../MaterialIcon/MaterialIcon";
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
+import { KeyShortcut } from "../KeyShortcut/KeyShortcut";
 import * as styles from "./Modal.scss";
 
 enum ModalBtnType {
@@ -84,13 +85,11 @@ function Modal(props: React.PropsWithChildren<ModalProps>): React.ReactElement {
     );
 
     if (btn.type == ModalBtnType.SAVE) {
-      // TODO: wrap in a key shortcut listener for ctrl+enter
-      // return (
-      //   <KeyShortcut key={btn.type.toString()} ctrlEnter={true} onTrigger={btn.onClick}>
-      //     {btnElement}
-      //   </KeyShortcut>
-      // );
-      return btnElement;
+      return (
+        <KeyShortcut key={btn.type.toString()} ctrlEnter={true} onTrigger={btn.onClick}>
+          {btnElement}
+        </KeyShortcut>
+      );
     } else {
       return btnElement;
     }
