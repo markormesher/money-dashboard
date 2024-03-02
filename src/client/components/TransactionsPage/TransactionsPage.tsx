@@ -22,6 +22,7 @@ import { DEFAULT_CURRENCY_CODE } from "../../../models/ICurrency";
 import { Badge } from "../_ui/Badge/Badge";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { useNonceState } from "../../helpers/state-hooks";
+import { TransactionApi } from "../../api/transactions";
 
 function TransactionsPage(): ReactElement {
   // state
@@ -155,7 +156,7 @@ function TransactionsPage(): ReactElement {
     }
 
     try {
-      // await TransactionApi.deleteTransaction(transaction);
+      await TransactionApi.deleteTransaction(transaction);
       updateNonce();
     } catch (error) {
       globalErrorManager.emitNonFatalError("Failed to delete transaction", error);
