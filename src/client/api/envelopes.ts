@@ -21,7 +21,7 @@ async function getAllEnvelopes(): Promise<IEnvelope[]> {
   return res.data.map(mapEnvelopeFromApi);
 }
 
-async function getEnvelopeBalancess(): Promise<IEnvelopeBalance[]> {
+async function getEnvelopeBalances(): Promise<IEnvelopeBalance[]> {
   const res = await axios.get<IEnvelopeBalance[]>("/api/envelopes/balances");
   return res.data.map(mapEnvelopeBalanceFromApi);
 }
@@ -57,13 +57,16 @@ const EnvelopeApi = {
   saveEnvelope,
   deleteEnvelope,
   getAllEnvelopes,
-  getEnvelopeBalancess,
+  getEnvelopeBalances,
   saveEnvelopeAllocation,
   deleteEnvelopeAllocation,
   saveEnvelopeTransfer,
   deleteEnvelopeTransfer,
   cloneEnvelopeTransfers,
+
+  // cached versisons
   useEnvelopeList: cacheWrap("envelope-list", getAllEnvelopes),
+  useEnvelopeBalances: cacheWrap("envelope-balances", getEnvelopeBalances),
 };
 
 export { EnvelopeApi };

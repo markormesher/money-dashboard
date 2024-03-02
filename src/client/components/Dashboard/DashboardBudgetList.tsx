@@ -9,18 +9,12 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { Card } from "../_ui/Card/Card";
 import { MaterialIconName, MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
 import { BudgetApi } from "../../api/budgets";
-import { globalErrorManager } from "../../helpers/errors/error-manager";
 import * as styles from "./DashboardBudgetList.scss";
 
 function DashboardBudgetList(): React.ReactElement {
-  const [budgetBalances, setBudgetBalances] = React.useState<IBudgetBalance[]>();
+  const [budgetBalances, refreshBudgetBalances] = BudgetApi.useBudgetBalances();
   React.useEffect(() => {
-    BudgetApi.getBudgetBalances()
-      .then(setBudgetBalances)
-      .catch((err) => {
-        globalErrorManager.emitNonFatalError("Failed to load budget balances", err);
-        setBudgetBalances([]);
-      });
+    refreshBudgetBalances();
   }, []);
 
   React.useEffect(() => {

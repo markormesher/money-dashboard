@@ -1,5 +1,4 @@
 import * as React from "react";
-import { IEnvelopeBalance } from "../../../models/IEnvelopeBalance";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatCurrency } from "../../helpers/formatters";
@@ -7,18 +6,12 @@ import { combine } from "../../helpers/style-helpers";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { Card } from "../_ui/Card/Card";
 import { EnvelopeApi } from "../../api/envelopes";
-import { globalErrorManager } from "../../helpers/errors/error-manager";
 import * as styles from "./DashboardEnvelopeList.scss";
 
 function DashboardEnvelopeList(): React.ReactElement | null {
-  const [envelopeBalances, setEnvelopeBalances] = React.useState<IEnvelopeBalance[]>();
+  const [envelopeBalances, refreshEnvelopeBalances] = EnvelopeApi.useEnvelopeBalances();
   React.useEffect(() => {
-    EnvelopeApi.getEnvelopeBalancess()
-      .then(setEnvelopeBalances)
-      .catch((err) => {
-        globalErrorManager.emitNonFatalError("Failed to load envelope balances", err);
-        setEnvelopeBalances([]);
-      });
+    refreshEnvelopeBalances();
   }, []);
 
   if (envelopeBalances == undefined) {

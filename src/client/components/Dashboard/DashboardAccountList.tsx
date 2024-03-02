@@ -13,13 +13,13 @@ import { MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
 import { ExchangeRateApi } from "../../api/exchange-rates";
 import { AccountApi } from "../../api/accounts";
 import { StockPriceApi } from "../../api/stock-prices";
-import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { useNonceState } from "../../helpers/state-hooks";
 import * as styles from "./DashboardAccountList.scss";
 import { AssetBalanceUpdateModal } from "./AssetBalanceUpdateModal";
 
 function DashboardAccountList(): React.ReactElement | null {
   const [nonce, updateNonce] = useNonceState();
+
   const [exchangeRates, refreshExchangeRates] = ExchangeRateApi.useLatestExchangeRates();
   const [stockPrices, refreshStockPrices] = StockPriceApi.useLatestStockPrices();
   React.useEffect(() => {
@@ -27,18 +27,12 @@ function DashboardAccountList(): React.ReactElement | null {
     refreshStockPrices();
   }, []);
 
-  const [accountBalances, setAccountBalances] = React.useState<IAccountBalance[]>();
+  const [accountBalances, refreshAccountBalances] = AccountApi.useAccountBalances();
   React.useEffect(() => {
-    AccountApi.getAccountBalances()
-      .then(setAccountBalances)
-      .catch((err) => {
-        globalErrorManager.emitNonFatalError("Failed to load account balances", err);
-        setAccountBalances([]);
-      });
+    refreshAccountBalances();
   }, [nonce]);
 
   const [sectionsClosed, setSectionsClosed] = React.useState<AccountType[]>([]);
-
   const [balanceToUpdate, setBalanceToUpdate] = React.useState<IAccountBalance>();
 
   if (!accountBalances || !exchangeRates || !stockPrices) {

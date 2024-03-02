@@ -1,21 +1,14 @@
 import * as React from "react";
-import { ICategoryBalance } from "../../../models/ICategoryBalance";
 import { CategoryApi } from "../../api/categories";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { formatCurrencyStyled } from "../../helpers/formatters";
 import { Card } from "../_ui/Card/Card";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 
 function DashboardAlertList(): React.ReactElement | null {
-  const [memoBalances, setMemoBalances] = React.useState<ICategoryBalance[]>();
+  const [memoBalances, refreshMemoBalances] = CategoryApi.useMemoCategoryBalances();
   React.useEffect(() => {
-    CategoryApi.getMemoCategoryBalances()
-      .then(setMemoBalances)
-      .catch((err) => {
-        globalErrorManager.emitNonFatalError("Failed to load memo category balances", err);
-        setMemoBalances([]);
-      });
+    refreshMemoBalances();
   }, []);
 
   if (!memoBalances) {

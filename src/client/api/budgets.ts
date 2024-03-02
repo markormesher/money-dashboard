@@ -2,6 +2,7 @@ import axios from "axios";
 import { IBudget, mapBudgetFromApi } from "../../models/IBudget";
 import { IBudgetBalance } from "../../models/IBudgetBalance";
 import { IDateRange } from "../../models/IDateRange";
+import { cacheWrap } from "./utils";
 
 async function saveBudget(budget: IBudget): Promise<void> {
   await axios.post(`/api/budgets/edit/${budget.id || ""}`, budget);
@@ -32,6 +33,9 @@ const BudgetApi = {
   deleteBudget,
   cloneBudgets,
   getBudgetBalances,
+
+  // cached versions
+  useBudgetBalances: cacheWrap("budget-balances", getBudgetBalances),
 };
 
 export { BudgetApi };

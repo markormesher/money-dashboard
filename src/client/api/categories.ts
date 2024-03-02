@@ -26,7 +26,10 @@ const CategoryApi = {
   deleteCategory,
   getAllCategories,
   getMemoCategoryBalances,
+
+  // cached versions
   useCategoryList: cacheWrap("category-list", getAllCategories),
+  useMemoCategoryBalances: cacheWrap("memo-category-balances", getMemoCategoryBalances),
 };
 
 export { CategoryApi };

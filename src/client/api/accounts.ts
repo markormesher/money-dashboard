@@ -33,7 +33,9 @@ const AccountApi = {
   getAccountBalances,
   updateAccountBalance,
 
+  // cached versions
   useAccountList: cacheWrap("account-list", getAllAccounts),
+  useAccountBalances: cacheWrap("account-balances", getAccountBalances),
 };
 
 export { AccountApi };
