@@ -4,7 +4,6 @@ import { IDateRange } from "../../../models/IDateRange";
 import { validateDateRange } from "../../../models/validators/DateRangeValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
-import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { DateRangeChooser } from "../_ui/DateRangeChooser/DateRangeChooser";
 import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { useModelEditingState } from "../../helpers/state-hooks";
@@ -63,25 +62,23 @@ function BudgetCloneModal(props: BudgetCloneModalProps): React.ReactElement {
       modalBusy={editorBusy}
       onCloseRequest={onCancel}
     >
-      <ControlledForm onSubmit={cloneBudgets}>
-        <div className={bs.mb3}>
-          <label className={bs.formLabel}>Date Range</label>
-          <DateRangeChooser
-            startDate={currentValues.startDate ? currentValues.startDate : undefined}
-            endDate={currentValues.endDate ? currentValues.endDate : undefined}
-            includeYearToDatePreset={false}
-            includeAllTimePreset={false}
-            onValueChange={(startDate, endDate) => {
-              updateModel({ startDate, endDate });
-            }}
-            dropDownProps={{
-              btnProps: {
-                className: combine(bs.btnOutlineDark, bs.btnSm, bs.formControl),
-              },
-            }}
-          />
-        </div>
-      </ControlledForm>
+      <div className={bs.mb3}>
+        <label className={bs.formLabel}>Date Range</label>
+        <DateRangeChooser
+          startDate={currentValues.startDate ? currentValues.startDate : undefined}
+          endDate={currentValues.endDate ? currentValues.endDate : undefined}
+          includeYearToDatePreset={false}
+          includeAllTimePreset={false}
+          onValueChange={(startDate, endDate) => {
+            updateModel({ startDate, endDate });
+          }}
+          dropDownProps={{
+            btnProps: {
+              className: combine(bs.btnOutlineDark, bs.btnSm, bs.formControl),
+            },
+          }}
+        />
+      </div>
     </Modal>
   );
 }

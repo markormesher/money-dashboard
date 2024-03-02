@@ -9,7 +9,6 @@ import {
 import { validateAccount } from "../../../models/validators/AccountValidator";
 import { ALL_CURRENCIES, DEFAULT_CURRENCY_CODE, isCurrencyCode } from "../../../models/ICurrency";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { AccountApi } from "../../api/accounts";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
@@ -110,115 +109,113 @@ function AccountEditModal(props: AccountEditModalProps): React.ReactElement {
       modalBusy={editorBusy}
       onCloseRequest={onCancel}
     >
-      <ControlledForm onSubmit={saveAccount}>
-        <div className={bs.row}>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledTextInput
-              id={"name"}
-              label={"Name"}
-              placeholder={"Account Name"}
-              value={currentValues.name}
-              onValueChange={(name) => updateModel({ name })}
-              disabled={editorBusy}
-              error={errors.name}
-              inputProps={{
-                autoFocus: true,
-              }}
-            />
-          </div>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledSelectInput
-              id="type"
-              label={"Type"}
-              value={currentValues.type}
-              onValueChange={(type) => {
-                if (isAccountType(type)) {
-                  updateModel({ type });
-                }
-              }}
-              disabled={editorBusy}
-              error={errors.type}
-            >
-              <option value={"current"}>Current Account</option>
-              <option value={"savings"}>Savings Account</option>
-              <option value={"asset"}>Asset</option>
-              <option value={"other"}>Other</option>
-            </ControlledSelectInput>
-          </div>
-        </div>
-        <div className={bs.row}>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledSelectInput
-              id={"currency"}
-              label={"Currency"}
-              value={currentValues.currencyCode}
-              onValueChange={handleCurrencyChange}
-              disabled={editorBusy || currentValues.stockTicker !== null}
-              error={errors.currencyCode}
-            >
-              {ALL_CURRENCIES.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.name}
-                </option>
-              ))}
-            </ControlledSelectInput>
-          </div>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledSelectInput
-              id={"stockTicker"}
-              label={"Stock Ticker"}
-              value={currentValues.stockTicker ?? ""}
-              onValueChange={handleStockTickerChange}
-              disabled={editorBusy}
-              error={errors.stockTicker}
-            >
-              <option value={""}>-- Select --</option>
-              {ALL_STOCKS.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
-                <option key={c.ticker} value={c.ticker}>
-                  {c.name}
-                </option>
-              ))}
-            </ControlledSelectInput>
-          </div>
-        </div>
-        <div className={bs.mb3}>
-          <label className={bs.formLabel}>Tags</label>
-          <div className={bs.row}>{tagCheckboxes}</div>
-          {errors.tags && <div className={combine(bs.invalidFeedback, bs.dBlock)}>{errors.tags}</div>}
-        </div>
-        <div className={bs.mb3}>
-          <label className={bs.formLabel}>Options</label>
-          <div className={bs.row}>
-            <div className={bs.col}>
-              <ControlledCheckboxInput
-                id={"includeInEnvelopes"}
-                label={"Include in envelope calculations?"}
-                checked={currentValues.includeInEnvelopes}
-                disabled={editorBusy}
-                onCheckedChange={(checked) => updateModel({ includeInEnvelopes: checked })}
-              />
-            </div>
-            <div className={bs.col}>
-              <ControlledCheckboxInput
-                id={"active"}
-                label={"Active?"}
-                checked={currentValues.active}
-                disabled={editorBusy}
-                onCheckedChange={(checked) => updateModel({ active: checked })}
-              />
-            </div>
-          </div>
-        </div>
-        <div className={bs.mb3}>
-          <ControlledTextArea
-            id={"note"}
-            label={"Note"}
-            value={currentValues.note}
+      <div className={bs.row}>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledTextInput
+            id={"name"}
+            label={"Name"}
+            placeholder={"Account Name"}
+            value={currentValues.name}
+            onValueChange={(name) => updateModel({ name })}
             disabled={editorBusy}
-            onValueChange={(note) => updateModel({ note })}
+            error={errors.name}
+            inputProps={{
+              autoFocus: true,
+            }}
           />
         </div>
-      </ControlledForm>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledSelectInput
+            id="type"
+            label={"Type"}
+            value={currentValues.type}
+            onValueChange={(type) => {
+              if (isAccountType(type)) {
+                updateModel({ type });
+              }
+            }}
+            disabled={editorBusy}
+            error={errors.type}
+          >
+            <option value={"current"}>Current Account</option>
+            <option value={"savings"}>Savings Account</option>
+            <option value={"asset"}>Asset</option>
+            <option value={"other"}>Other</option>
+          </ControlledSelectInput>
+        </div>
+      </div>
+      <div className={bs.row}>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledSelectInput
+            id={"currency"}
+            label={"Currency"}
+            value={currentValues.currencyCode}
+            onValueChange={handleCurrencyChange}
+            disabled={editorBusy || currentValues.stockTicker !== null}
+            error={errors.currencyCode}
+          >
+            {ALL_CURRENCIES.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.name}
+              </option>
+            ))}
+          </ControlledSelectInput>
+        </div>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledSelectInput
+            id={"stockTicker"}
+            label={"Stock Ticker"}
+            value={currentValues.stockTicker ?? ""}
+            onValueChange={handleStockTickerChange}
+            disabled={editorBusy}
+            error={errors.stockTicker}
+          >
+            <option value={""}>-- Select --</option>
+            {ALL_STOCKS.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
+              <option key={c.ticker} value={c.ticker}>
+                {c.name}
+              </option>
+            ))}
+          </ControlledSelectInput>
+        </div>
+      </div>
+      <div className={bs.mb3}>
+        <label className={bs.formLabel}>Tags</label>
+        <div className={bs.row}>{tagCheckboxes}</div>
+        {errors.tags && <div className={combine(bs.invalidFeedback, bs.dBlock)}>{errors.tags}</div>}
+      </div>
+      <div className={bs.mb3}>
+        <label className={bs.formLabel}>Options</label>
+        <div className={bs.row}>
+          <div className={bs.col}>
+            <ControlledCheckboxInput
+              id={"includeInEnvelopes"}
+              label={"Include in envelope calculations?"}
+              checked={currentValues.includeInEnvelopes}
+              disabled={editorBusy}
+              onCheckedChange={(checked) => updateModel({ includeInEnvelopes: checked })}
+            />
+          </div>
+          <div className={bs.col}>
+            <ControlledCheckboxInput
+              id={"active"}
+              label={"Active?"}
+              checked={currentValues.active}
+              disabled={editorBusy}
+              onCheckedChange={(checked) => updateModel({ active: checked })}
+            />
+          </div>
+        </div>
+      </div>
+      <div className={bs.mb3}>
+        <ControlledTextArea
+          id={"note"}
+          label={"Note"}
+          value={currentValues.note}
+          disabled={editorBusy}
+          onValueChange={(note) => updateModel({ note })}
+        />
+      </div>
     </Modal>
   );
 }

@@ -1,7 +1,6 @@
 import * as React from "react";
 import { startOfDay } from "date-fns";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
 import { formatDate } from "../../helpers/formatters";
@@ -61,20 +60,18 @@ function EnvelopeTransferCloneModal(props: EnvelopeTransferCloneModalProps): Rea
       modalBusy={editorBusy}
       onCloseRequest={onCancel}
     >
-      <ControlledForm onSubmit={cloneTransfers}>
-        <div className={bs.row}>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledDateInput
-              id={"date"}
-              label={"Date"}
-              value={formatDate(currentValues.date, "system") || ""}
-              disabled={editorBusy}
-              error={errors.date}
-              onValueChange={(date) => updateModel({ date })}
-            />
-          </div>
+      <div className={bs.row}>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledDateInput
+            id={"date"}
+            label={"Date"}
+            value={formatDate(currentValues.date, "system") || ""}
+            disabled={editorBusy}
+            error={errors.date}
+            onValueChange={(date) => updateModel({ date })}
+          />
         </div>
-      </ControlledForm>
+      </div>
     </Modal>
   );
 }

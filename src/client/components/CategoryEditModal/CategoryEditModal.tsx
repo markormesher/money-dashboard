@@ -7,7 +7,6 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { useModelEditingState } from "../../helpers/state-hooks";
 import { Badge } from "../_ui/Badge/Badge";
-import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledCheckboxInput } from "../_ui/ControlledInputs/ControlledCheckboxInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
@@ -81,65 +80,63 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
       modalBusy={editorBusy}
       onCloseRequest={onCancel}
     >
-      <ControlledForm onSubmit={saveCategory}>
-        <div className={bs.mb3}>
-          <ControlledTextInput
-            id={"name"}
-            label={"Name"}
-            placeholder={"Category Name"}
-            value={currentValues.name}
-            onValueChange={(name) => updateModel({ name })}
-            disabled={editorBusy}
-            error={errors.name}
-            inputProps={{
-              autoFocus: true,
-            }}
-          />
-        </div>
-        <div className={bs.mb3}>
-          <label className={bs.formLabel}>Type</label>
-          <div className={bs.row}>
-            <div className={bs.col}>
-              <ControlledCheckboxInput
-                id={"type-income"}
-                label={<Badge className={bs.bgSuccess}>Income</Badge>}
-                checked={currentValues.isIncomeCategory}
-                disabled={editorBusy}
-                onCheckedChange={handleTypeCheckedChange}
-              />
-            </div>
-            <div className={bs.col}>
-              <ControlledCheckboxInput
-                id={"type-expense"}
-                label={<Badge className={bs.bgDanger}>Expense</Badge>}
-                checked={currentValues.isExpenseCategory}
-                disabled={editorBusy}
-                onCheckedChange={handleTypeCheckedChange}
-              />
-            </div>
+      <div className={bs.mb3}>
+        <ControlledTextInput
+          id={"name"}
+          label={"Name"}
+          placeholder={"Category Name"}
+          value={currentValues.name}
+          onValueChange={(name) => updateModel({ name })}
+          disabled={editorBusy}
+          error={errors.name}
+          inputProps={{
+            autoFocus: true,
+          }}
+        />
+      </div>
+      <div className={bs.mb3}>
+        <label className={bs.formLabel}>Type</label>
+        <div className={bs.row}>
+          <div className={bs.col}>
+            <ControlledCheckboxInput
+              id={"type-income"}
+              label={<Badge className={bs.bgSuccess}>Income</Badge>}
+              checked={currentValues.isIncomeCategory}
+              disabled={editorBusy}
+              onCheckedChange={handleTypeCheckedChange}
+            />
           </div>
-          <div className={bs.row}>
-            <div className={bs.col}>
-              <ControlledCheckboxInput
-                id={"type-asset"}
-                label={<Badge className={bs.bgWarning}>Asset Growth</Badge>}
-                checked={currentValues.isAssetGrowthCategory}
-                disabled={editorBusy}
-                onCheckedChange={handleTypeCheckedChange}
-              />
-            </div>
-            <div className={bs.col}>
-              <ControlledCheckboxInput
-                id={"type-memo"}
-                label={<Badge className={bs.bgInfo}>Memo</Badge>}
-                checked={currentValues.isMemoCategory}
-                disabled={editorBusy}
-                onCheckedChange={handleTypeCheckedChange}
-              />
-            </div>
+          <div className={bs.col}>
+            <ControlledCheckboxInput
+              id={"type-expense"}
+              label={<Badge className={bs.bgDanger}>Expense</Badge>}
+              checked={currentValues.isExpenseCategory}
+              disabled={editorBusy}
+              onCheckedChange={handleTypeCheckedChange}
+            />
           </div>
         </div>
-      </ControlledForm>
+        <div className={bs.row}>
+          <div className={bs.col}>
+            <ControlledCheckboxInput
+              id={"type-asset"}
+              label={<Badge className={bs.bgWarning}>Asset Growth</Badge>}
+              checked={currentValues.isAssetGrowthCategory}
+              disabled={editorBusy}
+              onCheckedChange={handleTypeCheckedChange}
+            />
+          </div>
+          <div className={bs.col}>
+            <ControlledCheckboxInput
+              id={"type-memo"}
+              label={<Badge className={bs.bgInfo}>Memo</Badge>}
+              checked={currentValues.isMemoCategory}
+              disabled={editorBusy}
+              onCheckedChange={handleTypeCheckedChange}
+            />
+          </div>
+        </div>
+      </div>
     </Modal>
   );
 }

@@ -8,7 +8,6 @@ import { useModelEditingState } from "../../helpers/state-hooks";
 import { combine } from "../../helpers/style-helpers";
 import { Badge } from "../_ui/Badge/Badge";
 import { BudgetApi } from "../../api/budgets";
-import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledRadioInput } from "../_ui/ControlledInputs/ControlledRadioInput";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
@@ -76,91 +75,89 @@ function BudgetEditModal(props: BudgetEditModalProps): ReactElement {
       modalBusy={editorBusy}
       onCloseRequest={onCancel}
     >
-      <ControlledForm onSubmit={saveBudget}>
-        <div className={bs.mb3}>
-          <ControlledSelectInput
-            id={"category"}
-            label={"Category"}
-            value={currentValues.category ? currentValues.category.id : ""}
-            disabled={editorBusy || !categoryList}
-            error={errors.category}
-            onValueChange={handleCategoryChange}
-            selectProps={{
-              autoFocus: true,
+      <div className={bs.mb3}>
+        <ControlledSelectInput
+          id={"category"}
+          label={"Category"}
+          value={currentValues.category ? currentValues.category.id : ""}
+          disabled={editorBusy || !categoryList}
+          error={errors.category}
+          onValueChange={handleCategoryChange}
+          selectProps={{
+            autoFocus: true,
+          }}
+        >
+          {categoryList && <option value={""}>-- Select --</option>}
+          {categoryList &&
+            categoryList
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((c) => (
+                <option value={c.id} key={c.id}>
+                  {c.name}
+                </option>
+              ))}
+          {!categoryList && <option>Loading...</option>}
+        </ControlledSelectInput>
+      </div>
+      <div className={bs.row}>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledTextInput
+            id={"amount"}
+            label={"Amount"}
+            value={!isNaN(currentValues.amount) ? currentValues.amount : ""}
+            disabled={editorBusy}
+            error={errors.amount}
+            onValueChange={(amount) => updateModel({ amount: parseFloat(amount) })}
+            inputProps={{
+              type: "number",
+              step: "0.01",
+              min: "0",
             }}
-          >
-            {categoryList && <option value={""}>-- Select --</option>}
-            {categoryList &&
-              categoryList
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((c) => (
-                  <option value={c.id} key={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-            {!categoryList && <option>Loading...</option>}
-          </ControlledSelectInput>
+          />
         </div>
+        <div className={combine(bs.col, bs.mb3)}>
+          <label className={bs.formLabel}>Date Range</label>
+          <DateRangeChooser
+            startDate={currentValues.startDate ? currentValues.startDate : undefined}
+            endDate={currentValues.endDate ? currentValues.endDate : undefined}
+            includeYearToDatePreset={false}
+            includeAllTimePreset={false}
+            onValueChange={(startDate, endDate) => updateModel({ startDate, endDate })}
+            dropDownProps={{
+              btnProps: {
+                className: combine(bs.btnOutlineDark, bs.btnSm, bs.formControl),
+              },
+            }}
+          />
+        </div>
+      </div>
+      <div className={bs.mb3}>
+        <label className={bs.formLabel}>Type</label>
         <div className={bs.row}>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledTextInput
-              id={"amount"}
-              label={"Amount"}
-              value={!isNaN(currentValues.amount) ? currentValues.amount : ""}
+          <div className={bs.col}>
+            <ControlledRadioInput
+              id={"type-budget"}
+              name={"type"}
+              value={"budget"}
+              label={<Badge className={bs.bgInfo}>Budget</Badge>}
+              checked={currentValues.type === "budget"}
               disabled={editorBusy}
-              error={errors.amount}
-              onValueChange={(amount) => updateModel({ amount: parseFloat(amount) })}
-              inputProps={{
-                type: "number",
-                step: "0.01",
-                min: "0",
-              }}
+              onValueChange={() => updateModel({ type: "budget" })}
             />
           </div>
-          <div className={combine(bs.col, bs.mb3)}>
-            <label className={bs.formLabel}>Date Range</label>
-            <DateRangeChooser
-              startDate={currentValues.startDate ? currentValues.startDate : undefined}
-              endDate={currentValues.endDate ? currentValues.endDate : undefined}
-              includeYearToDatePreset={false}
-              includeAllTimePreset={false}
-              onValueChange={(startDate, endDate) => updateModel({ startDate, endDate })}
-              dropDownProps={{
-                btnProps: {
-                  className: combine(bs.btnOutlineDark, bs.btnSm, bs.formControl),
-                },
-              }}
+          <div className={bs.col}>
+            <ControlledRadioInput
+              id={"type-bill"}
+              name={"type"}
+              value={"bill"}
+              label={<Badge className={bs.bgWarning}>Bill</Badge>}
+              checked={currentValues.type === "bill"}
+              disabled={editorBusy}
+              onValueChange={() => updateModel({ type: "bill" })}
             />
           </div>
         </div>
-        <div className={bs.mb3}>
-          <label className={bs.formLabel}>Type</label>
-          <div className={bs.row}>
-            <div className={bs.col}>
-              <ControlledRadioInput
-                id={"type-budget"}
-                name={"type"}
-                value={"budget"}
-                label={<Badge className={bs.bgInfo}>Budget</Badge>}
-                checked={currentValues.type === "budget"}
-                disabled={editorBusy}
-                onValueChange={() => updateModel({ type: "budget" })}
-              />
-            </div>
-            <div className={bs.col}>
-              <ControlledRadioInput
-                id={"type-bill"}
-                name={"type"}
-                value={"bill"}
-                label={<Badge className={bs.bgWarning}>Bill</Badge>}
-                checked={currentValues.type === "bill"}
-                disabled={editorBusy}
-                onValueChange={() => updateModel({ type: "bill" })}
-              />
-            </div>
-          </div>
-        </div>
-      </ControlledForm>
+      </div>
     </Modal>
   );
 }

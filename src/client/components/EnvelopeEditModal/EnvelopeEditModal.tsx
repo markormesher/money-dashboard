@@ -5,7 +5,6 @@ import { EnvelopeApi } from "../../api/envelopes";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { globalErrorManager } from "../../helpers/errors/error-manager";
 import { useModelEditingState } from "../../helpers/state-hooks";
-import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 
@@ -58,22 +57,20 @@ function EnvelopeEditModal(props: EnvelopeEditModalProps): React.ReactElement {
       modalBusy={editorBusy}
       onCloseRequest={onCancel}
     >
-      <ControlledForm onSubmit={saveEnvelope}>
-        <div className={bs.mb3}>
-          <ControlledTextInput
-            id={"name"}
-            label={"Name"}
-            placeholder={"Envelope Name"}
-            value={currentValues.name}
-            onValueChange={(name) => updateModel({ name })}
-            disabled={editorBusy}
-            error={errors.name}
-            inputProps={{
-              autoFocus: true,
-            }}
-          />
-        </div>
-      </ControlledForm>
+      <div className={bs.mb3}>
+        <ControlledTextInput
+          id={"name"}
+          label={"Name"}
+          placeholder={"Envelope Name"}
+          value={currentValues.name}
+          onValueChange={(name) => updateModel({ name })}
+          disabled={editorBusy}
+          error={errors.name}
+          inputProps={{
+            autoFocus: true,
+          }}
+        />
+      </div>
     </Modal>
   );
 }

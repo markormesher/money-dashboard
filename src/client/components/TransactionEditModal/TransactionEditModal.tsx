@@ -4,7 +4,6 @@ import { validateTransaction } from "../../../models/validators/TransactionValid
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextArea } from "../_ui/ControlledInputs/ControlledTextArea";
@@ -95,121 +94,119 @@ function TransactionEditModal(props: TransactionEditModalProps): React.ReactElem
       modalBusy={editorBusy}
       onCloseRequest={onCancel}
     >
-      <ControlledForm onSubmit={saveTransaction}>
-        <div className={bs.row}>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledDateInput
-              id={"transactionDate"}
-              label={"Transaction Date"}
-              value={formatDate(currentValues.transactionDate, "system") || ""}
-              disabled={editorBusy}
-              error={errors.transactionDate}
-              onValueChange={(date) => updateModel({ transactionDate: date, effectiveDate: date })}
-              inputProps={{
-                autoFocus: !continuousEditing,
-              }}
-            />
-          </div>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledDateInput
-              id={"effectiveDate"}
-              label={"Effective Date"}
-              value={formatDate(currentValues.effectiveDate, "system") || ""}
-              disabled={editorBusy}
-              error={errors.effectiveDate}
-              onValueChange={(date) => updateModel({ effectiveDate: date })}
-              inputProps={{
-                tabIndex: -1,
-              }}
-            />
-          </div>
-        </div>
-        <div className={bs.row}>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledSelectInput
-              id={"account"}
-              label={"Account"}
-              value={currentValues.account ? currentValues.account.id : ""}
-              disabled={editorBusy || !accountList}
-              error={errors.account}
-              onValueChange={handleAccountChange}
-              selectProps={{
-                autoFocus: continuousEditing,
-              }}
-            >
-              {accountList && <option value={""}>-- Select --</option>}
-              {accountList &&
-                accountList
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((a) => (
-                    <option value={a.id} key={a.id}>
-                      {a.name}
-                    </option>
-                  ))}
-              {!accountList && <option>Loading...</option>}
-            </ControlledSelectInput>
-          </div>
-          <div className={combine(bs.col, bs.mb3)}>
-            <SuggestionTextInput
-              id={"payee"}
-              label={"Payee"}
-              value={currentValues.payee}
-              disabled={editorBusy}
-              error={errors.payee}
-              onValueChange={(payee) => updateModel({ payee })}
-              suggestionOptions={payeeList}
-            />
-          </div>
-        </div>
-        <div className={bs.row}>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledSelectInput
-              id={"category"}
-              label={"Category"}
-              value={currentValues.category ? currentValues.category.id : ""}
-              disabled={editorBusy || !categoryList}
-              error={errors.category}
-              onValueChange={handleCategoryChange}
-            >
-              {categoryList && <option value={""}>-- Select --</option>}
-              {categoryList &&
-                categoryList
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((c) => (
-                    <option value={c.id} key={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-              {!categoryList && <option>Loading...</option>}
-            </ControlledSelectInput>
-          </div>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledTextInput
-              id={"amount"}
-              label={"Amount" + (currencyNote ? ` (${currencyNote})` : "")}
-              value={!isNaN(currentValues.amount) ? currentValues.amount : ""}
-              disabled={editorBusy}
-              error={errors.amount}
-              onValueChange={(amount) => updateModel({ amount: parseFloat(amount) })}
-              inputProps={{
-                type: "number",
-                step: "0.01",
-                min: "0",
-              }}
-            />
-          </div>
-        </div>
-        <div className={bs.mb3}>
-          <ControlledTextArea
-            id={"note"}
-            label={"Note"}
-            value={currentValues.note}
+      <div className={bs.row}>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledDateInput
+            id={"transactionDate"}
+            label={"Transaction Date"}
+            value={formatDate(currentValues.transactionDate, "system") || ""}
             disabled={editorBusy}
-            error={errors.note}
-            onValueChange={(note) => updateModel({ note })}
+            error={errors.transactionDate}
+            onValueChange={(date) => updateModel({ transactionDate: date, effectiveDate: date })}
+            inputProps={{
+              autoFocus: !continuousEditing,
+            }}
           />
         </div>
-      </ControlledForm>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledDateInput
+            id={"effectiveDate"}
+            label={"Effective Date"}
+            value={formatDate(currentValues.effectiveDate, "system") || ""}
+            disabled={editorBusy}
+            error={errors.effectiveDate}
+            onValueChange={(date) => updateModel({ effectiveDate: date })}
+            inputProps={{
+              tabIndex: -1,
+            }}
+          />
+        </div>
+      </div>
+      <div className={bs.row}>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledSelectInput
+            id={"account"}
+            label={"Account"}
+            value={currentValues.account ? currentValues.account.id : ""}
+            disabled={editorBusy || !accountList}
+            error={errors.account}
+            onValueChange={handleAccountChange}
+            selectProps={{
+              autoFocus: continuousEditing,
+            }}
+          >
+            {accountList && <option value={""}>-- Select --</option>}
+            {accountList &&
+              accountList
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((a) => (
+                  <option value={a.id} key={a.id}>
+                    {a.name}
+                  </option>
+                ))}
+            {!accountList && <option>Loading...</option>}
+          </ControlledSelectInput>
+        </div>
+        <div className={combine(bs.col, bs.mb3)}>
+          <SuggestionTextInput
+            id={"payee"}
+            label={"Payee"}
+            value={currentValues.payee}
+            disabled={editorBusy}
+            error={errors.payee}
+            onValueChange={(payee) => updateModel({ payee })}
+            suggestionOptions={payeeList}
+          />
+        </div>
+      </div>
+      <div className={bs.row}>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledSelectInput
+            id={"category"}
+            label={"Category"}
+            value={currentValues.category ? currentValues.category.id : ""}
+            disabled={editorBusy || !categoryList}
+            error={errors.category}
+            onValueChange={handleCategoryChange}
+          >
+            {categoryList && <option value={""}>-- Select --</option>}
+            {categoryList &&
+              categoryList
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((c) => (
+                  <option value={c.id} key={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+            {!categoryList && <option>Loading...</option>}
+          </ControlledSelectInput>
+        </div>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledTextInput
+            id={"amount"}
+            label={"Amount" + (currencyNote ? ` (${currencyNote})` : "")}
+            value={!isNaN(currentValues.amount) ? currentValues.amount : ""}
+            disabled={editorBusy}
+            error={errors.amount}
+            onValueChange={(amount) => updateModel({ amount: parseFloat(amount) })}
+            inputProps={{
+              type: "number",
+              step: "0.01",
+              min: "0",
+            }}
+          />
+        </div>
+      </div>
+      <div className={bs.mb3}>
+        <ControlledTextArea
+          id={"note"}
+          label={"Note"}
+          value={currentValues.note}
+          disabled={editorBusy}
+          error={errors.note}
+          onValueChange={(note) => updateModel({ note })}
+        />
+      </div>
     </Modal>
   );
 }

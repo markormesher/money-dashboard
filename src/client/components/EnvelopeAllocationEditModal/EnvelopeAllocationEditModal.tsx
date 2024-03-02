@@ -2,7 +2,6 @@ import * as React from "react";
 import { IEnvelopeAllocation, DEFAULT_CATEGORY_TO_ENVELOPE_ALLOCATION } from "../../../models/IEnvelopeAllocation";
 import { validateEnvelopeAllocation } from "../../../models/validators/EnvelopeAllocationValidator";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
 import { formatDate } from "../../helpers/formatters";
@@ -80,62 +79,60 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
       modalBusy={editorBusy}
       onCloseRequest={onCancel}
     >
-      <ControlledForm onSubmit={saveEnvelopeAllocation}>
-        <div className={bs.mb3}>
-          <ControlledDateInput
-            id={"startDate"}
-            label={"Start Date"}
-            value={formatDate(currentValues.startDate, "system") || ""}
-            disabled={editorBusy}
-            error={errors.startDate}
-            onValueChange={(startDate) => updateModel({ startDate })}
-          />
+      <div className={bs.mb3}>
+        <ControlledDateInput
+          id={"startDate"}
+          label={"Start Date"}
+          value={formatDate(currentValues.startDate, "system") || ""}
+          disabled={editorBusy}
+          error={errors.startDate}
+          onValueChange={(startDate) => updateModel({ startDate })}
+        />
+      </div>
+      <div className={bs.row}>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledSelectInput
+            id={"category"}
+            label={"Category"}
+            value={currentValues.category ? currentValues.category.id : ""}
+            disabled={editorBusy || !categoryList}
+            error={errors.category}
+            onValueChange={handleCategoryChange}
+          >
+            {categoryList && <option value={""}>-- Select --</option>}
+            {categoryList &&
+              categoryList
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((c) => (
+                  <option value={c.id} key={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+            {!categoryList && <option>Loading...</option>}
+          </ControlledSelectInput>
         </div>
-        <div className={bs.row}>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledSelectInput
-              id={"category"}
-              label={"Category"}
-              value={currentValues.category ? currentValues.category.id : ""}
-              disabled={editorBusy || !categoryList}
-              error={errors.category}
-              onValueChange={handleCategoryChange}
-            >
-              {categoryList && <option value={""}>-- Select --</option>}
-              {categoryList &&
-                categoryList
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((c) => (
-                    <option value={c.id} key={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-              {!categoryList && <option>Loading...</option>}
-            </ControlledSelectInput>
-          </div>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledSelectInput
-              id={"envelope"}
-              label={"Envelope"}
-              value={currentValues.envelope ? currentValues.envelope.id : ""}
-              disabled={editorBusy || !envelopeList}
-              error={errors.envelope}
-              onValueChange={handleEnvelopeChange}
-            >
-              {envelopeList && <option value={""}>-- Select --</option>}
-              {envelopeList &&
-                envelopeList
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((c) => (
-                    <option value={c.id} key={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-              {!envelopeList && <option>Loading...</option>}
-            </ControlledSelectInput>
-          </div>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledSelectInput
+            id={"envelope"}
+            label={"Envelope"}
+            value={currentValues.envelope ? currentValues.envelope.id : ""}
+            disabled={editorBusy || !envelopeList}
+            error={errors.envelope}
+            onValueChange={handleEnvelopeChange}
+          >
+            {envelopeList && <option value={""}>-- Select --</option>}
+            {envelopeList &&
+              envelopeList
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((c) => (
+                  <option value={c.id} key={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+            {!envelopeList && <option>Loading...</option>}
+          </ControlledSelectInput>
         </div>
-      </ControlledForm>
+      </div>
     </Modal>
   );
 }

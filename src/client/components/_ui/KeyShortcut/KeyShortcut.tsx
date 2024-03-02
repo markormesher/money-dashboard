@@ -1,12 +1,13 @@
 import * as React from "react";
 
 type KeyShortcutProps = {
-  readonly targetStr: string;
-  readonly onTrigger: () => void;
+  readonly targetStr?: string;
+  readonly ctrlEnter?: boolean;
+  readonly onTrigger?: () => void;
 };
 
 function KeyShortcut(props: React.PropsWithChildren<KeyShortcutProps>): React.ReactElement {
-  const { targetStr, onTrigger } = props;
+  const { targetStr, ctrlEnter, onTrigger } = props;
 
   const latestStr = React.useRef("");
 
@@ -18,18 +19,27 @@ function KeyShortcut(props: React.PropsWithChildren<KeyShortcutProps>): React.Re
   }, []);
 
   function handleKeyPress(evt: KeyboardEvent): void {
+    // ignore keypresses in inputs (apart from ctrl+enter - respond to that from anywhere)
     const target = evt.target;
     const disallowed = [HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement];
-    if (disallowed.some((t) => target instanceof t)) {
+    if (!ctrlEnter && disallowed.some((t) => target instanceof t)) {
       return;
     }
 
-    const key = evt.key;
-    latestStr.current = (latestStr.current + key).slice(-1 * targetStr.length);
-
-    if (latestStr.current === targetStr) {
+    // detect ctrl+enter
+    if (ctrlEnter && (evt.ctrlKey || evt.metaKey) && evt.key === "Enter") {
       evt.preventDefault();
-      onTrigger();
+      onTrigger?.();
+      return;
+    }
+
+    // track the latest typed sequence
+    if (targetStr) {
+      latestStr.current = (latestStr.current + evt.key).slice(-1 * targetStr.length);
+      if (latestStr.current === targetStr) {
+        evt.preventDefault();
+        onTrigger?.();
+      }
     }
   }
 

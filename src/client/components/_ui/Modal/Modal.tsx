@@ -70,7 +70,7 @@ function Modal(props: React.PropsWithChildren<ModalProps>): React.ReactElement {
         break;
     }
 
-    return (
+    const btnElement = (
       <IconBtn
         key={btn.type.toString()}
         icon={icon}
@@ -82,6 +82,18 @@ function Modal(props: React.PropsWithChildren<ModalProps>): React.ReactElement {
         }}
       />
     );
+
+    if (btn.type == ModalBtnType.SAVE) {
+      // TODO: wrap in a key shortcut listener for ctrl+enter
+      // return (
+      //   <KeyShortcut key={btn.type.toString()} ctrlEnter={true} onTrigger={btn.onClick}>
+      //     {btnElement}
+      //   </KeyShortcut>
+      // );
+      return btnElement;
+    } else {
+      return btnElement;
+    }
   }
 
   return (

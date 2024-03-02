@@ -3,7 +3,6 @@ import { combine } from "../../helpers/style-helpers";
 import { formatDate } from "../../helpers/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { ModalBtn, Modal, ModalBtnType } from "../_ui/Modal/Modal";
-import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { IAccountBalanceUpdate } from "../../../models/IAccountBalanceUpdate";
 import { validateAccountBalanceUpdate } from "../../../models/validators/AccountBalanceUpdateValidator";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
@@ -61,35 +60,33 @@ function AssetBalanceUpdateModal(props: AssetBalanceUpdateModalProps): React.Rea
 
   return (
     <Modal title={"Update Asset Balance"} buttons={modalBtns} modalBusy={editorBusy} onCloseRequest={onCancel}>
-      <ControlledForm onSubmit={saveUpdate}>
-        <div className={bs.row}>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledDateInput
-              id={"date"}
-              label={"Date"}
-              value={formatDate(currentValues.updateDate, "system") || ""}
-              disabled={editorBusy}
-              error={errors.updateDate}
-              onValueChange={(updateDate) => updateModel({ updateDate })}
-            />
-          </div>
-          <div className={combine(bs.col, bs.mb3)}>
-            <ControlledTextInput
-              id={"balance"}
-              label={"Balance" + (currencyNote ? ` (${currencyNote})` : "")}
-              value={!isNaN(currentValues.balance) ? currentValues.balance : ""}
-              disabled={editorBusy}
-              error={errors.balance}
-              onValueChange={(amount) => updateModel({ balance: parseFloat(amount) })}
-              inputProps={{
-                type: "number",
-                step: "0.01",
-                min: "0",
-              }}
-            />
-          </div>
+      <div className={bs.row}>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledDateInput
+            id={"date"}
+            label={"Date"}
+            value={formatDate(currentValues.updateDate, "system") || ""}
+            disabled={editorBusy}
+            error={errors.updateDate}
+            onValueChange={(updateDate) => updateModel({ updateDate })}
+          />
         </div>
-      </ControlledForm>
+        <div className={combine(bs.col, bs.mb3)}>
+          <ControlledTextInput
+            id={"balance"}
+            label={"Balance" + (currencyNote ? ` (${currencyNote})` : "")}
+            value={!isNaN(currentValues.balance) ? currentValues.balance : ""}
+            disabled={editorBusy}
+            error={errors.balance}
+            onValueChange={(amount) => updateModel({ balance: parseFloat(amount) })}
+            inputProps={{
+              type: "number",
+              step: "0.01",
+              min: "0",
+            }}
+          />
+        </div>
+      </div>
     </Modal>
   );
 }
