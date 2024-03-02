@@ -142,7 +142,7 @@ function TransactionsPage(): ReactElement {
     // always close the modal to reset it
     setTransactionToEdit(undefined);
 
-    // should we re-open it?
+    // re-open the modal if we were creating a new one (but not if we were editing)
     if (transaction?.id == DEFAULT_TRANSACTION.id) {
       editTransaction(getNextTransactionForContinuousCreation(transaction));
     }
