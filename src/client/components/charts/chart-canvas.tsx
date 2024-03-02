@@ -29,7 +29,7 @@ const defaultConfig: ChartConfiguration = {
         },
       },
       y: {
-        min: 0,
+        beginAtZero: true,
         ticks: {
           callback: (v) => formatCurrency(parseFloat("" + v)),
         },
