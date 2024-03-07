@@ -10,9 +10,9 @@ import { roundCurrency } from "../utils/helpers";
 import { getTransactionQueryBuilder, saveTransaction } from "./transaction-manager";
 import { getCategoryQueryBuilder } from "./category-manager";
 
-interface IAccountQueryBuilderOptions {
+type IAccountQueryBuilderOptions = {
   readonly withProfile?: boolean;
-}
+};
 
 function getAccountQueryBuilder(options: IAccountQueryBuilderOptions = {}): SelectQueryBuilder<DbAccount> {
   let builder = DbAccount.createQueryBuilder("account");
@@ -52,7 +52,7 @@ function getAllAccounts(user: DbUser, activeOnly = true): Promise<DbAccount[]> {
 }
 
 function getAccountBalances(user: DbUser): Promise<IAccountBalance[]> {
-  const accountBalanceQuery: Promise<Array<{ account_id: string; balance: number }>> = getTransactionQueryBuilder()
+  const accountBalanceQuery: Promise<{ account_id: string; balance: number }[]> = getTransactionQueryBuilder()
     .select("transaction.account_id")
     .addSelect("SUM(transaction.amount)", "balance")
     .where("transaction.profile_id = :profileId")
@@ -64,7 +64,7 @@ function getAccountBalances(user: DbUser): Promise<IAccountBalance[]> {
     .getRawMany();
 
   return Promise.all([getAllAccounts(user), accountBalanceQuery]).then(([accounts, balances]) => {
-    const balanceMap: { [key: string]: number } = {};
+    const balanceMap: Record<string, number> = {};
     balances.forEach((sum) => {
       balanceMap[sum.account_id] = roundCurrency(sum.balance);
     });

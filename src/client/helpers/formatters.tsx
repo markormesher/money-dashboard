@@ -126,8 +126,8 @@ function formatBudgetPeriod(start: number, end: number): string {
 
 // categories
 
-function generateCategoryTypeBadge(category: ICategory): Array<ReactElement<void>> {
-  const output = [] as Array<ReactElement<void>>;
+function generateCategoryTypeBadge(category: ICategory): ReactElement<void>[] {
+  const output = [] as ReactElement<void>[];
   if (category.isAssetGrowthCategory) {
     output.push(
       <Badge key={"category-asset"} className={bs.bgWarning} marginRight={true}>

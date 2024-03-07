@@ -7,9 +7,9 @@ import { isDev } from "../utils/env";
 
 declare module "express-serve-static-core" {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  interface Request {
+  type Request = {
     user: DbUser;
-  }
+  };
 }
 
 const loadUser: RequestHandler = (req: Request, _res: Response, next: NextFunction) => {

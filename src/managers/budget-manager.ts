@@ -6,10 +6,10 @@ import { DbBudget } from "../db/models/DbBudget";
 import { DbUser } from "../db/models/DbUser";
 import { getTransactionQueryBuilder } from "./transaction-manager";
 
-interface IBudgetQueryBuilderOptions {
+type IBudgetQueryBuilderOptions = {
   readonly withCategory?: boolean;
   readonly withProfile?: boolean;
-}
+};
 
 function getBudgetQueryBuilder(options: IBudgetQueryBuilderOptions = {}): SelectQueryBuilder<DbBudget> {
   let builder = DbBudget.createQueryBuilder("budget");
@@ -71,7 +71,7 @@ function getBudgetBalances(user: DbUser, currentOnly: boolean): Promise<IBudgetB
             startDate: budget.startDate,
             endDate: budget.endDate,
           })
-          .getRawOne() as Promise<{ balance: number }>;
+          .getRawOne();
       });
       return Promise.all([budgets, Promise.all(getBalanceTasks)]);
     })

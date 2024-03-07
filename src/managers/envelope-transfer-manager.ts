@@ -4,9 +4,9 @@ import { cleanUuid } from "../utils/entities";
 import { DbEnvelopeTransfer } from "../db/models/DbEnvelopeTransfer";
 import { DbUser } from "../db/models/DbUser";
 
-interface IEnvelopeTransferQueryBuilderOptions {
+type IEnvelopeTransferQueryBuilderOptions = {
   readonly withProfile?: boolean;
-}
+};
 
 function getEnvelopeTransferQueryBuilder(
   options: IEnvelopeTransferQueryBuilderOptions = {},

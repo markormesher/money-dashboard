@@ -1,9 +1,9 @@
 import { IEnvelope, mapEnvelopeFromApi } from "./IEnvelope";
 
-interface IEnvelopeBalance {
+type IEnvelopeBalance = {
   readonly envelope: IEnvelope;
   readonly balance: number;
-}
+};
 
 function mapEnvelopeBalanceFromApi(balance?: IEnvelopeBalance): IEnvelopeBalance {
   if (!balance) {

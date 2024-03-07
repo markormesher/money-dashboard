@@ -4,9 +4,7 @@ import { IDataTableResponse } from "../../../../../models/IDataTableResponse";
 import { ColumnSortEntry } from "../DataTable";
 import { IDataTableDataProvider } from "./IDataTableDataProvider";
 
-interface IApiParams {
-  readonly [key: string]: number | string | boolean;
-}
+type IApiParams = Readonly<Record<string, number | string | boolean>>;
 
 class ApiDataTableDataProvider<Model> implements IDataTableDataProvider<Model> {
   private static formatOrdering(sortedColumns: ColumnSortEntry[]): string[][] {

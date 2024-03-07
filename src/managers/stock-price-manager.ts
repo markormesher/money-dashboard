@@ -29,7 +29,7 @@ async function getStockPricesBetweenDates(fromDate: number, toDate: number): Pro
     })
     .getMany();
 
-  const output: Map<number, StockPriceMap> = new Map();
+  const output = new Map<number, StockPriceMap>();
   prices.forEach((price) => {
     output.set(price.date, { ...(output.get(price.date) || {}), [price.ticker]: price });
   });

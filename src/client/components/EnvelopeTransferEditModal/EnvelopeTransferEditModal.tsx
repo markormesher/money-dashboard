@@ -116,14 +116,13 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
             onValueChange={handleFromEnvelopeChange}
           >
             {envelopeList && <option> Unallocated funds </option>}
-            {envelopeList &&
-              envelopeList
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((c) => (
-                  <option value={c.id} key={c.id}>
-                    {c.name}
-                  </option>
-                ))}
+            {envelopeList
+              ?.sort((a, b) => a.name.localeCompare(b.name))
+              .map((c) => (
+                <option value={c.id} key={c.id}>
+                  {c.name}
+                </option>
+              ))}
             {!envelopeList && <option>Loading...</option>}
           </ControlledSelectInput>
         </div>
@@ -137,14 +136,13 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
             onValueChange={handleToEnvelopeChange}
           >
             {envelopeList && <option>Unallocated funds</option>}
-            {envelopeList &&
-              envelopeList
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((c) => (
-                  <option value={c.id} key={c.id}>
-                    {c.name}
-                  </option>
-                ))}
+            {envelopeList
+              ?.sort((a, b) => a.name.localeCompare(b.name))
+              .map((c) => (
+                <option value={c.id} key={c.id}>
+                  {c.name}
+                </option>
+              ))}
             {!envelopeList && <option>Loading...</option>}
           </ControlledSelectInput>
         </div>

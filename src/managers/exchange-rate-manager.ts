@@ -34,7 +34,7 @@ async function getExchangeRatesBetweenDates(fromDate: number, toDate: number): P
     })
     .getMany();
 
-  const output: Map<number, ExchangeRateMap> = new Map();
+  const output = new Map<number, ExchangeRateMap>();
   rates.forEach((rate) => {
     output.set(rate.date, { ...(output.get(rate.date) || {}), [rate.currencyCode]: rate });
   });

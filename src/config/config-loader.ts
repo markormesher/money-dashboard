@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 
-let loadedFileConfig: { readonly [key: string]: string } = {};
+let loadedFileConfig: Readonly<Record<string, string>> = {};
 
 function getFileConfig(path: string): string {
   if (loadedFileConfig[path] === undefined) {

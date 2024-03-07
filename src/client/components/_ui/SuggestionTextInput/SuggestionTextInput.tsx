@@ -17,7 +17,7 @@ function SuggestionTextInput(props: SuggestionTextInputProps): React.ReactElemen
   const MAX_SUGGESTIONS_SHOWN = 10;
 
   const { suggestionOptions, ...inputProps } = props;
-  const innerInputProps = (inputProps && inputProps.inputProps) || {};
+  const innerInputProps = inputProps?.inputProps || {};
 
   const [userInput, setUserInput] = React.useState<string>();
   const [suggestions, setSuggestions] = React.useState<string[]>([]);
@@ -33,7 +33,7 @@ function SuggestionTextInput(props: SuggestionTextInputProps): React.ReactElemen
     }
 
     const regex = new RegExp(".*" + removeRegexChars(value).split("").join(".*") + ".*", "i");
-    const scores: { [key: string]: number } = {};
+    const scores: Record<string, number> = {};
     const newSuggestions = (suggestionOptions ?? [])
       .filter((s) => regex.test(s))
       .sort((a, b) => {

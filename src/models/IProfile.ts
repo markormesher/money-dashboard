@@ -5,7 +5,7 @@ import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "./ICategory";
 import { ITransaction, mapTransactionFromApi, mapTransactionForApi } from "./ITransaction";
 import { IUser, mapUserFromApi, mapUserForApi } from "./IUser";
 
-interface IProfile {
+type IProfile = {
   readonly id: string;
   readonly name: string;
   readonly deleted: boolean;
@@ -16,7 +16,7 @@ interface IProfile {
   readonly transactions: ITransaction[];
   readonly users: IUser[];
   readonly usersWithProfileActivated: IUser[];
-}
+};
 
 const DEFAULT_PROFILE: IProfile = {
   id: null,

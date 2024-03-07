@@ -35,7 +35,7 @@ router.get("/data", (req: Request, res: Response, next: NextFunction) => {
     })
     .getMany()
     .then((transactions) => {
-      if (!transactions || !transactions.length) {
+      if (!transactions?.length) {
         return null;
       }
 
@@ -43,7 +43,7 @@ router.get("/data", (req: Request, res: Response, next: NextFunction) => {
       const allCategories = transactions
         .map((t) => t.category)
         .filter((cat, idx, arr) => arr.findIndex((c) => c.id === cat.id) === idx);
-      const yearData: { [key: number]: { [id: string]: IDetailedCategoryBalance } } = {};
+      const yearData: Record<number, Record<string, IDetailedCategoryBalance>> = {};
 
       for (const year of allYears) {
         yearData[year] = {};

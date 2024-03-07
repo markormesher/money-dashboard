@@ -2,7 +2,7 @@ import { convertLocalDateToUtc, convertUtcDateToLocal } from "../utils/dates";
 import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 import { IEnvelope, mapEnvelopeFromApi, mapEnvelopeForApi } from "./IEnvelope";
 
-interface IEnvelopeTransfer {
+type IEnvelopeTransfer = {
   readonly id: string;
   readonly date: number;
   readonly amount: number;
@@ -12,7 +12,7 @@ interface IEnvelopeTransfer {
   readonly fromEnvelope: IEnvelope;
   readonly toEnvelope: IEnvelope;
   readonly profile: IProfile;
-}
+};
 
 const DEFAULT_ENVELOPE_TRANSFER: IEnvelopeTransfer = {
   id: undefined,

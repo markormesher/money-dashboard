@@ -8,14 +8,14 @@ function getDataForTable<T extends BaseModel>(
   req: Request,
   totalQuery: SelectQueryBuilder<T>,
   filteredQuery: SelectQueryBuilder<T>,
-  preOrder?: Array<[string, "ASC" | "DESC"]>,
-  postOrder?: Array<[string, "ASC" | "DESC"]>,
+  preOrder?: [string, "ASC" | "DESC"][],
+  postOrder?: [string, "ASC" | "DESC"][],
 ): Promise<IDataTableResponse<T>> {
   const start = parseInt(req.query.start as string, 10);
   const length = parseInt(req.query.length as string, 10);
 
-  const rawOrder = req.query.order as unknown as Array<[string, "ASC" | "DESC"]>;
-  const order: Array<[string, "ASC" | "DESC"]> = [];
+  const rawOrder = req.query.order as unknown as [string, "ASC" | "DESC"][];
+  const order: [string, "ASC" | "DESC"][] = [];
   if (preOrder) {
     preOrder.forEach((o) => order.push(o));
   }

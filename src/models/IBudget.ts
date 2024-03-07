@@ -3,7 +3,7 @@ import { convertUtcDateToLocal, convertLocalDateToUtc } from "../utils/dates";
 import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "./ICategory";
 import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 
-interface IBudget {
+type IBudget = {
   readonly id: string;
   readonly type: "budget" | "bill";
   readonly amount: number;
@@ -13,7 +13,7 @@ interface IBudget {
 
   readonly category: ICategory;
   readonly profile: IProfile;
-}
+};
 
 const DEFAULT_BUDGET: IBudget = {
   id: undefined,

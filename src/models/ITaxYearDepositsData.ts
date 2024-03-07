@@ -2,11 +2,11 @@ import { mapEntities } from "../utils/entities";
 import { ICategory, mapCategoryFromApi } from "./ICategory";
 import { IDetailedCategoryBalance } from "./IDetailedCategoryBalance";
 
-interface ITaxYearDepositsData {
+type ITaxYearDepositsData = {
   readonly allYears: number[];
   readonly allCategories: ICategory[];
-  readonly yearData: { readonly [year: number]: { readonly [categoryId: string]: IDetailedCategoryBalance } };
-}
+  readonly yearData: Readonly<Record<number, Readonly<Record<string, IDetailedCategoryBalance>>>>;
+};
 
 function mapTaxYearDepositsDataFromApi(data?: ITaxYearDepositsData): ITaxYearDepositsData {
   if (!data) {

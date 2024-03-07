@@ -3,12 +3,12 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 import { MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
 
-interface IErrorPageProps {
+type IErrorPageProps = {
   readonly title?: string;
   readonly error?: Error;
   readonly fullPage?: boolean;
   readonly stacks?: string[];
-}
+};
 
 function ErrorPage(props: IErrorPageProps): React.ReactElement {
   const title = props.title ?? "Something went wrong";

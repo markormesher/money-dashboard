@@ -19,7 +19,7 @@ import { IAccountBalanceUpdate } from "../models/IAccountBalanceUpdate";
 const router = Express.Router();
 
 router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const searchTerm = req.query.searchTerm;
   const activeOnly = req.query.activeOnly === "true";
 
@@ -49,21 +49,21 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get("/list", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   getAllAccounts(user)
     .then((accounts: DbAccount[]) => res.json(accounts))
     .catch(next);
 });
 
 router.get("/balances", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   getAccountBalances(user)
     .then((balances: IAccountBalance[]) => res.json(balances))
     .catch(next);
 });
 
 router.post("/edit/:accountId?", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const accountId = req.params.accountId;
   const properties: Partial<DbAccount> = {
     name: req.body.name,
@@ -82,7 +82,7 @@ router.post("/edit/:accountId?", (req: Request, res: Response, next: NextFunctio
 });
 
 router.post("/set-active/:accountId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const accountId = req.params.accountId;
 
   setAccountActive(user, accountId, true)
@@ -91,7 +91,7 @@ router.post("/set-active/:accountId", (req: Request, res: Response, next: NextFu
 });
 
 router.post("/set-inactive/:accountId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const accountId = req.params.accountId;
 
   setAccountActive(user, accountId, false)
@@ -100,7 +100,7 @@ router.post("/set-inactive/:accountId", (req: Request, res: Response, next: Next
 });
 
 router.post("/delete/:accountId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const accountId = req.params.accountId;
 
   deleteAccount(user, accountId)
@@ -109,7 +109,7 @@ router.post("/delete/:accountId", (req: Request, res: Response, next: NextFuncti
 });
 
 router.post("/asset-balance-update", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const update: IAccountBalanceUpdate = req.body.balanceUpdate;
 
   // note: even errors are sent as 200 responses so the front end can handle them

@@ -5,11 +5,11 @@ import { cleanUuid } from "../utils/entities";
 import { DbTransaction } from "../db/models/DbTransaction";
 import { DbUser } from "../db/models/DbUser";
 
-interface ITransactionQueryBuilderOptions {
+type ITransactionQueryBuilderOptions = {
   readonly withAccount?: boolean;
   readonly withCategory?: boolean;
   readonly withProfile?: boolean;
-}
+};
 
 function getTransactionQueryBuilder(options: ITransactionQueryBuilderOptions = {}): SelectQueryBuilder<DbTransaction> {
   let builder = DbTransaction.createQueryBuilder("transaction");
@@ -42,16 +42,15 @@ function getTransaction(user: DbUser, transactionId: string): Promise<DbTransact
 }
 
 function getAllPayees(user: DbUser): Promise<string[]> {
-  return (
-    getTransactionQueryBuilder()
-      .select("DISTINCT payee")
-      .where("transaction.profile_id = :profileId")
-      .andWhere("transaction.deleted = FALSE")
-      .setParameters({
-        profileId: user.activeProfile.id,
-      })
-      .getRawMany() as Promise<Array<{ payee: string }>>
-  ).then((results) => results.map((r) => r.payee).sort());
+  return getTransactionQueryBuilder()
+    .select("DISTINCT payee")
+    .where("transaction.profile_id = :profileId")
+    .andWhere("transaction.deleted = FALSE")
+    .setParameters({
+      profileId: user.activeProfile.id,
+    })
+    .getRawMany()
+    .then((results) => results.map((r) => r.payee).sort());
 }
 
 function saveTransaction(

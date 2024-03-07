@@ -1,10 +1,10 @@
 import { IAccount, mapAccountFromApi } from "./IAccount";
 
-interface IDetailedAccountBalance {
+type IDetailedAccountBalance = {
   readonly account: IAccount;
   readonly balanceIn: number;
   readonly balanceOut: number;
-}
+};
 
 function mapDetailedAccountBalanceFromApi(balance?: IDetailedAccountBalance): IDetailedAccountBalance {
   if (!balance) {

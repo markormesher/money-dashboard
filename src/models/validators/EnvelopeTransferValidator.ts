@@ -1,7 +1,7 @@
 import { IEnvelopeTransfer } from "../IEnvelopeTransfer";
 import { GLOBAL_MIN_DATE } from "../../utils/dates";
 
-interface IEnvelopeTransferValidationResult {
+type IEnvelopeTransferValidationResult = {
   readonly isValid: boolean;
   readonly errors: {
     readonly date?: string;
@@ -10,7 +10,7 @@ interface IEnvelopeTransferValidationResult {
     readonly toEnvelope?: string;
     readonly note?: string;
   };
-}
+};
 
 function validateEnvelopeTransfer(transfer: IEnvelopeTransfer): IEnvelopeTransferValidationResult {
   if (!transfer) {
@@ -26,8 +26,8 @@ function validateEnvelopeTransfer(transfer: IEnvelopeTransfer): IEnvelopeTransfe
   };
 
   if (
-    (!transfer.fromEnvelope || !transfer.fromEnvelope.id || transfer.fromEnvelope.id.trim() === "") &&
-    (!transfer.toEnvelope || !transfer.toEnvelope.id || transfer.toEnvelope.id.trim() === "")
+    (!transfer.fromEnvelope?.id || transfer.fromEnvelope.id.trim() === "") &&
+    (!transfer.toEnvelope?.id || transfer.toEnvelope.id.trim() === "")
   ) {
     result = {
       isValid: false,

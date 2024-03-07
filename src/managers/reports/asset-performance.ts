@@ -39,10 +39,10 @@ async function getAssetPerformanceReportData(
     };
   }
 
-  const dailyBalancePerCurrencyInclGrowth: Map<number, Map<CurrencyCode, number>> = new Map();
-  const dailyBalancePerCurrencyExclGrowth: Map<number, Map<CurrencyCode, number>> = new Map();
-  const runningTotalPerCurrencyInclGrowth: Map<CurrencyCode, number> = new Map();
-  const runningTotalPerCurrencyExclGrowth: Map<CurrencyCode, number> = new Map();
+  const dailyBalancePerCurrencyInclGrowth = new Map<number, Map<CurrencyCode, number>>();
+  const dailyBalancePerCurrencyExclGrowth = new Map<number, Map<CurrencyCode, number>>();
+  const runningTotalPerCurrencyInclGrowth = new Map<CurrencyCode, number>();
+  const runningTotalPerCurrencyExclGrowth = new Map<CurrencyCode, number>();
   let lastDateSeen = -1;
 
   const takeRunningTotalSnapshot = (): void => {
@@ -84,8 +84,8 @@ async function getAssetPerformanceReportData(
   const exchangeRates = await getExchangeRatesBetweenDates(startDate, maxTxnDate);
 
   // convert per-currency balances into the GBP value on that day
-  const dataInclGrowth: Array<{ x: number; y: number }> = [];
-  const dataExclGrowth: Array<{ x: number; y: number }> = [];
+  const dataInclGrowth: { x: number; y: number }[] = [];
+  const dataExclGrowth: { x: number; y: number }[] = [];
   dailyBalancePerCurrencyInclGrowth.forEach((totals, date) => {
     let total = 0;
     totals.forEach((balance, currencyCode) => {

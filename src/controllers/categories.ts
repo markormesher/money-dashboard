@@ -15,7 +15,7 @@ import {
 const router = Express.Router();
 
 router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const searchTerm = req.query.searchTerm;
 
   const totalQuery = getCategoryQueryBuilder()
@@ -40,14 +40,14 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get("/list", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   getAllCategories(user)
     .then((categories: DbCategory[]) => res.json(categories))
     .catch(next);
 });
 
 router.post("/edit/:categoryId?", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const categoryId = req.params.categoryId;
   const properties: Partial<DbCategory> = {
     name: req.body.name,
@@ -63,7 +63,7 @@ router.post("/edit/:categoryId?", (req: Request, res: Response, next: NextFuncti
 });
 
 router.post("/delete/:categoryId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const categoryId = req.params.categoryId;
 
   deleteCategory(user, categoryId)
@@ -72,7 +72,7 @@ router.post("/delete/:categoryId", (req: Request, res: Response, next: NextFunct
 });
 
 router.get("/memo-balances", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
 
   getMemoCategoryBalances(user)
     .then((balances: ICategoryBalance[]) => res.json(balances))

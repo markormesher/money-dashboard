@@ -1,18 +1,14 @@
 {
   "compilerOptions": {
-    "noImplicitAny": true,
-    "module": "commonjs",
     "target": "es2018",
-    "jsx": "react",
+    "module": "commonjs",
     "moduleResolution": "node",
+    "baseUrl": "./",
     "outDir": "./build",
+    "strict": true,
+    "jsx": "react",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "alwaysStrict": true,
-    "baseUrl": "./",
-    "allowJs": false,
-    "removeComments": false,
-    "sourceMap": true,
     "allowSyntheticDefaultImports": true
   },
   "include": [

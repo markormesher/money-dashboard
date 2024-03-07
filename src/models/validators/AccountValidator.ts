@@ -2,7 +2,7 @@ import { IAccount, ACCOUNT_TAG_DISPLAY_NAMES, ACCOUNT_TYPES } from "../IAccount"
 import { ALL_CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "../ICurrency";
 import { ALL_STOCK_TICKERS, getStock } from "../IStock";
 
-interface IAccountValidationResult {
+type IAccountValidationResult = {
   readonly isValid: boolean;
   readonly errors: {
     readonly name?: string;
@@ -11,7 +11,7 @@ interface IAccountValidationResult {
     readonly currencyCode?: string;
     readonly stockTicker?: string;
   };
-}
+};
 
 function validateAccount(account: IAccount): IAccountValidationResult {
   if (!account) {

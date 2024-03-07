@@ -4,10 +4,10 @@ import { cleanUuid } from "../utils/entities";
 import { DbUser } from "../db/models/DbUser";
 import { createProfileAndAddToUser } from "./profile-manager";
 
-interface IUserQueryBuilderOptions {
+type IUserQueryBuilderOptions = {
   readonly withProfiles?: boolean;
   readonly withActiveProfile?: boolean;
-}
+};
 
 function getUserQueryBuilder(options: IUserQueryBuilderOptions = {}): SelectQueryBuilder<DbUser> {
   let builder = DbUser.createQueryBuilder("user");

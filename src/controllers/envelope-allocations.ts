@@ -14,7 +14,7 @@ import {
 const router = Express.Router();
 
 router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const searchTerm = req.query.searchTerm;
   const activeOnly = req.query.activeOnly === "true";
 
@@ -44,14 +44,14 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get("/list", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   getAllEnvelopeAllocations(user)
     .then((envelopes: DbEnvelopeAllocation[]) => res.json(envelopes))
     .catch(next);
 });
 
 router.post("/edit/:allocationId?", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const allocationId = req.params.allocationId;
   const properties: Partial<DbEnvelopeAllocation> = {
     startDate: req.body.startDate,
@@ -65,7 +65,7 @@ router.post("/edit/:allocationId?", (req: Request, res: Response, next: NextFunc
 });
 
 router.post("/delete/:allocationId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const allocationId = req.params.allocationId;
 
   deleteEnvelopeAllocation(user, allocationId)

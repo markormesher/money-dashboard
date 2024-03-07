@@ -4,7 +4,7 @@ import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 import { ITransaction, mapTransactionFromApi, mapTransactionForApi } from "./ITransaction";
 import { IEnvelopeAllocation } from "./IEnvelopeAllocation";
 
-interface ICategory {
+type ICategory = {
   readonly id: string;
   readonly name: string;
   readonly isMemoCategory: boolean;
@@ -17,7 +17,7 @@ interface ICategory {
   readonly transactions: ITransaction[];
   readonly envelopeAllocations: IEnvelopeAllocation[];
   readonly profile: IProfile;
-}
+};
 
 const DEFAULT_CATEGORY: ICategory = {
   id: undefined,

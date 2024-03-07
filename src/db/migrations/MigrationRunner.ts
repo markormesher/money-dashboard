@@ -15,10 +15,10 @@ INSERT INTO migrations VALUES (default, default);
 
  */
 
-interface IMigrationsTableRow {
+type IMigrationsTableRow = {
   readonly migration_in_progress: boolean;
   readonly last_migration: number;
-}
+};
 
 class MigrationRunner {
   private connectionOptions: ConnectionOptions;

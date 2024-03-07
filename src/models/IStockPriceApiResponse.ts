@@ -1,6 +1,6 @@
 import { StockTicker } from "./IStock";
 
-interface IStockPriceApiResponse {
+type IStockPriceApiResponse = {
   readonly status: string;
   readonly from: string;
   readonly symbol: StockTicker;
@@ -11,6 +11,6 @@ interface IStockPriceApiResponse {
   readonly volume: number;
   readonly afterHours: number;
   readonly preMarket: number;
-}
+};
 
 export { IStockPriceApiResponse };

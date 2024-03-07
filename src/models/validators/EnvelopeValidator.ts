@@ -1,11 +1,11 @@
 import { IEnvelope } from "../IEnvelope";
 
-interface IEnvelopeValidationResult {
+type IEnvelopeValidationResult = {
   readonly isValid: boolean;
   readonly errors: {
     readonly name?: string;
   };
-}
+};
 
 function validateEnvelope(envelope: IEnvelope): IEnvelopeValidationResult {
   if (!envelope) {

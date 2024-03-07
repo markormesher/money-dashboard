@@ -3,7 +3,7 @@ import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 import { ICategory, mapCategoryFromApi, mapCategoryForApi } from "./ICategory";
 import { IEnvelope, mapEnvelopeFromApi, mapEnvelopeForApi } from "./IEnvelope";
 
-interface IEnvelopeAllocation {
+type IEnvelopeAllocation = {
   readonly id: string;
   readonly startDate: number;
   readonly deleted: boolean;
@@ -11,7 +11,7 @@ interface IEnvelopeAllocation {
   readonly category: ICategory;
   readonly envelope: IEnvelope;
   readonly profile: IProfile;
-}
+};
 
 const DEFAULT_CATEGORY_TO_ENVELOPE_ALLOCATION: IEnvelopeAllocation = {
   id: undefined,

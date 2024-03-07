@@ -88,14 +88,13 @@ function BudgetEditModal(props: BudgetEditModalProps): ReactElement {
           }}
         >
           {categoryList && <option value={""}>-- Select --</option>}
-          {categoryList &&
-            categoryList
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .map((c) => (
-                <option value={c.id} key={c.id}>
-                  {c.name}
-                </option>
-              ))}
+          {categoryList
+            ?.sort((a, b) => a.name.localeCompare(b.name))
+            .map((c) => (
+              <option value={c.id} key={c.id}>
+                {c.name}
+              </option>
+            ))}
           {!categoryList && <option>Loading...</option>}
         </ControlledSelectInput>
       </div>

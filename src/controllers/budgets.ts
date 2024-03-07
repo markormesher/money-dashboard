@@ -18,7 +18,7 @@ import {
 const router = Express.Router();
 
 router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const searchTerm = req.query.searchTerm;
   const currentOnly = req.query.currentOnly === "true";
 
@@ -50,7 +50,7 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.post("/edit/:budgetId?", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const budgetId = req.params.budgetId;
   const properties: Partial<DbBudget> = {
     category: DbCategory.create({ id: req.body.category.id }),
@@ -66,7 +66,7 @@ router.post("/edit/:budgetId?", (req: Request, res: Response, next: NextFunction
 });
 
 router.post("/delete/:budgetId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const budgetId = req.params.budgetId;
 
   deleteBudget(user, budgetId)
@@ -75,7 +75,7 @@ router.post("/delete/:budgetId", (req: Request, res: Response, next: NextFunctio
 });
 
 router.post("/clone", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const budgetIds: string[] = req.body.budgetIds;
   const startDate = req.body.startDate;
   const endDate = req.body.endDate;
@@ -86,7 +86,7 @@ router.post("/clone", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get("/balances", (req: Request, res: Response, next: NextFunction) => {
-  getBudgetBalances(req.user as DbUser, true)
+  getBudgetBalances(req.user, true)
     .then((balances: IBudgetBalance[]) => res.json(balances))
     .catch(next);
 });
