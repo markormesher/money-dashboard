@@ -11,7 +11,7 @@ import { AccountTag } from "../../models/IAccount";
 const router = Express.Router();
 
 router.get("/data", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const dateMode = req.query.dateMode as DateModeOption;
   const accountTag: AccountTag = req.query.accountTag as AccountTag;
 

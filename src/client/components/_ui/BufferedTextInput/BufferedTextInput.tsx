@@ -10,7 +10,7 @@ type BufferedTextInputProps = {
 
 function BufferedTextInput(props: BufferedTextInputProps): React.ReactElement {
   const { delay, onValueChange, inputProps } = props;
-  const timeoutRef = React.useRef<NodeJS.Timer>();
+  const timeoutRef = React.useRef<NodeJS.Timeout>();
 
   React.useEffect(() => {
     return function cleanup() {

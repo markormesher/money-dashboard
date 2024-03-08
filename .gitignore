@@ -6,9 +6,9 @@
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+node_modules/
 
 build/
 coverage/
-
 .nyc_output/
 logs/

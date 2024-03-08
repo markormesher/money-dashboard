@@ -13,7 +13,7 @@ function DeleteBtn<Payload>(props: DeleteBtnProps<Payload>): React.ReactElement 
 
   const [triggered, setTriggered] = React.useState(false);
   const [running, setRunning] = React.useState(false);
-  const timeoutRef = React.useRef<NodeJS.Timer>();
+  const timeoutRef = React.useRef<NodeJS.Timeout>();
 
   React.useEffect(() => {
     return function cleanup() {
