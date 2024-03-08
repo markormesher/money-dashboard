@@ -5,11 +5,12 @@ import { getOrCreateUserWithExternalUsername } from "../managers/user-manager";
 import { DbUser } from "../db/models/DbUser";
 import { isDev } from "../utils/env";
 
-declare module "express-serve-static-core" {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  type Request = {
-    user: DbUser;
-  };
+declare global {
+  namespace Express {
+    export interface Request {
+      user: DbUser;
+    }
+  }
 }
 
 const loadUser: RequestHandler = (req: Request, _res: Response, next: NextFunction) => {
