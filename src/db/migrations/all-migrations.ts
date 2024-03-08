@@ -252,7 +252,7 @@ ALTER TABLE transaction
     up: async (): Promise<any> => {
       const oneHourInMs = 60 * 60 * 1000;
       const transactions = await getTransactionQueryBuilder().getMany();
-      const editPromises: Array<Promise<DbTransaction>> = [];
+      const editPromises: Promise<DbTransaction>[] = [];
       transactions.forEach((t) => {
         let edited = false;
         if (dateIsInBst(t.transactionDate)) {
@@ -272,7 +272,7 @@ ALTER TABLE transaction
     down: async (): Promise<any> => {
       const oneHourInMs = 60 * 60 * 1000;
       const transactions = await getTransactionQueryBuilder().getMany();
-      const editPromises: Array<Promise<DbTransaction>> = [];
+      const editPromises: Promise<DbTransaction>[] = [];
       transactions.forEach((t) => {
         let edited = false;
         if (dateIsInBst(t.transactionDate - oneHourInMs)) {

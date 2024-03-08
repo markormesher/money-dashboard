@@ -5,7 +5,7 @@ import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 
 type DateModeOption = "effective" | "transaction";
 
-interface ITransaction {
+type ITransaction = {
   readonly id: string;
   readonly transactionDate: number;
   readonly effectiveDate: number;
@@ -18,7 +18,7 @@ interface ITransaction {
   readonly account: IAccount;
   readonly category: ICategory;
   readonly profile: IProfile;
-}
+};
 
 const DEFAULT_TRANSACTION: ITransaction = {
   id: null,

@@ -1,9 +1,9 @@
 import { IAccount, mapAccountFromApi } from "./IAccount";
 
-interface IAccountBalance {
+type IAccountBalance = {
   readonly account: IAccount;
   readonly balance: number;
-}
+};
 
 function mapAccountBalanceFromApi(balance?: IAccountBalance): IAccountBalance {
   if (!balance) {

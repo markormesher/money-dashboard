@@ -136,14 +136,13 @@ function TransactionEditModal(props: TransactionEditModalProps): React.ReactElem
             }}
           >
             {accountList && <option value={""}>-- Select --</option>}
-            {accountList &&
-              accountList
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((a) => (
-                  <option value={a.id} key={a.id}>
-                    {a.name}
-                  </option>
-                ))}
+            {accountList
+              ?.sort((a, b) => a.name.localeCompare(b.name))
+              .map((a) => (
+                <option value={a.id} key={a.id}>
+                  {a.name}
+                </option>
+              ))}
             {!accountList && <option>Loading...</option>}
           </ControlledSelectInput>
         </div>
@@ -170,14 +169,13 @@ function TransactionEditModal(props: TransactionEditModalProps): React.ReactElem
             onValueChange={handleCategoryChange}
           >
             {categoryList && <option value={""}>-- Select --</option>}
-            {categoryList &&
-              categoryList
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((c) => (
-                  <option value={c.id} key={c.id}>
-                    {c.name}
-                  </option>
-                ))}
+            {categoryList
+              ?.sort((a, b) => a.name.localeCompare(b.name))
+              .map((c) => (
+                <option value={c.id} key={c.id}>
+                  {c.name}
+                </option>
+              ))}
             {!categoryList && <option>Loading...</option>}
           </ControlledSelectInput>
         </div>

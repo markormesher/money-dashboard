@@ -14,7 +14,7 @@ import {
 const router = Express.Router();
 
 router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const searchTerm = req.query.searchTerm;
 
   const totalQuery = getProfileQueryBuilder({ withUsers: true })
@@ -39,14 +39,14 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get("/list", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   getAllProfiles(user)
     .then((profiles: DbProfile[]) => res.json(profiles))
     .catch(next);
 });
 
 router.post("/edit/:profileId?", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const profileId = req.params.profileId;
   const properties: Partial<DbProfile> = {
     name: req.body.name,
@@ -58,7 +58,7 @@ router.post("/edit/:profileId?", (req: Request, res: Response, next: NextFunctio
 });
 
 router.post("/delete/:profileId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const profileId = req.params.profileId;
 
   deleteProfile(user, profileId)
@@ -67,7 +67,7 @@ router.post("/delete/:profileId", (req: Request, res: Response, next: NextFuncti
 });
 
 router.post("/select/:profileId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const profileId = req.params.profileId;
 
   setActiveProfileForUser(user, profileId)

@@ -57,7 +57,7 @@ function getDateRanges(props: DateRangeChooserProps): IDateRange[] {
         endDate: new Date().getTime(),
       },
       ...(customPresets || []),
-    ] as Array<boolean | IDateRange>
+    ] as (boolean | IDateRange)[]
   ).filter((a) => a !== false) as IDateRange[];
 }
 

@@ -4,9 +4,9 @@ import { cleanUuid } from "../utils/entities";
 import { DbEnvelopeAllocation } from "../db/models/DbEnvelopeAllocation";
 import { DbUser } from "../db/models/DbUser";
 
-interface IEnvelopeAllocationQueryBuilderOptions {
+type IEnvelopeAllocationQueryBuilderOptions = {
   readonly withProfile?: boolean;
-}
+};
 
 function getEnvelopeAllocationQueryBuilder(
   options: IEnvelopeAllocationQueryBuilderOptions = {},

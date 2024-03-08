@@ -14,7 +14,7 @@ import {
 const router = Express.Router();
 
 router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const searchTerm = req.query.searchTerm || "";
 
   const totalQuery = getTransactionQueryBuilder()
@@ -48,7 +48,7 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.post("/edit/:transactionId?", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const transactionId = req.params.transactionId;
   const properties: Partial<DbTransaction> = {
     transactionDate: req.body.transactionDate,
@@ -70,7 +70,7 @@ router.post("/edit/:transactionId?", (req: Request, res: Response, next: NextFun
 });
 
 router.post("/delete/:transactionId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const transactionId = req.params.transactionId;
 
   deleteTransaction(user, transactionId)
@@ -79,7 +79,7 @@ router.post("/delete/:transactionId", (req: Request, res: Response, next: NextFu
 });
 
 router.get("/payees", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   getAllPayees(user)
     .then((payees: string[]) => res.json(payees))
     .catch(next);
