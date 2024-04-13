@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IProfile, mapProfileFromApi } from "../../models/IProfile";
+import { IProfile, mapProfileForApi, mapProfileFromApi } from "../../models/IProfile";
 import { IUser, mapUserFromApi } from "../../models/IUser";
 import { mapEntities } from "../../utils/entities";
 
@@ -14,7 +14,7 @@ async function getAllProfiles(): Promise<IProfile[]> {
 }
 
 async function saveProfile(profile: IProfile): Promise<void> {
-  await axios.post(`/api/profiles/edit/${profile.id || ""}`, profile);
+  await axios.post(`/api/profiles/edit/${profile.id || ""}`, mapProfileForApi(profile));
 }
 
 async function deleteProfile(profile: IProfile): Promise<void> {
