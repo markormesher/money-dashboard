@@ -1,15 +1,15 @@
 import axios from "axios";
 import { IDate } from "../../models/IDate";
-import { IEnvelope, mapEnvelopeFromApi } from "../../models/IEnvelope";
-import { IEnvelopeAllocation } from "../../models/IEnvelopeAllocation";
+import { IEnvelope, mapEnvelopeForApi, mapEnvelopeFromApi } from "../../models/IEnvelope";
+import { IEnvelopeAllocation, mapEnvelopeAllocationForApi } from "../../models/IEnvelopeAllocation";
 import { IEnvelopeBalance, mapEnvelopeBalanceFromApi } from "../../models/IEnvelopeBalance";
-import { IEnvelopeTransfer } from "../../models/IEnvelopeTransfer";
+import { IEnvelopeTransfer, mapEnvelopeTransferForApi } from "../../models/IEnvelopeTransfer";
 import { cacheWrap } from "./utils";
 
 // envelopes
 
 async function saveEnvelope(envelope: IEnvelope): Promise<void> {
-  await axios.post(`/api/envelopes/edit/${envelope.id || ""}`, envelope);
+  await axios.post(`/api/envelopes/edit/${envelope.id || ""}`, mapEnvelopeForApi(envelope));
 }
 
 async function deleteEnvelope(envelope: IEnvelope): Promise<void> {
@@ -29,7 +29,10 @@ async function getEnvelopeBalances(): Promise<IEnvelopeBalance[]> {
 // envelope allocations
 
 async function saveEnvelopeAllocation(envelopeAllocation: IEnvelopeAllocation): Promise<void> {
-  await axios.post(`/api/envelope-allocations/edit/${envelopeAllocation.id || ""}`, envelopeAllocation);
+  await axios.post(
+    `/api/envelope-allocations/edit/${envelopeAllocation.id || ""}`,
+    mapEnvelopeAllocationForApi(envelopeAllocation),
+  );
 }
 
 async function deleteEnvelopeAllocation(envelopeAllocation: IEnvelopeAllocation): Promise<void> {
@@ -39,7 +42,10 @@ async function deleteEnvelopeAllocation(envelopeAllocation: IEnvelopeAllocation)
 // envelope transfers
 
 async function saveEnvelopeTransfer(envelopeTransfer: IEnvelopeTransfer): Promise<void> {
-  await axios.post(`/api/envelope-transfers/edit/${envelopeTransfer.id || ""}`, envelopeTransfer);
+  await axios.post(
+    `/api/envelope-transfers/edit/${envelopeTransfer.id || ""}`,
+    mapEnvelopeTransferForApi(envelopeTransfer),
+  );
 }
 
 async function deleteEnvelopeTransfer(envelopeTransfer: IEnvelopeTransfer): Promise<void> {

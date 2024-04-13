@@ -1,11 +1,11 @@
 import axios from "axios";
-import { IAccount, mapAccountFromApi } from "../../models/IAccount";
+import { IAccount, mapAccountForApi, mapAccountFromApi } from "../../models/IAccount";
 import { IAccountBalance, mapAccountBalanceFromApi } from "../../models/IAccountBalance";
 import { IAccountBalanceUpdate } from "../../models/IAccountBalanceUpdate";
 import { cacheWrap } from "./utils";
 
 async function saveAccount(account: IAccount): Promise<void> {
-  await axios.post(`/api/accounts/edit/${account.id || ""}`, account);
+  await axios.post(`/api/accounts/edit/${account.id || ""}`, mapAccountForApi(account));
 }
 
 async function deleteAccount(account: IAccount): Promise<void> {

@@ -1,10 +1,10 @@
 import axios from "axios";
-import { ICategory, mapCategoryFromApi } from "../../models/ICategory";
+import { ICategory, mapCategoryForApi, mapCategoryFromApi } from "../../models/ICategory";
 import { ICategoryBalance, mapCategoryBalanceFromApi } from "../../models/ICategoryBalance";
 import { cacheWrap } from "./utils";
 
 async function saveCategory(category: ICategory): Promise<void> {
-  await axios.post(`/api/categories/edit/${category.id || ""}`, category);
+  await axios.post(`/api/categories/edit/${category.id || ""}`, mapCategoryForApi(category));
 }
 
 async function deleteCategory(category: ICategory): Promise<void> {
