@@ -4,7 +4,7 @@ const NULL_UUID = "00000000-0000-0000-0000-000000000000";
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function mapEntities<T>(mapper: (entity: T) => T, entities?: T[]): T[] {
-  if (!entities && entities !== []) {
+  if (entities === undefined || entities === null) {
     return undefined;
   } else {
     return entities.map(mapper);

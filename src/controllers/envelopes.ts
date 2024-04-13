@@ -15,7 +15,7 @@ import { IEnvelopeBalance } from "../models/IEnvelopeBalance";
 const router = Express.Router();
 
 router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const searchTerm = req.query.searchTerm;
 
   const totalQuery = getEnvelopeQueryBuilder()
@@ -40,14 +40,14 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get("/list", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   getAllEnvelopes(user)
     .then((envelopes: DbEnvelope[]) => res.json(envelopes))
     .catch(next);
 });
 
 router.post("/edit/:envelopeId?", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const envelopeId = req.params.envelopeId;
   const properties: Partial<DbEnvelope> = {
     name: req.body.name,
@@ -59,7 +59,7 @@ router.post("/edit/:envelopeId?", (req: Request, res: Response, next: NextFuncti
 });
 
 router.post("/delete/:envelopeId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const envelopeId = req.params.envelopeId;
 
   deleteEnvelope(user, envelopeId)
@@ -68,7 +68,7 @@ router.post("/delete/:envelopeId", (req: Request, res: Response, next: NextFunct
 });
 
 router.get("/balances", (req: Request, res: Response, next: NextFunction) => {
-  getEnvelopeBalances(req.user as DbUser)
+  getEnvelopeBalances(req.user)
     .then((balances: IEnvelopeBalance[]) => res.json(balances))
     .catch(next);
 });

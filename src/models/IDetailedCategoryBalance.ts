@@ -1,10 +1,10 @@
 import { ICategory, mapCategoryFromApi } from "./ICategory";
 
-interface IDetailedCategoryBalance {
+type IDetailedCategoryBalance = {
   readonly category: ICategory;
   readonly balanceIn: number;
   readonly balanceOut: number;
-}
+};
 
 function mapDetailedCategoryBalanceFromApi(balance?: IDetailedCategoryBalance): IDetailedCategoryBalance {
   if (!balance) {

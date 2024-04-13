@@ -5,9 +5,9 @@ import { DbProfile } from "../db/models/DbProfile";
 import { DbUser } from "../db/models/DbUser";
 import { getUser } from "./user-manager";
 
-interface IProfileQueryBuilderOptions {
+type IProfileQueryBuilderOptions = {
   readonly withUsers?: boolean;
-}
+};
 
 function getProfileQueryBuilder(options: IProfileQueryBuilderOptions = {}): SelectQueryBuilder<DbProfile> {
   let builder = DbProfile.createQueryBuilder("profile");

@@ -1,27 +1,14 @@
-# Generated code
-build/
+# Dependencies
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 node_modules/
 
-# Test outputs
+build/
 coverage/
 .nyc_output/
-
-# Logs
-yarn-*.log*
-logs/**
-!logs/.gitkeep
-
-# IntelliJ
-*.iml
-.idea/
-
-# Linux
-*~
-.Trash-*
-
-# OSX
-.DS_Store
-._*
-
-# Local dev
-docker-compose.dev.yml
+logs/

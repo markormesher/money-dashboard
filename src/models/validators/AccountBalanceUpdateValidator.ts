@@ -1,14 +1,14 @@
 import { IAccountBalanceUpdate } from "../IAccountBalanceUpdate";
 import { GLOBAL_MIN_DATE } from "../../utils/dates";
 
-interface IAccountBalanceUpdateValidationResult {
+type IAccountBalanceUpdateValidationResult = {
   readonly isValid: boolean;
   readonly errors: {
     readonly account?: string;
     readonly balance?: string;
     readonly updateDate?: string;
   };
-}
+};
 
 function validateAccountBalanceUpdate(
   accountBalanceUpdate: IAccountBalanceUpdate,
@@ -25,11 +25,7 @@ function validateAccountBalanceUpdate(
     errors: {},
   };
 
-  if (
-    !accountBalanceUpdate.account ||
-    !accountBalanceUpdate.account.id ||
-    accountBalanceUpdate.account.id.trim() === ""
-  ) {
+  if (!accountBalanceUpdate.account?.id || accountBalanceUpdate.account.id.trim() === "") {
     result = {
       isValid: false,
       errors: {

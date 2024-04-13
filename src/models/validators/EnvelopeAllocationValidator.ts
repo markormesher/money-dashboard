@@ -1,14 +1,14 @@
 import { IEnvelopeAllocation } from "../IEnvelopeAllocation";
 import { GLOBAL_MIN_DATE } from "../../utils/dates";
 
-interface IEnvelopeAllocationValidationResult {
+type IEnvelopeAllocationValidationResult = {
   readonly isValid: boolean;
   readonly errors: {
     readonly category?: string;
     readonly envelope?: string;
     readonly startDate?: string;
   };
-}
+};
 
 function validateEnvelopeAllocation(allocation: IEnvelopeAllocation): IEnvelopeAllocationValidationResult {
   if (!allocation) {
@@ -23,7 +23,7 @@ function validateEnvelopeAllocation(allocation: IEnvelopeAllocation): IEnvelopeA
     errors: {},
   };
 
-  if (!allocation.category || !allocation.category.id || allocation.category.id.trim() === "") {
+  if (!allocation.category?.id || allocation.category.id.trim() === "") {
     result = {
       isValid: false,
       errors: {
@@ -33,7 +33,7 @@ function validateEnvelopeAllocation(allocation: IEnvelopeAllocation): IEnvelopeA
     };
   }
 
-  if (!allocation.envelope || !allocation.envelope.id || allocation.envelope.id.trim() === "") {
+  if (!allocation.envelope?.id || allocation.envelope.id.trim() === "") {
     result = {
       isValid: false,
       errors: {

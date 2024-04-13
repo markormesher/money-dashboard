@@ -100,14 +100,13 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
             onValueChange={handleCategoryChange}
           >
             {categoryList && <option value={""}>-- Select --</option>}
-            {categoryList &&
-              categoryList
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((c) => (
-                  <option value={c.id} key={c.id}>
-                    {c.name}
-                  </option>
-                ))}
+            {categoryList
+              ?.sort((a, b) => a.name.localeCompare(b.name))
+              .map((c) => (
+                <option value={c.id} key={c.id}>
+                  {c.name}
+                </option>
+              ))}
             {!categoryList && <option>Loading...</option>}
           </ControlledSelectInput>
         </div>
@@ -121,14 +120,13 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
             onValueChange={handleEnvelopeChange}
           >
             {envelopeList && <option value={""}>-- Select --</option>}
-            {envelopeList &&
-              envelopeList
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((c) => (
-                  <option value={c.id} key={c.id}>
-                    {c.name}
-                  </option>
-                ))}
+            {envelopeList
+              ?.sort((a, b) => a.name.localeCompare(b.name))
+              .map((c) => (
+                <option value={c.id} key={c.id}>
+                  {c.name}
+                </option>
+              ))}
             {!envelopeList && <option>Loading...</option>}
           </ControlledSelectInput>
         </div>

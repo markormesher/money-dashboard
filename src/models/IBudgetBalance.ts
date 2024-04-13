@@ -1,8 +1,8 @@
 import { IBudget } from "./IBudget";
 
-interface IBudgetBalance {
+type IBudgetBalance = {
   readonly budget: IBudget;
   readonly balance: number;
-}
+};
 
 export { IBudgetBalance };

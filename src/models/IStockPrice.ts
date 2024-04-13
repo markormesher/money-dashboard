@@ -1,10 +1,10 @@
 import { StockTicker } from "./IStock";
 
-interface IStockPrice {
+type IStockPrice = {
   readonly ticker: StockTicker;
   readonly date: number;
   readonly ratePerBaseCurrency: number;
-}
+};
 
 type StockPriceMap = {
   [key in StockTicker]?: IStockPrice;

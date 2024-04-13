@@ -1,7 +1,7 @@
 import { mapEntities } from "../utils/entities";
 import { IProfile, mapProfileFromApi, mapProfileForApi } from "./IProfile";
 
-interface IUser {
+type IUser = {
   readonly id: string;
   readonly externalUsername: string;
   readonly displayName: string;
@@ -9,7 +9,7 @@ interface IUser {
   readonly profiles: IProfile[];
   readonly activeProfile: IProfile;
   readonly deleted: boolean;
-}
+};
 
 const DEFAULT_USER: IUser = {
   id: null,

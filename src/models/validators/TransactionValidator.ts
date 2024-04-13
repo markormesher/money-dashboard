@@ -1,7 +1,7 @@
 import { ITransaction } from "../ITransaction";
 import { GLOBAL_MIN_DATE } from "../../utils/dates";
 
-interface ITransactionValidationResult {
+type ITransactionValidationResult = {
   readonly isValid: boolean;
   readonly errors: {
     readonly account?: string;
@@ -12,7 +12,7 @@ interface ITransactionValidationResult {
     readonly effectiveDate?: string;
     readonly note?: string;
   };
-}
+};
 
 function validateTransaction(transaction: ITransaction): ITransactionValidationResult {
   if (!transaction) {
@@ -27,7 +27,7 @@ function validateTransaction(transaction: ITransaction): ITransactionValidationR
     errors: {},
   };
 
-  if (!transaction.account || !transaction.account.id || transaction.account.id.trim() === "") {
+  if (!transaction.account?.id || transaction.account.id.trim() === "") {
     result = {
       isValid: false,
       errors: {
@@ -37,7 +37,7 @@ function validateTransaction(transaction: ITransaction): ITransactionValidationR
     };
   }
 
-  if (!transaction.category || !transaction.category.id || transaction.category.id.trim() === "") {
+  if (!transaction.category?.id || transaction.category.id.trim() === "") {
     result = {
       isValid: false,
       errors: {

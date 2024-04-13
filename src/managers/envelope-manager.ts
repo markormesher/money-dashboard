@@ -12,9 +12,9 @@ import { getAllEnvelopeAllocations } from "./envelope-allocation-manager";
 import { getTransactionQueryBuilder } from "./transaction-manager";
 import { getEnvelopeTransferQueryBuilder } from "./envelope-transfer-manager";
 
-interface IEnvelopeQueryBuilderOptions {
+type IEnvelopeQueryBuilderOptions = {
   readonly withProfile?: boolean;
-}
+};
 
 function getEnvelopeQueryBuilder(options: IEnvelopeQueryBuilderOptions = {}): SelectQueryBuilder<DbEnvelope> {
   let builder = DbEnvelope.createQueryBuilder("envelope");

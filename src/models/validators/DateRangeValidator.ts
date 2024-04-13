@@ -2,13 +2,13 @@ import { isAfter, isSameDay } from "date-fns";
 import { IDateRange } from "../IDateRange";
 import { GLOBAL_MIN_DATE } from "../../utils/dates";
 
-interface IDateRangeValidationResult {
+type IDateRangeValidationResult = {
   readonly isValid: boolean;
   readonly errors: {
     readonly startDate?: string;
     readonly endDate?: string;
   };
-}
+};
 
 function validateDateRange(range: IDateRange): IDateRangeValidationResult {
   if (!range) {
