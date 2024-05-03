@@ -152,7 +152,7 @@ function ProfilesPage(): ReactElement {
       <PageHeader>
         <h2>Profiles</h2>
         <PageHeaderActions>
-          <KeyShortcut targetStr={"c"} onTrigger={createProfile}>
+          <KeyShortcut targetStr={"c"}>
             <IconBtn
               icon={"add"}
               text={"New Profile"}

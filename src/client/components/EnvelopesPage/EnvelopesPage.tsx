@@ -155,16 +155,15 @@ class UCEnvelopesPage extends PureComponent<IEnvelopesPageProps> {
         <PageHeader>
           <h2>Envelopes</h2>
           <PageHeaderActions>
-            <KeyShortcut targetStr={"c"} onTrigger={this.startEnvelopeCreation}>
-              <IconBtn
-                icon={"add"}
-                text={"New Envelope"}
-                onClick={this.startEnvelopeCreation}
-                btnProps={{
-                  className: combine(bs.btnSm, bs.btnSuccess),
-                }}
-              />
-            </KeyShortcut>
+            <KeyShortcut targetStr={"c"} onTrigger={this.startEnvelopeCreation} />
+            <IconBtn
+              icon={"add"}
+              text={"New Envelope"}
+              onClick={this.startEnvelopeCreation}
+              btnProps={{
+                className: combine(bs.btnSm, bs.btnSuccess),
+              }}
+            />
           </PageHeaderActions>
         </PageHeader>
 
