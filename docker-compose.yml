@@ -29,7 +29,7 @@ services:
       - ./logs:/logs
 
   postgres:
-    image: postgres:16
+    image: postgres:16@sha256:17b6fe3a18780358f7f44a02bc21a8ef5f349aa83d8dae96d43cd168a97cf6fa
     secrets:
       - postgres-password
     environment:
