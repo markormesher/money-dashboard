@@ -1,11 +1,11 @@
 import axios from "axios";
-import { IBudget, mapBudgetFromApi } from "../../models/IBudget";
+import { IBudget, mapBudgetForApi, mapBudgetFromApi } from "../../models/IBudget";
 import { IBudgetBalance } from "../../models/IBudgetBalance";
 import { IDateRange } from "../../models/IDateRange";
 import { cacheWrap } from "./utils";
 
 async function saveBudget(budget: IBudget): Promise<void> {
-  await axios.post(`/api/budgets/edit/${budget.id || ""}`, budget);
+  await axios.post(`/api/budgets/edit/${budget.id || ""}`, mapBudgetForApi(budget));
 }
 
 async function deleteBudget(budget: IBudget): Promise<void> {

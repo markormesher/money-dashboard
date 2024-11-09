@@ -43,7 +43,7 @@ function DataTable<Model>(props: DataTableProps<Model>): React.ReactElement {
   const [failed, setFailed] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(0);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [sortedColumns, setSortedColumns] = React.useState<ColumnSortEntry[]>([]);
+  const [sortedColumns, setSortedColumns] = React.useState<ColumnSortEntry[]>();
   const [rows, setRows] = React.useState<Model[]>();
   const [filteredRowCount, setFilteredRowCount] = React.useState(0);
   const [totalRowCount, setTotalRowCount] = React.useState(0);

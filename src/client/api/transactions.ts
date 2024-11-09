@@ -1,9 +1,9 @@
 import axios from "axios";
-import { ITransaction } from "../../models/ITransaction";
+import { ITransaction, mapTransactionForApi } from "../../models/ITransaction";
 import { cacheWrap } from "./utils";
 
 async function saveTransaction(transaction: ITransaction): Promise<void> {
-  await axios.post(`/api/transactions/edit/${transaction.id || ""}`, transaction);
+  await axios.post(`/api/transactions/edit/${transaction.id || ""}`, mapTransactionForApi(transaction));
 }
 
 async function deleteTransaction(transaction: ITransaction): Promise<void> {
