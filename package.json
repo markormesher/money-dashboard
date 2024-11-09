@@ -2,7 +2,7 @@
   "name": "money-dashboard",
   "version": "0.0.0",
   "license": "Apache-2.0",
-  "packageManager": "yarn@4.1.1",
+  "packageManager": "yarn@4.5.1",
   "scripts": {
     "// root commands": "//",
     "dev": "run-s dc-build dc-up dc-down",
