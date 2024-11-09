@@ -1,11 +1,11 @@
 import { ICategory } from "../ICategory";
 
-interface ICategoryValidationResult {
+type ICategoryValidationResult = {
   readonly isValid: boolean;
   readonly errors: {
     readonly name?: string;
   };
-}
+};
 
 function validateCategory(category: ICategory): ICategoryValidationResult {
   if (!category) {

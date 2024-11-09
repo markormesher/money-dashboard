@@ -55,14 +55,14 @@ async function getBalanceHistoryReportData(
     ...(await getStockPricesBetweenDates(addDays(minDate, -7).getTime(), endDate)),
   ].sort((a, b) => a[0] - b[0]);
 
-  const runningTotalPerCurrency: Map<CurrencyCode, number> = new Map();
-  const runningTotalPerStock: Map<StockTicker, number> = new Map();
+  const runningTotalPerCurrency = new Map<CurrencyCode, number>();
+  const runningTotalPerStock = new Map<StockTicker, number>();
 
   let exchangeRateIdx = -1;
   let stockPriceIdx = -1;
   let transactionIdx = -1;
 
-  const balanceDataPoints: Array<{ x: number; y: number }> = [];
+  const balanceDataPoints: { x: number; y: number }[] = [];
 
   for (
     let date = startOfDay(Math.max(startDate, minDate)).getTime();

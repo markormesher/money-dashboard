@@ -9,9 +9,9 @@ import { roundCurrency } from "../utils/helpers";
 import { getTransactionQueryBuilder } from "./transaction-manager";
 import { getLatestExchangeRates } from "./exchange-rate-manager";
 
-interface ICategoryQueryBuilderOptions {
+type ICategoryQueryBuilderOptions = {
   readonly withProfile?: boolean;
-}
+};
 
 function getCategoryQueryBuilder(options: ICategoryQueryBuilderOptions = {}): SelectQueryBuilder<DbCategory> {
   let builder = DbCategory.createQueryBuilder("category");
@@ -46,11 +46,11 @@ function getAllCategories(user: DbUser): Promise<DbCategory[]> {
 }
 
 async function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]> {
-  const balances: Array<{
+  const balances: {
     amount: string;
     category_id: string;
     currency_code: CurrencyCode;
-  }> = await getTransactionQueryBuilder({ withCategory: true, withAccount: true })
+  }[] = await getTransactionQueryBuilder({ withCategory: true, withAccount: true })
     .select("transaction.category_id")
     .addSelect("account.currency_code")
     .addSelect("ROUND(SUM(amount)::numeric, 2)", "amount")
@@ -64,7 +64,7 @@ async function getMemoCategoryBalances(user: DbUser): Promise<ICategoryBalance[]
   const categories = await getAllCategories(user);
   const exchangeRates = await getLatestExchangeRates();
 
-  const balanceMap: { [key: string]: number } = {};
+  const balanceMap: Record<string, number> = {};
 
   balances.forEach((balance) => {
     const gbpBalance = parseFloat(balance.amount) / exchangeRates[balance.currency_code].ratePerGbp;

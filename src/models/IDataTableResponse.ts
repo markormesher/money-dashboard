@@ -1,7 +1,7 @@
-interface IDataTableResponse<T> {
+type IDataTableResponse<T> = {
   readonly filteredRowCount: number;
   readonly totalRowCount: number;
   readonly data: T[];
-}
+};
 
 export { IDataTableResponse };

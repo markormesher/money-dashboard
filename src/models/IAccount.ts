@@ -5,17 +5,17 @@ import { CurrencyCode } from "./ICurrency";
 import { StockTicker } from "./IStock";
 
 const ACCOUNT_TYPES = ["current", "savings", "asset", "other"] as const;
-type AccountType = typeof ACCOUNT_TYPES[number];
+type AccountType = (typeof ACCOUNT_TYPES)[number];
 
 const ACCOUNT_TAGS = ["pension", "isa"] as const;
-type AccountTag = typeof ACCOUNT_TAGS[number];
+type AccountTag = (typeof ACCOUNT_TAGS)[number];
 
 const ACCOUNT_TAG_DISPLAY_NAMES: { [key in AccountTag]: string } = {
   pension: "Pension",
   isa: "ISA",
 };
 
-interface IAccount {
+type IAccount = {
   readonly id: string;
   readonly name: string;
   readonly type: AccountType;
@@ -29,7 +29,7 @@ interface IAccount {
 
   readonly profile: IProfile;
   readonly transactions: ITransaction[];
-}
+};
 
 const DEFAULT_ACCOUNT: IAccount = {
   id: null,

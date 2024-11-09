@@ -25,8 +25,8 @@ function DashboardRateHistories(): React.ReactElement | null {
     return <LoadingSpinner centre={true} />;
   }
 
-  const currenciesInUse: Set<CurrencyCode> = new Set();
-  const stocksInUse: Set<StockTicker> = new Set();
+  const currenciesInUse = new Set<CurrencyCode>();
+  const stocksInUse = new Set<StockTicker>();
 
   accountList.forEach((a) => {
     if (a.currencyCode != DEFAULT_CURRENCY_CODE) {

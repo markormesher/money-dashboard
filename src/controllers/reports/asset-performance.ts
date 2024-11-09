@@ -8,7 +8,7 @@ import { getAssetPerformanceReportData } from "../../managers/reports/asset-perf
 const router = Express.Router();
 
 router.get("/data", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const startDate = startOfDay(parseInt(req.query.startDate as string)).getTime();
   const endDate = endOfDay(parseInt(req.query.endDate as string)).getTime();
   const dateMode = req.query.dateMode as DateModeOption;

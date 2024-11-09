@@ -3,12 +3,12 @@ import { ReactElement } from "react";
 
 type CurrencyCode = "GBP" | "EUR" | "USD";
 
-interface ICurrency {
+type ICurrency = {
   readonly code: CurrencyCode;
   readonly name: string;
   readonly stringSymbol: string;
   readonly htmlSymbol: ReactElement;
-}
+};
 
 const gbp: ICurrency = {
   code: "GBP",

@@ -1,9 +1,9 @@
 import { QueryRunner } from "typeorm";
 
-interface IDbMigration {
+type IDbMigration = {
   readonly migrationNumber: number;
   readonly up: (qr: QueryRunner) => Promise<void>;
   readonly down: (qr: QueryRunner) => Promise<void>;
-}
+};
 
 export { IDbMigration };

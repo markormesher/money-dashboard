@@ -2,12 +2,12 @@ import { CurrencyCode } from "./ICurrency";
 
 type StockTicker = "PLTR";
 
-interface IStock {
+type IStock = {
   readonly ticker: StockTicker;
   readonly baseCurrency: CurrencyCode;
   readonly name: string;
   readonly minDate: number;
-}
+};
 
 const pltr: IStock = {
   ticker: "PLTR",

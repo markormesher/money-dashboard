@@ -15,7 +15,7 @@ import {
 const router = Express.Router();
 
 router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const searchTerm = req.query.searchTerm;
 
   const totalQuery = getEnvelopeTransferQueryBuilder()
@@ -42,14 +42,14 @@ router.get("/table-data", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get("/list", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   getAllEnvelopeTransfers(user)
     .then((envelopes: DbEnvelopeTransfer[]) => res.json(envelopes))
     .catch(next);
 });
 
 router.post("/edit/:transferId?", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const transferId = req.params.transferId;
   const properties: Partial<DbEnvelopeTransfer> = {
     date: req.body.date,
@@ -65,7 +65,7 @@ router.post("/edit/:transferId?", (req: Request, res: Response, next: NextFuncti
 });
 
 router.post("/delete/:transferId", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const transferId = req.params.transferId;
 
   deleteEnvelopeTransfer(user, transferId)
@@ -74,7 +74,7 @@ router.post("/delete/:transferId", (req: Request, res: Response, next: NextFunct
 });
 
 router.post("/clone", (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as DbUser;
+  const user = req.user;
   const envelopeTransferIds: string[] = req.body.envelopeTransferIds;
   const date = req.body.date;
 

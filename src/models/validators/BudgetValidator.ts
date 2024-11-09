@@ -1,7 +1,7 @@
 import { IBudget } from "../IBudget";
 import { validateDateRange } from "./DateRangeValidator";
 
-interface IBudgetValidationResult {
+type IBudgetValidationResult = {
   readonly isValid: boolean;
   readonly errors: {
     readonly category?: string;
@@ -10,7 +10,7 @@ interface IBudgetValidationResult {
     readonly startDate?: string;
     readonly endDate?: string;
   };
-}
+};
 
 function validateBudget(budget: IBudget): IBudgetValidationResult {
   if (!budget) {
@@ -53,7 +53,7 @@ function validateBudget(budget: IBudget): IBudgetValidationResult {
     };
   }
 
-  if (!budget.category || !budget.category.id || budget.category.id.trim() === "") {
+  if (!budget.category?.id || budget.category.id.trim() === "") {
     result = {
       isValid: false,
       errors: {
