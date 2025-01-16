@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package moneydashboard.v4;
+
+option go_package = "github.com/markormesher/money-dashboard/internal/gen/moneydashboard/v4;mdv4";
+
+message User {
+  string id = 1;
+}
+
+message GetCurrentUserRequest {}
+
+message GetCurrentUserResponse {
+  User user = 1;
+}
+
+service MDService {
+  rpc GetCurrentUser(GetCurrentUserRequest) returns (GetCurrentUserResponse);
+}

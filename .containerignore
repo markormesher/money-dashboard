@@ -1,0 +1,7 @@
+backend/build/
+
+orontend/node_modules/
+frontent/dist/
+
+.task/
+.imgrefs

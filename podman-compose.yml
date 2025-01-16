@@ -1,0 +1,10 @@
+version: 3.7
+
+services:
+  money-dashboard:
+    build:
+      context: .
+      dockerfile: Containerfile
+    restart: always
+    ports:
+      - "8080:8080"
