@@ -8,7 +8,7 @@ import (
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	v4 "github.com/markormesher/money-dashboard/internal/gen/moneydashboard/v4"
+	v4 "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4"
 	http "net/http"
 	strings "strings"
 )
@@ -38,12 +38,6 @@ const (
 	MDServiceGetCurrentUserProcedure = "/moneydashboard.v4.MDService/GetCurrentUser"
 )
 
-// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
-var (
-	mDServiceServiceDescriptor              = v4.File_moneydashboard_v4_moneydashboard_proto.Services().ByName("MDService")
-	mDServiceGetCurrentUserMethodDescriptor = mDServiceServiceDescriptor.Methods().ByName("GetCurrentUser")
-)
-
 // MDServiceClient is a client for the moneydashboard.v4.MDService service.
 type MDServiceClient interface {
 	GetCurrentUser(context.Context, *connect.Request[v4.GetCurrentUserRequest]) (*connect.Response[v4.GetCurrentUserResponse], error)
@@ -58,11 +52,12 @@ type MDServiceClient interface {
 // http://api.acme.com or https://acme.com/grpc).
 func NewMDServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) MDServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
+	mDServiceMethods := v4.File_moneydashboard_v4_moneydashboard_proto.Services().ByName("MDService").Methods()
 	return &mDServiceClient{
 		getCurrentUser: connect.NewClient[v4.GetCurrentUserRequest, v4.GetCurrentUserResponse](
 			httpClient,
 			baseURL+MDServiceGetCurrentUserProcedure,
-			connect.WithSchema(mDServiceGetCurrentUserMethodDescriptor),
+			connect.WithSchema(mDServiceMethods.ByName("GetCurrentUser")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -89,10 +84,11 @@ type MDServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewMDServiceHandler(svc MDServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	mDServiceMethods := v4.File_moneydashboard_v4_moneydashboard_proto.Services().ByName("MDService").Methods()
 	mDServiceGetCurrentUserHandler := connect.NewUnaryHandler(
 		MDServiceGetCurrentUserProcedure,
 		svc.GetCurrentUser,
-		connect.WithSchema(mDServiceGetCurrentUserMethodDescriptor),
+		connect.WithSchema(mDServiceMethods.ByName("GetCurrentUser")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/moneydashboard.v4.MDService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -3,7 +3,7 @@ WORKDIR /app
 
 RUN corepack enable
 
-COPY ./frontend/package.json ./frontend/pnpm-lock.yaml ./frontend
+COPY ./frontend/package.json ./frontend/pnpm-lock.yaml ./frontend/
 RUN cd frontend && pnpm install --frozen-lockfile
 
 COPY ./frontend ./frontend
@@ -25,8 +25,8 @@ RUN cd backend && go build -o ./build/main ./cmd
 FROM gcr.io/distroless/base-debian12@sha256:e9d0321de8927f69ce20e39bfc061343cce395996dfc1f0db6540e5145bc63a5
 WORKDIR /app
 
-LABEL image.registry=container-registry-tatsu.lan.tatsu.casa
-LABEL image.name=project-census
+LABEL image.registry=ghcr.io
+LABEL image.name=markormesher/money-dashboard
 
 ENV FRONTEND_DIST_PATH=/app/frontend/dist
 COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist

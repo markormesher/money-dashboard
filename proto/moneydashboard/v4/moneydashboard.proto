@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package moneydashboard.v4;
 
-option go_package = "github.com/markormesher/money-dashboard/internal/gen/moneydashboard/v4;mdv4";
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
 
 message User {
   string id = 1;

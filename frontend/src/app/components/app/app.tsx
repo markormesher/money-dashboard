@@ -2,7 +2,7 @@ import React from "react";
 import { ReactElement } from "react";
 import { createConnectTransport } from "@connectrpc/connect-web";
 import { createClient } from "@connectrpc/connect";
-import { User, MDService } from "../../../gen/moneydashboard/v4/moneydashboard_pb";
+import { User, MDService } from "../../../api_gen/moneydashboard/v4/moneydashboard_pb";
 
 function App(): ReactElement {
   const apiTransport = createConnectTransport({ baseUrl: "/" });
