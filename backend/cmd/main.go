@@ -29,13 +29,53 @@ func main() {
 		os.Exit(1)
 	}
 
-	// db init
+	// db
+	pool, db := setupDB(cfg)
+	defer pool.Close()
+
+	// core logic
+	core := core.Core{
+		Config: cfg,
+		DB:     db,
+	}
+
+	// server router
+	mux := mux.NewRouter()
+
+	// backend server
+	apiServer := api.NewApiServer(&core)
+	apiPath, apiHandler := mdv4connect.NewMDServiceHandler(apiServer)
+	mux.PathPrefix(apiPath).Handler(apiHandler)
+
+	// frontend server
+	spaServer := spa.SinglePageApp{
+		ContentBase: cfg.FrontendDistPath,
+		IndexPage:   "index.html",
+	}
+	mux.PathPrefix("/").Handler(spaServer.Handler())
+
+	// actual HTTP server
+	httpServer := http.Server{
+		Addr:              "0.0.0.0:8080",
+		Handler:           h2c.NewHandler(mux, &http2.Server{}),
+		ReadTimeout:       30,
+		ReadHeaderTimeout: 30,
+		WriteTimeout:      30,
+		IdleTimeout:       30,
+	}
+	err = httpServer.ListenAndServe()
+	if err != nil {
+		l.Error("failed to start server", "error", err)
+		os.Exit(1)
+	}
+}
+
+func setupDB(cfg config.Config) (*pgxpool.Pool, *database.DB) {
 	pool, err := pgxpool.New(context.Background(), cfg.PostgresConnectionStr)
 	if err != nil {
 		l.Error("failed to init database connection pool", "error", err)
 		os.Exit(1)
 	}
-	defer pool.Close()
 
 	l.Info("checking database connectivity")
 	attemptsLeft := 5
@@ -64,32 +104,5 @@ func main() {
 	}
 	l.Info("database migration completed")
 
-	// core logic
-	core := core.Core{
-		Config: cfg,
-		DB:     db,
-	}
-	apiServer := api.NewApiServer(&core)
-
-	// server setup
-	mux := mux.NewRouter()
-
-	// auth
-	// mux.Use(apiServer.AuthMiddleware)
-
-	// backend server
-	apiPath, apiHandler := mdv4connect.NewMDServiceHandler(apiServer)
-	mux.PathPrefix(apiPath).Handler(apiHandler)
-
-	// frontend server
-	appServer := spa.SinglePageApp{
-		ContentBase: cfg.FrontendDistPath,
-		IndexPage:   "index.html",
-	}
-	mux.PathPrefix("/").Handler(appServer.Handler())
-
-	http.ListenAndServe(
-		"0.0.0.0:8080",
-		h2c.NewHandler(mux, &http2.Server{}),
-	)
+	return pool, db
 }
