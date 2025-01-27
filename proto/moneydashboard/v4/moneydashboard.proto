@@ -5,13 +5,16 @@ package moneydashboard.v4;
 option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
 
 message User {
-  string id = 1;
+  string ID = 1;
+  string ExternalUsername = 2;
+  string DisplayName = 3;
+  bool Deleted = 4;
 }
 
 message GetCurrentUserRequest {}
 
 message GetCurrentUserResponse {
-  User user = 1;
+  User User = 1;
 }
 
 service MDService {

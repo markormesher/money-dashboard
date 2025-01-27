@@ -1,13 +1,12 @@
 package api
 
 import (
-	"context"
 	"net/http"
 
-	"connectrpc.com/connect"
 	mdv4 "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4"
 	"github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4/mdv4connect"
 	"github.com/markormesher/money-dashboard/internal/core"
+	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
 type apiServer struct {
@@ -25,11 +24,15 @@ func (s *apiServer) ConfigureMux(mux *http.ServeMux) {
 	mux.Handle(path, handler)
 }
 
-func (s *apiServer) GetCurrentUser(ctx context.Context, req *connect.Request[mdv4.GetCurrentUserRequest]) (*connect.Response[mdv4.GetCurrentUserResponse], error) {
-	res := connect.NewResponse(&mdv4.GetCurrentUserResponse{
-		User: &mdv4.User{
-			Id: "abc123",
-		},
-	})
-	return res, nil
+// goverter:converter
+// goverter:output:format function
+// goverter:output:file ./conversion/generated.go
+// goverter:output:package github.com/markormesher/money-dashboard/internal/api/conversion
+// goverter:extend github.com/markormesher/money-dashboard/internal/uuidtools:ConvertStringUUIDToNormal
+// goverter:extend github.com/markormesher/money-dashboard/internal/uuidtools:ConvertNormalUUIDToString
+type converterSpec interface {
+	UserToCore(source *mdv4.User) *schema.User
+
+	// goverter:ignore state sizeCache unknownFields
+	UserFromCore(source schema.User) *mdv4.User
 }

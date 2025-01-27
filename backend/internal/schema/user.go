@@ -5,5 +5,8 @@ import (
 )
 
 type User struct {
-	ID uuid.UUID
+	ID               uuid.UUID
+	ExternalUsername string
+	DisplayName      string
+	Deleted          bool
 }

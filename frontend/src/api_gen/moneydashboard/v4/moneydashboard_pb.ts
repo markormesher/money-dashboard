@@ -10,16 +10,31 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file moneydashboard/v4/moneydashboard.proto.
  */
 export const file_moneydashboard_v4_moneydashboard: GenFile = /*@__PURE__*/
-  fileDesc("CiZtb25leWRhc2hib2FyZC92NC9tb25leWRhc2hib2FyZC5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiEgoEVXNlchIKCgJpZBgBIAEoCSIXChVHZXRDdXJyZW50VXNlclJlcXVlc3QiPwoWR2V0Q3VycmVudFVzZXJSZXNwb25zZRIlCgR1c2VyGAEgASgLMhcubW9uZXlkYXNoYm9hcmQudjQuVXNlcjJyCglNRFNlcnZpY2USZQoOR2V0Q3VycmVudFVzZXISKC5tb25leWRhc2hib2FyZC52NC5HZXRDdXJyZW50VXNlclJlcXVlc3QaKS5tb25leWRhc2hib2FyZC52NC5HZXRDdXJyZW50VXNlclJlc3BvbnNlQlFaT2dpdGh1Yi5jb20vbWFya29ybWVzaGVyL21vbmV5LWRhc2hib2FyZC9pbnRlcm5hbC9hcGlfZ2VuL21vbmV5ZGFzaGJvYXJkL3Y0O21kdjRiBnByb3RvMw");
+  fileDesc("CiZtb25leWRhc2hib2FyZC92NC9tb25leWRhc2hib2FyZC5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiUgoEVXNlchIKCgJJRBgBIAEoCRIYChBFeHRlcm5hbFVzZXJuYW1lGAIgASgJEhMKC0Rpc3BsYXlOYW1lGAMgASgJEg8KB0RlbGV0ZWQYBCABKAgiFwoVR2V0Q3VycmVudFVzZXJSZXF1ZXN0Ij8KFkdldEN1cnJlbnRVc2VyUmVzcG9uc2USJQoEVXNlchgBIAEoCzIXLm1vbmV5ZGFzaGJvYXJkLnY0LlVzZXIycgoJTURTZXJ2aWNlEmUKDkdldEN1cnJlbnRVc2VyEigubW9uZXlkYXNoYm9hcmQudjQuR2V0Q3VycmVudFVzZXJSZXF1ZXN0GikubW9uZXlkYXNoYm9hcmQudjQuR2V0Q3VycmVudFVzZXJSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM");
 
 /**
  * @generated from message moneydashboard.v4.User
  */
 export type User = Message<"moneydashboard.v4.User"> & {
   /**
-   * @generated from field: string id = 1;
+   * @generated from field: string ID = 1;
    */
-  id: string;
+  ID: string;
+
+  /**
+   * @generated from field: string ExternalUsername = 2;
+   */
+  ExternalUsername: string;
+
+  /**
+   * @generated from field: string DisplayName = 3;
+   */
+  DisplayName: string;
+
+  /**
+   * @generated from field: bool Deleted = 4;
+   */
+  Deleted: boolean;
 };
 
 /**
@@ -47,9 +62,9 @@ export const GetCurrentUserRequestSchema: GenMessage<GetCurrentUserRequest> = /*
  */
 export type GetCurrentUserResponse = Message<"moneydashboard.v4.GetCurrentUserResponse"> & {
   /**
-   * @generated from field: moneydashboard.v4.User user = 1;
+   * @generated from field: moneydashboard.v4.User User = 1;
    */
-  user?: User;
+  User?: User;
 };
 
 /**
