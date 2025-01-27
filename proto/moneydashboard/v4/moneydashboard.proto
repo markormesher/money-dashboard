@@ -6,15 +6,15 @@ option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/mo
 
 message User {
   string ID = 1;
-  string ExternalUsername = 2;
-  string DisplayName = 3;
-  bool Deleted = 4;
+  string externalUsername = 2;
+  string displayName = 3;
+  bool deleted = 4;
 }
 
 message GetCurrentUserRequest {}
 
 message GetCurrentUserResponse {
-  User User = 1;
+  User user = 1;
 }
 
 service MDService {

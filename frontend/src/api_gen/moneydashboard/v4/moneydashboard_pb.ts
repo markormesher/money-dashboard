@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file moneydashboard/v4/moneydashboard.proto.
  */
 export const file_moneydashboard_v4_moneydashboard: GenFile = /*@__PURE__*/
-  fileDesc("CiZtb25leWRhc2hib2FyZC92NC9tb25leWRhc2hib2FyZC5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiUgoEVXNlchIKCgJJRBgBIAEoCRIYChBFeHRlcm5hbFVzZXJuYW1lGAIgASgJEhMKC0Rpc3BsYXlOYW1lGAMgASgJEg8KB0RlbGV0ZWQYBCABKAgiFwoVR2V0Q3VycmVudFVzZXJSZXF1ZXN0Ij8KFkdldEN1cnJlbnRVc2VyUmVzcG9uc2USJQoEVXNlchgBIAEoCzIXLm1vbmV5ZGFzaGJvYXJkLnY0LlVzZXIycgoJTURTZXJ2aWNlEmUKDkdldEN1cnJlbnRVc2VyEigubW9uZXlkYXNoYm9hcmQudjQuR2V0Q3VycmVudFVzZXJSZXF1ZXN0GikubW9uZXlkYXNoYm9hcmQudjQuR2V0Q3VycmVudFVzZXJSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM");
+  fileDesc("CiZtb25leWRhc2hib2FyZC92NC9tb25leWRhc2hib2FyZC5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiUgoEVXNlchIKCgJJRBgBIAEoCRIYChBleHRlcm5hbFVzZXJuYW1lGAIgASgJEhMKC2Rpc3BsYXlOYW1lGAMgASgJEg8KB2RlbGV0ZWQYBCABKAgiFwoVR2V0Q3VycmVudFVzZXJSZXF1ZXN0Ij8KFkdldEN1cnJlbnRVc2VyUmVzcG9uc2USJQoEdXNlchgBIAEoCzIXLm1vbmV5ZGFzaGJvYXJkLnY0LlVzZXIycgoJTURTZXJ2aWNlEmUKDkdldEN1cnJlbnRVc2VyEigubW9uZXlkYXNoYm9hcmQudjQuR2V0Q3VycmVudFVzZXJSZXF1ZXN0GikubW9uZXlkYXNoYm9hcmQudjQuR2V0Q3VycmVudFVzZXJSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM");
 
 /**
  * @generated from message moneydashboard.v4.User
@@ -22,19 +22,19 @@ export type User = Message<"moneydashboard.v4.User"> & {
   ID: string;
 
   /**
-   * @generated from field: string ExternalUsername = 2;
+   * @generated from field: string externalUsername = 2;
    */
-  ExternalUsername: string;
+  externalUsername: string;
 
   /**
-   * @generated from field: string DisplayName = 3;
+   * @generated from field: string displayName = 3;
    */
-  DisplayName: string;
+  displayName: string;
 
   /**
-   * @generated from field: bool Deleted = 4;
+   * @generated from field: bool deleted = 4;
    */
-  Deleted: boolean;
+  deleted: boolean;
 };
 
 /**
@@ -62,9 +62,9 @@ export const GetCurrentUserRequestSchema: GenMessage<GetCurrentUserRequest> = /*
  */
 export type GetCurrentUserResponse = Message<"moneydashboard.v4.GetCurrentUserResponse"> & {
   /**
-   * @generated from field: moneydashboard.v4.User User = 1;
+   * @generated from field: moneydashboard.v4.User user = 1;
    */
-  User?: User;
+  user?: User;
 };
 
 /**

@@ -23,7 +23,7 @@ INSERT INTO usr (
     external_username,
     display_name,
     deleted
-  FROM user
+  FROM "user"
 );
 
-DROP TABLE "user";
+-- note: not dropping the old table yet

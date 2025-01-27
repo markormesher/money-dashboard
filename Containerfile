@@ -31,5 +31,6 @@ LABEL image.name=markormesher/money-dashboard
 ENV FRONTEND_DIST_PATH=/app/frontend/dist
 COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
 COPY --from=backend-builder /app/backend/build /app/backend/build
+COPY ./sql /app/sql
 
 CMD ["/app/backend/build/main"]
