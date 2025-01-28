@@ -11,12 +11,57 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const getUserByExternalUsername = `-- name: GetUserByExternalUsername :one
+SELECT id, external_username, display_name, deleted FROM usr WHERE external_username = $1 AND deleted = FALSE
+`
+
+func (q *Queries) GetUserByExternalUsername(ctx context.Context, externalUsername string) (Usr, error) {
+	row := q.db.QueryRow(ctx, getUserByExternalUsername, externalUsername)
+	var i Usr
+	err := row.Scan(
+		&i.ID,
+		&i.ExternalUsername,
+		&i.DisplayName,
+		&i.Deleted,
+	)
+	return i, err
+}
+
 const getUserById = `-- name: GetUserById :one
 SELECT id, external_username, display_name, deleted FROM usr WHERE id = $1 AND deleted = FALSE
 `
 
 func (q *Queries) GetUserById(ctx context.Context, id pgtype.UUID) (Usr, error) {
 	row := q.db.QueryRow(ctx, getUserById, id)
+	var i Usr
+	err := row.Scan(
+		&i.ID,
+		&i.ExternalUsername,
+		&i.DisplayName,
+		&i.Deleted,
+	)
+	return i, err
+}
+
+const upsertUser = `-- name: UpsertUser :one
+INSERT INTO usr (
+  id, external_username, display_name
+) VALUES (
+  $1, $2, $3
+) ON CONFLICT (id) DO UPDATE SET
+  external_username = $2,
+  display_name = $3
+RETURNING id, external_username, display_name, deleted
+`
+
+type UpsertUserParams struct {
+	ID               pgtype.UUID
+	ExternalUsername string
+	DisplayName      string
+}
+
+func (q *Queries) UpsertUser(ctx context.Context, arg UpsertUserParams) (Usr, error) {
+	row := q.db.QueryRow(ctx, upsertUser, arg.ID, arg.ExternalUsername, arg.DisplayName)
 	var i Usr
 	err := row.Scan(
 		&i.ID,

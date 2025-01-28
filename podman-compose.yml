@@ -3,11 +3,12 @@ version: 3.7
 services:
   money-dashboard:
     build:
-      context: .
-      dockerfile: Containerfile
-    restart: always
+      context: "."
+      dockerfile: "Containerfile"
+    restart: "always"
     environment:
       - "POSTGRES_CONNECTION_STRING=postgresql://money_dashboard:foobar@postgres/money_dashboard"
+      - "DEV_MODE=yes"
     ports:
       - "8080:8080"
 

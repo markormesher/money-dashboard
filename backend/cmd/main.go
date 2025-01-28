@@ -15,8 +15,6 @@ import (
 	"github.com/markormesher/money-dashboard/internal/database"
 	"github.com/markormesher/money-dashboard/internal/logging"
 	"github.com/markormesher/money-dashboard/internal/spa"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
 )
 
 var l = logging.Logger
@@ -55,15 +53,7 @@ func main() {
 	mux.PathPrefix("/").Handler(spaServer.Handler())
 
 	// actual HTTP server
-	httpServer := http.Server{
-		Addr:              "0.0.0.0:8080",
-		Handler:           h2c.NewHandler(mux, &http2.Server{}),
-		ReadTimeout:       30,
-		ReadHeaderTimeout: 30,
-		WriteTimeout:      30,
-		IdleTimeout:       30,
-	}
-	err = httpServer.ListenAndServe()
+	err = http.ListenAndServe("0.0.0.0:8080", mux)
 	if err != nil {
 		l.Error("failed to start server", "error", err)
 		os.Exit(1)

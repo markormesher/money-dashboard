@@ -8,6 +8,15 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type User struct {
+	ID               pgtype.UUID
+	DisplayName      string
+	Image            string
+	Deleted          bool
+	ActiveProfileID  pgtype.UUID
+	ExternalUsername pgtype.Text
+}
+
 type Usr struct {
 	ID               pgtype.UUID
 	ExternalUsername string
