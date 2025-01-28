@@ -11,7 +11,7 @@ import (
 
 func UserFromCore(source schema.User) *v4.User {
 	var mdv4User v4.User
-	mdv4User.ID = uuidtools.ConvertNormalUUIDToString(source.ID)
+	mdv4User.Id = uuidtools.ConvertNormalUUIDToString(source.ID)
 	mdv4User.ExternalUsername = source.ExternalUsername
 	mdv4User.DisplayName = source.DisplayName
 	mdv4User.Deleted = source.Deleted
@@ -21,7 +21,7 @@ func UserToCore(source *v4.User) *schema.User {
 	var pSchemaUser *schema.User
 	if source != nil {
 		var schemaUser schema.User
-		schemaUser.ID = uuidtools.ConvertStringUUIDToNormal((*source).ID)
+		schemaUser.ID = uuidtools.ConvertStringUUIDToNormal((*source).Id)
 		schemaUser.ExternalUsername = (*source).ExternalUsername
 		schemaUser.DisplayName = (*source).DisplayName
 		schemaUser.Deleted = (*source).Deleted

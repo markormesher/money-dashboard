@@ -1,5 +1,3 @@
-//go:build !goverter
-
 package database
 
 import (
