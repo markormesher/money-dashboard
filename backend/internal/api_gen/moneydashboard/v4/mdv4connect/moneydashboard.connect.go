@@ -33,14 +33,20 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// MDServiceGetCurrentUserProcedure is the fully-qualified name of the MDService's GetCurrentUser
-	// RPC.
-	MDServiceGetCurrentUserProcedure = "/moneydashboard.v4.MDService/GetCurrentUser"
+	// MDServiceGetUserProcedure is the fully-qualified name of the MDService's GetUser RPC.
+	MDServiceGetUserProcedure = "/moneydashboard.v4.MDService/GetUser"
+	// MDServiceGetProfilesProcedure is the fully-qualified name of the MDService's GetProfiles RPC.
+	MDServiceGetProfilesProcedure = "/moneydashboard.v4.MDService/GetProfiles"
+	// MDServiceSetActiveProfileProcedure is the fully-qualified name of the MDService's
+	// SetActiveProfile RPC.
+	MDServiceSetActiveProfileProcedure = "/moneydashboard.v4.MDService/SetActiveProfile"
 )
 
 // MDServiceClient is a client for the moneydashboard.v4.MDService service.
 type MDServiceClient interface {
-	GetCurrentUser(context.Context, *connect.Request[v4.GetCurrentUserRequest]) (*connect.Response[v4.GetCurrentUserResponse], error)
+	GetUser(context.Context, *connect.Request[v4.GetUserRequest]) (*connect.Response[v4.GetUserResponse], error)
+	GetProfiles(context.Context, *connect.Request[v4.GetProfilesRequest]) (*connect.Response[v4.GetProfilesResponse], error)
+	SetActiveProfile(context.Context, *connect.Request[v4.SetActiveProfileRequest]) (*connect.Response[v4.SetActiveProfileResponse], error)
 }
 
 // NewMDServiceClient constructs a client for the moneydashboard.v4.MDService service. By default,
@@ -54,10 +60,22 @@ func NewMDServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...c
 	baseURL = strings.TrimRight(baseURL, "/")
 	mDServiceMethods := v4.File_moneydashboard_v4_moneydashboard_proto.Services().ByName("MDService").Methods()
 	return &mDServiceClient{
-		getCurrentUser: connect.NewClient[v4.GetCurrentUserRequest, v4.GetCurrentUserResponse](
+		getUser: connect.NewClient[v4.GetUserRequest, v4.GetUserResponse](
 			httpClient,
-			baseURL+MDServiceGetCurrentUserProcedure,
-			connect.WithSchema(mDServiceMethods.ByName("GetCurrentUser")),
+			baseURL+MDServiceGetUserProcedure,
+			connect.WithSchema(mDServiceMethods.ByName("GetUser")),
+			connect.WithClientOptions(opts...),
+		),
+		getProfiles: connect.NewClient[v4.GetProfilesRequest, v4.GetProfilesResponse](
+			httpClient,
+			baseURL+MDServiceGetProfilesProcedure,
+			connect.WithSchema(mDServiceMethods.ByName("GetProfiles")),
+			connect.WithClientOptions(opts...),
+		),
+		setActiveProfile: connect.NewClient[v4.SetActiveProfileRequest, v4.SetActiveProfileResponse](
+			httpClient,
+			baseURL+MDServiceSetActiveProfileProcedure,
+			connect.WithSchema(mDServiceMethods.ByName("SetActiveProfile")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -65,17 +83,31 @@ func NewMDServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...c
 
 // mDServiceClient implements MDServiceClient.
 type mDServiceClient struct {
-	getCurrentUser *connect.Client[v4.GetCurrentUserRequest, v4.GetCurrentUserResponse]
+	getUser          *connect.Client[v4.GetUserRequest, v4.GetUserResponse]
+	getProfiles      *connect.Client[v4.GetProfilesRequest, v4.GetProfilesResponse]
+	setActiveProfile *connect.Client[v4.SetActiveProfileRequest, v4.SetActiveProfileResponse]
 }
 
-// GetCurrentUser calls moneydashboard.v4.MDService.GetCurrentUser.
-func (c *mDServiceClient) GetCurrentUser(ctx context.Context, req *connect.Request[v4.GetCurrentUserRequest]) (*connect.Response[v4.GetCurrentUserResponse], error) {
-	return c.getCurrentUser.CallUnary(ctx, req)
+// GetUser calls moneydashboard.v4.MDService.GetUser.
+func (c *mDServiceClient) GetUser(ctx context.Context, req *connect.Request[v4.GetUserRequest]) (*connect.Response[v4.GetUserResponse], error) {
+	return c.getUser.CallUnary(ctx, req)
+}
+
+// GetProfiles calls moneydashboard.v4.MDService.GetProfiles.
+func (c *mDServiceClient) GetProfiles(ctx context.Context, req *connect.Request[v4.GetProfilesRequest]) (*connect.Response[v4.GetProfilesResponse], error) {
+	return c.getProfiles.CallUnary(ctx, req)
+}
+
+// SetActiveProfile calls moneydashboard.v4.MDService.SetActiveProfile.
+func (c *mDServiceClient) SetActiveProfile(ctx context.Context, req *connect.Request[v4.SetActiveProfileRequest]) (*connect.Response[v4.SetActiveProfileResponse], error) {
+	return c.setActiveProfile.CallUnary(ctx, req)
 }
 
 // MDServiceHandler is an implementation of the moneydashboard.v4.MDService service.
 type MDServiceHandler interface {
-	GetCurrentUser(context.Context, *connect.Request[v4.GetCurrentUserRequest]) (*connect.Response[v4.GetCurrentUserResponse], error)
+	GetUser(context.Context, *connect.Request[v4.GetUserRequest]) (*connect.Response[v4.GetUserResponse], error)
+	GetProfiles(context.Context, *connect.Request[v4.GetProfilesRequest]) (*connect.Response[v4.GetProfilesResponse], error)
+	SetActiveProfile(context.Context, *connect.Request[v4.SetActiveProfileRequest]) (*connect.Response[v4.SetActiveProfileResponse], error)
 }
 
 // NewMDServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -85,16 +117,32 @@ type MDServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewMDServiceHandler(svc MDServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	mDServiceMethods := v4.File_moneydashboard_v4_moneydashboard_proto.Services().ByName("MDService").Methods()
-	mDServiceGetCurrentUserHandler := connect.NewUnaryHandler(
-		MDServiceGetCurrentUserProcedure,
-		svc.GetCurrentUser,
-		connect.WithSchema(mDServiceMethods.ByName("GetCurrentUser")),
+	mDServiceGetUserHandler := connect.NewUnaryHandler(
+		MDServiceGetUserProcedure,
+		svc.GetUser,
+		connect.WithSchema(mDServiceMethods.ByName("GetUser")),
+		connect.WithHandlerOptions(opts...),
+	)
+	mDServiceGetProfilesHandler := connect.NewUnaryHandler(
+		MDServiceGetProfilesProcedure,
+		svc.GetProfiles,
+		connect.WithSchema(mDServiceMethods.ByName("GetProfiles")),
+		connect.WithHandlerOptions(opts...),
+	)
+	mDServiceSetActiveProfileHandler := connect.NewUnaryHandler(
+		MDServiceSetActiveProfileProcedure,
+		svc.SetActiveProfile,
+		connect.WithSchema(mDServiceMethods.ByName("SetActiveProfile")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/moneydashboard.v4.MDService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case MDServiceGetCurrentUserProcedure:
-			mDServiceGetCurrentUserHandler.ServeHTTP(w, r)
+		case MDServiceGetUserProcedure:
+			mDServiceGetUserHandler.ServeHTTP(w, r)
+		case MDServiceGetProfilesProcedure:
+			mDServiceGetProfilesHandler.ServeHTTP(w, r)
+		case MDServiceSetActiveProfileProcedure:
+			mDServiceSetActiveProfileHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -104,6 +152,14 @@ func NewMDServiceHandler(svc MDServiceHandler, opts ...connect.HandlerOption) (s
 // UnimplementedMDServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedMDServiceHandler struct{}
 
-func (UnimplementedMDServiceHandler) GetCurrentUser(context.Context, *connect.Request[v4.GetCurrentUserRequest]) (*connect.Response[v4.GetCurrentUserResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDService.GetCurrentUser is not implemented"))
+func (UnimplementedMDServiceHandler) GetUser(context.Context, *connect.Request[v4.GetUserRequest]) (*connect.Response[v4.GetUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDService.GetUser is not implemented"))
+}
+
+func (UnimplementedMDServiceHandler) GetProfiles(context.Context, *connect.Request[v4.GetProfilesRequest]) (*connect.Response[v4.GetProfilesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDService.GetProfiles is not implemented"))
+}
+
+func (UnimplementedMDServiceHandler) SetActiveProfile(context.Context, *connect.Request[v4.SetActiveProfileRequest]) (*connect.Response[v4.SetActiveProfileResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDService.SetActiveProfile is not implemented"))
 }

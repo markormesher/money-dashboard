@@ -1,6 +1,5 @@
--- the old table was called "user", the new one is called "usr" for convenience
+-- create the old users table, create the new one, copy data, but don't drop the old one yet
 
--- create the old table if it doesn't exist
 CREATE TABLE IF NOT EXISTS "user" (
   id UUID NOT NULL,
   display_name VARCHAR NOT NULL,
@@ -25,5 +24,3 @@ INSERT INTO usr (
     deleted
   FROM "user"
 );
-
--- note: not dropping the old table yet

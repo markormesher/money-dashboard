@@ -1,10 +1,23 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "./query.sql"
+    queries: "./queries"
     schema: "./migrations"
     gen:
       go:
         package: "database_gen"
         out: "../backend/internal/database_gen"
         sql_package: "pgx/v5"
+        emit_pointers_for_null_types: true
+        overrides:
+          - db_type: "uuid"
+            nullable: false
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
+          - db_type: "uuid"
+            nullable: true
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
+              pointer: true

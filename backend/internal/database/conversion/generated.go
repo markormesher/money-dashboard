@@ -6,12 +6,25 @@ package conversion
 import (
 	databasegen "github.com/markormesher/money-dashboard/internal/database_gen"
 	schema "github.com/markormesher/money-dashboard/internal/schema"
-	uuidtools "github.com/markormesher/money-dashboard/internal/uuidtools"
 )
 
+func ProfileFromCore(source schema.Profile) databasegen.Profile {
+	var database_genProfile databasegen.Profile
+	database_genProfile.ID = source.ID
+	database_genProfile.Name = source.Name
+	database_genProfile.Deleted = source.Deleted
+	return database_genProfile
+}
+func ProfileToCore(source databasegen.Profile) schema.Profile {
+	var schemaProfile schema.Profile
+	schemaProfile.ID = source.ID
+	schemaProfile.Name = source.Name
+	schemaProfile.Deleted = source.Deleted
+	return schemaProfile
+}
 func UserFromCore(source schema.User) databasegen.Usr {
 	var database_genUsr databasegen.Usr
-	database_genUsr.ID = uuidtools.ConvertNormalUUIDToPostgres(source.ID)
+	database_genUsr.ID = source.ID
 	database_genUsr.ExternalUsername = source.ExternalUsername
 	database_genUsr.DisplayName = source.DisplayName
 	database_genUsr.Deleted = source.Deleted
@@ -19,9 +32,19 @@ func UserFromCore(source schema.User) databasegen.Usr {
 }
 func UserToCore(source databasegen.Usr) schema.User {
 	var schemaUser schema.User
-	schemaUser.ID = uuidtools.ConvertPostgresUUIDToNormal(source.ID)
+	schemaUser.ID = source.ID
 	schemaUser.ExternalUsername = source.ExternalUsername
 	schemaUser.DisplayName = source.DisplayName
 	schemaUser.Deleted = source.Deleted
 	return schemaUser
+}
+func UserprofileRoleFromCore(source schema.UserProfileRole) databasegen.UserProfileRole {
+	var database_genUserProfileRole databasegen.UserProfileRole
+	database_genUserProfileRole.Role = source.Role
+	return database_genUserProfileRole
+}
+func UserprofileRoleToCore(source databasegen.UserProfileRole) schema.UserProfileRole {
+	var schemaUserProfileRole schema.UserProfileRole
+	schemaUserProfileRole.Role = source.Role
+	return schemaUserProfileRole
 }

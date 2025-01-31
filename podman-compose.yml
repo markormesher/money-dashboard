@@ -9,8 +9,11 @@ services:
     environment:
       - "POSTGRES_CONNECTION_STRING=postgresql://money_dashboard:foobar@postgres/money_dashboard"
       - "DEV_MODE=yes"
+      - "FRONTEND_DIST_PATH=/app/src/frontend/dist"
     ports:
       - "8080:8080"
+    volumes:
+      - "./frontend:/app/src/frontend:ro"
 
   postgres:
     image: "docker.io/library/postgres:17.2"

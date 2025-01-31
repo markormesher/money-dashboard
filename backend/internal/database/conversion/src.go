@@ -9,10 +9,19 @@ import (
 // goverter:output:format function
 // goverter:output:file ./generated.go
 // goverter:output:package github.com/markormesher/money-dashboard/internal/database/conversion
-// goverter:extend github.com/markormesher/money-dashboard/internal/uuidtools:ConvertPostgresUUIDToNormal
-// goverter:extend github.com/markormesher/money-dashboard/internal/uuidtools:ConvertNormalUUIDToPostgres
 // goverter:matchIgnoreCase yes
+// goverter:skipCopySameType yes
 type converterSpec interface {
-	UserToCore(source database_gen.Usr) schema.User
+	// goverter:ignore ActiveProfileID
 	UserFromCore(source schema.User) database_gen.Usr
+	// goverter:ignore ActiveProfile
+	UserToCore(source database_gen.Usr) schema.User
+
+	ProfileFromCore(source schema.Profile) database_gen.Profile
+	ProfileToCore(source database_gen.Profile) schema.Profile
+
+	// goverter:ignore UserID ProfileID
+	UserprofileRoleFromCore(source schema.UserProfileRole) database_gen.UserProfileRole
+	// goverter:ignore User Profile
+	UserprofileRoleToCore(source database_gen.UserProfileRole) schema.UserProfileRole
 }

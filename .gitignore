@@ -5,3 +5,5 @@ frontend/dist/
 
 .task/
 .imgrefs
+
+dump.sql

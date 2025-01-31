@@ -8,7 +8,7 @@ import (
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
-func (s *apiServer) GetUser(ctx context.Context, req connect.AnyRequest) (schema.User, error) {
+func (s *apiServer) getReqUser(ctx context.Context, req connect.AnyRequest) (schema.User, error) {
 	extUsername := req.Header().Get("remote-user")
 	extName := req.Header().Get("remote-name")
 

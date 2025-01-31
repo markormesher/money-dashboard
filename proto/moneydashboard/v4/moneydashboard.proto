@@ -9,14 +9,36 @@ message User {
   string external_username = 2;
   string display_name = 3;
   bool deleted = 4;
+
+  Profile active_profile = 5;
 }
 
-message GetCurrentUserRequest {}
+message Profile {
+  string id = 1;
+  string name = 2;
+  bool deleted = 3;
+}
 
-message GetCurrentUserResponse {
+message GetUserRequest {}
+
+message GetUserResponse {
   User user = 1;
 }
 
+message GetProfilesRequest {}
+
+message GetProfilesResponse {
+  repeated Profile profiles = 1;
+}
+
+message SetActiveProfileRequest {
+  string profile_id = 1;
+}
+
+message SetActiveProfileResponse {}
+
 service MDService {
-  rpc GetCurrentUser(GetCurrentUserRequest) returns (GetCurrentUserResponse);
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc GetProfiles(GetProfilesRequest) returns (GetProfilesResponse);
+  rpc SetActiveProfile(SetActiveProfileRequest) returns (SetActiveProfileResponse);
 }

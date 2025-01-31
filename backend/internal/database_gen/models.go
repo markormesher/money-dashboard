@@ -5,21 +5,25 @@
 package database_gen
 
 import (
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/google/uuid"
 )
 
-type User struct {
-	ID               pgtype.UUID
-	DisplayName      string
-	Image            string
-	Deleted          bool
-	ActiveProfileID  pgtype.UUID
-	ExternalUsername pgtype.Text
+type Profile struct {
+	ID      uuid.UUID
+	Name    string
+	Deleted bool
+}
+
+type UserProfileRole struct {
+	UserID    uuid.UUID
+	ProfileID uuid.UUID
+	Role      string
 }
 
 type Usr struct {
-	ID               pgtype.UUID
+	ID               uuid.UUID
 	ExternalUsername string
 	DisplayName      string
 	Deleted          bool
+	ActiveProfileID  *uuid.UUID
 }

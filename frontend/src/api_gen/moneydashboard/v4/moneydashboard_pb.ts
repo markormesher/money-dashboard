@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file moneydashboard/v4/moneydashboard.proto.
  */
 export const file_moneydashboard_v4_moneydashboard: GenFile = /*@__PURE__*/
-  fileDesc("CiZtb25leWRhc2hib2FyZC92NC9tb25leWRhc2hib2FyZC5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiVAoEVXNlchIKCgJpZBgBIAEoCRIZChFleHRlcm5hbF91c2VybmFtZRgCIAEoCRIUCgxkaXNwbGF5X25hbWUYAyABKAkSDwoHZGVsZXRlZBgEIAEoCCIXChVHZXRDdXJyZW50VXNlclJlcXVlc3QiPwoWR2V0Q3VycmVudFVzZXJSZXNwb25zZRIlCgR1c2VyGAEgASgLMhcubW9uZXlkYXNoYm9hcmQudjQuVXNlcjJyCglNRFNlcnZpY2USZQoOR2V0Q3VycmVudFVzZXISKC5tb25leWRhc2hib2FyZC52NC5HZXRDdXJyZW50VXNlclJlcXVlc3QaKS5tb25leWRhc2hib2FyZC52NC5HZXRDdXJyZW50VXNlclJlc3BvbnNlQlFaT2dpdGh1Yi5jb20vbWFya29ybWVzaGVyL21vbmV5LWRhc2hib2FyZC9pbnRlcm5hbC9hcGlfZ2VuL21vbmV5ZGFzaGJvYXJkL3Y0O21kdjRiBnByb3RvMw");
+  fileDesc("CiZtb25leWRhc2hib2FyZC92NC9tb25leWRhc2hib2FyZC5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiiAEKBFVzZXISCgoCaWQYASABKAkSGQoRZXh0ZXJuYWxfdXNlcm5hbWUYAiABKAkSFAoMZGlzcGxheV9uYW1lGAMgASgJEg8KB2RlbGV0ZWQYBCABKAgSMgoOYWN0aXZlX3Byb2ZpbGUYBSABKAsyGi5tb25leWRhc2hib2FyZC52NC5Qcm9maWxlIjQKB1Byb2ZpbGUSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdkZWxldGVkGAMgASgIIhAKDkdldFVzZXJSZXF1ZXN0IjgKD0dldFVzZXJSZXNwb25zZRIlCgR1c2VyGAEgASgLMhcubW9uZXlkYXNoYm9hcmQudjQuVXNlciIUChJHZXRQcm9maWxlc1JlcXVlc3QiQwoTR2V0UHJvZmlsZXNSZXNwb25zZRIsCghwcm9maWxlcxgBIAMoCzIaLm1vbmV5ZGFzaGJvYXJkLnY0LlByb2ZpbGUiLQoXU2V0QWN0aXZlUHJvZmlsZVJlcXVlc3QSEgoKcHJvZmlsZV9pZBgBIAEoCSIaChhTZXRBY3RpdmVQcm9maWxlUmVzcG9uc2UyqAIKCU1EU2VydmljZRJQCgdHZXRVc2VyEiEubW9uZXlkYXNoYm9hcmQudjQuR2V0VXNlclJlcXVlc3QaIi5tb25leWRhc2hib2FyZC52NC5HZXRVc2VyUmVzcG9uc2USXAoLR2V0UHJvZmlsZXMSJS5tb25leWRhc2hib2FyZC52NC5HZXRQcm9maWxlc1JlcXVlc3QaJi5tb25leWRhc2hib2FyZC52NC5HZXRQcm9maWxlc1Jlc3BvbnNlEmsKEFNldEFjdGl2ZVByb2ZpbGUSKi5tb25leWRhc2hib2FyZC52NC5TZXRBY3RpdmVQcm9maWxlUmVxdWVzdBorLm1vbmV5ZGFzaGJvYXJkLnY0LlNldEFjdGl2ZVByb2ZpbGVSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM");
 
 /**
  * @generated from message moneydashboard.v4.User
@@ -35,6 +35,11 @@ export type User = Message<"moneydashboard.v4.User"> & {
    * @generated from field: bool deleted = 4;
    */
   deleted: boolean;
+
+  /**
+   * @generated from field: moneydashboard.v4.Profile active_profile = 5;
+   */
+  activeProfile?: Profile;
 };
 
 /**
@@ -45,22 +50,49 @@ export const UserSchema: GenMessage<User> = /*@__PURE__*/
   messageDesc(file_moneydashboard_v4_moneydashboard, 0);
 
 /**
- * @generated from message moneydashboard.v4.GetCurrentUserRequest
+ * @generated from message moneydashboard.v4.Profile
  */
-export type GetCurrentUserRequest = Message<"moneydashboard.v4.GetCurrentUserRequest"> & {
+export type Profile = Message<"moneydashboard.v4.Profile"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  /**
+   * @generated from field: bool deleted = 3;
+   */
+  deleted: boolean;
 };
 
 /**
- * Describes the message moneydashboard.v4.GetCurrentUserRequest.
- * Use `create(GetCurrentUserRequestSchema)` to create a new message.
+ * Describes the message moneydashboard.v4.Profile.
+ * Use `create(ProfileSchema)` to create a new message.
  */
-export const GetCurrentUserRequestSchema: GenMessage<GetCurrentUserRequest> = /*@__PURE__*/
+export const ProfileSchema: GenMessage<Profile> = /*@__PURE__*/
   messageDesc(file_moneydashboard_v4_moneydashboard, 1);
 
 /**
- * @generated from message moneydashboard.v4.GetCurrentUserResponse
+ * @generated from message moneydashboard.v4.GetUserRequest
  */
-export type GetCurrentUserResponse = Message<"moneydashboard.v4.GetCurrentUserResponse"> & {
+export type GetUserRequest = Message<"moneydashboard.v4.GetUserRequest"> & {
+};
+
+/**
+ * Describes the message moneydashboard.v4.GetUserRequest.
+ * Use `create(GetUserRequestSchema)` to create a new message.
+ */
+export const GetUserRequestSchema: GenMessage<GetUserRequest> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_moneydashboard, 2);
+
+/**
+ * @generated from message moneydashboard.v4.GetUserResponse
+ */
+export type GetUserResponse = Message<"moneydashboard.v4.GetUserResponse"> & {
   /**
    * @generated from field: moneydashboard.v4.User user = 1;
    */
@@ -68,23 +100,99 @@ export type GetCurrentUserResponse = Message<"moneydashboard.v4.GetCurrentUserRe
 };
 
 /**
- * Describes the message moneydashboard.v4.GetCurrentUserResponse.
- * Use `create(GetCurrentUserResponseSchema)` to create a new message.
+ * Describes the message moneydashboard.v4.GetUserResponse.
+ * Use `create(GetUserResponseSchema)` to create a new message.
  */
-export const GetCurrentUserResponseSchema: GenMessage<GetCurrentUserResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_moneydashboard, 2);
+export const GetUserResponseSchema: GenMessage<GetUserResponse> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_moneydashboard, 3);
+
+/**
+ * @generated from message moneydashboard.v4.GetProfilesRequest
+ */
+export type GetProfilesRequest = Message<"moneydashboard.v4.GetProfilesRequest"> & {
+};
+
+/**
+ * Describes the message moneydashboard.v4.GetProfilesRequest.
+ * Use `create(GetProfilesRequestSchema)` to create a new message.
+ */
+export const GetProfilesRequestSchema: GenMessage<GetProfilesRequest> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_moneydashboard, 4);
+
+/**
+ * @generated from message moneydashboard.v4.GetProfilesResponse
+ */
+export type GetProfilesResponse = Message<"moneydashboard.v4.GetProfilesResponse"> & {
+  /**
+   * @generated from field: repeated moneydashboard.v4.Profile profiles = 1;
+   */
+  profiles: Profile[];
+};
+
+/**
+ * Describes the message moneydashboard.v4.GetProfilesResponse.
+ * Use `create(GetProfilesResponseSchema)` to create a new message.
+ */
+export const GetProfilesResponseSchema: GenMessage<GetProfilesResponse> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_moneydashboard, 5);
+
+/**
+ * @generated from message moneydashboard.v4.SetActiveProfileRequest
+ */
+export type SetActiveProfileRequest = Message<"moneydashboard.v4.SetActiveProfileRequest"> & {
+  /**
+   * @generated from field: string profile_id = 1;
+   */
+  profileId: string;
+};
+
+/**
+ * Describes the message moneydashboard.v4.SetActiveProfileRequest.
+ * Use `create(SetActiveProfileRequestSchema)` to create a new message.
+ */
+export const SetActiveProfileRequestSchema: GenMessage<SetActiveProfileRequest> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_moneydashboard, 6);
+
+/**
+ * @generated from message moneydashboard.v4.SetActiveProfileResponse
+ */
+export type SetActiveProfileResponse = Message<"moneydashboard.v4.SetActiveProfileResponse"> & {
+};
+
+/**
+ * Describes the message moneydashboard.v4.SetActiveProfileResponse.
+ * Use `create(SetActiveProfileResponseSchema)` to create a new message.
+ */
+export const SetActiveProfileResponseSchema: GenMessage<SetActiveProfileResponse> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_moneydashboard, 7);
 
 /**
  * @generated from service moneydashboard.v4.MDService
  */
 export const MDService: GenService<{
   /**
-   * @generated from rpc moneydashboard.v4.MDService.GetCurrentUser
+   * @generated from rpc moneydashboard.v4.MDService.GetUser
    */
-  getCurrentUser: {
+  getUser: {
     methodKind: "unary";
-    input: typeof GetCurrentUserRequestSchema;
-    output: typeof GetCurrentUserResponseSchema;
+    input: typeof GetUserRequestSchema;
+    output: typeof GetUserResponseSchema;
+  },
+  /**
+   * @generated from rpc moneydashboard.v4.MDService.GetProfiles
+   */
+  getProfiles: {
+    methodKind: "unary";
+    input: typeof GetProfilesRequestSchema;
+    output: typeof GetProfilesResponseSchema;
+  },
+  /**
+   * @generated from rpc moneydashboard.v4.MDService.SetActiveProfile
+   */
+  setActiveProfile: {
+    methodKind: "unary";
+    input: typeof SetActiveProfileRequestSchema;
+    output: typeof SetActiveProfileResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_moneydashboard_v4_moneydashboard, 0);
