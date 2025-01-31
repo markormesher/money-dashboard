@@ -22,6 +22,10 @@ function App(): ReactElement {
 
   const [profiles, setProfiles] = React.useState<Profile[]>();
   React.useEffect(() => {
+    if (!user) {
+      return;
+    }
+
     apiClient
       .getProfiles({})
       .then((res) => {
@@ -30,7 +34,7 @@ function App(): ReactElement {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [user]);
 
   function setActiveProfile(id: string) {
     apiClient
