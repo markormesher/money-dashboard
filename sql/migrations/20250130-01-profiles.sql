@@ -1,21 +1,10 @@
--- create the old profile table, then tweak the schema to match new defaults
+-- tweak the existing profile schema to match new defaults
 -- no need to use a temporary table, the original table works fine for the new schema
-
-CREATE TABLE IF NOT EXISTS profile (
-  id UUID NOT NULL PRIMARY KEY,
-  name VARCHAR NOT NULL,
-  deleted bOOLEAN NOT NULL
-);
 
 ALTER TABLE profile ALTER COLUMN name TYPE TEXT;
 ALTER TABLE profile ALTER COLUMN deleted SET DEFAULT FALSE;
 
--- user <-> profile links: create the old table, copy the data across, drop the old table
-
-CREATE TABLE IF NOT EXISTS user_profiles_profile (
-  user_id UUID NOT NULL,
-  profile_id UUID NOT NULL
-);
+-- user <-> profile links: copy the data across, drop the old table
 
 CREATE TABLE user_profile_role (
   user_id UUID NOT NULL REFERENCES usr (id),

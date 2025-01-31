@@ -1,4 +1,4 @@
--- create the old users table, create the new one, copy data, but don't drop the old one yet
+-- create a new users table and copy data, but don't drop the old one yet
 
 CREATE TABLE IF NOT EXISTS "user" (
   id UUID NOT NULL,

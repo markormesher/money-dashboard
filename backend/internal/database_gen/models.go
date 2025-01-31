@@ -6,12 +6,108 @@ package database_gen
 
 import (
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
+
+type Account struct {
+	ID                 uuid.UUID
+	Deleted            bool
+	Name               string
+	Type               string
+	Active             bool
+	ProfileID          uuid.UUID
+	Note               *string
+	Tags               []string
+	CurrencyCode       string
+	StockTicker        *string
+	IncludeInEnvelopes *bool
+}
+
+type Budget struct {
+	ID         uuid.UUID
+	Deleted    bool
+	Type       string
+	Amount     float64
+	StartDate  int64
+	EndDate    int64
+	CategoryID *uuid.UUID
+	ProfileID  *uuid.UUID
+}
+
+type Category struct {
+	ID                    uuid.UUID
+	Name                  string
+	IsMemoCategory        bool
+	IsIncomeCategory      bool
+	IsExpenseCategory     bool
+	IsAssetGrowthCategory bool
+	Deleted               bool
+	ProfileID             *uuid.UUID
+}
+
+type Envelope struct {
+	ID        uuid.UUID
+	Deleted   bool
+	Name      string
+	ProfileID uuid.UUID
+}
+
+type EnvelopeAllocation struct {
+	ID         uuid.UUID
+	Deleted    bool
+	StartDate  int64
+	CategoryID uuid.UUID
+	EnvelopeID uuid.UUID
+	ProfileID  uuid.UUID
+}
+
+type EnvelopeTransfer struct {
+	ID             uuid.UUID
+	Deleted        bool
+	Date           int64
+	Amount         float64
+	Note           *string
+	FromEnvelopeID *uuid.UUID
+	ToEnvelopeID   *uuid.UUID
+	ProfileID      uuid.UUID
+}
+
+type ExchangeRate struct {
+	CurrencyCode string
+	Date         int64
+	RatePerGbp   float64
+	UpdateTime   int64
+}
+
+type Migration struct {
+	MigrationInProgress bool
+	LastMigration       int32
+}
 
 type Profile struct {
 	ID      uuid.UUID
 	Name    string
 	Deleted bool
+}
+
+type StockPrice struct {
+	Ticker              string
+	Date                int64
+	RatePerBaseCurrency *float64
+}
+
+type Transaction struct {
+	ID              uuid.UUID
+	TransactionDate int64
+	EffectiveDate   int64
+	Amount          float64
+	Payee           string
+	Note            *string
+	Deleted         bool
+	AccountID       *uuid.UUID
+	CategoryID      *uuid.UUID
+	ProfileID       *uuid.UUID
+	CreationDate    pgtype.Timestamp
 }
 
 type UserProfileRole struct {
