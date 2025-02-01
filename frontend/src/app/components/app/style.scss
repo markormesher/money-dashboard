@@ -1,13 +1,5 @@
 @use "@picocss/pico";
-@use "material-icons/iconfont/outlined.css";
 @use "../../../settings.scss" as settings;
-
-// fix for icons
-
-.material-icons-outlined {
-  font-size: inherit !important;
-  line-height: inherit !important;
-}
 
 $header-height: 3rem;
 

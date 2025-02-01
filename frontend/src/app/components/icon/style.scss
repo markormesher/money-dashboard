@@ -1,0 +1,15 @@
+@use "material-icons/iconfont/outlined.css";
+
+.material-icons-outlined {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+.icon-group {
+  display: flex;
+  align-items: center;
+
+  *:not(:last-child) {
+    margin-right: calc(var(--pico-block-spacing-horizontal) / 2);
+  }
+}

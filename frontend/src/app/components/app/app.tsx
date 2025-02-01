@@ -5,7 +5,7 @@ import { createClient } from "@connectrpc/connect";
 import { User, MDService, Profile } from "../../../api_gen/moneydashboard/v4/moneydashboard_pb";
 import "./style.scss";
 import { concatClasses } from "../../utils/style";
-import { Icon } from "../icon/icon";
+import { Icon, IconGroup } from "../icon/icon";
 
 function App(): ReactElement {
   const apiTransport = createConnectTransport({ baseUrl: "/" });
@@ -63,7 +63,12 @@ function App(): ReactElement {
     <>
       <header id={"main-header"}>
         <div className={"container-fluid"}>
-          <span>Money Dashboard</span>
+          <div>
+            <IconGroup>
+              <Icon name={"account_balance"} />
+              <span>Money Dashboard</span>
+            </IconGroup>
+          </div>
           <nav>
             <ul>
               <li>
