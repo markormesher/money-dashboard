@@ -3,6 +3,8 @@ import { ReactElement } from "react";
 import { createConnectTransport } from "@connectrpc/connect-web";
 import { createClient } from "@connectrpc/connect";
 import { User, MDService, Profile } from "../../../api_gen/moneydashboard/v4/moneydashboard_pb";
+import "./style.scss";
+import { concatClasses } from "../../utils/style";
 
 function App(): ReactElement {
   const apiTransport = createConnectTransport({ baseUrl: "/" });
@@ -47,21 +49,111 @@ function App(): ReactElement {
       });
   }
 
+  const [menuOpen, setMenuOpen] = React.useState(false);
+
+  const [theme, setTheme] = React.useState("light");
+  const toggleTheme = () => setTheme((curr) => (curr == "light" ? "dark" : "light"));
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
   return (
     <>
-      <p>User:</p>
-      <pre>{JSON.stringify(user, null, 2)}</pre>
-      <p>Profiles:</p>
-      <pre>{JSON.stringify(profiles, null, 2)}</pre>
-      <p>
-        <select onChange={(evt) => setActiveProfile(evt.target.value)}>
-          {profiles?.map((p) => (
-            <option key={p.id} value={p.id} selected={user?.activeProfile?.id == p.id}>
-              {p.name}
-            </option>
-          ))}
-        </select>
-      </p>
+      <header id={"main-header"}>
+        <div className={"container-fluid"}>
+          <span>MD</span>
+          <nav>
+            <ul>
+              <li>
+                <details className={"dropdown"}>
+                  <summary>{user?.activeProfile?.name}</summary>
+                  <ul dir={"rtl"}>
+                    {profiles?.map((p) => (
+                      <li key={p.id} onClick={() => setActiveProfile(p.id)}>
+                        {p.name}
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              </li>
+              <li>
+                <span onClick={toggleTheme}>L/D</span>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <main className={"container-fluid"}>
+        <nav aria-label={"breadcrumb"}>
+          <ul>
+            <li>
+              <a href={"#"} className={"secondary"} onClick={() => setMenuOpen(true)}>
+                Dashboard
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <aside className={concatClasses("main-menu", menuOpen && "open")}>
+          <header>
+            <h2>Dashboard</h2>
+            <a aria-label={"Close"} onClick={() => setMenuOpen(false)}>
+              X
+            </a>
+          </header>
+
+          <nav>
+            <details open={true}>
+              <summary>Settings</summary>
+              <ul>
+                <li className={"active"}>Accounts</li>
+                <li>Currencies</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>Tools</summary>
+              <ul>
+                <li>Currencies</li>
+                <li>Currencies</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>Huge Menu</summary>
+              <ul>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+                <li>Currencies</li>
+              </ul>
+            </details>
+          </nav>
+        </aside>
+
+        <div id={"content"}>
+          <section>
+            <p>User:</p>
+            <pre>{JSON.stringify(user, null, 2)}</pre>
+            <p>Profiles:</p>
+            <pre>{JSON.stringify(profiles, null, 2)}</pre>
+          </section>
+        </div>
+      </main>
     </>
   );
 }

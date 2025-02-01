@@ -1,0 +1,146 @@
+@use "@picocss/pico";
+@use "../../../settings.scss" as settings;
+
+$header-height: 3rem;
+
+header#main-header {
+  z-index: 3;
+
+  @include settings.desktop-only {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    backdrop-filter: blur(1rem);
+    box-shadow: var(--pico-card-box-shadow);
+  }
+
+  .container-fluid {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: $header-height;
+  }
+}
+
+main {
+  display: grid;
+
+  @include settings.desktop-only {
+    grid-template-columns: 12rem auto;
+    grid-template-rows: auto;
+    grid-template-areas: "menu content";
+    column-gap: var(--pico-block-spacing-horizontal);
+
+    // top margin to account for fixed header
+    margin-top: $header-height;
+  }
+
+  @include settings.mobile-only {
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    grid-template-areas: "breadcrumb" "content";
+  }
+}
+
+nav[aria-label="breadcrumb"] {
+  grid-area: breadcrumb;
+
+  @include settings.desktop-only {
+    display: none;
+  }
+}
+
+aside.main-menu {
+  grid-area: menu;
+  z-index: 2;
+
+  background-color: var(--pico-background-color);
+  color: var(--pico-color);
+
+  display: flex;
+  flex-direction: column;
+
+  @include settings.mobile-only {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    inset: 0;
+    z-index: 4;
+
+    padding: 2rem 2rem 0 2rem;
+
+    margin-left: -100%;
+    transition: margin-left var(--pico-transition);
+
+    &.open {
+      margin-left: 0;
+    }
+  }
+
+  @include settings.desktop-only {
+    position: sticky;
+    align-self: start;
+    height: calc(100vh - $header-height);
+    top: $header-height;
+    z-index: 2;
+
+    padding-top: var(--pico-block-spacing-vertical);
+
+    font-size: calc(var(--pico-font-size) * 0.6);
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--pico-block-spacing-vertical);
+
+    @include settings.desktop-only {
+      display: none;
+    }
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  nav {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+
+    details {
+      summary {
+        font-weight: bold;
+        margin-bottom: calc(var(--pico-block-spacing-vertical) * 0.5);
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+
+        border-left: 1px solid var(--pico-muted-border-color);
+
+        li {
+          padding: 0;
+          padding-left: calc(var(--pico-block-spacing-horizontal) * 0.5);
+
+          margin-top: calc(var(--pico-block-spacing-vertical) * 0.25);
+          margin-bottom: calc(var(--pico-block-spacing-vertical) * 0.25);
+          margin-left: -1px;
+          margin-right: 0;
+
+          &.active {
+            border-left: 1px solid var(--pico-color);
+          }
+        }
+      }
+    }
+  }
+}
+
+div#content {
+  grid-area: content;
+  z-index: 2;
+  padding-top: var(--pico-block-spacing-vertical);
+}
