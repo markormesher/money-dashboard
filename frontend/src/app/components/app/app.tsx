@@ -6,6 +6,7 @@ import { User, MDService, Profile } from "../../../api_gen/moneydashboard/v4/mon
 import "./style.scss";
 import { concatClasses } from "../../utils/style";
 import { Icon, IconGroup } from "../icon/icon";
+import { useRouter } from "./router";
 
 function App(): ReactElement {
   const apiTransport = createConnectTransport({ baseUrl: "/" });
@@ -51,6 +52,7 @@ function App(): ReactElement {
   }
 
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const { path } = useRouter();
 
   const [theme, setTheme] = React.useState("light");
   const toggleTheme = () => setTheme((curr) => (curr == "light" ? "dark" : "light"));
@@ -65,8 +67,10 @@ function App(): ReactElement {
         <div className={"container-fluid"}>
           <div>
             <IconGroup>
-              <Icon name={"account_balance"} />
-              <span>Money Dashboard</span>
+              <a href={"/"}>
+                <Icon name={"account_balance"} />
+              </a>
+              <a href={"/"}>Money Dashboard</a>
             </IconGroup>
           </div>
           <nav>
@@ -84,9 +88,9 @@ function App(): ReactElement {
                 </details>
               </li>
               <li>
-                <span onClick={toggleTheme} style={{ opacity: 0.7 }}>
+                <a href={"#"} onClick={toggleTheme} className={"secondary"} style={{ opacity: 0.7 }}>
                   <Icon name={"brightness_medium"} />
-                </span>
+                </a>
               </li>
             </ul>
           </nav>
@@ -97,12 +101,12 @@ function App(): ReactElement {
         <nav aria-label={"breadcrumb"}>
           <ul>
             <li>
-              <a href={"#"} className={"secondary"} onClick={() => setMenuOpen(true)}>
+              <a className={"secondary"} onClick={() => setMenuOpen(true)}>
                 <Icon name={"menu"} />
               </a>
             </li>
             <li>
-              <a href={"#"} className={"secondary"} onClick={() => setMenuOpen(true)}>
+              <a className={"secondary"} onClick={() => setMenuOpen(true)}>
                 Dashboard
               </a>
             </li>
@@ -112,47 +116,168 @@ function App(): ReactElement {
         <aside className={concatClasses("main-menu", menuOpen && "open")}>
           <header>
             <h2>Dashboard</h2>
-            <a aria-label={"Close"} onClick={() => setMenuOpen(false)} className={"secondary"}>
+            <a href={"#"} aria-label={"Close"} onClick={() => setMenuOpen(false)} className={"secondary"}>
               <Icon name={"close"} />
             </a>
           </header>
 
           <nav>
             <details open={true}>
+              <summary>Home</summary>
+              <ul>
+                <li className={"active"}>
+                  <a href={"/"} className={"secondary"}>
+                    Dashboard
+                  </a>
+                </li>
+                <li>
+                  <a href={"/settings/currencies"} className={"secondary"}>
+                    Currencies
+                  </a>
+                </li>
+              </ul>
+            </details>
+
+            <details open={true}>
               <summary>Settings</summary>
               <ul>
-                <li className={"active"}>Accounts</li>
-                <li>Currencies</li>
+                <li className={"active"}>
+                  <a href={"/settings/accounts"} className={"secondary"}>
+                    Accounts
+                  </a>
+                </li>
+                <li>
+                  <a href={"/settings/currencies"} className={"secondary"}>
+                    Currencies
+                  </a>
+                </li>
               </ul>
             </details>
 
             <details>
               <summary>Tools</summary>
               <ul>
-                <li>Currencies</li>
-                <li>Currencies</li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
               </ul>
             </details>
 
             <details>
               <summary>Huge Menu</summary>
               <ul>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
-                <li>Currencies</li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
+                <li>
+                  <a href={"/"} className={"secondary"}>
+                    Link
+                  </a>
+                </li>
               </ul>
             </details>
           </nav>
@@ -160,6 +285,7 @@ function App(): ReactElement {
 
         <div id={"content"}>
           <section>
+            <p>Path: {path}</p>
             <p>User:</p>
             <pre>{JSON.stringify(user, null, 2)}</pre>
             <p>Profiles:</p>
