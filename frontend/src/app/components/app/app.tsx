@@ -5,6 +5,7 @@ import { createClient } from "@connectrpc/connect";
 import { User, MDService, Profile } from "../../../api_gen/moneydashboard/v4/moneydashboard_pb";
 import "./style.scss";
 import { concatClasses } from "../../utils/style";
+import { Icon } from "../icon/icon";
 
 function App(): ReactElement {
   const apiTransport = createConnectTransport({ baseUrl: "/" });
@@ -62,7 +63,7 @@ function App(): ReactElement {
     <>
       <header id={"main-header"}>
         <div className={"container-fluid"}>
-          <span>MD</span>
+          <span>Money Dashboard</span>
           <nav>
             <ul>
               <li>
@@ -78,7 +79,9 @@ function App(): ReactElement {
                 </details>
               </li>
               <li>
-                <span onClick={toggleTheme}>L/D</span>
+                <span onClick={toggleTheme} style={{ opacity: 0.7 }}>
+                  <Icon name={"brightness_medium"} />
+                </span>
               </li>
             </ul>
           </nav>
@@ -90,6 +93,11 @@ function App(): ReactElement {
           <ul>
             <li>
               <a href={"#"} className={"secondary"} onClick={() => setMenuOpen(true)}>
+                <Icon name={"menu"} />
+              </a>
+            </li>
+            <li>
+              <a href={"#"} className={"secondary"} onClick={() => setMenuOpen(true)}>
                 Dashboard
               </a>
             </li>
@@ -99,8 +107,8 @@ function App(): ReactElement {
         <aside className={concatClasses("main-menu", menuOpen && "open")}>
           <header>
             <h2>Dashboard</h2>
-            <a aria-label={"Close"} onClick={() => setMenuOpen(false)}>
-              X
+            <a aria-label={"Close"} onClick={() => setMenuOpen(false)} className={"secondary"}>
+              <Icon name={"close"} />
             </a>
           </header>
 
