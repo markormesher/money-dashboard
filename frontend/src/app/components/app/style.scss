@@ -97,15 +97,11 @@ aside.main-menu {
   header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: end;
     margin-bottom: var(--pico-block-spacing-vertical);
 
     @include settings.desktop-only {
       display: none;
-    }
-
-    h2 {
-      margin: 0;
     }
   }
 
@@ -115,34 +111,37 @@ aside.main-menu {
     scrollbar-width: thin;
 
     details {
-      summary {
-        font-weight: bold;
-        margin-bottom: calc(var(--pico-block-spacing-vertical) * 0.5);
-      }
+      margin-bottom: var(--pico-block-spacing-vertical);
+    }
 
-      ul {
-        margin: 0;
+    summary {
+      font-weight: bold;
+      margin-bottom: calc(var(--pico-block-spacing-vertical) * 0.5);
+    }
+
+    ul {
+      padding: 0;
+      margin: 0;
+      margin-bottom: var(--pico-block-spacing-vertical);
+
+      border-left: 1px solid var(--pico-muted-border-color);
+
+      li {
         padding: 0;
+        padding-left: calc(var(--pico-block-spacing-horizontal) * 0.5);
 
-        border-left: 1px solid var(--pico-muted-border-color);
+        margin-top: calc(var(--pico-block-spacing-vertical) * 0.25);
+        margin-bottom: calc(var(--pico-block-spacing-vertical) * 0.25);
+        margin-left: -1px;
+        margin-right: 0;
 
-        li {
+        &.active {
+          border-left: 1px solid var(--pico-color);
+        }
+
+        a {
+          margin: 0;
           padding: 0;
-          padding-left: calc(var(--pico-block-spacing-horizontal) * 0.5);
-
-          margin-top: calc(var(--pico-block-spacing-vertical) * 0.25);
-          margin-bottom: calc(var(--pico-block-spacing-vertical) * 0.25);
-          margin-left: -1px;
-          margin-right: 0;
-
-          &.active {
-            border-left: 1px solid var(--pico-color);
-          }
-
-          a {
-            margin: 0;
-            padding: 0;
-          }
         }
       }
     }

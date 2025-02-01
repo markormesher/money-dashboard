@@ -1,22 +1,34 @@
 import React, { ReactElement } from "react";
 
+type PageMeta = {
+  title: string;
+};
+
 type RouterContextType = {
   path: string;
   navigate?: (path: string, query?: string) => void;
+
+  meta: PageMeta;
+  setMeta?: (meta: PageMeta) => void;
 };
 
-const RouterContext = React.createContext<RouterContextType>({ path: "/" });
+const RouterContext = React.createContext<RouterContextType>({ path: "/", meta: { title: "" } });
 
 const useRouter = () => React.useContext(RouterContext);
 
 function RouterProvider(props: React.PropsWithChildren): ReactElement {
   const [path, setPath] = React.useState(window.location.pathname);
+  const [meta, setMetaInner] = React.useState({ title: "" });
 
   const navigate = (newPath: string) => {
     if (newPath !== path) {
       window.history.pushState(null, "", newPath);
       setPath(newPath);
     }
+  };
+
+  const setMeta = (newMeta: PageMeta) => {
+    setMetaInner(newMeta);
   };
 
   const handleAnchorClick = (evt: MouseEvent) => {
@@ -62,7 +74,7 @@ function RouterProvider(props: React.PropsWithChildren): ReactElement {
     };
   }, []);
 
-  return <RouterContext.Provider value={{ path, navigate }}>{props.children}</RouterContext.Provider>;
+  return <RouterContext.Provider value={{ path, navigate, meta, setMeta }}>{props.children}</RouterContext.Provider>;
 }
 
 export { RouterProvider, useRouter };

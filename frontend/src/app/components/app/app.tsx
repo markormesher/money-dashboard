@@ -4,9 +4,10 @@ import { createConnectTransport } from "@connectrpc/connect-web";
 import { createClient } from "@connectrpc/connect";
 import { User, MDService, Profile } from "../../../api_gen/moneydashboard/v4/moneydashboard_pb";
 import "./style.scss";
-import { concatClasses } from "../../utils/style";
 import { Icon, IconGroup } from "../icon/icon";
 import { useRouter } from "./router";
+import { Menu } from "./menu";
+import { Breadcrumbs } from "./breadcrumbs";
 
 function App(): ReactElement {
   const apiTransport = createConnectTransport({ baseUrl: "/" });
@@ -52,10 +53,13 @@ function App(): ReactElement {
   }
 
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const { path } = useRouter();
+  const { path, setMeta } = useRouter();
 
   const [theme, setTheme] = React.useState("light");
   const toggleTheme = () => setTheme((curr) => (curr == "light" ? "dark" : "light"));
+
+  // TODO: move into real pages later
+  React.useEffect(() => setMeta?.({ title: "Dashboard" }), []);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -98,198 +102,21 @@ function App(): ReactElement {
       </header>
 
       <main className={"container-fluid"}>
-        <nav aria-label={"breadcrumb"}>
-          <ul>
-            <li>
-              <a className={"secondary"} onClick={() => setMenuOpen(true)}>
-                <Icon name={"menu"} />
-              </a>
-            </li>
-            <li>
-              <a className={"secondary"} onClick={() => setMenuOpen(true)}>
-                Dashboard
-              </a>
-            </li>
-          </ul>
-        </nav>
+        <Breadcrumbs setMenuOpen={setMenuOpen} />
 
-        <aside className={concatClasses("main-menu", menuOpen && "open")}>
-          <header>
-            <h2>Dashboard</h2>
-            <a href={"#"} aria-label={"Close"} onClick={() => setMenuOpen(false)} className={"secondary"}>
-              <Icon name={"close"} />
-            </a>
-          </header>
-
-          <nav>
-            <details open={true}>
-              <summary>Home</summary>
-              <ul>
-                <li className={"active"}>
-                  <a href={"/"} className={"secondary"}>
-                    Dashboard
-                  </a>
-                </li>
-                <li>
-                  <a href={"/settings/currencies"} className={"secondary"}>
-                    Currencies
-                  </a>
-                </li>
-              </ul>
-            </details>
-
-            <details open={true}>
-              <summary>Settings</summary>
-              <ul>
-                <li className={"active"}>
-                  <a href={"/settings/accounts"} className={"secondary"}>
-                    Accounts
-                  </a>
-                </li>
-                <li>
-                  <a href={"/settings/currencies"} className={"secondary"}>
-                    Currencies
-                  </a>
-                </li>
-              </ul>
-            </details>
-
-            <details>
-              <summary>Tools</summary>
-              <ul>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-              </ul>
-            </details>
-
-            <details>
-              <summary>Huge Menu</summary>
-              <ul>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-                <li>
-                  <a href={"/"} className={"secondary"}>
-                    Link
-                  </a>
-                </li>
-              </ul>
-            </details>
-          </nav>
-        </aside>
+        <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
         <div id={"content"}>
           <section>
             <p>Path: {path}</p>
-            <p>User:</p>
-            <pre>{JSON.stringify(user, null, 2)}</pre>
-            <p>Profiles:</p>
-            <pre>{JSON.stringify(profiles, null, 2)}</pre>
+            <p>User: {user?.displayName ?? "Loading..."}</p>
+            <p>
+              Profile:{" "}
+              {profiles
+                ?.map((p) => p.name)
+                ?.sort()
+                ?.join(", ") ?? "Loading..."}
+            </p>
           </section>
         </div>
       </main>
