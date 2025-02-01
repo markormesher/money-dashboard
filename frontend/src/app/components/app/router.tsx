@@ -6,15 +6,22 @@ type PageMeta = {
 
 type RouterContextType = {
   path: string;
-  navigate?: (path: string, query?: string) => void;
+  navigate: (path: string, query?: string) => void;
 
   meta: PageMeta;
-  setMeta?: (meta: PageMeta) => void;
+  setMeta: (meta: PageMeta) => void;
 };
 
-const RouterContext = React.createContext<RouterContextType>({ path: "/", meta: { title: "" } });
+const RouterContext = React.createContext<RouterContextType | null>(null);
 
-const useRouter = () => React.useContext(RouterContext);
+const useRouter = (): RouterContextType => {
+  const context = React.useContext(RouterContext);
+  if (!context) {
+    throw new Error("useRouter must be used within a <RouterProvider>");
+  }
+
+  return context;
+};
 
 function RouterProvider(props: React.PropsWithChildren): ReactElement {
   const [path, setPath] = React.useState(window.location.pathname);
@@ -78,4 +85,3 @@ function RouterProvider(props: React.PropsWithChildren): ReactElement {
 }
 
 export { RouterProvider, useRouter };
-

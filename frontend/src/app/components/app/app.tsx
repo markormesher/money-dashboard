@@ -59,7 +59,7 @@ function App(): ReactElement {
   const toggleTheme = () => setTheme((curr) => (curr == "light" ? "dark" : "light"));
 
   // TODO: move into real pages later
-  React.useEffect(() => setMeta?.({ title: "Dashboard" }), []);
+  React.useEffect(() => setMeta({ title: "Dashboard" }), []);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
