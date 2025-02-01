@@ -40,10 +40,8 @@ func (db *DB) GetUserById(ctx context.Context, id uuid.UUID) (schema.User, bool,
 func (db *DB) GetUserByExternalUsername(ctx context.Context, externalUsername string) (schema.User, bool, error) {
 	res, err := db.queries.GetUserByExternalUsername(ctx, externalUsername)
 	if errors.Is(err, pgx.ErrNoRows) {
-		fmt.Println("no rows")
 		return schema.User{}, false, nil
 	} else if err != nil {
-		fmt.Println("err")
 		return schema.User{}, false, err
 	}
 

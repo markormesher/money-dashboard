@@ -49,9 +49,9 @@ function App(): ReactElement {
 
   return (
     <>
-      <p>User</p>
+      <p>User:</p>
       <pre>{JSON.stringify(user, null, 2)}</pre>
-      <p>Profiles</p>
+      <p>Profiles:</p>
       <pre>{JSON.stringify(profiles, null, 2)}</pre>
       <p>
         <select onChange={(evt) => setActiveProfile(evt.target.value)}>
