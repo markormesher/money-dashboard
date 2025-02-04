@@ -1,9 +1,11 @@
 import React, { ReactElement } from "react";
 import { Icon, IconGroup } from "../icon/icon";
 import { concatClasses } from "../../utils/style";
-import { Profile, User } from "../../../api_gen/moneydashboard/v4/moneydashboard_pb";
+import { User } from "../../../api_gen/moneydashboard/v4/moneydashboard_pb";
 import { apiClient } from "../../../api/api";
 import { ProfileChooser } from "../profile-chooser/profile-chooser";
+import { useAsyncEffect } from "../../utils/hooks";
+import { toastBus } from "../toaster/toaster";
 import { useRouter } from "./router";
 
 type MenuProps = {
@@ -18,15 +20,14 @@ function Menu(props: MenuProps): ReactElement {
   const [profileChooserOpen, setProfileChooserOpen] = React.useState(false);
 
   const [user, setUser] = React.useState<User>();
-  React.useEffect(() => {
-    apiClient
-      .getUser({})
-      .then((res) => {
-        setUser(res.user);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  useAsyncEffect(async () => {
+    try {
+      const res = await apiClient.getUser({});
+      setUser(res.user);
+    } catch (e) {
+      toastBus.error("Failed to load user");
+      console.log(e);
+    }
   }, []);
 
   React.useEffect(() => {
