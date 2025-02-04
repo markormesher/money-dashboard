@@ -29,22 +29,6 @@ function Menu(props: MenuProps): ReactElement {
       });
   }, []);
 
-  const [profiles, setProfiles] = React.useState<Profile[]>();
-  React.useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    apiClient
-      .getProfiles({})
-      .then((res) => {
-        setProfiles(res.profiles);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [user]);
-
   React.useEffect(() => {
     document.querySelectorAll("nav > details").forEach((d) => {
       if (d.querySelector("li.active")) {

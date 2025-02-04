@@ -58,7 +58,6 @@ function Modal(props: React.PropsWithChildren<ModalProps>): ReactElement {
           {header}
           <button aria-label={"Close"} rel={"prev"} onClick={maybeClose} />
         </header>
-
         {props.children}
       </article>
     </dialog>
