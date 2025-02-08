@@ -1,5 +1,5 @@
 -- name: GetCurrencyById :one
-SELECT * FROM currency WHERE currency.id = $1 AND currency.deleted = FALSE;
+SELECT * FROM currency WHERE currency.id = $1;
 
 -- name: GetAllCurrencies :many
-SELECT * FROM currency WHERE currency.deleted = FALSE;
+SELECT * FROM currency;

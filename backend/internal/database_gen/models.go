@@ -50,14 +50,14 @@ type Currency struct {
 	Code          string
 	Symbol        string
 	DecimalPlaces int32
-	Deleted       bool
+	Active        bool
 }
 
-type CurrencyValue struct {
+type CurrencyRate struct {
 	ID         uuid.UUID
 	CurrencyID uuid.UUID
 	Date       pgtype.Date
-	Value      pgtype.Numeric
+	Rate       pgtype.Numeric
 }
 
 type Envelope struct {

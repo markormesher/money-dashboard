@@ -12,7 +12,7 @@ import (
 )
 
 const getAllCurrencies = `-- name: GetAllCurrencies :many
-SELECT id, code, symbol, decimal_places, deleted FROM currency WHERE currency.deleted = FALSE
+SELECT id, code, symbol, decimal_places, active FROM currency
 `
 
 func (q *Queries) GetAllCurrencies(ctx context.Context) ([]Currency, error) {
@@ -29,7 +29,7 @@ func (q *Queries) GetAllCurrencies(ctx context.Context) ([]Currency, error) {
 			&i.Code,
 			&i.Symbol,
 			&i.DecimalPlaces,
-			&i.Deleted,
+			&i.Active,
 		); err != nil {
 			return nil, err
 		}
@@ -42,7 +42,7 @@ func (q *Queries) GetAllCurrencies(ctx context.Context) ([]Currency, error) {
 }
 
 const getCurrencyById = `-- name: GetCurrencyById :one
-SELECT id, code, symbol, decimal_places, deleted FROM currency WHERE currency.id = $1 AND currency.deleted = FALSE
+SELECT id, code, symbol, decimal_places, active FROM currency WHERE currency.id = $1
 `
 
 func (q *Queries) GetCurrencyById(ctx context.Context, id uuid.UUID) (Currency, error) {
@@ -53,7 +53,7 @@ func (q *Queries) GetCurrencyById(ctx context.Context, id uuid.UUID) (Currency, 
 		&i.Code,
 		&i.Symbol,
 		&i.DecimalPlaces,
-		&i.Deleted,
+		&i.Active,
 	)
 	return i, err
 }

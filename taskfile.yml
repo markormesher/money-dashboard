@@ -28,6 +28,7 @@ tasks:
     cmds:
       - task: gen-buf-proto
       - task: gen-sqlc-sql
+      - task: gen-goverter-backend
   gen-buf:
     cmds:
       - task: gen-buf-proto
@@ -39,6 +40,13 @@ tasks:
     cmds:
       - task: gen-sqlc-sql
   gen-sqlc-sql:
+    dir: '{{.ROOT_DIR}}/sql'
+    cmds:
+      - cmd: sqlc generate
+  gen-goverter:
+    cmds:
+      - task: gen-goverter-backend
+  gen-goverter-backend:
     dir: '{{.ROOT_DIR}}/sql'
     cmds:
       - cmd: sqlc generate

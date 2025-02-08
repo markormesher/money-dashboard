@@ -8,7 +8,7 @@ message Currency {
   string code = 2;
   string symbol = 3;
   int32 decimal_places = 4;
-  bool deleted = 5;
+  bool active = 5;
 }
 
 message GetAllCurrenciesRequest {}

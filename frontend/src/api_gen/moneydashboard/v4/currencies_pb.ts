@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file moneydashboard/v4/currencies.proto.
  */
 export const file_moneydashboard_v4_currencies: GenFile = /*@__PURE__*/
-  fileDesc("CiJtb25leWRhc2hib2FyZC92NC9jdXJyZW5jaWVzLnByb3RvEhFtb25leWRhc2hib2FyZC52NCJdCghDdXJyZW5jeRIKCgJpZBgBIAEoCRIMCgRjb2RlGAIgASgJEg4KBnN5bWJvbBgDIAEoCRIWCg5kZWNpbWFsX3BsYWNlcxgEIAEoBRIPCgdkZWxldGVkGAUgASgIIhkKF0dldEFsbEN1cnJlbmNpZXNSZXF1ZXN0IksKGEdldEFsbEN1cnJlbmNpZXNSZXNwb25zZRIvCgpjdXJyZW5jaWVzGAEgAygLMhsubW9uZXlkYXNoYm9hcmQudjQuQ3VycmVuY3lCUVpPZ2l0aHViLmNvbS9tYXJrb3JtZXNoZXIvbW9uZXktZGFzaGJvYXJkL2ludGVybmFsL2FwaV9nZW4vbW9uZXlkYXNoYm9hcmQvdjQ7bWR2NGIGcHJvdG8z");
+  fileDesc("CiJtb25leWRhc2hib2FyZC92NC9jdXJyZW5jaWVzLnByb3RvEhFtb25leWRhc2hib2FyZC52NCJcCghDdXJyZW5jeRIKCgJpZBgBIAEoCRIMCgRjb2RlGAIgASgJEg4KBnN5bWJvbBgDIAEoCRIWCg5kZWNpbWFsX3BsYWNlcxgEIAEoBRIOCgZhY3RpdmUYBSABKAgiGQoXR2V0QWxsQ3VycmVuY2llc1JlcXVlc3QiSwoYR2V0QWxsQ3VycmVuY2llc1Jlc3BvbnNlEi8KCmN1cnJlbmNpZXMYASADKAsyGy5tb25leWRhc2hib2FyZC52NC5DdXJyZW5jeUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM");
 
 /**
  * @generated from message moneydashboard.v4.Currency
@@ -37,9 +37,9 @@ export type Currency = Message<"moneydashboard.v4.Currency"> & {
   decimalPlaces: number;
 
   /**
-   * @generated from field: bool deleted = 5;
+   * @generated from field: bool active = 5;
    */
-  deleted: boolean;
+  active: boolean;
 };
 
 /**
