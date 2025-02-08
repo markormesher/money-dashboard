@@ -18,19 +18,42 @@ function CurrenciesPage(): ReactElement {
   }, []);
 
   const [error, setError] = React.useState<unknown>();
-  const [showOptions, setShowOptions] = React.useState(false);
-
   const [currencies, setCurrencies] = React.useState<Currency[]>();
+
   useAsyncEffect(async () => {
     try {
       const res = await apiClient.getAllCurrencies({});
-      setCurrencies([...res.currencies, ...res.currencies, ...res.currencies, ...res.currencies]);
+      setCurrencies(res.currencies);
     } catch (e) {
       toastBus.error("Failed to load currencies");
       setError(e);
       console.log(e);
     }
   }, []);
+
+  const pageButtons = [
+    <button className={"outline"}>
+      <IconGroup>
+        <Icon name={"add"} />
+        <span>New</span>
+      </IconGroup>
+    </button>,
+  ];
+
+  const pageOptions = (
+    <>
+      <fieldset>
+        <input type={"text"} placeholder={"Search"} />
+      </fieldset>
+
+      <fieldset>
+        <label>
+          <input type={"checkbox"} role={"switch"} />
+          Hide inactive
+        </label>
+      </fieldset>
+    </>
+  );
 
   let body: ReactElement;
   if (error) {
@@ -48,19 +71,19 @@ function CurrenciesPage(): ReactElement {
             <footer>
               <ul>
                 <li>
-                  <a href={""} className={"secondary"} onClick={() => copyToClipboard(c.id)}>
+                  <a href={""} className={"secondary"} onClick={() => toastBus.info("Coming soon..")}>
                     <IconGroup>
-                      <Icon name={"content_copy"} />
-                      <span>Copy ID</span>
+                      <Icon name={"edit"} />
+                      <span>Edit</span>
                     </IconGroup>
                   </a>
                 </li>
 
                 <li>
-                  <a href={""} className={"secondary"} onClick={() => toastBus.info("Coming soon..")}>
+                  <a href={""} className={"secondary"} onClick={() => copyToClipboard(c.id)}>
                     <IconGroup>
-                      <Icon name={"edit"} />
-                      <span>Edit</span>
+                      <Icon name={"content_copy"} />
+                      <span>Copy ID</span>
                     </IconGroup>
                   </a>
                 </li>
@@ -74,42 +97,8 @@ function CurrenciesPage(): ReactElement {
 
   return (
     <>
-      <section>
-        <PageHeader title={"Currencies"}>
-          <div role={"group"}>
-            <button className={"outline"}>
-              <IconGroup>
-                <Icon name={"add"} />
-                <span>New</span>
-              </IconGroup>
-            </button>
-
-            <button className={"outline"} onClick={() => setShowOptions((c) => !c)}>
-              <Icon name={"tune"} />
-            </button>
-          </div>
-        </PageHeader>
-      </section>
-
-      {showOptions ? (
-        <section>
-          <article className={"page-options"}>
-            <fieldset>
-              <input type={"text"} placeholder={"Search"} />
-            </fieldset>
-
-            <fieldset>
-              <label>
-                <input type={"checkbox"} role={"switch"} />
-                Hide inactive
-              </label>
-            </fieldset>
-          </article>
-        </section>
-      ) : null}
-
+      <PageHeader title={"Currencies"} buttons={pageButtons} options={pageOptions} />
       <hr />
-
       <section>{body}</section>
     </>
   );
