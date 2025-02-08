@@ -65,10 +65,10 @@ tasks:
           fi
 
           # First build to get visible logs
-          $builder build -f Containerfile .
+          $builder build -f Containerfile.frontend-dev .
 
           # Second (cached) build to get the image ID
-          img=$($builder build -q -f Containerfile .)
+          img=$($builder build -q -f Containerfile.frontend-dev .)
 
           if [[ -f .imgrefs ]]; then
             cat .imgrefs | while read tag; do
@@ -136,8 +136,8 @@ tasks:
             exit 1
           fi
 
-          img_name=$( (grep "LABEL image.name=" Containerfile || echo) | head -n 1 | cut -d '=' -f 2-)
-          img_registry=$( (grep "LABEL image.registry=" Containerfile || echo) | head -n 1 | cut -d '=' -f 2-)
+          img_name=$( (grep "LABEL image.name=" Containerfile.frontend-dev || echo) | head -n 1 | cut -d '=' -f 2-)
+          img_registry=$( (grep "LABEL image.registry=" Containerfile.frontend-dev || echo) | head -n 1 | cut -d '=' -f 2-)
 
           version=$(git describe --tags)
           is_exact_tag=$(git describe --tags --exact-match >/dev/null 2>&1 && echo y || echo n)
@@ -205,6 +205,7 @@ tasks:
     cmds:
       - task: lintfix-buf-proto
       - task: lintfix-go-backend
+      - task: lintfix-js-frontend
   lintfix-buf:
     cmds:
       - task: lintfix-buf-proto
@@ -219,3 +220,10 @@ tasks:
     dir: '{{.ROOT_DIR}}/backend'
     cmds:
       - cmd: gofmt -s -w .
+  lintfix-js:
+    cmds:
+      - task: lintfix-js-frontend
+  lintfix-js-frontend:
+    dir: '{{.ROOT_DIR}}/frontend'
+    cmds:
+      - cmd: pnpm lintfix

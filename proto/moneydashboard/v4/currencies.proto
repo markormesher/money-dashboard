@@ -1,0 +1,18 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message Currency {
+  string id = 1;
+  string code = 2;
+  string symbol = 3;
+  int32 decimal_places = 4;
+  bool deleted = 5;
+}
+
+message GetAllCurrenciesRequest {}
+
+message GetAllCurrenciesResponse {
+  repeated Currency currencies = 1;
+}

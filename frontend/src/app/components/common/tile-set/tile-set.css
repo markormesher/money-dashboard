@@ -1,0 +1,30 @@
+div.tile-set {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+
+  article.tile {
+    margin: 0;
+
+    footer {
+      ul {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--pico-block-spacing-vertical)
+          var(--pico-block-spacing-horizontal);
+
+        margin: 0;
+        padding: 0;
+
+        li {
+          list-style-type: none;
+
+          a {
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+}

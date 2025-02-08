@@ -20,4 +20,7 @@ type converterSpec interface {
 
 	ProfileFromCore(source schema.Profile) *mdv4.Profile
 	ProfileToCore(source *mdv4.Profile) schema.Profile
+
+	CurrencyFromCore(source schema.Currency) *mdv4.Currency
+	CurrencyToCore(source *mdv4.Currency) schema.Currency
 }

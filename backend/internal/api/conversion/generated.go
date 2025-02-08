@@ -9,6 +9,28 @@ import (
 	uuidtools "github.com/markormesher/money-dashboard/internal/uuidtools"
 )
 
+func CurrencyFromCore(source schema.Currency) *v4.Currency {
+	var mdv4Currency v4.Currency
+	mdv4Currency.Id = uuidtools.ConvertUUIDToString(source.ID)
+	mdv4Currency.Code = source.Code
+	mdv4Currency.Symbol = source.Symbol
+	mdv4Currency.DecimalPlaces = source.DecimalPlaces
+	mdv4Currency.Deleted = source.Deleted
+	return &mdv4Currency
+}
+func CurrencyToCore(source *v4.Currency) schema.Currency {
+	var schemaCurrency schema.Currency
+	if source != nil {
+		var schemaCurrency2 schema.Currency
+		schemaCurrency2.ID = uuidtools.ConvertStringToUUID((*source).Id)
+		schemaCurrency2.Code = (*source).Code
+		schemaCurrency2.Symbol = (*source).Symbol
+		schemaCurrency2.DecimalPlaces = (*source).DecimalPlaces
+		schemaCurrency2.Deleted = (*source).Deleted
+		schemaCurrency = schemaCurrency2
+	}
+	return schemaCurrency
+}
 func ProfileFromCore(source schema.Profile) *v4.Profile {
 	var mdv4Profile v4.Profile
 	mdv4Profile.Id = uuidtools.ConvertUUIDToString(source.ID)

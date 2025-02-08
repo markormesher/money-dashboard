@@ -45,6 +45,21 @@ type Category struct {
 	ProfileID             *uuid.UUID
 }
 
+type Currency struct {
+	ID            uuid.UUID
+	Code          string
+	Symbol        string
+	DecimalPlaces int32
+	Deleted       bool
+}
+
+type CurrencyValue struct {
+	ID         uuid.UUID
+	CurrencyID uuid.UUID
+	Date       pgtype.Date
+	Value      pgtype.Numeric
+}
+
 type Envelope struct {
 	ID        uuid.UUID
 	Deleted   bool

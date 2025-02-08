@@ -18,4 +18,24 @@ function useAsyncHandler<T = void>(f: (arg: T) => Promise<void>): (arg: T) => vo
   };
 }
 
-export { useAsyncEffect, useAsyncHandler };
+type WaitGroup = {
+  count: number;
+  add: (qty?: number) => void;
+  done: (qty?: number) => void;
+};
+
+function useWaitGroup(): WaitGroup {
+  const [count, setCount] = React.useState(0);
+
+  const add = (qty?: number) => {
+    setCount((curr) => curr + (qty ?? 1));
+  };
+
+  const done = (qty?: number) => {
+    setCount((curr) => curr - (qty ?? 1));
+  };
+
+  return { count, add, done };
+}
+
+export { useAsyncEffect, useAsyncHandler, useWaitGroup };

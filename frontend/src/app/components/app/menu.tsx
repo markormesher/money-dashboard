@@ -1,11 +1,11 @@
 import React, { ReactElement } from "react";
-import { Icon, IconGroup } from "../icon/icon";
+import { Icon, IconGroup } from "../common/icon/icon";
 import { concatClasses } from "../../utils/style";
-import { User } from "../../../api_gen/moneydashboard/v4/moneydashboard_pb";
 import { apiClient } from "../../../api/api";
 import { ProfileChooser } from "../profile-chooser/profile-chooser";
 import { useAsyncEffect } from "../../utils/hooks";
 import { toastBus } from "../toaster/toaster";
+import { User } from "../../../api_gen/moneydashboard/v4/users_pb";
 import { useRouter } from "./router";
 
 type MenuProps = {
@@ -76,14 +76,14 @@ function Menu(props: MenuProps): ReactElement {
           <details>
             <summary>Settings</summary>
             <ul>
-              {link("/accounts", "Accounts")}
-              {link("/assets", "Assets")}
-              {link("/budgets", "Budgets")}
-              {link("/categories", "Categories")}
-              {link("/currencies", "Currencies")}
-              {link("/envelopes", "Envelopes")}
-              {link("/holdings", "Holdings")}
-              {link("/profiles", "Profiles")}
+              {link("/settings/accounts", "Accounts")}
+              {link("/settings/assets", "Assets")}
+              {link("/settings/budgets", "Budgets")}
+              {link("/settings/categories", "Categories")}
+              {link("/settings/currencies", "Currencies")}
+              {link("/settings/envelopes", "Envelopes")}
+              {link("/settings/holdings", "Holdings")}
+              {link("/settings/profiles", "Profiles")}
             </ul>
           </details>
         </nav>

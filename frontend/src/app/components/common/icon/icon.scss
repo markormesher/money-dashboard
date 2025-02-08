@@ -1,6 +1,6 @@
-@use "material-icons/iconfont/outlined.css";
+@use "material-symbols/outlined.css";
 
-.material-icons-outlined {
+.material-symbols-outlined {
   font-size: inherit !important;
   line-height: inherit !important;
 }
@@ -9,7 +9,11 @@
   display: flex;
   align-items: center;
 
+  * {
+    margin: 0;
+  }
+
   *:not(:last-child) {
-    margin-right: calc(var(--pico-block-spacing-horizontal) / 2);
+    margin-right: 0.4em;
   }
 }

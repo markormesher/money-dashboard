@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS "user" (
   id UUID NOT NULL,
   display_name VARCHAR NOT NULL,
   image VARCHAR NOT NULL,
-  deleted bOOLEAN NOT NULL,
+  deleted BOOLEAN NOT NULL,
   active_profile_id UUID,
   external_username VARCHAR
 );

@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite build --watch",
     "build": "tsc && vite build",
-    "lint": "eslint ./src && prettier -c ./src/**/*.scss",
-    "lint-fix": "eslint --fix ./src && prettier --write ./src/**/*.scss"
+    "lint": "eslint ./src && prettier -c ./src/**/*.scss ./src/**/*.css",
+    "lintfix": "eslint --fix ./src && prettier --write ./src/**/*.scss ./src/**/*.css"
   },
   "packageManager": "pnpm@10.1.0",
   "devDependencies": {
@@ -30,7 +30,7 @@
     "@connectrpc/connect": "^2.0.1",
     "@connectrpc/connect-web": "^2.0.1",
     "@picocss/pico": "^2.0.6",
-    "material-icons": "^1.13.13",
+    "material-symbols": "^0.28.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "uuid": "^11.0.5"

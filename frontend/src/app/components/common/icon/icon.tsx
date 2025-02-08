@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import "./style.scss";
+import "./icon.scss";
 
 const defaultProps = {
   size: "1rem",
@@ -11,7 +11,7 @@ type IconProps = Partial<typeof defaultProps> & {
 
 function Icon(props: IconProps): ReactElement {
   const fullProps = { ...defaultProps, ...props };
-  return <span className={"material-icons-outlined"}>{fullProps.name}</span>;
+  return <span className={"material-symbols-outlined"}>{fullProps.name}</span>;
 }
 
 function IconGroup(props: React.PropsWithChildren): ReactElement {

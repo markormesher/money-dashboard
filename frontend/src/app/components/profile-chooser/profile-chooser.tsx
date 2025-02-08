@@ -1,10 +1,10 @@
 import React, { ReactElement } from "react";
-import { ExternalModalProps, Modal } from "../modal/modal";
-import { Icon, IconGroup } from "../icon/icon";
-import { Profile, User } from "../../../api_gen/moneydashboard/v4/moneydashboard_pb";
+import { ExternalModalProps, Modal } from "../common/modal/modal";
+import { Icon, IconGroup } from "../common/icon/icon";
 import { apiClient } from "../../../api/api";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks";
 import { toastBus } from "../toaster/toaster";
+import { Profile, User } from "../../../api_gen/moneydashboard/v4/users_pb";
 
 type ProfileChooserProps = ExternalModalProps & {};
 

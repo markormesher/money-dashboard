@@ -1,5 +1,4 @@
 syntax = "proto3";
-
 package moneydashboard.v4;
 
 option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
@@ -36,9 +35,3 @@ message SetActiveProfileRequest {
 }
 
 message SetActiveProfileResponse {}
-
-service MDService {
-  rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  rpc GetProfiles(GetProfilesRequest) returns (GetProfilesResponse);
-  rpc SetActiveProfile(SetActiveProfileRequest) returns (SetActiveProfileResponse);
-}

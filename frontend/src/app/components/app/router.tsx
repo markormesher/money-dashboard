@@ -2,6 +2,11 @@ import React, { ReactElement } from "react";
 
 type PageMeta = {
   title: string;
+  parents?: string[];
+};
+
+const defaultMeta: Partial<PageMeta> = {
+  parents: [],
 };
 
 type RouterContextType = {
@@ -35,7 +40,7 @@ function RouterProvider(props: React.PropsWithChildren): ReactElement {
   };
 
   const setMeta = (newMeta: PageMeta) => {
-    setMetaInner(newMeta);
+    setMetaInner({ ...defaultMeta, ...newMeta });
   };
 
   const handleAnchorClick = (evt: MouseEvent) => {

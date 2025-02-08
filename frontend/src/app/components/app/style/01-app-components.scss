@@ -1,11 +1,6 @@
-@use "@picocss/pico";
-@use "../../../settings.scss" as settings;
+@use "../../../../settings.scss" as settings;
 
 $header-height: 3rem;
-
-:root {
-  --pico-font-weight: light;
-}
 
 header#main-header {
   z-index: 3;
@@ -33,12 +28,15 @@ header#main-header {
 
 main {
   display: grid;
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 0;
 
   @include settings.desktop-only {
-    grid-template-columns: 12rem auto;
+    grid-template-columns: 14rem auto;
     grid-template-rows: auto;
     grid-template-areas: "menu content";
-    column-gap: var(--pico-block-spacing-horizontal);
 
     // top margin to account for fixed header
     margin-top: $header-height;
@@ -53,6 +51,7 @@ main {
 
 nav[aria-label="breadcrumb"] {
   grid-area: breadcrumb;
+  padding: 0 var(--pico-block-spacing-horizontal);
 
   @include settings.desktop-only {
     display: none;
@@ -63,11 +62,9 @@ aside.main-menu {
   grid-area: menu;
   z-index: 2;
 
-  background-color: var(--pico-background-color);
-  color: var(--pico-color);
-
   display: flex;
   flex-direction: column;
+  padding-left: var(--pico-block-spacing-horizontal);
 
   @include settings.mobile-only {
     position: fixed;
@@ -76,10 +73,14 @@ aside.main-menu {
     inset: 0;
     z-index: 4;
 
-    padding: 2rem 2rem 0 2rem;
+    padding: var(--pico-block-spacing-vertical)
+      var(--pico-block-spacing-horizontal) 0
+      var(--pico-block-spacing-horizontal);
 
     margin-left: -100%;
     transition: margin-left var(--pico-transition);
+
+    background-color: var(--pico-background-color);
 
     &.open {
       margin-left: 0;
@@ -94,8 +95,6 @@ aside.main-menu {
     z-index: 2;
 
     padding-top: var(--pico-block-spacing-vertical);
-
-    font-size: calc(var(--pico-font-size) * 0.6);
   }
 
   header {
@@ -137,8 +136,8 @@ aside.main-menu {
         padding: 0;
         padding-left: calc(var(--pico-block-spacing-horizontal) * 0.5);
 
-        margin-top: calc(var(--pico-block-spacing-vertical) * 0.25);
-        margin-bottom: calc(var(--pico-block-spacing-vertical) * 0.25);
+        margin-top: calc(var(--pico-block-spacing-vertical) * 0.5);
+        margin-bottom: calc(var(--pico-block-spacing-vertical) * 0.5);
         margin-left: -1px;
         margin-right: 0;
 
@@ -170,5 +169,12 @@ aside.main-menu {
 div#content {
   grid-area: content;
   z-index: 2;
-  padding-top: var(--pico-block-spacing-vertical);
+  padding: var(--pico-block-spacing-vertical)
+    var(--pico-block-spacing-horizontal)
+    calc(var(--pico-block-spacing-vertical) * 3)
+    var(--pico-block-spacing-horizontal);
+
+  @include settings.mobile-only {
+    padding-top: 0;
+  }
 }

@@ -8,6 +8,24 @@ import (
 	schema "github.com/markormesher/money-dashboard/internal/schema"
 )
 
+func CurrencyFromCore(source schema.Currency) databasegen.Currency {
+	var database_genCurrency databasegen.Currency
+	database_genCurrency.ID = source.ID
+	database_genCurrency.Code = source.Code
+	database_genCurrency.Symbol = source.Symbol
+	database_genCurrency.DecimalPlaces = source.DecimalPlaces
+	database_genCurrency.Deleted = source.Deleted
+	return database_genCurrency
+}
+func CurrencyToCore(source databasegen.Currency) schema.Currency {
+	var schemaCurrency schema.Currency
+	schemaCurrency.ID = source.ID
+	schemaCurrency.Code = source.Code
+	schemaCurrency.Symbol = source.Symbol
+	schemaCurrency.DecimalPlaces = source.DecimalPlaces
+	schemaCurrency.Deleted = source.Deleted
+	return schemaCurrency
+}
 func ProfileFromCore(source schema.Profile) databasegen.Profile {
 	var database_genProfile databasegen.Profile
 	database_genProfile.ID = source.ID

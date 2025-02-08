@@ -24,4 +24,7 @@ type converterSpec interface {
 	UserprofileRoleFromCore(source schema.UserProfileRole) database_gen.UserProfileRole
 	// goverter:ignore User Profile
 	UserprofileRoleToCore(source database_gen.UserProfileRole) schema.UserProfileRole
+
+	CurrencyFromCore(source schema.Currency) database_gen.Currency
+	CurrencyToCore(source database_gen.Currency) schema.Currency
 }
