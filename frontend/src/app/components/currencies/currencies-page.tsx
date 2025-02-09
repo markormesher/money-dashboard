@@ -10,8 +10,9 @@ import { ErrorPanel } from "../common/error/error";
 import { Tile, TileSet } from "../common/tile-set/tile-set";
 import { copyToClipboard } from "../../utils/text";
 import { currencyServiceClient } from "../../../api/api";
-import { gbpCurrencyId } from "../../../config/consts";
+import { gbpCurrencyId, zeroId } from "../../../config/consts";
 import { formatDateFromProto } from "../../utils/dates";
+import { CurrencyEditModal } from "./currency-edit-modal";
 
 function CurrenciesPage(): ReactElement {
   const { setMeta } = useRouter();
@@ -23,12 +24,14 @@ function CurrenciesPage(): ReactElement {
   const [currencies, setCurrencies] = React.useState<Currency[]>();
   const [rates, setRates] = React.useState<Record<string, CurrencyRate>>();
 
+  const [editingId, setEditingId] = React.useState<string>();
+
   useAsyncEffect(async () => {
     try {
       const res = await currencyServiceClient.getAllCurrencies({});
       setCurrencies(res.currencies);
     } catch (e) {
-      toastBus.error("Failed to load currencies");
+      toastBus.error("Failed to load currencies.");
       setError(e);
       console.log(e);
     }
@@ -43,14 +46,14 @@ function CurrenciesPage(): ReactElement {
       });
       setRates(rates);
     } catch (e) {
-      toastBus.error("Failed to load currencies");
+      toastBus.error("Failed to load currency rates.");
       setError(e);
       console.log(e);
     }
   }, []);
 
   const pageButtons = [
-    <button className={"outline"}>
+    <button className={"outline"} onClick={() => setEditingId(zeroId)}>
       <IconGroup>
         <Icon name={"add"} />
         <span>New</span>
@@ -109,7 +112,7 @@ function CurrenciesPage(): ReactElement {
                 ) : (
                   <ul className={"horizonal"}>
                     <li>
-                      <a href={""} className={"secondary"} onClick={() => toastBus.info("Coming soon...")}>
+                      <a href={""} className={"secondary"} onClick={() => setEditingId(c.id)}>
                         <IconGroup>
                           <Icon name={"edit"} />
                           <span>Edit</span>
@@ -137,9 +140,12 @@ function CurrenciesPage(): ReactElement {
 
   return (
     <>
-      <PageHeader title={"Currencies"} buttons={pageButtons} options={pageOptions} />
-      <hr />
-      <section>{body}</section>
+      <div id={"content"} className={"overflow-auto"}>
+        <PageHeader title={"Currencies"} buttons={pageButtons} options={pageOptions} />
+        <hr />
+        <section>{body}</section>
+      </div>
+      <CurrencyEditModal currencyId={editingId} onClose={() => setEditingId(undefined)} />
     </>
   );
 }

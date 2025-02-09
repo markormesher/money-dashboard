@@ -3,7 +3,7 @@ import "./modal.scss";
 
 type ExternalModalProps = {
   open: boolean;
-  setOpen: (open: boolean) => void;
+  onClose: () => void;
 };
 
 type ModalProps = ExternalModalProps & {
@@ -12,15 +12,15 @@ type ModalProps = ExternalModalProps & {
 };
 
 function Modal(props: React.PropsWithChildren<ModalProps>): ReactElement {
-  const { open, setOpen, interceptClose, header } = props;
+  const { open, onClose, interceptClose, header } = props;
 
   const maybeClose = () => {
     if (!interceptClose) {
-      setOpen(false);
+      onClose();
     } else {
       const userReply = interceptClose();
       if (userReply) {
-        setOpen(false);
+        onClose();
       }
     }
   };

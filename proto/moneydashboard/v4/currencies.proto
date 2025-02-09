@@ -28,7 +28,7 @@ message GetAllCurrenciesResponse {
 message GetLatestCurrencyRatesRequest {}
 
 message GetLatestCurrencyRatesResponse {
-  repeated CurrencyRate currencyRates = 1;
+  repeated CurrencyRate currency_rates = 1;
 }
 
 service MDCurrencyService {

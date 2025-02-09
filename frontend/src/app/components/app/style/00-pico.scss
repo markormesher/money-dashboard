@@ -62,3 +62,10 @@ button {
   --pico-form-element-spacing-vertical: 0.5rem !important;
   --pico-form-element-spacing-horizontal: 1rem !important;
 }
+
+input:not([type="checkbox"], [type="radio"]),
+select,
+textarea {
+  margin-bottom: 0;
+  /* Original: --pico-spacing */
+}

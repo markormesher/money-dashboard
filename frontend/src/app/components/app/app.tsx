@@ -59,12 +59,8 @@ function App(): ReactElement {
 
       <main>
         <Breadcrumbs setMenuOpen={setMenuOpen} />
-
         <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
-
-        <div id={"content"} className={"overflow-auto"}>
-          {getContent()}
-        </div>
+        {getContent()}
       </main>
     </>
   );

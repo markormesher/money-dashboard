@@ -1,4 +1,5 @@
 import React from "react";
+import { deepEqual } from "./utils";
 
 function useAsyncEffect(f: () => Promise<void>, dependencies?: React.DependencyList): void {
   React.useEffect(() => {
@@ -38,4 +39,54 @@ function useWaitGroup(): WaitGroup {
   return { count, add, done };
 }
 
-export { useAsyncEffect, useAsyncHandler, useWaitGroup };
+type FormState<T> = {
+  model: Partial<T> | undefined;
+  setModel: (model: T | undefined) => void;
+  patchModel: (patch: Partial<T>) => void;
+
+  busy: boolean;
+  setBusy: (busy: boolean) => void;
+
+  hasChanges: boolean;
+
+  fatalError: unknown;
+  setFatalError: (busy: unknown) => void;
+};
+
+function useForm<T>(): FormState<T> {
+  // TODO: validation
+
+  const [originalModel, setOriginalModel] = React.useState<Partial<T>>();
+  const [model, setModelInner] = React.useState<Partial<T>>();
+  const [busy, setBusy] = React.useState(false);
+  const [hasChanges, setHasChanges] = React.useState(false);
+  const [fatalError, setFatalError] = React.useState<unknown>();
+
+  const setModel = (m: T | undefined) => {
+    setOriginalModel(m);
+    setModelInner(m);
+  };
+
+  const patchModel = (m: Partial<T>) => {
+    setModelInner((curr) => {
+      return { ...curr, ...m };
+    });
+  };
+
+  React.useEffect(() => {
+    setHasChanges(!deepEqual(model, originalModel));
+  }, [model, originalModel]);
+
+  return {
+    model,
+    setModel,
+    patchModel,
+    busy,
+    setBusy,
+    hasChanges,
+    fatalError,
+    setFatalError,
+  };
+}
+
+export { useAsyncEffect, useAsyncHandler, useWaitGroup, useForm };

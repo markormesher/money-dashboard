@@ -98,7 +98,7 @@ function Menu(props: MenuProps): ReactElement {
         </div>
       </aside>
 
-      <ProfileChooser open={profileChooserOpen} setOpen={setProfileChooserOpen} />
+      <ProfileChooser open={profileChooserOpen} onClose={() => setProfileChooserOpen(false)} />
     </>
   );
 }
