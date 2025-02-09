@@ -7,23 +7,8 @@ div.tile-set {
     margin: 0;
 
     footer {
-      ul {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: var(--pico-block-spacing-vertical)
-          var(--pico-block-spacing-horizontal);
-
-        margin: 0;
-        padding: 0;
-
-        li {
-          list-style-type: none;
-
-          a {
-            text-decoration: none;
-          }
-        }
+      a {
+        text-decoration: none;
       }
     }
   }

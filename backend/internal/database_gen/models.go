@@ -5,7 +5,10 @@
 package database_gen
 
 import (
+	"time"
+
 	"github.com/google/uuid"
+	"github.com/govalues/decimal"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -46,18 +49,19 @@ type Category struct {
 }
 
 type Currency struct {
-	ID            uuid.UUID
-	Code          string
-	Symbol        string
-	DecimalPlaces int32
-	Active        bool
+	ID                   uuid.UUID
+	Code                 string
+	Symbol               string
+	DisplayPrecision     int32
+	Active               bool
+	CalculationPrecision int32
 }
 
 type CurrencyRate struct {
 	ID         uuid.UUID
 	CurrencyID uuid.UUID
-	Date       pgtype.Date
-	Rate       pgtype.Numeric
+	Date       time.Time
+	Rate       decimal.Decimal
 }
 
 type Envelope struct {

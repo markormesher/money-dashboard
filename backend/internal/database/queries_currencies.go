@@ -34,3 +34,15 @@ func (db *DB) GetCurrencyById(ctx context.Context, id uuid.UUID) (schema.Currenc
 	currency := conversion.CurrencyToCore(res)
 	return currency, true, nil
 }
+
+func (db *DB) GetLatestCurrencyRates(ctx context.Context) ([]schema.CurrencyRate, error) {
+	res, err := db.queries.GetLatestCurrencyRates(ctx)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	currencies := conversiontools.ConvertSlice(res, conversion.CurrencyRateToCore)
+	return currencies, nil
+}

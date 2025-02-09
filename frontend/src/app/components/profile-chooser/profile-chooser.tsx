@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import { ExternalModalProps, Modal } from "../common/modal/modal";
 import { Icon, IconGroup } from "../common/icon/icon";
-import { apiClient } from "../../../api/api";
+import { userServiceClient } from "../../../api/api";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks";
 import { toastBus } from "../toaster/toaster";
 import { Profile, User } from "../../../api_gen/moneydashboard/v4/users_pb";
@@ -18,7 +18,7 @@ function ProfileChooser(props: ProfileChooserProps): ReactElement {
     }
 
     try {
-      const res = await apiClient.getUser({});
+      const res = await userServiceClient.getUser({});
       setUser(res.user);
     } catch (e) {
       toastBus.error("Failed to load user");
@@ -32,7 +32,7 @@ function ProfileChooser(props: ProfileChooserProps): ReactElement {
     }
 
     try {
-      const res = await apiClient.getProfiles({});
+      const res = await userServiceClient.getProfiles({});
       setProfiles(res.profiles);
     } catch (e) {
       toastBus.error("Failed to load profiles");
@@ -42,7 +42,7 @@ function ProfileChooser(props: ProfileChooserProps): ReactElement {
 
   const selectProfile = useAsyncHandler(async (id: string) => {
     try {
-      await apiClient.setActiveProfile({ profileId: id });
+      await userServiceClient.setActiveProfile({ profileId: id });
       window.location.reload();
     } catch (e) {
       toastBus.error("Failed to set active profile");

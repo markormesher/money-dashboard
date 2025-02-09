@@ -12,11 +12,11 @@ function copyToClipboard(str: string): void {
   navigator.clipboard
     .writeText(elem.value)
     .then(() => {
-      toastBus.success("Copied to clipboard");
+      toastBus.success("Copied to clipboard.");
       document.body.removeChild(elem);
     })
     .catch((e) => {
-      toastBus.error("Failed to copy to clipboard");
+      toastBus.error("Failed to copy to clipboard.");
       console.log(e);
       document.body.removeChild(elem);
     });

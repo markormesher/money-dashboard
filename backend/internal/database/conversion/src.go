@@ -27,4 +27,7 @@ type converterSpec interface {
 
 	CurrencyFromCore(source schema.Currency) database_gen.Currency
 	CurrencyToCore(source database_gen.Currency) schema.Currency
+
+	CurrencyRateFromCore(source schema.CurrencyRate) database_gen.CurrencyRate
+	CurrencyRateToCore(source database_gen.CurrencyRate) schema.CurrencyRate
 }

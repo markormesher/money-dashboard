@@ -2,15 +2,15 @@
 // @generated from file moneydashboard/v4/currencies.proto (package moneydashboard.v4, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv1";
-import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv1";
+import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file moneydashboard/v4/currencies.proto.
  */
 export const file_moneydashboard_v4_currencies: GenFile = /*@__PURE__*/
-  fileDesc("CiJtb25leWRhc2hib2FyZC92NC9jdXJyZW5jaWVzLnByb3RvEhFtb25leWRhc2hib2FyZC52NCJcCghDdXJyZW5jeRIKCgJpZBgBIAEoCRIMCgRjb2RlGAIgASgJEg4KBnN5bWJvbBgDIAEoCRIWCg5kZWNpbWFsX3BsYWNlcxgEIAEoBRIOCgZhY3RpdmUYBSABKAgiGQoXR2V0QWxsQ3VycmVuY2llc1JlcXVlc3QiSwoYR2V0QWxsQ3VycmVuY2llc1Jlc3BvbnNlEi8KCmN1cnJlbmNpZXMYASADKAsyGy5tb25leWRhc2hib2FyZC52NC5DdXJyZW5jeUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM");
+  fileDesc("CiJtb25leWRhc2hib2FyZC92NC9jdXJyZW5jaWVzLnByb3RvEhFtb25leWRhc2hib2FyZC52NCJ+CghDdXJyZW5jeRIKCgJpZBgBIAEoCRIMCgRjb2RlGAIgASgJEg4KBnN5bWJvbBgDIAEoCRIZChFkaXNwbGF5X3ByZWNpc2lvbhgEIAEoBRIdChVjYWxjdWxhdGlvbl9wcmVjaXNpb24YBSABKAUSDgoGYWN0aXZlGAYgASgIIksKDEN1cnJlbmN5UmF0ZRIKCgJpZBgBIAEoCRITCgtjdXJyZW5jeV9pZBgCIAEoCRIMCgRkYXRlGAMgASgDEgwKBHJhdGUYBCABKAEiGQoXR2V0QWxsQ3VycmVuY2llc1JlcXVlc3QiSwoYR2V0QWxsQ3VycmVuY2llc1Jlc3BvbnNlEi8KCmN1cnJlbmNpZXMYASADKAsyGy5tb25leWRhc2hib2FyZC52NC5DdXJyZW5jeSIfCh1HZXRMYXRlc3RDdXJyZW5jeVJhdGVzUmVxdWVzdCJYCh5HZXRMYXRlc3RDdXJyZW5jeVJhdGVzUmVzcG9uc2USNgoNY3VycmVuY3lSYXRlcxgBIAMoCzIfLm1vbmV5ZGFzaGJvYXJkLnY0LkN1cnJlbmN5UmF0ZTL/AQoRTURDdXJyZW5jeVNlcnZpY2USawoQR2V0QWxsQ3VycmVuY2llcxIqLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEFsbEN1cnJlbmNpZXNSZXF1ZXN0GisubW9uZXlkYXNoYm9hcmQudjQuR2V0QWxsQ3VycmVuY2llc1Jlc3BvbnNlEn0KFkdldExhdGVzdEN1cnJlbmN5UmF0ZXMSMC5tb25leWRhc2hib2FyZC52NC5HZXRMYXRlc3RDdXJyZW5jeVJhdGVzUmVxdWVzdBoxLm1vbmV5ZGFzaGJvYXJkLnY0LkdldExhdGVzdEN1cnJlbmN5UmF0ZXNSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM");
 
 /**
  * @generated from message moneydashboard.v4.Currency
@@ -32,12 +32,17 @@ export type Currency = Message<"moneydashboard.v4.Currency"> & {
   symbol: string;
 
   /**
-   * @generated from field: int32 decimal_places = 4;
+   * @generated from field: int32 display_precision = 4;
    */
-  decimalPlaces: number;
+  displayPrecision: number;
 
   /**
-   * @generated from field: bool active = 5;
+   * @generated from field: int32 calculation_precision = 5;
+   */
+  calculationPrecision: number;
+
+  /**
+   * @generated from field: bool active = 6;
    */
   active: boolean;
 };
@@ -50,6 +55,38 @@ export const CurrencySchema: GenMessage<Currency> = /*@__PURE__*/
   messageDesc(file_moneydashboard_v4_currencies, 0);
 
 /**
+ * @generated from message moneydashboard.v4.CurrencyRate
+ */
+export type CurrencyRate = Message<"moneydashboard.v4.CurrencyRate"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string currency_id = 2;
+   */
+  currencyId: string;
+
+  /**
+   * @generated from field: int64 date = 3;
+   */
+  date: bigint;
+
+  /**
+   * @generated from field: double rate = 4;
+   */
+  rate: number;
+};
+
+/**
+ * Describes the message moneydashboard.v4.CurrencyRate.
+ * Use `create(CurrencyRateSchema)` to create a new message.
+ */
+export const CurrencyRateSchema: GenMessage<CurrencyRate> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_currencies, 1);
+
+/**
  * @generated from message moneydashboard.v4.GetAllCurrenciesRequest
  */
 export type GetAllCurrenciesRequest = Message<"moneydashboard.v4.GetAllCurrenciesRequest"> & {
@@ -60,7 +97,7 @@ export type GetAllCurrenciesRequest = Message<"moneydashboard.v4.GetAllCurrencie
  * Use `create(GetAllCurrenciesRequestSchema)` to create a new message.
  */
 export const GetAllCurrenciesRequestSchema: GenMessage<GetAllCurrenciesRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_currencies, 1);
+  messageDesc(file_moneydashboard_v4_currencies, 2);
 
 /**
  * @generated from message moneydashboard.v4.GetAllCurrenciesResponse
@@ -77,5 +114,58 @@ export type GetAllCurrenciesResponse = Message<"moneydashboard.v4.GetAllCurrenci
  * Use `create(GetAllCurrenciesResponseSchema)` to create a new message.
  */
 export const GetAllCurrenciesResponseSchema: GenMessage<GetAllCurrenciesResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_currencies, 2);
+  messageDesc(file_moneydashboard_v4_currencies, 3);
+
+/**
+ * @generated from message moneydashboard.v4.GetLatestCurrencyRatesRequest
+ */
+export type GetLatestCurrencyRatesRequest = Message<"moneydashboard.v4.GetLatestCurrencyRatesRequest"> & {
+};
+
+/**
+ * Describes the message moneydashboard.v4.GetLatestCurrencyRatesRequest.
+ * Use `create(GetLatestCurrencyRatesRequestSchema)` to create a new message.
+ */
+export const GetLatestCurrencyRatesRequestSchema: GenMessage<GetLatestCurrencyRatesRequest> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_currencies, 4);
+
+/**
+ * @generated from message moneydashboard.v4.GetLatestCurrencyRatesResponse
+ */
+export type GetLatestCurrencyRatesResponse = Message<"moneydashboard.v4.GetLatestCurrencyRatesResponse"> & {
+  /**
+   * @generated from field: repeated moneydashboard.v4.CurrencyRate currencyRates = 1;
+   */
+  currencyRates: CurrencyRate[];
+};
+
+/**
+ * Describes the message moneydashboard.v4.GetLatestCurrencyRatesResponse.
+ * Use `create(GetLatestCurrencyRatesResponseSchema)` to create a new message.
+ */
+export const GetLatestCurrencyRatesResponseSchema: GenMessage<GetLatestCurrencyRatesResponse> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_currencies, 5);
+
+/**
+ * @generated from service moneydashboard.v4.MDCurrencyService
+ */
+export const MDCurrencyService: GenService<{
+  /**
+   * @generated from rpc moneydashboard.v4.MDCurrencyService.GetAllCurrencies
+   */
+  getAllCurrencies: {
+    methodKind: "unary";
+    input: typeof GetAllCurrenciesRequestSchema;
+    output: typeof GetAllCurrenciesResponseSchema;
+  },
+  /**
+   * @generated from rpc moneydashboard.v4.MDCurrencyService.GetLatestCurrencyRates
+   */
+  getLatestCurrencyRates: {
+    methodKind: "unary";
+    input: typeof GetLatestCurrencyRatesRequestSchema;
+    output: typeof GetLatestCurrencyRatesResponseSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_moneydashboard_v4_currencies, 0);
 

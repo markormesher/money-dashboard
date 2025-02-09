@@ -35,3 +35,9 @@ message SetActiveProfileRequest {
 }
 
 message SetActiveProfileResponse {}
+
+service MDUserService {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc GetProfiles(GetProfilesRequest) returns (GetProfilesResponse);
+  rpc SetActiveProfile(SetActiveProfileRequest) returns (SetActiveProfileResponse);
+}

@@ -14,9 +14,30 @@ func CurrencyFromCore(source schema.Currency) *v4.Currency {
 	mdv4Currency.Id = uuidtools.ConvertUUIDToString(source.ID)
 	mdv4Currency.Code = source.Code
 	mdv4Currency.Symbol = source.Symbol
-	mdv4Currency.DecimalPlaces = source.DecimalPlaces
-	mdv4Currency.Deleted = source.Deleted
+	mdv4Currency.DisplayPrecision = source.DisplayPrecision
+	mdv4Currency.CalculationPrecision = source.CalculationPrecision
+	mdv4Currency.Active = source.Active
 	return &mdv4Currency
+}
+func CurrencyRateFromCore(source schema.CurrencyRate) *v4.CurrencyRate {
+	var mdv4CurrencyRate v4.CurrencyRate
+	mdv4CurrencyRate.Id = uuidtools.ConvertUUIDToString(source.ID)
+	mdv4CurrencyRate.CurrencyId = uuidtools.ConvertUUIDToString(source.CurrencyID)
+	mdv4CurrencyRate.Date = ConvertTimeToInt(source.Date)
+	mdv4CurrencyRate.Rate = ConvertDecimalToFloat(source.Rate)
+	return &mdv4CurrencyRate
+}
+func CurrencyRateToCore(source *v4.CurrencyRate) schema.CurrencyRate {
+	var schemaCurrencyRate schema.CurrencyRate
+	if source != nil {
+		var schemaCurrencyRate2 schema.CurrencyRate
+		schemaCurrencyRate2.ID = uuidtools.ConvertStringToUUID((*source).Id)
+		schemaCurrencyRate2.CurrencyID = uuidtools.ConvertStringToUUID((*source).CurrencyId)
+		schemaCurrencyRate2.Date = ConvertIntToTime((*source).Date)
+		schemaCurrencyRate2.Rate = ConvertFloatToDecimal((*source).Rate)
+		schemaCurrencyRate = schemaCurrencyRate2
+	}
+	return schemaCurrencyRate
 }
 func CurrencyToCore(source *v4.Currency) schema.Currency {
 	var schemaCurrency schema.Currency
@@ -25,8 +46,9 @@ func CurrencyToCore(source *v4.Currency) schema.Currency {
 		schemaCurrency2.ID = uuidtools.ConvertStringToUUID((*source).Id)
 		schemaCurrency2.Code = (*source).Code
 		schemaCurrency2.Symbol = (*source).Symbol
-		schemaCurrency2.DecimalPlaces = (*source).DecimalPlaces
-		schemaCurrency2.Deleted = (*source).Deleted
+		schemaCurrency2.DisplayPrecision = (*source).DisplayPrecision
+		schemaCurrency2.CalculationPrecision = (*source).CalculationPrecision
+		schemaCurrency2.Active = (*source).Active
 		schemaCurrency = schemaCurrency2
 	}
 	return schemaCurrency

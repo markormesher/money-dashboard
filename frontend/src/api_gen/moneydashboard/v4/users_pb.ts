@@ -2,15 +2,15 @@
 // @generated from file moneydashboard/v4/users.proto (package moneydashboard.v4, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv1";
-import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv1";
+import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file moneydashboard/v4/users.proto.
  */
 export const file_moneydashboard_v4_users: GenFile = /*@__PURE__*/
-  fileDesc("Ch1tb25leWRhc2hib2FyZC92NC91c2Vycy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiiAEKBFVzZXISCgoCaWQYASABKAkSGQoRZXh0ZXJuYWxfdXNlcm5hbWUYAiABKAkSFAoMZGlzcGxheV9uYW1lGAMgASgJEg8KB2RlbGV0ZWQYBCABKAgSMgoOYWN0aXZlX3Byb2ZpbGUYBSABKAsyGi5tb25leWRhc2hib2FyZC52NC5Qcm9maWxlIjQKB1Byb2ZpbGUSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdkZWxldGVkGAMgASgIIhAKDkdldFVzZXJSZXF1ZXN0IjgKD0dldFVzZXJSZXNwb25zZRIlCgR1c2VyGAEgASgLMhcubW9uZXlkYXNoYm9hcmQudjQuVXNlciIUChJHZXRQcm9maWxlc1JlcXVlc3QiQwoTR2V0UHJvZmlsZXNSZXNwb25zZRIsCghwcm9maWxlcxgBIAMoCzIaLm1vbmV5ZGFzaGJvYXJkLnY0LlByb2ZpbGUiLQoXU2V0QWN0aXZlUHJvZmlsZVJlcXVlc3QSEgoKcHJvZmlsZV9pZBgBIAEoCSIaChhTZXRBY3RpdmVQcm9maWxlUmVzcG9uc2VCUVpPZ2l0aHViLmNvbS9tYXJrb3JtZXNoZXIvbW9uZXktZGFzaGJvYXJkL2ludGVybmFsL2FwaV9nZW4vbW9uZXlkYXNoYm9hcmQvdjQ7bWR2NGIGcHJvdG8z");
+  fileDesc("Ch1tb25leWRhc2hib2FyZC92NC91c2Vycy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiiAEKBFVzZXISCgoCaWQYASABKAkSGQoRZXh0ZXJuYWxfdXNlcm5hbWUYAiABKAkSFAoMZGlzcGxheV9uYW1lGAMgASgJEg8KB2RlbGV0ZWQYBCABKAgSMgoOYWN0aXZlX3Byb2ZpbGUYBSABKAsyGi5tb25leWRhc2hib2FyZC52NC5Qcm9maWxlIjQKB1Byb2ZpbGUSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdkZWxldGVkGAMgASgIIhAKDkdldFVzZXJSZXF1ZXN0IjgKD0dldFVzZXJSZXNwb25zZRIlCgR1c2VyGAEgASgLMhcubW9uZXlkYXNoYm9hcmQudjQuVXNlciIUChJHZXRQcm9maWxlc1JlcXVlc3QiQwoTR2V0UHJvZmlsZXNSZXNwb25zZRIsCghwcm9maWxlcxgBIAMoCzIaLm1vbmV5ZGFzaGJvYXJkLnY0LlByb2ZpbGUiLQoXU2V0QWN0aXZlUHJvZmlsZVJlcXVlc3QSEgoKcHJvZmlsZV9pZBgBIAEoCSIaChhTZXRBY3RpdmVQcm9maWxlUmVzcG9uc2UyrAIKDU1EVXNlclNlcnZpY2USUAoHR2V0VXNlchIhLm1vbmV5ZGFzaGJvYXJkLnY0LkdldFVzZXJSZXF1ZXN0GiIubW9uZXlkYXNoYm9hcmQudjQuR2V0VXNlclJlc3BvbnNlElwKC0dldFByb2ZpbGVzEiUubW9uZXlkYXNoYm9hcmQudjQuR2V0UHJvZmlsZXNSZXF1ZXN0GiYubW9uZXlkYXNoYm9hcmQudjQuR2V0UHJvZmlsZXNSZXNwb25zZRJrChBTZXRBY3RpdmVQcm9maWxlEioubW9uZXlkYXNoYm9hcmQudjQuU2V0QWN0aXZlUHJvZmlsZVJlcXVlc3QaKy5tb25leWRhc2hib2FyZC52NC5TZXRBY3RpdmVQcm9maWxlUmVzcG9uc2VCUVpPZ2l0aHViLmNvbS9tYXJrb3JtZXNoZXIvbW9uZXktZGFzaGJvYXJkL2ludGVybmFsL2FwaV9nZW4vbW9uZXlkYXNoYm9hcmQvdjQ7bWR2NGIGcHJvdG8z");
 
 /**
  * @generated from message moneydashboard.v4.User
@@ -165,4 +165,35 @@ export type SetActiveProfileResponse = Message<"moneydashboard.v4.SetActiveProfi
  */
 export const SetActiveProfileResponseSchema: GenMessage<SetActiveProfileResponse> = /*@__PURE__*/
   messageDesc(file_moneydashboard_v4_users, 7);
+
+/**
+ * @generated from service moneydashboard.v4.MDUserService
+ */
+export const MDUserService: GenService<{
+  /**
+   * @generated from rpc moneydashboard.v4.MDUserService.GetUser
+   */
+  getUser: {
+    methodKind: "unary";
+    input: typeof GetUserRequestSchema;
+    output: typeof GetUserResponseSchema;
+  },
+  /**
+   * @generated from rpc moneydashboard.v4.MDUserService.GetProfiles
+   */
+  getProfiles: {
+    methodKind: "unary";
+    input: typeof GetProfilesRequestSchema;
+    output: typeof GetProfilesResponseSchema;
+  },
+  /**
+   * @generated from rpc moneydashboard.v4.MDUserService.SetActiveProfile
+   */
+  setActiveProfile: {
+    methodKind: "unary";
+    input: typeof SetActiveProfileRequestSchema;
+    output: typeof SetActiveProfileResponseSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_moneydashboard_v4_users, 0);
 

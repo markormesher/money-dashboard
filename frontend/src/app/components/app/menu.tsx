@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import { Icon, IconGroup } from "../common/icon/icon";
 import { concatClasses } from "../../utils/style";
-import { apiClient } from "../../../api/api";
+import { userServiceClient } from "../../../api/api";
 import { ProfileChooser } from "../profile-chooser/profile-chooser";
 import { useAsyncEffect } from "../../utils/hooks";
 import { toastBus } from "../toaster/toaster";
@@ -22,7 +22,7 @@ function Menu(props: MenuProps): ReactElement {
   const [user, setUser] = React.useState<User>();
   useAsyncEffect(async () => {
     try {
-      const res = await apiClient.getUser({});
+      const res = await userServiceClient.getUser({});
       setUser(res.user);
     } catch (e) {
       toastBus.error("Failed to load user");

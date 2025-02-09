@@ -42,7 +42,14 @@ func main() {
 
 	// backend server
 	apiServer := api.NewApiServer(&core)
-	apiPath, apiHandler := mdv4connect.NewMDServiceHandler(apiServer)
+
+	var apiPath string
+	var apiHandler http.Handler
+
+	apiPath, apiHandler = mdv4connect.NewMDCurrencyServiceHandler(apiServer)
+	mux.PathPrefix(apiPath).Handler(apiHandler)
+
+	apiPath, apiHandler = mdv4connect.NewMDUserServiceHandler(apiServer)
 	mux.PathPrefix(apiPath).Handler(apiHandler)
 
 	// frontend server

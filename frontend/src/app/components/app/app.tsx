@@ -7,7 +7,8 @@ import { Menu } from "./menu";
 import { Breadcrumbs } from "./breadcrumbs";
 
 import "./style/00-pico.scss";
-import "./style/01-app-components.scss";
+import "./style/01-common.css";
+import "./style/02-app-components.scss";
 
 function App(): ReactElement {
   const [menuOpen, setMenuOpen] = React.useState(false);

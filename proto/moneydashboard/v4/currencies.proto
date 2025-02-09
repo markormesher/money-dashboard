@@ -7,12 +7,31 @@ message Currency {
   string id = 1;
   string code = 2;
   string symbol = 3;
-  int32 decimal_places = 4;
-  bool active = 5;
+  int32 display_precision = 4;
+  int32 calculation_precision = 5;
+  bool active = 6;
+}
+
+message CurrencyRate {
+  string id = 1;
+  string currency_id = 2;
+  int64 date = 3;
+  double rate = 4;
 }
 
 message GetAllCurrenciesRequest {}
 
 message GetAllCurrenciesResponse {
   repeated Currency currencies = 1;
+}
+
+message GetLatestCurrencyRatesRequest {}
+
+message GetLatestCurrencyRatesResponse {
+  repeated CurrencyRate currencyRates = 1;
+}
+
+service MDCurrencyService {
+  rpc GetAllCurrencies(GetAllCurrenciesRequest) returns (GetAllCurrenciesResponse);
+  rpc GetLatestCurrencyRates(GetLatestCurrencyRatesRequest) returns (GetLatestCurrencyRatesResponse);
 }

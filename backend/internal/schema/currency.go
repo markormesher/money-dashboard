@@ -4,19 +4,21 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/govalues/decimal"
 )
 
 type Currency struct {
-	ID            uuid.UUID
-	Code          string
-	Symbol        string
-	DecimalPlaces int32
-	Deleted       bool
+	ID                   uuid.UUID
+	Code                 string
+	Symbol               string
+	DisplayPrecision     int32
+	CalculationPrecision int32
+	Active               bool
 }
 
-type CurrencyValue struct {
-	ID       uuid.UUID
-	Date     time.Time
-	Value    float64
-	Currency *Currency
+type CurrencyRate struct {
+	ID         uuid.UUID
+	CurrencyID uuid.UUID
+	Date       time.Time
+	Rate       decimal.Decimal
 }

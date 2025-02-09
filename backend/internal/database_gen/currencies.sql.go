@@ -12,7 +12,7 @@ import (
 )
 
 const getAllCurrencies = `-- name: GetAllCurrencies :many
-SELECT id, code, symbol, decimal_places, active FROM currency
+SELECT id, code, symbol, display_precision, active, calculation_precision FROM currency
 `
 
 func (q *Queries) GetAllCurrencies(ctx context.Context) ([]Currency, error) {
@@ -28,8 +28,9 @@ func (q *Queries) GetAllCurrencies(ctx context.Context) ([]Currency, error) {
 			&i.ID,
 			&i.Code,
 			&i.Symbol,
-			&i.DecimalPlaces,
+			&i.DisplayPrecision,
 			&i.Active,
+			&i.CalculationPrecision,
 		); err != nil {
 			return nil, err
 		}
@@ -42,7 +43,7 @@ func (q *Queries) GetAllCurrencies(ctx context.Context) ([]Currency, error) {
 }
 
 const getCurrencyById = `-- name: GetCurrencyById :one
-SELECT id, code, symbol, decimal_places, active FROM currency WHERE currency.id = $1
+SELECT id, code, symbol, display_precision, active, calculation_precision FROM currency WHERE currency.id = $1
 `
 
 func (q *Queries) GetCurrencyById(ctx context.Context, id uuid.UUID) (Currency, error) {
@@ -52,8 +53,38 @@ func (q *Queries) GetCurrencyById(ctx context.Context, id uuid.UUID) (Currency, 
 		&i.ID,
 		&i.Code,
 		&i.Symbol,
-		&i.DecimalPlaces,
+		&i.DisplayPrecision,
 		&i.Active,
+		&i.CalculationPrecision,
 	)
 	return i, err
+}
+
+const getLatestCurrencyRates = `-- name: GetLatestCurrencyRates :many
+SELECT DISTINCT ON (currency_id) id, currency_id, date, rate FROM currency_rates ORDER BY currency_id, "date" DESC
+`
+
+func (q *Queries) GetLatestCurrencyRates(ctx context.Context) ([]CurrencyRate, error) {
+	rows, err := q.db.Query(ctx, getLatestCurrencyRates)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []CurrencyRate
+	for rows.Next() {
+		var i CurrencyRate
+		if err := rows.Scan(
+			&i.ID,
+			&i.CurrencyID,
+			&i.Date,
+			&i.Rate,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

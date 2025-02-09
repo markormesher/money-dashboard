@@ -47,9 +47,9 @@ tasks:
     cmds:
       - task: gen-goverter-backend
   gen-goverter-backend:
-    dir: '{{.ROOT_DIR}}/sql'
+    dir: '{{.ROOT_DIR}}/backend'
     cmds:
-      - cmd: sqlc generate
+      - cmd: goverter gen ./internal/{database,api}/conversion
   imgbuild:
     cmds:
       - task: imgbuild-root

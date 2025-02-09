@@ -1,6 +1,10 @@
 package conversion
 
 import (
+	"fmt"
+	"time"
+
+	"github.com/govalues/decimal"
 	mdv4 "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4"
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
@@ -11,6 +15,10 @@ import (
 // goverter:output:package github.com/markormesher/money-dashboard/internal/api/conversion
 // goverter:extend github.com/markormesher/money-dashboard/internal/uuidtools:ConvertUUIDToString
 // goverter:extend github.com/markormesher/money-dashboard/internal/uuidtools:ConvertStringToUUID
+// goverter:extend ConvertTimeToInt
+// goverter:extend ConvertIntToTime
+// goverter:extend ConvertDecimalToFloat
+// goverter:extend ConvertFloatToDecimal
 // goverter:matchIgnoreCase yes
 // goverter:ignoreUnexported yes
 // goverter:useZeroValueOnPointerInconsistency yes
@@ -23,4 +31,28 @@ type converterSpec interface {
 
 	CurrencyFromCore(source schema.Currency) *mdv4.Currency
 	CurrencyToCore(source *mdv4.Currency) schema.Currency
+
+	CurrencyRateFromCore(source schema.CurrencyRate) *mdv4.CurrencyRate
+	CurrencyRateToCore(source *mdv4.CurrencyRate) schema.CurrencyRate
+}
+
+func ConvertTimeToInt(v time.Time) int64 {
+	return v.Unix()
+}
+
+func ConvertIntToTime(v int64) time.Time {
+	return time.Unix(v, 0)
+}
+
+func ConvertDecimalToFloat(v decimal.Decimal) float64 {
+	f, _ := v.Float64()
+	return f
+}
+
+func ConvertFloatToDecimal(v float64) decimal.Decimal {
+	d, err := decimal.NewFromFloat64(v)
+	if err != nil {
+		panic(fmt.Sprintf("unable to convert float %v to decimal: %v", v, err))
+	}
+	return d
 }
