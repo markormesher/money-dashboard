@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,7 +18,22 @@ type Currency struct {
 }
 
 func (c *Currency) Validate() error {
-	// TODO
+	if len(c.Code) < 2 || len(c.Code) > 6 {
+		return fmt.Errorf("currency code must be between 2 and 6 characters")
+	}
+
+	if len(c.Symbol) < 1 || len(c.Symbol) > 2 {
+		return fmt.Errorf("currency symbol must be between 2 and 6 characters")
+	}
+
+	if c.DisplayPrecision < 0 {
+		return fmt.Errorf("currency display precision must be 0 or greater")
+	}
+
+	if c.CalculationPrecision < 0 {
+		return fmt.Errorf("currency calculation precision must be 0 or greater")
+	}
+
 	return nil
 }
 
@@ -28,7 +44,18 @@ type CurrencyRate struct {
 	Rate       decimal.Decimal
 }
 
-func (c *CurrencyRate) Validate() error {
-	// TODO
+func (r *CurrencyRate) Validate() error {
+	if r.Date.After(time.Now()) {
+		return fmt.Errorf("currency rate must not be in the future")
+	}
+
+	if r.Date.Before(PlatformMinimumDate) {
+		return fmt.Errorf("currency rate must not be before the platform minimum date")
+	}
+
+	if r.Rate.IsNeg() {
+		return fmt.Errorf("currency rate must be greater than 0")
+	}
+
 	return nil
 }
