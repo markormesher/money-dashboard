@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"connectrpc.com/connect"
+	"github.com/google/uuid"
 	"github.com/markormesher/money-dashboard/internal/api/conversion"
 	mdv4 "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4"
 	"github.com/markormesher/money-dashboard/internal/conversiontools"
-	"github.com/markormesher/money-dashboard/internal/uuidtools"
 )
 
 func (s *apiServer) GetUser(ctx context.Context, req *connect.Request[mdv4.GetUserRequest]) (*connect.Response[mdv4.GetUserResponse], error) {
@@ -44,8 +44,11 @@ func (s *apiServer) SetActiveProfile(ctx context.Context, req *connect.Request[m
 		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
 
-	// TODO: check convert errors on external uuids
-	id := uuidtools.ConvertStringToUUID(req.Msg.ProfileId)
+	id, err := uuid.Parse(req.Msg.ProfileId)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
+
 	err = s.core.SetActiveProfile(ctx, user, id)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)

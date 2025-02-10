@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 
 	"github.com/markormesher/money-dashboard/internal/logging"
@@ -13,6 +14,7 @@ type Config struct {
 	DevMode               bool
 	PostgresConnectionStr string
 	FrontendDistPath      string
+	ExternalDataSecret    string
 }
 
 func GetConfig() (Config, error) {
@@ -28,9 +30,29 @@ func GetConfig() (Config, error) {
 		return Config{}, fmt.Errorf("frontend path not specified")
 	}
 
+	externalDataSecret := os.Getenv("EXTERNAL_DATA_SECRET")
+	if externalDataSecret == "" {
+		if devMode {
+			externalDataSecret = "foobar"
+		} else {
+			externalDataSecret = randomSecret()
+			l.Warn("EXTERNAL_DATA_SECRET was not specified; a random secret has been generated", "externalDataSecret", externalDataSecret)
+		}
+	}
+
 	return Config{
 		DevMode:               devMode,
 		PostgresConnectionStr: postgresConnectionStr,
 		FrontendDistPath:      frontendDistPath,
+		ExternalDataSecret:    externalDataSecret,
 	}, nil
+}
+
+func randomSecret() string {
+	letters := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	b := make([]byte, 20)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
 }

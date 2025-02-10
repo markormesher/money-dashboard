@@ -16,9 +16,19 @@ type Currency struct {
 	Active               bool
 }
 
+func (c *Currency) Validate() error {
+	// TODO
+	return nil
+}
+
 type CurrencyRate struct {
 	ID         uuid.UUID
 	CurrencyID uuid.UUID
 	Date       time.Time
 	Rate       decimal.Decimal
+}
+
+func (c *CurrencyRate) Validate() error {
+	// TODO
+	return nil
 }

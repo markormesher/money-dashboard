@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/markormesher/money-dashboard/internal/conversiontools"
 	"github.com/markormesher/money-dashboard/internal/database/conversion"
+	"github.com/markormesher/money-dashboard/internal/database_gen"
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
@@ -35,6 +36,17 @@ func (db *DB) GetCurrencyById(ctx context.Context, id uuid.UUID) (schema.Currenc
 	return currency, true, nil
 }
 
+func (db *DB) UpsertCurrency(ctx context.Context, currency schema.Currency) error {
+	return db.queries.UpsertCurrency(ctx, database_gen.UpsertCurrencyParams{
+		ID:                   currency.ID,
+		Code:                 currency.Code,
+		Symbol:               currency.Symbol,
+		DisplayPrecision:     currency.DisplayPrecision,
+		CalculationPrecision: currency.CalculationPrecision,
+		Active:               currency.Active,
+	})
+}
+
 func (db *DB) GetLatestCurrencyRates(ctx context.Context) ([]schema.CurrencyRate, error) {
 	res, err := db.queries.GetLatestCurrencyRates(ctx)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -45,4 +57,13 @@ func (db *DB) GetLatestCurrencyRates(ctx context.Context) ([]schema.CurrencyRate
 
 	currencies := conversiontools.ConvertSlice(res, conversion.CurrencyRateToCore)
 	return currencies, nil
+}
+
+func (db *DB) UpsertCurrencyRate(ctx context.Context, rate schema.CurrencyRate) error {
+	return db.queries.UpsertCurrencyRate(ctx, database_gen.UpsertCurrencyRateParams{
+		ID:         rate.ID,
+		CurrencyID: rate.CurrencyID,
+		Date:       rate.Date,
+		Rate:       rate.Rate,
+	})
 }

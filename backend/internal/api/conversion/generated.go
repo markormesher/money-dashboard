@@ -6,12 +6,11 @@ package conversion
 import (
 	v4 "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4"
 	schema "github.com/markormesher/money-dashboard/internal/schema"
-	uuidtools "github.com/markormesher/money-dashboard/internal/uuidtools"
 )
 
 func CurrencyFromCore(source schema.Currency) *v4.Currency {
 	var mdv4Currency v4.Currency
-	mdv4Currency.Id = uuidtools.ConvertUUIDToString(source.ID)
+	mdv4Currency.Id = ConvertUUIDToString(source.ID)
 	mdv4Currency.Code = source.Code
 	mdv4Currency.Symbol = source.Symbol
 	mdv4Currency.DisplayPrecision = source.DisplayPrecision
@@ -21,8 +20,8 @@ func CurrencyFromCore(source schema.Currency) *v4.Currency {
 }
 func CurrencyRateFromCore(source schema.CurrencyRate) *v4.CurrencyRate {
 	var mdv4CurrencyRate v4.CurrencyRate
-	mdv4CurrencyRate.Id = uuidtools.ConvertUUIDToString(source.ID)
-	mdv4CurrencyRate.CurrencyId = uuidtools.ConvertUUIDToString(source.CurrencyID)
+	mdv4CurrencyRate.Id = ConvertUUIDToString(source.ID)
+	mdv4CurrencyRate.CurrencyId = ConvertUUIDToString(source.CurrencyID)
 	mdv4CurrencyRate.Date = ConvertTimeToInt(source.Date)
 	mdv4CurrencyRate.Rate = ConvertDecimalToFloat(source.Rate)
 	return &mdv4CurrencyRate
@@ -31,8 +30,8 @@ func CurrencyRateToCore(source *v4.CurrencyRate) schema.CurrencyRate {
 	var schemaCurrencyRate schema.CurrencyRate
 	if source != nil {
 		var schemaCurrencyRate2 schema.CurrencyRate
-		schemaCurrencyRate2.ID = uuidtools.ConvertStringToUUID((*source).Id)
-		schemaCurrencyRate2.CurrencyID = uuidtools.ConvertStringToUUID((*source).CurrencyId)
+		schemaCurrencyRate2.ID = ConvertStringToUUID((*source).Id)
+		schemaCurrencyRate2.CurrencyID = ConvertStringToUUID((*source).CurrencyId)
 		schemaCurrencyRate2.Date = ConvertIntToTime((*source).Date)
 		schemaCurrencyRate2.Rate = ConvertFloatToDecimal((*source).Rate)
 		schemaCurrencyRate = schemaCurrencyRate2
@@ -43,7 +42,7 @@ func CurrencyToCore(source *v4.Currency) schema.Currency {
 	var schemaCurrency schema.Currency
 	if source != nil {
 		var schemaCurrency2 schema.Currency
-		schemaCurrency2.ID = uuidtools.ConvertStringToUUID((*source).Id)
+		schemaCurrency2.ID = ConvertStringToUUID((*source).Id)
 		schemaCurrency2.Code = (*source).Code
 		schemaCurrency2.Symbol = (*source).Symbol
 		schemaCurrency2.DisplayPrecision = (*source).DisplayPrecision
@@ -55,7 +54,7 @@ func CurrencyToCore(source *v4.Currency) schema.Currency {
 }
 func ProfileFromCore(source schema.Profile) *v4.Profile {
 	var mdv4Profile v4.Profile
-	mdv4Profile.Id = uuidtools.ConvertUUIDToString(source.ID)
+	mdv4Profile.Id = ConvertUUIDToString(source.ID)
 	mdv4Profile.Name = source.Name
 	mdv4Profile.Deleted = source.Deleted
 	return &mdv4Profile
@@ -64,7 +63,7 @@ func ProfileToCore(source *v4.Profile) schema.Profile {
 	var schemaProfile schema.Profile
 	if source != nil {
 		var schemaProfile2 schema.Profile
-		schemaProfile2.ID = uuidtools.ConvertStringToUUID((*source).Id)
+		schemaProfile2.ID = ConvertStringToUUID((*source).Id)
 		schemaProfile2.Name = (*source).Name
 		schemaProfile2.Deleted = (*source).Deleted
 		schemaProfile = schemaProfile2
@@ -73,7 +72,7 @@ func ProfileToCore(source *v4.Profile) schema.Profile {
 }
 func UserFromCore(source schema.User) *v4.User {
 	var mdv4User v4.User
-	mdv4User.Id = uuidtools.ConvertUUIDToString(source.ID)
+	mdv4User.Id = ConvertUUIDToString(source.ID)
 	mdv4User.ExternalUsername = source.ExternalUsername
 	mdv4User.DisplayName = source.DisplayName
 	mdv4User.Deleted = source.Deleted
@@ -84,7 +83,7 @@ func UserToCore(source *v4.User) schema.User {
 	var schemaUser schema.User
 	if source != nil {
 		var schemaUser2 schema.User
-		schemaUser2.ID = uuidtools.ConvertStringToUUID((*source).Id)
+		schemaUser2.ID = ConvertStringToUUID((*source).Id)
 		schemaUser2.ExternalUsername = (*source).ExternalUsername
 		schemaUser2.DisplayName = (*source).DisplayName
 		schemaUser2.Deleted = (*source).Deleted
@@ -97,7 +96,7 @@ func pMdv4ProfileToPSchemaProfile(source *v4.Profile) *schema.Profile {
 	var pSchemaProfile *schema.Profile
 	if source != nil {
 		var schemaProfile schema.Profile
-		schemaProfile.ID = uuidtools.ConvertStringToUUID((*source).Id)
+		schemaProfile.ID = ConvertStringToUUID((*source).Id)
 		schemaProfile.Name = (*source).Name
 		schemaProfile.Deleted = (*source).Deleted
 		pSchemaProfile = &schemaProfile
@@ -108,7 +107,7 @@ func pSchemaProfileToPMdv4Profile(source *schema.Profile) *v4.Profile {
 	var pMdv4Profile *v4.Profile
 	if source != nil {
 		var mdv4Profile v4.Profile
-		mdv4Profile.Id = uuidtools.ConvertUUIDToString((*source).ID)
+		mdv4Profile.Id = ConvertUUIDToString((*source).ID)
 		mdv4Profile.Name = (*source).Name
 		mdv4Profile.Deleted = (*source).Deleted
 		pMdv4Profile = &mdv4Profile

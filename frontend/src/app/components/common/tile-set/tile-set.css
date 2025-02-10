@@ -5,6 +5,7 @@ div.tile-set {
 
   article.tile {
     margin: 0;
+    height: fit-content;
 
     footer {
       a {

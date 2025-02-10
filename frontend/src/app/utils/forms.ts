@@ -6,4 +6,9 @@ function safeNumberValue(v: number | undefined): number | string {
   }
 }
 
-export { safeNumberValue };
+function focusFieldByName(name: string): void {
+  const el = document.querySelector(`input[name='${name}'], select[name='${name}'], textarea[name='${name}']`);
+  (el as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null)?.focus();
+}
+
+export { safeNumberValue, focusFieldByName };

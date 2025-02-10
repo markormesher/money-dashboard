@@ -7,8 +7,10 @@ package database_gen
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/govalues/decimal"
 )
 
 const getAllCurrencies = `-- name: GetAllCurrencies :many
@@ -61,7 +63,7 @@ func (q *Queries) GetCurrencyById(ctx context.Context, id uuid.UUID) (Currency, 
 }
 
 const getLatestCurrencyRates = `-- name: GetLatestCurrencyRates :many
-SELECT DISTINCT ON (currency_id) id, currency_id, date, rate FROM currency_rates ORDER BY currency_id, "date" DESC
+SELECT DISTINCT ON (currency_id) id, currency_id, date, rate FROM currency_rate ORDER BY currency_id, "date" DESC
 `
 
 func (q *Queries) GetLatestCurrencyRates(ctx context.Context) ([]CurrencyRate, error) {
@@ -87,4 +89,64 @@ func (q *Queries) GetLatestCurrencyRates(ctx context.Context) ([]CurrencyRate, e
 		return nil, err
 	}
 	return items, nil
+}
+
+const upsertCurrency = `-- name: UpsertCurrency :exec
+INSERT INTO currency (
+  id, code, symbol, display_precision, calculation_precision, active
+) VALUES (
+  $1, $2, $3, $4, $5, $6
+) ON CONFLICT (id) DO UPDATE SET
+  code = $2,
+  symbol = $3,
+  display_precision = $4,
+  calculation_precision = $5,
+  active = $6
+`
+
+type UpsertCurrencyParams struct {
+	ID                   uuid.UUID
+	Code                 string
+	Symbol               string
+	DisplayPrecision     int32
+	CalculationPrecision int32
+	Active               bool
+}
+
+func (q *Queries) UpsertCurrency(ctx context.Context, arg UpsertCurrencyParams) error {
+	_, err := q.db.Exec(ctx, upsertCurrency,
+		arg.ID,
+		arg.Code,
+		arg.Symbol,
+		arg.DisplayPrecision,
+		arg.CalculationPrecision,
+		arg.Active,
+	)
+	return err
+}
+
+const upsertCurrencyRate = `-- name: UpsertCurrencyRate :exec
+INSERT INTO currency_rate (
+  id, currency_id, "date", rate
+) VALUES (
+  $1, $2, $3, $4
+) ON CONFLICT (currency_id, "date") DO UPDATE SET
+  rate = $4
+`
+
+type UpsertCurrencyRateParams struct {
+	ID         uuid.UUID
+	CurrencyID uuid.UUID
+	Date       time.Time
+	Rate       decimal.Decimal
+}
+
+func (q *Queries) UpsertCurrencyRate(ctx context.Context, arg UpsertCurrencyRateParams) error {
+	_, err := q.db.Exec(ctx, upsertCurrencyRate,
+		arg.ID,
+		arg.CurrencyID,
+		arg.Date,
+		arg.Rate,
+	)
+	return err
 }

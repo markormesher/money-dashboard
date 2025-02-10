@@ -13,6 +13,7 @@ type ModalProps = ExternalModalProps & {
 
 function Modal(props: React.PropsWithChildren<ModalProps>): ReactElement {
   const { open, onClose, interceptClose, header } = props;
+  const dialogRef = React.useRef<HTMLDialogElement>(null);
 
   const maybeClose = () => {
     if (!interceptClose) {
@@ -41,18 +42,18 @@ function Modal(props: React.PropsWithChildren<ModalProps>): ReactElement {
 
   React.useEffect(() => {
     if (open) {
-      document.addEventListener("keyup", escKeyListener);
+      dialogRef.current?.addEventListener("keyup", escKeyListener);
     } else {
-      document.removeEventListener("keyup", escKeyListener);
+      dialogRef.current?.removeEventListener("keyup", escKeyListener);
     }
 
     return function cleanup() {
-      document.removeEventListener("keyup", escKeyListener);
+      dialogRef.current?.removeEventListener("keyup", escKeyListener);
     };
   }, [open]);
 
   return (
-    <dialog open={open} onClick={bgClickListener}>
+    <dialog open={open} onClick={bgClickListener} ref={dialogRef}>
       <article>
         <header>
           {header}

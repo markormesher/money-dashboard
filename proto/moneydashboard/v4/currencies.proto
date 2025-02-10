@@ -19,11 +19,25 @@ message CurrencyRate {
   double rate = 4;
 }
 
+message GetCurrencyByIdRequest {
+  string id = 1;
+}
+
+message GetCurrencyByIdResponse {
+  Currency currency = 1;
+}
+
 message GetAllCurrenciesRequest {}
 
 message GetAllCurrenciesResponse {
   repeated Currency currencies = 1;
 }
+
+message UpsertCurrencyRequest {
+  Currency currency = 1;
+}
+
+message UpsertCurrencyResponse {}
 
 message GetLatestCurrencyRatesRequest {}
 
@@ -31,7 +45,17 @@ message GetLatestCurrencyRatesResponse {
   repeated CurrencyRate currency_rates = 1;
 }
 
+message UpsertCurrencyRateRequest {
+  CurrencyRate rate = 1;
+}
+
+message UpsertCurrencyRateResponse {}
+
 service MDCurrencyService {
+  rpc GetCurrencyById(GetCurrencyByIdRequest) returns (GetCurrencyByIdResponse);
   rpc GetAllCurrencies(GetAllCurrenciesRequest) returns (GetAllCurrenciesResponse);
+  rpc UpsertCurrency(UpsertCurrencyRequest) returns (UpsertCurrencyResponse);
+
   rpc GetLatestCurrencyRates(GetLatestCurrencyRatesRequest) returns (GetLatestCurrencyRatesResponse);
+  rpc UpsertCurrencyRate(UpsertCurrencyRateRequest) returns (UpsertCurrencyRateResponse);
 }
