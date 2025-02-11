@@ -48,3 +48,4 @@ function useNudge(): [number, () => void] {
 }
 
 export { useAsyncEffect, useAsyncHandler, useWaitGroup, useNudge };
+export type { WaitGroup };

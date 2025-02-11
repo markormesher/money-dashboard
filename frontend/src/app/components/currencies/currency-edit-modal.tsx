@@ -38,16 +38,15 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
         calculationPrecision: 4,
         active: true,
       });
-      form.setBusy(false);
       setFocusOnNextRender("code");
       return;
     }
 
     try {
-      form.setBusy(true);
+      form.wg.add();
       const res = await currencyServiceClient.getCurrencyById({ id: currencyId });
       form.setModel(res.currency);
-      form.setBusy(false);
+      form.wg.done();
       setFocusOnNextRender("code");
     } catch (e) {
       toastBus.error("Failed to load currency.");
@@ -57,11 +56,11 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
   }, [currencyId]);
 
   React.useEffect(() => {
-    if (!form.busy && !!focusOnNextRender) {
+    if (form.wg.count == 0 && !!focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }
-  }, [focusOnNextRender, form.busy]);
+  }, [focusOnNextRender, form.wg.count]);
 
   // wrap in a ref to use in the closure below
   const modifiedRef = React.useRef(form.modified);
@@ -74,21 +73,22 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
   };
 
   const save = useAsyncHandler(async () => {
-    if (form.busy || !form.valid || !form.model) {
+    if (form.wg.count > 0 || !form.valid || !form.model) {
       return;
     }
 
+    form.wg.add();
+
     try {
-      form.setBusy(true);
       await currencyServiceClient.upsertCurrency({ currency: form.model });
       toastBus.success("Saved currency.");
-      form.setBusy(false);
       onSaveFinished();
     } catch (e) {
       toastBus.error("Failed to save currency.");
-      form.setBusy(false);
       console.log(e);
     }
+
+    form.wg.done();
   });
 
   const header = (
@@ -180,7 +180,7 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
     <Modal header={header} open={true} onClose={onCancel} interceptClose={interceptClose}>
       {body}
       <footer>
-        <button disabled={form.busy || !form.valid} onClick={() => save()}>
+        <button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
           <IconGroup>
             <Icon name={"save"} />
             <span>Save</span>

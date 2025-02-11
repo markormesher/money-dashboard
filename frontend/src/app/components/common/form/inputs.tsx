@@ -19,11 +19,11 @@ function Input<T>(props: InputProps<T>): ReactElement {
   const labelAfterInput = props.type == "checkbox";
 
   return (
-    <label>
+    <label aria-disabled={formState.wg.count > 0}>
       {labelAfterInput ? null : label}
       <input
         name={fieldName}
-        disabled={formState.busy}
+        disabled={formState.wg.count > 0}
         aria-invalid={userHasInteracted && hasError ? true : undefined}
         onBlur={() => setUserHasInteracted(true)}
         autoComplete={"off"}
@@ -45,11 +45,11 @@ function Textarea<T>(props: TextareaProps<T>): ReactElement {
   const hasError = !!error;
 
   return (
-    <label>
+    <label aria-disabled={formState.wg.count > 0}>
       {label}
       <textarea
         name={fieldName}
-        disabled={formState.busy}
+        disabled={formState.wg.count > 0}
         aria-invalid={userHasInteracted && hasError ? true : undefined}
         onBlur={() => setUserHasInteracted(true)}
         autoComplete={"off"}
@@ -70,11 +70,11 @@ function Select<T>(props: React.PropsWithChildren<SelectProps<T>>): ReactElement
   const hasError = !!error;
 
   return (
-    <label>
+    <label aria-disabled={formState.wg.count > 0}>
       {label}
       <select
         name={fieldName}
-        disabled={formState.busy}
+        disabled={formState.wg.count > 0}
         aria-invalid={userHasInteracted && hasError ? true : undefined}
         onBlur={() => setUserHasInteracted(true)}
         autoComplete={"off"}

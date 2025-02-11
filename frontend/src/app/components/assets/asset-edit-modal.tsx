@@ -31,8 +31,10 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
   const [currencies, setCurrencies] = React.useState<Currency[]>();
   useAsyncEffect(async () => {
     try {
+      form.wg.add();
       const res = await currencyServiceClient.getAllCurrencies({});
       setCurrencies(res.currencies);
+      form.wg.done();
     } catch (e) {
       toastBus.error("Failed to load currencies.");
       form.setFatalError(e);
@@ -52,16 +54,15 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
         active: true,
         currency: undefined,
       });
-      form.setBusy(false);
       setFocusOnNextRender("name");
       return;
     }
 
     try {
-      form.setBusy(true);
+      form.wg.add();
       const res = await assetServiceClient.getAssetById({ id: assetId });
       form.setModel(res.asset);
-      form.setBusy(false);
+      form.wg.done();
       setFocusOnNextRender("name");
     } catch (e) {
       toastBus.error("Failed to load asset.");
@@ -71,11 +72,11 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
   }, [assetId]);
 
   React.useEffect(() => {
-    if (!form.busy && !!focusOnNextRender) {
+    if (form.wg.count == 0 && !!focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }
-  }, [focusOnNextRender, form.busy]);
+  }, [focusOnNextRender, form.wg.count]);
 
   // wrap in a ref to use in the closure below
   const modifiedRef = React.useRef(form.modified);
@@ -88,21 +89,22 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
   };
 
   const save = useAsyncHandler(async () => {
-    if (form.busy || !form.valid || !form.model) {
+    if (form.wg.count > 0 || !form.valid || !form.model) {
       return;
     }
 
+    form.wg.add();
+
     try {
-      form.setBusy(true);
       await assetServiceClient.upsertAsset({ asset: form.model });
       toastBus.success("Saved asset.");
-      form.setBusy(false);
       onSaveFinished();
     } catch (e) {
       toastBus.error("Failed to save asset.");
-      form.setBusy(false);
       console.log(e);
     }
+
+    form.wg.done();
   });
 
   const header = (
@@ -136,7 +138,9 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
             value={form.model?.currency?.id}
             onChange={(evt) => form.patchModel({ currency: currencies?.find((c) => c.id == evt.target.value) })}
           >
-            {currencies?.map((c) => <option value={c.id}>{c.code}</option>)}
+            {currencies
+              ?.sort((a, b) => a.code.localeCompare(b.code))
+              ?.map((c) => <option value={c.id}>{c.code}</option>)}
           </Select>
         </fieldset>
 
@@ -204,7 +208,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
     <Modal header={header} open={true} onClose={onCancel} interceptClose={interceptClose}>
       {body}
       <footer>
-        <button disabled={form.busy || !form.valid} onClick={() => save()}>
+        <button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
           <IconGroup>
             <Icon name={"save"} />
             <span>Save</span>
