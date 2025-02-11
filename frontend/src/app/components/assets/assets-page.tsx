@@ -18,7 +18,7 @@ import { AssetEditModal } from "./asset-edit-modal";
 function AssetsPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
-    setMeta({ parents: ["Settings"], title: "Assets" });
+    setMeta({ parents: ["Metadata"], title: "Assets" });
   }, []);
 
   const [nudgeValue, nudge] = useNudge();
@@ -115,6 +115,7 @@ function AssetsPage(): ReactElement {
                 <h4>{a.name}</h4>
                 <ul className={"labels"}>
                   {!a.active ? <li>Inactive</li> : null}
+                  <li>{a.currency?.code}</li>
                   {price !== undefined ? (
                     <>
                       <li>

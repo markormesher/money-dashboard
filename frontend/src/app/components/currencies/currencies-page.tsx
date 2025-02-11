@@ -18,7 +18,7 @@ import { CurrencyEditModal } from "./currency-edit-modal";
 function CurrenciesPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
-    setMeta({ parents: ["Settings"], title: "Currencies" });
+    setMeta({ parents: ["Metadata"], title: "Currencies" });
   }, []);
 
   const [nudgeValue, nudge] = useNudge();

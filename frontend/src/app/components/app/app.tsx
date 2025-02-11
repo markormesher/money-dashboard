@@ -24,9 +24,9 @@ function App(): ReactElement {
 
   function getContent(): ReactElement {
     switch (path) {
-      case "/settings/assets":
+      case "/metadata/assets":
         return <AssetsPage />;
-      case "/settings/currencies":
+      case "/metadata/currencies":
         return <CurrenciesPage />;
     }
 

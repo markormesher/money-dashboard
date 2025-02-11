@@ -195,7 +195,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
           <hgroup>
             <h6>Note</h6>
             <small>
-              Assets are shared across all user and profiles. They <strong>cannot be deleted</strong> after creation;
+              Assets are shared across all users and profiles. They <strong>cannot be deleted</strong> after creation;
               they can only be marked as inactive, which will prevent them from being used on new holdings.
             </small>
           </hgroup>

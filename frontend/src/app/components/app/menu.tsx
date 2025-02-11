@@ -60,10 +60,20 @@ function Menu(props: MenuProps): ReactElement {
         </header>
 
         <nav>
-          <ul>
-            {link("/", "Dashboard")}
-            {link("/transactions", "Transactions")}
-          </ul>
+          <ul>{link("/", "Dashboard")}</ul>
+
+          <details>
+            <summary>Records</summary>
+            <ul>
+              {link("/records/accounts", "Accounts")}
+              {link("/records/budgets", "Budgets")}
+              {link("/records/categories", "Categories")}
+              {link("/records/envelopes", "Envelopes")}
+              {link("/records/holdings", "Holdings")}
+              {link("/records/profiles", "Profiles")}
+              {link("/records/transactions", "Transactions")}
+            </ul>
+          </details>
 
           <details>
             <summary>Reports</summary>
@@ -74,16 +84,10 @@ function Menu(props: MenuProps): ReactElement {
           </details>
 
           <details>
-            <summary>Settings</summary>
+            <summary>Metadata</summary>
             <ul>
-              {link("/settings/accounts", "Accounts")}
-              {link("/settings/assets", "Assets")}
-              {link("/settings/budgets", "Budgets")}
-              {link("/settings/categories", "Categories")}
-              {link("/settings/currencies", "Currencies")}
-              {link("/settings/envelopes", "Envelopes")}
-              {link("/settings/holdings", "Holdings")}
-              {link("/settings/profiles", "Profiles")}
+              {link("/metadata/assets", "Assets")}
+              {link("/metadata/currencies", "Currencies")}
             </ul>
           </details>
         </nav>
