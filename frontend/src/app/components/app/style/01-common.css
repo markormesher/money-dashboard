@@ -2,17 +2,32 @@
   color: var(--pico-muted-color);
 }
 
-ul.horizonal {
+.mb0 {
+  margin-bottom: 0;
+}
+
+ul.horizonal,
+ul.labels {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
 
-  margin: 0;
   padding: 0;
 
   li {
     list-style-type: none;
     margin: 0;
   }
+}
+
+ul.labels li {
+  padding: calc(var(--pico-block-spacing-vertical) * 0.25)
+    calc(var(--pico-block-spacing-horizontal) * 0.5);
+  background-color: color-mix(
+    in srgb,
+    var(--pico-muted-color) 15%,
+    transparent
+  );
+  border-radius: var(--pico-border-radius);
 }

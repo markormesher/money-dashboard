@@ -3,6 +3,7 @@ package schema
 import (
 	"fmt"
 	"time"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/govalues/decimal"
@@ -18,11 +19,11 @@ type Currency struct {
 }
 
 func (c *Currency) Validate() error {
-	if len(c.Code) < 2 || len(c.Code) > 6 {
+	if utf8.RuneCountInString(c.Code) < 2 || utf8.RuneCountInString(c.Code) > 6 {
 		return fmt.Errorf("currency code must be between 2 and 6 characters")
 	}
 
-	if len(c.Symbol) < 1 || len(c.Symbol) > 2 {
+	if utf8.RuneCountInString(c.Symbol) < 1 || utf8.RuneCountInString(c.Symbol) > 2 {
 		return fmt.Errorf("currency symbol must be between 2 and 6 characters")
 	}
 

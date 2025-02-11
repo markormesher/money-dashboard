@@ -8,6 +8,52 @@ import (
 	schema "github.com/markormesher/money-dashboard/internal/schema"
 )
 
+func AssetFromCore(source schema.Asset) *v4.Asset {
+	var mdv4Asset v4.Asset
+	mdv4Asset.Id = ConvertUUIDToString(source.ID)
+	mdv4Asset.Name = source.Name
+	mdv4Asset.Notes = source.Notes
+	mdv4Asset.DisplayPrecision = source.DisplayPrecision
+	mdv4Asset.CalculationPrecision = source.CalculationPrecision
+	mdv4Asset.Active = source.Active
+	mdv4Asset.Currency = pSchemaCurrencyToPMdv4Currency(source.Currency)
+	return &mdv4Asset
+}
+func AssetPriceFromCore(source schema.AssetPrice) *v4.AssetPrice {
+	var mdv4AssetPrice v4.AssetPrice
+	mdv4AssetPrice.Id = ConvertUUIDToString(source.ID)
+	mdv4AssetPrice.AssetId = ConvertUUIDToString(source.AssetID)
+	mdv4AssetPrice.Date = ConvertTimeToInt(source.Date)
+	mdv4AssetPrice.Price = ConvertDecimalToFloat(source.Price)
+	return &mdv4AssetPrice
+}
+func AssetPriceToCore(source *v4.AssetPrice) schema.AssetPrice {
+	var schemaAssetPrice schema.AssetPrice
+	if source != nil {
+		var schemaAssetPrice2 schema.AssetPrice
+		schemaAssetPrice2.ID = ConvertStringToUUID((*source).Id)
+		schemaAssetPrice2.AssetID = ConvertStringToUUID((*source).AssetId)
+		schemaAssetPrice2.Date = ConvertIntToTime((*source).Date)
+		schemaAssetPrice2.Price = ConvertFloatToDecimal((*source).Price)
+		schemaAssetPrice = schemaAssetPrice2
+	}
+	return schemaAssetPrice
+}
+func AssetToCore(source *v4.Asset) schema.Asset {
+	var schemaAsset schema.Asset
+	if source != nil {
+		var schemaAsset2 schema.Asset
+		schemaAsset2.ID = ConvertStringToUUID((*source).Id)
+		schemaAsset2.Name = (*source).Name
+		schemaAsset2.Notes = (*source).Notes
+		schemaAsset2.DisplayPrecision = (*source).DisplayPrecision
+		schemaAsset2.CalculationPrecision = (*source).CalculationPrecision
+		schemaAsset2.Active = (*source).Active
+		schemaAsset2.Currency = pMdv4CurrencyToPSchemaCurrency((*source).Currency)
+		schemaAsset = schemaAsset2
+	}
+	return schemaAsset
+}
 func CurrencyFromCore(source schema.Currency) *v4.Currency {
 	var mdv4Currency v4.Currency
 	mdv4Currency.Id = ConvertUUIDToString(source.ID)
@@ -92,6 +138,20 @@ func UserToCore(source *v4.User) schema.User {
 	}
 	return schemaUser
 }
+func pMdv4CurrencyToPSchemaCurrency(source *v4.Currency) *schema.Currency {
+	var pSchemaCurrency *schema.Currency
+	if source != nil {
+		var schemaCurrency schema.Currency
+		schemaCurrency.ID = ConvertStringToUUID((*source).Id)
+		schemaCurrency.Code = (*source).Code
+		schemaCurrency.Symbol = (*source).Symbol
+		schemaCurrency.DisplayPrecision = (*source).DisplayPrecision
+		schemaCurrency.CalculationPrecision = (*source).CalculationPrecision
+		schemaCurrency.Active = (*source).Active
+		pSchemaCurrency = &schemaCurrency
+	}
+	return pSchemaCurrency
+}
 func pMdv4ProfileToPSchemaProfile(source *v4.Profile) *schema.Profile {
 	var pSchemaProfile *schema.Profile
 	if source != nil {
@@ -102,6 +162,20 @@ func pMdv4ProfileToPSchemaProfile(source *v4.Profile) *schema.Profile {
 		pSchemaProfile = &schemaProfile
 	}
 	return pSchemaProfile
+}
+func pSchemaCurrencyToPMdv4Currency(source *schema.Currency) *v4.Currency {
+	var pMdv4Currency *v4.Currency
+	if source != nil {
+		var mdv4Currency v4.Currency
+		mdv4Currency.Id = ConvertUUIDToString((*source).ID)
+		mdv4Currency.Code = (*source).Code
+		mdv4Currency.Symbol = (*source).Symbol
+		mdv4Currency.DisplayPrecision = (*source).DisplayPrecision
+		mdv4Currency.CalculationPrecision = (*source).CalculationPrecision
+		mdv4Currency.Active = (*source).Active
+		pMdv4Currency = &mdv4Currency
+	}
+	return pMdv4Currency
 }
 func pSchemaProfileToPMdv4Profile(source *schema.Profile) *v4.Profile {
 	var pMdv4Profile *v4.Profile

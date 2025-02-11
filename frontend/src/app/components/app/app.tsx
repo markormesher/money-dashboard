@@ -2,6 +2,7 @@ import React from "react";
 import { ReactElement } from "react";
 import { Icon, IconGroup } from "../common/icon/icon";
 import { CurrenciesPage } from "../currencies/currencies-page";
+import { AssetsPage } from "../assets/assets-page";
 import { useRouter } from "./router";
 import { Menu } from "./menu";
 import { Breadcrumbs } from "./breadcrumbs";
@@ -22,8 +23,11 @@ function App(): ReactElement {
   }, [theme]);
 
   function getContent(): ReactElement {
-    if (path == "/settings/currencies") {
-      return <CurrenciesPage />;
+    switch (path) {
+      case "/settings/assets":
+        return <AssetsPage />;
+      case "/settings/currencies":
+        return <CurrenciesPage />;
     }
 
     return (

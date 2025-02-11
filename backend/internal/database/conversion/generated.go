@@ -9,6 +9,24 @@ import (
 	schema "github.com/markormesher/money-dashboard/internal/schema"
 )
 
+func AssetPriceToCore(source databasegen.AssetPrice) schema.AssetPrice {
+	var schemaAssetPrice schema.AssetPrice
+	schemaAssetPrice.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaAssetPrice.AssetID = uuidUUIDToUuidUUID(source.AssetID)
+	schemaAssetPrice.Date = source.Date
+	schemaAssetPrice.Price = source.Price
+	return schemaAssetPrice
+}
+func AssetToCore(source databasegen.Asset) schema.Asset {
+	var schemaAsset schema.Asset
+	schemaAsset.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaAsset.Name = source.Name
+	schemaAsset.Notes = source.Notes
+	schemaAsset.DisplayPrecision = source.DisplayPrecision
+	schemaAsset.CalculationPrecision = source.CalculationPrecision
+	schemaAsset.Active = source.Active
+	return schemaAsset
+}
 func CurrencyRateToCore(source databasegen.CurrencyRate) schema.CurrencyRate {
 	var schemaCurrencyRate schema.CurrencyRate
 	schemaCurrencyRate.ID = uuidUUIDToUuidUUID(source.ID)

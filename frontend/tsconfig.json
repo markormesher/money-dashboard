@@ -6,7 +6,8 @@
     "moduleResolution": "nodenext",
     "noEmit": true,
     "jsx": "react",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "exactOptionalPropertyTypes": false
   },
   "include": [
     "./src/**/*.ts",

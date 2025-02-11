@@ -12,6 +12,7 @@ import { copyToClipboard } from "../../utils/text";
 import { currencyServiceClient } from "../../../api/api";
 import { formatDateFromProto } from "../../utils/dates";
 import { GBP_CURRENCY_ID, NULL_UUID } from "../../../config/consts";
+import { EmptyResultsPanel } from "../common/empty/empty-results";
 import { CurrencyEditModal } from "./currency-edit-modal";
 
 function CurrenciesPage(): ReactElement {
@@ -86,41 +87,43 @@ function CurrenciesPage(): ReactElement {
   } else if (!currencies || !rates) {
     body = <LoadingPanel />;
   } else {
-    body = (
-      <TileSet>
-        {currencies
-          .filter((c) => showInactive || c.active)
-          .sort((a, b) => a.code.localeCompare(b.code))
-          .map((c) => {
+    const filteredCurrencies = currencies
+      .filter((c) => showInactive || c.active)
+      .sort((a, b) => a.code.localeCompare(b.code));
+
+    if (filteredCurrencies.length == 0) {
+      body = <EmptyResultsPanel pluralNoun={"currencies"} />;
+    } else {
+      body = (
+        <TileSet>
+          {filteredCurrencies.map((c) => {
             const isGbp = c.id == GBP_CURRENCY_ID;
             const rate = rates[c.id];
 
             return (
               <Tile key={c.id}>
-                <hgroup>
-                  <h4>
-                    {c.symbol} {c.code}
-                  </h4>
-                  <ul className={"horizonal"}>
-                    {!c.active ? <li>Inactive</li> : null}
-                    {rate ? (
-                      <>
-                        <li>
-                          &pound; = {c.symbol}
-                          {rate.rate.toFixed(c.calculationPrecision)}
-                        </li>
-                        {!isGbp ? <li>Updated {formatDateFromProto(rate.date)}</li> : null}
-                      </>
-                    ) : (
-                      <li>No rate data</li>
-                    )}
-                  </ul>
-                </hgroup>
+                <h4>
+                  {c.symbol} {c.code}
+                </h4>
+                <ul className={"labels"}>
+                  {!c.active ? <li>Inactive</li> : null}
+                  {rate ? (
+                    <>
+                      <li>
+                        &pound; = {c.symbol}
+                        {rate.rate.toFixed(c.calculationPrecision)}
+                      </li>
+                      {!isGbp ? <li>Updated {formatDateFromProto(rate.date)}</li> : null}
+                    </>
+                  ) : (
+                    <li>No rate data</li>
+                  )}
+                </ul>
                 <footer>
                   {isGbp ? (
                     <small className={"muted"}>The base currency cannot be edited.</small>
                   ) : (
-                    <ul className={"horizonal"}>
+                    <ul className={"horizonal mb0"}>
                       <li>
                         <a href={""} className={"secondary"} onClick={() => setEditingId(c.id)}>
                           <IconGroup>
@@ -144,8 +147,9 @@ function CurrenciesPage(): ReactElement {
               </Tile>
             );
           })}
-      </TileSet>
-    );
+        </TileSet>
+      );
+    }
   }
 
   return (

@@ -26,6 +26,23 @@ type Account struct {
 	IncludeInEnvelopes *bool
 }
 
+type Asset struct {
+	ID                   uuid.UUID
+	Name                 string
+	Notes                string
+	DisplayPrecision     int32
+	CalculationPrecision int32
+	CurrencyID           uuid.UUID
+	Active               bool
+}
+
+type AssetPrice struct {
+	ID      uuid.UUID
+	AssetID uuid.UUID
+	Date    time.Time
+	Price   decimal.Decimal
+}
+
 type Budget struct {
 	ID         uuid.UUID
 	Deleted    bool

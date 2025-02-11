@@ -14,17 +14,17 @@ import (
 )
 
 func (db *DB) GetUserById(ctx context.Context, id uuid.UUID) (schema.User, bool, error) {
-	res, err := db.queries.GetUserById(ctx, id)
+	row, err := db.queries.GetUserById(ctx, id)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return schema.User{}, false, nil
 	} else if err != nil {
 		return schema.User{}, false, err
 	}
 
-	user := conversion.UserToCore(res)
+	user := conversion.UserToCore(row)
 
-	if res.ActiveProfileID != nil {
-		profile, ok, err := db.GetProfileById(ctx, *res.ActiveProfileID)
+	if row.ActiveProfileID != nil {
+		profile, ok, err := db.GetProfileById(ctx, *row.ActiveProfileID)
 		if err != nil {
 			return schema.User{}, true, err
 		}
@@ -38,17 +38,17 @@ func (db *DB) GetUserById(ctx context.Context, id uuid.UUID) (schema.User, bool,
 }
 
 func (db *DB) GetUserByExternalUsername(ctx context.Context, externalUsername string) (schema.User, bool, error) {
-	res, err := db.queries.GetUserByExternalUsername(ctx, externalUsername)
+	row, err := db.queries.GetUserByExternalUsername(ctx, externalUsername)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return schema.User{}, false, nil
 	} else if err != nil {
 		return schema.User{}, false, err
 	}
 
-	user := conversion.UserToCore(res)
+	user := conversion.UserToCore(row)
 
-	if res.ActiveProfileID != nil {
-		profile, ok, err := db.GetProfileById(ctx, *res.ActiveProfileID)
+	if row.ActiveProfileID != nil {
+		profile, ok, err := db.GetProfileById(ctx, *row.ActiveProfileID)
 		if err != nil {
 			return schema.User{}, true, err
 		}
@@ -70,26 +70,26 @@ func (db *DB) UpsertUser(ctx context.Context, user schema.User) error {
 }
 
 func (db *DB) GetProfileById(ctx context.Context, id uuid.UUID) (schema.Profile, bool, error) {
-	res, err := db.queries.GetProfileById(ctx, id)
+	row, err := db.queries.GetProfileById(ctx, id)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return schema.Profile{}, false, nil
 	} else if err != nil {
 		return schema.Profile{}, false, err
 	}
 
-	profile := conversion.ProfileToCore(res)
+	profile := conversion.ProfileToCore(row)
 	return profile, true, nil
 }
 
 func (db *DB) GetUserProfiles(ctx context.Context, userID uuid.UUID) ([]schema.Profile, error) {
-	res, err := db.queries.GetUserProfiles(ctx, userID)
+	rows, err := db.queries.GetUserProfiles(ctx, userID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return []schema.Profile{}, nil
 	} else if err != nil {
 		return []schema.Profile{}, err
 	}
 
-	profiles := conversiontools.ConvertSlice(res, conversion.ProfileToCore)
+	profiles := conversiontools.ConvertSlice(rows, conversion.ProfileToCore)
 	return profiles, nil
 }
 

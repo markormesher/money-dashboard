@@ -1,0 +1,65 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+import "moneydashboard/v4/currencies.proto";
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message Asset {
+  string id = 1;
+  string name = 2;
+  string notes = 3;
+  int32 display_precision = 4;
+  int32 calculation_precision = 5;
+  bool active = 6;
+
+  Currency currency = 7;
+}
+
+message AssetPrice {
+  string id = 1;
+  string asset_id = 2;
+  int64 date = 3;
+  double price = 4;
+}
+
+message GetAssetByIdRequest {
+  string id = 1;
+}
+
+message GetAssetByIdResponse {
+  Asset asset = 1;
+}
+
+message GetAllAssetsRequest {}
+
+message GetAllAssetsResponse {
+  repeated Asset assets = 1;
+}
+
+message UpsertAssetRequest {
+  Asset asset = 1;
+}
+
+message UpsertAssetResponse {}
+
+message GetLatestAssetPricesRequest {}
+
+message GetLatestAssetPricesResponse {
+  repeated AssetPrice asset_prices = 1;
+}
+
+message UpsertAssetPriceRequest {
+  AssetPrice price = 1;
+}
+
+message UpsertAssetPriceResponse {}
+
+service MDAssetService {
+  rpc GetAssetById(GetAssetByIdRequest) returns (GetAssetByIdResponse);
+  rpc GetAllAssets(GetAllAssetsRequest) returns (GetAllAssetsResponse);
+  rpc UpsertAsset(UpsertAssetRequest) returns (UpsertAssetResponse);
+
+  rpc GetLatestAssetPrices(GetLatestAssetPricesRequest) returns (GetLatestAssetPricesResponse);
+  rpc UpsertAssetPrice(UpsertAssetPriceRequest) returns (UpsertAssetPriceResponse);
+}

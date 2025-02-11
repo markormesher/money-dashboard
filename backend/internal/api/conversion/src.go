@@ -35,6 +35,12 @@ type converterSpec interface {
 
 	CurrencyRateFromCore(source schema.CurrencyRate) *mdv4.CurrencyRate
 	CurrencyRateToCore(source *mdv4.CurrencyRate) schema.CurrencyRate
+
+	AssetFromCore(source schema.Asset) *mdv4.Asset
+	AssetToCore(source *mdv4.Asset) schema.Asset
+
+	AssetPriceFromCore(source schema.AssetPrice) *mdv4.AssetPrice
+	AssetPriceToCore(source *mdv4.AssetPrice) schema.AssetPrice
 }
 
 // utility methods to convert between core and api types

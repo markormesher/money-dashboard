@@ -12,28 +12,28 @@ import (
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
-func (db *DB) GetAllCurrencies(ctx context.Context) ([]schema.Currency, error) {
-	res, err := db.queries.GetAllCurrencies(ctx)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return nil, nil
-	} else if err != nil {
-		return nil, err
-	}
-
-	currencies := conversiontools.ConvertSlice(res, conversion.CurrencyToCore)
-	return currencies, nil
-}
-
 func (db *DB) GetCurrencyById(ctx context.Context, id uuid.UUID) (schema.Currency, bool, error) {
-	res, err := db.queries.GetCurrencyById(ctx, id)
+	row, err := db.queries.GetCurrencyById(ctx, id)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return schema.Currency{}, false, nil
 	} else if err != nil {
 		return schema.Currency{}, false, err
 	}
 
-	currency := conversion.CurrencyToCore(res)
+	currency := conversion.CurrencyToCore(row)
 	return currency, true, nil
+}
+
+func (db *DB) GetAllCurrencies(ctx context.Context) ([]schema.Currency, error) {
+	rows, err := db.queries.GetAllCurrencies(ctx)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	currencies := conversiontools.ConvertSlice(rows, conversion.CurrencyToCore)
+	return currencies, nil
 }
 
 func (db *DB) UpsertCurrency(ctx context.Context, currency schema.Currency) error {
@@ -48,14 +48,14 @@ func (db *DB) UpsertCurrency(ctx context.Context, currency schema.Currency) erro
 }
 
 func (db *DB) GetLatestCurrencyRates(ctx context.Context) ([]schema.CurrencyRate, error) {
-	res, err := db.queries.GetLatestCurrencyRates(ctx)
+	rows, err := db.queries.GetLatestCurrencyRates(ctx)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	} else if err != nil {
 		return nil, err
 	}
 
-	currencies := conversiontools.ConvertSlice(res, conversion.CurrencyRateToCore)
+	currencies := conversiontools.ConvertSlice(rows, conversion.CurrencyRateToCore)
 	return currencies, nil
 }
 

@@ -1,60 +1,74 @@
 import React, { ReactElement } from "react";
 import { Modal } from "../common/modal/modal";
 import { Icon, IconGroup } from "../common/icon/icon";
-import { Currency } from "../../../api_gen/moneydashboard/v4/currencies_pb";
+import { Asset } from "../../../api_gen/moneydashboard/v4/assets_pb";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks";
-import { currencyServiceClient } from "../../../api/api";
+import { assetServiceClient, currencyServiceClient } from "../../../api/api";
 import { toastBus } from "../toaster/toaster";
 import { focusFieldByName, safeNumberValue } from "../../utils/forms";
 import { ErrorPanel } from "../common/error/error";
-import { validateCurrency } from "../../schema/validation";
-import { Input } from "../common/form/inputs";
+import { validateAsset } from "../../schema/validation";
+import { Input, Select, Textarea } from "../common/form/inputs";
 import { useForm } from "../common/form/hook";
 import { NULL_UUID } from "../../../config/consts";
+import { Currency } from "../../../api_gen/moneydashboard/v4/currencies_pb";
 
-type CurrencyEditModalProps = {
-  currencyId: string;
+type AssetEditModalProps = {
+  assetId: string;
   onSaveFinished: () => void;
   onCancel: () => void;
 };
 
-function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
-  const { currencyId, onSaveFinished, onCancel } = props;
-  const createMode = currencyId == NULL_UUID;
+function AssetEditModal(props: AssetEditModalProps): ReactElement {
+  const { assetId, onSaveFinished, onCancel } = props;
+  const createMode = assetId == NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
-  const form = useForm<Currency>({
-    validator: validateCurrency,
+  const form = useForm<Asset>({
+    validator: validateAsset,
   });
 
+  const [currencies, setCurrencies] = React.useState<Currency[]>();
   useAsyncEffect(async () => {
-    if (currencyId == NULL_UUID) {
+    try {
+      const res = await currencyServiceClient.getAllCurrencies({});
+      setCurrencies(res.currencies);
+    } catch (e) {
+      toastBus.error("Failed to load currencies.");
+      form.setFatalError(e);
+      console.log(e);
+    }
+  }, []);
+
+  useAsyncEffect(async () => {
+    if (assetId == NULL_UUID) {
       form.setModel({
-        $typeName: "moneydashboard.v4.Currency",
+        $typeName: "moneydashboard.v4.Asset",
         id: NULL_UUID,
-        code: "",
-        symbol: "",
+        name: "",
+        notes: "",
         displayPrecision: 2,
         calculationPrecision: 4,
         active: true,
+        currency: undefined,
       });
       form.setBusy(false);
-      setFocusOnNextRender("code");
+      setFocusOnNextRender("name");
       return;
     }
 
     try {
       form.setBusy(true);
-      const res = await currencyServiceClient.getCurrencyById({ id: currencyId });
-      form.setModel(res.currency);
+      const res = await assetServiceClient.getAssetById({ id: assetId });
+      form.setModel(res.asset);
       form.setBusy(false);
-      setFocusOnNextRender("code");
+      setFocusOnNextRender("name");
     } catch (e) {
-      toastBus.error("Failed to load currency.");
+      toastBus.error("Failed to load asset.");
       form.setFatalError(e);
       console.log(e);
     }
-  }, [currencyId]);
+  }, [assetId]);
 
   React.useEffect(() => {
     if (!form.busy && !!focusOnNextRender) {
@@ -80,12 +94,12 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
 
     try {
       form.setBusy(true);
-      await currencyServiceClient.upsertCurrency({ currency: form.model });
-      toastBus.success("Saved currency.");
+      await assetServiceClient.upsertAsset({ asset: form.model });
+      toastBus.success("Saved asset.");
       form.setBusy(false);
       onSaveFinished();
     } catch (e) {
-      toastBus.error("Failed to save currency.");
+      toastBus.error("Failed to save asset.");
       form.setBusy(false);
       console.log(e);
     }
@@ -93,8 +107,8 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
 
   const header = (
     <IconGroup>
-      <Icon name={"payments"} />
-      <span>{createMode ? "Create" : "Edit"} Currency</span>
+      <Icon name={"candlestick_chart"} />
+      <span>{createMode ? "Create" : "Edit"} Asset</span>
     </IconGroup>
   );
 
@@ -106,24 +120,24 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
       <form>
         <fieldset className={"grid"}>
           <Input
-            label={"Currency Code"}
+            label={"Name"}
             formState={form}
-            fieldName={"code"}
+            fieldName={"name"}
             type={"text"}
-            placeholder={"e.g. GBP"}
-            value={form.model?.code}
-            onChange={(evt) => form.patchModel({ code: evt.target.value })}
+            placeholder={"e.g. LSE:ABC"}
+            value={form.model?.name}
+            onChange={(evt) => form.patchModel({ name: evt.target.value })}
           />
 
-          <Input
-            label={"Symbol"}
+          <Select
+            label={"Currency"}
             formState={form}
-            fieldName={"symbol"}
-            type={"text"}
-            placeholder={"e.g. £"}
-            value={form.model?.symbol}
-            onChange={(evt) => form.patchModel({ symbol: evt.target.value })}
-          />
+            fieldName={"currency"}
+            value={form.model?.currency?.id}
+            onChange={(evt) => form.patchModel({ currency: currencies?.find((c) => c.id == evt.target.value) })}
+          >
+            {currencies?.map((c) => <option value={c.id}>{c.code}</option>)}
+          </Select>
         </fieldset>
 
         <fieldset className={"grid"}>
@@ -151,6 +165,17 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
         </fieldset>
 
         <fieldset className={"grid"}>
+          <Textarea
+            label={"Notes"}
+            formState={form}
+            fieldName={"notes"}
+            placeholder={""}
+            value={form.model?.notes}
+            onChange={(evt) => form.patchModel({ notes: evt.target.value })}
+          />
+        </fieldset>
+
+        <fieldset className={"grid"}>
           <Input
             label={"Active"}
             formState={form}
@@ -166,9 +191,8 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
           <hgroup>
             <h6>Note</h6>
             <small>
-              Currencies are shared across all user and profiles. They <strong>cannot be deleted</strong> after
-              creation; they can only be marked as inactive, which will prevent them from being used on new holdings and
-              assets.
+              Assets are shared across all user and profiles. They <strong>cannot be deleted</strong> after creation;
+              they can only be marked as inactive, which will prevent them from being used on new holdings.
             </small>
           </hgroup>
         ) : null}
@@ -191,4 +215,4 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
   );
 }
 
-export { CurrencyEditModal };
+export { AssetEditModal };

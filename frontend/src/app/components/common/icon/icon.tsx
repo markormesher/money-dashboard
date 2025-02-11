@@ -7,11 +7,12 @@ const defaultProps = {
 
 type IconProps = Partial<typeof defaultProps> & {
   name: string;
+  className?: string;
 };
 
 function Icon(props: IconProps): ReactElement {
   const fullProps = { ...defaultProps, ...props };
-  return <span className={"material-symbols-outlined"}>{fullProps.name}</span>;
+  return <span className={`material-symbols-outlined ${props.className}`}>{fullProps.name}</span>;
 }
 
 function IconGroup(props: React.PropsWithChildren): ReactElement {
