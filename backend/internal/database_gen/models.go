@@ -55,6 +55,19 @@ type Budget struct {
 }
 
 type Category struct {
+	ID                   uuid.UUID
+	Name                 string
+	IsMemo               bool
+	IsInterestIncome     bool
+	IsDividendIncome     bool
+	IsCapitalAcquisition bool
+	IsCapitalDisposal    bool
+	IsCapitalEventFee    bool
+	ProfileID            uuid.UUID
+	Active               bool
+}
+
+type CategoryOld struct {
 	ID                    uuid.UUID
 	Name                  string
 	IsMemoCategory        bool

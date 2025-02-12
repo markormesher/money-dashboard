@@ -1,0 +1,46 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+import "moneydashboard/v4/users.proto";
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message Category {
+  string id = 1;
+  string name = 2;
+	bool is_memo = 3;
+	bool is_interest_income = 4;
+	bool is_dividend_income = 5;
+	bool is_capital_acquisition = 6;
+	bool is_capital_disposal = 7;
+	bool is_capital_event_fee = 8;
+  bool active = 9;
+
+  Profile profile = 10;
+}
+
+message GetCategoryByIdRequest {
+  string id = 1;
+}
+
+message GetCategoryByIdResponse {
+  Category category = 1;
+}
+
+message GetAllCategoriesRequest {}
+
+message GetAllCategoriesResponse {
+  repeated Category categories = 1;
+}
+
+message UpsertCategoryRequest {
+  Category category = 1;
+}
+
+message UpsertCategoryResponse {}
+
+service MDCategoryService {
+  rpc GetCategoryById(GetCategoryByIdRequest) returns (GetCategoryByIdResponse);
+  rpc GetAllCategories(GetAllCategoriesRequest) returns (GetAllCategoriesResponse);
+  rpc UpsertCategory(UpsertCategoryRequest) returns (UpsertCategoryResponse);
+}

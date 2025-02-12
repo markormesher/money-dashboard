@@ -24,11 +24,14 @@ import (
 // goverter:ignoreUnexported yes
 // goverter:useZeroValueOnPointerInconsistency yes
 type converterSpec interface {
-	UserFromCore(source schema.User) *mdv4.User
-	UserToCore(source *mdv4.User) schema.User
+	AssetFromCore(source schema.Asset) *mdv4.Asset
+	AssetToCore(source *mdv4.Asset) schema.Asset
 
-	ProfileFromCore(source schema.Profile) *mdv4.Profile
-	ProfileToCore(source *mdv4.Profile) schema.Profile
+	AssetPriceFromCore(source schema.AssetPrice) *mdv4.AssetPrice
+	AssetPriceToCore(source *mdv4.AssetPrice) schema.AssetPrice
+
+	CategoryFromCore(source schema.Category) *mdv4.Category
+	CategoryToCore(source *mdv4.Category) schema.Category
 
 	CurrencyFromCore(source schema.Currency) *mdv4.Currency
 	CurrencyToCore(source *mdv4.Currency) schema.Currency
@@ -36,11 +39,11 @@ type converterSpec interface {
 	CurrencyRateFromCore(source schema.CurrencyRate) *mdv4.CurrencyRate
 	CurrencyRateToCore(source *mdv4.CurrencyRate) schema.CurrencyRate
 
-	AssetFromCore(source schema.Asset) *mdv4.Asset
-	AssetToCore(source *mdv4.Asset) schema.Asset
+	ProfileFromCore(source schema.Profile) *mdv4.Profile
+	ProfileToCore(source *mdv4.Profile) schema.Profile
 
-	AssetPriceFromCore(source schema.AssetPrice) *mdv4.AssetPrice
-	AssetPriceToCore(source *mdv4.AssetPrice) schema.AssetPrice
+	UserFromCore(source schema.User) *mdv4.User
+	UserToCore(source *mdv4.User) schema.User
 }
 
 // utility methods to convert between core and api types

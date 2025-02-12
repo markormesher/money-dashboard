@@ -27,6 +27,19 @@ func AssetToCore(source databasegen.Asset) schema.Asset {
 	schemaAsset.Active = source.Active
 	return schemaAsset
 }
+func CategoryToCore(source databasegen.Category) schema.Category {
+	var schemaCategory schema.Category
+	schemaCategory.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaCategory.Name = source.Name
+	schemaCategory.IsMemo = source.IsMemo
+	schemaCategory.IsInterestIncome = source.IsInterestIncome
+	schemaCategory.IsDividendIncome = source.IsDividendIncome
+	schemaCategory.IsCapitalAcquisition = source.IsCapitalAcquisition
+	schemaCategory.IsCapitalDisposal = source.IsCapitalDisposal
+	schemaCategory.IsCapitalEventFee = source.IsCapitalEventFee
+	schemaCategory.Active = source.Active
+	return schemaCategory
+}
 func CurrencyRateToCore(source databasegen.CurrencyRate) schema.CurrencyRate {
 	var schemaCurrencyRate schema.CurrencyRate
 	schemaCurrencyRate.ID = uuidUUIDToUuidUUID(source.ID)

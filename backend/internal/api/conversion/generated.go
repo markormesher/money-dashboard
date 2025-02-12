@@ -54,6 +54,38 @@ func AssetToCore(source *v4.Asset) schema.Asset {
 	}
 	return schemaAsset
 }
+func CategoryFromCore(source schema.Category) *v4.Category {
+	var mdv4Category v4.Category
+	mdv4Category.Id = ConvertUUIDToString(source.ID)
+	mdv4Category.Name = source.Name
+	mdv4Category.IsMemo = source.IsMemo
+	mdv4Category.IsInterestIncome = source.IsInterestIncome
+	mdv4Category.IsDividendIncome = source.IsDividendIncome
+	mdv4Category.IsCapitalAcquisition = source.IsCapitalAcquisition
+	mdv4Category.IsCapitalDisposal = source.IsCapitalDisposal
+	mdv4Category.IsCapitalEventFee = source.IsCapitalEventFee
+	mdv4Category.Active = source.Active
+	mdv4Category.Profile = pSchemaProfileToPMdv4Profile(source.Profile)
+	return &mdv4Category
+}
+func CategoryToCore(source *v4.Category) schema.Category {
+	var schemaCategory schema.Category
+	if source != nil {
+		var schemaCategory2 schema.Category
+		schemaCategory2.ID = ConvertStringToUUID((*source).Id)
+		schemaCategory2.Name = (*source).Name
+		schemaCategory2.IsMemo = (*source).IsMemo
+		schemaCategory2.IsInterestIncome = (*source).IsInterestIncome
+		schemaCategory2.IsDividendIncome = (*source).IsDividendIncome
+		schemaCategory2.IsCapitalAcquisition = (*source).IsCapitalAcquisition
+		schemaCategory2.IsCapitalDisposal = (*source).IsCapitalDisposal
+		schemaCategory2.IsCapitalEventFee = (*source).IsCapitalEventFee
+		schemaCategory2.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
+		schemaCategory2.Active = (*source).Active
+		schemaCategory = schemaCategory2
+	}
+	return schemaCategory
+}
 func CurrencyFromCore(source schema.Currency) *v4.Currency {
 	var mdv4Currency v4.Currency
 	mdv4Currency.Id = ConvertUUIDToString(source.ID)
