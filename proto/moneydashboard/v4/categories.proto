@@ -8,12 +8,12 @@ option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/mo
 message Category {
   string id = 1;
   string name = 2;
-	bool is_memo = 3;
-	bool is_interest_income = 4;
-	bool is_dividend_income = 5;
-	bool is_capital_acquisition = 6;
-	bool is_capital_disposal = 7;
-	bool is_capital_event_fee = 8;
+  bool is_memo = 3;
+  bool is_interest_income = 4;
+  bool is_dividend_income = 5;
+  bool is_capital_acquisition = 6;
+  bool is_capital_disposal = 7;
+  bool is_capital_event_fee = 8;
   bool active = 9;
 
   Profile profile = 10;
