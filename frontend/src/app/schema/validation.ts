@@ -59,6 +59,18 @@ function validateCategory(value: Partial<Category>): FormValidationResult<Curren
     }
   }
 
+  const mutuallyExclusiveFlags = [
+    value?.isMemo,
+    value?.isInterestIncome,
+    value?.isDividendIncome,
+    value?.isCapitalAcquisition,
+    value?.isCapitalDisposal,
+    value?.isCapitalEventFee,
+  ].filter((v) => !!v).length;
+  if (mutuallyExclusiveFlags > 1) {
+    result.isValid = false;
+  }
+
   return result;
 }
 

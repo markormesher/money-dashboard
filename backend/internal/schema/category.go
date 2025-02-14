@@ -25,7 +25,18 @@ func (c *Category) Validate() error {
 		return fmt.Errorf("category name must be at least 1 character")
 	}
 
-	// TODO: feature combos
+	mutuallyExclusiveFlags := []bool{
+		c.IsMemo, c.IsInterestIncome, c.IsDividendIncome, c.IsCapitalAcquisition, c.IsCapitalDisposal, c.IsCapitalEventFee,
+	}
+	mutuallyExclusiveCount := 0
+	for _, v := range mutuallyExclusiveFlags {
+		if v {
+			mutuallyExclusiveCount++
+		}
+	}
+	if mutuallyExclusiveCount > 1 {
+		return fmt.Errorf("category cannot use more than one mutually exclusive flag")
+	}
 
 	return nil
 }
