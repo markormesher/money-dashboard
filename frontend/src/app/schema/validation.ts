@@ -1,4 +1,5 @@
 import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb";
+import { Category } from "../../api_gen/moneydashboard/v4/categories_pb";
 import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb";
 import { FormValidationResult } from "../components/common/form/hook";
 
@@ -40,6 +41,21 @@ function validateAsset(value: Partial<Asset>): FormValidationResult<Asset> {
     } else if (value.calculationPrecision < 0) {
       result.isValid = false;
       result.errors.calculationPrecision = "Calculation precision must be at least 0";
+    }
+  }
+
+  return result;
+}
+
+function validateCategory(value: Partial<Category>): FormValidationResult<Currency> {
+  const result: FormValidationResult<Category> = { isValid: true, errors: {} };
+
+  if (value?.name === undefined) {
+    result.isValid = false;
+  } else {
+    if (value.name.length < 1) {
+      result.isValid = false;
+      result.errors.name = "Name must be at least 1 character";
     }
   }
 
@@ -100,4 +116,4 @@ function validateCurrency(value: Partial<Currency>): FormValidationResult<Curren
   return result;
 }
 
-export { validateAsset, validateCurrency };
+export { validateAsset, validateCategory, validateCurrency };

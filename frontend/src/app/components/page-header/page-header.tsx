@@ -6,10 +6,11 @@ type PageHeaderProps = {
   title: string;
   buttons?: ReactElement[];
   options?: ReactElement;
+  optionsStartOpen?: boolean;
 };
 
 function PageHeader(props: React.PropsWithChildren<PageHeaderProps>): ReactElement {
-  const [showOptions, setShowOptions] = React.useState(false);
+  const [showOptions, setShowOptions] = React.useState(props.optionsStartOpen ?? false);
 
   let buttons = props.buttons ?? [];
 
