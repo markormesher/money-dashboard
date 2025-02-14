@@ -5,7 +5,8 @@ SELECT
 FROM
   category JOIN profile on category.profile_id = profile.id
 WHERE
-  category.id = $1
+  category.id = @category_id
+  AND profile.id = @profile_id
 ;
 
 -- name: GetAllCategoriesForProfile :many

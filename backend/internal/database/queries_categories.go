@@ -11,8 +11,11 @@ import (
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
-func (db *DB) GetCategoryById(ctx context.Context, id uuid.UUID) (schema.Category, bool, error) {
-	row, err := db.queries.GetCategoryById(ctx, id)
+func (db *DB) GetCategoryById(ctx context.Context, id uuid.UUID, profileID uuid.UUID) (schema.Category, bool, error) {
+	row, err := db.queries.GetCategoryById(ctx, database_gen.GetCategoryByIdParams{
+		CategoryID: id,
+		ProfileID:  profileID,
+	})
 	if errors.Is(err, pgx.ErrNoRows) {
 		return schema.Category{}, false, nil
 	} else if err != nil {

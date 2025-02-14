@@ -9,12 +9,7 @@ import (
 )
 
 func (c *Core) GetCategoryById(ctx context.Context, id uuid.UUID, profileID uuid.UUID) (schema.Category, bool, error) {
-	category, ok, err := c.DB.GetCategoryById(ctx, id)
-	if ok && category.Profile.ID != profileID {
-		return schema.Category{}, false, nil
-	}
-
-	return category, ok, err
+	return c.DB.GetCategoryById(ctx, id, profileID)
 }
 
 func (c *Core) GetAllCategoriesForProfile(ctx context.Context, profileID uuid.UUID) ([]schema.Category, error) {

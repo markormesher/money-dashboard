@@ -68,15 +68,21 @@ FROM
   category JOIN profile on category.profile_id = profile.id
 WHERE
   category.id = $1
+  AND profile.id = $2
 `
+
+type GetCategoryByIdParams struct {
+	CategoryID uuid.UUID
+	ProfileID  uuid.UUID
+}
 
 type GetCategoryByIdRow struct {
 	Category Category
 	Profile  Profile
 }
 
-func (q *Queries) GetCategoryById(ctx context.Context, id uuid.UUID) (GetCategoryByIdRow, error) {
-	row := q.db.QueryRow(ctx, getCategoryById, id)
+func (q *Queries) GetCategoryById(ctx context.Context, arg GetCategoryByIdParams) (GetCategoryByIdRow, error) {
+	row := q.db.QueryRow(ctx, getCategoryById, arg.CategoryID, arg.ProfileID)
 	var i GetCategoryByIdRow
 	err := row.Scan(
 		&i.Category.ID,
