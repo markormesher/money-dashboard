@@ -1,0 +1,44 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+import "moneydashboard/v4/users.proto";
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message Account {
+  string id = 1;
+  string name = 2;
+  string notes = 3;
+  bool is_isa = 4;
+  bool is_pension = 5;
+  bool exclude_from_envelopes = 6;
+  bool active = 7;
+
+  Profile profile = 8;
+}
+
+message GetAccountByIdRequest {
+  string id = 1;
+}
+
+message GetAccountByIdResponse {
+  Account account = 1;
+}
+
+message GetAllAccountsRequest {}
+
+message GetAllAccountsResponse {
+  repeated Account accounts = 1;
+}
+
+message UpsertAccountRequest {
+  Account account = 1;
+}
+
+message UpsertAccountResponse {}
+
+service MDAccountService {
+  rpc GetAccountById(GetAccountByIdRequest) returns (GetAccountByIdResponse);
+  rpc GetAllAccounts(GetAllAccountsRequest) returns (GetAllAccountsResponse);
+  rpc UpsertAccount(UpsertAccountRequest) returns (UpsertAccountResponse);
+}

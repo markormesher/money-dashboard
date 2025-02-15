@@ -2,6 +2,10 @@
   color: var(--pico-muted-color);
 }
 
+.semi-transparent {
+  opacity: 0.5;
+}
+
 .mb0 {
   margin-bottom: 0;
 }

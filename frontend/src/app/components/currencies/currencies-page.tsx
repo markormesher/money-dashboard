@@ -13,6 +13,7 @@ import { currencyServiceClient } from "../../../api/api";
 import { formatDateFromProto } from "../../utils/dates";
 import { GBP_CURRENCY_ID, NULL_UUID } from "../../../config/consts";
 import { EmptyResultsPanel } from "../common/empty/empty-results";
+import { concatClasses } from "../../utils/style";
 import { CurrencyEditModal } from "./currency-edit-modal";
 
 function CurrenciesPage(): ReactElement {
@@ -101,7 +102,7 @@ function CurrenciesPage(): ReactElement {
             const rate = rates[c.id];
 
             return (
-              <Tile key={c.id}>
+              <Tile key={c.id} className={concatClasses(!c.active && "semi-transparent")}>
                 <h4>
                   {c.symbol} {c.code}
                 </h4>

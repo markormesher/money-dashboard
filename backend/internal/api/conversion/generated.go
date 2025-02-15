@@ -8,6 +8,34 @@ import (
 	schema "github.com/markormesher/money-dashboard/internal/schema"
 )
 
+func AccountFromCore(source schema.Account) *v4.Account {
+	var mdv4Account v4.Account
+	mdv4Account.Id = ConvertUUIDToString(source.ID)
+	mdv4Account.Name = source.Name
+	mdv4Account.Notes = source.Notes
+	mdv4Account.IsIsa = source.IsIsa
+	mdv4Account.IsPension = source.IsPension
+	mdv4Account.ExcludeFromEnvelopes = source.ExcludeFromEnvelopes
+	mdv4Account.Active = source.Active
+	mdv4Account.Profile = pSchemaProfileToPMdv4Profile(source.Profile)
+	return &mdv4Account
+}
+func AccountToCore(source *v4.Account) schema.Account {
+	var schemaAccount schema.Account
+	if source != nil {
+		var schemaAccount2 schema.Account
+		schemaAccount2.ID = ConvertStringToUUID((*source).Id)
+		schemaAccount2.Name = (*source).Name
+		schemaAccount2.Notes = (*source).Notes
+		schemaAccount2.IsIsa = (*source).IsIsa
+		schemaAccount2.IsPension = (*source).IsPension
+		schemaAccount2.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
+		schemaAccount2.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
+		schemaAccount2.Active = (*source).Active
+		schemaAccount = schemaAccount2
+	}
+	return schemaAccount
+}
 func AssetFromCore(source schema.Asset) *v4.Asset {
 	var mdv4Asset v4.Asset
 	mdv4Asset.Id = ConvertUUIDToString(source.ID)

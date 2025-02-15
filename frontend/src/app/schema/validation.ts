@@ -1,7 +1,29 @@
+import { Account } from "../../api_gen/moneydashboard/v4/accounts_pb";
 import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb";
 import { Category } from "../../api_gen/moneydashboard/v4/categories_pb";
 import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb";
 import { FormValidationResult } from "../components/common/form/hook";
+
+function validateAccount(value: Partial<Account>): FormValidationResult<Account> {
+  const result: FormValidationResult<Account> = { isValid: true, errors: {} };
+
+  if (value?.name === undefined) {
+    result.isValid = false;
+  } else {
+    if (value.name.length < 1) {
+      result.isValid = false;
+      result.errors.name = "Name must be at least 1 character";
+    }
+  }
+
+  if (value?.isIsa && value?.isPension) {
+    result.isValid = false;
+    result.errors.isIsa = "ISA and pension status are mutually exclusive";
+    result.errors.isPension = "ISA and pension status are mutually exclusive";
+  }
+
+  return result;
+}
 
 function validateAsset(value: Partial<Asset>): FormValidationResult<Asset> {
   const result: FormValidationResult<Asset> = { isValid: true, errors: {} };
@@ -128,4 +150,4 @@ function validateCurrency(value: Partial<Currency>): FormValidationResult<Curren
   return result;
 }
 
-export { validateAsset, validateCategory, validateCurrency };
+export { validateAccount, validateAsset, validateCategory, validateCurrency };

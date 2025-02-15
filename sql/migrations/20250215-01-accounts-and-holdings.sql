@@ -8,7 +8,7 @@ CREATE TABLE account (
   is_pension BOOLEAN NOT NULL DEFAULT FALSE,
   exclude_from_envelopes BOOLEAN NOT NULL DEFAULT FALSE,
   profile_id UUID NOT NULL REFERENCES profile (id),
-  active BOOLEAN DEFAULT TRUE
+  active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE holding (
@@ -18,7 +18,7 @@ CREATE TABLE holding (
   asset_id UUID REFERENCES asset (id),
   account_id UUID NOT NULL REFERENCES account (id),
   profile_id UUID NOT NULL REFERENCES profile (id),
-  active BOOLEAN DEFAULT TRUE
+  active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 INSERT INTO account (

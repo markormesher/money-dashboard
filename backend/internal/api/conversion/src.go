@@ -24,6 +24,9 @@ import (
 // goverter:ignoreUnexported yes
 // goverter:useZeroValueOnPointerInconsistency yes
 type converterSpec interface {
+	AccountFromCore(source schema.Account) *mdv4.Account
+	AccountToCore(source *mdv4.Account) schema.Account
+
 	AssetFromCore(source schema.Asset) *mdv4.Asset
 	AssetToCore(source *mdv4.Asset) schema.Asset
 

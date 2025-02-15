@@ -4,6 +4,7 @@ import { Icon, IconGroup } from "../common/icon/icon";
 import { CurrenciesPage } from "../currencies/currencies-page";
 import { AssetsPage } from "../assets/assets-page";
 import { CategoriesPage } from "../categories/categories-page";
+import { AccountsPage } from "../accounts/accounts-page";
 import { useRouter } from "./router";
 import { Menu } from "./menu";
 import { Breadcrumbs } from "./breadcrumbs";
@@ -25,6 +26,8 @@ function App(): ReactElement {
 
   function getContent(): ReactElement {
     switch (path) {
+      case "/records/accounts":
+        return <AccountsPage />;
       case "/records/categories":
         return <CategoriesPage />;
 

@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { Category } from "../../../api_gen/moneydashboard/v4/categories_pb";
+import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb";
 import { useAsyncEffect, useNudge } from "../../utils/hooks";
 import { toastBus } from "../toaster/toaster";
 import { Icon, IconGroup } from "../common/icon/icon";
@@ -11,19 +11,19 @@ import { Tile, TileSet } from "../common/tile-set/tile-set";
 import { copyToClipboard, safeNewRegex } from "../../utils/text";
 import { NULL_UUID } from "../../../config/consts";
 import { EmptyResultsPanel } from "../common/empty/empty-results";
-import { categoryServiceClient } from "../../../api/api";
+import { accountServiceClient } from "../../../api/api";
 import { concatClasses } from "../../utils/style";
-import { CategoryEditModal } from "./category-edit-modal";
+import { AccountEditModal } from "./account-edit-modal";
 
-function CategoriesPage(): ReactElement {
+function AccountsPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
-    setMeta({ parents: ["Metadata"], title: "Categories" });
+    setMeta({ parents: ["Metadata"], title: "Accounts" });
   }, []);
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
-  const [categories, setCategories] = React.useState<Category[]>();
+  const [accounts, setAccounts] = React.useState<Account[]>();
 
   const [searchString, setSearchString] = React.useState("");
   const [showInactive, setShowInactive] = React.useState(false);
@@ -32,10 +32,10 @@ function CategoriesPage(): ReactElement {
 
   useAsyncEffect(async () => {
     try {
-      const res = await categoryServiceClient.getAllCategories({});
-      setCategories(res.categories);
+      const res = await accountServiceClient.getAllAccounts({});
+      setAccounts(res.accounts);
     } catch (e) {
-      toastBus.error("Failed to load categories.");
+      toastBus.error("Failed to load accounts.");
       setError(e);
       console.log(e);
     }
@@ -78,32 +78,29 @@ function CategoriesPage(): ReactElement {
   let body: ReactElement;
   if (error) {
     body = <ErrorPanel error={error} />;
-  } else if (!categories) {
+  } else if (!accounts) {
     body = <LoadingPanel />;
   } else {
     const searchRegex = safeNewRegex(searchString);
-    const filteredCategories = categories
+    const filteredAccounts = accounts
       .filter((a) => showInactive || a.active)
       .filter((a) => searchRegex?.test(a.name) ?? true)
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    if (filteredCategories.length == 0) {
-      body = <EmptyResultsPanel pluralNoun={"categories"} />;
+    if (filteredAccounts.length == 0) {
+      body = <EmptyResultsPanel pluralNoun={"accounts"} />;
     } else {
       body = (
         <TileSet>
-          {filteredCategories.map((c) => {
+          {filteredAccounts.map((c) => {
             return (
               <Tile key={c.id} className={concatClasses(!c.active && "semi-transparent")}>
                 <h4>{c.name}</h4>
                 <ul className={"labels"}>
                   {!c.active ? <li>Inactive</li> : null}
-                  {c.isMemo ? <li>Memo</li> : null}
-                  {c.isInterestIncome ? <li>Interest Income</li> : null}
-                  {c.isDividendIncome ? <li>Dividend Income</li> : null}
-                  {c.isCapitalAcquisition ? <li>Capital Acquisition</li> : null}
-                  {c.isCapitalDisposal ? <li>Capital Disposal</li> : null}
-                  {c.isCapitalEventFee ? <li>Capital Event Fee</li> : null}
+                  {c.isIsa ? <li>ISA</li> : null}
+                  {c.isPension ? <li>Pension</li> : null}
+                  {c.excludeFromEnvelopes ? <li>Excluded from envelopes</li> : null}
                 </ul>
                 <footer>
                   <ul className={"horizonal mb0"}>
@@ -138,19 +135,31 @@ function CategoriesPage(): ReactElement {
     <>
       <div id={"content"} className={"overflow-auto"}>
         <PageHeader
-          title={"Categories"}
-          icon={"label"}
+          title={"Accounts"}
+          icon={"account_balance_wallet"}
           buttons={pageButtons}
           options={pageOptions}
           optionsStartOpen={true}
         />
         <hr />
         <section>{body}</section>
+        <hr />
+        <section>
+          <p>
+            <IconGroup>
+              <Icon name={"info"} className={"muted"} />
+              <span>
+                Accounts are a wrapper around a collection of one or more <a href={"/records/holdings"}>holdings</a>;
+                usually 1:1 with an actual account held at a financial institution.
+              </span>
+            </IconGroup>
+          </p>
+        </section>
       </div>
 
       {editingId ? (
-        <CategoryEditModal
-          categoryId={editingId}
+        <AccountEditModal
+          accountId={editingId}
           onSaveFinished={() => {
             nudge();
             setEditingId(undefined);
@@ -162,4 +171,4 @@ function CategoriesPage(): ReactElement {
   );
 }
 
-export { CategoriesPage };
+export { AccountsPage };

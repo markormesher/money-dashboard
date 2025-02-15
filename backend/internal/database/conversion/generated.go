@@ -9,6 +9,17 @@ import (
 	schema "github.com/markormesher/money-dashboard/internal/schema"
 )
 
+func AccountToCore(source databasegen.Account) schema.Account {
+	var schemaAccount schema.Account
+	schemaAccount.ID = source.ID
+	schemaAccount.Name = source.Name
+	schemaAccount.Notes = source.Notes
+	schemaAccount.IsIsa = source.IsIsa
+	schemaAccount.IsPension = source.IsPension
+	schemaAccount.ExcludeFromEnvelopes = source.ExcludeFromEnvelopes
+	schemaAccount.Active = source.Active
+	return schemaAccount
+}
 func AssetPriceToCore(source databasegen.AssetPrice) schema.AssetPrice {
 	var schemaAssetPrice schema.AssetPrice
 	schemaAssetPrice.ID = uuidUUIDToUuidUUID(source.ID)

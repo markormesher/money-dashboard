@@ -13,6 +13,17 @@ import (
 )
 
 type Account struct {
+	ID                   uuid.UUID
+	Name                 string
+	Notes                string
+	IsIsa                bool
+	IsPension            bool
+	ExcludeFromEnvelopes bool
+	ProfileID            uuid.UUID
+	Active               bool
+}
+
+type AccountOld struct {
 	ID                 uuid.UUID
 	Deleted            bool
 	Name               string
@@ -126,6 +137,16 @@ type ExchangeRate struct {
 	Date         int64
 	RatePerGbp   float64
 	UpdateTime   int64
+}
+
+type Holding struct {
+	ID         uuid.UUID
+	Name       string
+	CurrencyID *uuid.UUID
+	AssetID    *uuid.UUID
+	AccountID  uuid.UUID
+	ProfileID  uuid.UUID
+	Active     bool
 }
 
 type Migration struct {

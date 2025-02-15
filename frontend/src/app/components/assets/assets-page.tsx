@@ -13,6 +13,7 @@ import { assetServiceClient } from "../../../api/api";
 import { formatDateFromProto } from "../../utils/dates";
 import { NULL_UUID } from "../../../config/consts";
 import { EmptyResultsPanel } from "../common/empty/empty-results";
+import { concatClasses } from "../../utils/style";
 import { AssetEditModal } from "./asset-edit-modal";
 
 function AssetsPage(): ReactElement {
@@ -111,7 +112,7 @@ function AssetsPage(): ReactElement {
           {filteredAssets.map((a) => {
             const price = prices[a.id];
             return (
-              <Tile key={a.id}>
+              <Tile key={a.id} className={concatClasses(!a.active && "semi-transparent")}>
                 <h4>{a.name}</h4>
                 <ul className={"labels"}>
                   {!a.active ? <li>Inactive</li> : null}

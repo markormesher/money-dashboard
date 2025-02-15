@@ -13,13 +13,16 @@ import (
 // goverter:skipCopySameType yes
 type converterSpec interface {
 
-	// goverter:ignore Profile
-	CategoryToCore(source database_gen.Category) schema.Category
-
 	// goverter:ignore Currency
 	AssetToCore(source database_gen.Asset) schema.Asset
 
+	// goverter:ignore Profile
+	AccountToCore(source database_gen.Account) schema.Account
+
 	AssetPriceToCore(source database_gen.AssetPrice) schema.AssetPrice
+
+	// goverter:ignore Profile
+	CategoryToCore(source database_gen.Category) schema.Category
 
 	CurrencyToCore(source database_gen.Currency) schema.Currency
 
