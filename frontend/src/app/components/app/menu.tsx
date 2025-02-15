@@ -66,12 +66,17 @@ function Menu(props: MenuProps): ReactElement {
             <summary>Records</summary>
             <ul>
               {link("/records/accounts", "Accounts")}
-              {link("/records/budgets", "Budgets")}
               {link("/records/categories", "Categories")}
-              {link("/records/envelopes", "Envelopes")}
               {link("/records/holdings", "Holdings")}
-              {link("/records/profiles", "Profiles")}
               {link("/records/transactions", "Transactions")}
+            </ul>
+          </details>
+
+          <details>
+            <summary>Planning</summary>
+            <ul>
+              {link("/planning/budgets", "Budgets")}
+              {link("/planning/envelopes", "Envelopes")}
             </ul>
           </details>
 
@@ -88,6 +93,7 @@ function Menu(props: MenuProps): ReactElement {
             <ul>
               {link("/metadata/assets", "Assets")}
               {link("/metadata/currencies", "Currencies")}
+              {link("/metadata/profiles", "Profiles")}
             </ul>
           </details>
         </nav>
