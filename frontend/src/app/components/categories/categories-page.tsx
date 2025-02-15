@@ -136,7 +136,13 @@ function CategoriesPage(): ReactElement {
   return (
     <>
       <div id={"content"} className={"overflow-auto"}>
-        <PageHeader title={"Categories"} buttons={pageButtons} options={pageOptions} optionsStartOpen={true} />
+        <PageHeader
+          title={"Categories"}
+          icon={"label"}
+          buttons={pageButtons}
+          options={pageOptions}
+          optionsStartOpen={true}
+        />
         <hr />
         <section>{body}</section>
       </div>

@@ -161,7 +161,7 @@ function AssetsPage(): ReactElement {
   return (
     <>
       <div id={"content"} className={"overflow-auto"}>
-        <PageHeader title={"Assets"} buttons={pageButtons} options={pageOptions} />
+        <PageHeader title={"Assets"} icon={"candlestick_chart"} buttons={pageButtons} options={pageOptions} />
         <hr />
         <section>{body}</section>
         <hr />

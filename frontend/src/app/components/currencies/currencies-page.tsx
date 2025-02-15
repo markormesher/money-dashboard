@@ -155,7 +155,7 @@ function CurrenciesPage(): ReactElement {
   return (
     <>
       <div id={"content"} className={"overflow-auto"}>
-        <PageHeader title={"Currencies"} buttons={pageButtons} options={pageOptions} />
+        <PageHeader title={"Currencies"} icon={"payments"} buttons={pageButtons} options={pageOptions} />
         <hr />
         <section>{body}</section>
       </div>

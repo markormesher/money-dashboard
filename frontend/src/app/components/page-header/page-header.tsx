@@ -1,9 +1,10 @@
 import React, { ReactElement } from "react";
 import "./page-header.scss";
-import { Icon } from "../common/icon/icon";
+import { Icon, IconGroup } from "../common/icon/icon";
 
 type PageHeaderProps = {
   title: string;
+  icon: string;
   buttons?: ReactElement[];
   options?: ReactElement;
   optionsStartOpen?: boolean;
@@ -27,7 +28,12 @@ function PageHeader(props: React.PropsWithChildren<PageHeaderProps>): ReactEleme
     <>
       <section>
         <div className={"page-header"}>
-          <h3>{props.title}</h3>
+          <h3>
+            <IconGroup>
+              <Icon name={props.icon} className={"muted"} />
+              <span>{props.title}</span>
+            </IconGroup>
+          </h3>
           {buttons ? <div role={"group"}>{buttons}</div> : null}
         </div>
       </section>
