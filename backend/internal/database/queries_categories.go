@@ -49,7 +49,7 @@ func (db *DB) GetAllCategoriesForProfile(ctx context.Context, profileID uuid.UUI
 	return categories, nil
 }
 
-func (db *DB) UpsertCategory(ctx context.Context, category schema.Category) error {
+func (db *DB) UpsertCategory(ctx context.Context, category schema.Category, profileID uuid.UUID) error {
 	return db.queries.UpsertCategory(ctx, database_gen.UpsertCategoryParams{
 		ID:                   category.ID,
 		Name:                 category.Name,
@@ -59,7 +59,7 @@ func (db *DB) UpsertCategory(ctx context.Context, category schema.Category) erro
 		IsCapitalAcquisition: category.IsCapitalAcquisition,
 		IsCapitalDisposal:    category.IsCapitalDisposal,
 		IsCapitalEventFee:    category.IsCapitalEventFee,
-		ProfileID:            category.Profile.ID,
 		Active:               category.Active,
+		ProfileID:            profileID,
 	})
 }

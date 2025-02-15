@@ -32,5 +32,5 @@ func (c *Core) UpsertCategory(ctx context.Context, category schema.Category, pro
 		}
 	}
 
-	return c.DB.UpsertCategory(ctx, category)
+	return c.DB.UpsertCategory(ctx, category, profileID)
 }
