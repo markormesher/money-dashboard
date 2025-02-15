@@ -94,7 +94,7 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
 
   const header = (
     <IconGroup>
-      <Icon name={"label"} />
+      <Icon name={"account_balance_wallet"} />
       <span>{createMode ? "Create" : "Edit"} Account</span>
     </IconGroup>
   );
