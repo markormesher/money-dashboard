@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 import { v4 } from "uuid";
 import "./toaster.css";
+import { Icon, IconGroup } from "../common/icon/icon.js";
 
 const toastDurationMs = 4000;
 const animationGraceMs = 1000;
@@ -94,13 +95,31 @@ function Toaster(): ReactElement {
     const visible = remainingLifeMs > 0;
     const pos = 15 + toastsVisible * 55;
 
+    let icon = "";
+    switch (t.sentiment) {
+      case "info":
+        icon = "info";
+        break;
+      case "success":
+        icon = "check_circle";
+        break;
+      case "error":
+        icon = "warning";
+        break;
+    }
+
     toastOutput.push(
       <div
         key={t.id}
         className={`toast ${visible ? "toast-show" : ""} toast-${t.sentiment}`}
         style={{ top: `${pos}px` }}
       >
-        <div className={`toast-text`}>{t.text}</div>
+        <div className={`toast-text`}>
+          <IconGroup>
+            <Icon name={icon} />
+            <span>{t.text}</span>
+          </IconGroup>
+        </div>
         <div className={`toast-progress`} style={{ width: `${(remainingLifeMs / toastDurationMs) * 100}%` }}></div>
       </div>,
     );
