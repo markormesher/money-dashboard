@@ -69,6 +69,13 @@ func CurrencyToCore(source databasegen.Currency) schema.Currency {
 	schemaCurrency.Active = source.Active
 	return schemaCurrency
 }
+func HoldingToCore(source databasegen.Holding) schema.Holding {
+	var schemaHolding schema.Holding
+	schemaHolding.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaHolding.Name = source.Name
+	schemaHolding.Active = source.Active
+	return schemaHolding
+}
 func ProfileToCore(source databasegen.Profile) schema.Profile {
 	var schemaProfile schema.Profile
 	schemaProfile.ID = uuidUUIDToUuidUUID(source.ID)

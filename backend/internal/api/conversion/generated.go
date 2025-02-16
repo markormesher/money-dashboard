@@ -158,6 +158,32 @@ func CurrencyToCore(source *v4.Currency) schema.Currency {
 	}
 	return schemaCurrency
 }
+func HoldingFromCore(source schema.Holding) *v4.Holding {
+	var mdv4Holding v4.Holding
+	mdv4Holding.Id = ConvertUUIDToString(source.ID)
+	mdv4Holding.Name = source.Name
+	mdv4Holding.Active = source.Active
+	mdv4Holding.Currency = pSchemaCurrencyToPMdv4Currency(source.Currency)
+	mdv4Holding.Asset = pSchemaAssetToPMdv4Asset(source.Asset)
+	mdv4Holding.Account = pSchemaAccountToPMdv4Account(source.Account)
+	mdv4Holding.Profile = pSchemaProfileToPMdv4Profile(source.Profile)
+	return &mdv4Holding
+}
+func HoldingToCore(source *v4.Holding) schema.Holding {
+	var schemaHolding schema.Holding
+	if source != nil {
+		var schemaHolding2 schema.Holding
+		schemaHolding2.ID = ConvertStringToUUID((*source).Id)
+		schemaHolding2.Name = (*source).Name
+		schemaHolding2.Currency = pMdv4CurrencyToPSchemaCurrency((*source).Currency)
+		schemaHolding2.Asset = pMdv4AssetToPSchemaAsset((*source).Asset)
+		schemaHolding2.Account = pMdv4AccountToPSchemaAccount((*source).Account)
+		schemaHolding2.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
+		schemaHolding2.Active = (*source).Active
+		schemaHolding = schemaHolding2
+	}
+	return schemaHolding
+}
 func ProfileFromCore(source schema.Profile) *v4.Profile {
 	var mdv4Profile v4.Profile
 	mdv4Profile.Id = ConvertUUIDToString(source.ID)
@@ -198,6 +224,37 @@ func UserToCore(source *v4.User) schema.User {
 	}
 	return schemaUser
 }
+func pMdv4AccountToPSchemaAccount(source *v4.Account) *schema.Account {
+	var pSchemaAccount *schema.Account
+	if source != nil {
+		var schemaAccount schema.Account
+		schemaAccount.ID = ConvertStringToUUID((*source).Id)
+		schemaAccount.Name = (*source).Name
+		schemaAccount.Notes = (*source).Notes
+		schemaAccount.IsIsa = (*source).IsIsa
+		schemaAccount.IsPension = (*source).IsPension
+		schemaAccount.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
+		schemaAccount.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
+		schemaAccount.Active = (*source).Active
+		pSchemaAccount = &schemaAccount
+	}
+	return pSchemaAccount
+}
+func pMdv4AssetToPSchemaAsset(source *v4.Asset) *schema.Asset {
+	var pSchemaAsset *schema.Asset
+	if source != nil {
+		var schemaAsset schema.Asset
+		schemaAsset.ID = ConvertStringToUUID((*source).Id)
+		schemaAsset.Name = (*source).Name
+		schemaAsset.Notes = (*source).Notes
+		schemaAsset.DisplayPrecision = (*source).DisplayPrecision
+		schemaAsset.CalculationPrecision = (*source).CalculationPrecision
+		schemaAsset.Active = (*source).Active
+		schemaAsset.Currency = pMdv4CurrencyToPSchemaCurrency((*source).Currency)
+		pSchemaAsset = &schemaAsset
+	}
+	return pSchemaAsset
+}
 func pMdv4CurrencyToPSchemaCurrency(source *v4.Currency) *schema.Currency {
 	var pSchemaCurrency *schema.Currency
 	if source != nil {
@@ -222,6 +279,37 @@ func pMdv4ProfileToPSchemaProfile(source *v4.Profile) *schema.Profile {
 		pSchemaProfile = &schemaProfile
 	}
 	return pSchemaProfile
+}
+func pSchemaAccountToPMdv4Account(source *schema.Account) *v4.Account {
+	var pMdv4Account *v4.Account
+	if source != nil {
+		var mdv4Account v4.Account
+		mdv4Account.Id = ConvertUUIDToString((*source).ID)
+		mdv4Account.Name = (*source).Name
+		mdv4Account.Notes = (*source).Notes
+		mdv4Account.IsIsa = (*source).IsIsa
+		mdv4Account.IsPension = (*source).IsPension
+		mdv4Account.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
+		mdv4Account.Active = (*source).Active
+		mdv4Account.Profile = pSchemaProfileToPMdv4Profile((*source).Profile)
+		pMdv4Account = &mdv4Account
+	}
+	return pMdv4Account
+}
+func pSchemaAssetToPMdv4Asset(source *schema.Asset) *v4.Asset {
+	var pMdv4Asset *v4.Asset
+	if source != nil {
+		var mdv4Asset v4.Asset
+		mdv4Asset.Id = ConvertUUIDToString((*source).ID)
+		mdv4Asset.Name = (*source).Name
+		mdv4Asset.Notes = (*source).Notes
+		mdv4Asset.DisplayPrecision = (*source).DisplayPrecision
+		mdv4Asset.CalculationPrecision = (*source).CalculationPrecision
+		mdv4Asset.Active = (*source).Active
+		mdv4Asset.Currency = pSchemaCurrencyToPMdv4Currency((*source).Currency)
+		pMdv4Asset = &mdv4Asset
+	}
+	return pMdv4Asset
 }
 func pSchemaCurrencyToPMdv4Currency(source *schema.Currency) *v4.Currency {
 	var pMdv4Currency *v4.Currency

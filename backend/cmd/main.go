@@ -58,6 +58,9 @@ func main() {
 	apiPath, apiHandler = mdv4connect.NewMDCurrencyServiceHandler(apiServer)
 	mux.PathPrefix(apiPath).Handler(apiHandler)
 
+	apiPath, apiHandler = mdv4connect.NewMDHoldingServiceHandler(apiServer)
+	mux.PathPrefix(apiPath).Handler(apiHandler)
+
 	apiPath, apiHandler = mdv4connect.NewMDUserServiceHandler(apiServer)
 	mux.PathPrefix(apiPath).Handler(apiHandler)
 

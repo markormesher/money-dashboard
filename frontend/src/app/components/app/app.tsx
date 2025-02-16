@@ -5,6 +5,7 @@ import { CurrenciesPage } from "../currencies/currencies-page";
 import { AssetsPage } from "../assets/assets-page";
 import { CategoriesPage } from "../categories/categories-page";
 import { AccountsPage } from "../accounts/accounts-page";
+import { HoldingsPage } from "../holdings/holdings-page";
 import { useRouter } from "./router";
 import { Menu } from "./menu";
 import { Breadcrumbs } from "./breadcrumbs";
@@ -30,6 +31,8 @@ function App(): ReactElement {
         return <AccountsPage />;
       case "/records/categories":
         return <CategoriesPage />;
+      case "/records/holdings":
+        return <HoldingsPage />;
 
       case "/metadata/assets":
         return <AssetsPage />;

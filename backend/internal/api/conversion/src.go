@@ -42,6 +42,9 @@ type converterSpec interface {
 	CurrencyRateFromCore(source schema.CurrencyRate) *mdv4.CurrencyRate
 	CurrencyRateToCore(source *mdv4.CurrencyRate) schema.CurrencyRate
 
+	HoldingFromCore(source schema.Holding) *mdv4.Holding
+	HoldingToCore(source *mdv4.Holding) schema.Holding
+
 	ProfileFromCore(source schema.Profile) *mdv4.Profile
 	ProfileToCore(source *mdv4.Profile) schema.Profile
 

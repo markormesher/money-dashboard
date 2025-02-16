@@ -1,0 +1,46 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+import "moneydashboard/v4/accounts.proto";
+import "moneydashboard/v4/assets.proto";
+import "moneydashboard/v4/currencies.proto";
+import "moneydashboard/v4/users.proto";
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message Holding {
+  string id = 1;
+  string name = 2;
+  bool active = 3;
+
+  Currency currency = 4;
+  Asset asset = 5;
+  Account account = 6;
+  Profile profile = 7;
+}
+
+message GetHoldingByIdRequest {
+  string id = 1;
+}
+
+message GetHoldingByIdResponse {
+  Holding holding = 1;
+}
+
+message GetAllHoldingsRequest {}
+
+message GetAllHoldingsResponse {
+  repeated Holding holdings = 1;
+}
+
+message UpsertHoldingRequest {
+  Holding holding = 1;
+}
+
+message UpsertHoldingResponse {}
+
+service MDHoldingService {
+  rpc GetHoldingById(GetHoldingByIdRequest) returns (GetHoldingByIdResponse);
+  rpc GetAllHoldings(GetAllHoldingsRequest) returns (GetAllHoldingsResponse);
+  rpc UpsertHolding(UpsertHoldingRequest) returns (UpsertHoldingResponse);
+}

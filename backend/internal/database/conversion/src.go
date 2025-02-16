@@ -28,6 +28,9 @@ type converterSpec interface {
 
 	CurrencyRateToCore(source database_gen.CurrencyRate) schema.CurrencyRate
 
+	// goverter:ignore Currency Asset Account Profile
+	HoldingToCore(source database_gen.Holding) schema.Holding
+
 	ProfileToCore(source database_gen.Profile) schema.Profile
 
 	// goverter:ignore ActiveProfile

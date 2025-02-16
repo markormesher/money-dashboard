@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb";
+import { Holding } from "../../../api_gen/moneydashboard/v4/holdings_pb";
 import { useAsyncEffect, useNudge } from "../../utils/hooks";
 import { toastBus } from "../toaster/toaster";
 import { Icon, IconGroup } from "../common/icon/icon";
@@ -11,19 +11,19 @@ import { Tile, TileSet } from "../common/tile-set/tile-set";
 import { copyToClipboard, safeNewRegex } from "../../utils/text";
 import { NULL_UUID } from "../../../config/consts";
 import { EmptyResultsPanel } from "../common/empty/empty-results";
-import { accountServiceClient } from "../../../api/api";
+import { holdingServiceClient } from "../../../api/api";
 import { concatClasses } from "../../utils/style";
-import { AccountEditModal } from "./account-edit-modal";
+// import { HoldingEditModal } from "./holding-edit-modal";
 
-function AccountsPage(): ReactElement {
+function HoldingsPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
-    setMeta({ parents: ["Metadata"], title: "Accounts" });
+    setMeta({ parents: ["Metadata"], title: "Holdings" });
   }, []);
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
-  const [accounts, setAccounts] = React.useState<Account[]>();
+  const [holdings, setHoldings] = React.useState<Holding[]>();
 
   const [searchString, setSearchString] = React.useState("");
   const [showInactive, setShowInactive] = React.useState(false);
@@ -32,10 +32,10 @@ function AccountsPage(): ReactElement {
 
   useAsyncEffect(async () => {
     try {
-      const res = await accountServiceClient.getAllAccounts({});
-      setAccounts(res.accounts);
+      const res = await holdingServiceClient.getAllHoldings({});
+      setHoldings(res.holdings);
     } catch (e) {
-      toastBus.error("Failed to load accounts.");
+      toastBus.error("Failed to load holdings.");
       setError(e);
       console.log(e);
     }
@@ -78,30 +78,27 @@ function AccountsPage(): ReactElement {
   let body: ReactElement;
   if (error) {
     body = <ErrorPanel error={error} />;
-  } else if (!accounts) {
+  } else if (!holdings) {
     body = <LoadingPanel />;
   } else {
     const searchRegex = safeNewRegex(searchString);
-    const filteredAccounts = accounts
+    const filteredHoldings = holdings
       .filter((a) => showInactive || a.active)
-      .filter((a) => searchRegex?.test(a.name) ?? true)
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .filter((a) => searchRegex?.test(`${a.account?.name} / ${a.name}`) ?? true)
+      .sort((a, b) => `${a.account?.name} / ${a.name}`.localeCompare(`${b.account?.name} / ${b.name}`));
 
-    if (filteredAccounts.length == 0) {
-      body = <EmptyResultsPanel pluralNoun={"accounts"} />;
+    if (filteredHoldings.length == 0) {
+      body = <EmptyResultsPanel pluralNoun={"holdings"} />;
     } else {
       body = (
         <TileSet>
-          {filteredAccounts.map((c) => {
+          {filteredHoldings.map((c) => {
             return (
               <Tile key={c.id} className={concatClasses(!c.active && "semi-transparent")}>
-                <h4>{c.name}</h4>
-                <ul className={"labels"}>
-                  {!c.active ? <li>Inactive</li> : null}
-                  {c.isIsa ? <li>ISA</li> : null}
-                  {c.isPension ? <li>Pension</li> : null}
-                  {c.excludeFromEnvelopes ? <li>Excluded from envelopes</li> : null}
-                </ul>
+                <h4>
+                  <span className={"muted"}>{c.account?.name}</span> / {c.name}
+                </h4>
+                <ul className={"labels"}>{!c.active ? <li>Inactive</li> : null}</ul>
                 <footer>
                   <ul className={"horizonal mb0"}>
                     <li>
@@ -135,8 +132,8 @@ function AccountsPage(): ReactElement {
     <>
       <div id={"content"} className={"overflow-auto"}>
         <PageHeader
-          title={"Accounts"}
-          icon={"account_balance"}
+          title={"Holdings"}
+          icon={"account_balance_wallet"}
           buttons={pageButtons}
           options={pageOptions}
           optionsStartOpen={true}
@@ -149,17 +146,19 @@ function AccountsPage(): ReactElement {
             <IconGroup>
               <Icon name={"info"} className={"muted"} />
               <span>
-                Accounts are a wrapper around a collection of one or more <a href={"/records/holdings"}>holdings</a>;
-                usually 1:1 with an actual account held at a financial institution.
+                A holding is a balance of cash in a single <a href={"/metadata/currencies"}>currency</a> or investments
+                in a single <a href={"/metadata/assets"}>asset</a> held within an{" "}
+                <a href={"/records/accounts"}>account</a>.
               </span>
             </IconGroup>
           </p>
         </section>
       </div>
 
+      {/*
       {editingId ? (
-        <AccountEditModal
-          accountId={editingId}
+        <HoldingEditModal
+          holdingId={editingId}
           onSaveFinished={() => {
             nudge();
             setEditingId(undefined);
@@ -167,8 +166,9 @@ function AccountsPage(): ReactElement {
           onCancel={() => setEditingId(undefined)}
         />
       ) : null}
+      */}
     </>
   );
 }
 
-export { AccountsPage };
+export { HoldingsPage };
