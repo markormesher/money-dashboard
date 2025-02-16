@@ -78,12 +78,12 @@ func (db *DB) GetAllHoldingsForProfile(ctx context.Context, profileID uuid.UUID)
 }
 
 func (db *DB) UpsertHolding(ctx context.Context, holding schema.Holding, profileID uuid.UUID) error {
-	var currencyId, assetId uuid.UUID
+	var currencyId, assetId *uuid.UUID
 	if holding.Currency != nil {
-		currencyId = holding.Currency.ID
+		currencyId = &holding.Currency.ID
 	}
 	if holding.Asset != nil {
-		assetId = holding.Asset.ID
+		assetId = &holding.Asset.ID
 	}
 
 	return db.queries.UpsertHolding(ctx, database_gen.UpsertHoldingParams{

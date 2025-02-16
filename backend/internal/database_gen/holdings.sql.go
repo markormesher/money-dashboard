@@ -192,8 +192,8 @@ INSERT INTO holding (
 type UpsertHoldingParams struct {
 	ID         uuid.UUID
 	Name       string
-	CurrencyID uuid.UUID
-	AssetID    uuid.UUID
+	CurrencyID *uuid.UUID
+	AssetID    *uuid.UUID
 	AccountID  uuid.UUID
 	ProfileID  uuid.UUID
 	Active     bool

@@ -80,7 +80,7 @@ function Select<T>(props: React.PropsWithChildren<SelectProps<T>>): ReactElement
         autoComplete={"off"}
         {...props}
       >
-        <option>-- Select --</option>
+        <option selected={!props.value}>-- Select --</option>
         {children}
       </select>
       {userHasInteracted && hasError ? <small>{error}</small> : null}

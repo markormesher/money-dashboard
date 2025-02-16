@@ -12,6 +12,7 @@ import (
 // goverter:output:package github.com/markormesher/money-dashboard/internal/database/conversion
 // goverter:matchIgnoreCase yes
 // goverter:skipCopySameType yes
+// goverter:useZeroValueOnPointerInconsistency yes
 // goverter:extend ConvertPgTextToPrimitive
 // goverter:extend ConvertPgIntToPrimitive
 // goverter:extend ConvertPgBoolToPrimitive

@@ -23,8 +23,8 @@ func (db *DB) GetUserById(ctx context.Context, id uuid.UUID) (schema.User, bool,
 
 	user := conversion.UserToCore(row)
 
-	if row.ActiveProfileID != uuid.Nil {
-		profile, ok, err := db.GetProfileById(ctx, row.ActiveProfileID)
+	if row.ActiveProfileID != nil {
+		profile, ok, err := db.GetProfileById(ctx, *row.ActiveProfileID)
 		if err != nil {
 			return schema.User{}, true, err
 		}
@@ -47,8 +47,8 @@ func (db *DB) GetUserByExternalUsername(ctx context.Context, externalUsername st
 
 	user := conversion.UserToCore(row)
 
-	if row.ActiveProfileID != uuid.Nil {
-		profile, ok, err := db.GetProfileById(ctx, row.ActiveProfileID)
+	if row.ActiveProfileID != nil {
+		profile, ok, err := db.GetProfileById(ctx, *row.ActiveProfileID)
 		if err != nil {
 			return schema.User{}, true, err
 		}
@@ -103,7 +103,7 @@ func (db *DB) UpsertProfile(ctx context.Context, profile schema.Profile) error {
 func (db *DB) SetActiveProfile(ctx context.Context, userID uuid.UUID, profileId uuid.UUID) error {
 	return db.queries.SetActiveProfile(ctx, database_gen.SetActiveProfileParams{
 		ID:              userID,
-		ActiveProfileID: profileId,
+		ActiveProfileID: &profileId,
 	})
 }
 

@@ -13,6 +13,7 @@ import { NULL_UUID } from "../../../config/consts";
 import { EmptyResultsPanel } from "../common/empty/empty-results";
 import { holdingServiceClient } from "../../../api/api";
 import { concatClasses } from "../../utils/style";
+import { HoldingEditModal } from "./holding-edit-modal";
 // import { HoldingEditModal } from "./holding-edit-modal";
 
 function HoldingsPage(): ReactElement {
@@ -159,7 +160,6 @@ function HoldingsPage(): ReactElement {
         </section>
       </div>
 
-      {/*
       {editingId ? (
         <HoldingEditModal
           holdingId={editingId}
@@ -170,7 +170,6 @@ function HoldingsPage(): ReactElement {
           onCancel={() => setEditingId(undefined)}
         />
       ) : null}
-      */}
     </>
   );
 }

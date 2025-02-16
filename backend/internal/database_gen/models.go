@@ -61,8 +61,8 @@ type Budget struct {
 	Amount     float64
 	StartDate  int64
 	EndDate    int64
-	CategoryID uuid.UUID
-	ProfileID  uuid.UUID
+	CategoryID *uuid.UUID
+	ProfileID  *uuid.UUID
 }
 
 type Category struct {
@@ -86,7 +86,7 @@ type CategoryOld struct {
 	IsExpenseCategory     bool
 	IsAssetGrowthCategory bool
 	Deleted               bool
-	ProfileID             uuid.UUID
+	ProfileID             *uuid.UUID
 }
 
 type Currency struct {
@@ -127,8 +127,8 @@ type EnvelopeTransfer struct {
 	Date           int64
 	Amount         float64
 	Note           pgtype.Text
-	FromEnvelopeID uuid.UUID
-	ToEnvelopeID   uuid.UUID
+	FromEnvelopeID *uuid.UUID
+	ToEnvelopeID   *uuid.UUID
 	ProfileID      uuid.UUID
 }
 
@@ -142,8 +142,8 @@ type ExchangeRate struct {
 type Holding struct {
 	ID         uuid.UUID
 	Name       string
-	CurrencyID uuid.UUID
-	AssetID    uuid.UUID
+	CurrencyID *uuid.UUID
+	AssetID    *uuid.UUID
 	AccountID  uuid.UUID
 	ProfileID  uuid.UUID
 	Active     bool
@@ -156,18 +156,18 @@ type Migration struct {
 
 type NullableHoldingAsset struct {
 	HoldingID            uuid.UUID
-	ID                   uuid.UUID
+	ID                   *uuid.UUID
 	Name                 pgtype.Text
 	Notes                pgtype.Text
 	DisplayPrecision     pgtype.Int4
 	CalculationPrecision pgtype.Int4
-	CurrencyID           uuid.UUID
+	CurrencyID           *uuid.UUID
 	Active               pgtype.Bool
 }
 
 type NullableHoldingCurrency struct {
 	HoldingID            uuid.UUID
-	ID                   uuid.UUID
+	ID                   *uuid.UUID
 	Code                 pgtype.Text
 	Symbol               pgtype.Text
 	DisplayPrecision     pgtype.Int4
@@ -195,9 +195,9 @@ type Transaction struct {
 	Payee           string
 	Note            pgtype.Text
 	Deleted         bool
-	AccountID       uuid.UUID
-	CategoryID      uuid.UUID
-	ProfileID       uuid.UUID
+	AccountID       *uuid.UUID
+	CategoryID      *uuid.UUID
+	ProfileID       *uuid.UUID
 	CreationDate    pgtype.Timestamp
 }
 
@@ -212,5 +212,5 @@ type Usr struct {
 	ExternalUsername string
 	DisplayName      string
 	Deleted          bool
-	ActiveProfileID  uuid.UUID
+	ActiveProfileID  *uuid.UUID
 }

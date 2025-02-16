@@ -2,9 +2,11 @@ import React from "react";
 import { deepEqual } from "../../../utils/utils";
 import { useWaitGroup, WaitGroup } from "../../../utils/hooks";
 
+type ErrorKey<T> = "global" | Extract<keyof T, string>;
+
 type FormValidationResult<T> = {
   isValid: boolean;
-  errors: Partial<Record<Extract<keyof T, string>, string>>;
+  errors: Partial<Record<ErrorKey<T>, string>>;
 };
 
 type FormHookOptions<T> = {
@@ -17,14 +19,14 @@ type FormState<T> = {
   patchModel: (patch: Partial<T>) => void;
 
   valid: boolean;
-  fieldError: (name: Extract<keyof T, string>) => string | undefined;
+  fieldError: (name: ErrorKey<T>) => string | undefined;
 
   modified: boolean;
 
   wg: WaitGroup;
 
   fatalError: unknown;
-  setFatalError: (busy: unknown) => void;
+  setFatalError: (error: unknown) => void;
 };
 
 function useForm<T>(options: FormHookOptions<T> = {}): FormState<T> {
@@ -74,8 +76,8 @@ function useForm<T>(options: FormHookOptions<T> = {}): FormState<T> {
     setValid(validationResult.isValid);
   }, [validationResult]);
 
-  const fieldError = (name: Extract<keyof T, string>) => {
-    return validationResult.errors[name];
+  const fieldError = (key: ErrorKey<T>) => {
+    return validationResult.errors[key];
   };
 
   return {

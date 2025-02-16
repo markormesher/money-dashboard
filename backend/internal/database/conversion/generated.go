@@ -78,7 +78,7 @@ func HoldingToCore(source databasegen.Holding) schema.Holding {
 }
 func NullableHoldingAssetToCore(source databasegen.NullableHoldingAsset) schema.Asset {
 	var schemaAsset schema.Asset
-	schemaAsset.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaAsset.ID = pUuidUUIDToUuidUUID(source.ID)
 	schemaAsset.Name = ConvertPgTextToPrimitive(source.Name)
 	schemaAsset.Notes = ConvertPgTextToPrimitive(source.Notes)
 	schemaAsset.DisplayPrecision = ConvertPgIntToPrimitive(source.DisplayPrecision)
@@ -88,7 +88,7 @@ func NullableHoldingAssetToCore(source databasegen.NullableHoldingAsset) schema.
 }
 func NullableHoldingCurrencyToCore(source databasegen.NullableHoldingCurrency) schema.Currency {
 	var schemaCurrency schema.Currency
-	schemaCurrency.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaCurrency.ID = pUuidUUIDToUuidUUID(source.ID)
 	schemaCurrency.Code = ConvertPgTextToPrimitive(source.Code)
 	schemaCurrency.Symbol = ConvertPgTextToPrimitive(source.Symbol)
 	schemaCurrency.DisplayPrecision = ConvertPgIntToPrimitive(source.DisplayPrecision)
@@ -115,6 +115,13 @@ func UserToCore(source databasegen.Usr) schema.User {
 	schemaUser.DisplayName = source.DisplayName
 	schemaUser.Deleted = source.Deleted
 	return schemaUser
+}
+func pUuidUUIDToUuidUUID(source *uuid.UUID) uuid.UUID {
+	var uuidUUID uuid.UUID
+	if source != nil {
+		uuidUUID = uuidUUIDToUuidUUID((*source))
+	}
+	return uuidUUID
 }
 func uuidUUIDToUuidUUID(source uuid.UUID) uuid.UUID {
 	return source
