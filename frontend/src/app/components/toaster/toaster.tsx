@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { v4 } from "uuid";
-import "./toaster.scss";
+import "./toaster.css";
 
 const toastDurationMs = 4000;
 const animationGraceMs = 1000;

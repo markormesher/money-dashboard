@@ -1,3 +1,7 @@
+:root {
+  --mobile-breakpoint: 1024px;
+}
+
 .muted {
   color: var(--pico-muted-color);
 }

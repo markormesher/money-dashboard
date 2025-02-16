@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import "./modal.scss";
+import "./modal.css";
 
 type ExternalModalProps = {
   open: boolean;

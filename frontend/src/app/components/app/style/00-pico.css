@@ -1,6 +1,6 @@
-@use "@picocss/pico";
+@import "@picocss/pico";
 
-// pico overrides
+/* pico overrides */
 
 :root {
   --pico-font-family-sans-serif: Inter, system-ui, "Segoe UI", Roboto, Oxygen,

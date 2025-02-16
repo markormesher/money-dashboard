@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import "./icon.scss";
+import "./icon.css";
 
 const defaultProps = {
   size: "1rem",

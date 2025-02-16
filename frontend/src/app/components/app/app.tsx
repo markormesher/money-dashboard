@@ -10,7 +10,7 @@ import { useRouter } from "./router.js";
 import { Menu } from "./menu.js";
 import { Breadcrumbs } from "./breadcrumbs.js";
 
-import "./style/00-pico.scss";
+import "./style/00-pico.css";
 import "./style/01-common.css";
 import "./style/02-app-components.scss";
 

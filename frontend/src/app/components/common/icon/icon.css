@@ -1,4 +1,4 @@
-@use "material-symbols/outlined.css";
+@import "material-symbols/outlined.css";
 
 .material-symbols-outlined {
   font-size: inherit !important;
