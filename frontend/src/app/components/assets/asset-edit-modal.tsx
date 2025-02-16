@@ -10,7 +10,7 @@ import { validateAsset } from "../../schema/validation.js";
 import { Input, Select, Textarea } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
+import { useAsyncEffect, useAsyncHandler, useKeyShortcut } from "../../utils/hooks.js";
 import { useCurrencyList } from "../../schema/hooks.js";
 
 type AssetEditModalProps = {
@@ -90,6 +90,8 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
 
     form.wg.done();
   });
+
+  useKeyShortcut({ ctrlEnter: true, onTrigger: () => save() });
 
   const header = (
     <IconGroup>

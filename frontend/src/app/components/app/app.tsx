@@ -27,11 +27,11 @@ function App(): ReactElement {
 
   function getContent(): ReactElement {
     switch (path) {
-      case "/records/accounts":
+      case "/settings/accounts":
         return <AccountsPage />;
-      case "/records/categories":
+      case "/settings/categories":
         return <CategoriesPage />;
-      case "/records/holdings":
+      case "/settings/holdings":
         return <HoldingsPage />;
 
       case "/metadata/assets":

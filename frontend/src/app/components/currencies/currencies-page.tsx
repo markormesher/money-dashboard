@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { Currency, CurrencyRate } from "../../../api_gen/moneydashboard/v4/currencies_pb.js";
-import { useAsyncEffect, useNudge } from "../../utils/hooks.js";
+import { useAsyncEffect, useKeyShortcut, useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useRouter } from "../app/router.js";
@@ -30,6 +30,7 @@ function CurrenciesPage(): ReactElement {
   const [showInactive, setShowInactive] = React.useState(false);
 
   const [editingId, setEditingId] = React.useState<string>();
+  useKeyShortcut({ targetStr: "c", onTrigger: () => setEditingId(NULL_UUID) });
 
   useAsyncEffect(async () => {
     try {

@@ -3,7 +3,7 @@ import { Icon, IconGroup } from "../common/icon/icon.js";
 import { concatClasses } from "../../utils/style.js";
 import { userServiceClient } from "../../../api/api.js";
 import { ProfileChooser } from "../profile-chooser/profile-chooser.js";
-import { useAsyncEffect } from "../../utils/hooks.js";
+import { useAsyncEffect, useKeyShortcut } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { User } from "../../../api_gen/moneydashboard/v4/users_pb.js";
 import { useRouter } from "./router.js";
@@ -15,7 +15,7 @@ type MenuProps = {
 
 function Menu(props: MenuProps): ReactElement {
   const { menuOpen, setMenuOpen } = props;
-  const { path: currentPath } = useRouter();
+  const { navigate, path: currentPath } = useRouter();
 
   const [profileChooserOpen, setProfileChooserOpen] = React.useState(false);
 
@@ -40,9 +40,24 @@ function Menu(props: MenuProps): ReactElement {
     });
   }, [currentPath]);
 
+  useKeyShortcut({
+    targetStr: "gd",
+    onTrigger: () => {
+      setMenuOpen(false);
+      navigate("/");
+    },
+  });
+  useKeyShortcut({
+    targetStr: "gt",
+    onTrigger: () => {
+      setMenuOpen(false);
+      navigate("/records/transactions");
+    },
+  });
+
   function link(path: string, text: string, icon: string): ReactElement {
     return (
-      <li className={concatClasses(path == currentPath && "active")}>
+      <li className={concatClasses(path == currentPath && "active")} key={path}>
         <IconGroup>
           <Icon name={icon} />
           <a href={path} onClick={() => props.setMenuOpen(false)}>
@@ -63,15 +78,16 @@ function Menu(props: MenuProps): ReactElement {
         </header>
 
         <nav>
-          <ul>{link("/", "Dashboard", "house")}</ul>
+          <ul>
+            {link("/", "Dashboard", "house")}
+            {link("/transactions", "Transactions", "list")}
+          </ul>
 
           <details>
-            <summary>Records</summary>
+            <summary>Reports</summary>
             <ul>
-              {link("/records/accounts", "Accounts", "account_balance")}
-              {link("/records/categories", "Categories", "label")}
-              {link("/records/holdings", "Holdings", "account_balance_wallet")}
-              {link("/records/transactions", "Transactions", "list")}
+              {link("/reports/balance-history", "Balance History", "monitoring")}
+              {link("/reports/tax-helper", "Tax Helper", "receipt_long")}
             </ul>
           </details>
 
@@ -84,10 +100,11 @@ function Menu(props: MenuProps): ReactElement {
           </details>
 
           <details>
-            <summary>Reports</summary>
+            <summary>Settings</summary>
             <ul>
-              {link("/reports/balance-history", "Balance History", "monitoring")}
-              {link("/reports/tax-helper", "Tax Helper", "receipt_long")}
+              {link("/settings/accounts", "Accounts", "account_balance")}
+              {link("/settings/categories", "Categories", "label")}
+              {link("/settings/holdings", "Holdings", "account_balance_wallet")}
             </ul>
           </details>
 
