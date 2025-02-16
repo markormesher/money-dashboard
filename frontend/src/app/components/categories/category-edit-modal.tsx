@@ -20,7 +20,7 @@ type CategoryEditModalProps = {
 
 function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
   const { categoryId, onSaveFinished, onCancel } = props;
-  const createMode = categoryId == NULL_UUID;
+  const createNew = categoryId == NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Category>({
@@ -49,7 +49,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
   };
 
   useAsyncEffect(async () => {
-    if (categoryId == NULL_UUID) {
+    if (createNew) {
       form.setModel({
         $typeName: "moneydashboard.v4.Category",
         id: NULL_UUID,
@@ -86,16 +86,6 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
     }
   }, [focusOnNextRender, form.wg.count]);
 
-  // wrap in a ref to use in the closure below
-  const modifiedRef = React.useRef(form.modified);
-  React.useEffect(() => {
-    modifiedRef.current = form.modified;
-  }, [form.modified]);
-
-  const interceptClose = () => {
-    return !modifiedRef.current || confirm("Are you sure you want to discard your changes?");
-  };
-
   const save = useAsyncHandler(async () => {
     if (form.wg.count > 0 || !form.valid || !form.model) {
       return;
@@ -118,7 +108,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
   const header = (
     <IconGroup>
       <Icon name={"label"} />
-      <span>{createMode ? "Create" : "Edit"} Category</span>
+      <span>{createNew ? "Create" : "Edit"} Category</span>
     </IconGroup>
   );
 
@@ -222,7 +212,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
   }
 
   return (
-    <Modal header={header} open={true} onClose={onCancel} interceptClose={interceptClose}>
+    <Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
       {body}
       <footer>
         <button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>

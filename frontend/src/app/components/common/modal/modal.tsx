@@ -7,22 +7,17 @@ type ExternalModalProps = {
 };
 
 type ModalProps = ExternalModalProps & {
-  interceptClose?: () => boolean;
   header: ReactElement;
+  warnOnClose?: boolean;
 };
 
 function Modal(props: React.PropsWithChildren<ModalProps>): ReactElement {
-  const { open, onClose, interceptClose, header } = props;
+  const { open, onClose, header, warnOnClose: closeWarning } = props;
   const dialogRef = React.useRef<HTMLDialogElement>(null);
 
   const maybeClose = () => {
-    if (!interceptClose) {
+    if (!closeWarning || confirm("Are you sure you want to cancel?")) {
       onClose();
-    } else {
-      const userReply = interceptClose();
-      if (userReply) {
-        onClose();
-      }
     }
   };
 

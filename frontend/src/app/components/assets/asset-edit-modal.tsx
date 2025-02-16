@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { Asset } from "../../../api_gen/moneydashboard/v4/assets_pb.js";
-import { assetServiceClient, currencyServiceClient } from "../../../api/api.js";
+import { assetServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName, safeNumberValue } from "../../utils/forms.js";
 import { ErrorPanel } from "../common/error/error.js";
@@ -10,8 +10,8 @@ import { validateAsset } from "../../schema/validation.js";
 import { Input, Select, Textarea } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
-import { Currency } from "../../../api_gen/moneydashboard/v4/currencies_pb.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
+import { useCurrencyList } from "../../schema/hooks.js";
 
 type AssetEditModalProps = {
   assetId: string;
@@ -21,29 +21,23 @@ type AssetEditModalProps = {
 
 function AssetEditModal(props: AssetEditModalProps): ReactElement {
   const { assetId, onSaveFinished, onCancel } = props;
-  const createMode = assetId == NULL_UUID;
+  const createNew = assetId == NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Asset>({
     validator: validateAsset,
   });
 
-  const [currencies, setCurrencies] = React.useState<Currency[]>();
-  useAsyncEffect(async () => {
-    try {
-      form.wg.add();
-      const res = await currencyServiceClient.getAllCurrencies({});
-      setCurrencies(res.currencies);
-      form.wg.done();
-    } catch (e) {
+  const currencies = useCurrencyList({
+    wg: form.wg,
+    onError: (e) => {
       toastBus.error("Failed to load currencies.");
       form.setFatalError(e);
-      console.log(e);
-    }
-  }, []);
+    },
+  });
 
   useAsyncEffect(async () => {
-    if (assetId == NULL_UUID) {
+    if (createNew) {
       form.setModel({
         $typeName: "moneydashboard.v4.Asset",
         id: NULL_UUID,
@@ -78,16 +72,6 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
     }
   }, [focusOnNextRender, form.wg.count]);
 
-  // wrap in a ref to use in the closure below
-  const modifiedRef = React.useRef(form.modified);
-  React.useEffect(() => {
-    modifiedRef.current = form.modified;
-  }, [form.modified]);
-
-  const interceptClose = () => {
-    return !modifiedRef.current || confirm("Are you sure you want to discard your changes?");
-  };
-
   const save = useAsyncHandler(async () => {
     if (form.wg.count > 0 || !form.valid || !form.model) {
       return;
@@ -110,7 +94,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
   const header = (
     <IconGroup>
       <Icon name={"candlestick_chart"} />
-      <span>{createMode ? "Create" : "Edit"} Asset</span>
+      <span>{createNew ? "Create" : "Edit"} Asset</span>
     </IconGroup>
   );
 
@@ -191,7 +175,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
           />
         </fieldset>
 
-        {createMode ? (
+        {createNew ? (
           <hgroup>
             <h6>Note</h6>
             <small>
@@ -205,7 +189,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
   }
 
   return (
-    <Modal header={header} open={true} onClose={onCancel} interceptClose={interceptClose}>
+    <Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
       {body}
       <footer>
         <button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>

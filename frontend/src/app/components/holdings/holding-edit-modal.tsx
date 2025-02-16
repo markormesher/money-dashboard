@@ -21,7 +21,7 @@ type HoldingEditModalProps = {
 
 function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
   const { holdingId, onSaveFinished, onCancel } = props;
-  const createMode = holdingId == NULL_UUID;
+  const createNew = holdingId == NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Holding>({
@@ -53,7 +53,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
   });
 
   useAsyncEffect(async () => {
-    if (holdingId == NULL_UUID) {
+    if (createNew) {
       form.setModel({
         $typeName: "moneydashboard.v4.Holding",
         id: NULL_UUID,
@@ -87,16 +87,6 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
     }
   }, [focusOnNextRender, form.wg.count]);
 
-  // wrap in a ref to use in the closure below
-  const modifiedRef = React.useRef(form.modified);
-  React.useEffect(() => {
-    modifiedRef.current = form.modified;
-  }, [form.modified]);
-
-  const interceptClose = () => {
-    return !modifiedRef.current || confirm("Are you sure you want to discard your changes?");
-  };
-
   const save = useAsyncHandler(async () => {
     if (form.wg.count > 0 || !form.valid || !form.model) {
       return;
@@ -119,7 +109,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
   const header = (
     <IconGroup>
       <Icon name={"account_balance_wallet"} />
-      <span>{createMode ? "Create" : "Edit"} Holding</span>
+      <span>{createNew ? "Create" : "Edit"} Holding</span>
     </IconGroup>
   );
 
@@ -208,7 +198,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
   }
 
   return (
-    <Modal header={header} open={true} onClose={onCancel} interceptClose={interceptClose}>
+    <Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
       {body}
       <footer>
         <button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
