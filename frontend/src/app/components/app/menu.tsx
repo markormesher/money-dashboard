@@ -40,12 +40,15 @@ function Menu(props: MenuProps): ReactElement {
     });
   }, [currentPath]);
 
-  function link(path: string, text: string): ReactElement {
+  function link(path: string, text: string, icon: string): ReactElement {
     return (
       <li className={concatClasses(path == currentPath && "active")}>
-        <a href={path} onClick={() => props.setMenuOpen(false)} className={"secondary"}>
-          {text}
-        </a>
+        <IconGroup>
+          <Icon name={icon} />
+          <a href={path} onClick={() => props.setMenuOpen(false)}>
+            {text}
+          </a>
+        </IconGroup>
       </li>
     );
   }
@@ -60,40 +63,40 @@ function Menu(props: MenuProps): ReactElement {
         </header>
 
         <nav>
-          <ul>{link("/", "Dashboard")}</ul>
+          <ul>{link("/", "Dashboard", "house")}</ul>
 
           <details>
             <summary>Records</summary>
             <ul>
-              {link("/records/accounts", "Accounts")}
-              {link("/records/categories", "Categories")}
-              {link("/records/holdings", "Holdings")}
-              {link("/records/transactions", "Transactions")}
+              {link("/records/accounts", "Accounts", "account_balance")}
+              {link("/records/categories", "Categories", "label")}
+              {link("/records/holdings", "Holdings", "account_balance_wallet")}
+              {link("/records/transactions", "Transactions", "list")}
             </ul>
           </details>
 
           <details>
             <summary>Planning</summary>
             <ul>
-              {link("/planning/budgets", "Budgets")}
-              {link("/planning/envelopes", "Envelopes")}
+              {link("/planning/budgets", "Budgets", "tune")}
+              {link("/planning/envelopes", "Envelopes", "mail")}
             </ul>
           </details>
 
           <details>
             <summary>Reports</summary>
             <ul>
-              {link("/reports/balance-history", "Balance History")}
-              {link("/reports/tax-helper", "Tax Helper")}
+              {link("/reports/balance-history", "Balance History", "monitoring")}
+              {link("/reports/tax-helper", "Tax Helper", "receipt_long")}
             </ul>
           </details>
 
           <details>
             <summary>Metadata</summary>
             <ul>
-              {link("/metadata/assets", "Assets")}
-              {link("/metadata/currencies", "Currencies")}
-              {link("/metadata/profiles", "Profiles")}
+              {link("/metadata/assets", "Assets", "candlestick_chart")}
+              {link("/metadata/currencies", "Currencies", "payments")}
+              {link("/metadata/profiles", "Profiles", "group")}
             </ul>
           </details>
         </nav>

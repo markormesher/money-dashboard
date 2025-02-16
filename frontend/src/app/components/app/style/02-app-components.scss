@@ -122,6 +122,7 @@ aside.main-menu {
 
     summary {
       font-weight: bold;
+      color: var(--pico-muted-color);
       margin-bottom: calc(var(--pico-block-spacing-vertical) * 0.5);
     }
 
@@ -130,24 +131,24 @@ aside.main-menu {
       margin: 0;
       margin-bottom: var(--pico-block-spacing-vertical);
 
-      border-left: 1px solid var(--pico-muted-border-color);
-
       li {
         padding: 0;
-        padding-left: calc(var(--pico-block-spacing-horizontal) * 0.5);
+        margin: calc(var(--pico-block-spacing-vertical) * 0.5) 0;
 
-        margin-top: calc(var(--pico-block-spacing-vertical) * 0.5);
-        margin-bottom: calc(var(--pico-block-spacing-vertical) * 0.5);
-        margin-left: -1px;
-        margin-right: 0;
-
-        &.active {
-          border-left: 1px solid var(--pico-color);
+        .icon {
+          color: var(--pico-muted-color);
         }
 
         a {
           margin: 0;
           padding: 0;
+          color: var(--pico-primary-color) !important;
+        }
+
+        &.active {
+          a {
+            font-weight: bold;
+          }
         }
       }
     }
