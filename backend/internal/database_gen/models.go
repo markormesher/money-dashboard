@@ -30,11 +30,11 @@ type AccountOld struct {
 	Type               string
 	Active             bool
 	ProfileID          uuid.UUID
-	Note               *string
+	Note               pgtype.Text
 	Tags               []string
 	CurrencyCode       string
-	StockTicker        *string
-	IncludeInEnvelopes *bool
+	StockTicker        pgtype.Text
+	IncludeInEnvelopes pgtype.Bool
 }
 
 type Asset struct {
@@ -61,8 +61,8 @@ type Budget struct {
 	Amount     float64
 	StartDate  int64
 	EndDate    int64
-	CategoryID *uuid.UUID
-	ProfileID  *uuid.UUID
+	CategoryID uuid.UUID
+	ProfileID  uuid.UUID
 }
 
 type Category struct {
@@ -86,7 +86,7 @@ type CategoryOld struct {
 	IsExpenseCategory     bool
 	IsAssetGrowthCategory bool
 	Deleted               bool
-	ProfileID             *uuid.UUID
+	ProfileID             uuid.UUID
 }
 
 type Currency struct {
@@ -126,9 +126,9 @@ type EnvelopeTransfer struct {
 	Deleted        bool
 	Date           int64
 	Amount         float64
-	Note           *string
-	FromEnvelopeID *uuid.UUID
-	ToEnvelopeID   *uuid.UUID
+	Note           pgtype.Text
+	FromEnvelopeID uuid.UUID
+	ToEnvelopeID   uuid.UUID
 	ProfileID      uuid.UUID
 }
 
@@ -142,8 +142,8 @@ type ExchangeRate struct {
 type Holding struct {
 	ID         uuid.UUID
 	Name       string
-	CurrencyID *uuid.UUID
-	AssetID    *uuid.UUID
+	CurrencyID uuid.UUID
+	AssetID    uuid.UUID
 	AccountID  uuid.UUID
 	ProfileID  uuid.UUID
 	Active     bool
@@ -152,6 +152,27 @@ type Holding struct {
 type Migration struct {
 	MigrationInProgress bool
 	LastMigration       int32
+}
+
+type NullableHoldingAsset struct {
+	HoldingID            uuid.UUID
+	ID                   uuid.UUID
+	Name                 pgtype.Text
+	Notes                pgtype.Text
+	DisplayPrecision     pgtype.Int4
+	CalculationPrecision pgtype.Int4
+	CurrencyID           uuid.UUID
+	Active               pgtype.Bool
+}
+
+type NullableHoldingCurrency struct {
+	HoldingID            uuid.UUID
+	ID                   uuid.UUID
+	Code                 pgtype.Text
+	Symbol               pgtype.Text
+	DisplayPrecision     pgtype.Int4
+	Active               pgtype.Bool
+	CalculationPrecision pgtype.Int4
 }
 
 type Profile struct {
@@ -163,7 +184,7 @@ type Profile struct {
 type StockPrice struct {
 	Ticker              string
 	Date                int64
-	RatePerBaseCurrency *float64
+	RatePerBaseCurrency pgtype.Float8
 }
 
 type Transaction struct {
@@ -172,11 +193,11 @@ type Transaction struct {
 	EffectiveDate   int64
 	Amount          float64
 	Payee           string
-	Note            *string
+	Note            pgtype.Text
 	Deleted         bool
-	AccountID       *uuid.UUID
-	CategoryID      *uuid.UUID
-	ProfileID       *uuid.UUID
+	AccountID       uuid.UUID
+	CategoryID      uuid.UUID
+	ProfileID       uuid.UUID
 	CreationDate    pgtype.Timestamp
 }
 
@@ -191,5 +212,5 @@ type Usr struct {
 	ExternalUsername string
 	DisplayName      string
 	Deleted          bool
-	ActiveProfileID  *uuid.UUID
+	ActiveProfileID  uuid.UUID
 }

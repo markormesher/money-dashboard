@@ -1,16 +1,16 @@
 -- name: GetHoldingById :one
 SELECT
   sqlc.embed(holding),
-  --sqlc.embed(currency),
-  --sqlc.embed(asset),
+  sqlc.embed(nullable_holding_currency),
+  sqlc.embed(nullable_holding_asset),
   sqlc.embed(account),
   sqlc.embed(profile)
 FROM
   holding
-    --LEFT JOIN currency on holding.currency_id = currency.id
-    --LEFT JOIN asset on holding.asset_id = asset.id
-    JOIN account on holding.account_id = account.id
-    JOIN profile on holding.profile_id = profile.id
+    LEFT JOIN nullable_holding_currency ON holding.id = nullable_holding_currency.holding_id
+    LEFT JOIN nullable_holding_asset ON holding.id = nullable_holding_asset.holding_id
+    JOIN account ON holding.account_id = account.id
+    JOIN profile ON holding.profile_id = profile.id
 WHERE
   holding.id = @holding_id
   AND profile.id = @profile_id
@@ -19,16 +19,16 @@ WHERE
 -- name: GetAllHoldingsForProfile :many
 SELECT
   sqlc.embed(holding),
-  --sqlc.embed(currency),
-  --sqlc.embed(asset),
+  sqlc.embed(nullable_holding_currency),
+  sqlc.embed(nullable_holding_asset),
   sqlc.embed(account),
   sqlc.embed(profile)
 FROM
   holding
-    --LEFT JOIN currency on holding.currency_id = currency.id
-    --LEFT JOIN asset on holding.asset_id = asset.id
-    JOIN account on holding.account_id = account.id
-    JOIN profile on holding.profile_id = profile.id
+    LEFT JOIN nullable_holding_currency ON holding.id = nullable_holding_currency.holding_id
+    LEFT JOIN nullable_holding_asset ON holding.id = nullable_holding_asset.holding_id
+    JOIN account ON holding.account_id = account.id
+    JOIN profile ON holding.profile_id = profile.id
 WHERE
   profile.id = @profile_id
 ;

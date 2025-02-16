@@ -23,11 +23,22 @@ func (db *DB) GetHoldingById(ctx context.Context, id uuid.UUID, profileID uuid.U
 	}
 
 	holding := conversion.HoldingToCore(row.Holding)
-	account := conversion.AccountToCore(row.Account)
-	profile := conversion.ProfileToCore(row.Profile)
 
+	account := conversion.AccountToCore(row.Account)
 	holding.Account = &account
+
+	profile := conversion.ProfileToCore(row.Profile)
 	holding.Profile = &profile
+
+	currency := conversion.NullableHoldingCurrencyToCore(row.NullableHoldingCurrency)
+	if currency.ID != uuid.Nil {
+		holding.Currency = &currency
+	}
+
+	asset := conversion.NullableHoldingAssetToCore(row.NullableHoldingAsset)
+	if asset.ID != uuid.Nil {
+		holding.Asset = &asset
+	}
 
 	return holding, true, nil
 }
@@ -43,11 +54,22 @@ func (db *DB) GetAllHoldingsForProfile(ctx context.Context, profileID uuid.UUID)
 	holdings := make([]schema.Holding, len(rows))
 	for i, row := range rows {
 		holding := conversion.HoldingToCore(row.Holding)
-		account := conversion.AccountToCore(row.Account)
-		profile := conversion.ProfileToCore(row.Profile)
 
+		account := conversion.AccountToCore(row.Account)
 		holding.Account = &account
+
+		profile := conversion.ProfileToCore(row.Profile)
 		holding.Profile = &profile
+
+		currency := conversion.NullableHoldingCurrencyToCore(row.NullableHoldingCurrency)
+		if currency.ID != uuid.Nil {
+			holding.Currency = &currency
+		}
+
+		asset := conversion.NullableHoldingAssetToCore(row.NullableHoldingAsset)
+		if asset.ID != uuid.Nil {
+			holding.Asset = &asset
+		}
 
 		holdings[i] = holding
 	}
@@ -56,12 +78,12 @@ func (db *DB) GetAllHoldingsForProfile(ctx context.Context, profileID uuid.UUID)
 }
 
 func (db *DB) UpsertHolding(ctx context.Context, holding schema.Holding, profileID uuid.UUID) error {
-	var currencyId, assetId *uuid.UUID
+	var currencyId, assetId uuid.UUID
 	if holding.Currency != nil {
-		currencyId = &holding.Currency.ID
+		currencyId = holding.Currency.ID
 	}
 	if holding.Asset != nil {
-		assetId = &holding.Asset.ID
+		assetId = holding.Asset.ID
 	}
 
 	return db.queries.UpsertHolding(ctx, database_gen.UpsertHoldingParams{

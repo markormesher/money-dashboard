@@ -94,7 +94,7 @@ WHERE
 `
 
 type SetActiveProfileParams struct {
-	ActiveProfileID *uuid.UUID
+	ActiveProfileID uuid.UUID
 	ID              uuid.UUID
 }
 

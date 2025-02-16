@@ -20,8 +20,9 @@ func (db *DB) GetAssetById(ctx context.Context, id uuid.UUID) (schema.Asset, boo
 		return schema.Asset{}, false, err
 	}
 
-	currency := conversion.CurrencyToCore(row.Currency)
 	asset := conversion.AssetToCore(row.Asset)
+
+	currency := conversion.CurrencyToCore(row.Currency)
 	asset.Currency = &currency
 
 	return asset, true, nil
@@ -37,10 +38,12 @@ func (db *DB) GetAllAssets(ctx context.Context) ([]schema.Asset, error) {
 
 	assets := make([]schema.Asset, len(rows))
 	for i, row := range rows {
-		currency := conversion.CurrencyToCore(row.Currency)
+		asset := conversion.AssetToCore(row.Asset)
 
-		assets[i] = conversion.AssetToCore(row.Asset)
-		assets[i].Currency = &currency
+		currency := conversion.CurrencyToCore(row.Currency)
+		asset.Currency = &currency
+
+		assets[i] = asset
 	}
 
 	return assets, nil

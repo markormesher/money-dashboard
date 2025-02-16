@@ -98,7 +98,11 @@ function HoldingsPage(): ReactElement {
                 <h4>
                   <span className={"muted"}>{c.account?.name}</span> / {c.name}
                 </h4>
-                <ul className={"labels"}>{!c.active ? <li>Inactive</li> : null}</ul>
+                <ul className={"labels"}>
+                  {!c.active ? <li>Inactive</li> : null}
+                  {c.currency ? <li>{c.currency.code}</li> : null}
+                  {c.asset ? <li>{c.asset.name}</li> : null}
+                </ul>
                 <footer>
                   <ul className={"horizonal mb0"}>
                     <li>
@@ -146,8 +150,8 @@ function HoldingsPage(): ReactElement {
             <IconGroup>
               <Icon name={"info"} className={"muted"} />
               <span>
-                A holding is a balance of cash in a single <a href={"/metadata/currencies"}>currency</a> or investments
-                in a single <a href={"/metadata/assets"}>asset</a> held within an{" "}
+                A holding is a balance of cash in a single <a href={"/metadata/currencies"}>currency</a> or an
+                investment in a single <a href={"/metadata/assets"}>asset</a> held within an{" "}
                 <a href={"/records/accounts"}>account</a>.
               </span>
             </IconGroup>

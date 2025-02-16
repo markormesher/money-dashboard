@@ -23,6 +23,7 @@ func (db *DB) GetCategoryById(ctx context.Context, id uuid.UUID, profileID uuid.
 	}
 
 	category := conversion.CategoryToCore(row.Category)
+
 	profile := conversion.ProfileToCore(row.Profile)
 	category.Profile = &profile
 
@@ -40,6 +41,7 @@ func (db *DB) GetAllCategoriesForProfile(ctx context.Context, profileID uuid.UUI
 	categories := make([]schema.Category, len(rows))
 	for i, row := range rows {
 		category := conversion.CategoryToCore(row.Category)
+
 		profile := conversion.ProfileToCore(row.Profile)
 		category.Profile = &profile
 

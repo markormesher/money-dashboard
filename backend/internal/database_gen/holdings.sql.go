@@ -14,24 +14,26 @@ import (
 const getAllHoldingsForProfile = `-- name: GetAllHoldingsForProfile :many
 SELECT
   holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
-  --sqlc.embed(currency),
-  --sqlc.embed(asset),
+  nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active, nullable_holding_currency.calculation_precision,
+  nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.calculation_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
   account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active,
   profile.id, profile.name, profile.deleted
 FROM
   holding
-    --LEFT JOIN currency on holding.currency_id = currency.id
-    --LEFT JOIN asset on holding.asset_id = asset.id
-    JOIN account on holding.account_id = account.id
-    JOIN profile on holding.profile_id = profile.id
+    LEFT JOIN nullable_holding_currency ON holding.id = nullable_holding_currency.holding_id
+    LEFT JOIN nullable_holding_asset ON holding.id = nullable_holding_asset.holding_id
+    JOIN account ON holding.account_id = account.id
+    JOIN profile ON holding.profile_id = profile.id
 WHERE
   profile.id = $1
 `
 
 type GetAllHoldingsForProfileRow struct {
-	Holding Holding
-	Account Account
-	Profile Profile
+	Holding                 Holding
+	NullableHoldingCurrency NullableHoldingCurrency
+	NullableHoldingAsset    NullableHoldingAsset
+	Account                 Account
+	Profile                 Profile
 }
 
 func (q *Queries) GetAllHoldingsForProfile(ctx context.Context, profileID uuid.UUID) ([]GetAllHoldingsForProfileRow, error) {
@@ -51,6 +53,21 @@ func (q *Queries) GetAllHoldingsForProfile(ctx context.Context, profileID uuid.U
 			&i.Holding.AccountID,
 			&i.Holding.ProfileID,
 			&i.Holding.Active,
+			&i.NullableHoldingCurrency.HoldingID,
+			&i.NullableHoldingCurrency.ID,
+			&i.NullableHoldingCurrency.Code,
+			&i.NullableHoldingCurrency.Symbol,
+			&i.NullableHoldingCurrency.DisplayPrecision,
+			&i.NullableHoldingCurrency.Active,
+			&i.NullableHoldingCurrency.CalculationPrecision,
+			&i.NullableHoldingAsset.HoldingID,
+			&i.NullableHoldingAsset.ID,
+			&i.NullableHoldingAsset.Name,
+			&i.NullableHoldingAsset.Notes,
+			&i.NullableHoldingAsset.DisplayPrecision,
+			&i.NullableHoldingAsset.CalculationPrecision,
+			&i.NullableHoldingAsset.CurrencyID,
+			&i.NullableHoldingAsset.Active,
 			&i.Account.ID,
 			&i.Account.Name,
 			&i.Account.Notes,
@@ -76,16 +93,16 @@ func (q *Queries) GetAllHoldingsForProfile(ctx context.Context, profileID uuid.U
 const getHoldingById = `-- name: GetHoldingById :one
 SELECT
   holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
-  --sqlc.embed(currency),
-  --sqlc.embed(asset),
+  nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active, nullable_holding_currency.calculation_precision,
+  nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.calculation_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
   account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active,
   profile.id, profile.name, profile.deleted
 FROM
   holding
-    --LEFT JOIN currency on holding.currency_id = currency.id
-    --LEFT JOIN asset on holding.asset_id = asset.id
-    JOIN account on holding.account_id = account.id
-    JOIN profile on holding.profile_id = profile.id
+    LEFT JOIN nullable_holding_currency ON holding.id = nullable_holding_currency.holding_id
+    LEFT JOIN nullable_holding_asset ON holding.id = nullable_holding_asset.holding_id
+    JOIN account ON holding.account_id = account.id
+    JOIN profile ON holding.profile_id = profile.id
 WHERE
   holding.id = $1
   AND profile.id = $2
@@ -97,9 +114,11 @@ type GetHoldingByIdParams struct {
 }
 
 type GetHoldingByIdRow struct {
-	Holding Holding
-	Account Account
-	Profile Profile
+	Holding                 Holding
+	NullableHoldingCurrency NullableHoldingCurrency
+	NullableHoldingAsset    NullableHoldingAsset
+	Account                 Account
+	Profile                 Profile
 }
 
 func (q *Queries) GetHoldingById(ctx context.Context, arg GetHoldingByIdParams) (GetHoldingByIdRow, error) {
@@ -113,6 +132,21 @@ func (q *Queries) GetHoldingById(ctx context.Context, arg GetHoldingByIdParams) 
 		&i.Holding.AccountID,
 		&i.Holding.ProfileID,
 		&i.Holding.Active,
+		&i.NullableHoldingCurrency.HoldingID,
+		&i.NullableHoldingCurrency.ID,
+		&i.NullableHoldingCurrency.Code,
+		&i.NullableHoldingCurrency.Symbol,
+		&i.NullableHoldingCurrency.DisplayPrecision,
+		&i.NullableHoldingCurrency.Active,
+		&i.NullableHoldingCurrency.CalculationPrecision,
+		&i.NullableHoldingAsset.HoldingID,
+		&i.NullableHoldingAsset.ID,
+		&i.NullableHoldingAsset.Name,
+		&i.NullableHoldingAsset.Notes,
+		&i.NullableHoldingAsset.DisplayPrecision,
+		&i.NullableHoldingAsset.CalculationPrecision,
+		&i.NullableHoldingAsset.CurrencyID,
+		&i.NullableHoldingAsset.Active,
 		&i.Account.ID,
 		&i.Account.Name,
 		&i.Account.Notes,
@@ -158,8 +192,8 @@ INSERT INTO holding (
 type UpsertHoldingParams struct {
 	ID         uuid.UUID
 	Name       string
-	CurrencyID *uuid.UUID
-	AssetID    *uuid.UUID
+	CurrencyID uuid.UUID
+	AssetID    uuid.UUID
 	AccountID  uuid.UUID
 	ProfileID  uuid.UUID
 	Active     bool

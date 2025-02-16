@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -18,6 +19,13 @@ import (
 )
 
 var l = logging.Logger
+
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		l.Info(fmt.Sprintf("%s: %s", r.Method, r.URL.Path))
+		next.ServeHTTP(w, r)
+	})
+}
 
 func main() {
 	// config
@@ -39,6 +47,7 @@ func main() {
 
 	// server router
 	mux := mux.NewRouter()
+	mux.Use(loggingMiddleware)
 
 	// backend server
 	apiServer := api.NewApiServer(&core)

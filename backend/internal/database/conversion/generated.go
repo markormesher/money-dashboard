@@ -76,6 +76,26 @@ func HoldingToCore(source databasegen.Holding) schema.Holding {
 	schemaHolding.Active = source.Active
 	return schemaHolding
 }
+func NullableHoldingAssetToCore(source databasegen.NullableHoldingAsset) schema.Asset {
+	var schemaAsset schema.Asset
+	schemaAsset.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaAsset.Name = ConvertPgTextToPrimitive(source.Name)
+	schemaAsset.Notes = ConvertPgTextToPrimitive(source.Notes)
+	schemaAsset.DisplayPrecision = ConvertPgIntToPrimitive(source.DisplayPrecision)
+	schemaAsset.CalculationPrecision = ConvertPgIntToPrimitive(source.CalculationPrecision)
+	schemaAsset.Active = ConvertPgBoolToPrimitive(source.Active)
+	return schemaAsset
+}
+func NullableHoldingCurrencyToCore(source databasegen.NullableHoldingCurrency) schema.Currency {
+	var schemaCurrency schema.Currency
+	schemaCurrency.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaCurrency.Code = ConvertPgTextToPrimitive(source.Code)
+	schemaCurrency.Symbol = ConvertPgTextToPrimitive(source.Symbol)
+	schemaCurrency.DisplayPrecision = ConvertPgIntToPrimitive(source.DisplayPrecision)
+	schemaCurrency.CalculationPrecision = ConvertPgIntToPrimitive(source.CalculationPrecision)
+	schemaCurrency.Active = ConvertPgBoolToPrimitive(source.Active)
+	return schemaCurrency
+}
 func ProfileToCore(source databasegen.Profile) schema.Profile {
 	var schemaProfile schema.Profile
 	schemaProfile.ID = uuidUUIDToUuidUUID(source.ID)

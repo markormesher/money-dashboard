@@ -23,6 +23,7 @@ func (db *DB) GetAccountById(ctx context.Context, id uuid.UUID, profileID uuid.U
 	}
 
 	account := conversion.AccountToCore(row.Account)
+
 	profile := conversion.ProfileToCore(row.Profile)
 	account.Profile = &profile
 
@@ -40,6 +41,7 @@ func (db *DB) GetAllAccountsForProfile(ctx context.Context, profileID uuid.UUID)
 	accounts := make([]schema.Account, len(rows))
 	for i, row := range rows {
 		account := conversion.AccountToCore(row.Account)
+
 		profile := conversion.ProfileToCore(row.Profile)
 		account.Profile = &profile
 
