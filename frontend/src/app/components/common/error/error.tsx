@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import "./error.css";
-import { Icon, IconGroup } from "../icon/icon";
+import { Icon, IconGroup } from "../icon/icon.js";
 
 type ErrorPanelProps = {
   error?: unknown;

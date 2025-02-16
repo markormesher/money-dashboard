@@ -1,16 +1,16 @@
 import React, { ReactElement } from "react";
-import { Modal } from "../common/modal/modal";
-import { Icon, IconGroup } from "../common/icon/icon";
-import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks";
-import { accountServiceClient } from "../../../api/api";
-import { toastBus } from "../toaster/toaster";
-import { focusFieldByName } from "../../utils/forms";
-import { ErrorPanel } from "../common/error/error";
-import { validateAccount } from "../../schema/validation";
-import { Input } from "../common/form/inputs";
-import { useForm } from "../common/form/hook";
-import { NULL_UUID } from "../../../config/consts";
+import { Modal } from "../common/modal/modal.js";
+import { Icon, IconGroup } from "../common/icon/icon.js";
+import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
+import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
+import { accountServiceClient } from "../../../api/api.js";
+import { toastBus } from "../toaster/toaster.js";
+import { focusFieldByName } from "../../utils/forms.js";
+import { ErrorPanel } from "../common/error/error.js";
+import { validateAccount } from "../../schema/validation.js";
+import { Input } from "../common/form/inputs.js";
+import { useForm } from "../common/form/hook.js";
+import { NULL_UUID } from "../../../config/consts.js";
 
 type AccountEditModalProps = {
   accountId: string;

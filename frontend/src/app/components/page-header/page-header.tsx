@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import "./page-header.scss";
-import { Icon, IconGroup } from "../common/icon/icon";
+import { Icon, IconGroup } from "../common/icon/icon.js";
 
 type PageHeaderProps = {
   title: string;

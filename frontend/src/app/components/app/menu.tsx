@@ -1,12 +1,12 @@
 import React, { ReactElement } from "react";
-import { Icon, IconGroup } from "../common/icon/icon";
-import { concatClasses } from "../../utils/style";
-import { userServiceClient } from "../../../api/api";
-import { ProfileChooser } from "../profile-chooser/profile-chooser";
-import { useAsyncEffect } from "../../utils/hooks";
-import { toastBus } from "../toaster/toaster";
-import { User } from "../../../api_gen/moneydashboard/v4/users_pb";
-import { useRouter } from "./router";
+import { Icon, IconGroup } from "../common/icon/icon.js";
+import { concatClasses } from "../../utils/style.js";
+import { userServiceClient } from "../../../api/api.js";
+import { ProfileChooser } from "../profile-chooser/profile-chooser.js";
+import { useAsyncEffect } from "../../utils/hooks.js";
+import { toastBus } from "../toaster/toaster.js";
+import { User } from "../../../api_gen/moneydashboard/v4/users_pb.js";
+import { useRouter } from "./router.js";
 
 type MenuProps = {
   menuOpen: boolean;

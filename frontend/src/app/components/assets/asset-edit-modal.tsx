@@ -1,17 +1,17 @@
 import React, { ReactElement } from "react";
-import { Modal } from "../common/modal/modal";
-import { Icon, IconGroup } from "../common/icon/icon";
-import { Asset } from "../../../api_gen/moneydashboard/v4/assets_pb";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks";
-import { assetServiceClient, currencyServiceClient } from "../../../api/api";
-import { toastBus } from "../toaster/toaster";
-import { focusFieldByName, safeNumberValue } from "../../utils/forms";
-import { ErrorPanel } from "../common/error/error";
-import { validateAsset } from "../../schema/validation";
-import { Input, Select, Textarea } from "../common/form/inputs";
-import { useForm } from "../common/form/hook";
-import { NULL_UUID } from "../../../config/consts";
-import { Currency } from "../../../api_gen/moneydashboard/v4/currencies_pb";
+import { Modal } from "../common/modal/modal.js";
+import { Icon, IconGroup } from "../common/icon/icon.js";
+import { Asset } from "../../../api_gen/moneydashboard/v4/assets_pb.js";
+import { assetServiceClient, currencyServiceClient } from "../../../api/api.js";
+import { toastBus } from "../toaster/toaster.js";
+import { focusFieldByName, safeNumberValue } from "../../utils/forms.js";
+import { ErrorPanel } from "../common/error/error.js";
+import { validateAsset } from "../../schema/validation.js";
+import { Input, Select, Textarea } from "../common/form/inputs.js";
+import { useForm } from "../common/form/hook.js";
+import { NULL_UUID } from "../../../config/consts.js";
+import { Currency } from "../../../api_gen/moneydashboard/v4/currencies_pb.js";
+import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 
 type AssetEditModalProps = {
   assetId: string;

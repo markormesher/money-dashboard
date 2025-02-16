@@ -1,9 +1,9 @@
-import { Account } from "../../api_gen/moneydashboard/v4/accounts_pb";
-import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb";
-import { Category } from "../../api_gen/moneydashboard/v4/categories_pb";
-import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb";
-import { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb";
-import { FormValidationResult } from "../components/common/form/hook";
+import { Account } from "../../api_gen/moneydashboard/v4/accounts_pb.js";
+import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
+import { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
+import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
+import { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
+import { FormValidationResult } from "../components/common/form/hook.js";
 
 function validateAccount(value: Partial<Account>): FormValidationResult<Account> {
   const result: FormValidationResult<Account> = { isValid: true, errors: {} };

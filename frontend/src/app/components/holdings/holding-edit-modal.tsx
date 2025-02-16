@@ -1,17 +1,17 @@
 import React, { ReactElement } from "react";
-import { Modal } from "../common/modal/modal";
-import { Icon, IconGroup } from "../common/icon/icon";
-import { Holding } from "../../../api_gen/moneydashboard/v4/holdings_pb";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks";
-import { holdingServiceClient } from "../../../api/api";
-import { toastBus } from "../toaster/toaster";
-import { focusFieldByName } from "../../utils/forms";
-import { ErrorPanel } from "../common/error/error";
-import { validateHolding } from "../../schema/validation";
-import { Input, Select } from "../common/form/inputs";
-import { useForm } from "../common/form/hook";
-import { NULL_UUID } from "../../../config/consts";
-import { useAccountList, useAssetList, useCurrencyList } from "../../schema/hooks";
+import { Modal } from "../common/modal/modal.js";
+import { Icon, IconGroup } from "../common/icon/icon.js";
+import { Holding } from "../../../api_gen/moneydashboard/v4/holdings_pb.js";
+import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
+import { holdingServiceClient } from "../../../api/api.js";
+import { toastBus } from "../toaster/toaster.js";
+import { focusFieldByName } from "../../utils/forms.js";
+import { ErrorPanel } from "../common/error/error.js";
+import { validateHolding } from "../../schema/validation.js";
+import { Input, Select } from "../common/form/inputs.js";
+import { useForm } from "../common/form/hook.js";
+import { NULL_UUID } from "../../../config/consts.js";
+import { useAccountList, useAssetList, useCurrencyList } from "../../schema/hooks.js";
 
 type HoldingEditModalProps = {
   holdingId: string;

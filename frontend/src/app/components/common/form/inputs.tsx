@@ -1,5 +1,5 @@
 import React, { InputHTMLAttributes, ReactElement, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
-import { FormState } from "./hook";
+import { FormState } from "./hook.js";
 
 type FormInputProps<T> = {
   label: string;

@@ -1,14 +1,14 @@
 import React from "react";
 import { ReactElement } from "react";
-import { Icon, IconGroup } from "../common/icon/icon";
-import { CurrenciesPage } from "../currencies/currencies-page";
-import { AssetsPage } from "../assets/assets-page";
-import { CategoriesPage } from "../categories/categories-page";
-import { AccountsPage } from "../accounts/accounts-page";
-import { HoldingsPage } from "../holdings/holdings-page";
-import { useRouter } from "./router";
-import { Menu } from "./menu";
-import { Breadcrumbs } from "./breadcrumbs";
+import { Icon, IconGroup } from "../common/icon/icon.js";
+import { CurrenciesPage } from "../currencies/currencies-page.js";
+import { AssetsPage } from "../assets/assets-page.js";
+import { CategoriesPage } from "../categories/categories-page.js";
+import { AccountsPage } from "../accounts/accounts-page.js";
+import { HoldingsPage } from "../holdings/holdings-page.js";
+import { useRouter } from "./router.js";
+import { Menu } from "./menu.js";
+import { Breadcrumbs } from "./breadcrumbs.js";
 
 import "./style/00-pico.scss";
 import "./style/01-common.css";

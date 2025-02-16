@@ -1,6 +1,6 @@
 import React from "react";
-import { deepEqual } from "../../../utils/utils";
-import { useWaitGroup, WaitGroup } from "../../../utils/hooks";
+import { deepEqual } from "../../../utils/utils.js";
+import { useWaitGroup, WaitGroup } from "../../../utils/hooks.js";
 
 type ErrorKey<T> = "global" | Extract<keyof T, string>;
 

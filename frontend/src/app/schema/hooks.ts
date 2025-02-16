@@ -1,9 +1,9 @@
 import React from "react";
-import { Account } from "../../api_gen/moneydashboard/v4/accounts_pb";
-import { useAsyncEffect, WaitGroup } from "../utils/hooks";
-import { accountServiceClient, assetServiceClient, currencyServiceClient } from "../../api/api";
-import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb";
-import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb";
+import { Account } from "../../api_gen/moneydashboard/v4/accounts_pb.js";
+import { useAsyncEffect, WaitGroup } from "../utils/hooks.js";
+import { accountServiceClient, assetServiceClient, currencyServiceClient } from "../../api/api.js";
+import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
+import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
 
 type UseListOptions = {
   wg: WaitGroup;

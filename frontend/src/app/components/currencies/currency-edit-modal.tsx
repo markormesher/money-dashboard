@@ -1,16 +1,16 @@
 import React, { ReactElement } from "react";
-import { Modal } from "../common/modal/modal";
-import { Icon, IconGroup } from "../common/icon/icon";
-import { Currency } from "../../../api_gen/moneydashboard/v4/currencies_pb";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks";
-import { currencyServiceClient } from "../../../api/api";
-import { toastBus } from "../toaster/toaster";
-import { focusFieldByName, safeNumberValue } from "../../utils/forms";
-import { ErrorPanel } from "../common/error/error";
-import { validateCurrency } from "../../schema/validation";
-import { Input } from "../common/form/inputs";
-import { useForm } from "../common/form/hook";
-import { NULL_UUID } from "../../../config/consts";
+import { Modal } from "../common/modal/modal.js";
+import { Icon, IconGroup } from "../common/icon/icon.js";
+import { Currency } from "../../../api_gen/moneydashboard/v4/currencies_pb.js";
+import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
+import { currencyServiceClient } from "../../../api/api.js";
+import { toastBus } from "../toaster/toaster.js";
+import { focusFieldByName, safeNumberValue } from "../../utils/forms.js";
+import { ErrorPanel } from "../common/error/error.js";
+import { validateCurrency } from "../../schema/validation.js";
+import { Input } from "../common/form/inputs.js";
+import { useForm } from "../common/form/hook.js";
+import { NULL_UUID } from "../../../config/consts.js";
 
 type CurrencyEditModalProps = {
   currencyId: string;

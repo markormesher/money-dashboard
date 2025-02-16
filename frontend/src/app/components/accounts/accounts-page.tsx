@@ -1,19 +1,19 @@
 import React, { ReactElement } from "react";
-import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb";
-import { useAsyncEffect, useNudge } from "../../utils/hooks";
-import { toastBus } from "../toaster/toaster";
-import { Icon, IconGroup } from "../common/icon/icon";
-import { useRouter } from "../app/router";
-import { PageHeader } from "../page-header/page-header";
-import { LoadingPanel } from "../common/loading/loading";
-import { ErrorPanel } from "../common/error/error";
-import { Tile, TileSet } from "../common/tile-set/tile-set";
-import { copyToClipboard, safeNewRegex } from "../../utils/text";
-import { NULL_UUID } from "../../../config/consts";
-import { EmptyResultsPanel } from "../common/empty/empty-results";
-import { accountServiceClient } from "../../../api/api";
-import { concatClasses } from "../../utils/style";
-import { AccountEditModal } from "./account-edit-modal";
+import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
+import { useAsyncEffect, useNudge } from "../../utils/hooks.js";
+import { toastBus } from "../toaster/toaster.js";
+import { Icon, IconGroup } from "../common/icon/icon.js";
+import { useRouter } from "../app/router.js";
+import { PageHeader } from "../page-header/page-header.js";
+import { LoadingPanel } from "../common/loading/loading.js";
+import { ErrorPanel } from "../common/error/error.js";
+import { Tile, TileSet } from "../common/tile-set/tile-set.js";
+import { copyToClipboard, safeNewRegex } from "../../utils/text.js";
+import { NULL_UUID } from "../../../config/consts.js";
+import { EmptyResultsPanel } from "../common/empty/empty-results.js";
+import { accountServiceClient } from "../../../api/api.js";
+import { concatClasses } from "../../utils/style.js";
+import { AccountEditModal } from "./account-edit-modal.js";
 
 function AccountsPage(): ReactElement {
   const { setMeta } = useRouter();

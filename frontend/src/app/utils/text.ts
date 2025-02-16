@@ -1,4 +1,4 @@
-import { toastBus } from "../components/toaster/toaster";
+import { toastBus } from "../components/toaster/toaster.js";
 
 function copyToClipboard(str: string): void {
   const elem = document.createElement("input");

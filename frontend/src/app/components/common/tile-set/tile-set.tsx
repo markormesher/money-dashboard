@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import "./tile-set.css";
-import { concatClasses } from "../../../utils/style";
+import { concatClasses } from "../../../utils/style.js";
 
 type TileSetProps = unknown;
 type TileProps = {

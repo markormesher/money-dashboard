@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
-import { Icon } from "../common/icon/icon";
-import { useRouter } from "./router";
+import { Icon } from "../common/icon/icon.js";
+import { useRouter } from "./router.js";
 
 type BreadcrumbProps = {
   setMenuOpen: (open: boolean) => void;
