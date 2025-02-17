@@ -5,8 +5,10 @@ package conversion
 
 import (
 	uuid "github.com/google/uuid"
+	decimal "github.com/govalues/decimal"
 	databasegen "github.com/markormesher/money-dashboard/internal/database_gen"
 	schema "github.com/markormesher/money-dashboard/internal/schema"
+	"time"
 )
 
 func AccountToCore(source databasegen.Account) schema.Account {
@@ -24,8 +26,8 @@ func AssetPriceToCore(source databasegen.AssetPrice) schema.AssetPrice {
 	var schemaAssetPrice schema.AssetPrice
 	schemaAssetPrice.ID = uuidUUIDToUuidUUID(source.ID)
 	schemaAssetPrice.AssetID = uuidUUIDToUuidUUID(source.AssetID)
-	schemaAssetPrice.Date = source.Date
-	schemaAssetPrice.Price = source.Price
+	schemaAssetPrice.Date = timeTimeToTimeTime(source.Date)
+	schemaAssetPrice.Price = decimalDecimalToDecimalDecimal(source.Price)
 	return schemaAssetPrice
 }
 func AssetToCore(source databasegen.Asset) schema.Asset {
@@ -103,6 +105,19 @@ func ProfileToCore(source databasegen.Profile) schema.Profile {
 	schemaProfile.Deleted = source.Deleted
 	return schemaProfile
 }
+func TransactionToCore(source databasegen.Transaction) schema.Transaction {
+	var schemaTransaction schema.Transaction
+	schemaTransaction.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaTransaction.Date = timeTimeToTimeTime(source.Date)
+	schemaTransaction.BudgetDate = timeTimeToTimeTime(source.BudgetDate)
+	schemaTransaction.CreationDate = timeTimeToTimeTime(source.CreationDate)
+	schemaTransaction.Payee = source.Payee
+	schemaTransaction.Notes = source.Notes
+	schemaTransaction.Amount = decimalDecimalToDecimalDecimal(source.Amount)
+	schemaTransaction.UnitValue = decimalDecimalToDecimalDecimal(source.UnitValue)
+	schemaTransaction.Deleted = source.Deleted
+	return schemaTransaction
+}
 func UserProfileRoleToCore(source databasegen.UserProfileRole) schema.UserProfileRole {
 	var schemaUserProfileRole schema.UserProfileRole
 	schemaUserProfileRole.Role = source.Role
@@ -116,12 +131,18 @@ func UserToCore(source databasegen.Usr) schema.User {
 	schemaUser.Deleted = source.Deleted
 	return schemaUser
 }
+func decimalDecimalToDecimalDecimal(source decimal.Decimal) decimal.Decimal {
+	return source
+}
 func pUuidUUIDToUuidUUID(source *uuid.UUID) uuid.UUID {
 	var uuidUUID uuid.UUID
 	if source != nil {
 		uuidUUID = uuidUUIDToUuidUUID((*source))
 	}
 	return uuidUUID
+}
+func timeTimeToTimeTime(source time.Time) time.Time {
+	return source
 }
 func uuidUUIDToUuidUUID(source uuid.UUID) uuid.UUID {
 	return source

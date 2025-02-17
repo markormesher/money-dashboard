@@ -8,7 +8,7 @@ import { PageHeader } from "../page-header/page-header.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { Tile, TileSet } from "../common/tile-set/tile-set.js";
-import { copyToClipboard, safeNewRegex } from "../../utils/text.js";
+import { copyToClipboard } from "../../utils/text.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { holdingServiceClient } from "../../../api/api.js";
@@ -18,14 +18,14 @@ import { HoldingEditModal } from "./holding-edit-modal.js";
 function HoldingsPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
-    setMeta({ parents: ["Metadata"], title: "Holdings" });
+    setMeta({ parents: ["Settings"], title: "Holdings" });
   }, []);
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
   const [holdings, setHoldings] = React.useState<Holding[]>();
 
-  const [searchString, setSearchString] = React.useState("");
+  const [searchPattern, setSearchPattern] = React.useState<RegExp>();
   const [showInactive, setShowInactive] = React.useState(false);
 
   const [editingId, setEditingId] = React.useState<string>();
@@ -51,30 +51,19 @@ function HoldingsPage(): ReactElement {
     </button>,
   ];
 
-  const pageOptions = (
-    <>
-      <fieldset>
+  const pageOptions = [
+    <fieldset>
+      <label>
         <input
-          type={"text"}
-          placeholder={"Search"}
-          value={searchString}
-          onChange={(evt) => setSearchString(evt.target.value)}
+          type={"checkbox"}
+          role={"switch"}
+          checked={showInactive}
+          onChange={(evt) => setShowInactive(evt.target.checked)}
         />
-      </fieldset>
-
-      <fieldset>
-        <label>
-          <input
-            type={"checkbox"}
-            role={"switch"}
-            checked={showInactive}
-            onChange={(evt) => setShowInactive(evt.target.checked)}
-          />
-          Show inactive
-        </label>
-      </fieldset>
-    </>
-  );
+        Show inactive
+      </label>
+    </fieldset>,
+  ];
 
   let body: ReactElement;
   if (error) {
@@ -82,10 +71,9 @@ function HoldingsPage(): ReactElement {
   } else if (!holdings) {
     body = <LoadingPanel />;
   } else {
-    const searchRegex = safeNewRegex(searchString);
     const filteredHoldings = holdings
       .filter((a) => showInactive || a.active)
-      .filter((a) => searchRegex?.test(`${a.account?.name} / ${a.name}`) ?? true)
+      .filter((a) => searchPattern?.test(`${a.account?.name} / ${a.name}`) ?? true)
       .sort((a, b) => `${a.account?.name} / ${a.name}`.localeCompare(`${b.account?.name} / ${b.name}`));
 
     if (filteredHoldings.length == 0) {
@@ -97,7 +85,9 @@ function HoldingsPage(): ReactElement {
             return (
               <Tile key={c.id} className={concatClasses(!c.active && "semi-transparent")}>
                 <h4>
-                  <span className={"muted"}>{c.account?.name}</span> / {c.name}
+                  <span>{c.account?.name}</span>
+                  <span className={"separator"}>&#x2022;</span>
+                  <span>{c.name}</span>
                 </h4>
                 <ul className={"labels"}>
                   {!c.active ? <li>Inactive</li> : null}
@@ -141,9 +131,8 @@ function HoldingsPage(): ReactElement {
           icon={"account_balance_wallet"}
           buttons={pageButtons}
           options={pageOptions}
-          optionsStartOpen={true}
+          onSearchTextChange={(p) => setSearchPattern(p)}
         />
-        <hr />
         <section>{body}</section>
         <hr />
         <section>

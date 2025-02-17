@@ -65,6 +65,11 @@ function useKeyShortcut(opts: KeyShortcutOptions): void {
       return;
     }
 
+    // ignore escape key
+    if (evt.key == "Escape") {
+      return;
+    }
+
     if (ctrlEnter && (evt.ctrlKey || evt.metaKey) && evt.key === "Enter") {
       evt.preventDefault();
       onTrigger?.();

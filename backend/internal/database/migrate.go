@@ -46,7 +46,7 @@ func (db *DB) Migrate(ctx context.Context, migrationsDir string) error {
 	for _, file := range files {
 		name := file.Name()
 
-		if file.IsDir() || !strings.HasSuffix(name, ".sql") {
+		if file.IsDir() || strings.HasPrefix(name, "x-") || !strings.HasSuffix(name, ".sql") {
 			continue
 		}
 

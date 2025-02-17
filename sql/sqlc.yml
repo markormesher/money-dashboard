@@ -10,7 +10,6 @@ sql:
         sql_package: "pgx/v5"
         overrides:
           - db_type: "uuid"
-            nullable: false
             go_type:
               import: "github.com/google/uuid"
               type: "UUID"
@@ -24,17 +23,14 @@ sql:
               pointer: true
 
           - db_type: "pg_catalog.numeric"
-            nullable: false
             go_type:
               import: "github.com/govalues/decimal"
               type: "Decimal"
 
           - db_type: "date"
-            nullable: false
             go_type:
               type: "time.Time"
 
-          - db_type: "timestamp"
-            nullable: false
+          - db_type: "pg_catalog.timestamp"
             go_type:
               type: "time.Time"

@@ -54,3 +54,8 @@ ul.labels {
     border-radius: var(--pico-border-radius);
   }
 }
+
+span.separator {
+  margin: 0 calc(var(--pico-block-spacing-horizontal) * 0.5);
+  color: var(--pico-muted-color);
+}

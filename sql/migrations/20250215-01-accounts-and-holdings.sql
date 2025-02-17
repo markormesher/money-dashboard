@@ -21,9 +21,14 @@ CREATE TABLE holding (
   active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
+-- old account IDs become holding IDs in the new schema to match them up to transactions
+-- v5 IDs are used to derive new account IDs from the old one (a1b... is a random v4 seed)
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 INSERT INTO account (
   SELECT
-    id,
+    uuid_generate_v5('a1b953e2-7eba-4d94-82f4-00a23165bfcf', id::text),
     name,
     COALESCE(note, ''),
     name LIKE '%ISA%' OR 'isa' = ANY(tags),
@@ -36,11 +41,11 @@ INSERT INTO account (
 
 INSERT INTO holding (
   SELECT
-    uuid_generate_v4(),
+    id,
     'Cash',
     'b3092a40-1802-46fd-9967-11c7ac3522c5',
     NULL,
-    id,
+    uuid_generate_v5('a1b953e2-7eba-4d94-82f4-00a23165bfcf', id::text),
     profile_id,
     active AND NOT deleted
   FROM account_old

@@ -67,21 +67,19 @@ function CurrenciesPage(): ReactElement {
     </button>,
   ];
 
-  const pageOptions = (
-    <>
-      <fieldset>
-        <label>
-          <input
-            type={"checkbox"}
-            role={"switch"}
-            checked={showInactive}
-            onChange={(evt) => setShowInactive(evt.target.checked)}
-          />
-          Show inactive
-        </label>
-      </fieldset>
-    </>
-  );
+  const pageOptions = [
+    <fieldset>
+      <label>
+        <input
+          type={"checkbox"}
+          role={"switch"}
+          checked={showInactive}
+          onChange={(evt) => setShowInactive(evt.target.checked)}
+        />
+        Show inactive
+      </label>
+    </fieldset>,
+  ];
 
   let body: ReactElement;
   if (error) {
@@ -158,7 +156,6 @@ function CurrenciesPage(): ReactElement {
     <>
       <div id={"content"} className={"overflow-auto"}>
         <PageHeader title={"Currencies"} icon={"payments"} buttons={pageButtons} options={pageOptions} />
-        <hr />
         <section>{body}</section>
       </div>
 

@@ -43,6 +43,9 @@ type converterSpec interface {
 
 	ProfileToCore(source database_gen.Profile) schema.Profile
 
+	// goverter:ignore Holding Category Profile
+	TransactionToCore(source database_gen.Transaction) schema.Transaction
+
 	// goverter:ignore ActiveProfile
 	UserToCore(source database_gen.Usr) schema.User
 

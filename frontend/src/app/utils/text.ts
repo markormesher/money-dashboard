@@ -22,16 +22,4 @@ function copyToClipboard(str: string): void {
     });
 }
 
-function safeNewRegex(pattern: string): RegExp | null {
-  if (pattern == "") {
-    return null;
-  } else {
-    try {
-      return new RegExp(pattern, "i");
-    } catch {
-      return null;
-    }
-  }
-}
-
-export { copyToClipboard, safeNewRegex };
+export { copyToClipboard };

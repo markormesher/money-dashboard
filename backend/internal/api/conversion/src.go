@@ -48,6 +48,9 @@ type converterSpec interface {
 	ProfileFromCore(source schema.Profile) *mdv4.Profile
 	ProfileToCore(source *mdv4.Profile) schema.Profile
 
+	TransactionFromCore(source schema.Transaction) *mdv4.Transaction
+	TransactionToCore(source *mdv4.Transaction) schema.Transaction
+
 	UserFromCore(source schema.User) *mdv4.User
 	UserToCore(source *mdv4.User) schema.User
 }

@@ -8,7 +8,7 @@ import { PageHeader } from "../page-header/page-header.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { Tile, TileSet } from "../common/tile-set/tile-set.js";
-import { copyToClipboard, safeNewRegex } from "../../utils/text.js";
+import { copyToClipboard } from "../../utils/text.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { categoryServiceClient } from "../../../api/api.js";
@@ -18,14 +18,14 @@ import { CategoryEditModal } from "./category-edit-modal.js";
 function CategoriesPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
-    setMeta({ parents: ["Metadata"], title: "Categories" });
+    setMeta({ parents: ["Settings"], title: "Categories" });
   }, []);
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
   const [categories, setCategories] = React.useState<Category[]>();
 
-  const [searchString, setSearchString] = React.useState("");
+  const [searchPattern, setSearchPattern] = React.useState<RegExp>();
   const [showInactive, setShowInactive] = React.useState(false);
 
   const [editingId, setEditingId] = React.useState<string>();
@@ -51,30 +51,19 @@ function CategoriesPage(): ReactElement {
     </button>,
   ];
 
-  const pageOptions = (
-    <>
-      <fieldset>
+  const pageOptions = [
+    <fieldset>
+      <label>
         <input
-          type={"text"}
-          placeholder={"Search"}
-          value={searchString}
-          onChange={(evt) => setSearchString(evt.target.value)}
+          type={"checkbox"}
+          role={"switch"}
+          checked={showInactive}
+          onChange={(evt) => setShowInactive(evt.target.checked)}
         />
-      </fieldset>
-
-      <fieldset>
-        <label>
-          <input
-            type={"checkbox"}
-            role={"switch"}
-            checked={showInactive}
-            onChange={(evt) => setShowInactive(evt.target.checked)}
-          />
-          Show inactive
-        </label>
-      </fieldset>
-    </>
-  );
+        Show inactive
+      </label>
+    </fieldset>,
+  ];
 
   let body: ReactElement;
   if (error) {
@@ -82,10 +71,9 @@ function CategoriesPage(): ReactElement {
   } else if (!categories) {
     body = <LoadingPanel />;
   } else {
-    const searchRegex = safeNewRegex(searchString);
     const filteredCategories = categories
       .filter((a) => showInactive || a.active)
-      .filter((a) => searchRegex?.test(a.name) ?? true)
+      .filter((a) => searchPattern?.test(a.name) ?? true)
       .sort((a, b) => a.name.localeCompare(b.name));
 
     if (filteredCategories.length == 0) {
@@ -143,9 +131,8 @@ function CategoriesPage(): ReactElement {
           icon={"label"}
           buttons={pageButtons}
           options={pageOptions}
-          optionsStartOpen={true}
+          onSearchTextChange={(p) => setSearchPattern(p)}
         />
-        <hr />
         <section>{body}</section>
       </div>
 

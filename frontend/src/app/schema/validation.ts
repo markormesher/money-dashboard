@@ -3,7 +3,10 @@ import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
 import { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
 import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
 import { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
+import { Transaction } from "../../api_gen/moneydashboard/v4/transactions_pb.js";
+import { PLATFORM_MINIMUM_DATE } from "../../config/consts.js";
 import { FormValidationResult } from "../components/common/form/hook.js";
+import { parseDateFromProto } from "../utils/dates.js";
 
 function validateAccount(value: Partial<Account>): FormValidationResult<Account> {
   const result: FormValidationResult<Account> = { isValid: true, errors: {} };
@@ -176,4 +179,70 @@ function validateHolding(value: Partial<Holding>): FormValidationResult<Holding>
   return result;
 }
 
-export { validateAccount, validateAsset, validateCategory, validateCurrency, validateHolding };
+function validateTransaction(value: Partial<Transaction>): FormValidationResult<Transaction> {
+  const result: FormValidationResult<Transaction> = { isValid: true, errors: {} };
+
+  if (value?.date === undefined) {
+    result.isValid = false;
+  } else {
+    const dateParsed = parseDateFromProto(value.date);
+    if (isNaN(dateParsed.getTime())) {
+      result.isValid = false;
+      result.errors.date = "Invalid date";
+    } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
+      result.isValid = false;
+      result.errors.date = "Date must not be before the platform minimum";
+    }
+  }
+
+  if (value?.budgetDate === undefined) {
+    result.isValid = false;
+  } else {
+    const dateParsed = parseDateFromProto(value.budgetDate);
+    if (isNaN(dateParsed.getTime())) {
+      result.isValid = false;
+      result.errors.budgetDate = "Invalid budget date";
+    } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
+      result.isValid = false;
+      result.errors.budgetDate = "Budget date must not be before the platform minimum";
+    }
+  }
+
+  if (value?.payee === undefined) {
+    result.isValid = false;
+  } else {
+    if (value.payee.length < 1) {
+      result.isValid = false;
+      result.errors.payee = "Payee must be at least 1 character";
+    }
+  }
+
+  if (!value?.holding) {
+    result.isValid = false;
+    result.errors.holding = "A holding must be selected";
+  }
+
+  if (!value?.category) {
+    result.isValid = false;
+    result.errors.category = "A category must be selected";
+  }
+
+  /*
+   *
+	if t.Date.Before(PlatformMinimumDate) {
+		return fmt.Errorf("date must not be before the platform minimum date")
+	}
+
+	if t.BudgetDate.Before(PlatformMinimumDate) {
+		return fmt.Errorf("budget date must not be before the platform minimum date")
+	}
+
+	if t.CreationDate.Before(PlatformMinimumDate) {
+		return fmt.Errorf("creation must not be before the platform minimum date")
+	}
+   * */
+
+  return result;
+}
+
+export { validateAccount, validateAsset, validateCategory, validateCurrency, validateHolding, validateTransaction };

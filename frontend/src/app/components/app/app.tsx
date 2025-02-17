@@ -6,6 +6,7 @@ import { AssetsPage } from "../assets/assets-page.js";
 import { CategoriesPage } from "../categories/categories-page.js";
 import { AccountsPage } from "../accounts/accounts-page.js";
 import { HoldingsPage } from "../holdings/holdings-page.js";
+import { TransactionsPage } from "../transactions/transactions-page.js";
 import { useRouter } from "./router.js";
 import { Menu } from "./menu.js";
 import { Breadcrumbs } from "./breadcrumbs.js";
@@ -27,6 +28,9 @@ function App(): ReactElement {
 
   function getContent(): ReactElement {
     switch (path) {
+      case "/transactions":
+        return <TransactionsPage />;
+
       case "/settings/accounts":
         return <AccountsPage />;
       case "/settings/categories":

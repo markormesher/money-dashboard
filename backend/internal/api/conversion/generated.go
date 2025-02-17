@@ -202,6 +202,42 @@ func ProfileToCore(source *v4.Profile) schema.Profile {
 	}
 	return schemaProfile
 }
+func TransactionFromCore(source schema.Transaction) *v4.Transaction {
+	var mdv4Transaction v4.Transaction
+	mdv4Transaction.Id = ConvertUUIDToString(source.ID)
+	mdv4Transaction.Date = ConvertTimeToInt(source.Date)
+	mdv4Transaction.BudgetDate = ConvertTimeToInt(source.BudgetDate)
+	mdv4Transaction.CreationDate = ConvertTimeToInt(source.CreationDate)
+	mdv4Transaction.Payee = source.Payee
+	mdv4Transaction.Notes = source.Notes
+	mdv4Transaction.Amount = ConvertDecimalToFloat(source.Amount)
+	mdv4Transaction.UnitValue = ConvertDecimalToFloat(source.UnitValue)
+	mdv4Transaction.Deleted = source.Deleted
+	mdv4Transaction.Holding = pSchemaHoldingToPMdv4Holding(source.Holding)
+	mdv4Transaction.Category = pSchemaCategoryToPMdv4Category(source.Category)
+	mdv4Transaction.Profile = pSchemaProfileToPMdv4Profile(source.Profile)
+	return &mdv4Transaction
+}
+func TransactionToCore(source *v4.Transaction) schema.Transaction {
+	var schemaTransaction schema.Transaction
+	if source != nil {
+		var schemaTransaction2 schema.Transaction
+		schemaTransaction2.ID = ConvertStringToUUID((*source).Id)
+		schemaTransaction2.Date = ConvertIntToTime((*source).Date)
+		schemaTransaction2.BudgetDate = ConvertIntToTime((*source).BudgetDate)
+		schemaTransaction2.CreationDate = ConvertIntToTime((*source).CreationDate)
+		schemaTransaction2.Payee = (*source).Payee
+		schemaTransaction2.Notes = (*source).Notes
+		schemaTransaction2.Amount = ConvertFloatToDecimal((*source).Amount)
+		schemaTransaction2.UnitValue = ConvertFloatToDecimal((*source).UnitValue)
+		schemaTransaction2.Holding = pMdv4HoldingToPSchemaHolding((*source).Holding)
+		schemaTransaction2.Category = pMdv4CategoryToPSchemaCategory((*source).Category)
+		schemaTransaction2.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
+		schemaTransaction2.Deleted = (*source).Deleted
+		schemaTransaction = schemaTransaction2
+	}
+	return schemaTransaction
+}
 func UserFromCore(source schema.User) *v4.User {
 	var mdv4User v4.User
 	mdv4User.Id = ConvertUUIDToString(source.ID)
@@ -255,6 +291,24 @@ func pMdv4AssetToPSchemaAsset(source *v4.Asset) *schema.Asset {
 	}
 	return pSchemaAsset
 }
+func pMdv4CategoryToPSchemaCategory(source *v4.Category) *schema.Category {
+	var pSchemaCategory *schema.Category
+	if source != nil {
+		var schemaCategory schema.Category
+		schemaCategory.ID = ConvertStringToUUID((*source).Id)
+		schemaCategory.Name = (*source).Name
+		schemaCategory.IsMemo = (*source).IsMemo
+		schemaCategory.IsInterestIncome = (*source).IsInterestIncome
+		schemaCategory.IsDividendIncome = (*source).IsDividendIncome
+		schemaCategory.IsCapitalAcquisition = (*source).IsCapitalAcquisition
+		schemaCategory.IsCapitalDisposal = (*source).IsCapitalDisposal
+		schemaCategory.IsCapitalEventFee = (*source).IsCapitalEventFee
+		schemaCategory.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
+		schemaCategory.Active = (*source).Active
+		pSchemaCategory = &schemaCategory
+	}
+	return pSchemaCategory
+}
 func pMdv4CurrencyToPSchemaCurrency(source *v4.Currency) *schema.Currency {
 	var pSchemaCurrency *schema.Currency
 	if source != nil {
@@ -268,6 +322,21 @@ func pMdv4CurrencyToPSchemaCurrency(source *v4.Currency) *schema.Currency {
 		pSchemaCurrency = &schemaCurrency
 	}
 	return pSchemaCurrency
+}
+func pMdv4HoldingToPSchemaHolding(source *v4.Holding) *schema.Holding {
+	var pSchemaHolding *schema.Holding
+	if source != nil {
+		var schemaHolding schema.Holding
+		schemaHolding.ID = ConvertStringToUUID((*source).Id)
+		schemaHolding.Name = (*source).Name
+		schemaHolding.Currency = pMdv4CurrencyToPSchemaCurrency((*source).Currency)
+		schemaHolding.Asset = pMdv4AssetToPSchemaAsset((*source).Asset)
+		schemaHolding.Account = pMdv4AccountToPSchemaAccount((*source).Account)
+		schemaHolding.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
+		schemaHolding.Active = (*source).Active
+		pSchemaHolding = &schemaHolding
+	}
+	return pSchemaHolding
 }
 func pMdv4ProfileToPSchemaProfile(source *v4.Profile) *schema.Profile {
 	var pSchemaProfile *schema.Profile
@@ -311,6 +380,24 @@ func pSchemaAssetToPMdv4Asset(source *schema.Asset) *v4.Asset {
 	}
 	return pMdv4Asset
 }
+func pSchemaCategoryToPMdv4Category(source *schema.Category) *v4.Category {
+	var pMdv4Category *v4.Category
+	if source != nil {
+		var mdv4Category v4.Category
+		mdv4Category.Id = ConvertUUIDToString((*source).ID)
+		mdv4Category.Name = (*source).Name
+		mdv4Category.IsMemo = (*source).IsMemo
+		mdv4Category.IsInterestIncome = (*source).IsInterestIncome
+		mdv4Category.IsDividendIncome = (*source).IsDividendIncome
+		mdv4Category.IsCapitalAcquisition = (*source).IsCapitalAcquisition
+		mdv4Category.IsCapitalDisposal = (*source).IsCapitalDisposal
+		mdv4Category.IsCapitalEventFee = (*source).IsCapitalEventFee
+		mdv4Category.Active = (*source).Active
+		mdv4Category.Profile = pSchemaProfileToPMdv4Profile((*source).Profile)
+		pMdv4Category = &mdv4Category
+	}
+	return pMdv4Category
+}
 func pSchemaCurrencyToPMdv4Currency(source *schema.Currency) *v4.Currency {
 	var pMdv4Currency *v4.Currency
 	if source != nil {
@@ -324,6 +411,21 @@ func pSchemaCurrencyToPMdv4Currency(source *schema.Currency) *v4.Currency {
 		pMdv4Currency = &mdv4Currency
 	}
 	return pMdv4Currency
+}
+func pSchemaHoldingToPMdv4Holding(source *schema.Holding) *v4.Holding {
+	var pMdv4Holding *v4.Holding
+	if source != nil {
+		var mdv4Holding v4.Holding
+		mdv4Holding.Id = ConvertUUIDToString((*source).ID)
+		mdv4Holding.Name = (*source).Name
+		mdv4Holding.Active = (*source).Active
+		mdv4Holding.Currency = pSchemaCurrencyToPMdv4Currency((*source).Currency)
+		mdv4Holding.Asset = pSchemaAssetToPMdv4Asset((*source).Asset)
+		mdv4Holding.Account = pSchemaAccountToPMdv4Account((*source).Account)
+		mdv4Holding.Profile = pSchemaProfileToPMdv4Profile((*source).Profile)
+		pMdv4Holding = &mdv4Holding
+	}
+	return pMdv4Holding
 }
 func pSchemaProfileToPMdv4Profile(source *schema.Profile) *v4.Profile {
 	var pMdv4Profile *v4.Profile

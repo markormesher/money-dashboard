@@ -8,7 +8,7 @@ import { PageHeader } from "../page-header/page-header.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { Tile, TileSet } from "../common/tile-set/tile-set.js";
-import { copyToClipboard, safeNewRegex } from "../../utils/text.js";
+import { copyToClipboard } from "../../utils/text.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { accountServiceClient } from "../../../api/api.js";
@@ -18,14 +18,14 @@ import { AccountEditModal } from "./account-edit-modal.js";
 function AccountsPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
-    setMeta({ parents: ["Metadata"], title: "Accounts" });
+    setMeta({ parents: ["Settings"], title: "Accounts" });
   }, []);
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
   const [accounts, setAccounts] = React.useState<Account[]>();
 
-  const [searchString, setSearchString] = React.useState("");
+  const [searchPattern, setSearchPattern] = React.useState<RegExp>();
   const [showInactive, setShowInactive] = React.useState(false);
 
   const [editingId, setEditingId] = React.useState<string>();
@@ -51,30 +51,19 @@ function AccountsPage(): ReactElement {
     </button>,
   ];
 
-  const pageOptions = (
-    <>
-      <fieldset>
+  const pageOptions = [
+    <fieldset>
+      <label>
         <input
-          type={"text"}
-          placeholder={"Search"}
-          value={searchString}
-          onChange={(evt) => setSearchString(evt.target.value)}
+          type={"checkbox"}
+          role={"switch"}
+          checked={showInactive}
+          onChange={(evt) => setShowInactive(evt.target.checked)}
         />
-      </fieldset>
-
-      <fieldset>
-        <label>
-          <input
-            type={"checkbox"}
-            role={"switch"}
-            checked={showInactive}
-            onChange={(evt) => setShowInactive(evt.target.checked)}
-          />
-          Show inactive
-        </label>
-      </fieldset>
-    </>
-  );
+        Show inactive
+      </label>
+    </fieldset>,
+  ];
 
   let body: ReactElement;
   if (error) {
@@ -82,10 +71,9 @@ function AccountsPage(): ReactElement {
   } else if (!accounts) {
     body = <LoadingPanel />;
   } else {
-    const searchRegex = safeNewRegex(searchString);
     const filteredAccounts = accounts
       .filter((a) => showInactive || a.active)
-      .filter((a) => searchRegex?.test(a.name) ?? true)
+      .filter((a) => searchPattern?.test(a.name) ?? true)
       .sort((a, b) => a.name.localeCompare(b.name));
 
     if (filteredAccounts.length == 0) {
@@ -140,9 +128,8 @@ function AccountsPage(): ReactElement {
           icon={"account_balance"}
           buttons={pageButtons}
           options={pageOptions}
-          optionsStartOpen={true}
+          onSearchTextChange={(p) => setSearchPattern(p)}
         />
-        <hr />
         <section>{body}</section>
         <hr />
         <section>

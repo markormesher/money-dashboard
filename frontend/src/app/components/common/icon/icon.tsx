@@ -16,7 +16,11 @@ function Icon(props: IconProps): ReactElement {
 }
 
 function IconGroup(props: React.PropsWithChildren): ReactElement {
-  return <div className={"icon-group"}>{props.children}</div>;
+  return (
+    <div className={"icon-group"} {...props}>
+      {props.children}
+    </div>
+  );
 }
 
 export { Icon, IconGroup };

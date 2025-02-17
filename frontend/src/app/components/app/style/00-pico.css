@@ -77,3 +77,8 @@ textarea {
   margin-bottom: 0;
   /* Original: var(--pico-spacing) */
 }
+
+[data-tooltip] {
+  border-bottom: none !important;
+  cursor: inherit !important;
+}

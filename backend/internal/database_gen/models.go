@@ -188,6 +188,21 @@ type StockPrice struct {
 }
 
 type Transaction struct {
+	ID           uuid.UUID
+	Date         time.Time
+	BudgetDate   time.Time
+	CreationDate time.Time
+	Payee        string
+	Notes        string
+	Amount       decimal.Decimal
+	UnitValue    decimal.Decimal
+	HoldingID    uuid.UUID
+	CategoryID   uuid.UUID
+	ProfileID    uuid.UUID
+	Deleted      bool
+}
+
+type TransactionOld struct {
 	ID              uuid.UUID
 	TransactionDate int64
 	EffectiveDate   int64
@@ -198,7 +213,7 @@ type Transaction struct {
 	AccountID       *uuid.UUID
 	CategoryID      *uuid.UUID
 	ProfileID       *uuid.UUID
-	CreationDate    pgtype.Timestamp
+	CreationDate    time.Time
 }
 
 type UserProfileRole struct {

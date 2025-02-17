@@ -51,7 +51,7 @@ function Menu(props: MenuProps): ReactElement {
     targetStr: "gt",
     onTrigger: () => {
       setMenuOpen(false);
-      navigate("/records/transactions");
+      navigate("/transactions");
     },
   });
 

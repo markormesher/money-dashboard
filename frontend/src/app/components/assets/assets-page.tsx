@@ -8,7 +8,7 @@ import { PageHeader } from "../page-header/page-header.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { Tile, TileSet } from "../common/tile-set/tile-set.js";
-import { copyToClipboard, safeNewRegex } from "../../utils/text.js";
+import { copyToClipboard } from "../../utils/text.js";
 import { assetServiceClient } from "../../../api/api.js";
 import { formatDateFromProto } from "../../utils/dates.js";
 import { NULL_UUID } from "../../../config/consts.js";
@@ -27,7 +27,7 @@ function AssetsPage(): ReactElement {
   const [assets, setAssets] = React.useState<Asset[]>();
   const [prices, setPrices] = React.useState<Record<string, AssetPrice>>();
 
-  const [searchString, setSearchString] = React.useState("");
+  const [searchPattern, setSearchPattern] = React.useState<RegExp>();
   const [showInactive, setShowInactive] = React.useState(false);
 
   const [editingId, setEditingId] = React.useState<string>();
@@ -68,30 +68,19 @@ function AssetsPage(): ReactElement {
     </button>,
   ];
 
-  const pageOptions = (
-    <>
-      <fieldset>
+  const pageOptions = [
+    <fieldset>
+      <label>
         <input
-          type={"text"}
-          placeholder={"Search"}
-          value={searchString}
-          onChange={(evt) => setSearchString(evt.target.value)}
+          type={"checkbox"}
+          role={"switch"}
+          checked={showInactive}
+          onChange={(evt) => setShowInactive(evt.target.checked)}
         />
-      </fieldset>
-
-      <fieldset>
-        <label>
-          <input
-            type={"checkbox"}
-            role={"switch"}
-            checked={showInactive}
-            onChange={(evt) => setShowInactive(evt.target.checked)}
-          />
-          Show inactive
-        </label>
-      </fieldset>
-    </>
-  );
+        Show inactive
+      </label>
+    </fieldset>,
+  ];
 
   let body: ReactElement;
   if (error) {
@@ -99,10 +88,9 @@ function AssetsPage(): ReactElement {
   } else if (!assets || !prices) {
     body = <LoadingPanel />;
   } else {
-    const searchRegex = safeNewRegex(searchString);
     const filteredAssets = assets
       .filter((a) => showInactive || a.active)
-      .filter((a) => searchRegex?.test(a.name) ?? true)
+      .filter((a) => searchPattern?.test(a.name) ?? true)
       .sort((a, b) => a.name.localeCompare(b.name));
 
     if (filteredAssets.length == 0) {
@@ -163,8 +151,13 @@ function AssetsPage(): ReactElement {
   return (
     <>
       <div id={"content"} className={"overflow-auto"}>
-        <PageHeader title={"Assets"} icon={"candlestick_chart"} buttons={pageButtons} options={pageOptions} />
-        <hr />
+        <PageHeader
+          title={"Assets"}
+          icon={"candlestick_chart"}
+          buttons={pageButtons}
+          options={pageOptions}
+          onSearchTextChange={(p) => setSearchPattern(p)}
+        />
         <section>{body}</section>
         <hr />
         <section>

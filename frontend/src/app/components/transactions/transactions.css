@@ -1,0 +1,25 @@
+.amount-cell {
+  font-family: monospace;
+
+  .amount {
+    float: right;
+  }
+
+  .amount-prefix {
+    float: left;
+    margin-right: calc(var(--pico-block-spacing-horizontal) * 0.5);
+    color: var(--pico-muted-color);
+  }
+}
+
+.actions-cell {
+  a {
+    text-decoration: none;
+
+    &:hover {
+      span:not(.icon) {
+        text-decoration: underline;
+      }
+    }
+  }
+}
