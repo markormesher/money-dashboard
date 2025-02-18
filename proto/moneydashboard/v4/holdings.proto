@@ -4,7 +4,6 @@ package moneydashboard.v4;
 import "moneydashboard/v4/accounts.proto";
 import "moneydashboard/v4/assets.proto";
 import "moneydashboard/v4/currencies.proto";
-import "moneydashboard/v4/users.proto";
 
 option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
 

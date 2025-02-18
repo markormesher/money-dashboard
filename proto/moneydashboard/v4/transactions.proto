@@ -3,7 +3,6 @@ package moneydashboard.v4;
 
 import "moneydashboard/v4/categories.proto";
 import "moneydashboard/v4/holdings.proto";
-import "moneydashboard/v4/users.proto";
 
 option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
 
