@@ -15,8 +15,6 @@ message Category {
   bool is_capital_disposal = 7;
   bool is_capital_event_fee = 8;
   bool active = 9;
-
-  Profile profile = 10;
 }
 
 message GetCategoryByIdRequest {

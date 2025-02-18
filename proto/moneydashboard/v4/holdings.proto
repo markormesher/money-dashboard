@@ -16,7 +16,6 @@ message Holding {
   Currency currency = 4;
   Asset asset = 5;
   Account account = 6;
-  Profile profile = 7;
 }
 
 message GetHoldingByIdRequest {

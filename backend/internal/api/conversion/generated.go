@@ -17,7 +17,6 @@ func AccountFromCore(source schema.Account) *v4.Account {
 	mdv4Account.IsPension = source.IsPension
 	mdv4Account.ExcludeFromEnvelopes = source.ExcludeFromEnvelopes
 	mdv4Account.Active = source.Active
-	mdv4Account.Profile = pSchemaProfileToPMdv4Profile(source.Profile)
 	return &mdv4Account
 }
 func AccountToCore(source *v4.Account) schema.Account {
@@ -30,7 +29,6 @@ func AccountToCore(source *v4.Account) schema.Account {
 		schemaAccount2.IsIsa = (*source).IsIsa
 		schemaAccount2.IsPension = (*source).IsPension
 		schemaAccount2.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
-		schemaAccount2.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
 		schemaAccount2.Active = (*source).Active
 		schemaAccount = schemaAccount2
 	}
@@ -93,7 +91,6 @@ func CategoryFromCore(source schema.Category) *v4.Category {
 	mdv4Category.IsCapitalDisposal = source.IsCapitalDisposal
 	mdv4Category.IsCapitalEventFee = source.IsCapitalEventFee
 	mdv4Category.Active = source.Active
-	mdv4Category.Profile = pSchemaProfileToPMdv4Profile(source.Profile)
 	return &mdv4Category
 }
 func CategoryToCore(source *v4.Category) schema.Category {
@@ -108,7 +105,6 @@ func CategoryToCore(source *v4.Category) schema.Category {
 		schemaCategory2.IsCapitalAcquisition = (*source).IsCapitalAcquisition
 		schemaCategory2.IsCapitalDisposal = (*source).IsCapitalDisposal
 		schemaCategory2.IsCapitalEventFee = (*source).IsCapitalEventFee
-		schemaCategory2.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
 		schemaCategory2.Active = (*source).Active
 		schemaCategory = schemaCategory2
 	}
@@ -166,7 +162,6 @@ func HoldingFromCore(source schema.Holding) *v4.Holding {
 	mdv4Holding.Currency = pSchemaCurrencyToPMdv4Currency(source.Currency)
 	mdv4Holding.Asset = pSchemaAssetToPMdv4Asset(source.Asset)
 	mdv4Holding.Account = pSchemaAccountToPMdv4Account(source.Account)
-	mdv4Holding.Profile = pSchemaProfileToPMdv4Profile(source.Profile)
 	return &mdv4Holding
 }
 func HoldingToCore(source *v4.Holding) schema.Holding {
@@ -178,7 +173,6 @@ func HoldingToCore(source *v4.Holding) schema.Holding {
 		schemaHolding2.Currency = pMdv4CurrencyToPSchemaCurrency((*source).Currency)
 		schemaHolding2.Asset = pMdv4AssetToPSchemaAsset((*source).Asset)
 		schemaHolding2.Account = pMdv4AccountToPSchemaAccount((*source).Account)
-		schemaHolding2.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
 		schemaHolding2.Active = (*source).Active
 		schemaHolding = schemaHolding2
 	}
@@ -215,7 +209,6 @@ func TransactionFromCore(source schema.Transaction) *v4.Transaction {
 	mdv4Transaction.Deleted = source.Deleted
 	mdv4Transaction.Holding = pSchemaHoldingToPMdv4Holding(source.Holding)
 	mdv4Transaction.Category = pSchemaCategoryToPMdv4Category(source.Category)
-	mdv4Transaction.Profile = pSchemaProfileToPMdv4Profile(source.Profile)
 	return &mdv4Transaction
 }
 func TransactionToCore(source *v4.Transaction) schema.Transaction {
@@ -232,7 +225,6 @@ func TransactionToCore(source *v4.Transaction) schema.Transaction {
 		schemaTransaction2.UnitValue = ConvertFloatToDecimal((*source).UnitValue)
 		schemaTransaction2.Holding = pMdv4HoldingToPSchemaHolding((*source).Holding)
 		schemaTransaction2.Category = pMdv4CategoryToPSchemaCategory((*source).Category)
-		schemaTransaction2.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
 		schemaTransaction2.Deleted = (*source).Deleted
 		schemaTransaction = schemaTransaction2
 	}
@@ -270,7 +262,6 @@ func pMdv4AccountToPSchemaAccount(source *v4.Account) *schema.Account {
 		schemaAccount.IsIsa = (*source).IsIsa
 		schemaAccount.IsPension = (*source).IsPension
 		schemaAccount.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
-		schemaAccount.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
 		schemaAccount.Active = (*source).Active
 		pSchemaAccount = &schemaAccount
 	}
@@ -303,7 +294,6 @@ func pMdv4CategoryToPSchemaCategory(source *v4.Category) *schema.Category {
 		schemaCategory.IsCapitalAcquisition = (*source).IsCapitalAcquisition
 		schemaCategory.IsCapitalDisposal = (*source).IsCapitalDisposal
 		schemaCategory.IsCapitalEventFee = (*source).IsCapitalEventFee
-		schemaCategory.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
 		schemaCategory.Active = (*source).Active
 		pSchemaCategory = &schemaCategory
 	}
@@ -332,7 +322,6 @@ func pMdv4HoldingToPSchemaHolding(source *v4.Holding) *schema.Holding {
 		schemaHolding.Currency = pMdv4CurrencyToPSchemaCurrency((*source).Currency)
 		schemaHolding.Asset = pMdv4AssetToPSchemaAsset((*source).Asset)
 		schemaHolding.Account = pMdv4AccountToPSchemaAccount((*source).Account)
-		schemaHolding.Profile = pMdv4ProfileToPSchemaProfile((*source).Profile)
 		schemaHolding.Active = (*source).Active
 		pSchemaHolding = &schemaHolding
 	}
@@ -360,7 +349,6 @@ func pSchemaAccountToPMdv4Account(source *schema.Account) *v4.Account {
 		mdv4Account.IsPension = (*source).IsPension
 		mdv4Account.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
 		mdv4Account.Active = (*source).Active
-		mdv4Account.Profile = pSchemaProfileToPMdv4Profile((*source).Profile)
 		pMdv4Account = &mdv4Account
 	}
 	return pMdv4Account
@@ -393,7 +381,6 @@ func pSchemaCategoryToPMdv4Category(source *schema.Category) *v4.Category {
 		mdv4Category.IsCapitalDisposal = (*source).IsCapitalDisposal
 		mdv4Category.IsCapitalEventFee = (*source).IsCapitalEventFee
 		mdv4Category.Active = (*source).Active
-		mdv4Category.Profile = pSchemaProfileToPMdv4Profile((*source).Profile)
 		pMdv4Category = &mdv4Category
 	}
 	return pMdv4Category
@@ -422,7 +409,6 @@ func pSchemaHoldingToPMdv4Holding(source *schema.Holding) *v4.Holding {
 		mdv4Holding.Currency = pSchemaCurrencyToPMdv4Currency((*source).Currency)
 		mdv4Holding.Asset = pSchemaAssetToPMdv4Asset((*source).Asset)
 		mdv4Holding.Account = pSchemaAccountToPMdv4Account((*source).Account)
-		mdv4Holding.Profile = pSchemaProfileToPMdv4Profile((*source).Profile)
 		pMdv4Holding = &mdv4Holding
 	}
 	return pMdv4Holding

@@ -20,7 +20,6 @@ message Transaction {
 
   Holding holding = 10;
   Category category = 11;
-  Profile profile = 12;
 }
 
 message GetTransactionByIdRequest {

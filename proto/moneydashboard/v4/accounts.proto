@@ -13,8 +13,6 @@ message Account {
   bool is_pension = 5;
   bool exclude_from_envelopes = 6;
   bool active = 7;
-
-  Profile profile = 8;
 }
 
 message GetAccountByIdRequest {

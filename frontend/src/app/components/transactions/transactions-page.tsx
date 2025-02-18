@@ -32,11 +32,11 @@ function TransactionsPage(): ReactElement {
   const [error, setError] = React.useState<unknown>();
 
   const [searchPattern, setSearchPattern] = React.useState<RegExp>();
-  const [transactions, setTransactions] = React.useState<Transaction[]>();
+  const [page, setPage] = React.useState(1);
   const [total, setTotal] = React.useState(0);
   const [filteredTotal, setFilteredTotal] = React.useState(0);
   const [pageCount, setPageCount] = React.useState(1);
-  const [page, setPage] = React.useState(1);
+  const [transactions, setTransactions] = React.useState<Transaction[]>();
 
   const [editingId, setEditingId] = React.useState<string>();
   useKeyShortcut({ targetStr: "c", onTrigger: () => setEditingId(NULL_UUID) });

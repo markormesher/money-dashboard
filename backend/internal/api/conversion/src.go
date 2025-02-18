@@ -22,6 +22,7 @@ import (
 // goverter:extend ConvertFloatToDecimal
 // goverter:matchIgnoreCase yes
 // goverter:ignoreUnexported yes
+// goverter:ignoreMissing yes
 // goverter:useZeroValueOnPointerInconsistency yes
 type converterSpec interface {
 	AccountFromCore(source schema.Account) *mdv4.Account
