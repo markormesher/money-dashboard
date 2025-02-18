@@ -1,0 +1,4 @@
+backend/internal/api/api_gen/** linguist-generated=true
+backend/internal/api/database_gen/** linguist-generated=true
+backend/internal/**/conversion/generated.go linguist-generated=true
+frontend/src/api_gen/** linguist-generated=true
