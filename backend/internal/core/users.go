@@ -57,7 +57,7 @@ func (c *Core) GetOrCreateUser(ctx context.Context, externalUsername string, dis
 		}
 
 		if !hasAccess {
-			l.Info("user no longer has access to their active profiles - removing it", "userId", user.ID)
+			l.Info("user no longer has access to their active profile - removing it", "userId", user.ID)
 			user.ActiveProfile = nil
 		}
 	}
@@ -65,7 +65,7 @@ func (c *Core) GetOrCreateUser(ctx context.Context, externalUsername string, dis
 	// make sure a profile is set (it might have been removed earlier)
 	if user.ActiveProfile == nil {
 		l.Info("user has no active profile - picking one for them", "userId", user.ID)
-		err := c.SetActiveProfile(ctx, user, profiles[0].ID)
+		err := c.SetActiveProfile(ctx, user, profiles[0])
 		if err != nil {
 			return schema.User{}, err
 		}
@@ -94,7 +94,7 @@ func (c *Core) createNewUser(ctx context.Context, externalUsername string, displ
 	}
 
 	// set the profile as the active profile
-	err = c.SetActiveProfile(ctx, user, profile.ID)
+	err = c.SetActiveProfile(ctx, user, profile)
 	if err != nil {
 		return schema.User{}, err
 	}
@@ -132,7 +132,7 @@ func (c *Core) GetProfiles(ctx context.Context, user schema.User) ([]schema.Prof
 	return c.DB.GetUserProfiles(ctx, user.ID)
 }
 
-func (c *Core) SetActiveProfile(ctx context.Context, user schema.User, profileID uuid.UUID) error {
+func (c *Core) SetActiveProfile(ctx context.Context, user schema.User, profile schema.Profile) error {
 	profiles, err := c.DB.GetUserProfiles(ctx, user.ID)
 	if err != nil {
 		return err
@@ -140,7 +140,7 @@ func (c *Core) SetActiveProfile(ctx context.Context, user schema.User, profileID
 
 	hasAccess := false
 	for _, p := range profiles {
-		if p.ID == profileID {
+		if p.ID == profile.ID {
 			hasAccess = true
 			break
 		}
@@ -150,5 +150,5 @@ func (c *Core) SetActiveProfile(ctx context.Context, user schema.User, profileID
 		return fmt.Errorf("profile does not exist")
 	}
 
-	return c.DB.SetActiveProfile(ctx, user.ID, profileID)
+	return c.DB.SetActiveProfile(ctx, user.ID, profile.ID)
 }

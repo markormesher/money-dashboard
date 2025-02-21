@@ -21,7 +21,7 @@ func (s *apiServer) GetAccountById(ctx context.Context, req *connect.Request[mdv
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
 
-	account, ok, err := s.core.GetAccountById(ctx, id, user.ActiveProfile.ID)
+	account, ok, err := s.core.GetAccountById(ctx, *user.ActiveProfile, id)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -41,7 +41,7 @@ func (s *apiServer) GetAllAccounts(ctx context.Context, req *connect.Request[mdv
 		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
 
-	accounts, err := s.core.GetAllAccountsForProfile(ctx, user.ActiveProfile.ID)
+	accounts, err := s.core.GetAllAccounts(ctx, *user.ActiveProfile)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -59,7 +59,7 @@ func (s *apiServer) UpsertAccount(ctx context.Context, req *connect.Request[mdv4
 	}
 
 	account := conversion.AccountToCore(req.Msg.Account)
-	err = s.core.UpsertAccount(ctx, account, user.ActiveProfile.ID)
+	err = s.core.UpsertAccount(ctx, *user.ActiveProfile, account)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}

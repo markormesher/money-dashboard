@@ -9,7 +9,7 @@ WHERE
   AND profile.id = @profile_id
 ;
 
--- name: GetAllCategoriesForProfile :many
+-- name: GetAllCategories :many
 SELECT
   sqlc.embed(category),
   sqlc.embed(profile)

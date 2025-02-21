@@ -21,7 +21,7 @@ func (s *apiServer) GetHoldingById(ctx context.Context, req *connect.Request[mdv
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
 
-	holding, ok, err := s.core.GetHoldingById(ctx, id, user.ActiveProfile.ID)
+	holding, ok, err := s.core.GetHoldingById(ctx, *user.ActiveProfile, id)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -41,7 +41,7 @@ func (s *apiServer) GetAllHoldings(ctx context.Context, req *connect.Request[mdv
 		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
 
-	holdings, err := s.core.GetAllHoldingsForProfile(ctx, user.ActiveProfile.ID)
+	holdings, err := s.core.GetAllHoldings(ctx, *user.ActiveProfile)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -59,7 +59,7 @@ func (s *apiServer) UpsertHolding(ctx context.Context, req *connect.Request[mdv4
 	}
 
 	holding := conversion.HoldingToCore(req.Msg.Holding)
-	err = s.core.UpsertHolding(ctx, holding, user.ActiveProfile.ID)
+	err = s.core.UpsertHolding(ctx, *user.ActiveProfile, holding)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}

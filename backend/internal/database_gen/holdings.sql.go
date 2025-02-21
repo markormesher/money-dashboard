@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const getAllHoldingsForProfile = `-- name: GetAllHoldingsForProfile :many
+const getAllHoldings = `-- name: GetAllHoldings :many
 SELECT
   holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
   nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active, nullable_holding_currency.calculation_precision,
@@ -28,7 +28,7 @@ WHERE
   profile.id = $1
 `
 
-type GetAllHoldingsForProfileRow struct {
+type GetAllHoldingsRow struct {
 	Holding                 Holding
 	NullableHoldingCurrency NullableHoldingCurrency
 	NullableHoldingAsset    NullableHoldingAsset
@@ -36,15 +36,15 @@ type GetAllHoldingsForProfileRow struct {
 	Profile                 Profile
 }
 
-func (q *Queries) GetAllHoldingsForProfile(ctx context.Context, profileID uuid.UUID) ([]GetAllHoldingsForProfileRow, error) {
-	rows, err := q.db.Query(ctx, getAllHoldingsForProfile, profileID)
+func (q *Queries) GetAllHoldings(ctx context.Context, profileID uuid.UUID) ([]GetAllHoldingsRow, error) {
+	rows, err := q.db.Query(ctx, getAllHoldings, profileID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetAllHoldingsForProfileRow
+	var items []GetAllHoldingsRow
 	for rows.Next() {
-		var i GetAllHoldingsForProfileRow
+		var i GetAllHoldingsRow
 		if err := rows.Scan(
 			&i.Holding.ID,
 			&i.Holding.Name,

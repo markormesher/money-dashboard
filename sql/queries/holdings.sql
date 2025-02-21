@@ -16,7 +16,7 @@ WHERE
   AND profile.id = @profile_id
 ;
 
--- name: GetAllHoldingsForProfile :many
+-- name: GetAllHoldings :many
 SELECT
   sqlc.embed(holding),
   sqlc.embed(nullable_holding_currency),

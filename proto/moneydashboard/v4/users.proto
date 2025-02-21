@@ -31,7 +31,7 @@ message GetProfilesResponse {
 }
 
 message SetActiveProfileRequest {
-  string profile_id = 1;
+  Profile profile = 1;
 }
 
 message SetActiveProfileResponse {}

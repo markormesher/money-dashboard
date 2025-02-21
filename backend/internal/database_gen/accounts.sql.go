@@ -51,7 +51,7 @@ func (q *Queries) GetAccountById(ctx context.Context, arg GetAccountByIdParams) 
 	return i, err
 }
 
-const getAllAccountsForProfile = `-- name: GetAllAccountsForProfile :many
+const getAllAccounts = `-- name: GetAllAccounts :many
 SELECT
   account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active,
   profile.id, profile.name, profile.deleted
@@ -61,20 +61,20 @@ WHERE
   profile.id = $1
 `
 
-type GetAllAccountsForProfileRow struct {
+type GetAllAccountsRow struct {
 	Account Account
 	Profile Profile
 }
 
-func (q *Queries) GetAllAccountsForProfile(ctx context.Context, profileID uuid.UUID) ([]GetAllAccountsForProfileRow, error) {
-	rows, err := q.db.Query(ctx, getAllAccountsForProfile, profileID)
+func (q *Queries) GetAllAccounts(ctx context.Context, profileID uuid.UUID) ([]GetAllAccountsRow, error) {
+	rows, err := q.db.Query(ctx, getAllAccounts, profileID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetAllAccountsForProfileRow
+	var items []GetAllAccountsRow
 	for rows.Next() {
-		var i GetAllAccountsForProfileRow
+		var i GetAllAccountsRow
 		if err := rows.Scan(
 			&i.Account.ID,
 			&i.Account.Name,

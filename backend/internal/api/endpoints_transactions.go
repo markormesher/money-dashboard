@@ -21,7 +21,7 @@ func (s *apiServer) GetTransactionById(ctx context.Context, req *connect.Request
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
 
-	transaction, ok, err := s.core.GetTransactionById(ctx, id, user.ActiveProfile.ID)
+	transaction, ok, err := s.core.GetTransactionById(ctx, *user.ActiveProfile, id)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -41,7 +41,7 @@ func (s *apiServer) GetTransactionPage(ctx context.Context, req *connect.Request
 		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
 
-	page, err := s.core.GetTransactionPage(ctx, user.ActiveProfile.ID, req.Msg.Page, req.Msg.PerPage, req.Msg.SearchPattern)
+	page, err := s.core.GetTransactionPage(ctx, *user.ActiveProfile, req.Msg.Page, req.Msg.PerPage, req.Msg.SearchPattern)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -61,7 +61,7 @@ func (s *apiServer) UpsertTransaction(ctx context.Context, req *connect.Request[
 	}
 
 	transaction := conversion.TransactionToCore(req.Msg.Transaction)
-	err = s.core.UpsertTransaction(ctx, transaction, user.ActiveProfile.ID)
+	err = s.core.UpsertTransaction(ctx, *user.ActiveProfile, transaction)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}

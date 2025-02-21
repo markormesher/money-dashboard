@@ -43,8 +43,8 @@ func (db *DB) GetHoldingById(ctx context.Context, id uuid.UUID, profileID uuid.U
 	return holding, true, nil
 }
 
-func (db *DB) GetAllHoldingsForProfile(ctx context.Context, profileID uuid.UUID) ([]schema.Holding, error) {
-	rows, err := db.queries.GetAllHoldingsForProfile(ctx, profileID)
+func (db *DB) GetAllHoldings(ctx context.Context, profileID uuid.UUID) ([]schema.Holding, error) {
+	rows, err := db.queries.GetAllHoldings(ctx, profileID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	} else if err != nil {

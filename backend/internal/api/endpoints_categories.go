@@ -21,7 +21,7 @@ func (s *apiServer) GetCategoryById(ctx context.Context, req *connect.Request[md
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
 
-	category, ok, err := s.core.GetCategoryById(ctx, id, user.ActiveProfile.ID)
+	category, ok, err := s.core.GetCategoryById(ctx, *user.ActiveProfile, id)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -41,7 +41,7 @@ func (s *apiServer) GetAllCategories(ctx context.Context, req *connect.Request[m
 		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
 
-	categories, err := s.core.GetAllCategoriesForProfile(ctx, user.ActiveProfile.ID)
+	categories, err := s.core.GetAllCategories(ctx, *user.ActiveProfile)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -59,7 +59,7 @@ func (s *apiServer) UpsertCategory(ctx context.Context, req *connect.Request[mdv
 	}
 
 	category := conversion.CategoryToCore(req.Msg.Category)
-	err = s.core.UpsertCategory(ctx, category, user.ActiveProfile.ID)
+	err = s.core.UpsertCategory(ctx, *user.ActiveProfile, category)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}

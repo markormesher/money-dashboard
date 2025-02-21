@@ -8,15 +8,15 @@ import (
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
-func (c *Core) GetHoldingById(ctx context.Context, id uuid.UUID, profileID uuid.UUID) (schema.Holding, bool, error) {
-	return c.DB.GetHoldingById(ctx, id, profileID)
+func (c *Core) GetHoldingById(ctx context.Context, profile schema.Profile, id uuid.UUID) (schema.Holding, bool, error) {
+	return c.DB.GetHoldingById(ctx, id, profile.ID)
 }
 
-func (c *Core) GetAllHoldingsForProfile(ctx context.Context, profileID uuid.UUID) ([]schema.Holding, error) {
-	return c.DB.GetAllHoldingsForProfile(ctx, profileID)
+func (c *Core) GetAllHoldings(ctx context.Context, profile schema.Profile) ([]schema.Holding, error) {
+	return c.DB.GetAllHoldings(ctx, profile.ID)
 }
 
-func (c *Core) UpsertHolding(ctx context.Context, holding schema.Holding, profileID uuid.UUID) error {
+func (c *Core) UpsertHolding(ctx context.Context, profile schema.Profile, holding schema.Holding) error {
 	if err := holding.Validate(); err != nil {
 		return fmt.Errorf("invalid value: %w", err)
 	}
@@ -24,7 +24,7 @@ func (c *Core) UpsertHolding(ctx context.Context, holding schema.Holding, profil
 	if holding.ID == uuid.Nil {
 		holding.ID = uuid.New()
 	} else {
-		_, ok, err := c.GetHoldingById(ctx, holding.ID, profileID)
+		_, ok, err := c.GetHoldingById(ctx, profile, holding.ID)
 		if err != nil {
 			return err
 		} else if !ok {
@@ -32,5 +32,5 @@ func (c *Core) UpsertHolding(ctx context.Context, holding schema.Holding, profil
 		}
 	}
 
-	return c.DB.UpsertHolding(ctx, holding, profileID)
+	return c.DB.UpsertHolding(ctx, holding, profile.ID)
 }

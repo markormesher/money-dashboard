@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"connectrpc.com/connect"
-	"github.com/google/uuid"
 	"github.com/markormesher/money-dashboard/internal/api/conversion"
 	mdv4 "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4"
 	"github.com/markormesher/money-dashboard/internal/conversiontools"
@@ -44,12 +43,8 @@ func (s *apiServer) SetActiveProfile(ctx context.Context, req *connect.Request[m
 		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
 
-	id, err := uuid.Parse(req.Msg.ProfileId)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, err)
-	}
-
-	err = s.core.SetActiveProfile(ctx, user, id)
+	profile := conversion.ProfileToCore(req.Msg.Profile)
+	err = s.core.SetActiveProfile(ctx, user, profile)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}

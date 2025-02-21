@@ -30,8 +30,8 @@ func (db *DB) GetAccountById(ctx context.Context, id uuid.UUID, profileID uuid.U
 	return account, true, nil
 }
 
-func (db *DB) GetAllAccountsForProfile(ctx context.Context, profileID uuid.UUID) ([]schema.Account, error) {
-	rows, err := db.queries.GetAllAccountsForProfile(ctx, profileID)
+func (db *DB) GetAllAccounts(ctx context.Context, profileID uuid.UUID) ([]schema.Account, error) {
+	rows, err := db.queries.GetAllAccounts(ctx, profileID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	} else if err != nil {

@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const getAllCategoriesForProfile = `-- name: GetAllCategoriesForProfile :many
+const getAllCategories = `-- name: GetAllCategories :many
 SELECT
   category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active,
   profile.id, profile.name, profile.deleted
@@ -21,20 +21,20 @@ WHERE
   profile.id = $1
 `
 
-type GetAllCategoriesForProfileRow struct {
+type GetAllCategoriesRow struct {
 	Category Category
 	Profile  Profile
 }
 
-func (q *Queries) GetAllCategoriesForProfile(ctx context.Context, profileID uuid.UUID) ([]GetAllCategoriesForProfileRow, error) {
-	rows, err := q.db.Query(ctx, getAllCategoriesForProfile, profileID)
+func (q *Queries) GetAllCategories(ctx context.Context, profileID uuid.UUID) ([]GetAllCategoriesRow, error) {
+	rows, err := q.db.Query(ctx, getAllCategories, profileID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetAllCategoriesForProfileRow
+	var items []GetAllCategoriesRow
 	for rows.Next() {
-		var i GetAllCategoriesForProfileRow
+		var i GetAllCategoriesRow
 		if err := rows.Scan(
 			&i.Category.ID,
 			&i.Category.Name,

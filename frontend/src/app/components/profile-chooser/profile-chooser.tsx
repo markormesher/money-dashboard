@@ -40,9 +40,9 @@ function ProfileChooser(props: ProfileChooserProps): ReactElement {
     }
   }, [props.open]);
 
-  const selectProfile = useAsyncHandler(async (id: string) => {
+  const selectProfile = useAsyncHandler(async (profile: Profile) => {
     try {
-      await userServiceClient.setActiveProfile({ profileId: id });
+      await userServiceClient.setActiveProfile({ profile });
       window.location.reload();
     } catch (e) {
       toastBus.error("Failed to set active profile");
@@ -72,7 +72,7 @@ function ProfileChooser(props: ProfileChooserProps): ReactElement {
               decoration = <em>active now</em>;
             } else {
               decoration = (
-                <a href={"#"} className={"secondary"} onClick={() => selectProfile(p.id)}>
+                <a href={"#"} className={"secondary"} onClick={() => selectProfile(p)}>
                   select
                 </a>
               );

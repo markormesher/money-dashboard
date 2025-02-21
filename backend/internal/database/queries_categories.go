@@ -30,8 +30,8 @@ func (db *DB) GetCategoryById(ctx context.Context, id uuid.UUID, profileID uuid.
 	return category, true, nil
 }
 
-func (db *DB) GetAllCategoriesForProfile(ctx context.Context, profileID uuid.UUID) ([]schema.Category, error) {
-	rows, err := db.queries.GetAllCategoriesForProfile(ctx, profileID)
+func (db *DB) GetAllCategories(ctx context.Context, profileID uuid.UUID) ([]schema.Category, error) {
+	rows, err := db.queries.GetAllCategories(ctx, profileID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	} else if err != nil {
