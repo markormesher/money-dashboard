@@ -8,7 +8,7 @@ import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { validateAccount } from "../../schema/validation.js";
-import { Input } from "../common/form/inputs.js";
+import { Input, Textarea } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
 
@@ -150,6 +150,17 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
             role={"switch"}
             checked={form.model?.active ?? false}
             onChange={(evt) => form.patchModel({ active: evt.target.checked })}
+          />
+        </fieldset>
+
+        <fieldset className={"grid"}>
+          <Textarea
+            label={"Notes"}
+            formState={form}
+            fieldName={"notes"}
+            placeholder={""}
+            value={form.model?.notes}
+            onChange={(evt) => form.patchModel({ notes: evt.target.value })}
           />
         </fieldset>
       </form>

@@ -81,20 +81,21 @@ function AccountsPage(): ReactElement {
     } else {
       body = (
         <TileSet>
-          {filteredAccounts.map((c) => {
+          {filteredAccounts.map((a) => {
             return (
-              <Tile key={c.id} className={concatClasses(!c.active && "semi-transparent")}>
-                <h4>{c.name}</h4>
+              <Tile key={a.id} className={concatClasses(!a.active && "semi-transparent")}>
+                <h4>{a.name}</h4>
                 <ul className={"labels"}>
-                  {!c.active ? <li>Inactive</li> : null}
-                  {c.isIsa ? <li>ISA</li> : null}
-                  {c.isPension ? <li>Pension</li> : null}
-                  {c.excludeFromEnvelopes ? <li>Excluded from envelopes</li> : null}
+                  {!a.active ? <li>Inactive</li> : null}
+                  {a.isIsa ? <li>ISA</li> : null}
+                  {a.isPension ? <li>Pension</li> : null}
+                  {a.excludeFromEnvelopes ? <li>Excluded from envelopes</li> : null}
                 </ul>
+                {!!a.notes ? <small>{a.notes}</small> : null}
                 <footer>
                   <ul className={"horizonal mb0"}>
                     <li>
-                      <a href={""} className={"secondary"} onClick={() => setEditingId(c.id)}>
+                      <a href={""} className={"secondary"} onClick={() => setEditingId(a.id)}>
                         <IconGroup>
                           <Icon name={"edit"} />
                           <span>Edit</span>
@@ -103,7 +104,7 @@ function AccountsPage(): ReactElement {
                     </li>
 
                     <li>
-                      <a href={""} className={"secondary"} onClick={() => copyToClipboard(c.id)}>
+                      <a href={""} className={"secondary"} onClick={() => copyToClipboard(a.id)}>
                         <IconGroup>
                           <Icon name={"content_copy"} />
                           <span>Copy ID</span>
