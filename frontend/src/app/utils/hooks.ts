@@ -94,5 +94,13 @@ function useKeyShortcut(opts: KeyShortcutOptions): void {
   }, []);
 }
 
-export { useAsyncEffect, useAsyncHandler, useWaitGroup, useNudge, useKeyShortcut };
+function useFresh<T>(v: T): React.RefObject<T> {
+  const ref = React.useRef(v);
+  React.useEffect(() => {
+    ref.current = v;
+  }, [v]);
+  return ref;
+}
+
+export { useAsyncEffect, useAsyncHandler, useWaitGroup, useNudge, useKeyShortcut, useFresh };
 export type { WaitGroup };

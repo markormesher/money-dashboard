@@ -1,5 +1,6 @@
 import React, { ReactElement } from "react";
 import "./modal.css";
+import { useFresh } from "../../../utils/hooks.js";
 
 type ExternalModalProps = {
   open: boolean;
@@ -12,11 +13,13 @@ type ModalProps = ExternalModalProps & {
 };
 
 function Modal(props: React.PropsWithChildren<ModalProps>): ReactElement {
-  const { open, onClose, header, warnOnClose: closeWarning } = props;
+  const { open, onClose, header } = props;
+  const warnOnClose = useFresh(props.warnOnClose);
+
   const dialogRef = React.useRef<HTMLDialogElement>(null);
 
   const maybeClose = () => {
-    if (!closeWarning || confirm("Are you sure you want to cancel?")) {
+    if (!warnOnClose.current || confirm("Are you sure you want to cancel?")) {
       onClose();
     }
   };
@@ -31,19 +34,21 @@ function Modal(props: React.PropsWithChildren<ModalProps>): ReactElement {
 
   const escKeyListener = (evt: KeyboardEvent) => {
     if (evt.key == "Escape") {
+      evt.preventDefault();
+      evt.stopPropagation();
       maybeClose();
     }
   };
 
   React.useEffect(() => {
     if (open) {
-      dialogRef.current?.addEventListener("keyup", escKeyListener);
+      document.addEventListener("keydown", escKeyListener);
     } else {
-      dialogRef.current?.removeEventListener("keyup", escKeyListener);
+      document.removeEventListener("keydown", escKeyListener);
     }
 
     return function cleanup() {
-      dialogRef.current?.removeEventListener("keyup", escKeyListener);
+      document.removeEventListener("keydown", escKeyListener);
     };
   }, [open]);
 
