@@ -7,6 +7,7 @@ import { CategoriesPage } from "../categories/categories-page.js";
 import { AccountsPage } from "../accounts/accounts-page.js";
 import { HoldingsPage } from "../holdings/holdings-page.js";
 import { TransactionsPage } from "../transactions/transactions-page.js";
+import { ErrorPanel } from "../common/error/error.js";
 import { useRouter } from "./router.js";
 import { Menu } from "./menu.js";
 import { Breadcrumbs } from "./breadcrumbs.js";
@@ -45,9 +46,11 @@ function App(): ReactElement {
     }
 
     return (
-      <section>
-        <p>Path: {path}</p>
-      </section>
+      <div id={"content"} className={"overflow-auto"}>
+        <section>
+          <ErrorPanel error={`Page not found: ${path}`} />
+        </section>
+      </div>
     );
   }
 
