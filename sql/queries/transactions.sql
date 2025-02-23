@@ -131,3 +131,6 @@ INSERT INTO transaction (
   profile_id = @profile_id,
   deleted = @deleted
 ;
+
+-- name: DeleteTransaction :exec
+UPDATE transaction SET deleted = TRUE WHERE id = @id AND profile_id = @profile_id;

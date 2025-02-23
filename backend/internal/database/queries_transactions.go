@@ -118,3 +118,10 @@ func (db *DB) UpsertTransaction(ctx context.Context, transaction schema.Transact
 		Deleted:      transaction.Deleted,
 	})
 }
+
+func (db *DB) DeleteTransaction(ctx context.Context, id uuid.UUID, profileID uuid.UUID) error {
+	return db.queries.DeleteTransaction(ctx, database_gen.DeleteTransactionParams{
+		ID:        id,
+		ProfileID: profileID,
+	})
+}

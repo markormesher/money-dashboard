@@ -53,3 +53,14 @@ func (c *Core) UpsertTransaction(ctx context.Context, profile schema.Profile, tr
 
 	return c.DB.UpsertTransaction(ctx, transaction, profile.ID)
 }
+
+func (c *Core) DeleteTransaction(ctx context.Context, profile schema.Profile, id uuid.UUID) error {
+	_, ok, err := c.GetTransactionById(ctx, profile, id)
+	if err != nil {
+		return err
+	} else if !ok {
+		return fmt.Errorf("no such transaction")
+	}
+
+	return c.DB.DeleteTransaction(ctx, id, profile.ID)
+}

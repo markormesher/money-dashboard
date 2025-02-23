@@ -13,6 +13,20 @@ import (
 	"github.com/govalues/decimal"
 )
 
+const deleteTransaction = `-- name: DeleteTransaction :exec
+UPDATE transaction SET deleted = TRUE WHERE id = $1 AND profile_id = $2
+`
+
+type DeleteTransactionParams struct {
+	ID        uuid.UUID
+	ProfileID uuid.UUID
+}
+
+func (q *Queries) DeleteTransaction(ctx context.Context, arg DeleteTransactionParams) error {
+	_, err := q.db.Exec(ctx, deleteTransaction, arg.ID, arg.ProfileID)
+	return err
+}
+
 const getTransactionById = `-- name: GetTransactionById :one
 SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,

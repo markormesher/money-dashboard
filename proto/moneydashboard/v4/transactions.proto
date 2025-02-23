@@ -47,8 +47,15 @@ message UpsertTransactionRequest {
 
 message UpsertTransactionResponse {}
 
+message DeleteTransactionRequest {
+  string id = 1;
+}
+
+message DeleteTransactionResponse {}
+
 service MDTransactionService {
   rpc GetTransactionById(GetTransactionByIdRequest) returns (GetTransactionByIdResponse);
   rpc GetTransactionPage(GetTransactionPageRequest) returns (GetTransactionPageResponse);
   rpc UpsertTransaction(UpsertTransactionRequest) returns (UpsertTransactionResponse);
+  rpc DeleteTransaction(DeleteTransactionRequest) returns (DeleteTransactionResponse);
 }

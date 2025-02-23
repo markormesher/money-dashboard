@@ -69,3 +69,23 @@ func (s *apiServer) UpsertTransaction(ctx context.Context, req *connect.Request[
 	res := connect.NewResponse(&mdv4.UpsertTransactionResponse{})
 	return res, nil
 }
+
+func (s *apiServer) DeleteTransaction(ctx context.Context, req *connect.Request[mdv4.DeleteTransactionRequest]) (*connect.Response[mdv4.DeleteTransactionResponse], error) {
+	user, err := s.getReqUser(ctx, req)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	id, err := uuid.Parse(req.Msg.Id)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
+
+	err = s.core.DeleteTransaction(ctx, *user.ActiveProfile, id)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	res := connect.NewResponse(&mdv4.DeleteTransactionResponse{})
+	return res, nil
+}

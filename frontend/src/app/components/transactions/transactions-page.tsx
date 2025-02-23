@@ -10,15 +10,14 @@ import { ErrorPanel } from "../common/error/error.js";
 import { GBP_CURRENCY_ID, NULL_UUID } from "../../../config/consts.js";
 import { transactionServiceClient } from "../../../api/api.js";
 import { formatDateFromProto } from "../../utils/dates.js";
-
-import "./transactions.css";
-import { copyToClipboard } from "../../utils/text.js";
 import { formatCurrency } from "../../utils/currency.js";
 import { formatAsset } from "../../utils/assets.js";
 import { concatClasses } from "../../utils/style.js";
 import { useHoldingList } from "../../schema/hooks.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { TransactionEditModal } from "./transaction-edit-modal.js";
+
+import "./transactions.css";
 
 const PER_PAGE = 20;
 
@@ -40,6 +39,9 @@ function TransactionsPage(): ReactElement {
 
   const [editingId, setEditingId] = React.useState<string>();
   useKeyShortcut({ targetStr: "c", onTrigger: () => setEditingId(NULL_UUID) });
+
+  const [deletePendingId, setDeletePendingId] = React.useState<string>();
+  const clearDeletePendingId = React.useRef<number>(null);
 
   const holdings = useHoldingList({ onError: (e) => setError(e) });
   const [holdingsPerAccount, setHoldingsPerAccount] = React.useState<Record<string, number>>();
@@ -75,6 +77,27 @@ function TransactionsPage(): ReactElement {
       console.log(e);
     }
   }, [nudgeValue, page, searchPattern]);
+
+  const deleteTransaction = (id: string) => {
+    if (deletePendingId != id) {
+      setDeletePendingId(id);
+      if (clearDeletePendingId.current) {
+        clearTimeout(clearDeletePendingId.current);
+      }
+      clearDeletePendingId.current = window.setTimeout(() => setDeletePendingId(undefined), 2000);
+    } else {
+      transactionServiceClient
+        .deleteTransaction({ id })
+        .then(() => {
+          toastBus.success("Deleted transaction.");
+          nudge();
+        })
+        .catch((e) => {
+          toastBus.error("Failed to delete transaction.");
+          console.log(e);
+        });
+    }
+  };
 
   const pageButtons = [
     <button className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
@@ -144,6 +167,8 @@ function TransactionsPage(): ReactElement {
 
                 const qtyAccountHoldings = holdingsPerAccount[t.holding?.account?.id ?? ""] ?? 999;
 
+                const deletePending = deletePendingId == t.id;
+
                 return (
                   <tr>
                     <td>{formatDateFromProto(t.date)}</td>
@@ -186,10 +211,10 @@ function TransactionsPage(): ReactElement {
                           </a>
                         </li>
                         <li>
-                          <a href={""} className={"secondary"} onClick={() => copyToClipboard(t.id)}>
+                          <a href={""} className={"secondary"} onClick={() => deleteTransaction(t.id)}>
                             <IconGroup>
                               <Icon name={"delete"} />
-                              <span>Delete</span>
+                              <span>{deletePending ? "Sure?" : "Delete"}</span>
                             </IconGroup>
                           </a>
                         </li>
