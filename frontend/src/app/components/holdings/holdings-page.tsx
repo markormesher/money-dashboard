@@ -142,7 +142,7 @@ function HoldingsPage(): ReactElement {
               <span>
                 A holding is a balance of cash in a single <a href={"/metadata/currencies"}>currency</a> or an
                 investment in a single <a href={"/metadata/assets"}>asset</a> held within an{" "}
-                <a href={"/records/accounts"}>account</a>.
+                <a href={"/settings/accounts"}>account</a>.
               </span>
             </IconGroup>
           </p>

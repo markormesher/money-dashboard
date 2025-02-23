@@ -138,7 +138,7 @@ function AccountsPage(): ReactElement {
             <IconGroup>
               <Icon name={"info"} className={"muted"} />
               <span>
-                Accounts are a wrapper around a collection of one or more <a href={"/records/holdings"}>holdings</a>;
+                Accounts are a wrapper around a collection of one or more <a href={"/settings/holdings"}>holdings</a>;
                 usually 1:1 with an actual account held at a financial institution.
               </span>
             </IconGroup>
