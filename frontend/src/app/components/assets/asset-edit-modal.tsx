@@ -112,7 +112,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
             formState={form}
             fieldName={"name"}
             type={"text"}
-            placeholder={"e.g. LSE:ABC"}
+            placeholder={"e.g. ABC"}
             value={form.model?.name}
             onChange={(evt) => form.patchModel({ name: evt.target.value })}
           />
