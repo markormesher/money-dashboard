@@ -30,16 +30,6 @@ function Menu(props: MenuProps): ReactElement {
     }
   }, []);
 
-  React.useEffect(() => {
-    document.querySelectorAll("nav > details").forEach((d) => {
-      if (d.querySelector("li.active")) {
-        d.setAttribute("open", "open");
-      } else {
-        d.removeAttribute("open");
-      }
-    });
-  }, [currentPath]);
-
   useKeyShortcut({
     targetStr: "gd",
     onTrigger: () => {
@@ -83,7 +73,7 @@ function Menu(props: MenuProps): ReactElement {
             {link("/transactions", "Transactions", "list")}
           </ul>
 
-          <details>
+          <details open>
             <summary>Reports</summary>
             <ul>
               {link("/reports/balance-history", "Balance History", "monitoring")}
@@ -91,7 +81,7 @@ function Menu(props: MenuProps): ReactElement {
             </ul>
           </details>
 
-          <details>
+          <details open>
             <summary>Planning</summary>
             <ul>
               {link("/planning/budgets", "Budgets", "tune")}
@@ -99,7 +89,7 @@ function Menu(props: MenuProps): ReactElement {
             </ul>
           </details>
 
-          <details>
+          <details open>
             <summary>Settings</summary>
             <ul>
               {link("/settings/accounts", "Accounts", "account_balance")}
@@ -108,7 +98,7 @@ function Menu(props: MenuProps): ReactElement {
             </ul>
           </details>
 
-          <details>
+          <details open>
             <summary>Metadata</summary>
             <ul>
               {link("/metadata/assets", "Assets", "candlestick_chart")}

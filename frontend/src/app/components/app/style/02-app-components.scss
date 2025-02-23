@@ -121,9 +121,12 @@ aside.main-menu {
     }
 
     summary {
-      font-weight: bold;
       color: var(--pico-muted-color);
       margin-bottom: calc(var(--pico-block-spacing-vertical) * 0.5);
+
+      &::after {
+        background-image: none;
+      }
     }
 
     ul {
