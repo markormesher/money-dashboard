@@ -45,6 +45,19 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
     },
   });
 
+  const [holdingsPerAccount, setHoldingsPerAccount] = React.useState<Record<string, number>>();
+  React.useEffect(() => {
+    if (!holdings) {
+      return;
+    }
+
+    const hpa: Record<string, number> = {};
+    holdings.forEach((h) => {
+      hpa[h.account?.id ?? ""] = (hpa[h.account?.id ?? ""] ?? 0) + 1;
+    });
+    setHoldingsPerAccount(hpa);
+  }, [holdings]);
+
   useAsyncEffect(async () => {
     if (createNew) {
       form.setModel({
@@ -145,18 +158,24 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 
         <fieldset className={"grid"}>
           <Select
-            label={"Holding"}
+            label={"Account / Holding"}
             formState={form}
             fieldName={"holding"}
             value={form.model?.holding?.id}
             onChange={(evt) => form.patchModel({ holding: holdings?.find((c) => c.id == evt.target.value) })}
           >
             {holdings
-              ?.filter((c) => c.active)
+              ?.filter((h) => h.active)
               ?.sort((a, b) => `${a.account?.name} / ${a.name}`.localeCompare(`${b.account?.name} / ${b.name}`))
-              ?.map((c) => (
-                <option value={c.id}>
-                  {c.account?.name} / {c.name}
+              ?.map((h) => (
+                <option value={h.id}>
+                  {(holdingsPerAccount?.[h.account?.id ?? ""] ?? 0) > 1 ? (
+                    <>
+                      {h.account?.name} &nbsp;&nbsp;&#x2022;&nbsp;&nbsp; {h.name}
+                    </>
+                  ) : (
+                    h.account?.name
+                  )}
                 </option>
               ))}
           </Select>
@@ -195,6 +214,29 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
             onChange={(evt) => form.patchModel({ amount: parseFloat(evt.target.value) })}
           />
         </fieldset>
+
+        {form.model?.category?.isCapitalAcquisition || form.model?.category?.isCapitalDisposal ? (
+          <fieldset className={"grid"}>
+            <Input
+              label={"Unit Value"}
+              formState={form}
+              fieldName={"unitValue"}
+              type={"number"}
+              step={0.0001}
+              value={safeNumberValue(form.model?.unitValue)}
+              onChange={(evt) => form.patchModel({ unitValue: parseFloat(evt.target.value) })}
+            />
+
+            <IconGroup>
+              <Icon name={"info"} />
+              <small>
+                This is the {form.model?.category?.isCapitalAcquisition ? "acquisition cost" : "disposal value"} of{" "}
+                <u>each</u> unit of the asset {form.model?.category?.isCapitalAcquisition ? "acquired" : "disposed of"}{" "}
+                in this transaction.
+              </small>
+            </IconGroup>
+          </fieldset>
+        ) : null}
 
         <fieldset className={"grid"}>
           <Textarea

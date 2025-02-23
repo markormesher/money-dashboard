@@ -227,20 +227,63 @@ function validateTransaction(value: Partial<Transaction>): FormValidationResult<
     result.errors.category = "A category must be selected";
   }
 
-  /*
-   *
-	if t.Date.Before(PlatformMinimumDate) {
-		return fmt.Errorf("date must not be before the platform minimum date")
-	}
+  if (value?.amount === undefined) {
+    result.isValid = false;
+  } else {
+    if (isNaN(value.amount)) {
+      result.isValid = false;
+      result.errors.amount = "Amount must be valid";
+    }
+  }
 
-	if t.BudgetDate.Before(PlatformMinimumDate) {
-		return fmt.Errorf("budget date must not be before the platform minimum date")
-	}
+  if (value?.unitValue === undefined) {
+    result.isValid = false;
+  } else {
+    if (isNaN(value.unitValue)) {
+      result.isValid = false;
+      result.errors.unitValue = "Unit value must be valid";
+    } else if (value.unitValue < 0) {
+      result.isValid = false;
+      result.errors.unitValue = "Unit value must be positive";
+    }
+  }
 
-	if t.CreationDate.Before(PlatformMinimumDate) {
-		return fmt.Errorf("creation must not be before the platform minimum date")
-	}
-   * */
+  // combination rules
+
+  if ((value?.category?.isCapitalAcquisition || value?.category?.isCapitalDisposal) && !value?.holding?.asset) {
+    result.isValid = false;
+    result.errors.category = "This category is only valid for asset-backed holdings";
+  }
+
+  if (value?.category?.isCapitalAcquisition && (value?.amount ?? 0) <= 0) {
+    result.isValid = false;
+    result.errors.amount = "Capital acquisitions must be positive";
+  }
+
+  if (value?.category?.isCapitalDisposal && (value?.amount ?? 0) >= 0) {
+    result.isValid = false;
+    result.errors.amount = "Capital disposals must be negative";
+  }
+
+  if (value?.category?.isCapitalEventFee && (value?.amount ?? 0) >= 0) {
+    result.isValid = false;
+    result.errors.amount = "Capital event fees must be negative";
+  }
+
+  if ((value?.category?.isInterestIncome || value?.category?.isDividendIncome) && !value?.holding?.currency) {
+    result.isValid = false;
+    result.errors.category = "This category is only valid for cash-backed holdings";
+  }
+
+  if (value?.category?.isInterestIncome && (value?.amount ?? 0) <= 0) {
+    result.isValid = false;
+    result.errors.amount = "Interest income must be positive";
+  }
+
+  if (value?.category?.isDividendIncome && (value?.amount ?? 0) <= 0) {
+    result.isValid = false;
+    result.errors.amount = "Dividend income must be positive";
+  }
 
   return result;
 }

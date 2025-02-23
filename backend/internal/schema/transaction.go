@@ -49,6 +49,38 @@ func (t *Transaction) Validate() error {
 		return fmt.Errorf("transaction must be linked to a category")
 	}
 
+	if t.UnitValue.IsNeg() {
+		return fmt.Errorf("unit value must be positive")
+	}
+
+	if (t.Category.IsCapitalAcquisition || t.Category.IsCapitalDisposal) && t.Holding.Asset == nil {
+		return fmt.Errorf("category requires an asset-backed holding")
+	}
+
+	if t.Category.IsCapitalAcquisition && t.Amount.IsNeg() {
+		return fmt.Errorf("capital acquisitions must be positive")
+	}
+
+	if t.Category.IsCapitalDisposal && t.Amount.IsPos() {
+		return fmt.Errorf("capital disposals must be negative")
+	}
+
+	if t.Category.IsCapitalEventFee && t.Amount.IsPos() {
+		return fmt.Errorf("capital event fees must be negative")
+	}
+
+	if (t.Category.IsInterestIncome || t.Category.IsDividendIncome) && t.Holding.Currency == nil {
+		return fmt.Errorf("category requires a cash-backed holding")
+	}
+
+	if t.Category.IsInterestIncome && t.Amount.IsNeg() {
+		return fmt.Errorf("interest income must be positive")
+	}
+
+	if t.Category.IsDividendIncome && t.Amount.IsNeg() {
+		return fmt.Errorf("dividend income must be positive")
+	}
+
 	return nil
 }
 
