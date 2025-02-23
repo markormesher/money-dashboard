@@ -1,8 +1,8 @@
 import React, { ReactElement } from "react";
 import "./page-header.scss";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { useKeyShortcut } from "../../utils/hooks.js";
 import { focusFieldByName } from "../../utils/forms.js";
+import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
 
 type PageHeaderProps = {
   title: string;
@@ -30,10 +30,7 @@ function PageHeader(props: React.PropsWithChildren<PageHeaderProps>): ReactEleme
     }
   }, [searchString]);
 
-  useKeyShortcut({
-    targetStr: "/",
-    onTrigger: () => focusFieldByName("search"),
-  });
+  useKeyShortcut("/", () => focusFieldByName("search"));
 
   let options = props.options ?? [];
   if (props.onSearchTextChange) {

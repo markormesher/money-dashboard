@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 import "./modal.css";
 import { useFresh } from "../../../utils/hooks.js";
+import { ESCAPE, useKeyShortcut } from "../key-shortcuts/key-shortcuts.js";
 
 type ExternalModalProps = {
   open: boolean;
@@ -32,25 +33,11 @@ function Modal(props: React.PropsWithChildren<ModalProps>): ReactElement {
     maybeClose();
   };
 
-  const escKeyListener = (evt: KeyboardEvent) => {
-    if (evt.key == "Escape") {
-      evt.preventDefault();
-      evt.stopPropagation();
-      maybeClose();
-    }
-  };
-
-  React.useEffect(() => {
-    if (open) {
-      document.addEventListener("keydown", escKeyListener);
-    } else {
-      document.removeEventListener("keydown", escKeyListener);
-    }
-
-    return function cleanup() {
-      document.removeEventListener("keydown", escKeyListener);
-    };
-  }, [open]);
+  useKeyShortcut(ESCAPE, (evt) => {
+    evt.preventDefault();
+    evt.stopPropagation();
+    maybeClose();
+  });
 
   return (
     <dialog open={open} onClick={bgClickListener} ref={dialogRef}>

@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
-import { useAsyncEffect, useKeyShortcut, useNudge } from "../../utils/hooks.js";
+import { useAsyncEffect, useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useRouter } from "../app/router.js";
@@ -13,6 +13,7 @@ import { NULL_UUID } from "../../../config/consts.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { accountServiceClient } from "../../../api/api.js";
 import { concatClasses } from "../../utils/style.js";
+import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
 import { AccountEditModal } from "./account-edit-modal.js";
 
 function AccountsPage(): ReactElement {
@@ -29,7 +30,7 @@ function AccountsPage(): ReactElement {
   const [showInactive, setShowInactive] = React.useState(false);
 
   const [editingId, setEditingId] = React.useState<string>();
-  useKeyShortcut({ targetStr: "c", onTrigger: () => setEditingId(NULL_UUID) });
+  useKeyShortcut("c", () => setEditingId(NULL_UUID));
 
   useAsyncEffect(async () => {
     try {

@@ -8,6 +8,7 @@ import { AccountsPage } from "../accounts/accounts-page.js";
 import { HoldingsPage } from "../holdings/holdings-page.js";
 import { TransactionsPage } from "../transactions/transactions-page.js";
 import { ErrorPanel } from "../common/error/error.js";
+import { KeyListener } from "../common/key-shortcuts/key-shortcuts.js";
 import { useRouter } from "./router.js";
 import { Menu } from "./menu.js";
 import { Breadcrumbs } from "./breadcrumbs.js";
@@ -83,6 +84,8 @@ function App(): ReactElement {
         <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
         {getContent()}
       </main>
+
+      <KeyListener />
     </>
   );
 }

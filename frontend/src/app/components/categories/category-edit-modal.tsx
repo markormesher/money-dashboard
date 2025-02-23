@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { Category } from "../../../api_gen/moneydashboard/v4/categories_pb.js";
-import { useAsyncEffect, useAsyncHandler, useKeyShortcut } from "../../utils/hooks.js";
+import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { categoryServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
@@ -11,6 +11,7 @@ import { validateCategory } from "../../schema/validation.js";
 import { Input } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
+import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
 
 type CategoryEditModalProps = {
   categoryId: string;
@@ -105,7 +106,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
     form.wg.done();
   });
 
-  useKeyShortcut({ ctrlEnter: true, onTrigger: () => save() });
+  useKeyShortcut(CTRLENTER, () => save());
 
   const header = (
     <IconGroup>

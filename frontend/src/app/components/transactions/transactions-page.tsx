@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { Transaction } from "../../../api_gen/moneydashboard/v4/transactions_pb.js";
-import { useAsyncEffect, useKeyShortcut, useNudge } from "../../utils/hooks.js";
+import { useAsyncEffect, useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useRouter } from "../app/router.js";
@@ -15,8 +15,8 @@ import { formatAsset } from "../../utils/assets.js";
 import { concatClasses } from "../../utils/style.js";
 import { useHoldingList } from "../../schema/hooks.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
+import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
 import { TransactionEditModal } from "./transaction-edit-modal.js";
-
 import "./transactions.css";
 
 const PER_PAGE = 20;
@@ -38,7 +38,7 @@ function TransactionsPage(): ReactElement {
   const [transactions, setTransactions] = React.useState<Transaction[]>();
 
   const [editingId, setEditingId] = React.useState<string>();
-  useKeyShortcut({ targetStr: "c", onTrigger: () => setEditingId(NULL_UUID) });
+  useKeyShortcut("c", () => setEditingId(NULL_UUID));
 
   const [deletePendingId, setDeletePendingId] = React.useState<string>();
   const clearDeletePendingId = React.useRef<number>(null);

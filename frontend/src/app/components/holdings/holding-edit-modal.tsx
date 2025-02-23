@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { Holding } from "../../../api_gen/moneydashboard/v4/holdings_pb.js";
-import { useAsyncEffect, useAsyncHandler, useKeyShortcut } from "../../utils/hooks.js";
+import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { holdingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
@@ -12,6 +12,7 @@ import { Input, Select } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { useAccountList, useAssetList, useCurrencyList } from "../../schema/hooks.js";
+import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
 
 type HoldingEditModalProps = {
   holdingId: string;
@@ -106,7 +107,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
     form.wg.done();
   });
 
-  useKeyShortcut({ ctrlEnter: true, onTrigger: () => save() });
+  useKeyShortcut(CTRLENTER, () => save());
 
   const header = (
     <IconGroup>

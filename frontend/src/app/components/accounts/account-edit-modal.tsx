@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
-import { useAsyncEffect, useAsyncHandler, useKeyShortcut } from "../../utils/hooks.js";
+import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { accountServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
@@ -11,6 +11,7 @@ import { validateAccount } from "../../schema/validation.js";
 import { Input, Textarea } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
+import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
 
 type AccountEditModalProps = {
   accountId: string;
@@ -82,7 +83,7 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
     form.wg.done();
   });
 
-  useKeyShortcut({ ctrlEnter: true, onTrigger: () => save() });
+  useKeyShortcut(CTRLENTER, () => save());
 
   const header = (
     <IconGroup>
