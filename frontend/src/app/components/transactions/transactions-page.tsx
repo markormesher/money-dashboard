@@ -159,10 +159,11 @@ function TransactionsPage(): ReactElement {
                 if (t.holding?.currency) {
                   amount = formatCurrency(t.amount, t.holding.currency);
                   if (t.holding.currency.id != GBP_CURRENCY_ID) {
-                    amountPrefix = t.holding.currency.code;
+                    amountPrefix = t.holding.currency.symbol + t.holding.currency.code;
                   }
                 } else if (t.holding?.asset) {
                   amount = formatAsset(t.amount, t.holding.asset);
+                  amountPrefix = t.holding.asset.name;
                 }
 
                 const qtyAccountHoldings = holdingsPerAccount[t.holding?.account?.id ?? ""] ?? 999;
@@ -227,8 +228,12 @@ function TransactionsPage(): ReactElement {
           </tbody>
         </table>
         <small className={"muted"}>
-          Showing rows {PER_PAGE * (page - 1) + 1} of {Math.min(filteredTotal, PER_PAGE * page)} of {filteredTotal}
-          {filteredTotal != total ? ` (filtered from ${total} total)` : ""}.
+          Showing rows {PER_PAGE * (page - 1) + 1} of {Math.min(filteredTotal, PER_PAGE * page)} of{" "}
+          {filteredTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          {filteredTotal != total
+            ? ` (filtered from ${total.toLocaleString(undefined, { maximumFractionDigits: 0 })} total)`
+            : ""}
+          .
         </small>
       </>
     );
