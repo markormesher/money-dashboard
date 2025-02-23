@@ -227,8 +227,8 @@ function TransactionsPage(): ReactElement {
           </tbody>
         </table>
         <small className={"muted"}>
-          Showing rows {PER_PAGE * (page - 1) + 1} of {Math.min(filteredTotal, PER_PAGE * page)} of {filteredTotal}{" "}
-          (filtered from {total} total).
+          Showing rows {PER_PAGE * (page - 1) + 1} of {Math.min(filteredTotal, PER_PAGE * page)} of {filteredTotal}
+          {filteredTotal != total ? ` (filtered from ${total} total)` : ""}.
         </small>
       </>
     );
