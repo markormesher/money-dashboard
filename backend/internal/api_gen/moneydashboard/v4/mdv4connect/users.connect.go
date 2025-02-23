@@ -35,9 +35,6 @@ const (
 const (
 	// MDUserServiceGetUserProcedure is the fully-qualified name of the MDUserService's GetUser RPC.
 	MDUserServiceGetUserProcedure = "/moneydashboard.v4.MDUserService/GetUser"
-	// MDUserServiceGetProfilesProcedure is the fully-qualified name of the MDUserService's GetProfiles
-	// RPC.
-	MDUserServiceGetProfilesProcedure = "/moneydashboard.v4.MDUserService/GetProfiles"
 	// MDUserServiceSetActiveProfileProcedure is the fully-qualified name of the MDUserService's
 	// SetActiveProfile RPC.
 	MDUserServiceSetActiveProfileProcedure = "/moneydashboard.v4.MDUserService/SetActiveProfile"
@@ -46,7 +43,6 @@ const (
 // MDUserServiceClient is a client for the moneydashboard.v4.MDUserService service.
 type MDUserServiceClient interface {
 	GetUser(context.Context, *connect.Request[v4.GetUserRequest]) (*connect.Response[v4.GetUserResponse], error)
-	GetProfiles(context.Context, *connect.Request[v4.GetProfilesRequest]) (*connect.Response[v4.GetProfilesResponse], error)
 	SetActiveProfile(context.Context, *connect.Request[v4.SetActiveProfileRequest]) (*connect.Response[v4.SetActiveProfileResponse], error)
 }
 
@@ -67,12 +63,6 @@ func NewMDUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(mDUserServiceMethods.ByName("GetUser")),
 			connect.WithClientOptions(opts...),
 		),
-		getProfiles: connect.NewClient[v4.GetProfilesRequest, v4.GetProfilesResponse](
-			httpClient,
-			baseURL+MDUserServiceGetProfilesProcedure,
-			connect.WithSchema(mDUserServiceMethods.ByName("GetProfiles")),
-			connect.WithClientOptions(opts...),
-		),
 		setActiveProfile: connect.NewClient[v4.SetActiveProfileRequest, v4.SetActiveProfileResponse](
 			httpClient,
 			baseURL+MDUserServiceSetActiveProfileProcedure,
@@ -85,18 +75,12 @@ func NewMDUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 // mDUserServiceClient implements MDUserServiceClient.
 type mDUserServiceClient struct {
 	getUser          *connect.Client[v4.GetUserRequest, v4.GetUserResponse]
-	getProfiles      *connect.Client[v4.GetProfilesRequest, v4.GetProfilesResponse]
 	setActiveProfile *connect.Client[v4.SetActiveProfileRequest, v4.SetActiveProfileResponse]
 }
 
 // GetUser calls moneydashboard.v4.MDUserService.GetUser.
 func (c *mDUserServiceClient) GetUser(ctx context.Context, req *connect.Request[v4.GetUserRequest]) (*connect.Response[v4.GetUserResponse], error) {
 	return c.getUser.CallUnary(ctx, req)
-}
-
-// GetProfiles calls moneydashboard.v4.MDUserService.GetProfiles.
-func (c *mDUserServiceClient) GetProfiles(ctx context.Context, req *connect.Request[v4.GetProfilesRequest]) (*connect.Response[v4.GetProfilesResponse], error) {
-	return c.getProfiles.CallUnary(ctx, req)
 }
 
 // SetActiveProfile calls moneydashboard.v4.MDUserService.SetActiveProfile.
@@ -107,7 +91,6 @@ func (c *mDUserServiceClient) SetActiveProfile(ctx context.Context, req *connect
 // MDUserServiceHandler is an implementation of the moneydashboard.v4.MDUserService service.
 type MDUserServiceHandler interface {
 	GetUser(context.Context, *connect.Request[v4.GetUserRequest]) (*connect.Response[v4.GetUserResponse], error)
-	GetProfiles(context.Context, *connect.Request[v4.GetProfilesRequest]) (*connect.Response[v4.GetProfilesResponse], error)
 	SetActiveProfile(context.Context, *connect.Request[v4.SetActiveProfileRequest]) (*connect.Response[v4.SetActiveProfileResponse], error)
 }
 
@@ -124,12 +107,6 @@ func NewMDUserServiceHandler(svc MDUserServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(mDUserServiceMethods.ByName("GetUser")),
 		connect.WithHandlerOptions(opts...),
 	)
-	mDUserServiceGetProfilesHandler := connect.NewUnaryHandler(
-		MDUserServiceGetProfilesProcedure,
-		svc.GetProfiles,
-		connect.WithSchema(mDUserServiceMethods.ByName("GetProfiles")),
-		connect.WithHandlerOptions(opts...),
-	)
 	mDUserServiceSetActiveProfileHandler := connect.NewUnaryHandler(
 		MDUserServiceSetActiveProfileProcedure,
 		svc.SetActiveProfile,
@@ -140,8 +117,6 @@ func NewMDUserServiceHandler(svc MDUserServiceHandler, opts ...connect.HandlerOp
 		switch r.URL.Path {
 		case MDUserServiceGetUserProcedure:
 			mDUserServiceGetUserHandler.ServeHTTP(w, r)
-		case MDUserServiceGetProfilesProcedure:
-			mDUserServiceGetProfilesHandler.ServeHTTP(w, r)
 		case MDUserServiceSetActiveProfileProcedure:
 			mDUserServiceSetActiveProfileHandler.ServeHTTP(w, r)
 		default:
@@ -155,10 +130,6 @@ type UnimplementedMDUserServiceHandler struct{}
 
 func (UnimplementedMDUserServiceHandler) GetUser(context.Context, *connect.Request[v4.GetUserRequest]) (*connect.Response[v4.GetUserResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDUserService.GetUser is not implemented"))
-}
-
-func (UnimplementedMDUserServiceHandler) GetProfiles(context.Context, *connect.Request[v4.GetProfilesRequest]) (*connect.Response[v4.GetProfilesResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDUserService.GetProfiles is not implemented"))
 }
 
 func (UnimplementedMDUserServiceHandler) SetActiveProfile(context.Context, *connect.Request[v4.SetActiveProfileRequest]) (*connect.Response[v4.SetActiveProfileResponse], error) {

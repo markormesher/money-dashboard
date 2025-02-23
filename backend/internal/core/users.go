@@ -31,7 +31,7 @@ func (c *Core) GetOrCreateUser(ctx context.Context, externalUsername string, dis
 	}
 
 	// load profiles for this user and create a default one if they don't have any
-	profiles, err := c.DB.GetUserProfiles(ctx, user.ID)
+	profiles, err := c.DB.GetAllProfiles(ctx, user.ID)
 	if err != nil {
 		return schema.User{}, err
 	}
@@ -103,37 +103,8 @@ func (c *Core) createNewUser(ctx context.Context, externalUsername string, displ
 	return user, nil
 }
 
-func (c *Core) createDefaultProfile(ctx context.Context, user schema.User) (schema.Profile, error) {
-	// create the profile
-	profile := schema.Profile{
-		ID:   uuid.New(),
-		Name: "Default",
-	}
-	err := c.DB.UpsertProfile(ctx, profile)
-	if err != nil {
-		return schema.Profile{}, err
-	}
-
-	// make the user the owner of the profile
-	role := schema.UserProfileRole{
-		User:    &user,
-		Profile: &profile,
-		Role:    "owner",
-	}
-	err = c.DB.UpsertUserProfileRole(ctx, role)
-	if err != nil {
-		return schema.Profile{}, err
-	}
-
-	return profile, nil
-}
-
-func (c *Core) GetProfiles(ctx context.Context, user schema.User) ([]schema.Profile, error) {
-	return c.DB.GetUserProfiles(ctx, user.ID)
-}
-
 func (c *Core) SetActiveProfile(ctx context.Context, user schema.User, profile schema.Profile) error {
-	profiles, err := c.DB.GetUserProfiles(ctx, user.ID)
+	profiles, err := c.DB.GetAllProfiles(ctx, user.ID)
 	if err != nil {
 		return err
 	}

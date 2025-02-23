@@ -4,13 +4,15 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
+import type { Profile } from "./profiles_pb.js";
+import { file_moneydashboard_v4_profiles } from "./profiles_pb.js";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file moneydashboard/v4/users.proto.
  */
 export const file_moneydashboard_v4_users: GenFile = /*@__PURE__*/
-  fileDesc("Ch1tb25leWRhc2hib2FyZC92NC91c2Vycy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiiAEKBFVzZXISCgoCaWQYASABKAkSGQoRZXh0ZXJuYWxfdXNlcm5hbWUYAiABKAkSFAoMZGlzcGxheV9uYW1lGAMgASgJEg8KB2RlbGV0ZWQYBCABKAgSMgoOYWN0aXZlX3Byb2ZpbGUYBSABKAsyGi5tb25leWRhc2hib2FyZC52NC5Qcm9maWxlIjQKB1Byb2ZpbGUSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdkZWxldGVkGAMgASgIIhAKDkdldFVzZXJSZXF1ZXN0IjgKD0dldFVzZXJSZXNwb25zZRIlCgR1c2VyGAEgASgLMhcubW9uZXlkYXNoYm9hcmQudjQuVXNlciIUChJHZXRQcm9maWxlc1JlcXVlc3QiQwoTR2V0UHJvZmlsZXNSZXNwb25zZRIsCghwcm9maWxlcxgBIAMoCzIaLm1vbmV5ZGFzaGJvYXJkLnY0LlByb2ZpbGUiRgoXU2V0QWN0aXZlUHJvZmlsZVJlcXVlc3QSKwoHcHJvZmlsZRgBIAEoCzIaLm1vbmV5ZGFzaGJvYXJkLnY0LlByb2ZpbGUiGgoYU2V0QWN0aXZlUHJvZmlsZVJlc3BvbnNlMqwCCg1NRFVzZXJTZXJ2aWNlElAKB0dldFVzZXISIS5tb25leWRhc2hib2FyZC52NC5HZXRVc2VyUmVxdWVzdBoiLm1vbmV5ZGFzaGJvYXJkLnY0LkdldFVzZXJSZXNwb25zZRJcCgtHZXRQcm9maWxlcxIlLm1vbmV5ZGFzaGJvYXJkLnY0LkdldFByb2ZpbGVzUmVxdWVzdBomLm1vbmV5ZGFzaGJvYXJkLnY0LkdldFByb2ZpbGVzUmVzcG9uc2USawoQU2V0QWN0aXZlUHJvZmlsZRIqLm1vbmV5ZGFzaGJvYXJkLnY0LlNldEFjdGl2ZVByb2ZpbGVSZXF1ZXN0GisubW9uZXlkYXNoYm9hcmQudjQuU2V0QWN0aXZlUHJvZmlsZVJlc3BvbnNlQlFaT2dpdGh1Yi5jb20vbWFya29ybWVzaGVyL21vbmV5LWRhc2hib2FyZC9pbnRlcm5hbC9hcGlfZ2VuL21vbmV5ZGFzaGJvYXJkL3Y0O21kdjRiBnByb3RvMw");
+  fileDesc("Ch1tb25leWRhc2hib2FyZC92NC91c2Vycy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiiAEKBFVzZXISCgoCaWQYASABKAkSGQoRZXh0ZXJuYWxfdXNlcm5hbWUYAiABKAkSFAoMZGlzcGxheV9uYW1lGAMgASgJEg8KB2RlbGV0ZWQYBCABKAgSMgoOYWN0aXZlX3Byb2ZpbGUYBSABKAsyGi5tb25leWRhc2hib2FyZC52NC5Qcm9maWxlIhAKDkdldFVzZXJSZXF1ZXN0IjgKD0dldFVzZXJSZXNwb25zZRIlCgR1c2VyGAEgASgLMhcubW9uZXlkYXNoYm9hcmQudjQuVXNlciJGChdTZXRBY3RpdmVQcm9maWxlUmVxdWVzdBIrCgdwcm9maWxlGAEgASgLMhoubW9uZXlkYXNoYm9hcmQudjQuUHJvZmlsZSIaChhTZXRBY3RpdmVQcm9maWxlUmVzcG9uc2UyzgEKDU1EVXNlclNlcnZpY2USUAoHR2V0VXNlchIhLm1vbmV5ZGFzaGJvYXJkLnY0LkdldFVzZXJSZXF1ZXN0GiIubW9uZXlkYXNoYm9hcmQudjQuR2V0VXNlclJlc3BvbnNlEmsKEFNldEFjdGl2ZVByb2ZpbGUSKi5tb25leWRhc2hib2FyZC52NC5TZXRBY3RpdmVQcm9maWxlUmVxdWVzdBorLm1vbmV5ZGFzaGJvYXJkLnY0LlNldEFjdGl2ZVByb2ZpbGVSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM", [file_moneydashboard_v4_profiles]);
 
 /**
  * @generated from message moneydashboard.v4.User
@@ -50,33 +52,6 @@ export const UserSchema: GenMessage<User> = /*@__PURE__*/
   messageDesc(file_moneydashboard_v4_users, 0);
 
 /**
- * @generated from message moneydashboard.v4.Profile
- */
-export type Profile = Message<"moneydashboard.v4.Profile"> & {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id: string;
-
-  /**
-   * @generated from field: string name = 2;
-   */
-  name: string;
-
-  /**
-   * @generated from field: bool deleted = 3;
-   */
-  deleted: boolean;
-};
-
-/**
- * Describes the message moneydashboard.v4.Profile.
- * Use `create(ProfileSchema)` to create a new message.
- */
-export const ProfileSchema: GenMessage<Profile> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 1);
-
-/**
  * @generated from message moneydashboard.v4.GetUserRequest
  */
 export type GetUserRequest = Message<"moneydashboard.v4.GetUserRequest"> & {
@@ -87,7 +62,7 @@ export type GetUserRequest = Message<"moneydashboard.v4.GetUserRequest"> & {
  * Use `create(GetUserRequestSchema)` to create a new message.
  */
 export const GetUserRequestSchema: GenMessage<GetUserRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 2);
+  messageDesc(file_moneydashboard_v4_users, 1);
 
 /**
  * @generated from message moneydashboard.v4.GetUserResponse
@@ -104,37 +79,7 @@ export type GetUserResponse = Message<"moneydashboard.v4.GetUserResponse"> & {
  * Use `create(GetUserResponseSchema)` to create a new message.
  */
 export const GetUserResponseSchema: GenMessage<GetUserResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 3);
-
-/**
- * @generated from message moneydashboard.v4.GetProfilesRequest
- */
-export type GetProfilesRequest = Message<"moneydashboard.v4.GetProfilesRequest"> & {
-};
-
-/**
- * Describes the message moneydashboard.v4.GetProfilesRequest.
- * Use `create(GetProfilesRequestSchema)` to create a new message.
- */
-export const GetProfilesRequestSchema: GenMessage<GetProfilesRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 4);
-
-/**
- * @generated from message moneydashboard.v4.GetProfilesResponse
- */
-export type GetProfilesResponse = Message<"moneydashboard.v4.GetProfilesResponse"> & {
-  /**
-   * @generated from field: repeated moneydashboard.v4.Profile profiles = 1;
-   */
-  profiles: Profile[];
-};
-
-/**
- * Describes the message moneydashboard.v4.GetProfilesResponse.
- * Use `create(GetProfilesResponseSchema)` to create a new message.
- */
-export const GetProfilesResponseSchema: GenMessage<GetProfilesResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 5);
+  messageDesc(file_moneydashboard_v4_users, 2);
 
 /**
  * @generated from message moneydashboard.v4.SetActiveProfileRequest
@@ -151,7 +96,7 @@ export type SetActiveProfileRequest = Message<"moneydashboard.v4.SetActiveProfil
  * Use `create(SetActiveProfileRequestSchema)` to create a new message.
  */
 export const SetActiveProfileRequestSchema: GenMessage<SetActiveProfileRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 6);
+  messageDesc(file_moneydashboard_v4_users, 3);
 
 /**
  * @generated from message moneydashboard.v4.SetActiveProfileResponse
@@ -164,7 +109,7 @@ export type SetActiveProfileResponse = Message<"moneydashboard.v4.SetActiveProfi
  * Use `create(SetActiveProfileResponseSchema)` to create a new message.
  */
 export const SetActiveProfileResponseSchema: GenMessage<SetActiveProfileResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 7);
+  messageDesc(file_moneydashboard_v4_users, 4);
 
 /**
  * @generated from service moneydashboard.v4.MDUserService
@@ -177,14 +122,6 @@ export const MDUserService: GenService<{
     methodKind: "unary";
     input: typeof GetUserRequestSchema;
     output: typeof GetUserResponseSchema;
-  },
-  /**
-   * @generated from rpc moneydashboard.v4.MDUserService.GetProfiles
-   */
-  getProfiles: {
-    methodKind: "unary";
-    input: typeof GetProfilesRequestSchema;
-    output: typeof GetProfilesResponseSchema;
   },
   /**
    * @generated from rpc moneydashboard.v4.MDUserService.SetActiveProfile

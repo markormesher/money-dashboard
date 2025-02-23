@@ -11,17 +11,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const getProfileById = `-- name: GetProfileById :one
-SELECT id, name, deleted FROM profile WHERE profile.id = $1 AND profile.deleted = FALSE
-`
-
-func (q *Queries) GetProfileById(ctx context.Context, id uuid.UUID) (Profile, error) {
-	row := q.db.QueryRow(ctx, getProfileById, id)
-	var i Profile
-	err := row.Scan(&i.ID, &i.Name, &i.Deleted)
-	return i, err
-}
-
 const getUserByExternalUsername = `-- name: GetUserByExternalUsername :one
 SELECT id, external_username, display_name, deleted, active_profile_id FROM usr WHERE usr.external_username = $1 AND usr.deleted = FALSE
 `
@@ -56,34 +45,6 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (Usr, error) {
 	return i, err
 }
 
-const getUserProfiles = `-- name: GetUserProfiles :many
-SELECT id, name, deleted FROM profile
-WHERE
-  profile.id IN (SELECT profile_id FROM user_profile_role WHERE user_id = $1)
-  AND
-  profile.deleted = FALSE
-`
-
-func (q *Queries) GetUserProfiles(ctx context.Context, userID uuid.UUID) ([]Profile, error) {
-	rows, err := q.db.Query(ctx, getUserProfiles, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Profile
-	for rows.Next() {
-		var i Profile
-		if err := rows.Scan(&i.ID, &i.Name, &i.Deleted); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const setActiveProfile = `-- name: SetActiveProfile :exec
 UPDATE
   usr
@@ -100,25 +61,6 @@ type SetActiveProfileParams struct {
 
 func (q *Queries) SetActiveProfile(ctx context.Context, arg SetActiveProfileParams) error {
 	_, err := q.db.Exec(ctx, setActiveProfile, arg.ActiveProfileID, arg.ID)
-	return err
-}
-
-const upsertProfile = `-- name: UpsertProfile :exec
-INSERT INTO profile (
-  id, name
-) VALUES (
-  $1, $2
-) ON CONFLICT (id) DO UPDATE SET
-  name = $2
-`
-
-type UpsertProfileParams struct {
-	ID   uuid.UUID
-	Name string
-}
-
-func (q *Queries) UpsertProfile(ctx context.Context, arg UpsertProfileParams) error {
-	_, err := q.db.Exec(ctx, upsertProfile, arg.ID, arg.Name)
 	return err
 }
 
@@ -140,25 +82,5 @@ type UpsertUserParams struct {
 
 func (q *Queries) UpsertUser(ctx context.Context, arg UpsertUserParams) error {
 	_, err := q.db.Exec(ctx, upsertUser, arg.ID, arg.ExternalUsername, arg.DisplayName)
-	return err
-}
-
-const upsertUserProfileRole = `-- name: UpsertUserProfileRole :exec
-INSERT INTO user_profile_role (
-  user_id, profile_id, role
-) VALUES (
-  $1, $2, $3
-) ON CONFLICT (user_id, profile_id) DO UPDATE SET
-  role = $3
-`
-
-type UpsertUserProfileRoleParams struct {
-	UserID    uuid.UUID
-	ProfileID uuid.UUID
-	Role      string
-}
-
-func (q *Queries) UpsertUserProfileRole(ctx context.Context, arg UpsertUserProfileRoleParams) error {
-	_, err := q.db.Exec(ctx, upsertUserProfileRole, arg.UserID, arg.ProfileID, arg.Role)
 	return err
 }

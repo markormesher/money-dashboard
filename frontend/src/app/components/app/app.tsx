@@ -9,10 +9,10 @@ import { HoldingsPage } from "../holdings/holdings-page.js";
 import { TransactionsPage } from "../transactions/transactions-page.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { KeyListener } from "../common/key-shortcuts/key-shortcuts.js";
+import { ProfilesPage } from "../profiles/profiles-page.js";
 import { useRouter } from "./router.js";
 import { Menu } from "./menu.js";
 import { Breadcrumbs } from "./breadcrumbs.js";
-
 import "./style/00-pico.css";
 import "./style/01-common.css";
 import "./style/02-app-components.scss";
@@ -44,6 +44,8 @@ function App(): ReactElement {
         return <AssetsPage />;
       case "/metadata/currencies":
         return <CurrenciesPage />;
+      case "/metadata/profiles":
+        return <ProfilesPage />;
     }
 
     return (

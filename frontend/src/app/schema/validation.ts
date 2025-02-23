@@ -3,6 +3,7 @@ import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
 import { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
 import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
 import { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
+import { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
 import { Transaction } from "../../api_gen/moneydashboard/v4/transactions_pb.js";
 import { PLATFORM_MINIMUM_DATE } from "../../config/consts.js";
 import { FormValidationResult } from "../components/common/form/hook.js";
@@ -179,6 +180,21 @@ function validateHolding(value: Partial<Holding>): FormValidationResult<Holding>
   return result;
 }
 
+function validateProfile(value: Partial<Profile>): FormValidationResult<Profile> {
+  const result: FormValidationResult<Profile> = { isValid: true, errors: {} };
+
+  if (value?.name === undefined) {
+    result.isValid = false;
+  } else {
+    if (value.name.length < 1) {
+      result.isValid = false;
+      result.errors.name = "Name must be at least 1 character";
+    }
+  }
+
+  return result;
+}
+
 function validateTransaction(value: Partial<Transaction>): FormValidationResult<Transaction> {
   const result: FormValidationResult<Transaction> = { isValid: true, errors: {} };
 
@@ -288,4 +304,12 @@ function validateTransaction(value: Partial<Transaction>): FormValidationResult<
   return result;
 }
 
-export { validateAccount, validateAsset, validateCategory, validateCurrency, validateHolding, validateTransaction };
+export {
+  validateAccount,
+  validateAsset,
+  validateCategory,
+  validateCurrency,
+  validateHolding,
+  validateProfile,
+  validateTransaction,
+};

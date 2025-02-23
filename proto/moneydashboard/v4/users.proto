@@ -1,6 +1,8 @@
 syntax = "proto3";
 package moneydashboard.v4;
 
+import "moneydashboard/v4/profiles.proto";
+
 option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
 
 message User {
@@ -12,22 +14,10 @@ message User {
   Profile active_profile = 5;
 }
 
-message Profile {
-  string id = 1;
-  string name = 2;
-  bool deleted = 3;
-}
-
 message GetUserRequest {}
 
 message GetUserResponse {
   User user = 1;
-}
-
-message GetProfilesRequest {}
-
-message GetProfilesResponse {
-  repeated Profile profiles = 1;
 }
 
 message SetActiveProfileRequest {
@@ -38,6 +28,5 @@ message SetActiveProfileResponse {}
 
 service MDUserService {
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  rpc GetProfiles(GetProfilesRequest) returns (GetProfilesResponse);
   rpc SetActiveProfile(SetActiveProfileRequest) returns (SetActiveProfileResponse);
 }

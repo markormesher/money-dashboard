@@ -1,10 +1,11 @@
 import React, { ReactElement } from "react";
 import { ExternalModalProps, Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { userServiceClient } from "../../../api/api.js";
+import { profileServiceClient, userServiceClient } from "../../../api/api.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
-import { Profile, User } from "../../../api_gen/moneydashboard/v4/users_pb.js";
+import { User } from "../../../api_gen/moneydashboard/v4/users_pb.js";
+import { Profile } from "../../../api_gen/moneydashboard/v4/profiles_pb.js";
 
 type ProfileChooserProps = ExternalModalProps & {};
 
@@ -32,7 +33,7 @@ function ProfileChooser(props: ProfileChooserProps): ReactElement {
     }
 
     try {
-      const res = await userServiceClient.getProfiles({});
+      const res = await profileServiceClient.getAllProfiles({});
       setProfiles(res.profiles);
     } catch (e) {
       toastBus.error("Failed to load profiles");

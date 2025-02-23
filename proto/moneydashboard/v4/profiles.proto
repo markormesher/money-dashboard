@@ -1,0 +1,36 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message Profile {
+  string id = 1;
+  string name = 2;
+  bool deleted = 3;
+}
+
+message GetProfileByIdRequest {
+  string id = 1;
+}
+
+message GetProfileByIdResponse {
+  Profile profile = 1;
+}
+
+message GetAllProfilesRequest {}
+
+message GetAllProfilesResponse {
+  repeated Profile profiles = 1;
+}
+
+message UpsertProfileRequest {
+  Profile profile = 1;
+}
+
+message UpsertProfileResponse {}
+
+service MDProfileService {
+  rpc GetProfileById(GetProfileByIdRequest) returns (GetProfileByIdResponse);
+  rpc GetAllProfiles(GetAllProfilesRequest) returns (GetAllProfilesResponse);
+  rpc UpsertProfile(UpsertProfileRequest) returns (UpsertProfileResponse);
+}

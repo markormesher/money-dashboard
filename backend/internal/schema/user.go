@@ -11,15 +11,3 @@ type User struct {
 	Deleted          bool
 	ActiveProfile    *Profile
 }
-
-type Profile struct {
-	ID      uuid.UUID
-	Name    string
-	Deleted bool
-}
-
-type UserProfileRole struct {
-	User    *User
-	Profile *Profile
-	Role    string
-}
