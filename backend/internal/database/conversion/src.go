@@ -37,6 +37,8 @@ type converterSpec interface {
 
 	NullableHoldingAssetToCore(source database_gen.NullableHoldingAsset) schema.Asset
 
+	NullableHoldingAssetCurrencyToCore(source database_gen.NullableHoldingAssetCurrency) schema.Currency
+
 	ProfileToCore(source database_gen.Profile) schema.Profile
 
 	TransactionToCore(source database_gen.Transaction) schema.Transaction

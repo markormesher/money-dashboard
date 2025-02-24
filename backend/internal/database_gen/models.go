@@ -165,6 +165,16 @@ type NullableHoldingAsset struct {
 	Active               pgtype.Bool
 }
 
+type NullableHoldingAssetCurrency struct {
+	HoldingID            uuid.UUID
+	ID                   *uuid.UUID
+	Code                 pgtype.Text
+	Symbol               pgtype.Text
+	DisplayPrecision     pgtype.Int4
+	Active               pgtype.Bool
+	CalculationPrecision pgtype.Int4
+}
+
 type NullableHoldingCurrency struct {
 	HoldingID            uuid.UUID
 	ID                   *uuid.UUID

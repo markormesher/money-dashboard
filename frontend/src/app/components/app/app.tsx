@@ -10,6 +10,7 @@ import { TransactionsPage } from "../transactions/transactions-page.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { KeyListener } from "../common/key-shortcuts/key-shortcuts.js";
 import { ProfilesPage } from "../profiles/profiles-page.js";
+import { DashboardPage } from "../dashboard/dashboard.js";
 import { useRouter } from "./router.js";
 import { Menu } from "./menu.js";
 import { Breadcrumbs } from "./breadcrumbs.js";
@@ -30,6 +31,8 @@ function App(): ReactElement {
 
   function getContent(): ReactElement {
     switch (path) {
+      case "/":
+        return <DashboardPage />;
       case "/transactions":
         return <TransactionsPage />;
 

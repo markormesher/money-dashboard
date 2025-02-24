@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -38,6 +39,13 @@ func (db *DB) GetHoldingById(ctx context.Context, id uuid.UUID, profileID uuid.U
 	asset := conversion.NullableHoldingAssetToCore(row.NullableHoldingAsset)
 	if asset.ID != uuid.Nil {
 		holding.Asset = &asset
+
+		assetCurency := conversion.NullableHoldingAssetCurrencyToCore(row.NullableHoldingAssetCurrency)
+		if assetCurency.ID == uuid.Nil {
+			return schema.Holding{}, false, fmt.Errorf("the asset for holding %s has no currency", holding.ID)
+		}
+
+		holding.Asset.Currency = &assetCurency
 	}
 
 	return holding, true, nil
@@ -69,6 +77,13 @@ func (db *DB) GetAllHoldings(ctx context.Context, profileID uuid.UUID) ([]schema
 		asset := conversion.NullableHoldingAssetToCore(row.NullableHoldingAsset)
 		if asset.ID != uuid.Nil {
 			holding.Asset = &asset
+
+			assetCurency := conversion.NullableHoldingAssetCurrencyToCore(row.NullableHoldingAssetCurrency)
+			if assetCurency.ID == uuid.Nil {
+				return nil, fmt.Errorf("the asset for holding %s has no currency", holding.ID)
+			}
+
+			holding.Asset.Currency = &assetCurency
 		}
 
 		holdings[i] = holding

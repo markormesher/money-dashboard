@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/govalues/decimal"
 	mdv4 "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4"
+	"github.com/markormesher/money-dashboard/internal/core"
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
@@ -25,6 +26,8 @@ import (
 // goverter:ignoreMissing yes
 // goverter:useZeroValueOnPointerInconsistency yes
 type converterSpec interface {
+	// core entites
+
 	AccountFromCore(source schema.Account) *mdv4.Account
 	AccountToCore(source *mdv4.Account) schema.Account
 
@@ -54,6 +57,10 @@ type converterSpec interface {
 
 	UserFromCore(source schema.User) *mdv4.User
 	UserToCore(source *mdv4.User) schema.User
+
+	// reporting
+
+	HoldingBalanceFromCore(source core.HoldingBalance) *mdv4.HoldingBalance
 }
 
 // utility methods to convert between core and api types

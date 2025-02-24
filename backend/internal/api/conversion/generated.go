@@ -5,6 +5,7 @@ package conversion
 
 import (
 	v4 "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4"
+	core "github.com/markormesher/money-dashboard/internal/core"
 	schema "github.com/markormesher/money-dashboard/internal/schema"
 )
 
@@ -153,6 +154,13 @@ func CurrencyToCore(source *v4.Currency) schema.Currency {
 		schemaCurrency = schemaCurrency2
 	}
 	return schemaCurrency
+}
+func HoldingBalanceFromCore(source core.HoldingBalance) *v4.HoldingBalance {
+	var mdv4HoldingBalance v4.HoldingBalance
+	mdv4HoldingBalance.Holding = HoldingFromCore(source.Holding)
+	mdv4HoldingBalance.RawBalance = ConvertDecimalToFloat(source.RawBalance)
+	mdv4HoldingBalance.GbpBalance = ConvertDecimalToFloat(source.GbpBalance)
+	return &mdv4HoldingBalance
 }
 func HoldingFromCore(source schema.Holding) *v4.Holding {
 	var mdv4Holding v4.Holding

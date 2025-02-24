@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/markormesher/money-dashboard/internal/schema"
@@ -28,10 +29,6 @@ func (c *Core) UpsertAsset(ctx context.Context, asset schema.Asset) error {
 	return c.DB.UpsertAsset(ctx, asset)
 }
 
-func (c *Core) GetLatestAssetPrices(ctx context.Context) ([]schema.AssetPrice, error) {
-	return c.DB.GetLatestAssetPrices(ctx)
-}
-
 func (c *Core) UpsertAssetPrice(ctx context.Context, price schema.AssetPrice) error {
 	if err := price.Validate(); err != nil {
 		return fmt.Errorf("invalid value: %w", err)
@@ -42,4 +39,28 @@ func (c *Core) UpsertAssetPrice(ctx context.Context, price schema.AssetPrice) er
 	}
 
 	return c.DB.UpsertAssetPrice(ctx, price)
+}
+
+func (c *Core) GetLatestAssetPrices(ctx context.Context) ([]schema.AssetPrice, error) {
+	return c.DB.GetLatestAssetPrices(ctx)
+}
+
+func (c *Core) GetLatestAssetPrice(ctx context.Context, asset schema.Asset) (schema.AssetPrice, error) {
+	// TODO: cache
+	prices, err := c.GetLatestAssetPrices(ctx)
+	if err != nil {
+		return schema.AssetPrice{}, err
+	}
+
+	for _, price := range prices {
+		if price.AssetID == asset.ID {
+			return price, nil
+		}
+	}
+
+	return schema.AssetPrice{}, fmt.Errorf("no price data for asset")
+}
+
+func (c *Core) GetAssetPrice(ctx context.Context, asset schema.Asset, date time.Time) (schema.AssetPrice, error) {
+	return c.DB.GetAssetPrice(ctx, asset.ID, date)
 }

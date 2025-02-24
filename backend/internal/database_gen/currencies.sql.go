@@ -62,6 +62,33 @@ func (q *Queries) GetCurrencyById(ctx context.Context, id uuid.UUID) (Currency, 
 	return i, err
 }
 
+const getCurrencyRate = `-- name: GetCurrencyRate :one
+SELECT id, currency_id, date, rate FROM currency_rate
+WHERE
+  currency_id = $1
+  AND
+  "date" <= $2
+ORDER BY "date" DESC
+LIMIT 1
+`
+
+type GetCurrencyRateParams struct {
+	CurrencyID uuid.UUID
+	Date       time.Time
+}
+
+func (q *Queries) GetCurrencyRate(ctx context.Context, arg GetCurrencyRateParams) (CurrencyRate, error) {
+	row := q.db.QueryRow(ctx, getCurrencyRate, arg.CurrencyID, arg.Date)
+	var i CurrencyRate
+	err := row.Scan(
+		&i.ID,
+		&i.CurrencyID,
+		&i.Date,
+		&i.Rate,
+	)
+	return i, err
+}
+
 const getLatestCurrencyRates = `-- name: GetLatestCurrencyRates :many
 SELECT DISTINCT ON (currency_id) id, currency_id, date, rate FROM currency_rate ORDER BY currency_id, "date" DESC
 `

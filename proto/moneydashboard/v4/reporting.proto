@@ -1,0 +1,22 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+import "moneydashboard/v4/holdings.proto";
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message HoldingBalance {
+  Holding holding = 1;
+  double raw_balance = 2;
+  double gbp_balance = 3;
+}
+
+message GetHoldingBalancesRequest {}
+
+message GetHoldingBalancesResponse {
+  repeated HoldingBalance balances = 1;
+}
+
+service MDReportingService {
+  rpc GetHoldingBalances(GetHoldingBalancesRequest) returns (GetHoldingBalancesResponse);
+}

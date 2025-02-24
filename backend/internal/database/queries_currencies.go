@@ -3,6 +3,8 @@ package database
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -47,6 +49,15 @@ func (db *DB) UpsertCurrency(ctx context.Context, currency schema.Currency) erro
 	})
 }
 
+func (db *DB) UpsertCurrencyRate(ctx context.Context, rate schema.CurrencyRate) error {
+	return db.queries.UpsertCurrencyRate(ctx, database_gen.UpsertCurrencyRateParams{
+		ID:         rate.ID,
+		CurrencyID: rate.CurrencyID,
+		Date:       rate.Date,
+		Rate:       rate.Rate,
+	})
+}
+
 func (db *DB) GetLatestCurrencyRates(ctx context.Context) ([]schema.CurrencyRate, error) {
 	rows, err := db.queries.GetLatestCurrencyRates(ctx)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -59,11 +70,17 @@ func (db *DB) GetLatestCurrencyRates(ctx context.Context) ([]schema.CurrencyRate
 	return currencies, nil
 }
 
-func (db *DB) UpsertCurrencyRate(ctx context.Context, rate schema.CurrencyRate) error {
-	return db.queries.UpsertCurrencyRate(ctx, database_gen.UpsertCurrencyRateParams{
-		ID:         rate.ID,
-		CurrencyID: rate.CurrencyID,
-		Date:       rate.Date,
-		Rate:       rate.Rate,
+func (db *DB) GetCurrencyRate(ctx context.Context, currencyID uuid.UUID, date time.Time) (schema.CurrencyRate, error) {
+	row, err := db.queries.GetCurrencyRate(ctx, database_gen.GetCurrencyRateParams{
+		CurrencyID: currencyID,
+		Date:       date,
 	})
+	if errors.Is(err, pgx.ErrNoRows) {
+		return schema.CurrencyRate{}, fmt.Errorf("no rate data")
+	} else if err != nil {
+		return schema.CurrencyRate{}, err
+	}
+
+	rate := conversion.CurrencyRateToCore(row)
+	return rate, nil
 }

@@ -96,6 +96,33 @@ func (q *Queries) GetAssetById(ctx context.Context, id uuid.UUID) (GetAssetByIdR
 	return i, err
 }
 
+const getAssetPrice = `-- name: GetAssetPrice :one
+SELECT id, asset_id, date, price FROM asset_price
+WHERE
+  asset_id = $1
+  AND
+  "date" <= $2
+ORDER BY "date" DESC
+LIMIT 1
+`
+
+type GetAssetPriceParams struct {
+	AssetID uuid.UUID
+	Date    time.Time
+}
+
+func (q *Queries) GetAssetPrice(ctx context.Context, arg GetAssetPriceParams) (AssetPrice, error) {
+	row := q.db.QueryRow(ctx, getAssetPrice, arg.AssetID, arg.Date)
+	var i AssetPrice
+	err := row.Scan(
+		&i.ID,
+		&i.AssetID,
+		&i.Date,
+		&i.Price,
+	)
+	return i, err
+}
+
 const getLatestAssetPrices = `-- name: GetLatestAssetPrices :many
 SELECT DISTINCT ON (asset_id) id, asset_id, date, price FROM asset_price ORDER BY asset_id, "date" DESC
 `
