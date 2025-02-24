@@ -27,8 +27,8 @@ tasks:
   gen:
     cmds:
       - task: gen-buf-proto
-      - task: gen-sqlc-sql
       - task: gen-goverter-backend
+      - task: gen-sqlc-sql
   gen-buf:
     cmds:
       - task: gen-buf-proto
@@ -36,6 +36,13 @@ tasks:
     dir: '{{.ROOT_DIR}}/proto'
     cmds:
       - cmd: buf generate
+  gen-goverter:
+    cmds:
+      - task: gen-goverter-backend
+  gen-goverter-backend:
+    dir: '{{.ROOT_DIR}}/backend'
+    cmds:
+      - cmd: go tool github.com/jmattheis/goverter/cmd/goverter gen "./internal/api/conversion" "./internal/database/conversion"
   gen-sqlc:
     cmds:
       - task: gen-sqlc-sql
@@ -43,13 +50,6 @@ tasks:
     dir: '{{.ROOT_DIR}}/sql'
     cmds:
       - cmd: sqlc generate
-  gen-goverter:
-    cmds:
-      - task: gen-goverter-backend
-  gen-goverter-backend:
-    dir: '{{.ROOT_DIR}}/backend'
-    cmds:
-      - cmd: goverter gen ./internal/{database,api}/conversion
   imgbuild:
     cmds:
       - task: imgbuild-root
