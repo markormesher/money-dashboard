@@ -54,12 +54,12 @@ func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) (
 		}
 
 		if holding.Asset != nil {
-			price, err := c.GetLatestAssetPrice(ctx, *holding.Asset)
+			assetRate, err := c.GetLatestAssetRate(ctx, *holding.Asset)
 			if err != nil {
 				return nil, err
 			}
 
-			cashBalance, err := gbpBalance.Mul(price.Price)
+			cashBalance, err := gbpBalance.Mul(assetRate.Rate)
 			if err != nil {
 				return nil, err
 			}

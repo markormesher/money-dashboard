@@ -7,10 +7,8 @@ package database_gen
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
-	"github.com/govalues/decimal"
 )
 
 const getAllAssets = `-- name: GetAllAssets :many
@@ -96,62 +94,6 @@ func (q *Queries) GetAssetById(ctx context.Context, id uuid.UUID) (GetAssetByIdR
 	return i, err
 }
 
-const getAssetPrice = `-- name: GetAssetPrice :one
-SELECT id, asset_id, date, price FROM asset_price
-WHERE
-  asset_id = $1
-  AND
-  "date" <= $2
-ORDER BY "date" DESC
-LIMIT 1
-`
-
-type GetAssetPriceParams struct {
-	AssetID uuid.UUID
-	Date    time.Time
-}
-
-func (q *Queries) GetAssetPrice(ctx context.Context, arg GetAssetPriceParams) (AssetPrice, error) {
-	row := q.db.QueryRow(ctx, getAssetPrice, arg.AssetID, arg.Date)
-	var i AssetPrice
-	err := row.Scan(
-		&i.ID,
-		&i.AssetID,
-		&i.Date,
-		&i.Price,
-	)
-	return i, err
-}
-
-const getLatestAssetPrices = `-- name: GetLatestAssetPrices :many
-SELECT DISTINCT ON (asset_id) id, asset_id, date, price FROM asset_price ORDER BY asset_id, "date" DESC
-`
-
-func (q *Queries) GetLatestAssetPrices(ctx context.Context) ([]AssetPrice, error) {
-	rows, err := q.db.Query(ctx, getLatestAssetPrices)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []AssetPrice
-	for rows.Next() {
-		var i AssetPrice
-		if err := rows.Scan(
-			&i.ID,
-			&i.AssetID,
-			&i.Date,
-			&i.Price,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const upsertAsset = `-- name: UpsertAsset :exec
 INSERT INTO asset (
   id, name, notes, display_precision, calculation_precision, currency_id, active
@@ -185,32 +127,6 @@ func (q *Queries) UpsertAsset(ctx context.Context, arg UpsertAssetParams) error 
 		arg.CalculationPrecision,
 		arg.CurrencyID,
 		arg.Active,
-	)
-	return err
-}
-
-const upsertAssetPrice = `-- name: UpsertAssetPrice :exec
-INSERT INTO asset_price (
-  id, asset_id, "date", price
-) VALUES (
-  $1, $2, $3, $4
-) ON CONFLICT (asset_id, "date") DO UPDATE SET
-  price = $4
-`
-
-type UpsertAssetPriceParams struct {
-	ID      uuid.UUID
-	AssetID uuid.UUID
-	Date    time.Time
-	Price   decimal.Decimal
-}
-
-func (q *Queries) UpsertAssetPrice(ctx context.Context, arg UpsertAssetPriceParams) error {
-	_, err := q.db.Exec(ctx, upsertAssetPrice,
-		arg.ID,
-		arg.AssetID,
-		arg.Date,
-		arg.Price,
 	)
 	return err
 }

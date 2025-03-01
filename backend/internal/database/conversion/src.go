@@ -23,13 +23,9 @@ type converterSpec interface {
 
 	AccountToCore(source database_gen.Account) schema.Account
 
-	AssetPriceToCore(source database_gen.AssetPrice) schema.AssetPrice
-
 	CategoryToCore(source database_gen.Category) schema.Category
 
 	CurrencyToCore(source database_gen.Currency) schema.Currency
-
-	CurrencyRateToCore(source database_gen.CurrencyRate) schema.CurrencyRate
 
 	HoldingToCore(source database_gen.Holding) schema.Holding
 
@@ -40,6 +36,8 @@ type converterSpec interface {
 	NullableHoldingAssetCurrencyToCore(source database_gen.NullableHoldingAssetCurrency) schema.Currency
 
 	ProfileToCore(source database_gen.Profile) schema.Profile
+
+	RateToCore(source database_gen.Rate) schema.Rate
 
 	TransactionToCore(source database_gen.Transaction) schema.Transaction
 

@@ -7,10 +7,8 @@ package database_gen
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
-	"github.com/govalues/decimal"
 )
 
 const getAllCurrencies = `-- name: GetAllCurrencies :many
@@ -62,62 +60,6 @@ func (q *Queries) GetCurrencyById(ctx context.Context, id uuid.UUID) (Currency, 
 	return i, err
 }
 
-const getCurrencyRate = `-- name: GetCurrencyRate :one
-SELECT id, currency_id, date, rate FROM currency_rate
-WHERE
-  currency_id = $1
-  AND
-  "date" <= $2
-ORDER BY "date" DESC
-LIMIT 1
-`
-
-type GetCurrencyRateParams struct {
-	CurrencyID uuid.UUID
-	Date       time.Time
-}
-
-func (q *Queries) GetCurrencyRate(ctx context.Context, arg GetCurrencyRateParams) (CurrencyRate, error) {
-	row := q.db.QueryRow(ctx, getCurrencyRate, arg.CurrencyID, arg.Date)
-	var i CurrencyRate
-	err := row.Scan(
-		&i.ID,
-		&i.CurrencyID,
-		&i.Date,
-		&i.Rate,
-	)
-	return i, err
-}
-
-const getLatestCurrencyRates = `-- name: GetLatestCurrencyRates :many
-SELECT DISTINCT ON (currency_id) id, currency_id, date, rate FROM currency_rate ORDER BY currency_id, "date" DESC
-`
-
-func (q *Queries) GetLatestCurrencyRates(ctx context.Context) ([]CurrencyRate, error) {
-	rows, err := q.db.Query(ctx, getLatestCurrencyRates)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []CurrencyRate
-	for rows.Next() {
-		var i CurrencyRate
-		if err := rows.Scan(
-			&i.ID,
-			&i.CurrencyID,
-			&i.Date,
-			&i.Rate,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const upsertCurrency = `-- name: UpsertCurrency :exec
 INSERT INTO currency (
   id, code, symbol, display_precision, calculation_precision, active
@@ -148,32 +90,6 @@ func (q *Queries) UpsertCurrency(ctx context.Context, arg UpsertCurrencyParams) 
 		arg.DisplayPrecision,
 		arg.CalculationPrecision,
 		arg.Active,
-	)
-	return err
-}
-
-const upsertCurrencyRate = `-- name: UpsertCurrencyRate :exec
-INSERT INTO currency_rate (
-  id, currency_id, "date", rate
-) VALUES (
-  $1, $2, $3, $4
-) ON CONFLICT (currency_id, "date") DO UPDATE SET
-  rate = $4
-`
-
-type UpsertCurrencyRateParams struct {
-	ID         uuid.UUID
-	CurrencyID uuid.UUID
-	Date       time.Time
-	Rate       decimal.Decimal
-}
-
-func (q *Queries) UpsertCurrencyRate(ctx context.Context, arg UpsertCurrencyRateParams) error {
-	_, err := q.db.Exec(ctx, upsertCurrencyRate,
-		arg.ID,
-		arg.CurrencyID,
-		arg.Date,
-		arg.Rate,
 	)
 	return err
 }

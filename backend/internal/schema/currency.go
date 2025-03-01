@@ -2,11 +2,9 @@ package schema
 
 import (
 	"fmt"
-	"time"
 	"unicode/utf8"
 
 	"github.com/google/uuid"
-	"github.com/govalues/decimal"
 )
 
 type Currency struct {
@@ -33,29 +31,6 @@ func (c *Currency) Validate() error {
 
 	if c.CalculationPrecision < 0 {
 		return fmt.Errorf("currency calculation precision must be 0 or greater")
-	}
-
-	return nil
-}
-
-type CurrencyRate struct {
-	ID         uuid.UUID
-	CurrencyID uuid.UUID
-	Date       time.Time
-	Rate       decimal.Decimal
-}
-
-func (r *CurrencyRate) Validate() error {
-	if r.Date.After(time.Now()) {
-		return fmt.Errorf("currency rate must not be in the future")
-	}
-
-	if r.Date.Before(PlatformMinimumDate) {
-		return fmt.Errorf("currency rate must not be before the platform minimum date")
-	}
-
-	if r.Rate.IsNeg() {
-		return fmt.Errorf("currency rate must be greater than 0")
 	}
 
 	return nil

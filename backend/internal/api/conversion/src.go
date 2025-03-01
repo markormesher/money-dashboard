@@ -34,23 +34,20 @@ type converterSpec interface {
 	AssetFromCore(source schema.Asset) *mdv4.Asset
 	AssetToCore(source *mdv4.Asset) schema.Asset
 
-	AssetPriceFromCore(source schema.AssetPrice) *mdv4.AssetPrice
-	AssetPriceToCore(source *mdv4.AssetPrice) schema.AssetPrice
-
 	CategoryFromCore(source schema.Category) *mdv4.Category
 	CategoryToCore(source *mdv4.Category) schema.Category
 
 	CurrencyFromCore(source schema.Currency) *mdv4.Currency
 	CurrencyToCore(source *mdv4.Currency) schema.Currency
 
-	CurrencyRateFromCore(source schema.CurrencyRate) *mdv4.CurrencyRate
-	CurrencyRateToCore(source *mdv4.CurrencyRate) schema.CurrencyRate
-
 	HoldingFromCore(source schema.Holding) *mdv4.Holding
 	HoldingToCore(source *mdv4.Holding) schema.Holding
 
 	ProfileFromCore(source schema.Profile) *mdv4.Profile
 	ProfileToCore(source *mdv4.Profile) schema.Profile
+
+	RateFromCore(source schema.Rate) *mdv4.Rate
+	RateToCore(source *mdv4.Rate) schema.Rate
 
 	TransactionFromCore(source schema.Transaction) *mdv4.Transaction
 	TransactionToCore(source *mdv4.Transaction) schema.Transaction

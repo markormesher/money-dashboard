@@ -2,11 +2,9 @@ package schema
 
 import (
 	"fmt"
-	"time"
 	"unicode/utf8"
 
 	"github.com/google/uuid"
-	"github.com/govalues/decimal"
 )
 
 type Asset struct {
@@ -34,29 +32,6 @@ func (a *Asset) Validate() error {
 
 	if a.Currency == nil {
 		return fmt.Errorf("asset currency must be selected")
-	}
-
-	return nil
-}
-
-type AssetPrice struct {
-	ID      uuid.UUID
-	AssetID uuid.UUID
-	Date    time.Time
-	Price   decimal.Decimal
-}
-
-func (p *AssetPrice) Validate() error {
-	if p.Date.After(time.Now()) {
-		return fmt.Errorf("asset price must not be in the future")
-	}
-
-	if p.Date.Before(PlatformMinimumDate) {
-		return fmt.Errorf("asset price must not be before the platform minimum date")
-	}
-
-	if p.Price.IsNeg() {
-		return fmt.Errorf("asset price must be greater than 0")
 	}
 
 	return nil

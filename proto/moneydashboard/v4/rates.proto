@@ -1,0 +1,29 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message Rate {
+  string id = 1;
+  string asset_id = 2;
+  string currency_id = 3;
+  int64 date = 4;
+  double rate = 5;
+}
+
+message GetLatestRatesRequest {}
+
+message GetLatestRatesResponse {
+  repeated Rate rates = 1;
+}
+
+message UpsertRateRequest {
+  Rate rate = 1;
+}
+
+message UpsertRateResponse {}
+
+service MDRateService {
+  rpc GetLatestRates(GetLatestRatesRequest) returns (GetLatestRatesResponse);
+  rpc UpsertRate(UpsertRateRequest) returns (UpsertRateResponse);
+}

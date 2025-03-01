@@ -42,12 +42,6 @@ const (
 	// MDAssetServiceUpsertAssetProcedure is the fully-qualified name of the MDAssetService's
 	// UpsertAsset RPC.
 	MDAssetServiceUpsertAssetProcedure = "/moneydashboard.v4.MDAssetService/UpsertAsset"
-	// MDAssetServiceGetLatestAssetPricesProcedure is the fully-qualified name of the MDAssetService's
-	// GetLatestAssetPrices RPC.
-	MDAssetServiceGetLatestAssetPricesProcedure = "/moneydashboard.v4.MDAssetService/GetLatestAssetPrices"
-	// MDAssetServiceUpsertAssetPriceProcedure is the fully-qualified name of the MDAssetService's
-	// UpsertAssetPrice RPC.
-	MDAssetServiceUpsertAssetPriceProcedure = "/moneydashboard.v4.MDAssetService/UpsertAssetPrice"
 )
 
 // MDAssetServiceClient is a client for the moneydashboard.v4.MDAssetService service.
@@ -55,8 +49,6 @@ type MDAssetServiceClient interface {
 	GetAssetById(context.Context, *connect.Request[v4.GetAssetByIdRequest]) (*connect.Response[v4.GetAssetByIdResponse], error)
 	GetAllAssets(context.Context, *connect.Request[v4.GetAllAssetsRequest]) (*connect.Response[v4.GetAllAssetsResponse], error)
 	UpsertAsset(context.Context, *connect.Request[v4.UpsertAssetRequest]) (*connect.Response[v4.UpsertAssetResponse], error)
-	GetLatestAssetPrices(context.Context, *connect.Request[v4.GetLatestAssetPricesRequest]) (*connect.Response[v4.GetLatestAssetPricesResponse], error)
-	UpsertAssetPrice(context.Context, *connect.Request[v4.UpsertAssetPriceRequest]) (*connect.Response[v4.UpsertAssetPriceResponse], error)
 }
 
 // NewMDAssetServiceClient constructs a client for the moneydashboard.v4.MDAssetService service. By
@@ -88,28 +80,14 @@ func NewMDAssetServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(mDAssetServiceMethods.ByName("UpsertAsset")),
 			connect.WithClientOptions(opts...),
 		),
-		getLatestAssetPrices: connect.NewClient[v4.GetLatestAssetPricesRequest, v4.GetLatestAssetPricesResponse](
-			httpClient,
-			baseURL+MDAssetServiceGetLatestAssetPricesProcedure,
-			connect.WithSchema(mDAssetServiceMethods.ByName("GetLatestAssetPrices")),
-			connect.WithClientOptions(opts...),
-		),
-		upsertAssetPrice: connect.NewClient[v4.UpsertAssetPriceRequest, v4.UpsertAssetPriceResponse](
-			httpClient,
-			baseURL+MDAssetServiceUpsertAssetPriceProcedure,
-			connect.WithSchema(mDAssetServiceMethods.ByName("UpsertAssetPrice")),
-			connect.WithClientOptions(opts...),
-		),
 	}
 }
 
 // mDAssetServiceClient implements MDAssetServiceClient.
 type mDAssetServiceClient struct {
-	getAssetById         *connect.Client[v4.GetAssetByIdRequest, v4.GetAssetByIdResponse]
-	getAllAssets         *connect.Client[v4.GetAllAssetsRequest, v4.GetAllAssetsResponse]
-	upsertAsset          *connect.Client[v4.UpsertAssetRequest, v4.UpsertAssetResponse]
-	getLatestAssetPrices *connect.Client[v4.GetLatestAssetPricesRequest, v4.GetLatestAssetPricesResponse]
-	upsertAssetPrice     *connect.Client[v4.UpsertAssetPriceRequest, v4.UpsertAssetPriceResponse]
+	getAssetById *connect.Client[v4.GetAssetByIdRequest, v4.GetAssetByIdResponse]
+	getAllAssets *connect.Client[v4.GetAllAssetsRequest, v4.GetAllAssetsResponse]
+	upsertAsset  *connect.Client[v4.UpsertAssetRequest, v4.UpsertAssetResponse]
 }
 
 // GetAssetById calls moneydashboard.v4.MDAssetService.GetAssetById.
@@ -127,23 +105,11 @@ func (c *mDAssetServiceClient) UpsertAsset(ctx context.Context, req *connect.Req
 	return c.upsertAsset.CallUnary(ctx, req)
 }
 
-// GetLatestAssetPrices calls moneydashboard.v4.MDAssetService.GetLatestAssetPrices.
-func (c *mDAssetServiceClient) GetLatestAssetPrices(ctx context.Context, req *connect.Request[v4.GetLatestAssetPricesRequest]) (*connect.Response[v4.GetLatestAssetPricesResponse], error) {
-	return c.getLatestAssetPrices.CallUnary(ctx, req)
-}
-
-// UpsertAssetPrice calls moneydashboard.v4.MDAssetService.UpsertAssetPrice.
-func (c *mDAssetServiceClient) UpsertAssetPrice(ctx context.Context, req *connect.Request[v4.UpsertAssetPriceRequest]) (*connect.Response[v4.UpsertAssetPriceResponse], error) {
-	return c.upsertAssetPrice.CallUnary(ctx, req)
-}
-
 // MDAssetServiceHandler is an implementation of the moneydashboard.v4.MDAssetService service.
 type MDAssetServiceHandler interface {
 	GetAssetById(context.Context, *connect.Request[v4.GetAssetByIdRequest]) (*connect.Response[v4.GetAssetByIdResponse], error)
 	GetAllAssets(context.Context, *connect.Request[v4.GetAllAssetsRequest]) (*connect.Response[v4.GetAllAssetsResponse], error)
 	UpsertAsset(context.Context, *connect.Request[v4.UpsertAssetRequest]) (*connect.Response[v4.UpsertAssetResponse], error)
-	GetLatestAssetPrices(context.Context, *connect.Request[v4.GetLatestAssetPricesRequest]) (*connect.Response[v4.GetLatestAssetPricesResponse], error)
-	UpsertAssetPrice(context.Context, *connect.Request[v4.UpsertAssetPriceRequest]) (*connect.Response[v4.UpsertAssetPriceResponse], error)
 }
 
 // NewMDAssetServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -171,18 +137,6 @@ func NewMDAssetServiceHandler(svc MDAssetServiceHandler, opts ...connect.Handler
 		connect.WithSchema(mDAssetServiceMethods.ByName("UpsertAsset")),
 		connect.WithHandlerOptions(opts...),
 	)
-	mDAssetServiceGetLatestAssetPricesHandler := connect.NewUnaryHandler(
-		MDAssetServiceGetLatestAssetPricesProcedure,
-		svc.GetLatestAssetPrices,
-		connect.WithSchema(mDAssetServiceMethods.ByName("GetLatestAssetPrices")),
-		connect.WithHandlerOptions(opts...),
-	)
-	mDAssetServiceUpsertAssetPriceHandler := connect.NewUnaryHandler(
-		MDAssetServiceUpsertAssetPriceProcedure,
-		svc.UpsertAssetPrice,
-		connect.WithSchema(mDAssetServiceMethods.ByName("UpsertAssetPrice")),
-		connect.WithHandlerOptions(opts...),
-	)
 	return "/moneydashboard.v4.MDAssetService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MDAssetServiceGetAssetByIdProcedure:
@@ -191,10 +145,6 @@ func NewMDAssetServiceHandler(svc MDAssetServiceHandler, opts ...connect.Handler
 			mDAssetServiceGetAllAssetsHandler.ServeHTTP(w, r)
 		case MDAssetServiceUpsertAssetProcedure:
 			mDAssetServiceUpsertAssetHandler.ServeHTTP(w, r)
-		case MDAssetServiceGetLatestAssetPricesProcedure:
-			mDAssetServiceGetLatestAssetPricesHandler.ServeHTTP(w, r)
-		case MDAssetServiceUpsertAssetPriceProcedure:
-			mDAssetServiceUpsertAssetPriceHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -214,12 +164,4 @@ func (UnimplementedMDAssetServiceHandler) GetAllAssets(context.Context, *connect
 
 func (UnimplementedMDAssetServiceHandler) UpsertAsset(context.Context, *connect.Request[v4.UpsertAssetRequest]) (*connect.Response[v4.UpsertAssetResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDAssetService.UpsertAsset is not implemented"))
-}
-
-func (UnimplementedMDAssetServiceHandler) GetLatestAssetPrices(context.Context, *connect.Request[v4.GetLatestAssetPricesRequest]) (*connect.Response[v4.GetLatestAssetPricesResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDAssetService.GetLatestAssetPrices is not implemented"))
-}
-
-func (UnimplementedMDAssetServiceHandler) UpsertAssetPrice(context.Context, *connect.Request[v4.UpsertAssetPriceRequest]) (*connect.Response[v4.UpsertAssetPriceResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDAssetService.UpsertAssetPrice is not implemented"))
 }

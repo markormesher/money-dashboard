@@ -42,12 +42,6 @@ const (
 	// MDCurrencyServiceUpsertCurrencyProcedure is the fully-qualified name of the MDCurrencyService's
 	// UpsertCurrency RPC.
 	MDCurrencyServiceUpsertCurrencyProcedure = "/moneydashboard.v4.MDCurrencyService/UpsertCurrency"
-	// MDCurrencyServiceGetLatestCurrencyRatesProcedure is the fully-qualified name of the
-	// MDCurrencyService's GetLatestCurrencyRates RPC.
-	MDCurrencyServiceGetLatestCurrencyRatesProcedure = "/moneydashboard.v4.MDCurrencyService/GetLatestCurrencyRates"
-	// MDCurrencyServiceUpsertCurrencyRateProcedure is the fully-qualified name of the
-	// MDCurrencyService's UpsertCurrencyRate RPC.
-	MDCurrencyServiceUpsertCurrencyRateProcedure = "/moneydashboard.v4.MDCurrencyService/UpsertCurrencyRate"
 )
 
 // MDCurrencyServiceClient is a client for the moneydashboard.v4.MDCurrencyService service.
@@ -55,8 +49,6 @@ type MDCurrencyServiceClient interface {
 	GetCurrencyById(context.Context, *connect.Request[v4.GetCurrencyByIdRequest]) (*connect.Response[v4.GetCurrencyByIdResponse], error)
 	GetAllCurrencies(context.Context, *connect.Request[v4.GetAllCurrenciesRequest]) (*connect.Response[v4.GetAllCurrenciesResponse], error)
 	UpsertCurrency(context.Context, *connect.Request[v4.UpsertCurrencyRequest]) (*connect.Response[v4.UpsertCurrencyResponse], error)
-	GetLatestCurrencyRates(context.Context, *connect.Request[v4.GetLatestCurrencyRatesRequest]) (*connect.Response[v4.GetLatestCurrencyRatesResponse], error)
-	UpsertCurrencyRate(context.Context, *connect.Request[v4.UpsertCurrencyRateRequest]) (*connect.Response[v4.UpsertCurrencyRateResponse], error)
 }
 
 // NewMDCurrencyServiceClient constructs a client for the moneydashboard.v4.MDCurrencyService
@@ -88,28 +80,14 @@ func NewMDCurrencyServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(mDCurrencyServiceMethods.ByName("UpsertCurrency")),
 			connect.WithClientOptions(opts...),
 		),
-		getLatestCurrencyRates: connect.NewClient[v4.GetLatestCurrencyRatesRequest, v4.GetLatestCurrencyRatesResponse](
-			httpClient,
-			baseURL+MDCurrencyServiceGetLatestCurrencyRatesProcedure,
-			connect.WithSchema(mDCurrencyServiceMethods.ByName("GetLatestCurrencyRates")),
-			connect.WithClientOptions(opts...),
-		),
-		upsertCurrencyRate: connect.NewClient[v4.UpsertCurrencyRateRequest, v4.UpsertCurrencyRateResponse](
-			httpClient,
-			baseURL+MDCurrencyServiceUpsertCurrencyRateProcedure,
-			connect.WithSchema(mDCurrencyServiceMethods.ByName("UpsertCurrencyRate")),
-			connect.WithClientOptions(opts...),
-		),
 	}
 }
 
 // mDCurrencyServiceClient implements MDCurrencyServiceClient.
 type mDCurrencyServiceClient struct {
-	getCurrencyById        *connect.Client[v4.GetCurrencyByIdRequest, v4.GetCurrencyByIdResponse]
-	getAllCurrencies       *connect.Client[v4.GetAllCurrenciesRequest, v4.GetAllCurrenciesResponse]
-	upsertCurrency         *connect.Client[v4.UpsertCurrencyRequest, v4.UpsertCurrencyResponse]
-	getLatestCurrencyRates *connect.Client[v4.GetLatestCurrencyRatesRequest, v4.GetLatestCurrencyRatesResponse]
-	upsertCurrencyRate     *connect.Client[v4.UpsertCurrencyRateRequest, v4.UpsertCurrencyRateResponse]
+	getCurrencyById  *connect.Client[v4.GetCurrencyByIdRequest, v4.GetCurrencyByIdResponse]
+	getAllCurrencies *connect.Client[v4.GetAllCurrenciesRequest, v4.GetAllCurrenciesResponse]
+	upsertCurrency   *connect.Client[v4.UpsertCurrencyRequest, v4.UpsertCurrencyResponse]
 }
 
 // GetCurrencyById calls moneydashboard.v4.MDCurrencyService.GetCurrencyById.
@@ -127,23 +105,11 @@ func (c *mDCurrencyServiceClient) UpsertCurrency(ctx context.Context, req *conne
 	return c.upsertCurrency.CallUnary(ctx, req)
 }
 
-// GetLatestCurrencyRates calls moneydashboard.v4.MDCurrencyService.GetLatestCurrencyRates.
-func (c *mDCurrencyServiceClient) GetLatestCurrencyRates(ctx context.Context, req *connect.Request[v4.GetLatestCurrencyRatesRequest]) (*connect.Response[v4.GetLatestCurrencyRatesResponse], error) {
-	return c.getLatestCurrencyRates.CallUnary(ctx, req)
-}
-
-// UpsertCurrencyRate calls moneydashboard.v4.MDCurrencyService.UpsertCurrencyRate.
-func (c *mDCurrencyServiceClient) UpsertCurrencyRate(ctx context.Context, req *connect.Request[v4.UpsertCurrencyRateRequest]) (*connect.Response[v4.UpsertCurrencyRateResponse], error) {
-	return c.upsertCurrencyRate.CallUnary(ctx, req)
-}
-
 // MDCurrencyServiceHandler is an implementation of the moneydashboard.v4.MDCurrencyService service.
 type MDCurrencyServiceHandler interface {
 	GetCurrencyById(context.Context, *connect.Request[v4.GetCurrencyByIdRequest]) (*connect.Response[v4.GetCurrencyByIdResponse], error)
 	GetAllCurrencies(context.Context, *connect.Request[v4.GetAllCurrenciesRequest]) (*connect.Response[v4.GetAllCurrenciesResponse], error)
 	UpsertCurrency(context.Context, *connect.Request[v4.UpsertCurrencyRequest]) (*connect.Response[v4.UpsertCurrencyResponse], error)
-	GetLatestCurrencyRates(context.Context, *connect.Request[v4.GetLatestCurrencyRatesRequest]) (*connect.Response[v4.GetLatestCurrencyRatesResponse], error)
-	UpsertCurrencyRate(context.Context, *connect.Request[v4.UpsertCurrencyRateRequest]) (*connect.Response[v4.UpsertCurrencyRateResponse], error)
 }
 
 // NewMDCurrencyServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -171,18 +137,6 @@ func NewMDCurrencyServiceHandler(svc MDCurrencyServiceHandler, opts ...connect.H
 		connect.WithSchema(mDCurrencyServiceMethods.ByName("UpsertCurrency")),
 		connect.WithHandlerOptions(opts...),
 	)
-	mDCurrencyServiceGetLatestCurrencyRatesHandler := connect.NewUnaryHandler(
-		MDCurrencyServiceGetLatestCurrencyRatesProcedure,
-		svc.GetLatestCurrencyRates,
-		connect.WithSchema(mDCurrencyServiceMethods.ByName("GetLatestCurrencyRates")),
-		connect.WithHandlerOptions(opts...),
-	)
-	mDCurrencyServiceUpsertCurrencyRateHandler := connect.NewUnaryHandler(
-		MDCurrencyServiceUpsertCurrencyRateProcedure,
-		svc.UpsertCurrencyRate,
-		connect.WithSchema(mDCurrencyServiceMethods.ByName("UpsertCurrencyRate")),
-		connect.WithHandlerOptions(opts...),
-	)
 	return "/moneydashboard.v4.MDCurrencyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MDCurrencyServiceGetCurrencyByIdProcedure:
@@ -191,10 +145,6 @@ func NewMDCurrencyServiceHandler(svc MDCurrencyServiceHandler, opts ...connect.H
 			mDCurrencyServiceGetAllCurrenciesHandler.ServeHTTP(w, r)
 		case MDCurrencyServiceUpsertCurrencyProcedure:
 			mDCurrencyServiceUpsertCurrencyHandler.ServeHTTP(w, r)
-		case MDCurrencyServiceGetLatestCurrencyRatesProcedure:
-			mDCurrencyServiceGetLatestCurrencyRatesHandler.ServeHTTP(w, r)
-		case MDCurrencyServiceUpsertCurrencyRateProcedure:
-			mDCurrencyServiceUpsertCurrencyRateHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -214,12 +164,4 @@ func (UnimplementedMDCurrencyServiceHandler) GetAllCurrencies(context.Context, *
 
 func (UnimplementedMDCurrencyServiceHandler) UpsertCurrency(context.Context, *connect.Request[v4.UpsertCurrencyRequest]) (*connect.Response[v4.UpsertCurrencyResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDCurrencyService.UpsertCurrency is not implemented"))
-}
-
-func (UnimplementedMDCurrencyServiceHandler) GetLatestCurrencyRates(context.Context, *connect.Request[v4.GetLatestCurrencyRatesRequest]) (*connect.Response[v4.GetLatestCurrencyRatesResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDCurrencyService.GetLatestCurrencyRates is not implemented"))
-}
-
-func (UnimplementedMDCurrencyServiceHandler) UpsertCurrencyRate(context.Context, *connect.Request[v4.UpsertCurrencyRateRequest]) (*connect.Response[v4.UpsertCurrencyRateResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDCurrencyService.UpsertCurrencyRate is not implemented"))
 }

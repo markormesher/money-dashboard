@@ -46,26 +46,6 @@ func AssetFromCore(source schema.Asset) *v4.Asset {
 	mdv4Asset.Currency = pSchemaCurrencyToPMdv4Currency(source.Currency)
 	return &mdv4Asset
 }
-func AssetPriceFromCore(source schema.AssetPrice) *v4.AssetPrice {
-	var mdv4AssetPrice v4.AssetPrice
-	mdv4AssetPrice.Id = ConvertUUIDToString(source.ID)
-	mdv4AssetPrice.AssetId = ConvertUUIDToString(source.AssetID)
-	mdv4AssetPrice.Date = ConvertTimeToInt(source.Date)
-	mdv4AssetPrice.Price = ConvertDecimalToFloat(source.Price)
-	return &mdv4AssetPrice
-}
-func AssetPriceToCore(source *v4.AssetPrice) schema.AssetPrice {
-	var schemaAssetPrice schema.AssetPrice
-	if source != nil {
-		var schemaAssetPrice2 schema.AssetPrice
-		schemaAssetPrice2.ID = ConvertStringToUUID((*source).Id)
-		schemaAssetPrice2.AssetID = ConvertStringToUUID((*source).AssetId)
-		schemaAssetPrice2.Date = ConvertIntToTime((*source).Date)
-		schemaAssetPrice2.Price = ConvertFloatToDecimal((*source).Price)
-		schemaAssetPrice = schemaAssetPrice2
-	}
-	return schemaAssetPrice
-}
 func AssetToCore(source *v4.Asset) schema.Asset {
 	var schemaAsset schema.Asset
 	if source != nil {
@@ -120,26 +100,6 @@ func CurrencyFromCore(source schema.Currency) *v4.Currency {
 	mdv4Currency.CalculationPrecision = source.CalculationPrecision
 	mdv4Currency.Active = source.Active
 	return &mdv4Currency
-}
-func CurrencyRateFromCore(source schema.CurrencyRate) *v4.CurrencyRate {
-	var mdv4CurrencyRate v4.CurrencyRate
-	mdv4CurrencyRate.Id = ConvertUUIDToString(source.ID)
-	mdv4CurrencyRate.CurrencyId = ConvertUUIDToString(source.CurrencyID)
-	mdv4CurrencyRate.Date = ConvertTimeToInt(source.Date)
-	mdv4CurrencyRate.Rate = ConvertDecimalToFloat(source.Rate)
-	return &mdv4CurrencyRate
-}
-func CurrencyRateToCore(source *v4.CurrencyRate) schema.CurrencyRate {
-	var schemaCurrencyRate schema.CurrencyRate
-	if source != nil {
-		var schemaCurrencyRate2 schema.CurrencyRate
-		schemaCurrencyRate2.ID = ConvertStringToUUID((*source).Id)
-		schemaCurrencyRate2.CurrencyID = ConvertStringToUUID((*source).CurrencyId)
-		schemaCurrencyRate2.Date = ConvertIntToTime((*source).Date)
-		schemaCurrencyRate2.Rate = ConvertFloatToDecimal((*source).Rate)
-		schemaCurrencyRate = schemaCurrencyRate2
-	}
-	return schemaCurrencyRate
 }
 func CurrencyToCore(source *v4.Currency) schema.Currency {
 	var schemaCurrency schema.Currency
@@ -203,6 +163,28 @@ func ProfileToCore(source *v4.Profile) schema.Profile {
 		schemaProfile = schemaProfile2
 	}
 	return schemaProfile
+}
+func RateFromCore(source schema.Rate) *v4.Rate {
+	var mdv4Rate v4.Rate
+	mdv4Rate.Id = ConvertUUIDToString(source.ID)
+	mdv4Rate.AssetId = ConvertUUIDToString(source.AssetID)
+	mdv4Rate.CurrencyId = ConvertUUIDToString(source.CurrencyID)
+	mdv4Rate.Date = ConvertTimeToInt(source.Date)
+	mdv4Rate.Rate = ConvertDecimalToFloat(source.Rate)
+	return &mdv4Rate
+}
+func RateToCore(source *v4.Rate) schema.Rate {
+	var schemaRate schema.Rate
+	if source != nil {
+		var schemaRate2 schema.Rate
+		schemaRate2.ID = ConvertStringToUUID((*source).Id)
+		schemaRate2.AssetID = ConvertStringToUUID((*source).AssetId)
+		schemaRate2.CurrencyID = ConvertStringToUUID((*source).CurrencyId)
+		schemaRate2.Date = ConvertIntToTime((*source).Date)
+		schemaRate2.Rate = ConvertFloatToDecimal((*source).Rate)
+		schemaRate = schemaRate2
+	}
+	return schemaRate
 }
 func TransactionFromCore(source schema.Transaction) *v4.Transaction {
 	var mdv4Transaction v4.Transaction

@@ -64,6 +64,9 @@ func main() {
 	apiPath, apiHandler = mdv4connect.NewMDProfileServiceHandler(apiServer)
 	mux.PathPrefix(apiPath).Handler(apiHandler)
 
+	apiPath, apiHandler = mdv4connect.NewMDRateServiceHandler(apiServer)
+	mux.PathPrefix(apiPath).Handler(apiHandler)
+
 	apiPath, apiHandler = mdv4connect.NewMDReportingServiceHandler(apiServer)
 	mux.PathPrefix(apiPath).Handler(apiHandler)
 

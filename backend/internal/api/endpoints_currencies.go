@@ -67,36 +67,3 @@ func (s *apiServer) UpsertCurrency(ctx context.Context, req *connect.Request[mdv
 	res := connect.NewResponse(&mdv4.UpsertCurrencyResponse{})
 	return res, nil
 }
-
-func (s *apiServer) GetLatestCurrencyRates(ctx context.Context, req *connect.Request[mdv4.GetLatestCurrencyRatesRequest]) (*connect.Response[mdv4.GetLatestCurrencyRatesResponse], error) {
-	_, err := s.getReqUser(ctx, req)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeUnauthenticated, err)
-	}
-
-	rates, err := s.core.GetLatestCurrencyRates(ctx)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
-
-	res := connect.NewResponse(&mdv4.GetLatestCurrencyRatesResponse{
-		CurrencyRates: conversiontools.ConvertSlice(rates, conversion.CurrencyRateFromCore),
-	})
-	return res, nil
-}
-
-func (s *apiServer) UpsertCurrencyRate(ctx context.Context, req *connect.Request[mdv4.UpsertCurrencyRateRequest]) (*connect.Response[mdv4.UpsertCurrencyRateResponse], error) {
-	secret := req.Header().Get("x-api-key")
-	if secret != s.core.Config.ExternalDataSecret {
-		return nil, connect.NewError(connect.CodeUnauthenticated, nil)
-	}
-
-	rate := conversion.CurrencyRateToCore(req.Msg.Rate)
-	err := s.core.UpsertCurrencyRate(ctx, rate)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
-
-	res := connect.NewResponse(&mdv4.UpsertCurrencyRateResponse{})
-	return res, nil
-}

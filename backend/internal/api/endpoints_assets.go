@@ -67,36 +67,3 @@ func (s *apiServer) UpsertAsset(ctx context.Context, req *connect.Request[mdv4.U
 	res := connect.NewResponse(&mdv4.UpsertAssetResponse{})
 	return res, nil
 }
-
-func (s *apiServer) GetLatestAssetPrices(ctx context.Context, req *connect.Request[mdv4.GetLatestAssetPricesRequest]) (*connect.Response[mdv4.GetLatestAssetPricesResponse], error) {
-	_, err := s.getReqUser(ctx, req)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeUnauthenticated, err)
-	}
-
-	prices, err := s.core.GetLatestAssetPrices(ctx)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
-
-	res := connect.NewResponse(&mdv4.GetLatestAssetPricesResponse{
-		AssetPrices: conversiontools.ConvertSlice(prices, conversion.AssetPriceFromCore),
-	})
-	return res, nil
-}
-
-func (s *apiServer) UpsertAssetPrice(ctx context.Context, req *connect.Request[mdv4.UpsertAssetPriceRequest]) (*connect.Response[mdv4.UpsertAssetPriceResponse], error) {
-	secret := req.Header().Get("x-api-key")
-	if secret != s.core.Config.ExternalDataSecret {
-		return nil, connect.NewError(connect.CodeUnauthenticated, nil)
-	}
-
-	price := conversion.AssetPriceToCore(req.Msg.Price)
-	err := s.core.UpsertAssetPrice(ctx, price)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
-
-	res := connect.NewResponse(&mdv4.UpsertAssetPriceResponse{})
-	return res, nil
-}

@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file moneydashboard/v4/assets.proto.
  */
 export const file_moneydashboard_v4_assets: GenFile = /*@__PURE__*/
-  fileDesc("Ch5tb25leWRhc2hib2FyZC92NC9hc3NldHMucHJvdG8SEW1vbmV5ZGFzaGJvYXJkLnY0IqkBCgVBc3NldBIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEg0KBW5vdGVzGAMgASgJEhkKEWRpc3BsYXlfcHJlY2lzaW9uGAQgASgFEh0KFWNhbGN1bGF0aW9uX3ByZWNpc2lvbhgFIAEoBRIOCgZhY3RpdmUYBiABKAgSLQoIY3VycmVuY3kYByABKAsyGy5tb25leWRhc2hib2FyZC52NC5DdXJyZW5jeSJHCgpBc3NldFByaWNlEgoKAmlkGAEgASgJEhAKCGFzc2V0X2lkGAIgASgJEgwKBGRhdGUYAyABKAMSDQoFcHJpY2UYBCABKAEiIQoTR2V0QXNzZXRCeUlkUmVxdWVzdBIKCgJpZBgBIAEoCSI/ChRHZXRBc3NldEJ5SWRSZXNwb25zZRInCgVhc3NldBgBIAEoCzIYLm1vbmV5ZGFzaGJvYXJkLnY0LkFzc2V0IhUKE0dldEFsbEFzc2V0c1JlcXVlc3QiQAoUR2V0QWxsQXNzZXRzUmVzcG9uc2USKAoGYXNzZXRzGAEgAygLMhgubW9uZXlkYXNoYm9hcmQudjQuQXNzZXQiPQoSVXBzZXJ0QXNzZXRSZXF1ZXN0EicKBWFzc2V0GAEgASgLMhgubW9uZXlkYXNoYm9hcmQudjQuQXNzZXQiFQoTVXBzZXJ0QXNzZXRSZXNwb25zZSIdChtHZXRMYXRlc3RBc3NldFByaWNlc1JlcXVlc3QiUwocR2V0TGF0ZXN0QXNzZXRQcmljZXNSZXNwb25zZRIzCgxhc3NldF9wcmljZXMYASADKAsyHS5tb25leWRhc2hib2FyZC52NC5Bc3NldFByaWNlIkcKF1Vwc2VydEFzc2V0UHJpY2VSZXF1ZXN0EiwKBXByaWNlGAEgASgLMh0ubW9uZXlkYXNoYm9hcmQudjQuQXNzZXRQcmljZSIaChhVcHNlcnRBc3NldFByaWNlUmVzcG9uc2UylgQKDk1EQXNzZXRTZXJ2aWNlEl8KDEdldEFzc2V0QnlJZBImLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEFzc2V0QnlJZFJlcXVlc3QaJy5tb25leWRhc2hib2FyZC52NC5HZXRBc3NldEJ5SWRSZXNwb25zZRJfCgxHZXRBbGxBc3NldHMSJi5tb25leWRhc2hib2FyZC52NC5HZXRBbGxBc3NldHNSZXF1ZXN0GicubW9uZXlkYXNoYm9hcmQudjQuR2V0QWxsQXNzZXRzUmVzcG9uc2USXAoLVXBzZXJ0QXNzZXQSJS5tb25leWRhc2hib2FyZC52NC5VcHNlcnRBc3NldFJlcXVlc3QaJi5tb25leWRhc2hib2FyZC52NC5VcHNlcnRBc3NldFJlc3BvbnNlEncKFEdldExhdGVzdEFzc2V0UHJpY2VzEi4ubW9uZXlkYXNoYm9hcmQudjQuR2V0TGF0ZXN0QXNzZXRQcmljZXNSZXF1ZXN0Gi8ubW9uZXlkYXNoYm9hcmQudjQuR2V0TGF0ZXN0QXNzZXRQcmljZXNSZXNwb25zZRJrChBVcHNlcnRBc3NldFByaWNlEioubW9uZXlkYXNoYm9hcmQudjQuVXBzZXJ0QXNzZXRQcmljZVJlcXVlc3QaKy5tb25leWRhc2hib2FyZC52NC5VcHNlcnRBc3NldFByaWNlUmVzcG9uc2VCUVpPZ2l0aHViLmNvbS9tYXJrb3JtZXNoZXIvbW9uZXktZGFzaGJvYXJkL2ludGVybmFsL2FwaV9nZW4vbW9uZXlkYXNoYm9hcmQvdjQ7bWR2NGIGcHJvdG8z", [file_moneydashboard_v4_currencies]);
+  fileDesc("Ch5tb25leWRhc2hib2FyZC92NC9hc3NldHMucHJvdG8SEW1vbmV5ZGFzaGJvYXJkLnY0IqkBCgVBc3NldBIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEg0KBW5vdGVzGAMgASgJEhkKEWRpc3BsYXlfcHJlY2lzaW9uGAQgASgFEh0KFWNhbGN1bGF0aW9uX3ByZWNpc2lvbhgFIAEoBRIOCgZhY3RpdmUYBiABKAgSLQoIY3VycmVuY3kYByABKAsyGy5tb25leWRhc2hib2FyZC52NC5DdXJyZW5jeSIhChNHZXRBc3NldEJ5SWRSZXF1ZXN0EgoKAmlkGAEgASgJIj8KFEdldEFzc2V0QnlJZFJlc3BvbnNlEicKBWFzc2V0GAEgASgLMhgubW9uZXlkYXNoYm9hcmQudjQuQXNzZXQiFQoTR2V0QWxsQXNzZXRzUmVxdWVzdCJAChRHZXRBbGxBc3NldHNSZXNwb25zZRIoCgZhc3NldHMYASADKAsyGC5tb25leWRhc2hib2FyZC52NC5Bc3NldCI9ChJVcHNlcnRBc3NldFJlcXVlc3QSJwoFYXNzZXQYASABKAsyGC5tb25leWRhc2hib2FyZC52NC5Bc3NldCIVChNVcHNlcnRBc3NldFJlc3BvbnNlMrACCg5NREFzc2V0U2VydmljZRJfCgxHZXRBc3NldEJ5SWQSJi5tb25leWRhc2hib2FyZC52NC5HZXRBc3NldEJ5SWRSZXF1ZXN0GicubW9uZXlkYXNoYm9hcmQudjQuR2V0QXNzZXRCeUlkUmVzcG9uc2USXwoMR2V0QWxsQXNzZXRzEiYubW9uZXlkYXNoYm9hcmQudjQuR2V0QWxsQXNzZXRzUmVxdWVzdBonLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEFsbEFzc2V0c1Jlc3BvbnNlElwKC1Vwc2VydEFzc2V0EiUubW9uZXlkYXNoYm9hcmQudjQuVXBzZXJ0QXNzZXRSZXF1ZXN0GiYubW9uZXlkYXNoYm9hcmQudjQuVXBzZXJ0QXNzZXRSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM", [file_moneydashboard_v4_currencies]);
 
 /**
  * @generated from message moneydashboard.v4.Asset
@@ -62,38 +62,6 @@ export const AssetSchema: GenMessage<Asset> = /*@__PURE__*/
   messageDesc(file_moneydashboard_v4_assets, 0);
 
 /**
- * @generated from message moneydashboard.v4.AssetPrice
- */
-export type AssetPrice = Message<"moneydashboard.v4.AssetPrice"> & {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id: string;
-
-  /**
-   * @generated from field: string asset_id = 2;
-   */
-  assetId: string;
-
-  /**
-   * @generated from field: int64 date = 3;
-   */
-  date: bigint;
-
-  /**
-   * @generated from field: double price = 4;
-   */
-  price: number;
-};
-
-/**
- * Describes the message moneydashboard.v4.AssetPrice.
- * Use `create(AssetPriceSchema)` to create a new message.
- */
-export const AssetPriceSchema: GenMessage<AssetPrice> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_assets, 1);
-
-/**
  * @generated from message moneydashboard.v4.GetAssetByIdRequest
  */
 export type GetAssetByIdRequest = Message<"moneydashboard.v4.GetAssetByIdRequest"> & {
@@ -108,7 +76,7 @@ export type GetAssetByIdRequest = Message<"moneydashboard.v4.GetAssetByIdRequest
  * Use `create(GetAssetByIdRequestSchema)` to create a new message.
  */
 export const GetAssetByIdRequestSchema: GenMessage<GetAssetByIdRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_assets, 2);
+  messageDesc(file_moneydashboard_v4_assets, 1);
 
 /**
  * @generated from message moneydashboard.v4.GetAssetByIdResponse
@@ -125,7 +93,7 @@ export type GetAssetByIdResponse = Message<"moneydashboard.v4.GetAssetByIdRespon
  * Use `create(GetAssetByIdResponseSchema)` to create a new message.
  */
 export const GetAssetByIdResponseSchema: GenMessage<GetAssetByIdResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_assets, 3);
+  messageDesc(file_moneydashboard_v4_assets, 2);
 
 /**
  * @generated from message moneydashboard.v4.GetAllAssetsRequest
@@ -138,7 +106,7 @@ export type GetAllAssetsRequest = Message<"moneydashboard.v4.GetAllAssetsRequest
  * Use `create(GetAllAssetsRequestSchema)` to create a new message.
  */
 export const GetAllAssetsRequestSchema: GenMessage<GetAllAssetsRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_assets, 4);
+  messageDesc(file_moneydashboard_v4_assets, 3);
 
 /**
  * @generated from message moneydashboard.v4.GetAllAssetsResponse
@@ -155,7 +123,7 @@ export type GetAllAssetsResponse = Message<"moneydashboard.v4.GetAllAssetsRespon
  * Use `create(GetAllAssetsResponseSchema)` to create a new message.
  */
 export const GetAllAssetsResponseSchema: GenMessage<GetAllAssetsResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_assets, 5);
+  messageDesc(file_moneydashboard_v4_assets, 4);
 
 /**
  * @generated from message moneydashboard.v4.UpsertAssetRequest
@@ -172,7 +140,7 @@ export type UpsertAssetRequest = Message<"moneydashboard.v4.UpsertAssetRequest">
  * Use `create(UpsertAssetRequestSchema)` to create a new message.
  */
 export const UpsertAssetRequestSchema: GenMessage<UpsertAssetRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_assets, 6);
+  messageDesc(file_moneydashboard_v4_assets, 5);
 
 /**
  * @generated from message moneydashboard.v4.UpsertAssetResponse
@@ -185,67 +153,7 @@ export type UpsertAssetResponse = Message<"moneydashboard.v4.UpsertAssetResponse
  * Use `create(UpsertAssetResponseSchema)` to create a new message.
  */
 export const UpsertAssetResponseSchema: GenMessage<UpsertAssetResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_assets, 7);
-
-/**
- * @generated from message moneydashboard.v4.GetLatestAssetPricesRequest
- */
-export type GetLatestAssetPricesRequest = Message<"moneydashboard.v4.GetLatestAssetPricesRequest"> & {
-};
-
-/**
- * Describes the message moneydashboard.v4.GetLatestAssetPricesRequest.
- * Use `create(GetLatestAssetPricesRequestSchema)` to create a new message.
- */
-export const GetLatestAssetPricesRequestSchema: GenMessage<GetLatestAssetPricesRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_assets, 8);
-
-/**
- * @generated from message moneydashboard.v4.GetLatestAssetPricesResponse
- */
-export type GetLatestAssetPricesResponse = Message<"moneydashboard.v4.GetLatestAssetPricesResponse"> & {
-  /**
-   * @generated from field: repeated moneydashboard.v4.AssetPrice asset_prices = 1;
-   */
-  assetPrices: AssetPrice[];
-};
-
-/**
- * Describes the message moneydashboard.v4.GetLatestAssetPricesResponse.
- * Use `create(GetLatestAssetPricesResponseSchema)` to create a new message.
- */
-export const GetLatestAssetPricesResponseSchema: GenMessage<GetLatestAssetPricesResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_assets, 9);
-
-/**
- * @generated from message moneydashboard.v4.UpsertAssetPriceRequest
- */
-export type UpsertAssetPriceRequest = Message<"moneydashboard.v4.UpsertAssetPriceRequest"> & {
-  /**
-   * @generated from field: moneydashboard.v4.AssetPrice price = 1;
-   */
-  price?: AssetPrice;
-};
-
-/**
- * Describes the message moneydashboard.v4.UpsertAssetPriceRequest.
- * Use `create(UpsertAssetPriceRequestSchema)` to create a new message.
- */
-export const UpsertAssetPriceRequestSchema: GenMessage<UpsertAssetPriceRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_assets, 10);
-
-/**
- * @generated from message moneydashboard.v4.UpsertAssetPriceResponse
- */
-export type UpsertAssetPriceResponse = Message<"moneydashboard.v4.UpsertAssetPriceResponse"> & {
-};
-
-/**
- * Describes the message moneydashboard.v4.UpsertAssetPriceResponse.
- * Use `create(UpsertAssetPriceResponseSchema)` to create a new message.
- */
-export const UpsertAssetPriceResponseSchema: GenMessage<UpsertAssetPriceResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_assets, 11);
+  messageDesc(file_moneydashboard_v4_assets, 6);
 
 /**
  * @generated from service moneydashboard.v4.MDAssetService
@@ -274,22 +182,6 @@ export const MDAssetService: GenService<{
     methodKind: "unary";
     input: typeof UpsertAssetRequestSchema;
     output: typeof UpsertAssetResponseSchema;
-  },
-  /**
-   * @generated from rpc moneydashboard.v4.MDAssetService.GetLatestAssetPrices
-   */
-  getLatestAssetPrices: {
-    methodKind: "unary";
-    input: typeof GetLatestAssetPricesRequestSchema;
-    output: typeof GetLatestAssetPricesResponseSchema;
-  },
-  /**
-   * @generated from rpc moneydashboard.v4.MDAssetService.UpsertAssetPrice
-   */
-  upsertAssetPrice: {
-    methodKind: "unary";
-    input: typeof UpsertAssetPriceRequestSchema;
-    output: typeof UpsertAssetPriceResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_moneydashboard_v4_assets, 0);

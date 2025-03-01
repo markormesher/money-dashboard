@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { Asset, AssetPrice } from "../../../api_gen/moneydashboard/v4/assets_pb.js";
+import { Asset } from "../../../api_gen/moneydashboard/v4/assets_pb.js";
 import { useAsyncEffect, useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -9,12 +9,13 @@ import { LoadingPanel } from "../common/loading/loading.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { Tile, TileSet } from "../common/tile-set/tile-set.js";
 import { copyToClipboard } from "../../utils/text.js";
-import { assetServiceClient } from "../../../api/api.js";
+import { assetServiceClient, rateServiceClient } from "../../../api/api.js";
 import { formatDateFromProto } from "../../utils/dates.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { concatClasses } from "../../utils/style.js";
 import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
+import { Rate } from "../../../api_gen/moneydashboard/v4/rates_pb.js";
 import { AssetEditModal } from "./asset-edit-modal.js";
 
 function AssetsPage(): ReactElement {
@@ -26,7 +27,7 @@ function AssetsPage(): ReactElement {
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
   const [assets, setAssets] = React.useState<Asset[]>();
-  const [prices, setPrices] = React.useState<Record<string, AssetPrice>>();
+  const [rates, setRates] = React.useState<Record<string, Rate>>();
 
   const [searchPattern, setSearchPattern] = React.useState<RegExp>();
   const [showInactive, setShowInactive] = React.useState(false);
@@ -47,14 +48,16 @@ function AssetsPage(): ReactElement {
 
   useAsyncEffect(async () => {
     try {
-      const res = await assetServiceClient.getLatestAssetPrices({});
-      const prices: Record<string, AssetPrice> = {};
-      res.assetPrices.forEach((r) => {
-        prices[r.assetId] = r;
-      });
-      setPrices(prices);
+      const res = await rateServiceClient.getLatestRates({});
+      const rates: Record<string, Rate> = {};
+      res.rates
+        .filter((r) => r.assetId != NULL_UUID)
+        .forEach((r) => {
+          rates[r.assetId] = r;
+        });
+      setRates(rates);
     } catch (e) {
-      toastBus.error("Failed to load asset prices.");
+      toastBus.error("Failed to load asset rates.");
       setError(e);
       console.log(e);
     }
@@ -86,7 +89,7 @@ function AssetsPage(): ReactElement {
   let body: ReactElement;
   if (error) {
     body = <ErrorPanel error={error} />;
-  } else if (!assets || !prices) {
+  } else if (!assets || !rates) {
     body = <LoadingPanel />;
   } else {
     const filteredAssets = assets
@@ -100,23 +103,23 @@ function AssetsPage(): ReactElement {
       body = (
         <TileSet>
           {filteredAssets.map((a) => {
-            const price = prices[a.id];
+            const rate = rates[a.id];
             return (
               <Tile key={a.id} className={concatClasses(!a.active && "semi-transparent")}>
                 <h4>{a.name}</h4>
                 <ul className={"labels"}>
                   {!a.active ? <li>Inactive</li> : null}
                   <li>{a.currency?.code}</li>
-                  {price !== undefined ? (
+                  {rate !== undefined ? (
                     <>
                       <li>
                         {a.currency?.symbol}
-                        {price.price.toFixed(a.calculationPrecision)}
+                        {rate.rate.toFixed(a.calculationPrecision)}
                       </li>
-                      <li>Updated {formatDateFromProto(price.date)}</li>
+                      <li>Updated {formatDateFromProto(rate.date)}</li>
                     </>
                   ) : (
-                    <li>No price data</li>
+                    <li>No rate data</li>
                   )}
                 </ul>
                 {!!a.notes ? <small>{a.notes}</small> : null}

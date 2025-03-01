@@ -12,13 +12,6 @@ message Currency {
   bool active = 6;
 }
 
-message CurrencyRate {
-  string id = 1;
-  string currency_id = 2;
-  int64 date = 3;
-  double rate = 4;
-}
-
 message GetCurrencyByIdRequest {
   string id = 1;
 }
@@ -39,23 +32,8 @@ message UpsertCurrencyRequest {
 
 message UpsertCurrencyResponse {}
 
-message GetLatestCurrencyRatesRequest {}
-
-message GetLatestCurrencyRatesResponse {
-  repeated CurrencyRate currency_rates = 1;
-}
-
-message UpsertCurrencyRateRequest {
-  CurrencyRate rate = 1;
-}
-
-message UpsertCurrencyRateResponse {}
-
 service MDCurrencyService {
   rpc GetCurrencyById(GetCurrencyByIdRequest) returns (GetCurrencyByIdResponse);
   rpc GetAllCurrencies(GetAllCurrenciesRequest) returns (GetAllCurrenciesResponse);
   rpc UpsertCurrency(UpsertCurrencyRequest) returns (UpsertCurrencyResponse);
-
-  rpc GetLatestCurrencyRates(GetLatestCurrencyRatesRequest) returns (GetLatestCurrencyRatesResponse);
-  rpc UpsertCurrencyRate(UpsertCurrencyRateRequest) returns (UpsertCurrencyRateResponse);
 }

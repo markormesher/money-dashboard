@@ -22,17 +22,9 @@ func AccountToCore(source databasegen.Account) schema.Account {
 	schemaAccount.Active = source.Active
 	return schemaAccount
 }
-func AssetPriceToCore(source databasegen.AssetPrice) schema.AssetPrice {
-	var schemaAssetPrice schema.AssetPrice
-	schemaAssetPrice.ID = uuidUUIDToUuidUUID(source.ID)
-	schemaAssetPrice.AssetID = uuidUUIDToUuidUUID(source.AssetID)
-	schemaAssetPrice.Date = timeTimeToTimeTime(source.Date)
-	schemaAssetPrice.Price = decimalDecimalToDecimalDecimal(source.Price)
-	return schemaAssetPrice
-}
 func AssetToCore(source databasegen.Asset) schema.Asset {
 	var schemaAsset schema.Asset
-	schemaAsset.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaAsset.ID = source.ID
 	schemaAsset.Name = source.Name
 	schemaAsset.Notes = source.Notes
 	schemaAsset.DisplayPrecision = source.DisplayPrecision
@@ -42,7 +34,7 @@ func AssetToCore(source databasegen.Asset) schema.Asset {
 }
 func CategoryToCore(source databasegen.Category) schema.Category {
 	var schemaCategory schema.Category
-	schemaCategory.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaCategory.ID = source.ID
 	schemaCategory.Name = source.Name
 	schemaCategory.IsMemo = source.IsMemo
 	schemaCategory.IsInterestIncome = source.IsInterestIncome
@@ -53,17 +45,9 @@ func CategoryToCore(source databasegen.Category) schema.Category {
 	schemaCategory.Active = source.Active
 	return schemaCategory
 }
-func CurrencyRateToCore(source databasegen.CurrencyRate) schema.CurrencyRate {
-	var schemaCurrencyRate schema.CurrencyRate
-	schemaCurrencyRate.ID = uuidUUIDToUuidUUID(source.ID)
-	schemaCurrencyRate.CurrencyID = uuidUUIDToUuidUUID(source.CurrencyID)
-	schemaCurrencyRate.Date = source.Date
-	schemaCurrencyRate.Rate = source.Rate
-	return schemaCurrencyRate
-}
 func CurrencyToCore(source databasegen.Currency) schema.Currency {
 	var schemaCurrency schema.Currency
-	schemaCurrency.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaCurrency.ID = source.ID
 	schemaCurrency.Code = source.Code
 	schemaCurrency.Symbol = source.Symbol
 	schemaCurrency.DisplayPrecision = source.DisplayPrecision
@@ -73,7 +57,7 @@ func CurrencyToCore(source databasegen.Currency) schema.Currency {
 }
 func HoldingToCore(source databasegen.Holding) schema.Holding {
 	var schemaHolding schema.Holding
-	schemaHolding.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaHolding.ID = source.ID
 	schemaHolding.Name = source.Name
 	schemaHolding.Active = source.Active
 	return schemaHolding
@@ -110,14 +94,23 @@ func NullableHoldingCurrencyToCore(source databasegen.NullableHoldingCurrency) s
 }
 func ProfileToCore(source databasegen.Profile) schema.Profile {
 	var schemaProfile schema.Profile
-	schemaProfile.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaProfile.ID = source.ID
 	schemaProfile.Name = source.Name
 	schemaProfile.Deleted = source.Deleted
 	return schemaProfile
 }
+func RateToCore(source databasegen.Rate) schema.Rate {
+	var schemaRate schema.Rate
+	schemaRate.ID = source.ID
+	schemaRate.AssetID = pUuidUUIDToUuidUUID(source.AssetID)
+	schemaRate.CurrencyID = pUuidUUIDToUuidUUID(source.CurrencyID)
+	schemaRate.Date = source.Date
+	schemaRate.Rate = source.Rate
+	return schemaRate
+}
 func TransactionToCore(source databasegen.Transaction) schema.Transaction {
 	var schemaTransaction schema.Transaction
-	schemaTransaction.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaTransaction.ID = source.ID
 	schemaTransaction.Date = timeTimeToTimeTime(source.Date)
 	schemaTransaction.BudgetDate = timeTimeToTimeTime(source.BudgetDate)
 	schemaTransaction.CreationDate = timeTimeToTimeTime(source.CreationDate)
@@ -135,7 +128,7 @@ func UserProfileRoleToCore(source databasegen.UserProfileRole) schema.UserProfil
 }
 func UserToCore(source databasegen.Usr) schema.User {
 	var schemaUser schema.User
-	schemaUser.ID = uuidUUIDToUuidUUID(source.ID)
+	schemaUser.ID = source.ID
 	schemaUser.ExternalUsername = source.ExternalUsername
 	schemaUser.DisplayName = source.DisplayName
 	schemaUser.Deleted = source.Deleted
@@ -147,13 +140,10 @@ func decimalDecimalToDecimalDecimal(source decimal.Decimal) decimal.Decimal {
 func pUuidUUIDToUuidUUID(source *uuid.UUID) uuid.UUID {
 	var uuidUUID uuid.UUID
 	if source != nil {
-		uuidUUID = uuidUUIDToUuidUUID((*source))
+		uuidUUID = (*source)
 	}
 	return uuidUUID
 }
 func timeTimeToTimeTime(source time.Time) time.Time {
-	return source
-}
-func uuidUUIDToUuidUUID(source uuid.UUID) uuid.UUID {
 	return source
 }

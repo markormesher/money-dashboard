@@ -29,24 +29,3 @@ INSERT INTO asset (
   currency_id = @currency_id,
   active = @active
 ;
-
--- name: UpsertAssetPrice :exec
-INSERT INTO asset_price (
-  id, asset_id, "date", price
-) VALUES (
-  @id, @asset_id, @date, @price
-) ON CONFLICT (asset_id, "date") DO UPDATE SET
-  price = @price
-;
-
--- name: GetLatestAssetPrices :many
-SELECT DISTINCT ON (asset_id) * FROM asset_price ORDER BY asset_id, "date" DESC;
-
--- name: GetAssetPrice :one
-SELECT * FROM asset_price
-WHERE
-  asset_id = @asset_id
-  AND
-  "date" <= @date
-ORDER BY "date" DESC
-LIMIT 1;

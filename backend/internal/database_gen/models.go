@@ -47,13 +47,6 @@ type Asset struct {
 	Active               bool
 }
 
-type AssetPrice struct {
-	ID      uuid.UUID
-	AssetID uuid.UUID
-	Date    time.Time
-	Price   decimal.Decimal
-}
-
 type Budget struct {
 	ID         uuid.UUID
 	Deleted    bool
@@ -96,13 +89,6 @@ type Currency struct {
 	DisplayPrecision     int32
 	Active               bool
 	CalculationPrecision int32
-}
-
-type CurrencyRate struct {
-	ID         uuid.UUID
-	CurrencyID uuid.UUID
-	Date       time.Time
-	Rate       decimal.Decimal
 }
 
 type Envelope struct {
@@ -189,6 +175,14 @@ type Profile struct {
 	ID      uuid.UUID
 	Name    string
 	Deleted bool
+}
+
+type Rate struct {
+	ID         uuid.UUID
+	AssetID    *uuid.UUID
+	CurrencyID *uuid.UUID
+	Date       time.Time
+	Rate       decimal.Decimal
 }
 
 type StockPrice struct {
