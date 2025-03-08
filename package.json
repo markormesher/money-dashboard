@@ -35,7 +35,7 @@
     "clean": "rimraf ./build ./coverage ./.nyc_output"
   },
   "dependencies": {
-    "axios": "^0.28.0",
+    "axios": "^1.0.0",
     "body-parser": "^1.18.2",
     "bootstrap-scss": "^5.1.3",
     "chart.js": "^4.4.1",
