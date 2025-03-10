@@ -47,17 +47,6 @@ type Asset struct {
 	Active               bool
 }
 
-type Budget struct {
-	ID         uuid.UUID
-	Deleted    bool
-	Type       string
-	Amount     float64
-	StartDate  int64
-	EndDate    int64
-	CategoryID *uuid.UUID
-	ProfileID  *uuid.UUID
-}
-
 type Category struct {
 	ID                   uuid.UUID
 	Name                 string
@@ -133,6 +122,16 @@ type Holding struct {
 	AccountID  uuid.UUID
 	ProfileID  uuid.UUID
 	Active     bool
+}
+
+type LegacyBudget struct {
+	ID         uuid.UUID
+	Type       string
+	Amount     decimal.Decimal
+	StartDate  time.Time
+	EndDate    time.Time
+	CategoryID uuid.UUID
+	ProfileID  uuid.UUID
 }
 
 type Migration struct {
