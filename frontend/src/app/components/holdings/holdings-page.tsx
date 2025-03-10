@@ -1,6 +1,5 @@
 import React, { ReactElement } from "react";
-import { Holding } from "../../../api_gen/moneydashboard/v4/holdings_pb.js";
-import { useAsyncEffect, useNudge } from "../../utils/hooks.js";
+import { useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useRouter } from "../app/router.js";
@@ -11,9 +10,9 @@ import { Tile, TileSet } from "../common/tile-set/tile-set.js";
 import { copyToClipboard } from "../../utils/text.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
-import { holdingServiceClient } from "../../../api/api.js";
 import { concatClasses } from "../../utils/style.js";
 import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
+import { useHoldingList } from "../../schema/hooks.js";
 import { HoldingEditModal } from "./holding-edit-modal.js";
 
 function HoldingsPage(): ReactElement {
@@ -24,7 +23,6 @@ function HoldingsPage(): ReactElement {
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
-  const [holdings, setHoldings] = React.useState<Holding[]>();
 
   const [searchPattern, setSearchPattern] = React.useState<RegExp>();
   const [showInactive, setShowInactive] = React.useState(false);
@@ -32,16 +30,13 @@ function HoldingsPage(): ReactElement {
   const [editingId, setEditingId] = React.useState<string>();
   useKeyShortcut("c", () => setEditingId(NULL_UUID));
 
-  useAsyncEffect(async () => {
-    try {
-      const res = await holdingServiceClient.getAllHoldings({});
-      setHoldings(res.holdings);
-    } catch (e) {
+  const holdings = useHoldingList({
+    dependencies: [nudgeValue],
+    onError: (e) => {
       toastBus.error("Failed to load holdings.");
       setError(e);
-      console.log(e);
-    }
-  }, [nudgeValue]);
+    },
+  });
 
   const pageButtons = [
     <button className={"outline"} onClick={() => setEditingId(NULL_UUID)}>

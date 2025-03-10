@@ -1,6 +1,5 @@
 import React, { ReactElement } from "react";
-import { Currency } from "../../../api_gen/moneydashboard/v4/currencies_pb.js";
-import { useAsyncEffect, useNudge } from "../../utils/hooks.js";
+import { useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useRouter } from "../app/router.js";
@@ -9,13 +8,12 @@ import { LoadingPanel } from "../common/loading/loading.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { Tile, TileSet } from "../common/tile-set/tile-set.js";
 import { copyToClipboard } from "../../utils/text.js";
-import { currencyServiceClient, rateServiceClient } from "../../../api/api.js";
 import { formatDateFromProto } from "../../utils/dates.js";
 import { GBP_CURRENCY_ID, NULL_UUID } from "../../../config/consts.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { concatClasses } from "../../utils/style.js";
 import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
-import { Rate } from "../../../api_gen/moneydashboard/v4/rates_pb.js";
+import { useCurrencyList, useLatestRates } from "../../schema/hooks.js";
 import { CurrencyEditModal } from "./currency-edit-modal.js";
 
 function CurrenciesPage(): ReactElement {
@@ -26,41 +24,27 @@ function CurrenciesPage(): ReactElement {
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
-  const [currencies, setCurrencies] = React.useState<Currency[]>();
-  const [rates, setRates] = React.useState<Record<string, Rate>>();
 
   const [showInactive, setShowInactive] = React.useState(false);
 
   const [editingId, setEditingId] = React.useState<string>();
   useKeyShortcut("c", () => setEditingId(NULL_UUID));
 
-  useAsyncEffect(async () => {
-    try {
-      const res = await currencyServiceClient.getAllCurrencies({});
-      setCurrencies(res.currencies);
-    } catch (e) {
+  const currencies = useCurrencyList({
+    dependencies: [nudgeValue],
+    onError: (e) => {
       toastBus.error("Failed to load currencies.");
       setError(e);
-      console.log(e);
-    }
-  }, [nudgeValue]);
+    },
+  });
 
-  useAsyncEffect(async () => {
-    try {
-      const res = await rateServiceClient.getLatestRates({});
-      const rates: Record<string, Rate> = {};
-      res.rates
-        .filter((r) => r.currencyId != NULL_UUID)
-        .forEach((r) => {
-          rates[r.currencyId] = r;
-        });
-      setRates(rates);
-    } catch (e) {
+  const rates = useLatestRates({
+    dependencies: [nudgeValue],
+    onError: (e) => {
       toastBus.error("Failed to load currency rates.");
       setError(e);
-      console.log(e);
-    }
-  }, []);
+    },
+  });
 
   const pageButtons = [
     <button className={"outline"} onClick={() => setEditingId(NULL_UUID)}>

@@ -7,14 +7,19 @@ import {
   categoryServiceClient,
   currencyServiceClient,
   holdingServiceClient,
+  profileServiceClient,
+  rateServiceClient,
 } from "../../api/api.js";
 import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
 import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
 import { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
 import { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
+import { Rate } from "../../api_gen/moneydashboard/v4/rates_pb.js";
+import { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
 
 type UseListOptions = {
   wg?: WaitGroup;
+  dependencies?: React.DependencyList;
   onError: (error: unknown) => void;
 };
 
@@ -30,7 +35,7 @@ function useAccountList(options: UseListOptions): Account[] | undefined {
       console.log(e);
     }
     options.wg?.done();
-  }, []);
+  }, options.dependencies ?? []);
 
   return accounts;
 }
@@ -47,7 +52,7 @@ function useAssetList(options: UseListOptions): Asset[] | undefined {
       console.log(e);
     }
     options.wg?.done();
-  }, []);
+  }, options.dependencies ?? []);
 
   return assets;
 }
@@ -64,7 +69,7 @@ function useCategoryList(options: UseListOptions): Category[] | undefined {
       console.log(e);
     }
     options.wg?.done();
-  }, []);
+  }, options.dependencies ?? []);
 
   return categories;
 }
@@ -81,7 +86,7 @@ function useCurrencyList(options: UseListOptions): Currency[] | undefined {
       console.log(e);
     }
     options.wg?.done();
-  }, []);
+  }, options.dependencies ?? []);
 
   return currencies;
 }
@@ -98,9 +103,54 @@ function useHoldingList(options: UseListOptions): Holding[] | undefined {
       console.log(e);
     }
     options.wg?.done();
-  }, []);
+  }, options.dependencies ?? []);
 
   return holdings;
 }
 
-export { useAccountList, useAssetList, useCategoryList, useCurrencyList, useHoldingList };
+function useProfileList(options: UseListOptions): Profile[] | undefined {
+  const [profiles, setProfiles] = React.useState<Profile[]>();
+  useAsyncEffect(async () => {
+    options.wg?.add();
+    try {
+      const res = await profileServiceClient.getAllProfiles({});
+      setProfiles(res.profiles);
+    } catch (e) {
+      options.onError(e);
+      console.log(e);
+    }
+    options.wg?.done();
+  }, options.dependencies ?? []);
+
+  return profiles;
+}
+
+function useLatestRates(options: UseListOptions): Record<string, Rate> | undefined {
+  const [rates, setRates] = React.useState<Record<string, Rate>>();
+  useAsyncEffect(async () => {
+    options.wg?.add();
+    try {
+      const res = await rateServiceClient.getLatestRates({});
+      const rates: Record<string, Rate> = {};
+      res.rates.forEach((r) => {
+        rates[r.currencyId ?? r.assetId] = r;
+      });
+      setRates(rates);
+    } catch (e) {
+      options.onError(e);
+      console.log(e);
+    }
+    options.wg?.done();
+  }, options.dependencies ?? []);
+  return rates;
+}
+
+export {
+  useAccountList,
+  useAssetList,
+  useCategoryList,
+  useCurrencyList,
+  useHoldingList,
+  useProfileList,
+  useLatestRates,
+};
