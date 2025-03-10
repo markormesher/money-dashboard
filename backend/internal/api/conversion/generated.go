@@ -18,7 +18,26 @@ func AccountFromCore(source schema.Account) *v4.Account {
 	mdv4Account.IsPension = source.IsPension
 	mdv4Account.ExcludeFromEnvelopes = source.ExcludeFromEnvelopes
 	mdv4Account.Active = source.Active
+	mdv4Account.AccountGroup = pSchemaAccountGroupToPMdv4AccountGroup(source.AccountGroup)
 	return &mdv4Account
+}
+func AccountGroupFromCore(source schema.AccountGroup) *v4.AccountGroup {
+	var mdv4AccountGroup v4.AccountGroup
+	mdv4AccountGroup.Id = ConvertUUIDToString(source.ID)
+	mdv4AccountGroup.Name = source.Name
+	mdv4AccountGroup.DisplayOrder = source.DisplayOrder
+	return &mdv4AccountGroup
+}
+func AccountGroupToCore(source *v4.AccountGroup) schema.AccountGroup {
+	var schemaAccountGroup schema.AccountGroup
+	if source != nil {
+		var schemaAccountGroup2 schema.AccountGroup
+		schemaAccountGroup2.ID = ConvertStringToUUID((*source).Id)
+		schemaAccountGroup2.Name = (*source).Name
+		schemaAccountGroup2.DisplayOrder = (*source).DisplayOrder
+		schemaAccountGroup = schemaAccountGroup2
+	}
+	return schemaAccountGroup
 }
 func AccountToCore(source *v4.Account) schema.Account {
 	var schemaAccount schema.Account
@@ -30,6 +49,7 @@ func AccountToCore(source *v4.Account) schema.Account {
 		schemaAccount2.IsIsa = (*source).IsIsa
 		schemaAccount2.IsPension = (*source).IsPension
 		schemaAccount2.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
+		schemaAccount2.AccountGroup = pMdv4AccountGroupToPSchemaAccountGroup((*source).AccountGroup)
 		schemaAccount2.Active = (*source).Active
 		schemaAccount = schemaAccount2
 	}
@@ -242,6 +262,17 @@ func UserToCore(source *v4.User) schema.User {
 	}
 	return schemaUser
 }
+func pMdv4AccountGroupToPSchemaAccountGroup(source *v4.AccountGroup) *schema.AccountGroup {
+	var pSchemaAccountGroup *schema.AccountGroup
+	if source != nil {
+		var schemaAccountGroup schema.AccountGroup
+		schemaAccountGroup.ID = ConvertStringToUUID((*source).Id)
+		schemaAccountGroup.Name = (*source).Name
+		schemaAccountGroup.DisplayOrder = (*source).DisplayOrder
+		pSchemaAccountGroup = &schemaAccountGroup
+	}
+	return pSchemaAccountGroup
+}
 func pMdv4AccountToPSchemaAccount(source *v4.Account) *schema.Account {
 	var pSchemaAccount *schema.Account
 	if source != nil {
@@ -252,6 +283,7 @@ func pMdv4AccountToPSchemaAccount(source *v4.Account) *schema.Account {
 		schemaAccount.IsIsa = (*source).IsIsa
 		schemaAccount.IsPension = (*source).IsPension
 		schemaAccount.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
+		schemaAccount.AccountGroup = pMdv4AccountGroupToPSchemaAccountGroup((*source).AccountGroup)
 		schemaAccount.Active = (*source).Active
 		pSchemaAccount = &schemaAccount
 	}
@@ -328,6 +360,17 @@ func pMdv4ProfileToPSchemaProfile(source *v4.Profile) *schema.Profile {
 	}
 	return pSchemaProfile
 }
+func pSchemaAccountGroupToPMdv4AccountGroup(source *schema.AccountGroup) *v4.AccountGroup {
+	var pMdv4AccountGroup *v4.AccountGroup
+	if source != nil {
+		var mdv4AccountGroup v4.AccountGroup
+		mdv4AccountGroup.Id = ConvertUUIDToString((*source).ID)
+		mdv4AccountGroup.Name = (*source).Name
+		mdv4AccountGroup.DisplayOrder = (*source).DisplayOrder
+		pMdv4AccountGroup = &mdv4AccountGroup
+	}
+	return pMdv4AccountGroup
+}
 func pSchemaAccountToPMdv4Account(source *schema.Account) *v4.Account {
 	var pMdv4Account *v4.Account
 	if source != nil {
@@ -339,6 +382,7 @@ func pSchemaAccountToPMdv4Account(source *schema.Account) *v4.Account {
 		mdv4Account.IsPension = (*source).IsPension
 		mdv4Account.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
 		mdv4Account.Active = (*source).Active
+		mdv4Account.AccountGroup = pSchemaAccountGroupToPMdv4AccountGroup((*source).AccountGroup)
 		pMdv4Account = &mdv4Account
 	}
 	return pMdv4Account

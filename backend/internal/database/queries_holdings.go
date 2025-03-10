@@ -28,6 +28,9 @@ func (db *DB) GetHoldingById(ctx context.Context, id uuid.UUID, profileID uuid.U
 	account := conversion.AccountToCore(row.Account)
 	holding.Account = &account
 
+	accountGroup := conversion.AccountGroupToCore(row.AccountGroup)
+	holding.Account.AccountGroup = &accountGroup
+
 	profile := conversion.ProfileToCore(row.Profile)
 	holding.Profile = &profile
 
@@ -65,6 +68,9 @@ func (db *DB) GetAllHoldings(ctx context.Context, profileID uuid.UUID) ([]schema
 
 		account := conversion.AccountToCore(row.Account)
 		holding.Account = &account
+
+		accountGroup := conversion.AccountGroupToCore(row.AccountGroup)
+		holding.Account.AccountGroup = &accountGroup
 
 		profile := conversion.ProfileToCore(row.Profile)
 		holding.Profile = &profile

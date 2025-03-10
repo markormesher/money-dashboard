@@ -1,9 +1,12 @@
 -- name: GetAccountById :one
 SELECT
   sqlc.embed(account),
+  sqlc.embed(account_group),
   sqlc.embed(profile)
 FROM
-  account JOIN profile on account.profile_id = profile.id
+  account
+    JOIN account_group ON account.account_group_id = account_group.id
+    JOIN profile ON account.profile_id = profile.id
 WHERE
   account.id = @account_id
   AND profile.id = @profile_id
@@ -12,9 +15,12 @@ WHERE
 -- name: GetAllAccounts :many
 SELECT
   sqlc.embed(account),
+  sqlc.embed(account_group),
   sqlc.embed(profile)
 FROM
-  account JOIN profile on account.profile_id = profile.id
+  account
+    JOIN account_group ON account.account_group_id = account_group.id
+    JOIN profile ON account.profile_id = profile.id
 WHERE
   profile.id = @profile_id
 ;
@@ -27,6 +33,7 @@ INSERT INTO account (
   is_isa,
   is_pension,
   exclude_from_envelopes,
+  account_group_id,
   profile_id,
   active
 ) VALUES (
@@ -36,6 +43,7 @@ INSERT INTO account (
   @is_isa,
   @is_pension,
   @exclude_from_envelopes,
+  @account_group_id,
   @profile_id,
   @active
 ) ON CONFLICT (id) DO UPDATE SET
@@ -45,6 +53,7 @@ INSERT INTO account (
   is_isa = @is_isa,
   is_pension = @is_pension,
   exclude_from_envelopes = @exclude_from_envelopes,
+  account_group_id = @account_group_id,
   profile_id = @profile_id,
   active = @active
 ;

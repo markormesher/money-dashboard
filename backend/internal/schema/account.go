@@ -7,6 +7,13 @@ import (
 	"github.com/google/uuid"
 )
 
+type AccountGroup struct {
+	ID           uuid.UUID
+	Name         string
+	DisplayOrder int32
+	Profile      *Profile
+}
+
 type Account struct {
 	ID                   uuid.UUID
 	Name                 string
@@ -14,6 +21,7 @@ type Account struct {
 	IsIsa                bool
 	IsPension            bool
 	ExcludeFromEnvelopes bool
+	AccountGroup         *AccountGroup
 	Profile              *Profile
 	Active               bool
 }

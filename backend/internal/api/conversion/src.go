@@ -31,6 +31,9 @@ type converterSpec interface {
 	AccountFromCore(source schema.Account) *mdv4.Account
 	AccountToCore(source *mdv4.Account) schema.Account
 
+	AccountGroupFromCore(source schema.AccountGroup) *mdv4.AccountGroup
+	AccountGroupToCore(source *mdv4.AccountGroup) schema.AccountGroup
+
 	AssetFromCore(source schema.Asset) *mdv4.Asset
 	AssetToCore(source *mdv4.Asset) schema.Asset
 

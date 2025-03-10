@@ -13,10 +13,13 @@ import (
 
 const getAccountById = `-- name: GetAccountById :one
 SELECT
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
-  account JOIN profile on account.profile_id = profile.id
+  account
+    JOIN account_group ON account.account_group_id = account_group.id
+    JOIN profile ON account.profile_id = profile.id
 WHERE
   account.id = $1
   AND profile.id = $2
@@ -28,8 +31,9 @@ type GetAccountByIdParams struct {
 }
 
 type GetAccountByIdRow struct {
-	Account Account
-	Profile Profile
+	Account      Account
+	AccountGroup AccountGroup
+	Profile      Profile
 }
 
 func (q *Queries) GetAccountById(ctx context.Context, arg GetAccountByIdParams) (GetAccountByIdRow, error) {
@@ -44,6 +48,11 @@ func (q *Queries) GetAccountById(ctx context.Context, arg GetAccountByIdParams) 
 		&i.Account.ExcludeFromEnvelopes,
 		&i.Account.ProfileID,
 		&i.Account.Active,
+		&i.Account.AccountGroupID,
+		&i.AccountGroup.ID,
+		&i.AccountGroup.Name,
+		&i.AccountGroup.DisplayOrder,
+		&i.AccountGroup.ProfileID,
 		&i.Profile.ID,
 		&i.Profile.Name,
 		&i.Profile.Deleted,
@@ -53,17 +62,21 @@ func (q *Queries) GetAccountById(ctx context.Context, arg GetAccountByIdParams) 
 
 const getAllAccounts = `-- name: GetAllAccounts :many
 SELECT
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
-  account JOIN profile on account.profile_id = profile.id
+  account
+    JOIN account_group ON account.account_group_id = account_group.id
+    JOIN profile ON account.profile_id = profile.id
 WHERE
   profile.id = $1
 `
 
 type GetAllAccountsRow struct {
-	Account Account
-	Profile Profile
+	Account      Account
+	AccountGroup AccountGroup
+	Profile      Profile
 }
 
 func (q *Queries) GetAllAccounts(ctx context.Context, profileID uuid.UUID) ([]GetAllAccountsRow, error) {
@@ -84,6 +97,11 @@ func (q *Queries) GetAllAccounts(ctx context.Context, profileID uuid.UUID) ([]Ge
 			&i.Account.ExcludeFromEnvelopes,
 			&i.Account.ProfileID,
 			&i.Account.Active,
+			&i.Account.AccountGroupID,
+			&i.AccountGroup.ID,
+			&i.AccountGroup.Name,
+			&i.AccountGroup.DisplayOrder,
+			&i.AccountGroup.ProfileID,
 			&i.Profile.ID,
 			&i.Profile.Name,
 			&i.Profile.Deleted,
@@ -106,6 +124,7 @@ INSERT INTO account (
   is_isa,
   is_pension,
   exclude_from_envelopes,
+  account_group_id,
   profile_id,
   active
 ) VALUES (
@@ -116,7 +135,8 @@ INSERT INTO account (
   $5,
   $6,
   $7,
-  $8
+  $8,
+  $9
 ) ON CONFLICT (id) DO UPDATE SET
   id = $1,
   name = $2,
@@ -124,8 +144,9 @@ INSERT INTO account (
   is_isa = $4,
   is_pension = $5,
   exclude_from_envelopes = $6,
-  profile_id = $7,
-  active = $8
+  account_group_id = $7,
+  profile_id = $8,
+  active = $9
 `
 
 type UpsertAccountParams struct {
@@ -135,6 +156,7 @@ type UpsertAccountParams struct {
 	IsIsa                bool
 	IsPension            bool
 	ExcludeFromEnvelopes bool
+	AccountGroupID       uuid.UUID
 	ProfileID            uuid.UUID
 	Active               bool
 }
@@ -147,6 +169,7 @@ func (q *Queries) UpsertAccount(ctx context.Context, arg UpsertAccountParams) er
 		arg.IsIsa,
 		arg.IsPension,
 		arg.ExcludeFromEnvelopes,
+		arg.AccountGroupID,
 		arg.ProfileID,
 		arg.Active,
 	)

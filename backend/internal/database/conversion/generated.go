@@ -11,6 +11,13 @@ import (
 	"time"
 )
 
+func AccountGroupToCore(source databasegen.AccountGroup) schema.AccountGroup {
+	var schemaAccountGroup schema.AccountGroup
+	schemaAccountGroup.ID = source.ID
+	schemaAccountGroup.Name = source.Name
+	schemaAccountGroup.DisplayOrder = source.DisplayOrder
+	return schemaAccountGroup
+}
 func AccountToCore(source databasegen.Account) schema.Account {
 	var schemaAccount schema.Account
 	schemaAccount.ID = source.ID

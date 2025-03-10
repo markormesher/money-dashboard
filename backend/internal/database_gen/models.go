@@ -21,6 +21,14 @@ type Account struct {
 	ExcludeFromEnvelopes bool
 	ProfileID            uuid.UUID
 	Active               bool
+	AccountGroupID       uuid.UUID
+}
+
+type AccountGroup struct {
+	ID           uuid.UUID
+	Name         string
+	DisplayOrder int32
+	ProfileID    uuid.UUID
 }
 
 type AccountOld struct {

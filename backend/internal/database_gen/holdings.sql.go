@@ -17,7 +17,8 @@ SELECT
   nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active, nullable_holding_currency.calculation_precision,
   nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.calculation_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
   nullable_holding_asset_currency.holding_id, nullable_holding_asset_currency.id, nullable_holding_asset_currency.code, nullable_holding_asset_currency.symbol, nullable_holding_asset_currency.display_precision, nullable_holding_asset_currency.active, nullable_holding_asset_currency.calculation_precision,
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
   holding
@@ -25,6 +26,7 @@ FROM
     LEFT JOIN nullable_holding_asset ON holding.id = nullable_holding_asset.holding_id
     LEFT JOIN nullable_holding_asset_currency ON holding.id = nullable_holding_asset_currency.holding_id
     JOIN account ON holding.account_id = account.id
+    JOIN account_group ON account.account_group_id = account_group.id
     JOIN profile ON holding.profile_id = profile.id
 WHERE
   profile.id = $1
@@ -36,6 +38,7 @@ type GetAllHoldingsRow struct {
 	NullableHoldingAsset         NullableHoldingAsset
 	NullableHoldingAssetCurrency NullableHoldingAssetCurrency
 	Account                      Account
+	AccountGroup                 AccountGroup
 	Profile                      Profile
 }
 
@@ -86,6 +89,11 @@ func (q *Queries) GetAllHoldings(ctx context.Context, profileID uuid.UUID) ([]Ge
 			&i.Account.ExcludeFromEnvelopes,
 			&i.Account.ProfileID,
 			&i.Account.Active,
+			&i.Account.AccountGroupID,
+			&i.AccountGroup.ID,
+			&i.AccountGroup.Name,
+			&i.AccountGroup.DisplayOrder,
+			&i.AccountGroup.ProfileID,
 			&i.Profile.ID,
 			&i.Profile.Name,
 			&i.Profile.Deleted,
@@ -106,7 +114,8 @@ SELECT
   nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active, nullable_holding_currency.calculation_precision,
   nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.calculation_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
   nullable_holding_asset_currency.holding_id, nullable_holding_asset_currency.id, nullable_holding_asset_currency.code, nullable_holding_asset_currency.symbol, nullable_holding_asset_currency.display_precision, nullable_holding_asset_currency.active, nullable_holding_asset_currency.calculation_precision,
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
   holding
@@ -114,6 +123,7 @@ FROM
     LEFT JOIN nullable_holding_asset ON holding.id = nullable_holding_asset.holding_id
     LEFT JOIN nullable_holding_asset_currency ON holding.id = nullable_holding_asset_currency.holding_id
     JOIN account ON holding.account_id = account.id
+    JOIN account_group ON account.account_group_id = account_group.id
     JOIN profile ON holding.profile_id = profile.id
 WHERE
   holding.id = $1
@@ -131,6 +141,7 @@ type GetHoldingByIdRow struct {
 	NullableHoldingAsset         NullableHoldingAsset
 	NullableHoldingAssetCurrency NullableHoldingAssetCurrency
 	Account                      Account
+	AccountGroup                 AccountGroup
 	Profile                      Profile
 }
 
@@ -175,6 +186,11 @@ func (q *Queries) GetHoldingById(ctx context.Context, arg GetHoldingByIdParams) 
 		&i.Account.ExcludeFromEnvelopes,
 		&i.Account.ProfileID,
 		&i.Account.Active,
+		&i.Account.AccountGroupID,
+		&i.AccountGroup.ID,
+		&i.AccountGroup.Name,
+		&i.AccountGroup.DisplayOrder,
+		&i.AccountGroup.ProfileID,
 		&i.Profile.ID,
 		&i.Profile.Name,
 		&i.Profile.Deleted,

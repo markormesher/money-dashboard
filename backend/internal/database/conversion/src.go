@@ -23,6 +23,8 @@ type converterSpec interface {
 
 	AccountToCore(source database_gen.Account) schema.Account
 
+	AccountGroupToCore(source database_gen.AccountGroup) schema.AccountGroup
+
 	CategoryToCore(source database_gen.Category) schema.Category
 
 	CurrencyToCore(source database_gen.Currency) schema.Currency

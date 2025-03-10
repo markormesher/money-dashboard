@@ -11,6 +11,14 @@ message Account {
   bool is_pension = 5;
   bool exclude_from_envelopes = 6;
   bool active = 7;
+
+  AccountGroup account_group = 8;
+}
+
+message AccountGroup {
+  string id = 1;
+  string name = 2;
+  int32 display_order = 3;
 }
 
 message GetAccountByIdRequest {
