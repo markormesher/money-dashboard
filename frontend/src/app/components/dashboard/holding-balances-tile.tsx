@@ -11,6 +11,8 @@ import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
 import { formatCurrency } from "../../utils/currency.js";
 import "./holding-balances-tile.css";
 import { AccountGroup } from "../../../api_gen/moneydashboard/v4/account_groups_pb.js";
+import { formatAsset } from "../../utils/assets.js";
+import { GBP_CURRENCY, GBP_CURRENCY_ID } from "../../../config/consts.js";
 
 type Group = {
   accountGroup: AccountGroup;
@@ -37,7 +39,15 @@ function HoldingBalancesTile(): ReactElement {
     }
   }, []);
 
-  const [showHoldings, setShowHoldings] = React.useState(false);
+  const [openAccounts, setOpenAccounts] = React.useState<string[]>([]);
+
+  function toggleOpenAccount(id: string) {
+    if (openAccounts.includes(id)) {
+      setOpenAccounts(openAccounts.filter((a) => a != id));
+    } else {
+      setOpenAccounts([...openAccounts, id]);
+    }
+  }
 
   if (error) {
     return <ErrorPanel error={error} />;
@@ -46,6 +56,7 @@ function HoldingBalancesTile(): ReactElement {
   }
 
   const groups: Record<string, Group> = {};
+  let totalBalance = 0;
 
   for (const hb of holdingBalances) {
     const account = hb.holding?.account;
@@ -67,6 +78,7 @@ function HoldingBalancesTile(): ReactElement {
       group.rows[account.id] = row;
     }
 
+    totalBalance += hb.gbpBalance;
     row.balanceSum += hb.gbpBalance;
     row.balances.push(hb);
   }
@@ -91,49 +103,76 @@ function HoldingBalancesTile(): ReactElement {
               {Object.values(g.rows)
                 .sort((a, b) => Math.abs(b.balanceSum) - Math.abs(a.balanceSum))
                 .map((r) => {
-                  if (!showHoldings || r.balances.length == 1) {
+                  const { account, balances, balanceSum } = r;
+                  const showHoldings = openAccounts.includes(account.id);
+
+                  const label = (
+                    <div className={"row-label"} onClick={() => toggleOpenAccount(account.id)}>
+                      <IconGroup>
+                        <span>{account.name}</span>
+                        {account.notes ? (
+                          <span data-tooltip={account.notes}>
+                            <Icon name={"info"} className={"muted"} />
+                          </span>
+                        ) : null}
+                        {balances.length > 1 ? <Icon name={"account_tree"} className={"muted"} /> : null}
+                      </IconGroup>
+                    </div>
+                  );
+
+                  if (showHoldings) {
+                    const subRows = balances
+                      .sort((a, b) => b.gbpBalance - a.gbpBalance)
+                      .map((b) => {
+                        const { holding } = b;
+                        let conversionNote = "";
+
+                        if (holding?.asset) {
+                          conversionNote = `${formatAsset(b.rawBalance, holding.asset)} ${holding.asset.name}`;
+                        }
+
+                        if (holding?.currency && holding.currency.id != GBP_CURRENCY_ID) {
+                          conversionNote = `${formatCurrency(b.rawBalance, holding.currency)} ${holding.currency.code}`;
+                        }
+
+                        return (
+                          <div className={"balance-row"}>
+                            <div className={"row-label"}>
+                              <IconGroup>
+                                <span>{holding?.name}</span>
+                                {conversionNote ? (
+                                  <span data-tooltip={conversionNote}>
+                                    <Icon name={"shuffle"} className={"muted"} />
+                                  </span>
+                                ) : null}
+                              </IconGroup>
+                            </div>
+                            <div className={"row-value"}>{formatCurrency(b.gbpBalance, null)}</div>
+                          </div>
+                        );
+                      });
+
+                    return (
+                      <div className={concatClasses("balance-row", "with-children")}>
+                        {label}
+                        <div className={"row-children"}>{subRows} </div>
+                      </div>
+                    );
+                  } else {
                     return (
                       <div className={"balance-row"}>
-                        <div className={"row-label"}>{r.account.name}</div>
-                        <div className={"row-value"}>{formatCurrency(r.balanceSum, null)}</div>
+                        {label}
+                        <div className={"row-value"}>{formatCurrency(balanceSum, null)}</div>
                       </div>
                     );
                   }
-
-                  return (
-                    <div className={concatClasses("balance-row", "with-children")}>
-                      <div className={"row-label"}>{r.account.name}</div>
-                      <div className={"row-children"}>
-                        {r.balances
-                          .sort((a, b) => b.gbpBalance - a.gbpBalance)
-                          .map((b) => {
-                            return (
-                              <div className={"balance-row"}>
-                                <div className={"row-label"}>{b.holding?.name}</div>
-                                <div className={"row-value"}>{formatCurrency(b.gbpBalance, null)}</div>
-                              </div>
-                            );
-                          })}
-                      </div>
-                    </div>
-                  );
                 })}
             </>
           );
         })}
 
       <footer>
-        <fieldset className={concatClasses("mb0", "muted")}>
-          <label>
-            <input
-              type={"checkbox"}
-              role={"switch"}
-              checked={showHoldings}
-              onChange={(evt) => setShowHoldings(evt.target.checked)}
-            />
-            Individual holdings
-          </label>
-        </fieldset>
+        <div className={"total-balance"}>{formatCurrency(totalBalance, GBP_CURRENCY)}</div>
       </footer>
     </article>
   );

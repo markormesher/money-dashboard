@@ -30,3 +30,9 @@
     text-align: right;
   }
 }
+
+.total-balance {
+  font-family: monospace;
+  text-align: right;
+  font-size: 1.2rem;
+}
