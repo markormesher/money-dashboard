@@ -49,6 +49,9 @@ func main() {
 	apiPath, apiHandler = mdv4connect.NewMDAccountServiceHandler(apiServer)
 	mux.PathPrefix(apiPath).Handler(apiHandler)
 
+	apiPath, apiHandler = mdv4connect.NewMDAccountGroupServiceHandler(apiServer)
+	mux.PathPrefix(apiPath).Handler(apiHandler)
+
 	apiPath, apiHandler = mdv4connect.NewMDAssetServiceHandler(apiServer)
 	mux.PathPrefix(apiPath).Handler(apiHandler)
 

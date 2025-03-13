@@ -2,6 +2,7 @@ import React from "react";
 import { Account } from "../../api_gen/moneydashboard/v4/accounts_pb.js";
 import { useAsyncEffect, WaitGroup } from "../utils/hooks.js";
 import {
+  accountGroupServiceClient,
   accountServiceClient,
   assetServiceClient,
   categoryServiceClient,
@@ -16,6 +17,7 @@ import { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
 import { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
 import { Rate } from "../../api_gen/moneydashboard/v4/rates_pb.js";
 import { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
+import { AccountGroup } from "../../api_gen/moneydashboard/v4/account_groups_pb.js";
 
 type UseListOptions = {
   wg?: WaitGroup;
@@ -38,6 +40,23 @@ function useAccountList(options: UseListOptions): Account[] | undefined {
   }, options.dependencies ?? []);
 
   return accounts;
+}
+
+function useAccountGroupList(options: UseListOptions): AccountGroup[] | undefined {
+  const [accountGroups, setAccountGroups] = React.useState<AccountGroup[]>();
+  useAsyncEffect(async () => {
+    options.wg?.add();
+    try {
+      const res = await accountGroupServiceClient.getAllAccountGroups({});
+      setAccountGroups(res.accountGroups);
+    } catch (e) {
+      options.onError(e);
+      console.log(e);
+    }
+    options.wg?.done();
+  }, options.dependencies ?? []);
+
+  return accountGroups;
 }
 
 function useAssetList(options: UseListOptions): Asset[] | undefined {
@@ -147,6 +166,7 @@ function useLatestRates(options: UseListOptions): Record<string, Rate> | undefin
 
 export {
   useAccountList,
+  useAccountGroupList,
   useAssetList,
   useCategoryList,
   useCurrencyList,

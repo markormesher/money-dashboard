@@ -7,9 +7,10 @@ import { ErrorPanel } from "../common/error/error.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import { concatClasses } from "../../utils/style.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { Account, AccountGroup } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
+import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
 import { formatCurrency } from "../../utils/currency.js";
 import "./holding-balances-tile.css";
+import { AccountGroup } from "../../../api_gen/moneydashboard/v4/account_groups_pb.js";
 
 type Group = {
   accountGroup: AccountGroup;
@@ -86,7 +87,7 @@ function HoldingBalancesTile(): ReactElement {
         .map((g) => {
           return (
             <>
-              <h6>{g.accountGroup.name}</h6>
+              <h6 className={"balance-group-header"}>{g.accountGroup.name}</h6>
               {Object.values(g.rows)
                 .sort((a, b) => Math.abs(b.balanceSum) - Math.abs(a.balanceSum))
                 .map((r) => {

@@ -1,6 +1,7 @@
 import { createClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
 import { MDAccountService } from "../api_gen/moneydashboard/v4/accounts_pb.js";
+import { MDAccountGroupService } from "../api_gen/moneydashboard/v4/account_groups_pb.js";
 import { MDAssetService } from "../api_gen/moneydashboard/v4/assets_pb.js";
 import { MDCategoryService } from "../api_gen/moneydashboard/v4/categories_pb.js";
 import { MDCurrencyService } from "../api_gen/moneydashboard/v4/currencies_pb.js";
@@ -14,6 +15,7 @@ import { MDUserService } from "../api_gen/moneydashboard/v4/users_pb.js";
 const apiTransport = createConnectTransport({ baseUrl: "/" });
 
 const accountServiceClient = createClient(MDAccountService, apiTransport);
+const accountGroupServiceClient = createClient(MDAccountGroupService, apiTransport);
 const assetServiceClient = createClient(MDAssetService, apiTransport);
 const categoryServiceClient = createClient(MDCategoryService, apiTransport);
 const currencyServiceClient = createClient(MDCurrencyService, apiTransport);
@@ -26,6 +28,7 @@ const userServiceClient = createClient(MDUserService, apiTransport);
 
 export {
   accountServiceClient,
+  accountGroupServiceClient,
   assetServiceClient,
   categoryServiceClient,
   currencyServiceClient,

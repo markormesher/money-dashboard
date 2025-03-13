@@ -3,6 +3,7 @@ import "./page-header.scss";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { focusFieldByName } from "../../utils/forms.js";
 import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
+import { concatClasses } from "../../utils/style.js";
 
 type PageHeaderProps = {
   title: string;
@@ -10,6 +11,9 @@ type PageHeaderProps = {
   buttons?: ReactElement[];
   options?: ReactElement[];
   optionsStartClosed?: boolean;
+
+  subPages?: string[];
+  onSubPageSelected?: (page: string) => void;
 
   onSearchTextChange?: (pattern: RegExp | undefined) => void;
 };
@@ -66,7 +70,24 @@ function PageHeader(props: React.PropsWithChildren<PageHeaderProps>): ReactEleme
           <h3>
             <IconGroup>
               <Icon name={props.icon} className={"muted"} />
-              <span>{props.title}</span>
+              {props.subPages ? (
+                <span className={"sub-pages"}>
+                  {props.subPages.map((p, i, arr) => (
+                    <>
+                      <span
+                        key={p}
+                        className={concatClasses("sub-page", p == props.title && "active")}
+                        onClick={() => props.onSubPageSelected?.(p)}
+                      >
+                        {p}
+                      </span>
+                      {i == arr.length - 1 ? null : <span className={"divider"}>&bull;</span>}
+                    </>
+                  ))}
+                </span>
+              ) : (
+                <span>{props.title}</span>
+              )}
             </IconGroup>
           </h3>
           {buttons ? <div role={"group"}>{buttons}</div> : null}

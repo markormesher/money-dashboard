@@ -12,6 +12,30 @@ div.page-header {
     align-items: start;
   }
 
+  span.sub-pages {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+
+    span.sub-page {
+      color: var(--pico-muted-color);
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      &.active {
+        color: inherit !important;
+      }
+    }
+
+    span.divider {
+      opacity: 0.4;
+    }
+  }
+
   div[role="group"] {
     width: auto;
 

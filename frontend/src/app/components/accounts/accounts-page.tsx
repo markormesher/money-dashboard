@@ -12,8 +12,9 @@ import { NULL_UUID } from "../../../config/consts.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { concatClasses } from "../../utils/style.js";
 import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
-import { useAccountList } from "../../schema/hooks.js";
+import { useAccountGroupList, useAccountList } from "../../schema/hooks.js";
 import { AccountEditModal } from "./account-edit-modal.js";
+import { AccountGroupEditModal } from "./account-group-edit-modal.js";
 
 function AccountsPage(): ReactElement {
   const { setMeta } = useRouter();
@@ -21,14 +22,23 @@ function AccountsPage(): ReactElement {
     setMeta({ parents: ["Settings"], title: "Accounts" });
   }, []);
 
+  const [page, setPage] = React.useState("Accounts");
+
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
 
   const [searchPattern, setSearchPattern] = React.useState<RegExp>();
   const [showInactive, setShowInactive] = React.useState(false);
 
-  const [editingId, setEditingId] = React.useState<string>();
-  useKeyShortcut("c", () => setEditingId(NULL_UUID));
+  const [accountEditingId, setAccountEditingId] = React.useState<string>();
+  const [accountGroupEditingId, setAccountGroupEditingId] = React.useState<string>();
+  useKeyShortcut("c", () => {
+    if (page == "Accounts") {
+      setAccountEditingId(NULL_UUID);
+    } else if (page == "Account Groups") {
+      setAccountGroupEditingId(NULL_UUID);
+    }
+  });
 
   const accounts = useAccountList({
     dependencies: [nudgeValue],
@@ -38,35 +48,61 @@ function AccountsPage(): ReactElement {
     },
   });
 
-  const pageButtons = [
-    <button className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
-      <IconGroup>
-        <Icon name={"add"} />
-        <span>New</span>
-      </IconGroup>
-    </button>,
-  ];
+  const accountGroups = useAccountGroupList({
+    dependencies: [nudgeValue],
+    onError: (e) => {
+      toastBus.error("Failed to load account groups.");
+      setError(e);
+    },
+  });
 
-  const pageOptions = [
-    <fieldset>
-      <label>
-        <input
-          type={"checkbox"}
-          role={"switch"}
-          checked={showInactive}
-          onChange={(evt) => setShowInactive(evt.target.checked)}
-        />
-        Show inactive
-      </label>
-    </fieldset>,
-  ];
+  let pageButtons: ReactElement[] = [];
+  let pageOptions: ReactElement[] = [];
+
+  switch (page) {
+    case "Accounts":
+      pageButtons = [
+        <button className={"outline"} onClick={() => setAccountEditingId(NULL_UUID)}>
+          <IconGroup>
+            <Icon name={"add"} />
+            <span>New</span>
+          </IconGroup>
+        </button>,
+      ];
+
+      pageOptions = [
+        <fieldset>
+          <label>
+            <input
+              type={"checkbox"}
+              role={"switch"}
+              checked={showInactive}
+              onChange={(evt) => setShowInactive(evt.target.checked)}
+            />
+            Show inactive
+          </label>
+        </fieldset>,
+      ];
+      break;
+
+    case "Account Groups":
+      pageButtons = [
+        <button className={"outline"} onClick={() => setAccountGroupEditingId(NULL_UUID)}>
+          <IconGroup>
+            <Icon name={"add"} />
+            <span>New</span>
+          </IconGroup>
+        </button>,
+      ];
+      break;
+  }
 
   let body: ReactElement;
   if (error) {
     body = <ErrorPanel error={error} />;
-  } else if (!accounts) {
+  } else if (!accounts || !accountGroups) {
     body = <LoadingPanel />;
-  } else {
+  } else if (page == "Accounts") {
     const filteredAccounts = accounts
       .filter((a) => showInactive || a.active)
       .filter((a) => searchPattern?.test(a.name) ?? true)
@@ -82,6 +118,7 @@ function AccountsPage(): ReactElement {
               <Tile key={a.id} className={concatClasses(!a.active && "semi-transparent")}>
                 <h4>{a.name}</h4>
                 <ul className={"labels"}>
+                  <li>{a.accountGroup?.name}</li>
                   {!a.active ? <li>Inactive</li> : null}
                   {a.isIsa ? <li>ISA</li> : null}
                   {a.isPension ? <li>Pension</li> : null}
@@ -91,7 +128,7 @@ function AccountsPage(): ReactElement {
                 <footer>
                   <ul className={"horizonal mb0"}>
                     <li>
-                      <a href={""} className={"secondary"} onClick={() => setEditingId(a.id)}>
+                      <a href={""} className={"secondary"} onClick={() => setAccountEditingId(a.id)}>
                         <IconGroup>
                           <Icon name={"edit"} />
                           <span>Edit</span>
@@ -115,14 +152,63 @@ function AccountsPage(): ReactElement {
         </TileSet>
       );
     }
+  } else if (page == "Account Groups") {
+    const filteredGroups = accountGroups
+      .filter((g) => searchPattern?.test(g.name) ?? true)
+      .sort((a, b) => a.displayOrder - b.displayOrder);
+
+    if (filteredGroups.length == 0) {
+      body = <EmptyResultsPanel pluralNoun={"account groups"} />;
+    } else {
+      body = (
+        <TileSet>
+          {filteredGroups.map((g) => {
+            return (
+              <Tile key={g.id}>
+                <h4>{g.name}</h4>
+                <ul className={"labels"}>
+                  <li>Display order: {g.displayOrder}</li>
+                </ul>
+                <footer>
+                  <ul className={"horizonal mb0"}>
+                    <li>
+                      <a href={""} className={"secondary"} onClick={() => setAccountGroupEditingId(g.id)}>
+                        <IconGroup>
+                          <Icon name={"edit"} />
+                          <span>Edit</span>
+                        </IconGroup>
+                      </a>
+                    </li>
+
+                    <li>
+                      <a href={""} className={"secondary"} onClick={() => copyToClipboard(g.id)}>
+                        <IconGroup>
+                          <Icon name={"content_copy"} />
+                          <span>Copy ID</span>
+                        </IconGroup>
+                      </a>
+                    </li>
+                  </ul>
+                </footer>
+              </Tile>
+            );
+          })}
+        </TileSet>
+      );
+    }
+  } else {
+    // we shouldn't actually get here
+    body = <ErrorPanel error={"Unknown page"} />;
   }
 
   return (
     <>
       <div id={"content"} className={"overflow-auto"}>
         <PageHeader
-          title={"Accounts"}
+          title={page}
           icon={"account_balance"}
+          subPages={["Accounts", "Account Groups"]}
+          onSubPageSelected={setPage}
           buttons={pageButtons}
           options={pageOptions}
           onSearchTextChange={(p) => setSearchPattern(p)}
@@ -139,17 +225,38 @@ function AccountsPage(): ReactElement {
               </span>
             </IconGroup>
           </p>
+
+          <p>
+            <IconGroup>
+              <Icon name={"info"} className={"muted"} />
+              <span>
+                Accounts groups are named collections of accounts. They are only used to customise dashboard diplays;
+                they have no financial meaning.
+              </span>
+            </IconGroup>
+          </p>
         </section>
       </div>
 
-      {editingId ? (
+      {accountEditingId ? (
         <AccountEditModal
-          accountId={editingId}
+          accountId={accountEditingId}
           onSaveFinished={() => {
             nudge();
-            setEditingId(undefined);
+            setAccountEditingId(undefined);
           }}
-          onCancel={() => setEditingId(undefined)}
+          onCancel={() => setAccountEditingId(undefined)}
+        />
+      ) : null}
+
+      {accountGroupEditingId ? (
+        <AccountGroupEditModal
+          accountGroupId={accountGroupEditingId}
+          onSaveFinished={() => {
+            nudge();
+            setAccountGroupEditingId(undefined);
+          }}
+          onCancel={() => setAccountGroupEditingId(undefined)}
         />
       ) : null}
     </>

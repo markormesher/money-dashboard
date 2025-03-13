@@ -1,3 +1,4 @@
+import { AccountGroup } from "../../api_gen/moneydashboard/v4/account_groups_pb.js";
 import { Account } from "../../api_gen/moneydashboard/v4/accounts_pb.js";
 import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
 import { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
@@ -21,9 +22,29 @@ function validateAccount(value: Partial<Account>): FormValidationResult<Account>
     }
   }
 
+  if (!value?.accountGroup) {
+    result.isValid = false;
+    result.errors.accountGroup = "An account group must be selected";
+  }
+
   if (value?.isIsa && value?.isPension) {
     result.isValid = false;
     result.errors.global = "ISA and pension status are mutually exclusive";
+  }
+
+  return result;
+}
+
+function validateAccountGroup(value: Partial<AccountGroup>): FormValidationResult<AccountGroup> {
+  const result: FormValidationResult<Account> = { isValid: true, errors: {} };
+
+  if (value?.name === undefined) {
+    result.isValid = false;
+  } else {
+    if (value.name.length < 1) {
+      result.isValid = false;
+      result.errors.name = "Name must be at least 1 character";
+    }
   }
 
   return result;
@@ -306,6 +327,7 @@ function validateTransaction(value: Partial<Transaction>): FormValidationResult<
 
 export {
   validateAccount,
+  validateAccountGroup,
   validateAsset,
   validateCategory,
   validateCurrency,

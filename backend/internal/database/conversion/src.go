@@ -19,11 +19,11 @@ import (
 // goverter:extend ConvertPgIntToPrimitive
 // goverter:extend ConvertPgBoolToPrimitive
 type converterSpec interface {
-	AssetToCore(source database_gen.Asset) schema.Asset
-
 	AccountToCore(source database_gen.Account) schema.Account
 
 	AccountGroupToCore(source database_gen.AccountGroup) schema.AccountGroup
+
+	AssetToCore(source database_gen.Asset) schema.Asset
 
 	CategoryToCore(source database_gen.Category) schema.Category
 

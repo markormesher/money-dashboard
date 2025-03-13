@@ -65,6 +65,7 @@ func (db *DB) UpsertAccount(ctx context.Context, account schema.Account, profile
 		IsIsa:                account.IsIsa,
 		IsPension:            account.IsPension,
 		ExcludeFromEnvelopes: account.ExcludeFromEnvelopes,
+		AccountGroupID:       account.AccountGroup.ID,
 		Active:               account.Active,
 		ProfileID:            profileID,
 	})

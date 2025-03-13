@@ -4,13 +4,15 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
+import type { AccountGroup } from "./account_groups_pb.js";
+import { file_moneydashboard_v4_account_groups } from "./account_groups_pb.js";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file moneydashboard/v4/accounts.proto.
  */
 export const file_moneydashboard_v4_accounts: GenFile = /*@__PURE__*/
-  fileDesc("CiBtb25leWRhc2hib2FyZC92NC9hY2NvdW50cy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQivgEKB0FjY291bnQSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRINCgVub3RlcxgDIAEoCRIOCgZpc19pc2EYBCABKAgSEgoKaXNfcGVuc2lvbhgFIAEoCBIeChZleGNsdWRlX2Zyb21fZW52ZWxvcGVzGAYgASgIEg4KBmFjdGl2ZRgHIAEoCBI2Cg1hY2NvdW50X2dyb3VwGAggASgLMh8ubW9uZXlkYXNoYm9hcmQudjQuQWNjb3VudEdyb3VwIj8KDEFjY291bnRHcm91cBIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhUKDWRpc3BsYXlfb3JkZXIYAyABKAUiIwoVR2V0QWNjb3VudEJ5SWRSZXF1ZXN0EgoKAmlkGAEgASgJIkUKFkdldEFjY291bnRCeUlkUmVzcG9uc2USKwoHYWNjb3VudBgBIAEoCzIaLm1vbmV5ZGFzaGJvYXJkLnY0LkFjY291bnQiFwoVR2V0QWxsQWNjb3VudHNSZXF1ZXN0IkYKFkdldEFsbEFjY291bnRzUmVzcG9uc2USLAoIYWNjb3VudHMYASADKAsyGi5tb25leWRhc2hib2FyZC52NC5BY2NvdW50IkMKFFVwc2VydEFjY291bnRSZXF1ZXN0EisKB2FjY291bnQYASABKAsyGi5tb25leWRhc2hib2FyZC52NC5BY2NvdW50IhcKFVVwc2VydEFjY291bnRSZXNwb25zZTLEAgoQTURBY2NvdW50U2VydmljZRJlCg5HZXRBY2NvdW50QnlJZBIoLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEFjY291bnRCeUlkUmVxdWVzdBopLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEFjY291bnRCeUlkUmVzcG9uc2USZQoOR2V0QWxsQWNjb3VudHMSKC5tb25leWRhc2hib2FyZC52NC5HZXRBbGxBY2NvdW50c1JlcXVlc3QaKS5tb25leWRhc2hib2FyZC52NC5HZXRBbGxBY2NvdW50c1Jlc3BvbnNlEmIKDVVwc2VydEFjY291bnQSJy5tb25leWRhc2hib2FyZC52NC5VcHNlcnRBY2NvdW50UmVxdWVzdBooLm1vbmV5ZGFzaGJvYXJkLnY0LlVwc2VydEFjY291bnRSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM");
+  fileDesc("CiBtb25leWRhc2hib2FyZC92NC9hY2NvdW50cy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQivgEKB0FjY291bnQSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRINCgVub3RlcxgDIAEoCRIOCgZpc19pc2EYBCABKAgSEgoKaXNfcGVuc2lvbhgFIAEoCBIeChZleGNsdWRlX2Zyb21fZW52ZWxvcGVzGAYgASgIEg4KBmFjdGl2ZRgHIAEoCBI2Cg1hY2NvdW50X2dyb3VwGAggASgLMh8ubW9uZXlkYXNoYm9hcmQudjQuQWNjb3VudEdyb3VwIiMKFUdldEFjY291bnRCeUlkUmVxdWVzdBIKCgJpZBgBIAEoCSJFChZHZXRBY2NvdW50QnlJZFJlc3BvbnNlEisKB2FjY291bnQYASABKAsyGi5tb25leWRhc2hib2FyZC52NC5BY2NvdW50IhcKFUdldEFsbEFjY291bnRzUmVxdWVzdCJGChZHZXRBbGxBY2NvdW50c1Jlc3BvbnNlEiwKCGFjY291bnRzGAEgAygLMhoubW9uZXlkYXNoYm9hcmQudjQuQWNjb3VudCJDChRVcHNlcnRBY2NvdW50UmVxdWVzdBIrCgdhY2NvdW50GAEgASgLMhoubW9uZXlkYXNoYm9hcmQudjQuQWNjb3VudCIXChVVcHNlcnRBY2NvdW50UmVzcG9uc2UyxAIKEE1EQWNjb3VudFNlcnZpY2USZQoOR2V0QWNjb3VudEJ5SWQSKC5tb25leWRhc2hib2FyZC52NC5HZXRBY2NvdW50QnlJZFJlcXVlc3QaKS5tb25leWRhc2hib2FyZC52NC5HZXRBY2NvdW50QnlJZFJlc3BvbnNlEmUKDkdldEFsbEFjY291bnRzEigubW9uZXlkYXNoYm9hcmQudjQuR2V0QWxsQWNjb3VudHNSZXF1ZXN0GikubW9uZXlkYXNoYm9hcmQudjQuR2V0QWxsQWNjb3VudHNSZXNwb25zZRJiCg1VcHNlcnRBY2NvdW50EicubW9uZXlkYXNoYm9hcmQudjQuVXBzZXJ0QWNjb3VudFJlcXVlc3QaKC5tb25leWRhc2hib2FyZC52NC5VcHNlcnRBY2NvdW50UmVzcG9uc2VCUVpPZ2l0aHViLmNvbS9tYXJrb3JtZXNoZXIvbW9uZXktZGFzaGJvYXJkL2ludGVybmFsL2FwaV9nZW4vbW9uZXlkYXNoYm9hcmQvdjQ7bWR2NGIGcHJvdG8z", [file_moneydashboard_v4_account_groups]);
 
 /**
  * @generated from message moneydashboard.v4.Account
@@ -65,33 +67,6 @@ export const AccountSchema: GenMessage<Account> = /*@__PURE__*/
   messageDesc(file_moneydashboard_v4_accounts, 0);
 
 /**
- * @generated from message moneydashboard.v4.AccountGroup
- */
-export type AccountGroup = Message<"moneydashboard.v4.AccountGroup"> & {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id: string;
-
-  /**
-   * @generated from field: string name = 2;
-   */
-  name: string;
-
-  /**
-   * @generated from field: int32 display_order = 3;
-   */
-  displayOrder: number;
-};
-
-/**
- * Describes the message moneydashboard.v4.AccountGroup.
- * Use `create(AccountGroupSchema)` to create a new message.
- */
-export const AccountGroupSchema: GenMessage<AccountGroup> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_accounts, 1);
-
-/**
  * @generated from message moneydashboard.v4.GetAccountByIdRequest
  */
 export type GetAccountByIdRequest = Message<"moneydashboard.v4.GetAccountByIdRequest"> & {
@@ -106,7 +81,7 @@ export type GetAccountByIdRequest = Message<"moneydashboard.v4.GetAccountByIdReq
  * Use `create(GetAccountByIdRequestSchema)` to create a new message.
  */
 export const GetAccountByIdRequestSchema: GenMessage<GetAccountByIdRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_accounts, 2);
+  messageDesc(file_moneydashboard_v4_accounts, 1);
 
 /**
  * @generated from message moneydashboard.v4.GetAccountByIdResponse
@@ -123,7 +98,7 @@ export type GetAccountByIdResponse = Message<"moneydashboard.v4.GetAccountByIdRe
  * Use `create(GetAccountByIdResponseSchema)` to create a new message.
  */
 export const GetAccountByIdResponseSchema: GenMessage<GetAccountByIdResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_accounts, 3);
+  messageDesc(file_moneydashboard_v4_accounts, 2);
 
 /**
  * @generated from message moneydashboard.v4.GetAllAccountsRequest
@@ -136,7 +111,7 @@ export type GetAllAccountsRequest = Message<"moneydashboard.v4.GetAllAccountsReq
  * Use `create(GetAllAccountsRequestSchema)` to create a new message.
  */
 export const GetAllAccountsRequestSchema: GenMessage<GetAllAccountsRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_accounts, 4);
+  messageDesc(file_moneydashboard_v4_accounts, 3);
 
 /**
  * @generated from message moneydashboard.v4.GetAllAccountsResponse
@@ -153,7 +128,7 @@ export type GetAllAccountsResponse = Message<"moneydashboard.v4.GetAllAccountsRe
  * Use `create(GetAllAccountsResponseSchema)` to create a new message.
  */
 export const GetAllAccountsResponseSchema: GenMessage<GetAllAccountsResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_accounts, 5);
+  messageDesc(file_moneydashboard_v4_accounts, 4);
 
 /**
  * @generated from message moneydashboard.v4.UpsertAccountRequest
@@ -170,7 +145,7 @@ export type UpsertAccountRequest = Message<"moneydashboard.v4.UpsertAccountReque
  * Use `create(UpsertAccountRequestSchema)` to create a new message.
  */
 export const UpsertAccountRequestSchema: GenMessage<UpsertAccountRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_accounts, 6);
+  messageDesc(file_moneydashboard_v4_accounts, 5);
 
 /**
  * @generated from message moneydashboard.v4.UpsertAccountResponse
@@ -183,7 +158,7 @@ export type UpsertAccountResponse = Message<"moneydashboard.v4.UpsertAccountResp
  * Use `create(UpsertAccountResponseSchema)` to create a new message.
  */
 export const UpsertAccountResponseSchema: GenMessage<UpsertAccountResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_accounts, 7);
+  messageDesc(file_moneydashboard_v4_accounts, 6);
 
 /**
  * @generated from service moneydashboard.v4.MDAccountService

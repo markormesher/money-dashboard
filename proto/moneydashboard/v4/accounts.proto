@@ -1,6 +1,8 @@
 syntax = "proto3";
 package moneydashboard.v4;
 
+import "moneydashboard/v4/account_groups.proto";
+
 option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
 
 message Account {
@@ -13,12 +15,6 @@ message Account {
   bool active = 7;
 
   AccountGroup account_group = 8;
-}
-
-message AccountGroup {
-  string id = 1;
-  string name = 2;
-  int32 display_order = 3;
 }
 
 message GetAccountByIdRequest {

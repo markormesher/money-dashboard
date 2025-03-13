@@ -8,10 +8,11 @@ import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { validateAccount } from "../../schema/validation.js";
-import { Input, Textarea } from "../common/form/inputs.js";
+import { Input, Select, Textarea } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
+import { useAccountGroupList } from "../../schema/hooks.js";
 
 type AccountEditModalProps = {
   accountId: string;
@@ -26,6 +27,14 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Account>({
     validator: validateAccount,
+  });
+
+  const accountGroups = useAccountGroupList({
+    wg: form.wg,
+    onError: (e) => {
+      toastBus.error("Failed to load account groups.");
+      form.setFatalError(e);
+    },
   });
 
   useAsyncEffect(async () => {
@@ -108,6 +117,18 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
             value={form.model?.name}
             onChange={(evt) => form.patchModel({ name: evt.target.value })}
           />
+
+          <Select
+            label={"Group"}
+            formState={form}
+            fieldName={"accountGroup"}
+            value={form.model?.accountGroup?.id}
+            onChange={(evt) => form.patchModel({ accountGroup: accountGroups?.find((g) => g.id == evt.target.value) })}
+          >
+            {accountGroups
+              ?.sort((a, b) => a.displayOrder - b.displayOrder)
+              ?.map((g) => <option value={g.id}>{g.name}</option>)}
+          </Select>
         </fieldset>
 
         <fieldset className={"grid"}>

@@ -1,0 +1,36 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message AccountGroup {
+  string id = 1;
+  string name = 2;
+  int32 display_order = 3;
+}
+
+message GetAccountGroupByIdRequest {
+  string id = 1;
+}
+
+message GetAccountGroupByIdResponse {
+  AccountGroup account_group = 1;
+}
+
+message GetAllAccountGroupsRequest {}
+
+message GetAllAccountGroupsResponse {
+  repeated AccountGroup account_groups = 1;
+}
+
+message UpsertAccountGroupRequest {
+  AccountGroup account_group = 1;
+}
+
+message UpsertAccountGroupResponse {}
+
+service MDAccountGroupService {
+  rpc GetAccountGroupById(GetAccountGroupByIdRequest) returns (GetAccountGroupByIdResponse);
+  rpc GetAllAccountGroups(GetAllAccountGroupsRequest) returns (GetAllAccountGroupsResponse);
+  rpc UpsertAccountGroup(UpsertAccountGroupRequest) returns (UpsertAccountGroupResponse);
+}
