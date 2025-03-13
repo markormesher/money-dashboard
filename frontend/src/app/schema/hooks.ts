@@ -18,6 +18,7 @@ import { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
 import { Rate } from "../../api_gen/moneydashboard/v4/rates_pb.js";
 import { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
 import { AccountGroup } from "../../api_gen/moneydashboard/v4/account_groups_pb.js";
+import { NULL_UUID } from "../../config/consts.js";
 
 type UseListOptions = {
   wg?: WaitGroup;
@@ -152,7 +153,12 @@ function useLatestRates(options: UseListOptions): Record<string, Rate> | undefin
       const res = await rateServiceClient.getLatestRates({});
       const rates: Record<string, Rate> = {};
       res.rates.forEach((r) => {
-        rates[r.currencyId ?? r.assetId] = r;
+        if (r.currencyId != NULL_UUID) {
+          rates[r.currencyId] = r;
+        }
+        if (r.assetId != NULL_UUID) {
+          rates[r.assetId] = r;
+        }
       });
       setRates(rates);
     } catch (e) {
