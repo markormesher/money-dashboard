@@ -80,8 +80,8 @@ function Menu(props: MenuProps): ReactElement {
           <details open>
             <summary>Planning</summary>
             <ul>
-              {link("/planning/budgets", "Budgets", "tune")}
               {link("/planning/envelopes", "Envelopes", "mail")}
+              {link("/planning/envelope-transactions", "Envelope Transfers", "swap_horiz")}
             </ul>
           </details>
 
