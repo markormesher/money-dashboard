@@ -29,6 +29,10 @@ type converterSpec interface {
 
 	CurrencyToCore(source database_gen.Currency) schema.Currency
 
+	EnvelopeToCore(source database_gen.Envelope) schema.Envelope
+
+	EnvelopeAllocationToCore(source database_gen.EnvelopeAllocation) schema.EnvelopeAllocation
+
 	HoldingToCore(source database_gen.Holding) schema.Holding
 
 	NullableHoldingCurrencyToCore(source database_gen.NullableHoldingCurrency) schema.Currency

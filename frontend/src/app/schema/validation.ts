@@ -3,6 +3,8 @@ import { Account } from "../../api_gen/moneydashboard/v4/accounts_pb.js";
 import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
 import { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
 import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
+import { EnvelopeAllocation } from "../../api_gen/moneydashboard/v4/envelope_allocations_pb.js";
+import { Envelope } from "../../api_gen/moneydashboard/v4/envelopes_pb.js";
 import { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
 import { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
 import { Transaction } from "../../api_gen/moneydashboard/v4/transactions_pb.js";
@@ -201,6 +203,50 @@ function validateHolding(value: Partial<Holding>): FormValidationResult<Holding>
   return result;
 }
 
+function validateEnvelope(value: Partial<Envelope>): FormValidationResult<Envelope> {
+  const result: FormValidationResult<Account> = { isValid: true, errors: {} };
+
+  if (value?.name === undefined) {
+    result.isValid = false;
+  } else {
+    if (value.name.length < 1) {
+      result.isValid = false;
+      result.errors.name = "Name must be at least 1 character";
+    }
+  }
+
+  return result;
+}
+
+function validateEnvelopeAllocation(value: Partial<EnvelopeAllocation>): FormValidationResult<EnvelopeAllocation> {
+  const result: FormValidationResult<EnvelopeAllocation> = { isValid: true, errors: {} };
+
+  if (value?.startDate === undefined) {
+    result.isValid = false;
+  } else {
+    const dateParsed = parseDateFromProto(value.startDate);
+    if (isNaN(dateParsed.getTime())) {
+      result.isValid = false;
+      result.errors.startDate = "Invalid start date";
+    } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
+      result.isValid = false;
+      result.errors.startDate = "Start date must not be before the platform minimum";
+    }
+  }
+
+  if (!value?.category) {
+    result.isValid = false;
+    result.errors.category = "A category must be selected";
+  }
+
+  if (!value?.envelope) {
+    result.isValid = false;
+    result.errors.envelope = "An envelope must be selected";
+  }
+
+  return result;
+}
+
 function validateProfile(value: Partial<Profile>): FormValidationResult<Profile> {
   const result: FormValidationResult<Profile> = { isValid: true, errors: {} };
 
@@ -331,6 +377,8 @@ export {
   validateAsset,
   validateCategory,
   validateCurrency,
+  validateEnvelope,
+  validateEnvelopeAllocation,
   validateHolding,
   validateProfile,
   validateTransaction,

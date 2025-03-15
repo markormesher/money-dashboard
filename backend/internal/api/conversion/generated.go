@@ -143,6 +143,44 @@ func CurrencyToCore(source *v4.Currency) schema.Currency {
 	}
 	return schemaCurrency
 }
+func EnvelopeAllocationFromCore(source schema.EnvelopeAllocation) *v4.EnvelopeAllocation {
+	var mdv4EnvelopeAllocation v4.EnvelopeAllocation
+	mdv4EnvelopeAllocation.Id = ConvertUUIDToString(source.ID)
+	mdv4EnvelopeAllocation.StartDate = ConvertTimeToInt(source.StartDate)
+	mdv4EnvelopeAllocation.Category = pSchemaCategoryToPMdv4Category(source.Category)
+	mdv4EnvelopeAllocation.Envelope = pSchemaEnvelopeToPMdv4Envelope(source.Envelope)
+	return &mdv4EnvelopeAllocation
+}
+func EnvelopeAllocationToCore(source *v4.EnvelopeAllocation) schema.EnvelopeAllocation {
+	var schemaEnvelopeAllocation schema.EnvelopeAllocation
+	if source != nil {
+		var schemaEnvelopeAllocation2 schema.EnvelopeAllocation
+		schemaEnvelopeAllocation2.ID = ConvertStringToUUID((*source).Id)
+		schemaEnvelopeAllocation2.StartDate = ConvertIntToTime((*source).StartDate)
+		schemaEnvelopeAllocation2.Category = pMdv4CategoryToPSchemaCategory((*source).Category)
+		schemaEnvelopeAllocation2.Envelope = pMdv4EnvelopeToPSchemaEnvelope((*source).Envelope)
+		schemaEnvelopeAllocation = schemaEnvelopeAllocation2
+	}
+	return schemaEnvelopeAllocation
+}
+func EnvelopeFromCore(source schema.Envelope) *v4.Envelope {
+	var mdv4Envelope v4.Envelope
+	mdv4Envelope.Id = ConvertUUIDToString(source.ID)
+	mdv4Envelope.Name = source.Name
+	mdv4Envelope.Active = source.Active
+	return &mdv4Envelope
+}
+func EnvelopeToCore(source *v4.Envelope) schema.Envelope {
+	var schemaEnvelope schema.Envelope
+	if source != nil {
+		var schemaEnvelope2 schema.Envelope
+		schemaEnvelope2.ID = ConvertStringToUUID((*source).Id)
+		schemaEnvelope2.Name = (*source).Name
+		schemaEnvelope2.Active = (*source).Active
+		schemaEnvelope = schemaEnvelope2
+	}
+	return schemaEnvelope
+}
 func HoldingBalanceFromCore(source core.HoldingBalance) *v4.HoldingBalance {
 	var mdv4HoldingBalance v4.HoldingBalance
 	mdv4HoldingBalance.Holding = HoldingFromCore(source.Holding)
@@ -343,6 +381,17 @@ func pMdv4CurrencyToPSchemaCurrency(source *v4.Currency) *schema.Currency {
 	}
 	return pSchemaCurrency
 }
+func pMdv4EnvelopeToPSchemaEnvelope(source *v4.Envelope) *schema.Envelope {
+	var pSchemaEnvelope *schema.Envelope
+	if source != nil {
+		var schemaEnvelope schema.Envelope
+		schemaEnvelope.ID = ConvertStringToUUID((*source).Id)
+		schemaEnvelope.Name = (*source).Name
+		schemaEnvelope.Active = (*source).Active
+		pSchemaEnvelope = &schemaEnvelope
+	}
+	return pSchemaEnvelope
+}
 func pMdv4HoldingToPSchemaHolding(source *v4.Holding) *schema.Holding {
 	var pSchemaHolding *schema.Holding
 	if source != nil {
@@ -440,6 +489,17 @@ func pSchemaCurrencyToPMdv4Currency(source *schema.Currency) *v4.Currency {
 		pMdv4Currency = &mdv4Currency
 	}
 	return pMdv4Currency
+}
+func pSchemaEnvelopeToPMdv4Envelope(source *schema.Envelope) *v4.Envelope {
+	var pMdv4Envelope *v4.Envelope
+	if source != nil {
+		var mdv4Envelope v4.Envelope
+		mdv4Envelope.Id = ConvertUUIDToString((*source).ID)
+		mdv4Envelope.Name = (*source).Name
+		mdv4Envelope.Active = (*source).Active
+		pMdv4Envelope = &mdv4Envelope
+	}
+	return pMdv4Envelope
 }
 func pSchemaHoldingToPMdv4Holding(source *schema.Holding) *v4.Holding {
 	var pMdv4Holding *v4.Holding

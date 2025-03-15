@@ -11,15 +11,3 @@
     color: var(--pico-muted-color);
   }
 }
-
-.actions-cell {
-  a {
-    text-decoration: none;
-
-    &:hover {
-      span:not(.icon) {
-        text-decoration: underline;
-      }
-    }
-  }
-}

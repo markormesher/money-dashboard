@@ -62,6 +62,20 @@ func CurrencyToCore(source databasegen.Currency) schema.Currency {
 	schemaCurrency.Active = source.Active
 	return schemaCurrency
 }
+func EnvelopeAllocationToCore(source databasegen.EnvelopeAllocation) schema.EnvelopeAllocation {
+	var schemaEnvelopeAllocation schema.EnvelopeAllocation
+	schemaEnvelopeAllocation.ID = source.ID
+	schemaEnvelopeAllocation.StartDate = source.StartDate
+	schemaEnvelopeAllocation.Deleted = source.Deleted
+	return schemaEnvelopeAllocation
+}
+func EnvelopeToCore(source databasegen.Envelope) schema.Envelope {
+	var schemaEnvelope schema.Envelope
+	schemaEnvelope.ID = source.ID
+	schemaEnvelope.Name = source.Name
+	schemaEnvelope.Active = source.Active
+	return schemaEnvelope
+}
 func HoldingToCore(source databasegen.Holding) schema.Holding {
 	var schemaHolding schema.Holding
 	schemaHolding.ID = source.ID

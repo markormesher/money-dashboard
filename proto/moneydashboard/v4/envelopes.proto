@@ -1,0 +1,36 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message Envelope {
+  string id = 1;
+  string name = 2;
+  bool active = 3;
+}
+
+message GetEnvelopeByIdRequest {
+  string id = 1;
+}
+
+message GetEnvelopeByIdResponse {
+  Envelope envelope = 1;
+}
+
+message GetAllEnvelopesRequest {}
+
+message GetAllEnvelopesResponse {
+  repeated Envelope envelopes = 1;
+}
+
+message UpsertEnvelopeRequest {
+  Envelope envelope = 1;
+}
+
+message UpsertEnvelopeResponse {}
+
+service MDEnvelopeService {
+  rpc GetEnvelopeById(GetEnvelopeByIdRequest) returns (GetEnvelopeByIdResponse);
+  rpc GetAllEnvelopes(GetAllEnvelopesRequest) returns (GetAllEnvelopesResponse);
+  rpc UpsertEnvelope(UpsertEnvelopeRequest) returns (UpsertEnvelopeResponse);
+}

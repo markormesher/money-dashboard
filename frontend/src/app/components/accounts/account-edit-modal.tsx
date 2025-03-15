@@ -113,7 +113,6 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
             formState={form}
             fieldName={"name"}
             type={"text"}
-            placeholder={"e.g. LSE:ABC"}
             value={form.model?.name}
             onChange={(evt) => form.patchModel({ name: evt.target.value })}
           />

@@ -90,18 +90,34 @@ type Currency struct {
 
 type Envelope struct {
 	ID        uuid.UUID
-	Deleted   bool
 	Name      string
 	ProfileID uuid.UUID
+	Active    bool
 }
 
 type EnvelopeAllocation struct {
+	ID         uuid.UUID
+	StartDate  time.Time
+	CategoryID uuid.UUID
+	EnvelopeID uuid.UUID
+	ProfileID  uuid.UUID
+	Deleted    bool
+}
+
+type EnvelopeAllocationOld struct {
 	ID         uuid.UUID
 	Deleted    bool
 	StartDate  int64
 	CategoryID uuid.UUID
 	EnvelopeID uuid.UUID
 	ProfileID  uuid.UUID
+}
+
+type EnvelopeOld struct {
+	ID        uuid.UUID
+	Deleted   bool
+	Name      string
+	ProfileID uuid.UUID
 }
 
 type EnvelopeTransfer struct {

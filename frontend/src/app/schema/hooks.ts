@@ -7,6 +7,8 @@ import {
   assetServiceClient,
   categoryServiceClient,
   currencyServiceClient,
+  envelopeAllocationServiceClient,
+  envelopeServiceClient,
   holdingServiceClient,
   profileServiceClient,
   rateServiceClient,
@@ -19,6 +21,8 @@ import { Rate } from "../../api_gen/moneydashboard/v4/rates_pb.js";
 import { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
 import { AccountGroup } from "../../api_gen/moneydashboard/v4/account_groups_pb.js";
 import { NULL_UUID } from "../../config/consts.js";
+import { Envelope } from "../../api_gen/moneydashboard/v4/envelopes_pb.js";
+import { EnvelopeAllocation } from "../../api_gen/moneydashboard/v4/envelope_allocations_pb.js";
 
 type UseListOptions = {
   wg?: WaitGroup;
@@ -111,6 +115,40 @@ function useCurrencyList(options: UseListOptions): Currency[] | undefined {
   return currencies;
 }
 
+function useEnvelopeList(options: UseListOptions): Envelope[] | undefined {
+  const [envelopes, setEnvelopes] = React.useState<Envelope[]>();
+  useAsyncEffect(async () => {
+    options.wg?.add();
+    try {
+      const res = await envelopeServiceClient.getAllEnvelopes({});
+      setEnvelopes(res.envelopes);
+    } catch (e) {
+      options.onError(e);
+      console.log(e);
+    }
+    options.wg?.done();
+  }, options.dependencies ?? []);
+
+  return envelopes;
+}
+
+function useEnvelopeAllocationList(options: UseListOptions): EnvelopeAllocation[] | undefined {
+  const [envelopeAllocations, setEnvelopeAllocations] = React.useState<EnvelopeAllocation[]>();
+  useAsyncEffect(async () => {
+    options.wg?.add();
+    try {
+      const res = await envelopeAllocationServiceClient.getAllEnvelopeAllocations({});
+      setEnvelopeAllocations(res.envelopeAllocations);
+    } catch (e) {
+      options.onError(e);
+      console.log(e);
+    }
+    options.wg?.done();
+  }, options.dependencies ?? []);
+
+  return envelopeAllocations;
+}
+
 function useHoldingList(options: UseListOptions): Holding[] | undefined {
   const [holdings, setHoldings] = React.useState<Holding[]>();
   useAsyncEffect(async () => {
@@ -177,6 +215,8 @@ export {
   useCategoryList,
   useCurrencyList,
   useHoldingList,
+  useEnvelopeList,
+  useEnvelopeAllocationList,
   useProfileList,
   useLatestRates,
 };

@@ -43,6 +43,12 @@ type converterSpec interface {
 	CurrencyFromCore(source schema.Currency) *mdv4.Currency
 	CurrencyToCore(source *mdv4.Currency) schema.Currency
 
+	EnvelopeFromCore(source schema.Envelope) *mdv4.Envelope
+	EnvelopeToCore(source *mdv4.Envelope) schema.Envelope
+
+	EnvelopeAllocationFromCore(source schema.EnvelopeAllocation) *mdv4.EnvelopeAllocation
+	EnvelopeAllocationToCore(source *mdv4.EnvelopeAllocation) schema.EnvelopeAllocation
+
 	HoldingFromCore(source schema.Holding) *mdv4.Holding
 	HoldingToCore(source *mdv4.Holding) schema.Holding
 

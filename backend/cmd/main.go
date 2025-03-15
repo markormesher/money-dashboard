@@ -61,6 +61,12 @@ func main() {
 	apiPath, apiHandler = mdv4connect.NewMDCurrencyServiceHandler(apiServer)
 	mux.PathPrefix(apiPath).Handler(apiHandler)
 
+	apiPath, apiHandler = mdv4connect.NewMDEnvelopeServiceHandler(apiServer)
+	mux.PathPrefix(apiPath).Handler(apiHandler)
+
+	apiPath, apiHandler = mdv4connect.NewMDEnvelopeAllocationServiceHandler(apiServer)
+	mux.PathPrefix(apiPath).Handler(apiHandler)
+
 	apiPath, apiHandler = mdv4connect.NewMDHoldingServiceHandler(apiServer)
 	mux.PathPrefix(apiPath).Handler(apiHandler)
 

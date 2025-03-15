@@ -11,6 +11,7 @@ import { ErrorPanel } from "../common/error/error.js";
 import { KeyListener } from "../common/key-shortcuts/key-shortcuts.js";
 import { ProfilesPage } from "../profiles/profiles-page.js";
 import { DashboardPage } from "../dashboard/dashboard.js";
+import { EnvelopesPage } from "../envelopes/envelopes-page.js";
 import { useRouter } from "./router.js";
 import { Menu } from "./menu.js";
 import { Breadcrumbs } from "./breadcrumbs.js";
@@ -35,6 +36,9 @@ function App(): ReactElement {
         return <DashboardPage />;
       case "/transactions":
         return <TransactionsPage />;
+
+      case "/planning/envelopes":
+        return <EnvelopesPage />;
 
       case "/settings/accounts":
         return <AccountsPage />;

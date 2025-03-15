@@ -68,3 +68,15 @@ span.separator {
   /* pico-color-red-500 */
   color: rgb(217, 53, 38);
 }
+
+.actions-cell {
+  a {
+    text-decoration: none;
+
+    &:hover {
+      span:not(.icon) {
+        text-decoration: underline;
+      }
+    }
+  }
+}
