@@ -181,6 +181,30 @@ func EnvelopeToCore(source *v4.Envelope) schema.Envelope {
 	}
 	return schemaEnvelope
 }
+func EnvelopeTransferFromCore(source schema.EnvelopeTransfer) *v4.EnvelopeTransfer {
+	var mdv4EnvelopeTransfer v4.EnvelopeTransfer
+	mdv4EnvelopeTransfer.Id = ConvertUUIDToString(source.ID)
+	mdv4EnvelopeTransfer.Date = ConvertTimeToInt(source.Date)
+	mdv4EnvelopeTransfer.Notes = source.Notes
+	mdv4EnvelopeTransfer.Amount = ConvertDecimalToFloat(source.Amount)
+	mdv4EnvelopeTransfer.FromEnvelope = pSchemaEnvelopeToPMdv4Envelope(source.FromEnvelope)
+	mdv4EnvelopeTransfer.ToEnvelope = pSchemaEnvelopeToPMdv4Envelope(source.ToEnvelope)
+	return &mdv4EnvelopeTransfer
+}
+func EnvelopeTransferToCore(source *v4.EnvelopeTransfer) schema.EnvelopeTransfer {
+	var schemaEnvelopeTransfer schema.EnvelopeTransfer
+	if source != nil {
+		var schemaEnvelopeTransfer2 schema.EnvelopeTransfer
+		schemaEnvelopeTransfer2.ID = ConvertStringToUUID((*source).Id)
+		schemaEnvelopeTransfer2.Date = ConvertIntToTime((*source).Date)
+		schemaEnvelopeTransfer2.Amount = ConvertFloatToDecimal((*source).Amount)
+		schemaEnvelopeTransfer2.FromEnvelope = pMdv4EnvelopeToPSchemaEnvelope((*source).FromEnvelope)
+		schemaEnvelopeTransfer2.ToEnvelope = pMdv4EnvelopeToPSchemaEnvelope((*source).ToEnvelope)
+		schemaEnvelopeTransfer2.Notes = (*source).Notes
+		schemaEnvelopeTransfer = schemaEnvelopeTransfer2
+	}
+	return schemaEnvelopeTransfer
+}
 func HoldingBalanceFromCore(source core.HoldingBalance) *v4.HoldingBalance {
 	var mdv4HoldingBalance v4.HoldingBalance
 	mdv4HoldingBalance.Holding = HoldingFromCore(source.Holding)

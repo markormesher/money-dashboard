@@ -7,6 +7,7 @@ import { MDCategoryService } from "../api_gen/moneydashboard/v4/categories_pb.js
 import { MDCurrencyService } from "../api_gen/moneydashboard/v4/currencies_pb.js";
 import { MDEnvelopeService } from "../api_gen/moneydashboard/v4/envelopes_pb.js";
 import { MDEnvelopeAllocationService } from "../api_gen/moneydashboard/v4/envelope_allocations_pb.js";
+import { MDEnvelopeTransferService } from "../api_gen/moneydashboard/v4/envelope_transfers_pb.js";
 import { MDHoldingService } from "../api_gen/moneydashboard/v4/holdings_pb.js";
 import { MDProfileService } from "../api_gen/moneydashboard/v4/profiles_pb.js";
 import { MDRateService } from "../api_gen/moneydashboard/v4/rates_pb.js";
@@ -23,6 +24,7 @@ const categoryServiceClient = createClient(MDCategoryService, apiTransport);
 const currencyServiceClient = createClient(MDCurrencyService, apiTransport);
 const envelopeServiceClient = createClient(MDEnvelopeService, apiTransport);
 const envelopeAllocationServiceClient = createClient(MDEnvelopeAllocationService, apiTransport);
+const envelopeTransferServiceClient = createClient(MDEnvelopeTransferService, apiTransport);
 const holdingServiceClient = createClient(MDHoldingService, apiTransport);
 const profileServiceClient = createClient(MDProfileService, apiTransport);
 const rateServiceClient = createClient(MDRateService, apiTransport);
@@ -38,6 +40,7 @@ export {
   currencyServiceClient,
   envelopeServiceClient,
   envelopeAllocationServiceClient,
+  envelopeTransferServiceClient,
   holdingServiceClient,
   profileServiceClient,
   rateServiceClient,

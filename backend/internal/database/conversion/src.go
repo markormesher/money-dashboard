@@ -33,7 +33,13 @@ type converterSpec interface {
 
 	EnvelopeAllocationToCore(source database_gen.EnvelopeAllocation) schema.EnvelopeAllocation
 
+	EnvelopeTransferToCore(source database_gen.EnvelopeTransfer) schema.EnvelopeTransfer
+
 	HoldingToCore(source database_gen.Holding) schema.Holding
+
+	NullableEnvelopeTranferFromEnvelopeToCore(source database_gen.NullableEnvelopeTranferFromEnvelope) schema.Envelope
+
+	NullableEnvelopeTranferToEnvelopeToCore(source database_gen.NullableEnvelopeTranferToEnvelope) schema.Envelope
 
 	NullableHoldingCurrencyToCore(source database_gen.NullableHoldingCurrency) schema.Currency
 

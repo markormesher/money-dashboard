@@ -4,6 +4,7 @@ import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
 import { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
 import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
 import { EnvelopeAllocation } from "../../api_gen/moneydashboard/v4/envelope_allocations_pb.js";
+import { EnvelopeTransfer } from "../../api_gen/moneydashboard/v4/envelope_transfers_pb.js";
 import { Envelope } from "../../api_gen/moneydashboard/v4/envelopes_pb.js";
 import { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
 import { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
@@ -247,6 +248,31 @@ function validateEnvelopeAllocation(value: Partial<EnvelopeAllocation>): FormVal
   return result;
 }
 
+function validateEnvelopeTransfer(value: Partial<EnvelopeTransfer>): FormValidationResult<EnvelopeTransfer> {
+  const result: FormValidationResult<EnvelopeTransfer> = { isValid: true, errors: {} };
+
+  if (value?.date === undefined) {
+    result.isValid = false;
+  } else {
+    const dateParsed = parseDateFromProto(value.date);
+    if (isNaN(dateParsed.getTime())) {
+      result.isValid = false;
+      result.errors.date = "Invalid date";
+    } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
+      result.isValid = false;
+      result.errors.date = "Date must not be before the platform minimum";
+    }
+  }
+
+  if (!value.fromEnvelope && !value.toEnvelope) {
+    result.isValid = false;
+    result.errors.fromEnvelope = "At least one envelope must be selected";
+    result.errors.toEnvelope = "At least one envelope must be selected";
+  }
+
+  return result;
+}
+
 function validateProfile(value: Partial<Profile>): FormValidationResult<Profile> {
   const result: FormValidationResult<Profile> = { isValid: true, errors: {} };
 
@@ -379,6 +405,7 @@ export {
   validateCurrency,
   validateEnvelope,
   validateEnvelopeAllocation,
+  validateEnvelopeTransfer,
   validateHolding,
   validateProfile,
   validateTransaction,

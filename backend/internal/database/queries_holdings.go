@@ -34,13 +34,13 @@ func (db *DB) GetHoldingById(ctx context.Context, id uuid.UUID, profileID uuid.U
 	profile := conversion.ProfileToCore(row.Profile)
 	holding.Profile = &profile
 
-	currency := conversion.NullableHoldingCurrencyToCore(row.NullableHoldingCurrency)
-	if currency.ID != uuid.Nil {
+	if row.NullableHoldingCurrency.ID != nil {
+		currency := conversion.NullableHoldingCurrencyToCore(row.NullableHoldingCurrency)
 		holding.Currency = &currency
 	}
 
-	asset := conversion.NullableHoldingAssetToCore(row.NullableHoldingAsset)
-	if asset.ID != uuid.Nil {
+	if row.NullableHoldingAsset.ID != nil {
+		asset := conversion.NullableHoldingAssetToCore(row.NullableHoldingAsset)
 		holding.Asset = &asset
 
 		assetCurency := conversion.NullableHoldingAssetCurrencyToCore(row.NullableHoldingAssetCurrency)

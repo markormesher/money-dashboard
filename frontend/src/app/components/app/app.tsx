@@ -12,6 +12,7 @@ import { KeyListener } from "../common/key-shortcuts/key-shortcuts.js";
 import { ProfilesPage } from "../profiles/profiles-page.js";
 import { DashboardPage } from "../dashboard/dashboard.js";
 import { EnvelopesPage } from "../envelopes/envelopes-page.js";
+import { EnvelopeTransfersPage } from "../envelope-transfers/envelope-transfers-page.js";
 import { useRouter } from "./router.js";
 import { Menu } from "./menu.js";
 import { Breadcrumbs } from "./breadcrumbs.js";
@@ -39,6 +40,8 @@ function App(): ReactElement {
 
       case "/planning/envelopes":
         return <EnvelopesPage />;
+      case "/planning/envelope-transfers":
+        return <EnvelopeTransfersPage />;
 
       case "/settings/accounts":
         return <AccountsPage />;

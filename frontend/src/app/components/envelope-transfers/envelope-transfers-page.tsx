@@ -1,5 +1,4 @@
 import React, { ReactElement } from "react";
-import { Transaction } from "../../../api_gen/moneydashboard/v4/transactions_pb.js";
 import { useAsyncEffect, useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -7,23 +6,23 @@ import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import { ErrorPanel } from "../common/error/error.js";
-import { GBP_CURRENCY_ID, NULL_UUID } from "../../../config/consts.js";
-import { transactionServiceClient } from "../../../api/api.js";
+import { NULL_UUID } from "../../../config/consts.js";
 import { formatDateFromProto } from "../../utils/dates.js";
 import { formatCurrency } from "../../utils/currency.js";
-import { formatAsset } from "../../utils/assets.js";
-import { concatClasses } from "../../utils/style.js";
 import { useHoldingList } from "../../schema/hooks.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
-import { TransactionEditModal } from "./transaction-edit-modal.js";
+import { EnvelopeTransfer } from "../../../api_gen/moneydashboard/v4/envelope_transfers_pb.js";
+import { envelopeTransferServiceClient } from "../../../api/api.js";
+import { concatClasses } from "../../utils/style.js";
+import { EnvelopeTransferEditModal } from "./envelope-transfer-edit-modal.js";
 
 const PER_PAGE = 20;
 
-function TransactionsPage(): ReactElement {
+function EnvelopeTransfersPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
-    setMeta({ parents: [], title: "Transactions" });
+    setMeta({ parents: [], title: "Envelope Transfers" });
   }, []);
 
   const [nudgeValue, nudge] = useNudge();
@@ -34,7 +33,7 @@ function TransactionsPage(): ReactElement {
   const [total, setTotal] = React.useState(0);
   const [filteredTotal, setFilteredTotal] = React.useState(0);
   const [pageCount, setPageCount] = React.useState(1);
-  const [transactions, setTransactions] = React.useState<Transaction[]>();
+  const [envelopeTransfers, setEnvelopeTransfers] = React.useState<EnvelopeTransfer[]>();
 
   const [editingId, setEditingId] = React.useState<string>();
   useKeyShortcut("c", () => setEditingId(NULL_UUID));
@@ -58,26 +57,26 @@ function TransactionsPage(): ReactElement {
 
   useAsyncEffect(async () => {
     try {
-      const res = await transactionServiceClient.getTransactionPage({
+      const res = await envelopeTransferServiceClient.getEnvelopeTransferPage({
         page,
         perPage: PER_PAGE,
         searchPattern: searchPattern?.toString()?.replace(/^\/(.*)\/i/, "$1") ?? "",
       });
       setTotal(res.total);
       setFilteredTotal(res.filteredTotal);
-      setTransactions(res.filteredEntities);
+      setEnvelopeTransfers(res.filteredEntities);
 
       const pageCount = Math.max(Math.ceil(res.filteredTotal / PER_PAGE), 1);
       setPageCount(pageCount);
       setPage(Math.min(page, pageCount));
     } catch (e) {
-      toastBus.error("Failed to load transactions.");
+      toastBus.error("Failed to load envelopeTransfers.");
       setError(e);
       console.log(e);
     }
   }, [nudgeValue, page, searchPattern]);
 
-  const deleteTransaction = (id: string) => {
+  const deleteEnvelopeTransfer = (id: string) => {
     if (deletePendingId != id) {
       setDeletePendingId(id);
       if (clearDeletePendingId.current) {
@@ -85,14 +84,14 @@ function TransactionsPage(): ReactElement {
       }
       clearDeletePendingId.current = window.setTimeout(() => setDeletePendingId(undefined), 2000);
     } else {
-      transactionServiceClient
-        .deleteTransaction({ id })
+      envelopeTransferServiceClient
+        .deleteEnvelopeTransfer({ id })
         .then(() => {
-          toastBus.success("Deleted transaction.");
+          toastBus.success("Deleted envelope transfer.");
           nudge();
         })
         .catch((e) => {
-          toastBus.error("Failed to delete transaction.");
+          toastBus.error("Failed to delete envelope transfer.");
           console.log(e);
         });
     }
@@ -130,7 +129,7 @@ function TransactionsPage(): ReactElement {
   let body: ReactElement;
   if (error) {
     body = <ErrorPanel error={error} />;
-  } else if (!transactions || !holdingsPerAccount) {
+  } else if (!envelopeTransfers || !holdingsPerAccount) {
     body = <LoadingPanel />;
   } else {
     body = (
@@ -139,36 +138,20 @@ function TransactionsPage(): ReactElement {
           <thead>
             <tr>
               <td>Date</td>
-              <td>Account / Holding</td>
-              <td>Payee</td>
-              <td>Category</td>
+              <td>From Envelope</td>
+              <td>To Envelope</td>
               <td>Amount</td>
               <td>Actions</td>
             </tr>
           </thead>
           <tbody>
-            {!transactions || transactions.length == 0 ? (
+            {!envelopeTransfers || envelopeTransfers.length == 0 ? (
               <td colSpan={99}>
-                <EmptyResultsPanel pluralNoun={"transactions"} />
+                <EmptyResultsPanel pluralNoun={"envelope transfers"} />
               </td>
             ) : (
-              transactions?.map((t, i, arr) => {
-                let amount = "";
-                let amountPrefix = "";
-                if (t.holding?.currency) {
-                  amount = formatCurrency(t.amount, t.holding.currency);
-                  if (t.holding.currency.id != GBP_CURRENCY_ID) {
-                    amountPrefix = t.holding.currency.symbol + t.holding.currency.code;
-                  }
-                } else if (t.holding?.asset) {
-                  amount = formatAsset(t.amount, t.holding.asset);
-                  amountPrefix = t.holding.asset.name;
-                }
-
-                const qtyAccountHoldings = holdingsPerAccount[t.holding?.account?.id ?? ""] ?? 999;
-
+              envelopeTransfers?.map((t, i, arr) => {
                 const deletePending = deletePendingId == t.id;
-
                 const newDate = i == 0 || arr[i - 1]?.date != t.date;
 
                 return (
@@ -176,33 +159,21 @@ function TransactionsPage(): ReactElement {
                     <td>
                       <span className={concatClasses(!newDate && "muted")}>{formatDateFromProto(t.date)}</span>
                     </td>
-                    <td className={"holding-cell"}>
-                      {qtyAccountHoldings > 1 ? (
-                        <>
-                          <span>{t.holding?.account?.name}</span>
-                          <span className={"separator"}>&#x2022;</span>
-                          <span>{t.holding?.name}</span>
-                        </>
-                      ) : (
-                        <span>{t.holding?.account?.name}</span>
-                      )}
-                    </td>
-                    <td className={concatClasses(t.payee == "N/A" && "muted")}>
+                    <td>{t.fromEnvelope?.name ?? <em>Unallocated funds</em>}</td>
+                    <td>
                       {t.notes.length > 0 ? (
                         <IconGroup>
-                          <span>{t.payee}</span>
+                          <span>{t.toEnvelope?.name ?? <em>Unallocated funds</em>}</span>
                           <span data-tooltip={t.notes}>
                             <Icon name={"info"} className={"muted"} />
                           </span>
                         </IconGroup>
                       ) : (
-                        t.payee
+                        <>{t.toEnvelope?.name ?? <em>Unallocated funds</em>}</>
                       )}
                     </td>
-                    <td>{t.category?.name}</td>
                     <td className={"amount-cell"}>
-                      {amountPrefix != "" ? <span className={"amount-prefix"}>{amountPrefix}</span> : null}
-                      <span className={"amount"}>{amount}</span>
+                      <span className={"amount"}>{formatCurrency(t.amount, null)}</span>
                     </td>
                     <td className={"actions-cell"}>
                       <ul className={"horizonal mb0"}>
@@ -215,7 +186,7 @@ function TransactionsPage(): ReactElement {
                           </a>
                         </li>
                         <li>
-                          <a href={""} className={"secondary"} onClick={() => deleteTransaction(t.id)}>
+                          <a href={""} className={"secondary"} onClick={() => deleteEnvelopeTransfer(t.id)}>
                             <IconGroup>
                               <Icon name={"delete"} />
                               <span>{deletePending ? "Sure?" : "Delete"}</span>
@@ -246,8 +217,8 @@ function TransactionsPage(): ReactElement {
     <>
       <div id={"content"} className={"overflow-auto"}>
         <PageHeader
-          title={"Transactions"}
-          icon={"list"}
+          title={"Envelope Transfers"}
+          icon={"swap_horiz"}
           buttons={pageButtons}
           options={pageOptions}
           onSearchTextChange={(p) => setSearchPattern(p)}
@@ -256,8 +227,8 @@ function TransactionsPage(): ReactElement {
       </div>
 
       {editingId ? (
-        <TransactionEditModal
-          transactionId={editingId}
+        <EnvelopeTransferEditModal
+          envelopeTransferId={editingId}
           onSaveFinished={() => {
             nudge();
             setEditingId(undefined);
@@ -269,4 +240,4 @@ function TransactionsPage(): ReactElement {
   );
 }
 
-export { TransactionsPage };
+export { EnvelopeTransfersPage };

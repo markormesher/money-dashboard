@@ -49,6 +49,9 @@ type converterSpec interface {
 	EnvelopeAllocationFromCore(source schema.EnvelopeAllocation) *mdv4.EnvelopeAllocation
 	EnvelopeAllocationToCore(source *mdv4.EnvelopeAllocation) schema.EnvelopeAllocation
 
+	EnvelopeTransferFromCore(source schema.EnvelopeTransfer) *mdv4.EnvelopeTransfer
+	EnvelopeTransferToCore(source *mdv4.EnvelopeTransfer) schema.EnvelopeTransfer
+
 	HoldingFromCore(source schema.Holding) *mdv4.Holding
 	HoldingToCore(source *mdv4.Holding) schema.Holding
 

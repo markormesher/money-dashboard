@@ -69,7 +69,23 @@ span.separator {
   color: rgb(217, 53, 38);
 }
 
-.actions-cell {
+/* tables */
+
+td.amount-cell {
+  font-family: monospace;
+
+  .amount {
+    float: right;
+  }
+
+  .amount-prefix {
+    float: left;
+    margin-right: calc(var(--pico-block-spacing-horizontal) * 0.5);
+    color: var(--pico-muted-color);
+  }
+}
+
+td.actions-cell {
   a {
     text-decoration: none;
 

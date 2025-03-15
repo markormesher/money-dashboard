@@ -76,12 +76,35 @@ func EnvelopeToCore(source databasegen.Envelope) schema.Envelope {
 	schemaEnvelope.Active = source.Active
 	return schemaEnvelope
 }
+func EnvelopeTransferToCore(source databasegen.EnvelopeTransfer) schema.EnvelopeTransfer {
+	var schemaEnvelopeTransfer schema.EnvelopeTransfer
+	schemaEnvelopeTransfer.ID = source.ID
+	schemaEnvelopeTransfer.Date = source.Date
+	schemaEnvelopeTransfer.Amount = source.Amount
+	schemaEnvelopeTransfer.Notes = source.Notes
+	schemaEnvelopeTransfer.Deleted = source.Deleted
+	return schemaEnvelopeTransfer
+}
 func HoldingToCore(source databasegen.Holding) schema.Holding {
 	var schemaHolding schema.Holding
 	schemaHolding.ID = source.ID
 	schemaHolding.Name = source.Name
 	schemaHolding.Active = source.Active
 	return schemaHolding
+}
+func NullableEnvelopeTranferFromEnvelopeToCore(source databasegen.NullableEnvelopeTranferFromEnvelope) schema.Envelope {
+	var schemaEnvelope schema.Envelope
+	schemaEnvelope.ID = pUuidUUIDToUuidUUID(source.ID)
+	schemaEnvelope.Name = ConvertPgTextToPrimitive(source.Name)
+	schemaEnvelope.Active = ConvertPgBoolToPrimitive(source.Active)
+	return schemaEnvelope
+}
+func NullableEnvelopeTranferToEnvelopeToCore(source databasegen.NullableEnvelopeTranferToEnvelope) schema.Envelope {
+	var schemaEnvelope schema.Envelope
+	schemaEnvelope.ID = pUuidUUIDToUuidUUID(source.ID)
+	schemaEnvelope.Name = ConvertPgTextToPrimitive(source.Name)
+	schemaEnvelope.Active = ConvertPgBoolToPrimitive(source.Active)
+	return schemaEnvelope
 }
 func NullableHoldingAssetCurrencyToCore(source databasegen.NullableHoldingAssetCurrency) schema.Currency {
 	var schemaCurrency schema.Currency

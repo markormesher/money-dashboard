@@ -60,10 +60,13 @@ function Textarea<T>(props: TextareaProps<T>): ReactElement {
   );
 }
 
-type SelectProps<T> = FormInputProps<T> & SelectHTMLAttributes<HTMLSelectElement>;
+type SelectProps<T> = FormInputProps<T> &
+  SelectHTMLAttributes<HTMLSelectElement> & {
+    nullItemLabel?: string;
+  };
 
 function Select<T>(props: React.PropsWithChildren<SelectProps<T>>): ReactElement {
-  const { label, formState, fieldName, children } = props;
+  const { label, formState, fieldName, children, nullItemLabel } = props;
   const [userHasInteracted, setUserHasInteracted] = React.useState(false);
 
   const error = formState.fieldError(fieldName);
@@ -80,7 +83,7 @@ function Select<T>(props: React.PropsWithChildren<SelectProps<T>>): ReactElement
         autoComplete={"off"}
         {...props}
       >
-        <option selected={!props.value}>-- Select --</option>
+        <option selected={!props.value}>-- {nullItemLabel ?? "Select"} --</option>
         {children}
       </select>
       {userHasInteracted && hasError ? <small>{error}</small> : null}

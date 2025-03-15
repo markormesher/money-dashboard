@@ -122,6 +122,17 @@ type EnvelopeOld struct {
 
 type EnvelopeTransfer struct {
 	ID             uuid.UUID
+	Date           time.Time
+	Amount         decimal.Decimal
+	FromEnvelopeID *uuid.UUID
+	ToEnvelopeID   *uuid.UUID
+	Notes          string
+	ProfileID      uuid.UUID
+	Deleted        bool
+}
+
+type EnvelopeTransferOld struct {
+	ID             uuid.UUID
 	Deleted        bool
 	Date           int64
 	Amount         float64
@@ -161,6 +172,22 @@ type LegacyBudget struct {
 type Migration struct {
 	MigrationInProgress bool
 	LastMigration       int32
+}
+
+type NullableEnvelopeTranferFromEnvelope struct {
+	EnvelopeTransferID uuid.UUID
+	ID                 *uuid.UUID
+	Name               pgtype.Text
+	ProfileID          *uuid.UUID
+	Active             pgtype.Bool
+}
+
+type NullableEnvelopeTranferToEnvelope struct {
+	EnvelopeTransferID uuid.UUID
+	ID                 *uuid.UUID
+	Name               pgtype.Text
+	ProfileID          *uuid.UUID
+	Active             pgtype.Bool
 }
 
 type NullableHoldingAsset struct {

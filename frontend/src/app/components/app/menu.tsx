@@ -81,7 +81,7 @@ function Menu(props: MenuProps): ReactElement {
             <summary>Planning</summary>
             <ul>
               {link("/planning/envelopes", "Envelopes", "mail")}
-              {link("/planning/envelope-transactions", "Envelope Transfers", "swap_horiz")}
+              {link("/planning/envelope-transfers", "Envelope Transfers", "swap_horiz")}
             </ul>
           </details>
 
