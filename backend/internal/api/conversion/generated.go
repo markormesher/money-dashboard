@@ -81,6 +81,14 @@ func AssetToCore(source *v4.Asset) schema.Asset {
 	}
 	return schemaAsset
 }
+func CategoryBalanceFromCore(source core.CategoryBalance) *v4.CategoryBalance {
+	var mdv4CategoryBalance v4.CategoryBalance
+	mdv4CategoryBalance.Category = CategoryFromCore(source.Category)
+	mdv4CategoryBalance.Asset = pSchemaAssetToPMdv4Asset(source.Asset)
+	mdv4CategoryBalance.Currency = pSchemaCurrencyToPMdv4Currency(source.Currency)
+	mdv4CategoryBalance.RawBalance = ConvertDecimalToFloat(source.RawBalance)
+	return &mdv4CategoryBalance
+}
 func CategoryFromCore(source schema.Category) *v4.Category {
 	var mdv4Category v4.Category
 	mdv4Category.Id = ConvertUUIDToString(source.ID)

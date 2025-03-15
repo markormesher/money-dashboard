@@ -81,7 +81,7 @@ function PageHeader(props: React.PropsWithChildren<PageHeaderProps>): ReactEleme
                       >
                         {p}
                       </span>
-                      {i == arr.length - 1 ? null : <span className={"divider"}>&bull;</span>}
+                      {i == arr.length - 1 ? null : <span className={"separator"}>&bull;</span>}
                     </>
                   ))}
                 </span>

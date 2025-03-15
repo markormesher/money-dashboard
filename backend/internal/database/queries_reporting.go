@@ -14,6 +14,13 @@ type HoldingBalance struct {
 	HoldingID uuid.UUID
 }
 
+type CategoryBalance struct {
+	Balance    decimal.Decimal
+	CategoryID uuid.UUID
+	AssetID    *uuid.UUID
+	CurrencyID *uuid.UUID
+}
+
 func (db *DB) GetHoldingBalances(ctx context.Context, profileID uuid.UUID) ([]HoldingBalance, error) {
 	rows, err := db.queries.GetHoldingBalances(ctx, profileID)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -28,6 +35,28 @@ func (db *DB) GetHoldingBalances(ctx context.Context, profileID uuid.UUID) ([]Ho
 		output[i] = HoldingBalance{
 			Balance:   row.Balance,
 			HoldingID: row.HoldingID,
+		}
+	}
+
+	return output, nil
+}
+
+func (db *DB) GetMemoBalances(ctx context.Context, profileID uuid.UUID) ([]CategoryBalance, error) {
+	rows, err := db.queries.GetMemoBalances(ctx, profileID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return []CategoryBalance{}, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	output := make([]CategoryBalance, len(rows))
+
+	for i, row := range rows {
+		output[i] = CategoryBalance{
+			Balance:    row.Balance,
+			CategoryID: row.CategoryID,
+			AssetID:    row.AssetID,
+			CurrencyID: row.CurrencyID,
 		}
 	}
 

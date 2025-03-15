@@ -59,3 +59,12 @@ span.separator {
   margin: 0 calc(var(--pico-block-spacing-horizontal) * 0.5);
   color: var(--pico-muted-color);
 }
+
+.amount {
+  font-family: monospace;
+}
+
+.colour-red {
+  /* pico-color-red-500 */
+  color: rgb(217, 53, 38);
+}

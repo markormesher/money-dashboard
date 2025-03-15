@@ -48,3 +48,52 @@ func (q *Queries) GetHoldingBalances(ctx context.Context, profileID uuid.UUID) (
 	}
 	return items, nil
 }
+
+const getMemoBalances = `-- name: GetMemoBalances :many
+SELECT
+  CAST(SUM(transaction.amount) AS NUMERIC(19, 4)) AS balance,
+  holding.asset_id,
+  holding.currency_id,
+  transaction.category_id
+FROM
+  transaction
+    JOIN holding ON transaction.holding_id = holding.id
+    JOIN category ON transaction.category_id = category.id
+WHERE
+  transaction.profile_id = $1
+  AND transaction.deleted = FALSE
+  AND category.is_memo = TRUE
+GROUP BY holding.asset_id, holding.currency_id, transaction.category_id
+`
+
+type GetMemoBalancesRow struct {
+	Balance    decimal.Decimal
+	AssetID    *uuid.UUID
+	CurrencyID *uuid.UUID
+	CategoryID uuid.UUID
+}
+
+func (q *Queries) GetMemoBalances(ctx context.Context, profileID uuid.UUID) ([]GetMemoBalancesRow, error) {
+	rows, err := q.db.Query(ctx, getMemoBalances, profileID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetMemoBalancesRow
+	for rows.Next() {
+		var i GetMemoBalancesRow
+		if err := rows.Scan(
+			&i.Balance,
+			&i.AssetID,
+			&i.CurrencyID,
+			&i.CategoryID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

@@ -61,6 +61,7 @@ type converterSpec interface {
 	// reporting
 
 	HoldingBalanceFromCore(source core.HoldingBalance) *mdv4.HoldingBalance
+	CategoryBalanceFromCore(source core.CategoryBalance) *mdv4.CategoryBalance
 }
 
 // utility methods to convert between core and api types

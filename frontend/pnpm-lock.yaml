@@ -18,8 +18,8 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(@bufbuild/protobuf@2.2.3)(@connectrpc/connect@2.0.1(@bufbuild/protobuf@2.2.3))
       '@picocss/pico':
-        specifier: ^2.0.6
-        version: 2.0.6
+        specifier: ^2.1.0
+        version: 2.1.0
       material-symbols:
         specifier: ^0.28.1
         version: 0.28.1
@@ -453,9 +453,8 @@ packages:
     resolution: {integrity: sha512-dfUnCxiN9H4ap84DvD2ubjw+3vUNpstxa0TneY/Paat8a3R4uQZDLSvWjmznAY/DoahqTHl9V46HF/Zs3F29pg==}
     engines: {node: '>= 10.0.0'}
 
-  '@picocss/pico@2.0.6':
-    resolution: {integrity: sha512-/d8qsykowelD6g8k8JYgmCagOIulCPHMEc2NC4u7OjmpQLmtSetLhEbt0j1n3fPNJVcrT84dRp0RfJBn3wJROA==}
-    engines: {node: '>=18.19.0'}
+  '@picocss/pico@2.1.0':
+    resolution: {integrity: sha512-GKaWNZeaNYkkBDk/RbWc3XuQzGQHdlVt9ascF+GfUxN5M0XBaX+8m5+1PznGkMYCwpnId2AT+QRJbis2mGfEGA==}
 
   '@pkgr/core@0.1.1':
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
@@ -1948,7 +1947,7 @@ snapshots:
       '@parcel/watcher-win32-x64': 2.5.1
     optional: true
 
-  '@picocss/pico@2.0.6': {}
+  '@picocss/pico@2.1.0': {}
 
   '@pkgr/core@0.1.1': {}
 

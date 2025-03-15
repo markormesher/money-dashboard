@@ -1,6 +1,9 @@
 syntax = "proto3";
 package moneydashboard.v4;
 
+import "moneydashboard/v4/assets.proto";
+import "moneydashboard/v4/categories.proto";
+import "moneydashboard/v4/currencies.proto";
 import "moneydashboard/v4/holdings.proto";
 
 option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
@@ -11,12 +14,26 @@ message HoldingBalance {
   double gbp_balance = 3;
 }
 
+message CategoryBalance {
+  Category category = 1;
+  Asset asset = 2;
+  Currency currency = 3;
+  double raw_balance = 4;
+}
+
 message GetHoldingBalancesRequest {}
 
 message GetHoldingBalancesResponse {
   repeated HoldingBalance balances = 1;
 }
 
+message GetNonZeroMemoBalancesRequest {}
+
+message GetNonZeroMemoBalancesResponse {
+  repeated CategoryBalance balances = 1;
+}
+
 service MDReportingService {
   rpc GetHoldingBalances(GetHoldingBalancesRequest) returns (GetHoldingBalancesResponse);
+  rpc GetNonZeroMemoBalances(GetNonZeroMemoBalancesRequest) returns (GetNonZeroMemoBalancesResponse);
 }
