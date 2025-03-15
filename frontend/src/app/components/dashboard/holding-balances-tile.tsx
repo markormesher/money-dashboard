@@ -84,7 +84,7 @@ function HoldingBalancesTile(): ReactElement {
   }
 
   return (
-    <article>
+    <article className={"dashboard-balances-tile"}>
       <header>
         <h4 className={"mb0"}>
           <IconGroup>
@@ -99,7 +99,7 @@ function HoldingBalancesTile(): ReactElement {
         .map((g) => {
           return (
             <>
-              <h6 className={"balance-group-header"}>{g.accountGroup.name}</h6>
+              <h6 className={"group-header"}>{g.accountGroup.name}</h6>
               {Object.values(g.rows)
                 .sort((a, b) => Math.abs(b.balanceSum) - Math.abs(a.balanceSum))
                 .map((r) => {

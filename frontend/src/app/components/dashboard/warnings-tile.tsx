@@ -63,7 +63,7 @@ function WarningsTile(): ReactElement | null {
   }
 
   return (
-    <article className={"warnings-tile"}>
+    <article className={"dashboard-warnings-tile"}>
       <header>
         <h4 className={"mb0"}>
           <IconGroup>
