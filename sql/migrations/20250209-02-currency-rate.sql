@@ -6,4 +6,4 @@ CREATE TABLE currency_rate (
   UNIQUE(currency_id, "date")
 );
 
-INSERT INTO currency_rate VALUES (gen_random_uuid(), "b3092a40-1802-46fd-9967-11c7ac3522c5", "1970-01-01", 1.0);
+INSERT INTO currency_rate VALUES (gen_random_uuid(), 'b3092a40-1802-46fd-9967-11c7ac3522c5', '1970-01-01', 1.0);
