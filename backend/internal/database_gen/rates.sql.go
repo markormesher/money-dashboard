@@ -13,6 +13,36 @@ import (
 	"github.com/govalues/decimal"
 )
 
+const getHistoricRate = `-- name: GetHistoricRate :one
+SELECT id, asset_id, currency_id, date, rate FROM rate
+WHERE
+  (
+    asset_id = $1
+    OR currency_id = $1
+  )
+  AND "date" <= $2
+ORDER BY "date" DESC
+LIMIT 1
+`
+
+type GetHistoricRateParams struct {
+	AssetOrCurrenceyID *uuid.UUID
+	Date               time.Time
+}
+
+func (q *Queries) GetHistoricRate(ctx context.Context, arg GetHistoricRateParams) (Rate, error) {
+	row := q.db.QueryRow(ctx, getHistoricRate, arg.AssetOrCurrenceyID, arg.Date)
+	var i Rate
+	err := row.Scan(
+		&i.ID,
+		&i.AssetID,
+		&i.CurrencyID,
+		&i.Date,
+		&i.Rate,
+	)
+	return i, err
+}
+
 const getLatestRates = `-- name: GetLatestRates :many
 SELECT
   DISTINCT ON (asset_id, currency_id) id, asset_id, currency_id, date, rate
@@ -45,37 +75,6 @@ func (q *Queries) GetLatestRates(ctx context.Context) ([]Rate, error) {
 		return nil, err
 	}
 	return items, nil
-}
-
-const getRate = `-- name: GetRate :one
-SELECT id, asset_id, currency_id, date, rate FROM rate
-WHERE
-  asset_id = $1
-  AND
-  currency_id = $2
-  AND
-  "date" <= $3
-ORDER BY "date" DESC
-LIMIT 1
-`
-
-type GetRateParams struct {
-	AssetID    *uuid.UUID
-	CurrencyID *uuid.UUID
-	Date       time.Time
-}
-
-func (q *Queries) GetRate(ctx context.Context, arg GetRateParams) (Rate, error) {
-	row := q.db.QueryRow(ctx, getRate, arg.AssetID, arg.CurrencyID, arg.Date)
-	var i Rate
-	err := row.Scan(
-		&i.ID,
-		&i.AssetID,
-		&i.CurrencyID,
-		&i.Date,
-		&i.Rate,
-	)
-	return i, err
 }
 
 const upsertRate = `-- name: UpsertRate :exec

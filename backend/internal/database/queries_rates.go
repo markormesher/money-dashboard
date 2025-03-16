@@ -34,11 +34,10 @@ func (db *DB) GetLatestRates(ctx context.Context) ([]schema.Rate, error) {
 	return currencies, nil
 }
 
-func (db *DB) GetRate(ctx context.Context, assetID *uuid.UUID, currencyID *uuid.UUID, date time.Time) (schema.Rate, error) {
-	row, err := db.queries.GetRate(ctx, database_gen.GetRateParams{
-		AssetID:    assetID,
-		CurrencyID: currencyID,
-		Date:       date,
+func (db *DB) GetHistoricRate(ctx context.Context, assetOrCurrencyID uuid.UUID, date time.Time) (schema.Rate, error) {
+	row, err := db.queries.GetHistoricRate(ctx, database_gen.GetHistoricRateParams{
+		AssetOrCurrenceyID: &assetOrCurrencyID,
+		Date:               date,
 	})
 	if errors.Is(err, pgx.ErrNoRows) {
 		return schema.Rate{}, fmt.Errorf("no rate data")

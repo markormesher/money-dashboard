@@ -221,16 +221,52 @@ func (c *Core) GetEnvelopeBalances(ctx context.Context, profile schema.Profile) 
 
 	// apply all transactions
 	for _, t := range transactions {
+		gbpAmount := t.Amount
+
+		if t.Holding.Currency != nil {
+			rate, err := c.GetLatestCurrencyRate(ctx, *t.Holding.Currency)
+			if err != nil {
+				return nil, err
+			}
+
+			gbpAmount, err = t.Amount.Mul(rate.Rate)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if t.Holding.Asset != nil {
+			assetRate, err := c.GetLatestAssetRate(ctx, *t.Holding.Asset)
+			if err != nil {
+				return nil, err
+			}
+
+			cashBalance, err := t.Amount.Mul(assetRate.Rate)
+			if err != nil {
+				return nil, err
+			}
+
+			rate, err := c.GetLatestCurrencyRate(ctx, *t.Holding.Asset.Currency)
+			if err != nil {
+				return nil, err
+			}
+
+			gbpAmount, err = cashBalance.Mul(rate.Rate)
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		envelope := getEnvelopeForCategory(envelopeAllocations, *t.Category, t.Date)
 		if envelope != nil {
-			newBalance, err := balances[envelope.ID.String()].Add(t.Amount)
+			newBalance, err := balances[envelope.ID.String()].Add(gbpAmount)
 			if err != nil {
 				return nil, err
 			}
 
 			balances[envelope.ID.String()] = newBalance
 		} else {
-			unallocatedBalance, err = unallocatedBalance.Add(t.Amount)
+			unallocatedBalance, err = unallocatedBalance.Add(gbpAmount)
 			if err != nil {
 				return nil, err
 			}

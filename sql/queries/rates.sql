@@ -14,13 +14,13 @@ FROM
   rate
 ORDER BY asset_id, currency_id, "date" DESC;
 
--- name: GetRate :one
+-- name: GetHistoricRate :one
 SELECT * FROM rate
 WHERE
-  asset_id = @asset_id
-  AND
-  currency_id = @currency_id
-  AND
-  "date" <= @date
+  (
+    asset_id = @asset_or_currencey_id
+    OR currency_id = @asset_or_currencey_id
+  )
+  AND "date" <= @date
 ORDER BY "date" DESC
 LIMIT 1;
