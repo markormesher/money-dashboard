@@ -15,10 +15,20 @@ import (
 )
 
 func (db *DB) UpsertRate(ctx context.Context, rate schema.Rate) error {
+	var assetId, currencyId *uuid.UUID
+	if rate.AssetID != uuid.Nil {
+		assetId = &rate.AssetID
+	}
+	if rate.CurrencyID != uuid.Nil {
+		currencyId = &rate.CurrencyID
+	}
+
 	return db.queries.UpsertRate(ctx, database_gen.UpsertRateParams{
-		ID:   rate.ID,
-		Date: rate.Date,
-		Rate: rate.Rate,
+		ID:         rate.ID,
+		AssetID:    assetId,
+		CurrencyID: currencyId,
+		Date:       rate.Date,
+		Rate:       rate.Rate,
 	})
 }
 
