@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file moneydashboard/v4/envelope_transfers.proto.
  */
 export const file_moneydashboard_v4_envelope_transfers: GenFile = /*@__PURE__*/
-  fileDesc("Ciptb25leWRhc2hib2FyZC92NC9lbnZlbG9wZV90cmFuc2ZlcnMucHJvdG8SEW1vbmV5ZGFzaGJvYXJkLnY0IrEBChBFbnZlbG9wZVRyYW5zZmVyEgoKAmlkGAEgASgJEgwKBGRhdGUYAiABKAMSDQoFbm90ZXMYAyABKAkSDgoGYW1vdW50GAQgASgBEjIKDWZyb21fZW52ZWxvcGUYBSABKAsyGy5tb25leWRhc2hib2FyZC52NC5FbnZlbG9wZRIwCgt0b19lbnZlbG9wZRgGIAEoCzIbLm1vbmV5ZGFzaGJvYXJkLnY0LkVudmVsb3BlIiwKHkdldEVudmVsb3BlVHJhbnNmZXJCeUlkUmVxdWVzdBIKCgJpZBgBIAEoCSJgCh9HZXRFbnZlbG9wZVRyYW5zZmVyQnlJZFJlc3BvbnNlEj0KEGVudmVsb3BlVHJhbnNmZXIYASABKAsyIy5tb25leWRhc2hib2FyZC52NC5FbnZlbG9wZVRyYW5zZmVyIlgKHkdldEVudmVsb3BlVHJhbnNmZXJQYWdlUmVxdWVzdBIMCgRwYWdlGAEgASgFEhAKCHBlcl9wYWdlGAIgASgFEhYKDnNlYXJjaF9wYXR0ZXJuGAMgASgJIogBCh9HZXRFbnZlbG9wZVRyYW5zZmVyUGFnZVJlc3BvbnNlEg0KBXRvdGFsGAEgASgFEhYKDmZpbHRlcmVkX3RvdGFsGAIgASgFEj4KEWZpbHRlcmVkX2VudGl0aWVzGAMgAygLMiMubW9uZXlkYXNoYm9hcmQudjQuRW52ZWxvcGVUcmFuc2ZlciJeCh1VcHNlcnRFbnZlbG9wZVRyYW5zZmVyUmVxdWVzdBI9ChBlbnZlbG9wZVRyYW5zZmVyGAEgASgLMiMubW9uZXlkYXNoYm9hcmQudjQuRW52ZWxvcGVUcmFuc2ZlciIgCh5VcHNlcnRFbnZlbG9wZVRyYW5zZmVyUmVzcG9uc2UiKwodRGVsZXRlRW52ZWxvcGVUcmFuc2ZlclJlcXVlc3QSCgoCaWQYASABKAkiIAoeRGVsZXRlRW52ZWxvcGVUcmFuc2ZlclJlc3BvbnNlMp8EChlNREVudmVsb3BlVHJhbnNmZXJTZXJ2aWNlEoABChdHZXRFbnZlbG9wZVRyYW5zZmVyQnlJZBIxLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEVudmVsb3BlVHJhbnNmZXJCeUlkUmVxdWVzdBoyLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEVudmVsb3BlVHJhbnNmZXJCeUlkUmVzcG9uc2USgAEKF0dldEVudmVsb3BlVHJhbnNmZXJQYWdlEjEubW9uZXlkYXNoYm9hcmQudjQuR2V0RW52ZWxvcGVUcmFuc2ZlclBhZ2VSZXF1ZXN0GjIubW9uZXlkYXNoYm9hcmQudjQuR2V0RW52ZWxvcGVUcmFuc2ZlclBhZ2VSZXNwb25zZRJ9ChZVcHNlcnRFbnZlbG9wZVRyYW5zZmVyEjAubW9uZXlkYXNoYm9hcmQudjQuVXBzZXJ0RW52ZWxvcGVUcmFuc2ZlclJlcXVlc3QaMS5tb25leWRhc2hib2FyZC52NC5VcHNlcnRFbnZlbG9wZVRyYW5zZmVyUmVzcG9uc2USfQoWRGVsZXRlRW52ZWxvcGVUcmFuc2ZlchIwLm1vbmV5ZGFzaGJvYXJkLnY0LkRlbGV0ZUVudmVsb3BlVHJhbnNmZXJSZXF1ZXN0GjEubW9uZXlkYXNoYm9hcmQudjQuRGVsZXRlRW52ZWxvcGVUcmFuc2ZlclJlc3BvbnNlQlFaT2dpdGh1Yi5jb20vbWFya29ybWVzaGVyL21vbmV5LWRhc2hib2FyZC9pbnRlcm5hbC9hcGlfZ2VuL21vbmV5ZGFzaGJvYXJkL3Y0O21kdjRiBnByb3RvMw", [file_moneydashboard_v4_envelopes]);
+  fileDesc("Ciptb25leWRhc2hib2FyZC92NC9lbnZlbG9wZV90cmFuc2ZlcnMucHJvdG8SEW1vbmV5ZGFzaGJvYXJkLnY0IrEBChBFbnZlbG9wZVRyYW5zZmVyEgoKAmlkGAEgASgJEgwKBGRhdGUYAiABKAMSDQoFbm90ZXMYAyABKAkSDgoGYW1vdW50GAQgASgBEjIKDWZyb21fZW52ZWxvcGUYBSABKAsyGy5tb25leWRhc2hib2FyZC52NC5FbnZlbG9wZRIwCgt0b19lbnZlbG9wZRgGIAEoCzIbLm1vbmV5ZGFzaGJvYXJkLnY0LkVudmVsb3BlIiwKHkdldEVudmVsb3BlVHJhbnNmZXJCeUlkUmVxdWVzdBIKCgJpZBgBIAEoCSJhCh9HZXRFbnZlbG9wZVRyYW5zZmVyQnlJZFJlc3BvbnNlEj4KEWVudmVsb3BlX3RyYW5zZmVyGAEgASgLMiMubW9uZXlkYXNoYm9hcmQudjQuRW52ZWxvcGVUcmFuc2ZlciJYCh5HZXRFbnZlbG9wZVRyYW5zZmVyUGFnZVJlcXVlc3QSDAoEcGFnZRgBIAEoBRIQCghwZXJfcGFnZRgCIAEoBRIWCg5zZWFyY2hfcGF0dGVybhgDIAEoCSKIAQofR2V0RW52ZWxvcGVUcmFuc2ZlclBhZ2VSZXNwb25zZRINCgV0b3RhbBgBIAEoBRIWCg5maWx0ZXJlZF90b3RhbBgCIAEoBRI+ChFmaWx0ZXJlZF9lbnRpdGllcxgDIAMoCzIjLm1vbmV5ZGFzaGJvYXJkLnY0LkVudmVsb3BlVHJhbnNmZXIiXwodVXBzZXJ0RW52ZWxvcGVUcmFuc2ZlclJlcXVlc3QSPgoRZW52ZWxvcGVfdHJhbnNmZXIYASABKAsyIy5tb25leWRhc2hib2FyZC52NC5FbnZlbG9wZVRyYW5zZmVyIiAKHlVwc2VydEVudmVsb3BlVHJhbnNmZXJSZXNwb25zZSIrCh1EZWxldGVFbnZlbG9wZVRyYW5zZmVyUmVxdWVzdBIKCgJpZBgBIAEoCSIgCh5EZWxldGVFbnZlbG9wZVRyYW5zZmVyUmVzcG9uc2UiOgodQ2xvbmVFbnZlbG9wZVRyYW5zZmVyc1JlcXVlc3QSCwoDaWRzGAEgAygJEgwKBGRhdGUYAiABKAMiIAoeQ2xvbmVFbnZlbG9wZVRyYW5zZmVyc1Jlc3BvbnNlMp4FChlNREVudmVsb3BlVHJhbnNmZXJTZXJ2aWNlEoABChdHZXRFbnZlbG9wZVRyYW5zZmVyQnlJZBIxLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEVudmVsb3BlVHJhbnNmZXJCeUlkUmVxdWVzdBoyLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEVudmVsb3BlVHJhbnNmZXJCeUlkUmVzcG9uc2USgAEKF0dldEVudmVsb3BlVHJhbnNmZXJQYWdlEjEubW9uZXlkYXNoYm9hcmQudjQuR2V0RW52ZWxvcGVUcmFuc2ZlclBhZ2VSZXF1ZXN0GjIubW9uZXlkYXNoYm9hcmQudjQuR2V0RW52ZWxvcGVUcmFuc2ZlclBhZ2VSZXNwb25zZRJ9ChZVcHNlcnRFbnZlbG9wZVRyYW5zZmVyEjAubW9uZXlkYXNoYm9hcmQudjQuVXBzZXJ0RW52ZWxvcGVUcmFuc2ZlclJlcXVlc3QaMS5tb25leWRhc2hib2FyZC52NC5VcHNlcnRFbnZlbG9wZVRyYW5zZmVyUmVzcG9uc2USfQoWRGVsZXRlRW52ZWxvcGVUcmFuc2ZlchIwLm1vbmV5ZGFzaGJvYXJkLnY0LkRlbGV0ZUVudmVsb3BlVHJhbnNmZXJSZXF1ZXN0GjEubW9uZXlkYXNoYm9hcmQudjQuRGVsZXRlRW52ZWxvcGVUcmFuc2ZlclJlc3BvbnNlEn0KFkNsb25lRW52ZWxvcGVUcmFuc2ZlcnMSMC5tb25leWRhc2hib2FyZC52NC5DbG9uZUVudmVsb3BlVHJhbnNmZXJzUmVxdWVzdBoxLm1vbmV5ZGFzaGJvYXJkLnY0LkNsb25lRW52ZWxvcGVUcmFuc2ZlcnNSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM", [file_moneydashboard_v4_envelopes]);
 
 /**
  * @generated from message moneydashboard.v4.EnvelopeTransfer
@@ -78,7 +78,7 @@ export const GetEnvelopeTransferByIdRequestSchema: GenMessage<GetEnvelopeTransfe
  */
 export type GetEnvelopeTransferByIdResponse = Message<"moneydashboard.v4.GetEnvelopeTransferByIdResponse"> & {
   /**
-   * @generated from field: moneydashboard.v4.EnvelopeTransfer envelopeTransfer = 1;
+   * @generated from field: moneydashboard.v4.EnvelopeTransfer envelope_transfer = 1;
    */
   envelopeTransfer?: EnvelopeTransfer;
 };
@@ -149,7 +149,7 @@ export const GetEnvelopeTransferPageResponseSchema: GenMessage<GetEnvelopeTransf
  */
 export type UpsertEnvelopeTransferRequest = Message<"moneydashboard.v4.UpsertEnvelopeTransferRequest"> & {
   /**
-   * @generated from field: moneydashboard.v4.EnvelopeTransfer envelopeTransfer = 1;
+   * @generated from field: moneydashboard.v4.EnvelopeTransfer envelope_transfer = 1;
    */
   envelopeTransfer?: EnvelopeTransfer;
 };
@@ -205,6 +205,41 @@ export const DeleteEnvelopeTransferResponseSchema: GenMessage<DeleteEnvelopeTran
   messageDesc(file_moneydashboard_v4_envelope_transfers, 8);
 
 /**
+ * @generated from message moneydashboard.v4.CloneEnvelopeTransfersRequest
+ */
+export type CloneEnvelopeTransfersRequest = Message<"moneydashboard.v4.CloneEnvelopeTransfersRequest"> & {
+  /**
+   * @generated from field: repeated string ids = 1;
+   */
+  ids: string[];
+
+  /**
+   * @generated from field: int64 date = 2;
+   */
+  date: bigint;
+};
+
+/**
+ * Describes the message moneydashboard.v4.CloneEnvelopeTransfersRequest.
+ * Use `create(CloneEnvelopeTransfersRequestSchema)` to create a new message.
+ */
+export const CloneEnvelopeTransfersRequestSchema: GenMessage<CloneEnvelopeTransfersRequest> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_envelope_transfers, 9);
+
+/**
+ * @generated from message moneydashboard.v4.CloneEnvelopeTransfersResponse
+ */
+export type CloneEnvelopeTransfersResponse = Message<"moneydashboard.v4.CloneEnvelopeTransfersResponse"> & {
+};
+
+/**
+ * Describes the message moneydashboard.v4.CloneEnvelopeTransfersResponse.
+ * Use `create(CloneEnvelopeTransfersResponseSchema)` to create a new message.
+ */
+export const CloneEnvelopeTransfersResponseSchema: GenMessage<CloneEnvelopeTransfersResponse> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_envelope_transfers, 10);
+
+/**
  * @generated from service moneydashboard.v4.MDEnvelopeTransferService
  */
 export const MDEnvelopeTransferService: GenService<{
@@ -239,6 +274,14 @@ export const MDEnvelopeTransferService: GenService<{
     methodKind: "unary";
     input: typeof DeleteEnvelopeTransferRequestSchema;
     output: typeof DeleteEnvelopeTransferResponseSchema;
+  },
+  /**
+   * @generated from rpc moneydashboard.v4.MDEnvelopeTransferService.CloneEnvelopeTransfers
+   */
+  cloneEnvelopeTransfers: {
+    methodKind: "unary";
+    input: typeof CloneEnvelopeTransfersRequestSchema;
+    output: typeof CloneEnvelopeTransfersResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_moneydashboard_v4_envelope_transfers, 0);

@@ -30,7 +30,7 @@
     "@bufbuild/protobuf": "^2.2.3",
     "@connectrpc/connect": "^2.0.1",
     "@connectrpc/connect-web": "^2.0.1",
-    "@picocss/pico": "^2.1.0",
+    "@picocss/pico": "^2.1.1",
     "material-symbols": "^0.28.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

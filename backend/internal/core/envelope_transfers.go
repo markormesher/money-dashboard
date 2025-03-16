@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/markormesher/money-dashboard/internal/schema"
@@ -63,4 +64,34 @@ func (c *Core) DeleteEnvelopeTransfer(ctx context.Context, profile schema.Profil
 	}
 
 	return c.DB.DeleteEnvelopeTransfer(ctx, id, profile.ID)
+}
+
+func (c *Core) CloneEnvelopeTransfers(ctx context.Context, profile schema.Profile, ids []uuid.UUID, newDate time.Time) error {
+	if err := schema.ValidateDate(newDate); err != nil {
+		return fmt.Errorf("invalid value: %w", err)
+	}
+
+	for _, id := range ids {
+		t, ok, err := c.GetEnvelopeTransferById(ctx, profile, id)
+		if err != nil {
+			return err
+		} else if !ok {
+			return fmt.Errorf("no such envelope transfer")
+		}
+
+		newTransfer := schema.EnvelopeTransfer{
+			Amount:       t.Amount,
+			Date:         newDate,
+			FromEnvelope: t.FromEnvelope,
+			ToEnvelope:   t.ToEnvelope,
+			Notes:        t.Notes,
+		}
+
+		err = c.UpsertEnvelopeTransfer(ctx, profile, newTransfer)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

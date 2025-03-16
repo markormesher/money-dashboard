@@ -47,9 +47,17 @@ message DeleteEnvelopeTransferRequest {
 
 message DeleteEnvelopeTransferResponse {}
 
+message CloneEnvelopeTransfersRequest {
+  repeated string ids = 1;
+  int64 date = 2;
+}
+
+message CloneEnvelopeTransfersResponse {}
+
 service MDEnvelopeTransferService {
   rpc GetEnvelopeTransferById(GetEnvelopeTransferByIdRequest) returns (GetEnvelopeTransferByIdResponse);
   rpc GetEnvelopeTransferPage(GetEnvelopeTransferPageRequest) returns (GetEnvelopeTransferPageResponse);
   rpc UpsertEnvelopeTransfer(UpsertEnvelopeTransferRequest) returns (UpsertEnvelopeTransferResponse);
   rpc DeleteEnvelopeTransfer(DeleteEnvelopeTransferRequest) returns (DeleteEnvelopeTransferResponse);
+  rpc CloneEnvelopeTransfers(CloneEnvelopeTransfersRequest) returns (CloneEnvelopeTransfersResponse);
 }

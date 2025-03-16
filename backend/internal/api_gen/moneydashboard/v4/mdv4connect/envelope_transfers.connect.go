@@ -46,6 +46,9 @@ const (
 	// MDEnvelopeTransferServiceDeleteEnvelopeTransferProcedure is the fully-qualified name of the
 	// MDEnvelopeTransferService's DeleteEnvelopeTransfer RPC.
 	MDEnvelopeTransferServiceDeleteEnvelopeTransferProcedure = "/moneydashboard.v4.MDEnvelopeTransferService/DeleteEnvelopeTransfer"
+	// MDEnvelopeTransferServiceCloneEnvelopeTransfersProcedure is the fully-qualified name of the
+	// MDEnvelopeTransferService's CloneEnvelopeTransfers RPC.
+	MDEnvelopeTransferServiceCloneEnvelopeTransfersProcedure = "/moneydashboard.v4.MDEnvelopeTransferService/CloneEnvelopeTransfers"
 )
 
 // MDEnvelopeTransferServiceClient is a client for the moneydashboard.v4.MDEnvelopeTransferService
@@ -55,6 +58,7 @@ type MDEnvelopeTransferServiceClient interface {
 	GetEnvelopeTransferPage(context.Context, *connect.Request[v4.GetEnvelopeTransferPageRequest]) (*connect.Response[v4.GetEnvelopeTransferPageResponse], error)
 	UpsertEnvelopeTransfer(context.Context, *connect.Request[v4.UpsertEnvelopeTransferRequest]) (*connect.Response[v4.UpsertEnvelopeTransferResponse], error)
 	DeleteEnvelopeTransfer(context.Context, *connect.Request[v4.DeleteEnvelopeTransferRequest]) (*connect.Response[v4.DeleteEnvelopeTransferResponse], error)
+	CloneEnvelopeTransfers(context.Context, *connect.Request[v4.CloneEnvelopeTransfersRequest]) (*connect.Response[v4.CloneEnvelopeTransfersResponse], error)
 }
 
 // NewMDEnvelopeTransferServiceClient constructs a client for the
@@ -93,6 +97,12 @@ func NewMDEnvelopeTransferServiceClient(httpClient connect.HTTPClient, baseURL s
 			connect.WithSchema(mDEnvelopeTransferServiceMethods.ByName("DeleteEnvelopeTransfer")),
 			connect.WithClientOptions(opts...),
 		),
+		cloneEnvelopeTransfers: connect.NewClient[v4.CloneEnvelopeTransfersRequest, v4.CloneEnvelopeTransfersResponse](
+			httpClient,
+			baseURL+MDEnvelopeTransferServiceCloneEnvelopeTransfersProcedure,
+			connect.WithSchema(mDEnvelopeTransferServiceMethods.ByName("CloneEnvelopeTransfers")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -102,6 +112,7 @@ type mDEnvelopeTransferServiceClient struct {
 	getEnvelopeTransferPage *connect.Client[v4.GetEnvelopeTransferPageRequest, v4.GetEnvelopeTransferPageResponse]
 	upsertEnvelopeTransfer  *connect.Client[v4.UpsertEnvelopeTransferRequest, v4.UpsertEnvelopeTransferResponse]
 	deleteEnvelopeTransfer  *connect.Client[v4.DeleteEnvelopeTransferRequest, v4.DeleteEnvelopeTransferResponse]
+	cloneEnvelopeTransfers  *connect.Client[v4.CloneEnvelopeTransfersRequest, v4.CloneEnvelopeTransfersResponse]
 }
 
 // GetEnvelopeTransferById calls
@@ -126,6 +137,11 @@ func (c *mDEnvelopeTransferServiceClient) DeleteEnvelopeTransfer(ctx context.Con
 	return c.deleteEnvelopeTransfer.CallUnary(ctx, req)
 }
 
+// CloneEnvelopeTransfers calls moneydashboard.v4.MDEnvelopeTransferService.CloneEnvelopeTransfers.
+func (c *mDEnvelopeTransferServiceClient) CloneEnvelopeTransfers(ctx context.Context, req *connect.Request[v4.CloneEnvelopeTransfersRequest]) (*connect.Response[v4.CloneEnvelopeTransfersResponse], error) {
+	return c.cloneEnvelopeTransfers.CallUnary(ctx, req)
+}
+
 // MDEnvelopeTransferServiceHandler is an implementation of the
 // moneydashboard.v4.MDEnvelopeTransferService service.
 type MDEnvelopeTransferServiceHandler interface {
@@ -133,6 +149,7 @@ type MDEnvelopeTransferServiceHandler interface {
 	GetEnvelopeTransferPage(context.Context, *connect.Request[v4.GetEnvelopeTransferPageRequest]) (*connect.Response[v4.GetEnvelopeTransferPageResponse], error)
 	UpsertEnvelopeTransfer(context.Context, *connect.Request[v4.UpsertEnvelopeTransferRequest]) (*connect.Response[v4.UpsertEnvelopeTransferResponse], error)
 	DeleteEnvelopeTransfer(context.Context, *connect.Request[v4.DeleteEnvelopeTransferRequest]) (*connect.Response[v4.DeleteEnvelopeTransferResponse], error)
+	CloneEnvelopeTransfers(context.Context, *connect.Request[v4.CloneEnvelopeTransfersRequest]) (*connect.Response[v4.CloneEnvelopeTransfersResponse], error)
 }
 
 // NewMDEnvelopeTransferServiceHandler builds an HTTP handler from the service implementation. It
@@ -166,6 +183,12 @@ func NewMDEnvelopeTransferServiceHandler(svc MDEnvelopeTransferServiceHandler, o
 		connect.WithSchema(mDEnvelopeTransferServiceMethods.ByName("DeleteEnvelopeTransfer")),
 		connect.WithHandlerOptions(opts...),
 	)
+	mDEnvelopeTransferServiceCloneEnvelopeTransfersHandler := connect.NewUnaryHandler(
+		MDEnvelopeTransferServiceCloneEnvelopeTransfersProcedure,
+		svc.CloneEnvelopeTransfers,
+		connect.WithSchema(mDEnvelopeTransferServiceMethods.ByName("CloneEnvelopeTransfers")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/moneydashboard.v4.MDEnvelopeTransferService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MDEnvelopeTransferServiceGetEnvelopeTransferByIdProcedure:
@@ -176,6 +199,8 @@ func NewMDEnvelopeTransferServiceHandler(svc MDEnvelopeTransferServiceHandler, o
 			mDEnvelopeTransferServiceUpsertEnvelopeTransferHandler.ServeHTTP(w, r)
 		case MDEnvelopeTransferServiceDeleteEnvelopeTransferProcedure:
 			mDEnvelopeTransferServiceDeleteEnvelopeTransferHandler.ServeHTTP(w, r)
+		case MDEnvelopeTransferServiceCloneEnvelopeTransfersProcedure:
+			mDEnvelopeTransferServiceCloneEnvelopeTransfersHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -199,4 +224,8 @@ func (UnimplementedMDEnvelopeTransferServiceHandler) UpsertEnvelopeTransfer(cont
 
 func (UnimplementedMDEnvelopeTransferServiceHandler) DeleteEnvelopeTransfer(context.Context, *connect.Request[v4.DeleteEnvelopeTransferRequest]) (*connect.Response[v4.DeleteEnvelopeTransferResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDEnvelopeTransferService.DeleteEnvelopeTransfer is not implemented"))
+}
+
+func (UnimplementedMDEnvelopeTransferServiceHandler) CloneEnvelopeTransfers(context.Context, *connect.Request[v4.CloneEnvelopeTransfersRequest]) (*connect.Response[v4.CloneEnvelopeTransfersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDEnvelopeTransferService.CloneEnvelopeTransfers is not implemented"))
 }

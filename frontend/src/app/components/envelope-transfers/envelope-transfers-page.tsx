@@ -16,6 +16,7 @@ import { EnvelopeTransfer } from "../../../api_gen/moneydashboard/v4/envelope_tr
 import { envelopeTransferServiceClient } from "../../../api/api.js";
 import { concatClasses } from "../../utils/style.js";
 import { EnvelopeTransferEditModal } from "./envelope-transfer-edit-modal.js";
+import { EnvelopeTransferCloneModal } from "./envelope-transfer-clone-modal.js";
 
 const PER_PAGE = 20;
 
@@ -40,6 +41,16 @@ function EnvelopeTransfersPage(): ReactElement {
 
   const [deletePendingId, setDeletePendingId] = React.useState<string>();
   const clearDeletePendingId = React.useRef<number>(null);
+
+  const [cloneModalOpen, setCloneModalOpen] = React.useState(false);
+  const [clonePendingIds, setClonePendingIds] = React.useState<string[]>([]);
+  const toggleClonePending = (id: string) => {
+    if (clonePendingIds.includes(id)) {
+      setClonePendingIds(clonePendingIds.filter((a) => a != id));
+    } else {
+      setClonePendingIds([...clonePendingIds, id]);
+    }
+  };
 
   const holdings = useHoldingList({ onError: (e) => setError(e) });
   const [holdingsPerAccount, setHoldingsPerAccount] = React.useState<Record<string, number>>();
@@ -104,6 +115,12 @@ function EnvelopeTransfersPage(): ReactElement {
         <span>New</span>
       </IconGroup>
     </button>,
+    <button className={"outline"} onClick={() => setCloneModalOpen(true)} disabled={clonePendingIds.length == 0}>
+      <IconGroup>
+        <Icon name={"content_copy"} />
+        <span>{clonePendingIds.length == 0 ? "Clone Selected" : `Clone ${clonePendingIds.length} Selected`}</span>
+      </IconGroup>
+    </button>,
   ];
 
   const pageOptions = [
@@ -152,6 +169,7 @@ function EnvelopeTransfersPage(): ReactElement {
             ) : (
               envelopeTransfers?.map((t, i, arr) => {
                 const deletePending = deletePendingId == t.id;
+                const clonePending = clonePendingIds.includes(t.id);
                 const newDate = i == 0 || arr[i - 1]?.date != t.date;
 
                 return (
@@ -190,6 +208,14 @@ function EnvelopeTransfersPage(): ReactElement {
                             <IconGroup>
                               <Icon name={"delete"} />
                               <span>{deletePending ? "Sure?" : "Delete"}</span>
+                            </IconGroup>
+                          </a>
+                        </li>
+                        <li>
+                          <a href={""} className={"secondary"} onClick={() => toggleClonePending(t.id)}>
+                            <IconGroup>
+                              <Icon name={clonePending ? "check_box" : "check_box_outline_blank"} />
+                              <span>Clone</span>
                             </IconGroup>
                           </a>
                         </li>
@@ -234,6 +260,18 @@ function EnvelopeTransfersPage(): ReactElement {
             setEditingId(undefined);
           }}
           onCancel={() => setEditingId(undefined)}
+        />
+      ) : null}
+
+      {clonePendingIds.length > 0 && cloneModalOpen ? (
+        <EnvelopeTransferCloneModal
+          envelopeTransferIds={clonePendingIds}
+          onSaveFinished={() => {
+            nudge();
+            setClonePendingIds([]);
+            setCloneModalOpen(false);
+          }}
+          onCancel={() => setCloneModalOpen(false)}
         />
       ) : null}
     </>

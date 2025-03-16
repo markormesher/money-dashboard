@@ -89,3 +89,29 @@ func (s *apiServer) DeleteEnvelopeTransfer(ctx context.Context, req *connect.Req
 	res := connect.NewResponse(&mdv4.DeleteEnvelopeTransferResponse{})
 	return res, nil
 }
+
+func (s *apiServer) CloneEnvelopeTransfers(ctx context.Context, req *connect.Request[mdv4.CloneEnvelopeTransfersRequest]) (*connect.Response[mdv4.CloneEnvelopeTransfersResponse], error) {
+	user, err := s.getReqUser(ctx, req)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	ids := []uuid.UUID{}
+
+	for _, rawId := range req.Msg.Ids {
+		id, err := uuid.Parse(rawId)
+		if err != nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, err)
+		}
+
+		ids = append(ids, id)
+	}
+
+	err = s.core.CloneEnvelopeTransfers(ctx, *user.ActiveProfile, ids, conversion.ConvertIntToTime(req.Msg.Date))
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	res := connect.NewResponse(&mdv4.CloneEnvelopeTransfersResponse{})
+	return res, nil
+}
