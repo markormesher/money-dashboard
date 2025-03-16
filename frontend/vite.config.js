@@ -6,9 +6,6 @@ export default defineConfig(({}) => {
     build: {
       outDir: "../dist",
       emptyOutDir: true,
-      watch: {
-        buildDelay: 500,
-      },
     },
     define: {
       "process.env": {},
