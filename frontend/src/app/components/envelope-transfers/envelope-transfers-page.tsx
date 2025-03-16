@@ -44,13 +44,32 @@ function EnvelopeTransfersPage(): ReactElement {
 
   const [cloneModalOpen, setCloneModalOpen] = React.useState(false);
   const [clonePendingIds, setClonePendingIds] = React.useState<string[]>([]);
-  const toggleClonePending = (id: string) => {
+  const [lastSelectedIndexForClone, setLastSelectedIndexForClone] = React.useState(-1);
+  const toggleClonePending = (id: string, index: number, shiftSelect: boolean) => {
     if (clonePendingIds.includes(id)) {
       setClonePendingIds(clonePendingIds.filter((a) => a != id));
+      setLastSelectedIndexForClone(-1);
     } else {
-      setClonePendingIds([...clonePendingIds, id]);
+      if (shiftSelect && lastSelectedIndexForClone >= 0) {
+        const newPendingIds = [...clonePendingIds];
+        for (let i = Math.min(lastSelectedIndexForClone, index); i <= Math.max(lastSelectedIndexForClone, index); ++i) {
+          const t = envelopeTransfers?.[i];
+          if (t) {
+            newPendingIds.push(t.id);
+          }
+        }
+        setClonePendingIds(newPendingIds);
+      } else {
+        setClonePendingIds([...clonePendingIds, id]);
+      }
+      setLastSelectedIndexForClone(index);
     }
   };
+
+  React.useEffect(() => {
+    // clear the shift-select state on page change
+    setLastSelectedIndexForClone(-1);
+  }, [page]);
 
   const holdings = useHoldingList({ onError: (e) => setError(e) });
   const [holdingsPerAccount, setHoldingsPerAccount] = React.useState<Record<string, number>>();
@@ -212,7 +231,7 @@ function EnvelopeTransfersPage(): ReactElement {
                           </a>
                         </li>
                         <li>
-                          <a href={""} className={"secondary"} onClick={() => toggleClonePending(t.id)}>
+                          <a href={""} className={"secondary"} onClick={(e) => toggleClonePending(t.id, i, e.shiftKey)}>
                             <IconGroup>
                               <Icon name={clonePending ? "check_box" : "check_box_outline_blank"} />
                               <span>Clone</span>
