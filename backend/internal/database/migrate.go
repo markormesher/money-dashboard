@@ -72,25 +72,30 @@ func (db *DB) Migrate(ctx context.Context, migrationsDir string) error {
 		if err != nil {
 			return fmt.Errorf("error reading migration file: %w", err)
 		}
+		l.Info("debug - read file")
 
 		tx, err := db.conn.Begin(ctx)
 		if err != nil {
 			return fmt.Errorf("error running migration: %w", err)
 		}
+		l.Info("debug - started txn")
 
 		if _, err = db.conn.Exec(ctx, string(sqlBytes)); err != nil {
 			tx.Rollback(ctx)
 			return fmt.Errorf("error running migration: %w", err)
 		}
+		l.Info("debug - ran migration")
 
 		if _, err = db.conn.Exec(ctx, `INSERT INTO __migration VALUES ( $1 );`, name); err != nil {
 			tx.Rollback(ctx)
 			return fmt.Errorf("error running migration: %w", err)
 		}
+		l.Info("debug - updated tracker")
 
 		if err = tx.Commit(ctx); err != nil {
 			return fmt.Errorf("error committing migration: %w", err)
 		}
+		l.Info("debug - committed")
 	}
 
 	return nil
