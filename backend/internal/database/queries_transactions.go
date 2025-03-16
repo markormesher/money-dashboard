@@ -125,3 +125,43 @@ func (db *DB) DeleteTransaction(ctx context.Context, id uuid.UUID, profileID uui
 		ProfileID: profileID,
 	})
 }
+
+func (db *DB) GetTransactionsForEnvelopeCategories(ctx context.Context, profileID uuid.UUID) ([]schema.Transaction, error) {
+	rows, err := db.queries.GetTransactionsForEnvelopeCategories(ctx, profileID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	transactions := make([]schema.Transaction, len(rows))
+	for i, row := range rows {
+		transaction := conversion.TransactionToCore(row.Transaction)
+
+		category := conversion.CategoryToCore(row.Category)
+		transaction.Category = &category
+
+		holding := conversion.HoldingToCore(row.Holding)
+		transaction.Holding = &holding
+
+		holdingAccount := conversion.AccountToCore(row.Account)
+		transaction.Holding.Account = &holdingAccount
+
+		if row.NullableHoldingAsset.ID != nil {
+			holdingAsset := conversion.NullableHoldingAssetToCore(row.NullableHoldingAsset)
+			transaction.Holding.Asset = &holdingAsset
+		}
+
+		if row.NullableHoldingCurrency.ID != nil {
+			holdingCurrency := conversion.NullableHoldingCurrencyToCore(row.NullableHoldingCurrency)
+			transaction.Holding.Currency = &holdingCurrency
+		}
+
+		profile := conversion.ProfileToCore(row.Profile)
+		transaction.Profile = &profile
+
+		transactions[i] = transaction
+	}
+
+	return transactions, nil
+}

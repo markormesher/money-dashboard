@@ -41,6 +41,37 @@ func (db *DB) GetEnvelopeTransferById(ctx context.Context, id uuid.UUID, profile
 	return envelopeTransfer, true, nil
 }
 
+func (db *DB) GetAllEnvelopeTransfers(ctx context.Context, profileID uuid.UUID) ([]schema.EnvelopeTransfer, error) {
+	rows, err := db.queries.GetAllEnvelopeTransfers(ctx, profileID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	envelopeTransfers := make([]schema.EnvelopeTransfer, len(rows))
+	for i, row := range rows {
+		envelopeTransfer := conversion.EnvelopeTransferToCore(row.EnvelopeTransfer)
+
+		if row.NullableEnvelopeTranferFromEnvelope.ID != nil {
+			fromEnvelope := conversion.NullableEnvelopeTranferFromEnvelopeToCore(row.NullableEnvelopeTranferFromEnvelope)
+			envelopeTransfer.FromEnvelope = &fromEnvelope
+		}
+
+		if row.NullableEnvelopeTranferToEnvelope.ID != nil {
+			toEnvelope := conversion.NullableEnvelopeTranferToEnvelopeToCore(row.NullableEnvelopeTranferToEnvelope)
+			envelopeTransfer.ToEnvelope = &toEnvelope
+		}
+
+		profile := conversion.ProfileToCore(row.Profile)
+		envelopeTransfer.Profile = &profile
+
+		envelopeTransfers[i] = envelopeTransfer
+	}
+
+	return envelopeTransfers, nil
+}
+
 func (db *DB) GetEnvelopeTransferPageTotal(ctx context.Context, profileID uuid.UUID) (int32, error) {
 	total, err := db.queries.GetEnvelopeTransferPageTotal(ctx, profileID)
 	if err != nil {

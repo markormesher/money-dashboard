@@ -39,12 +39,16 @@ const (
 	// MDReportingServiceGetNonZeroMemoBalancesProcedure is the fully-qualified name of the
 	// MDReportingService's GetNonZeroMemoBalances RPC.
 	MDReportingServiceGetNonZeroMemoBalancesProcedure = "/moneydashboard.v4.MDReportingService/GetNonZeroMemoBalances"
+	// MDReportingServiceGetEnvelopeBalancesProcedure is the fully-qualified name of the
+	// MDReportingService's GetEnvelopeBalances RPC.
+	MDReportingServiceGetEnvelopeBalancesProcedure = "/moneydashboard.v4.MDReportingService/GetEnvelopeBalances"
 )
 
 // MDReportingServiceClient is a client for the moneydashboard.v4.MDReportingService service.
 type MDReportingServiceClient interface {
 	GetHoldingBalances(context.Context, *connect.Request[v4.GetHoldingBalancesRequest]) (*connect.Response[v4.GetHoldingBalancesResponse], error)
 	GetNonZeroMemoBalances(context.Context, *connect.Request[v4.GetNonZeroMemoBalancesRequest]) (*connect.Response[v4.GetNonZeroMemoBalancesResponse], error)
+	GetEnvelopeBalances(context.Context, *connect.Request[v4.GetEnvelopeBalancesRequest]) (*connect.Response[v4.GetEnvelopeBalancesResponse], error)
 }
 
 // NewMDReportingServiceClient constructs a client for the moneydashboard.v4.MDReportingService
@@ -70,6 +74,12 @@ func NewMDReportingServiceClient(httpClient connect.HTTPClient, baseURL string, 
 			connect.WithSchema(mDReportingServiceMethods.ByName("GetNonZeroMemoBalances")),
 			connect.WithClientOptions(opts...),
 		),
+		getEnvelopeBalances: connect.NewClient[v4.GetEnvelopeBalancesRequest, v4.GetEnvelopeBalancesResponse](
+			httpClient,
+			baseURL+MDReportingServiceGetEnvelopeBalancesProcedure,
+			connect.WithSchema(mDReportingServiceMethods.ByName("GetEnvelopeBalances")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -77,6 +87,7 @@ func NewMDReportingServiceClient(httpClient connect.HTTPClient, baseURL string, 
 type mDReportingServiceClient struct {
 	getHoldingBalances     *connect.Client[v4.GetHoldingBalancesRequest, v4.GetHoldingBalancesResponse]
 	getNonZeroMemoBalances *connect.Client[v4.GetNonZeroMemoBalancesRequest, v4.GetNonZeroMemoBalancesResponse]
+	getEnvelopeBalances    *connect.Client[v4.GetEnvelopeBalancesRequest, v4.GetEnvelopeBalancesResponse]
 }
 
 // GetHoldingBalances calls moneydashboard.v4.MDReportingService.GetHoldingBalances.
@@ -89,11 +100,17 @@ func (c *mDReportingServiceClient) GetNonZeroMemoBalances(ctx context.Context, r
 	return c.getNonZeroMemoBalances.CallUnary(ctx, req)
 }
 
+// GetEnvelopeBalances calls moneydashboard.v4.MDReportingService.GetEnvelopeBalances.
+func (c *mDReportingServiceClient) GetEnvelopeBalances(ctx context.Context, req *connect.Request[v4.GetEnvelopeBalancesRequest]) (*connect.Response[v4.GetEnvelopeBalancesResponse], error) {
+	return c.getEnvelopeBalances.CallUnary(ctx, req)
+}
+
 // MDReportingServiceHandler is an implementation of the moneydashboard.v4.MDReportingService
 // service.
 type MDReportingServiceHandler interface {
 	GetHoldingBalances(context.Context, *connect.Request[v4.GetHoldingBalancesRequest]) (*connect.Response[v4.GetHoldingBalancesResponse], error)
 	GetNonZeroMemoBalances(context.Context, *connect.Request[v4.GetNonZeroMemoBalancesRequest]) (*connect.Response[v4.GetNonZeroMemoBalancesResponse], error)
+	GetEnvelopeBalances(context.Context, *connect.Request[v4.GetEnvelopeBalancesRequest]) (*connect.Response[v4.GetEnvelopeBalancesResponse], error)
 }
 
 // NewMDReportingServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -115,12 +132,20 @@ func NewMDReportingServiceHandler(svc MDReportingServiceHandler, opts ...connect
 		connect.WithSchema(mDReportingServiceMethods.ByName("GetNonZeroMemoBalances")),
 		connect.WithHandlerOptions(opts...),
 	)
+	mDReportingServiceGetEnvelopeBalancesHandler := connect.NewUnaryHandler(
+		MDReportingServiceGetEnvelopeBalancesProcedure,
+		svc.GetEnvelopeBalances,
+		connect.WithSchema(mDReportingServiceMethods.ByName("GetEnvelopeBalances")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/moneydashboard.v4.MDReportingService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MDReportingServiceGetHoldingBalancesProcedure:
 			mDReportingServiceGetHoldingBalancesHandler.ServeHTTP(w, r)
 		case MDReportingServiceGetNonZeroMemoBalancesProcedure:
 			mDReportingServiceGetNonZeroMemoBalancesHandler.ServeHTTP(w, r)
+		case MDReportingServiceGetEnvelopeBalancesProcedure:
+			mDReportingServiceGetEnvelopeBalancesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -136,4 +161,8 @@ func (UnimplementedMDReportingServiceHandler) GetHoldingBalances(context.Context
 
 func (UnimplementedMDReportingServiceHandler) GetNonZeroMemoBalances(context.Context, *connect.Request[v4.GetNonZeroMemoBalancesRequest]) (*connect.Response[v4.GetNonZeroMemoBalancesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDReportingService.GetNonZeroMemoBalances is not implemented"))
+}
+
+func (UnimplementedMDReportingServiceHandler) GetEnvelopeBalances(context.Context, *connect.Request[v4.GetEnvelopeBalancesRequest]) (*connect.Response[v4.GetEnvelopeBalancesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDReportingService.GetEnvelopeBalances is not implemented"))
 }

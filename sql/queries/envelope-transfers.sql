@@ -15,6 +15,22 @@ WHERE
   AND envelope_transfer.deleted = FALSE
 ;
 
+-- name: GetAllEnvelopeTransfers :many
+SELECT
+  sqlc.embed(envelope_transfer),
+  sqlc.embed(nullable_envelope_tranfer_from_envelope),
+  sqlc.embed(nullable_envelope_tranfer_to_envelope),
+  sqlc.embed(profile)
+FROM
+  envelope_transfer
+    JOIN nullable_envelope_tranfer_from_envelope ON envelope_transfer.id = nullable_envelope_tranfer_from_envelope.envelope_transfer_id
+    JOIN nullable_envelope_tranfer_to_envelope ON envelope_transfer.id = nullable_envelope_tranfer_to_envelope.envelope_transfer_id
+    JOIN profile ON envelope_transfer.profile_id = profile.id
+WHERE
+  profile.id = @profile_id
+  AND envelope_transfer.deleted = FALSE
+;
+
 -- name: GetEnvelopeTransferPageTotal :one
 SELECT
   count(*)

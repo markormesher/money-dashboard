@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/govalues/decimal"
 	mdv4 "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4"
-	"github.com/markormesher/money-dashboard/internal/core"
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
@@ -69,8 +68,9 @@ type converterSpec interface {
 
 	// reporting
 
-	HoldingBalanceFromCore(source core.HoldingBalance) *mdv4.HoldingBalance
-	CategoryBalanceFromCore(source core.CategoryBalance) *mdv4.CategoryBalance
+	HoldingBalanceFromCore(source schema.HoldingBalance) *mdv4.HoldingBalance
+	CategoryBalanceFromCore(source schema.CategoryBalance) *mdv4.CategoryBalance
+	EnvelopeBalanceFromCore(source schema.EnvelopeBalance) *mdv4.EnvelopeBalance
 }
 
 // utility methods to convert between core and api types

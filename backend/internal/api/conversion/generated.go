@@ -5,7 +5,6 @@ package conversion
 
 import (
 	v4 "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4"
-	core "github.com/markormesher/money-dashboard/internal/core"
 	schema "github.com/markormesher/money-dashboard/internal/schema"
 )
 
@@ -81,7 +80,7 @@ func AssetToCore(source *v4.Asset) schema.Asset {
 	}
 	return schemaAsset
 }
-func CategoryBalanceFromCore(source core.CategoryBalance) *v4.CategoryBalance {
+func CategoryBalanceFromCore(source schema.CategoryBalance) *v4.CategoryBalance {
 	var mdv4CategoryBalance v4.CategoryBalance
 	mdv4CategoryBalance.Category = CategoryFromCore(source.Category)
 	mdv4CategoryBalance.Asset = pSchemaAssetToPMdv4Asset(source.Asset)
@@ -163,6 +162,12 @@ func EnvelopeAllocationToCore(source *v4.EnvelopeAllocation) schema.EnvelopeAllo
 	}
 	return schemaEnvelopeAllocation
 }
+func EnvelopeBalanceFromCore(source schema.EnvelopeBalance) *v4.EnvelopeBalance {
+	var mdv4EnvelopeBalance v4.EnvelopeBalance
+	mdv4EnvelopeBalance.Envelope = EnvelopeFromCore(source.Envelope)
+	mdv4EnvelopeBalance.GbpBalance = ConvertDecimalToFloat(source.GbpBalance)
+	return &mdv4EnvelopeBalance
+}
 func EnvelopeFromCore(source schema.Envelope) *v4.Envelope {
 	var mdv4Envelope v4.Envelope
 	mdv4Envelope.Id = ConvertUUIDToString(source.ID)
@@ -205,7 +210,7 @@ func EnvelopeTransferToCore(source *v4.EnvelopeTransfer) schema.EnvelopeTransfer
 	}
 	return schemaEnvelopeTransfer
 }
-func HoldingBalanceFromCore(source core.HoldingBalance) *v4.HoldingBalance {
+func HoldingBalanceFromCore(source schema.HoldingBalance) *v4.HoldingBalance {
 	var mdv4HoldingBalance v4.HoldingBalance
 	mdv4HoldingBalance.Holding = HoldingFromCore(source.Holding)
 	mdv4HoldingBalance.RawBalance = ConvertDecimalToFloat(source.RawBalance)

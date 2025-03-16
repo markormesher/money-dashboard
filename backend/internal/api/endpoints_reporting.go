@@ -42,3 +42,20 @@ func (s *apiServer) GetNonZeroMemoBalances(ctx context.Context, req *connect.Req
 	})
 	return res, nil
 }
+
+func (s *apiServer) GetEnvelopeBalances(ctx context.Context, req *connect.Request[mdv4.GetEnvelopeBalancesRequest]) (*connect.Response[mdv4.GetEnvelopeBalancesResponse], error) {
+	user, err := s.getReqUser(ctx, req)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	balances, err := s.core.GetEnvelopeBalances(ctx, *user.ActiveProfile)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	res := connect.NewResponse(&mdv4.GetEnvelopeBalancesResponse{
+		Balances: conversiontools.ConvertSlice(balances, conversion.EnvelopeBalanceFromCore),
+	})
+	return res, nil
+}

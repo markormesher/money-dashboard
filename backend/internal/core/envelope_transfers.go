@@ -13,6 +13,10 @@ func (c *Core) GetEnvelopeTransferById(ctx context.Context, profile schema.Profi
 	return c.DB.GetEnvelopeTransferById(ctx, id, profile.ID)
 }
 
+func (c *Core) GetAllEnvelopeTransfers(ctx context.Context, profile schema.Profile) ([]schema.EnvelopeTransfer, error) {
+	return c.DB.GetAllEnvelopeTransfers(ctx, profile.ID)
+}
+
 func (c *Core) GetEnvelopeTransferPage(ctx context.Context, profile schema.Profile, page int32, perPage int32, searchPattern string) (schema.EnvelopeTransferPage, error) {
 	total, err := c.DB.GetEnvelopeTransferPageTotal(ctx, profile.ID)
 	if err != nil {

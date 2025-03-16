@@ -4,6 +4,7 @@ import { useRouter } from "../app/router.js";
 import { concatClasses } from "../../utils/style.js";
 import { HoldingBalancesTile } from "./holding-balances-tile.js";
 import { WarningsTile } from "./warnings-tile.js";
+import { EnvelopeBalancesTile } from "./envelope-balances-tile.js";
 
 function DashboardPage(): ReactElement {
   const { setMeta } = useRouter();
@@ -20,9 +21,7 @@ function DashboardPage(): ReactElement {
         </div>
 
         <div className={"main"}>
-          <article>
-            <p>Main content</p>
-          </article>
+          <EnvelopeBalancesTile />
         </div>
       </div>
     </>

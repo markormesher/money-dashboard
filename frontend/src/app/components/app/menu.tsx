@@ -70,18 +70,18 @@ function Menu(props: MenuProps): ReactElement {
           </ul>
 
           <details open>
-            <summary>Reports</summary>
-            <ul>
-              {link("/reports/balance-history", "Balance History", "monitoring")}
-              {link("/reports/tax-helper", "Tax Helper", "receipt_long")}
-            </ul>
-          </details>
-
-          <details open>
             <summary>Planning</summary>
             <ul>
               {link("/planning/envelopes", "Envelopes", "mail")}
               {link("/planning/envelope-transfers", "Envelope Transfers", "swap_horiz")}
+            </ul>
+          </details>
+
+          <details open>
+            <summary>Reports</summary>
+            <ul>
+              {link("/reports/balance-history", "Balance History", "monitoring")}
+              {link("/reports/tax-helper", "Tax Helper", "receipt_long")}
             </ul>
           </details>
 

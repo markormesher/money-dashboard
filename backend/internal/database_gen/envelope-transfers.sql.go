@@ -28,6 +28,71 @@ func (q *Queries) DeleteEnvelopeTransfer(ctx context.Context, arg DeleteEnvelope
 	return err
 }
 
+const getAllEnvelopeTransfers = `-- name: GetAllEnvelopeTransfers :many
+SELECT
+  envelope_transfer.id, envelope_transfer.date, envelope_transfer.amount, envelope_transfer.from_envelope_id, envelope_transfer.to_envelope_id, envelope_transfer.notes, envelope_transfer.profile_id, envelope_transfer.deleted,
+  nullable_envelope_tranfer_from_envelope.envelope_transfer_id, nullable_envelope_tranfer_from_envelope.id, nullable_envelope_tranfer_from_envelope.name, nullable_envelope_tranfer_from_envelope.profile_id, nullable_envelope_tranfer_from_envelope.active,
+  nullable_envelope_tranfer_to_envelope.envelope_transfer_id, nullable_envelope_tranfer_to_envelope.id, nullable_envelope_tranfer_to_envelope.name, nullable_envelope_tranfer_to_envelope.profile_id, nullable_envelope_tranfer_to_envelope.active,
+  profile.id, profile.name, profile.deleted
+FROM
+  envelope_transfer
+    JOIN nullable_envelope_tranfer_from_envelope ON envelope_transfer.id = nullable_envelope_tranfer_from_envelope.envelope_transfer_id
+    JOIN nullable_envelope_tranfer_to_envelope ON envelope_transfer.id = nullable_envelope_tranfer_to_envelope.envelope_transfer_id
+    JOIN profile ON envelope_transfer.profile_id = profile.id
+WHERE
+  profile.id = $1
+  AND envelope_transfer.deleted = FALSE
+`
+
+type GetAllEnvelopeTransfersRow struct {
+	EnvelopeTransfer                    EnvelopeTransfer
+	NullableEnvelopeTranferFromEnvelope NullableEnvelopeTranferFromEnvelope
+	NullableEnvelopeTranferToEnvelope   NullableEnvelopeTranferToEnvelope
+	Profile                             Profile
+}
+
+func (q *Queries) GetAllEnvelopeTransfers(ctx context.Context, profileID uuid.UUID) ([]GetAllEnvelopeTransfersRow, error) {
+	rows, err := q.db.Query(ctx, getAllEnvelopeTransfers, profileID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllEnvelopeTransfersRow
+	for rows.Next() {
+		var i GetAllEnvelopeTransfersRow
+		if err := rows.Scan(
+			&i.EnvelopeTransfer.ID,
+			&i.EnvelopeTransfer.Date,
+			&i.EnvelopeTransfer.Amount,
+			&i.EnvelopeTransfer.FromEnvelopeID,
+			&i.EnvelopeTransfer.ToEnvelopeID,
+			&i.EnvelopeTransfer.Notes,
+			&i.EnvelopeTransfer.ProfileID,
+			&i.EnvelopeTransfer.Deleted,
+			&i.NullableEnvelopeTranferFromEnvelope.EnvelopeTransferID,
+			&i.NullableEnvelopeTranferFromEnvelope.ID,
+			&i.NullableEnvelopeTranferFromEnvelope.Name,
+			&i.NullableEnvelopeTranferFromEnvelope.ProfileID,
+			&i.NullableEnvelopeTranferFromEnvelope.Active,
+			&i.NullableEnvelopeTranferToEnvelope.EnvelopeTransferID,
+			&i.NullableEnvelopeTranferToEnvelope.ID,
+			&i.NullableEnvelopeTranferToEnvelope.Name,
+			&i.NullableEnvelopeTranferToEnvelope.ProfileID,
+			&i.NullableEnvelopeTranferToEnvelope.Active,
+			&i.Profile.ID,
+			&i.Profile.Name,
+			&i.Profile.Deleted,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getEnvelopeTransferById = `-- name: GetEnvelopeTransferById :one
 SELECT
   envelope_transfer.id, envelope_transfer.date, envelope_transfer.amount, envelope_transfer.from_envelope_id, envelope_transfer.to_envelope_id, envelope_transfer.notes, envelope_transfer.profile_id, envelope_transfer.deleted,
