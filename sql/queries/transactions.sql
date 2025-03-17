@@ -161,3 +161,13 @@ WHERE
   AND transaction.profile_id = @profile_id
   AND transaction.deleted = FALSE
 ;
+
+-- name: GetPayees :many
+SELECT
+  DISTINCT(payee) AS payee
+FROM
+  transaction
+WHERE
+  transaction.profile_id = @profile_id
+  AND transaction.deleted = FALSE
+;

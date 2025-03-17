@@ -27,6 +27,36 @@ func (q *Queries) DeleteTransaction(ctx context.Context, arg DeleteTransactionPa
 	return err
 }
 
+const getPayees = `-- name: GetPayees :many
+SELECT
+  DISTINCT(payee) AS payee
+FROM
+  transaction
+WHERE
+  transaction.profile_id = $1
+  AND transaction.deleted = FALSE
+`
+
+func (q *Queries) GetPayees(ctx context.Context, profileID uuid.UUID) ([]string, error) {
+	rows, err := q.db.Query(ctx, getPayees, profileID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var payee string
+		if err := rows.Scan(&payee); err != nil {
+			return nil, err
+		}
+		items = append(items, payee)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTransactionById = `-- name: GetTransactionById :one
 SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,

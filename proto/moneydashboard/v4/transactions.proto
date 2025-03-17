@@ -53,9 +53,16 @@ message DeleteTransactionRequest {
 
 message DeleteTransactionResponse {}
 
+message GetPayeesRequest {}
+
+message GetPayeesResponse {
+  repeated string payees = 1;
+}
+
 service MDTransactionService {
   rpc GetTransactionById(GetTransactionByIdRequest) returns (GetTransactionByIdResponse);
   rpc GetTransactionPage(GetTransactionPageRequest) returns (GetTransactionPageResponse);
   rpc UpsertTransaction(UpsertTransactionRequest) returns (UpsertTransactionResponse);
   rpc DeleteTransaction(DeleteTransactionRequest) returns (DeleteTransactionResponse);
+  rpc GetPayees(GetPayeesRequest) returns (GetPayeesResponse);
 }

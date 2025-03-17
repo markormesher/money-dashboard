@@ -12,6 +12,7 @@ import {
   holdingServiceClient,
   profileServiceClient,
   rateServiceClient,
+  transactionServiceClient,
 } from "../../api/api.js";
 import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
 import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
@@ -166,6 +167,23 @@ function useHoldingList(options: UseListOptions): Holding[] | undefined {
   return holdings;
 }
 
+function usePayeeList(options: UseListOptions): string[] | undefined {
+  const [payees, setPayees] = React.useState<string[]>();
+  useAsyncEffect(async () => {
+    options.wg?.add();
+    try {
+      const res = await transactionServiceClient.getPayees({});
+      setPayees(res.payees);
+    } catch (e) {
+      options.onError(e);
+      console.log(e);
+    }
+    options.wg?.done();
+  }, options.dependencies ?? []);
+
+  return payees;
+}
+
 function useProfileList(options: UseListOptions): Profile[] | undefined {
   const [profiles, setProfiles] = React.useState<Profile[]>();
   useAsyncEffect(async () => {
@@ -217,6 +235,7 @@ export {
   useHoldingList,
   useEnvelopeList,
   useEnvelopeAllocationList,
+  usePayeeList,
   useProfileList,
   useLatestRates,
 };

@@ -8,10 +8,10 @@ import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName, safeNumberValue } from "../../utils/forms.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { validateTransaction } from "../../schema/validation.js";
-import { Input, Select, Textarea } from "../common/form/inputs.js";
+import { Input, Select, SuggestionTextInput, Textarea } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
-import { useCategoryList, useHoldingList } from "../../schema/hooks.js";
+import { useCategoryList, useHoldingList, usePayeeList } from "../../schema/hooks.js";
 import { convertDateStrToProto, convertDateToProto, formatDateFromProto } from "../../utils/dates.js";
 import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
 
@@ -28,6 +28,14 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Transaction>({
     validator: validateTransaction,
+  });
+
+  const payees = usePayeeList({
+    wg: form.wg,
+    onError: (e) => {
+      toastBus.error("Failed to load payees.");
+      form.setFatalError(e);
+    },
   });
 
   const holdings = useHoldingList({
@@ -181,11 +189,11 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
               ))}
           </Select>
 
-          <Input
+          <SuggestionTextInput
             label={"Payee"}
             formState={form}
             fieldName={"payee"}
-            type={"text"}
+            candidates={payees ?? []}
             value={form.model?.payee}
             onChange={(evt) => form.patchModel({ payee: evt.target.value })}
           />

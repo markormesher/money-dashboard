@@ -165,3 +165,14 @@ func (db *DB) GetTransactionsForEnvelopeCategories(ctx context.Context, profileI
 
 	return transactions, nil
 }
+
+func (db *DB) GetPayees(ctx context.Context, profileID uuid.UUID) ([]string, error) {
+	rows, err := db.queries.GetPayees(ctx, profileID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
+}

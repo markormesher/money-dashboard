@@ -45,6 +45,9 @@ const (
 	// MDTransactionServiceDeleteTransactionProcedure is the fully-qualified name of the
 	// MDTransactionService's DeleteTransaction RPC.
 	MDTransactionServiceDeleteTransactionProcedure = "/moneydashboard.v4.MDTransactionService/DeleteTransaction"
+	// MDTransactionServiceGetPayeesProcedure is the fully-qualified name of the MDTransactionService's
+	// GetPayees RPC.
+	MDTransactionServiceGetPayeesProcedure = "/moneydashboard.v4.MDTransactionService/GetPayees"
 )
 
 // MDTransactionServiceClient is a client for the moneydashboard.v4.MDTransactionService service.
@@ -53,6 +56,7 @@ type MDTransactionServiceClient interface {
 	GetTransactionPage(context.Context, *connect.Request[v4.GetTransactionPageRequest]) (*connect.Response[v4.GetTransactionPageResponse], error)
 	UpsertTransaction(context.Context, *connect.Request[v4.UpsertTransactionRequest]) (*connect.Response[v4.UpsertTransactionResponse], error)
 	DeleteTransaction(context.Context, *connect.Request[v4.DeleteTransactionRequest]) (*connect.Response[v4.DeleteTransactionResponse], error)
+	GetPayees(context.Context, *connect.Request[v4.GetPayeesRequest]) (*connect.Response[v4.GetPayeesResponse], error)
 }
 
 // NewMDTransactionServiceClient constructs a client for the moneydashboard.v4.MDTransactionService
@@ -90,6 +94,12 @@ func NewMDTransactionServiceClient(httpClient connect.HTTPClient, baseURL string
 			connect.WithSchema(mDTransactionServiceMethods.ByName("DeleteTransaction")),
 			connect.WithClientOptions(opts...),
 		),
+		getPayees: connect.NewClient[v4.GetPayeesRequest, v4.GetPayeesResponse](
+			httpClient,
+			baseURL+MDTransactionServiceGetPayeesProcedure,
+			connect.WithSchema(mDTransactionServiceMethods.ByName("GetPayees")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -99,6 +109,7 @@ type mDTransactionServiceClient struct {
 	getTransactionPage *connect.Client[v4.GetTransactionPageRequest, v4.GetTransactionPageResponse]
 	upsertTransaction  *connect.Client[v4.UpsertTransactionRequest, v4.UpsertTransactionResponse]
 	deleteTransaction  *connect.Client[v4.DeleteTransactionRequest, v4.DeleteTransactionResponse]
+	getPayees          *connect.Client[v4.GetPayeesRequest, v4.GetPayeesResponse]
 }
 
 // GetTransactionById calls moneydashboard.v4.MDTransactionService.GetTransactionById.
@@ -121,6 +132,11 @@ func (c *mDTransactionServiceClient) DeleteTransaction(ctx context.Context, req 
 	return c.deleteTransaction.CallUnary(ctx, req)
 }
 
+// GetPayees calls moneydashboard.v4.MDTransactionService.GetPayees.
+func (c *mDTransactionServiceClient) GetPayees(ctx context.Context, req *connect.Request[v4.GetPayeesRequest]) (*connect.Response[v4.GetPayeesResponse], error) {
+	return c.getPayees.CallUnary(ctx, req)
+}
+
 // MDTransactionServiceHandler is an implementation of the moneydashboard.v4.MDTransactionService
 // service.
 type MDTransactionServiceHandler interface {
@@ -128,6 +144,7 @@ type MDTransactionServiceHandler interface {
 	GetTransactionPage(context.Context, *connect.Request[v4.GetTransactionPageRequest]) (*connect.Response[v4.GetTransactionPageResponse], error)
 	UpsertTransaction(context.Context, *connect.Request[v4.UpsertTransactionRequest]) (*connect.Response[v4.UpsertTransactionResponse], error)
 	DeleteTransaction(context.Context, *connect.Request[v4.DeleteTransactionRequest]) (*connect.Response[v4.DeleteTransactionResponse], error)
+	GetPayees(context.Context, *connect.Request[v4.GetPayeesRequest]) (*connect.Response[v4.GetPayeesResponse], error)
 }
 
 // NewMDTransactionServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -161,6 +178,12 @@ func NewMDTransactionServiceHandler(svc MDTransactionServiceHandler, opts ...con
 		connect.WithSchema(mDTransactionServiceMethods.ByName("DeleteTransaction")),
 		connect.WithHandlerOptions(opts...),
 	)
+	mDTransactionServiceGetPayeesHandler := connect.NewUnaryHandler(
+		MDTransactionServiceGetPayeesProcedure,
+		svc.GetPayees,
+		connect.WithSchema(mDTransactionServiceMethods.ByName("GetPayees")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/moneydashboard.v4.MDTransactionService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MDTransactionServiceGetTransactionByIdProcedure:
@@ -171,6 +194,8 @@ func NewMDTransactionServiceHandler(svc MDTransactionServiceHandler, opts ...con
 			mDTransactionServiceUpsertTransactionHandler.ServeHTTP(w, r)
 		case MDTransactionServiceDeleteTransactionProcedure:
 			mDTransactionServiceDeleteTransactionHandler.ServeHTTP(w, r)
+		case MDTransactionServiceGetPayeesProcedure:
+			mDTransactionServiceGetPayeesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -194,4 +219,8 @@ func (UnimplementedMDTransactionServiceHandler) UpsertTransaction(context.Contex
 
 func (UnimplementedMDTransactionServiceHandler) DeleteTransaction(context.Context, *connect.Request[v4.DeleteTransactionRequest]) (*connect.Response[v4.DeleteTransactionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDTransactionService.DeleteTransaction is not implemented"))
+}
+
+func (UnimplementedMDTransactionServiceHandler) GetPayees(context.Context, *connect.Request[v4.GetPayeesRequest]) (*connect.Response[v4.GetPayeesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDTransactionService.GetPayees is not implemented"))
 }

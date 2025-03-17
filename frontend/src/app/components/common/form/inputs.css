@@ -1,0 +1,30 @@
+.suggestions {
+  position: absolute;
+  padding: 0;
+  margin-top: 5px;
+  min-width: 180px;
+  background-color: var(--pico-background-color);
+  border: 1px solid var(--pico-form-element-border-color);
+  border-radius: var(--pico-border-radius);
+
+  li {
+    list-style: none;
+    margin-bottom: 0;
+    padding: calc(var(--pico-block-spacing-vertical) / 2)
+      calc(var(--pico-block-spacing-horizontal) / 2);
+
+    &.active,
+    &:hover {
+      background-color: color-mix(
+        in srgb,
+        var(--pico-muted-color) 15%,
+        transparent
+      );
+    }
+
+    .highlight-letter {
+      font-weight: bold;
+      background-color: var(--pico-mark-background-color);
+    }
+  }
+}
