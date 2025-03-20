@@ -121,6 +121,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
       if (transactionId == NULL_UUID) {
         // clear SOME of the record to get ready to edit again
         form.patchModel({
+          creationDate: convertDateToProto(new Date()),
           payee: "",
           category: undefined,
           amount: undefined,
