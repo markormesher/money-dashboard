@@ -118,10 +118,10 @@ INSERT INTO transaction (
   @profile_id,
   @deleted
 ) ON CONFLICT (id) DO UPDATE SET
+  -- note: creation_date deliberately not changed here
   id = @id,
   "date" = @date,
   budget_date = @budget_date,
-  creation_date = @creation_date,
   payee = @payee,
   notes = @notes,
   amount = @amount,

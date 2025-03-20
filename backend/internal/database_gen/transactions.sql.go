@@ -461,10 +461,10 @@ INSERT INTO transaction (
   $11,
   $12
 ) ON CONFLICT (id) DO UPDATE SET
+  -- note: creation_date deliberately not changed here
   id = $1,
   "date" = $2,
   budget_date = $3,
-  creation_date = $4,
   payee = $5,
   notes = $6,
   amount = $7,
