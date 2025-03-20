@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { Transaction } from "../../../api_gen/moneydashboard/v4/transactions_pb.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
+import { useAsyncEffect, useAsyncHandler, useNudge } from "../../utils/hooks.js";
 import { transactionServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName, safeNumberValue } from "../../utils/forms.js";
@@ -17,18 +17,21 @@ import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts
 
 type TransactionEditModalProps = {
   transactionId: string;
-  onSaveFinished: () => void;
+  onCreateFinished: () => void;
+  onEditFinished: () => void;
   onCancel: () => void;
 };
 
 function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
-  const { transactionId, onSaveFinished, onCancel } = props;
+  const { transactionId, onCreateFinished, onEditFinished, onCancel } = props;
   const createNew = transactionId == NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Transaction>({
     validator: validateTransaction,
   });
+
+  const [interactionGeneration, incInteractionGeneration] = useNudge();
 
   const payees = usePayeeList({
     wg: form.wg,
@@ -115,7 +118,20 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
     try {
       await transactionServiceClient.upsertTransaction({ transaction: form.model });
       toastBus.success("Saved transaction.");
-      onSaveFinished();
+      if (transactionId == NULL_UUID) {
+        // clear SOME of the record to get ready to edit again
+        form.patchModel({
+          payee: "",
+          category: undefined,
+          amount: undefined,
+          notes: "",
+        });
+        setFocusOnNextRender("payee");
+        incInteractionGeneration();
+        onCreateFinished();
+      } else {
+        onEditFinished();
+      }
     } catch (e) {
       toastBus.error("Failed to save transaction.");
       console.log(e);
@@ -143,6 +159,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
           <Input
             label={"Date"}
             formState={form}
+            interactionGeneration={interactionGeneration}
             fieldName={"date"}
             type={"date"}
             value={formatDateFromProto(form.model?.date, "system")}
@@ -157,6 +174,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
           <Input
             label={"Budget Date"}
             formState={form}
+            interactionGeneration={interactionGeneration}
             fieldName={"budgetDate"}
             type={"date"}
             tabIndex={-1}
@@ -169,6 +187,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
           <Select
             label={"Account / Holding"}
             formState={form}
+            interactionGeneration={interactionGeneration}
             fieldName={"holding"}
             value={form.model?.holding?.id}
             onChange={(evt) => form.patchModel({ holding: holdings?.find((c) => c.id == evt.target.value) })}
@@ -192,6 +211,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
           <SuggestionTextInput
             label={"Payee"}
             formState={form}
+            interactionGeneration={interactionGeneration}
             fieldName={"payee"}
             candidates={payees ?? []}
             value={form.model?.payee}
@@ -203,6 +223,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
           <Select
             label={"Category"}
             formState={form}
+            interactionGeneration={interactionGeneration}
             fieldName={"category"}
             value={form.model?.category?.id}
             onChange={(evt) => form.patchModel({ category: categories?.find((c) => c.id == evt.target.value) })}
@@ -229,6 +250,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
             <Input
               label={"Unit Value"}
               formState={form}
+              interactionGeneration={interactionGeneration}
               fieldName={"unitValue"}
               type={"number"}
               step={0.0001}
@@ -251,6 +273,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
           <Textarea
             label={"Notes"}
             formState={form}
+            interactionGeneration={interactionGeneration}
             fieldName={"notes"}
             placeholder={""}
             value={form.model?.notes}

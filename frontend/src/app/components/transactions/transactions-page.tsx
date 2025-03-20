@@ -258,7 +258,10 @@ function TransactionsPage(): ReactElement {
       {editingId ? (
         <TransactionEditModal
           transactionId={editingId}
-          onSaveFinished={() => {
+          onCreateFinished={() => {
+            nudge();
+          }}
+          onEditFinished={() => {
             nudge();
             setEditingId(undefined);
           }}
