@@ -12,7 +12,8 @@ message Category {
   bool is_capital_acquisition = 6;
   bool is_capital_disposal = 7;
   bool is_capital_event_fee = 8;
-  bool active = 9;
+  bool is_synthetic_asset_update = 9;
+  bool active = 10;
 }
 
 message GetCategoryByIdRequest {

@@ -8,16 +8,17 @@ import (
 )
 
 type Category struct {
-	ID                   uuid.UUID
-	Name                 string
-	IsMemo               bool
-	IsInterestIncome     bool
-	IsDividendIncome     bool
-	IsCapitalAcquisition bool
-	IsCapitalDisposal    bool
-	IsCapitalEventFee    bool
-	Profile              *Profile
-	Active               bool
+	ID                     uuid.UUID
+	Name                   string
+	IsMemo                 bool
+	IsInterestIncome       bool
+	IsDividendIncome       bool
+	IsCapitalAcquisition   bool
+	IsCapitalDisposal      bool
+	IsCapitalEventFee      bool
+	IsSyntheticAssetUpdate bool
+	Profile                *Profile
+	Active                 bool
 }
 
 func (c *Category) Validate() error {
@@ -26,7 +27,7 @@ func (c *Category) Validate() error {
 	}
 
 	mutuallyExclusiveFlags := []bool{
-		c.IsMemo, c.IsInterestIncome, c.IsDividendIncome, c.IsCapitalAcquisition, c.IsCapitalDisposal, c.IsCapitalEventFee,
+		c.IsMemo, c.IsInterestIncome, c.IsDividendIncome, c.IsCapitalAcquisition, c.IsCapitalDisposal, c.IsCapitalEventFee, c.IsSyntheticAssetUpdate,
 	}
 	mutuallyExclusiveCount := 0
 	for _, v := range mutuallyExclusiveFlags {

@@ -29,6 +29,7 @@ INSERT INTO category (
   is_capital_acquisition,
   is_capital_disposal,
   is_capital_event_fee,
+  is_synthetic_asset_update,
   profile_id,
   active
 ) VALUES (
@@ -40,6 +41,7 @@ INSERT INTO category (
   @is_capital_acquisition,
   @is_capital_disposal,
   @is_capital_event_fee,
+  @is_synthetic_asset_update,
   @profile_id,
   @active
 ) ON CONFLICT (id) DO UPDATE SET
@@ -51,6 +53,7 @@ INSERT INTO category (
   is_capital_acquisition = @is_capital_acquisition,
   is_capital_disposal = @is_capital_disposal,
   is_capital_event_fee = @is_capital_event_fee,
+  is_synthetic_asset_update = @is_synthetic_asset_update,
   profile_id = @profile_id,
   active = @active
 ;

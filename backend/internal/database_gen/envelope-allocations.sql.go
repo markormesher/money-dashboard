@@ -15,7 +15,7 @@ import (
 const getAllEnvelopeAllocations = `-- name: GetAllEnvelopeAllocations :many
 SELECT
   envelope_allocation.id, envelope_allocation.start_date, envelope_allocation.category_id, envelope_allocation.envelope_id, envelope_allocation.profile_id, envelope_allocation.deleted,
-  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update,
   envelope.id, envelope.name, envelope.profile_id, envelope.active,
   profile.id, profile.name, profile.deleted
 FROM
@@ -61,6 +61,7 @@ func (q *Queries) GetAllEnvelopeAllocations(ctx context.Context, profileID uuid.
 			&i.Category.IsCapitalEventFee,
 			&i.Category.ProfileID,
 			&i.Category.Active,
+			&i.Category.IsSyntheticAssetUpdate,
 			&i.Envelope.ID,
 			&i.Envelope.Name,
 			&i.Envelope.ProfileID,
@@ -82,7 +83,7 @@ func (q *Queries) GetAllEnvelopeAllocations(ctx context.Context, profileID uuid.
 const getEnvelopeAllocationById = `-- name: GetEnvelopeAllocationById :one
 SELECT
   envelope_allocation.id, envelope_allocation.start_date, envelope_allocation.category_id, envelope_allocation.envelope_id, envelope_allocation.profile_id, envelope_allocation.deleted,
-  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update,
   envelope.id, envelope.name, envelope.profile_id, envelope.active,
   profile.id, profile.name, profile.deleted
 FROM
@@ -128,6 +129,7 @@ func (q *Queries) GetEnvelopeAllocationById(ctx context.Context, arg GetEnvelope
 		&i.Category.IsCapitalEventFee,
 		&i.Category.ProfileID,
 		&i.Category.Active,
+		&i.Category.IsSyntheticAssetUpdate,
 		&i.Envelope.ID,
 		&i.Envelope.Name,
 		&i.Envelope.ProfileID,

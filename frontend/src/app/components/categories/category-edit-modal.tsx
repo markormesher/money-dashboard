@@ -35,7 +35,8 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
       | "isDividendIncome"
       | "isCapitalAcquisition"
       | "isCapitalDisposal"
-      | "isCapitalEventFee",
+      | "isCapitalEventFee"
+      | "isSyntheticAssetUpdate",
     value: boolean,
   ): void {
     form.patchModel({
@@ -45,6 +46,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
       isCapitalAcquisition: false,
       isCapitalDisposal: false,
       isCapitalEventFee: false,
+      isSyntheticAssetUpdate: false,
       [flag]: value,
     });
   };
@@ -61,6 +63,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
         isCapitalAcquisition: false,
         isCapitalDisposal: false,
         isCapitalEventFee: false,
+        isSyntheticAssetUpdate: false,
         active: true,
       });
       setFocusOnNextRender("name");
@@ -199,6 +202,16 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
         </fieldset>
 
         <fieldset className={"grid"}>
+          <Input
+            label={"Synthetic Asset Update"}
+            formState={form}
+            fieldName={"isSyntheticAssetUpdate"}
+            type={"checkbox"}
+            role={"switch"}
+            checked={form.model?.isSyntheticAssetUpdate ?? false}
+            onChange={(evt) => patchMutuallyExclusiveFlag("isSyntheticAssetUpdate", evt.target.checked)}
+          />
+
           <Input
             label={"Active"}
             formState={form}

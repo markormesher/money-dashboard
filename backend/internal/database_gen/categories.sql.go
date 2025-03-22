@@ -13,7 +13,7 @@ import (
 
 const getAllCategories = `-- name: GetAllCategories :many
 SELECT
-  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update,
   profile.id, profile.name, profile.deleted
 FROM
   category JOIN profile on category.profile_id = profile.id
@@ -46,6 +46,7 @@ func (q *Queries) GetAllCategories(ctx context.Context, profileID uuid.UUID) ([]
 			&i.Category.IsCapitalEventFee,
 			&i.Category.ProfileID,
 			&i.Category.Active,
+			&i.Category.IsSyntheticAssetUpdate,
 			&i.Profile.ID,
 			&i.Profile.Name,
 			&i.Profile.Deleted,
@@ -62,7 +63,7 @@ func (q *Queries) GetAllCategories(ctx context.Context, profileID uuid.UUID) ([]
 
 const getCategoryById = `-- name: GetCategoryById :one
 SELECT
-  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update,
   profile.id, profile.name, profile.deleted
 FROM
   category JOIN profile on category.profile_id = profile.id
@@ -95,6 +96,7 @@ func (q *Queries) GetCategoryById(ctx context.Context, arg GetCategoryByIdParams
 		&i.Category.IsCapitalEventFee,
 		&i.Category.ProfileID,
 		&i.Category.Active,
+		&i.Category.IsSyntheticAssetUpdate,
 		&i.Profile.ID,
 		&i.Profile.Name,
 		&i.Profile.Deleted,
@@ -112,6 +114,7 @@ INSERT INTO category (
   is_capital_acquisition,
   is_capital_disposal,
   is_capital_event_fee,
+  is_synthetic_asset_update,
   profile_id,
   active
 ) VALUES (
@@ -124,7 +127,8 @@ INSERT INTO category (
   $7,
   $8,
   $9,
-  $10
+  $10,
+  $11
 ) ON CONFLICT (id) DO UPDATE SET
   id = $1,
   name = $2,
@@ -134,21 +138,23 @@ INSERT INTO category (
   is_capital_acquisition = $6,
   is_capital_disposal = $7,
   is_capital_event_fee = $8,
-  profile_id = $9,
-  active = $10
+  is_synthetic_asset_update = $9,
+  profile_id = $10,
+  active = $11
 `
 
 type UpsertCategoryParams struct {
-	ID                   uuid.UUID
-	Name                 string
-	IsMemo               bool
-	IsInterestIncome     bool
-	IsDividendIncome     bool
-	IsCapitalAcquisition bool
-	IsCapitalDisposal    bool
-	IsCapitalEventFee    bool
-	ProfileID            uuid.UUID
-	Active               bool
+	ID                     uuid.UUID
+	Name                   string
+	IsMemo                 bool
+	IsInterestIncome       bool
+	IsDividendIncome       bool
+	IsCapitalAcquisition   bool
+	IsCapitalDisposal      bool
+	IsCapitalEventFee      bool
+	IsSyntheticAssetUpdate bool
+	ProfileID              uuid.UUID
+	Active                 bool
 }
 
 func (q *Queries) UpsertCategory(ctx context.Context, arg UpsertCategoryParams) error {
@@ -161,6 +167,7 @@ func (q *Queries) UpsertCategory(ctx context.Context, arg UpsertCategoryParams) 
 		arg.IsCapitalAcquisition,
 		arg.IsCapitalDisposal,
 		arg.IsCapitalEventFee,
+		arg.IsSyntheticAssetUpdate,
 		arg.ProfileID,
 		arg.Active,
 	)

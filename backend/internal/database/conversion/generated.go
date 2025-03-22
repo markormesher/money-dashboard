@@ -49,6 +49,7 @@ func CategoryToCore(source databasegen.Category) schema.Category {
 	schemaCategory.IsCapitalAcquisition = source.IsCapitalAcquisition
 	schemaCategory.IsCapitalDisposal = source.IsCapitalDisposal
 	schemaCategory.IsCapitalEventFee = source.IsCapitalEventFee
+	schemaCategory.IsSyntheticAssetUpdate = source.IsSyntheticAssetUpdate
 	schemaCategory.Active = source.Active
 	return schemaCategory
 }

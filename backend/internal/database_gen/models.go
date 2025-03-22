@@ -56,16 +56,17 @@ type Asset struct {
 }
 
 type Category struct {
-	ID                   uuid.UUID
-	Name                 string
-	IsMemo               bool
-	IsInterestIncome     bool
-	IsDividendIncome     bool
-	IsCapitalAcquisition bool
-	IsCapitalDisposal    bool
-	IsCapitalEventFee    bool
-	ProfileID            uuid.UUID
-	Active               bool
+	ID                     uuid.UUID
+	Name                   string
+	IsMemo                 bool
+	IsInterestIncome       bool
+	IsDividendIncome       bool
+	IsCapitalAcquisition   bool
+	IsCapitalDisposal      bool
+	IsCapitalEventFee      bool
+	ProfileID              uuid.UUID
+	Active                 bool
+	IsSyntheticAssetUpdate bool
 }
 
 type CategoryOld struct {

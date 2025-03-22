@@ -89,6 +89,7 @@ function CategoriesPage(): ReactElement {
                   {c.isCapitalAcquisition ? <li>Capital Acquisition</li> : null}
                   {c.isCapitalDisposal ? <li>Capital Disposal</li> : null}
                   {c.isCapitalEventFee ? <li>Capital Event Fee</li> : null}
+                  {c.isSyntheticAssetUpdate ? <li>Synthetic Asset Update</li> : null}
                 </ul>
                 <footer>
                   <ul className={"horizonal mb0"}>

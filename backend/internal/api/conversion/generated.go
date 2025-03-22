@@ -98,6 +98,7 @@ func CategoryFromCore(source schema.Category) *v4.Category {
 	mdv4Category.IsCapitalAcquisition = source.IsCapitalAcquisition
 	mdv4Category.IsCapitalDisposal = source.IsCapitalDisposal
 	mdv4Category.IsCapitalEventFee = source.IsCapitalEventFee
+	mdv4Category.IsSyntheticAssetUpdate = source.IsSyntheticAssetUpdate
 	mdv4Category.Active = source.Active
 	return &mdv4Category
 }
@@ -113,6 +114,7 @@ func CategoryToCore(source *v4.Category) schema.Category {
 		schemaCategory2.IsCapitalAcquisition = (*source).IsCapitalAcquisition
 		schemaCategory2.IsCapitalDisposal = (*source).IsCapitalDisposal
 		schemaCategory2.IsCapitalEventFee = (*source).IsCapitalEventFee
+		schemaCategory2.IsSyntheticAssetUpdate = (*source).IsSyntheticAssetUpdate
 		schemaCategory2.Active = (*source).Active
 		schemaCategory = schemaCategory2
 	}
@@ -391,6 +393,7 @@ func pMdv4CategoryToPSchemaCategory(source *v4.Category) *schema.Category {
 		schemaCategory.IsCapitalAcquisition = (*source).IsCapitalAcquisition
 		schemaCategory.IsCapitalDisposal = (*source).IsCapitalDisposal
 		schemaCategory.IsCapitalEventFee = (*source).IsCapitalEventFee
+		schemaCategory.IsSyntheticAssetUpdate = (*source).IsSyntheticAssetUpdate
 		schemaCategory.Active = (*source).Active
 		pSchemaCategory = &schemaCategory
 	}
@@ -500,6 +503,7 @@ func pSchemaCategoryToPMdv4Category(source *schema.Category) *v4.Category {
 		mdv4Category.IsCapitalAcquisition = (*source).IsCapitalAcquisition
 		mdv4Category.IsCapitalDisposal = (*source).IsCapitalDisposal
 		mdv4Category.IsCapitalEventFee = (*source).IsCapitalEventFee
+		mdv4Category.IsSyntheticAssetUpdate = (*source).IsSyntheticAssetUpdate
 		mdv4Category.Active = (*source).Active
 		pMdv4Category = &mdv4Category
 	}
