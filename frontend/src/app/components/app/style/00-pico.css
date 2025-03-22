@@ -3,9 +3,7 @@
 /* pico overrides */
 
 :root {
-  --pico-font-family-sans-serif: Inter, system-ui, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, Helvetica, Arial, "Helvetica Neue", sans-serif,
-    var(--pico-font-family-emoji);
+  --pico-font-family-sans-serif: Cantarell, Roboto, Ubuntu, sans-serif;
   --pico-font-size: 100%;
   --pico-line-height: 1.25;
   --pico-form-element-spacing-vertical: 0.5rem !important;
