@@ -26,3 +26,22 @@ WHERE
   AND category.is_memo = TRUE
 GROUP BY holding.asset_id, holding.currency_id, transaction.category_id
 ;
+
+-- name: GetTransactionsForEnvelopeBalances :many
+SELECT
+  sqlc.embed(transaction),
+  sqlc.embed(category),
+  sqlc.embed(profile),
+  sqlc.embed(account),
+  transaction.holding_id
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+    JOIN profile on transaction.profile_id = profile.id
+    JOIN holding on transaction.holding_id = holding.id -- not exposed - just used to join to accounts
+    JOIN account ON holding.account_id = account.id
+WHERE
+  account.exclude_from_envelopes = FALSE
+  AND transaction.profile_id = @profile_id
+  AND transaction.deleted = FALSE
+;

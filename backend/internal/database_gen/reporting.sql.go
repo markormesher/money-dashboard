@@ -97,3 +97,87 @@ func (q *Queries) GetMemoBalances(ctx context.Context, profileID uuid.UUID) ([]G
 	}
 	return items, nil
 }
+
+const getTransactionsForEnvelopeBalances = `-- name: GetTransactionsForEnvelopeBalances :many
+SELECT
+  transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update,
+  profile.id, profile.name, profile.deleted,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  transaction.holding_id
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+    JOIN profile on transaction.profile_id = profile.id
+    JOIN holding on transaction.holding_id = holding.id -- not exposed - just used to join to accounts
+    JOIN account ON holding.account_id = account.id
+WHERE
+  account.exclude_from_envelopes = FALSE
+  AND transaction.profile_id = $1
+  AND transaction.deleted = FALSE
+`
+
+type GetTransactionsForEnvelopeBalancesRow struct {
+	Transaction Transaction
+	Category    Category
+	Profile     Profile
+	Account     Account
+	HoldingID   uuid.UUID
+}
+
+func (q *Queries) GetTransactionsForEnvelopeBalances(ctx context.Context, profileID uuid.UUID) ([]GetTransactionsForEnvelopeBalancesRow, error) {
+	rows, err := q.db.Query(ctx, getTransactionsForEnvelopeBalances, profileID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetTransactionsForEnvelopeBalancesRow
+	for rows.Next() {
+		var i GetTransactionsForEnvelopeBalancesRow
+		if err := rows.Scan(
+			&i.Transaction.ID,
+			&i.Transaction.Date,
+			&i.Transaction.BudgetDate,
+			&i.Transaction.CreationDate,
+			&i.Transaction.Payee,
+			&i.Transaction.Notes,
+			&i.Transaction.Amount,
+			&i.Transaction.UnitValue,
+			&i.Transaction.HoldingID,
+			&i.Transaction.CategoryID,
+			&i.Transaction.ProfileID,
+			&i.Transaction.Deleted,
+			&i.Category.ID,
+			&i.Category.Name,
+			&i.Category.IsMemo,
+			&i.Category.IsInterestIncome,
+			&i.Category.IsDividendIncome,
+			&i.Category.IsCapitalAcquisition,
+			&i.Category.IsCapitalDisposal,
+			&i.Category.IsCapitalEventFee,
+			&i.Category.ProfileID,
+			&i.Category.Active,
+			&i.Category.IsSyntheticAssetUpdate,
+			&i.Profile.ID,
+			&i.Profile.Name,
+			&i.Profile.Deleted,
+			&i.Account.ID,
+			&i.Account.Name,
+			&i.Account.Notes,
+			&i.Account.IsIsa,
+			&i.Account.IsPension,
+			&i.Account.ExcludeFromEnvelopes,
+			&i.Account.ProfileID,
+			&i.Account.Active,
+			&i.Account.AccountGroupID,
+			&i.HoldingID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

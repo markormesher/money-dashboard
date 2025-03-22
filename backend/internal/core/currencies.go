@@ -11,14 +11,26 @@ import (
 // don't change this!
 const gbpCurrencyId = "b3092a40-1802-46fd-9967-11c7ac3522c5"
 
-// basic CRUD
-
 func (c *Core) GetCurrencyById(ctx context.Context, id uuid.UUID) (schema.Currency, bool, error) {
 	return c.DB.GetCurrencyById(ctx, id)
 }
 
 func (c *Core) GetAllCurrencies(ctx context.Context) ([]schema.Currency, error) {
 	return c.DB.GetAllCurrencies(ctx)
+}
+
+func (c *Core) GetAllCurrenciesAsMap(ctx context.Context) (map[uuid.UUID]schema.Currency, error) {
+	currencies, err := c.GetAllCurrencies(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	out := map[uuid.UUID]schema.Currency{}
+	for _, c := range currencies {
+		out[c.ID] = c
+	}
+
+	return out, nil
 }
 
 func (c *Core) UpsertCurrency(ctx context.Context, currency schema.Currency) error {

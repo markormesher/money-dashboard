@@ -5,20 +5,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/govalues/decimal"
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
 func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) ([]schema.HoldingBalance, error) {
-	holdingsArr, err := c.DB.GetAllHoldings(ctx, profile.ID)
+	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
 	if err != nil {
 		return nil, err
-	}
-
-	holdings := map[uuid.UUID]schema.Holding{}
-	for _, h := range holdingsArr {
-		holdings[h.ID] = h
 	}
 
 	balances, err := c.DB.GetHoldingBalances(ctx, profile.ID)
@@ -34,40 +28,9 @@ func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) (
 			return nil, fmt.Errorf("unknown holding: %s", b.HoldingID)
 		}
 
-		gbpBalance := b.Balance
-
-		if holding.Currency != nil {
-			rate, err := c.GetLatestCurrencyRate(ctx, *holding.Currency)
-			if err != nil {
-				return nil, err
-			}
-
-			gbpBalance, err = gbpBalance.Mul(rate.Rate)
-			if err != nil {
-				return nil, err
-			}
-		}
-
-		if holding.Asset != nil {
-			assetRate, err := c.GetLatestAssetRate(ctx, *holding.Asset)
-			if err != nil {
-				return nil, err
-			}
-
-			cashBalance, err := gbpBalance.Mul(assetRate.Rate)
-			if err != nil {
-				return nil, err
-			}
-
-			rate, err := c.GetLatestCurrencyRate(ctx, *holding.Asset.Currency)
-			if err != nil {
-				return nil, err
-			}
-
-			gbpBalance, err = cashBalance.Mul(rate.Rate)
-			if err != nil {
-				return nil, err
-			}
+		gbpBalance, err := c.ConvertNativeAmountToGbp(ctx, b.Balance, holding)
+		if err != nil {
+			return nil, err
 		}
 
 		outputBalances[i] = schema.HoldingBalance{
@@ -81,34 +44,19 @@ func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) (
 }
 
 func (c *Core) GetNonZeroMemoBalances(ctx context.Context, profile schema.Profile) ([]schema.CategoryBalance, error) {
-	categoriesArr, err := c.DB.GetAllCategories(ctx, profile.ID)
+	categories, err := c.GetAllCategoriesAsMap(ctx, profile)
 	if err != nil {
 		return nil, err
 	}
 
-	categories := map[uuid.UUID]schema.Category{}
-	for _, c := range categoriesArr {
-		categories[c.ID] = c
-	}
-
-	assetsArr, err := c.DB.GetAllAssets(ctx)
+	assets, err := c.GetAllAssetsAsMap(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	assets := map[uuid.UUID]schema.Asset{}
-	for _, a := range assetsArr {
-		assets[a.ID] = a
-	}
-
-	currenciesArr, err := c.DB.GetAllCurrencies(ctx)
+	currencies, err := c.GetAllCurrenciesAsMap(ctx)
 	if err != nil {
 		return nil, err
-	}
-
-	currencies := map[uuid.UUID]schema.Currency{}
-	for _, c := range currenciesArr {
-		currencies[c.ID] = c
 	}
 
 	balances, err := c.DB.GetMemoBalances(ctx, profile.ID)
@@ -172,7 +120,12 @@ func (c *Core) GetEnvelopeBalances(ctx context.Context, profile schema.Profile) 
 		return nil, err
 	}
 
-	transactions, err := c.GetTransactionsForEnvelopeCategories(ctx, profile)
+	transactions, err := c.DB.GetTransactionsForEnvelopeBalances(ctx, profile.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
 	if err != nil {
 		return nil, err
 	}
@@ -221,43 +174,19 @@ func (c *Core) GetEnvelopeBalances(ctx context.Context, profile schema.Profile) 
 
 	// apply all transactions
 	for _, t := range transactions {
-		gbpAmount := t.Amount
+		txn := t.Transaction
 
-		if t.Holding.Currency != nil {
-			rate, err := c.GetLatestCurrencyRate(ctx, *t.Holding.Currency)
-			if err != nil {
-				return nil, err
-			}
-
-			gbpAmount, err = t.Amount.Mul(rate.Rate)
-			if err != nil {
-				return nil, err
-			}
+		holding, ok := holdings[t.HoldingID]
+		if !ok {
+			return nil, fmt.Errorf("unknown holding: %s", t.HoldingID)
 		}
 
-		if t.Holding.Asset != nil {
-			assetRate, err := c.GetLatestAssetRate(ctx, *t.Holding.Asset)
-			if err != nil {
-				return nil, err
-			}
-
-			cashBalance, err := t.Amount.Mul(assetRate.Rate)
-			if err != nil {
-				return nil, err
-			}
-
-			rate, err := c.GetLatestCurrencyRate(ctx, *t.Holding.Asset.Currency)
-			if err != nil {
-				return nil, err
-			}
-
-			gbpAmount, err = cashBalance.Mul(rate.Rate)
-			if err != nil {
-				return nil, err
-			}
+		gbpAmount, err := c.ConvertNativeAmountToGbp(ctx, txn.Amount, holding)
+		if err != nil {
+			return nil, err
 		}
 
-		envelope := getEnvelopeForCategory(envelopeAllocations, *t.Category, t.Date)
+		envelope := getEnvelopeForCategory(envelopeAllocations, *txn.Category, txn.Date)
 		if envelope != nil {
 			newBalance, err := balances[envelope.ID.String()].Add(gbpAmount)
 			if err != nil {

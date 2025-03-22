@@ -65,10 +65,6 @@ func (c *Core) DeleteTransaction(ctx context.Context, profile schema.Profile, id
 	return c.DB.DeleteTransaction(ctx, id, profile.ID)
 }
 
-func (c *Core) GetTransactionsForEnvelopeCategories(ctx context.Context, profile schema.Profile) ([]schema.Transaction, error) {
-	return c.DB.GetTransactionsForEnvelopeCategories(ctx, profile.ID)
-}
-
 func (c *Core) GetPayees(ctx context.Context, profile schema.Profile) ([]string, error) {
 	return c.DB.GetPayees(ctx, profile.ID)
 }
