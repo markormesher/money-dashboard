@@ -53,6 +53,11 @@ function KeyListener(): ReactElement {
       return;
     }
 
+    if (evt.ctrlKey) {
+      // don't intercept copy, paste, etc.
+      return;
+    }
+
     if (evt.key.length == 1) {
       const newKeyBuffer = currentKeyBuffer.current + evt.key;
       const s1 = newKeyBuffer.slice(-2);
