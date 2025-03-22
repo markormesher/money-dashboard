@@ -7,6 +7,7 @@ import { toastBus } from "../toaster/toaster.js";
 import { User } from "../../../api_gen/moneydashboard/v4/users_pb.js";
 import { Profile } from "../../../api_gen/moneydashboard/v4/profiles_pb.js";
 import { useProfileList } from "../../schema/hooks.js";
+import { Tile, TileSet } from "../common/tile-set/tile-set.js";
 
 type ProfileChooserProps = ExternalModalProps & {};
 
@@ -57,28 +58,31 @@ function ProfileChooser(props: ProfileChooserProps): ReactElement {
     content = <p aria-busy="true">Loading</p>;
   } else {
     content = (
-      <ul>
+      <TileSet>
         {profiles
           .sort((a, b) => a.name.localeCompare(b.name))
           .map((p) => {
-            let decoration: ReactElement;
             if (p.id == user?.activeProfile?.id) {
-              decoration = <em>active now</em>;
+              return (
+                <Tile>
+                  {p.name}
+                  <span className={"separator"}>&#x2022;</span>
+                  <em>Active now</em>
+                </Tile>
+              );
             } else {
-              decoration = (
-                <a href={"#"} className={"secondary"} onClick={() => selectProfile(p)}>
-                  select
-                </a>
+              return (
+                <Tile>
+                  {p.name}
+                  <span className={"separator"}>&#x2022;</span>
+                  <a href={"#"} className={"secondary"} onClick={() => selectProfile(p)}>
+                    Select
+                  </a>
+                </Tile>
               );
             }
-
-            return (
-              <li>
-                {p.name} - {decoration}
-              </li>
-            );
           })}
-      </ul>
+      </TileSet>
     );
   }
 
