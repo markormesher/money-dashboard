@@ -53,7 +53,7 @@ function KeyListener(): ReactElement {
       return;
     }
 
-    if (evt.ctrlKey && !isCtrlEnter) {
+    if (evt.ctrlKey) {
       // don't intercept copy, paste, etc.
       return;
     }

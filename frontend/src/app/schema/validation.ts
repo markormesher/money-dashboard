@@ -312,8 +312,13 @@ function validateProfile(value: Partial<Profile>): FormValidationResult<Profile>
   return result;
 }
 
-function validateTransaction(value: Partial<Transaction>): FormValidationResult<Transaction> {
+function validateTransaction(value: Partial<Transaction>, holdings: Holding[]): FormValidationResult<Transaction> {
   const result: FormValidationResult<Transaction> = { isValid: true, errors: {} };
+
+  // set the detailed holding on the input value to make sure we have asset/currency data as well
+  if (value) {
+    value.holding = holdings.find((h) => h.id == value?.holding?.id);
+  }
 
   if (value?.date === undefined) {
     result.isValid = false;

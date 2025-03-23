@@ -28,7 +28,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Transaction>({
-    validator: validateTransaction,
+    validator: (v) => validateTransaction(v, holdings ?? []),
   });
 
   const [interactionGeneration, incInteractionGeneration] = useNudge();
@@ -120,11 +120,12 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
       toastBus.success("Saved transaction.");
       if (transactionId == NULL_UUID) {
         // clear SOME of the record to get ready to edit again
-        form.patchModel({
+        form.setModel({
+          ...form.model,
           creationDate: convertDateToProto(new Date()),
           payee: "",
           category: undefined,
-          amount: undefined,
+          amount: 0,
           notes: "",
         });
         setFocusOnNextRender("payee");
