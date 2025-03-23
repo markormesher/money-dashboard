@@ -107,7 +107,7 @@ function HoldingBalancesTile(): ReactElement {
                   const showHoldings = openAccounts.includes(account.id);
 
                   const label = (
-                    <div className={"row-label"} onClick={() => toggleOpenAccount(account.id)}>
+                    <div className={"row-label"}>
                       <IconGroup>
                         <span>{account.name}</span>
                         {account.notes ? (
@@ -153,14 +153,17 @@ function HoldingBalancesTile(): ReactElement {
                       });
 
                     return (
-                      <div className={concatClasses("balance-row", "with-children")}>
+                      <div
+                        className={concatClasses("balance-row", "with-children")}
+                        onClick={() => toggleOpenAccount(account.id)}
+                      >
                         {label}
                         <div className={"row-children"}>{subRows} </div>
                       </div>
                     );
                   } else {
                     return (
-                      <div className={"balance-row"}>
+                      <div className={"balance-row"} onClick={() => toggleOpenAccount(account.id)}>
                         {label}
                         <div className={"row-value"}>{formatCurrency(balanceSum, null)}</div>
                       </div>
