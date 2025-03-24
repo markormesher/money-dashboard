@@ -240,6 +240,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
           <Input
             label={"Amount"}
             formState={form}
+            interactionGeneration={interactionGeneration}
             fieldName={"amount"}
             type={"number"}
             step={0.01}
