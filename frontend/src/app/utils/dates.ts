@@ -35,8 +35,12 @@ function convertDateToProto(raw: Date): bigint {
   }
 }
 
-function convertDateStrToProto(raw: string): bigint {
-  return convertDateToProto(new Date(raw));
+function convertDateStrToProto(raw: string): bigint | undefined {
+  if (!raw || raw.trim() == "") {
+    return undefined;
+  } else {
+    return convertDateToProto(new Date(raw));
+  }
 }
 
 export { parseDateFromProto, formatDateFromProto, convertDateToProto, convertDateStrToProto };
