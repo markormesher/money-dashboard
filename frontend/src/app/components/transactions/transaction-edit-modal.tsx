@@ -37,6 +37,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
       toastBus.error("Failed to load payees.");
       form.setFatalError(e);
     },
+    dependencies: [form.modelIteration],
   });
 
   const holdings = useHoldingList({
