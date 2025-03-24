@@ -126,6 +126,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
           payee: "",
           category: undefined,
           amount: 0,
+          unitValue: 0,
           notes: "",
         });
         setFocusOnNextRender("payee");
