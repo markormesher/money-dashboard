@@ -13,18 +13,17 @@ type FormInputProps<T> = {
   label: string;
   formState: FormState<T>;
   fieldName: Extract<keyof T, string>;
-  interactionGeneration?: number;
 };
 
 type InputProps<T> = FormInputProps<T> & InputHTMLAttributes<HTMLInputElement>;
 
 function Input<T>(props: InputProps<T>): ReactElement {
-  const { label, formState, fieldName, interactionGeneration } = props;
-  const [userInteractionGeneration, setUserInteractionGeneration] = React.useState(-1);
+  const { label, formState, fieldName } = props;
+  const [lastModelIterationTouched, setLastModelIterationTouched] = React.useState(-1);
 
   const error = formState.fieldError(fieldName);
   const hasError = !!error;
-  const showError = userInteractionGeneration >= (interactionGeneration ?? 0);
+  const showError = lastModelIterationTouched >= formState.modelIteration;
 
   const labelAfterInput = props.type == "checkbox";
 
@@ -35,7 +34,7 @@ function Input<T>(props: InputProps<T>): ReactElement {
         name={fieldName}
         disabled={formState.wg.count > 0}
         aria-invalid={hasError && showError ? true : undefined}
-        onBlur={() => setUserInteractionGeneration(interactionGeneration ?? 0)}
+        onBlur={() => setLastModelIterationTouched(formState.modelIteration)}
         autoComplete={"off"}
         {...props}
       />
@@ -48,12 +47,12 @@ function Input<T>(props: InputProps<T>): ReactElement {
 type TextareaProps<T> = FormInputProps<T> & TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 function Textarea<T>(props: TextareaProps<T>): ReactElement {
-  const { label, formState, fieldName, interactionGeneration } = props;
-  const [userInteractionGeneration, setUserInteractionGeneration] = React.useState(-1);
+  const { label, formState, fieldName } = props;
+  const [lastModelIterationTouched, setLastModelIterationTouched] = React.useState(-1);
 
   const error = formState.fieldError(fieldName);
   const hasError = !!error;
-  const showError = userInteractionGeneration >= (interactionGeneration ?? 0);
+  const showError = lastModelIterationTouched >= formState.modelIteration;
 
   return (
     <label aria-disabled={formState.wg.count > 0}>
@@ -62,7 +61,7 @@ function Textarea<T>(props: TextareaProps<T>): ReactElement {
         name={fieldName}
         disabled={formState.wg.count > 0}
         aria-invalid={hasError && showError ? true : undefined}
-        onBlur={() => setUserInteractionGeneration(interactionGeneration ?? 0)}
+        onBlur={() => setLastModelIterationTouched(formState.modelIteration)}
         autoComplete={"off"}
         {...props}
       />
@@ -77,12 +76,12 @@ type SelectProps<T> = FormInputProps<T> &
   };
 
 function Select<T>(props: React.PropsWithChildren<SelectProps<T>>): ReactElement {
-  const { label, formState, fieldName, children, nullItemLabel, interactionGeneration } = props;
-  const [userInteractionGeneration, setUserInteractionGeneration] = React.useState(-1);
+  const { label, formState, fieldName, children, nullItemLabel } = props;
+  const [lastModelIterationTouched, setLastModelIterationTouched] = React.useState(-1);
 
   const error = formState.fieldError(fieldName);
   const hasError = !!error;
-  const showError = userInteractionGeneration >= (interactionGeneration ?? 0);
+  const showError = lastModelIterationTouched >= formState.modelIteration;
 
   return (
     <label aria-disabled={formState.wg.count > 0}>
@@ -91,7 +90,7 @@ function Select<T>(props: React.PropsWithChildren<SelectProps<T>>): ReactElement
         name={fieldName}
         disabled={formState.wg.count > 0}
         aria-invalid={hasError && showError ? true : undefined}
-        onBlur={() => setUserInteractionGeneration(interactionGeneration ?? 0)}
+        onBlur={() => setLastModelIterationTouched(formState.modelIteration)}
         autoComplete={"off"}
         {...props}
       >
@@ -108,8 +107,8 @@ type SuggestionTextInputProps<T> = FormInputProps<T> & InputHTMLAttributes<HTMLI
 function SuggestionTextInput<T>(props: SuggestionTextInputProps<T>): ReactElement {
   const maxSuggestions = 10;
 
-  const { label, formState, fieldName, candidates, interactionGeneration } = props;
-  const [userInteractionGeneration, setUserInteractionGeneration] = React.useState(-1);
+  const { label, formState, fieldName, candidates } = props;
+  const [lastModelIterationTouched, setLastModelIterationTouched] = React.useState(-1);
 
   const [suggestions, setSuggestions] = React.useState<string[]>([]);
   const [selectedSuggestion, setSelectedSuggestion] = React.useState<string>();
@@ -117,7 +116,7 @@ function SuggestionTextInput<T>(props: SuggestionTextInputProps<T>): ReactElemen
 
   const error = formState.fieldError(fieldName);
   const hasError = !!error;
-  const showError = userInteractionGeneration >= (interactionGeneration ?? 0);
+  const showError = lastModelIterationTouched >= formState.modelIteration;
 
   function populateSuggestions(value: string): void {
     if (!value || value === "") {
@@ -217,7 +216,7 @@ function SuggestionTextInput<T>(props: SuggestionTextInputProps<T>): ReactElemen
           // we might be blurring because the user clicked a suggestion;
           // in this case if we clear the suggestions immediately the click will "miss"
           setTimeout(() => clearSuggestions(), 200);
-          setUserInteractionGeneration(interactionGeneration ?? 0);
+          setLastModelIterationTouched(formState.modelIteration);
           props?.onBlur?.(evt);
         }}
       />

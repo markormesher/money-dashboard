@@ -15,6 +15,7 @@ type FormHookOptions<T> = {
 
 type FormState<T> = {
   model: T | undefined;
+  modelIteration: number;
   setModel: (model: T | undefined) => void;
   patchModel: (patch: Partial<T>) => void;
 
@@ -33,18 +34,22 @@ function useForm<T>(options: FormHookOptions<T> = {}): FormState<T> {
   const { validator } = options;
 
   const [originalModel, setOriginalModel] = React.useState<T>();
+  const [modelIteration, setModelIteration] = React.useState(0);
   const [model, setModelInner] = React.useState<T>();
+
   const [validationResult, setValidationResult] = React.useState<FormValidationResult<T>>({
     isValid: false,
     errors: {},
   });
   const [valid, setValid] = React.useState(false);
+
   const [modified, setModified] = React.useState(false);
   const [fatalError, setFatalError] = React.useState<unknown>();
   const wg = useWaitGroup();
 
   const setModel = (m: T | undefined) => {
     setOriginalModel(m);
+    setModelIteration((curr) => curr + 1);
     setModelInner(m);
   };
 
@@ -82,6 +87,7 @@ function useForm<T>(options: FormHookOptions<T> = {}): FormState<T> {
 
   return {
     model,
+    modelIteration,
     setModel,
     patchModel,
     valid,
