@@ -122,8 +122,9 @@ func setupDB(cfg config.Config) (*pgxpool.Pool, *database.DB) {
 			} else {
 				os.Exit(1)
 			}
+		} else {
+			break
 		}
-		break
 	}
 	l.Info("database connectivity okay")
 
