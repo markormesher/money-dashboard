@@ -14,7 +14,7 @@ import (
 
 const getHoldingBalances = `-- name: GetHoldingBalances :many
 SELECT
-  CAST(SUM(transaction.amount) AS NUMERIC(19, 4)) AS balance,
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
   transaction.holding_id
 FROM
   transaction
@@ -51,7 +51,7 @@ func (q *Queries) GetHoldingBalances(ctx context.Context, profileID uuid.UUID) (
 
 const getMemoBalances = `-- name: GetMemoBalances :many
 SELECT
-  CAST(SUM(transaction.amount) AS NUMERIC(19, 4)) AS balance,
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
   holding.asset_id,
   holding.currency_id,
   transaction.category_id

@@ -1,6 +1,6 @@
 -- name: GetHoldingBalances :many
 SELECT
-  CAST(SUM(transaction.amount) AS NUMERIC(19, 4)) AS balance,
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
   transaction.holding_id
 FROM
   transaction
@@ -12,7 +12,7 @@ GROUP BY transaction.holding_id
 
 -- name: GetMemoBalances :many
 SELECT
-  CAST(SUM(transaction.amount) AS NUMERIC(19, 4)) AS balance,
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
   holding.asset_id,
   holding.currency_id,
   transaction.category_id
