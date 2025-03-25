@@ -10,7 +10,6 @@ message Asset {
   string name = 2;
   string notes = 3;
   int32 display_precision = 4;
-  int32 calculation_precision = 5;
   bool active = 6;
 
   Currency currency = 7;

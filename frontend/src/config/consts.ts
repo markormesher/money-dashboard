@@ -8,7 +8,6 @@ const GBP_CURRENCY: Currency = {
   code: "GBP",
   symbol: "£",
   displayPrecision: 2,
-  calculationPrecision: 4,
   active: true,
 };
 

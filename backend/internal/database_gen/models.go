@@ -46,13 +46,12 @@ type AccountOld struct {
 }
 
 type Asset struct {
-	ID                   uuid.UUID
-	Name                 string
-	Notes                string
-	DisplayPrecision     int32
-	CalculationPrecision int32
-	CurrencyID           uuid.UUID
-	Active               bool
+	ID               uuid.UUID
+	Name             string
+	Notes            string
+	DisplayPrecision int32
+	CurrencyID       uuid.UUID
+	Active           bool
 }
 
 type Category struct {
@@ -81,12 +80,11 @@ type CategoryOld struct {
 }
 
 type Currency struct {
-	ID                   uuid.UUID
-	Code                 string
-	Symbol               string
-	DisplayPrecision     int32
-	Active               bool
-	CalculationPrecision int32
+	ID               uuid.UUID
+	Code             string
+	Symbol           string
+	DisplayPrecision int32
+	Active           bool
 }
 
 type Envelope struct {

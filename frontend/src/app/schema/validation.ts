@@ -85,18 +85,6 @@ function validateAsset(value: Partial<Asset>): FormValidationResult<Asset> {
     }
   }
 
-  if (value?.calculationPrecision === undefined) {
-    result.isValid = false;
-  } else {
-    if (isNaN(value.calculationPrecision)) {
-      result.isValid = false;
-      result.errors.calculationPrecision = "Calculation precision must be a valid number";
-    } else if (value.calculationPrecision < 0) {
-      result.isValid = false;
-      result.errors.calculationPrecision = "Calculation precision must be at least 0";
-    }
-  }
-
   return result;
 }
 
@@ -164,18 +152,6 @@ function validateCurrency(value: Partial<Currency>): FormValidationResult<Curren
     } else if (value.displayPrecision < 0) {
       result.isValid = false;
       result.errors.displayPrecision = "Display precision must be at least 0";
-    }
-  }
-
-  if (value?.calculationPrecision === undefined) {
-    result.isValid = false;
-  } else {
-    if (isNaN(value.calculationPrecision)) {
-      result.isValid = false;
-      result.errors.calculationPrecision = "Calculation precision must be a valid number";
-    } else if (value.calculationPrecision < 0) {
-      result.isValid = false;
-      result.errors.calculationPrecision = "Calculation precision must be at least 0";
     }
   }
 

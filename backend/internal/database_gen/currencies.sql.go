@@ -12,7 +12,7 @@ import (
 )
 
 const getAllCurrencies = `-- name: GetAllCurrencies :many
-SELECT id, code, symbol, display_precision, active, calculation_precision FROM currency
+SELECT id, code, symbol, display_precision, active FROM currency
 `
 
 func (q *Queries) GetAllCurrencies(ctx context.Context) ([]Currency, error) {
@@ -30,7 +30,6 @@ func (q *Queries) GetAllCurrencies(ctx context.Context) ([]Currency, error) {
 			&i.Symbol,
 			&i.DisplayPrecision,
 			&i.Active,
-			&i.CalculationPrecision,
 		); err != nil {
 			return nil, err
 		}
@@ -43,7 +42,7 @@ func (q *Queries) GetAllCurrencies(ctx context.Context) ([]Currency, error) {
 }
 
 const getCurrencyById = `-- name: GetCurrencyById :one
-SELECT id, code, symbol, display_precision, active, calculation_precision FROM currency WHERE currency.id = $1
+SELECT id, code, symbol, display_precision, active FROM currency WHERE currency.id = $1
 `
 
 func (q *Queries) GetCurrencyById(ctx context.Context, id uuid.UUID) (Currency, error) {
@@ -55,31 +54,28 @@ func (q *Queries) GetCurrencyById(ctx context.Context, id uuid.UUID) (Currency, 
 		&i.Symbol,
 		&i.DisplayPrecision,
 		&i.Active,
-		&i.CalculationPrecision,
 	)
 	return i, err
 }
 
 const upsertCurrency = `-- name: UpsertCurrency :exec
 INSERT INTO currency (
-  id, code, symbol, display_precision, calculation_precision, active
+  id, code, symbol, display_precision, active
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5
 ) ON CONFLICT (id) DO UPDATE SET
   code = $2,
   symbol = $3,
   display_precision = $4,
-  calculation_precision = $5,
-  active = $6
+  active = $5
 `
 
 type UpsertCurrencyParams struct {
-	ID                   uuid.UUID
-	Code                 string
-	Symbol               string
-	DisplayPrecision     int32
-	CalculationPrecision int32
-	Active               bool
+	ID               uuid.UUID
+	Code             string
+	Symbol           string
+	DisplayPrecision int32
+	Active           bool
 }
 
 func (q *Queries) UpsertCurrency(ctx context.Context, arg UpsertCurrencyParams) error {
@@ -88,7 +84,6 @@ func (q *Queries) UpsertCurrency(ctx context.Context, arg UpsertCurrencyParams) 
 		arg.Code,
 		arg.Symbol,
 		arg.DisplayPrecision,
-		arg.CalculationPrecision,
 		arg.Active,
 	)
 	return err

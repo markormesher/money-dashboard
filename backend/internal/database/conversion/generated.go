@@ -35,7 +35,6 @@ func AssetToCore(source databasegen.Asset) schema.Asset {
 	schemaAsset.Name = source.Name
 	schemaAsset.Notes = source.Notes
 	schemaAsset.DisplayPrecision = source.DisplayPrecision
-	schemaAsset.CalculationPrecision = source.CalculationPrecision
 	schemaAsset.Active = source.Active
 	return schemaAsset
 }
@@ -59,7 +58,6 @@ func CurrencyToCore(source databasegen.Currency) schema.Currency {
 	schemaCurrency.Code = source.Code
 	schemaCurrency.Symbol = source.Symbol
 	schemaCurrency.DisplayPrecision = source.DisplayPrecision
-	schemaCurrency.CalculationPrecision = source.CalculationPrecision
 	schemaCurrency.Active = source.Active
 	return schemaCurrency
 }

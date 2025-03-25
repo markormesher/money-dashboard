@@ -99,7 +99,7 @@ function CurrenciesPage(): ReactElement {
                     <>
                       <li>
                         &pound; = {c.symbol}
-                        {rate.rate.toFixed(c.calculationPrecision)}
+                        {rate.rate.toFixed(c.displayPrecision)}
                       </li>
                       {!isGbp ? <li>Updated {formatDateFromProto(rate.date)}</li> : null}
                     </>

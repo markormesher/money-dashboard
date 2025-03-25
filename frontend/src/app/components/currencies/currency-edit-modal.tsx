@@ -36,7 +36,6 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
         code: "",
         symbol: "",
         displayPrecision: 2,
-        calculationPrecision: 4,
         active: true,
       });
       setFocusOnNextRender("code");
@@ -131,19 +130,6 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
             onChange={(evt) => form.patchModel({ displayPrecision: parseInt(evt.target.value) ?? null })}
           />
 
-          <Input
-            label={"Calculation Precision"}
-            formState={form}
-            fieldName={"calculationPrecision"}
-            type={"number"}
-            step={1}
-            min={0}
-            value={safeNumberValue(form.model?.calculationPrecision)}
-            onChange={(evt) => form.patchModel({ calculationPrecision: parseInt(evt.target.value) ?? null })}
-          />
-        </fieldset>
-
-        <fieldset className={"grid"}>
           <Input
             label={"Active"}
             formState={form}

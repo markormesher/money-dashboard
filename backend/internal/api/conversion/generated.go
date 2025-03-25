@@ -60,7 +60,6 @@ func AssetFromCore(source schema.Asset) *v4.Asset {
 	mdv4Asset.Name = source.Name
 	mdv4Asset.Notes = source.Notes
 	mdv4Asset.DisplayPrecision = source.DisplayPrecision
-	mdv4Asset.CalculationPrecision = source.CalculationPrecision
 	mdv4Asset.Active = source.Active
 	mdv4Asset.Currency = pSchemaCurrencyToPMdv4Currency(source.Currency)
 	return &mdv4Asset
@@ -73,7 +72,6 @@ func AssetToCore(source *v4.Asset) schema.Asset {
 		schemaAsset2.Name = (*source).Name
 		schemaAsset2.Notes = (*source).Notes
 		schemaAsset2.DisplayPrecision = (*source).DisplayPrecision
-		schemaAsset2.CalculationPrecision = (*source).CalculationPrecision
 		schemaAsset2.Active = (*source).Active
 		schemaAsset2.Currency = pMdv4CurrencyToPSchemaCurrency((*source).Currency)
 		schemaAsset = schemaAsset2
@@ -126,7 +124,6 @@ func CurrencyFromCore(source schema.Currency) *v4.Currency {
 	mdv4Currency.Code = source.Code
 	mdv4Currency.Symbol = source.Symbol
 	mdv4Currency.DisplayPrecision = source.DisplayPrecision
-	mdv4Currency.CalculationPrecision = source.CalculationPrecision
 	mdv4Currency.Active = source.Active
 	return &mdv4Currency
 }
@@ -138,7 +135,6 @@ func CurrencyToCore(source *v4.Currency) schema.Currency {
 		schemaCurrency2.Code = (*source).Code
 		schemaCurrency2.Symbol = (*source).Symbol
 		schemaCurrency2.DisplayPrecision = (*source).DisplayPrecision
-		schemaCurrency2.CalculationPrecision = (*source).CalculationPrecision
 		schemaCurrency2.Active = (*source).Active
 		schemaCurrency = schemaCurrency2
 	}
@@ -374,7 +370,6 @@ func pMdv4AssetToPSchemaAsset(source *v4.Asset) *schema.Asset {
 		schemaAsset.Name = (*source).Name
 		schemaAsset.Notes = (*source).Notes
 		schemaAsset.DisplayPrecision = (*source).DisplayPrecision
-		schemaAsset.CalculationPrecision = (*source).CalculationPrecision
 		schemaAsset.Active = (*source).Active
 		schemaAsset.Currency = pMdv4CurrencyToPSchemaCurrency((*source).Currency)
 		pSchemaAsset = &schemaAsset
@@ -407,7 +402,6 @@ func pMdv4CurrencyToPSchemaCurrency(source *v4.Currency) *schema.Currency {
 		schemaCurrency.Code = (*source).Code
 		schemaCurrency.Symbol = (*source).Symbol
 		schemaCurrency.DisplayPrecision = (*source).DisplayPrecision
-		schemaCurrency.CalculationPrecision = (*source).CalculationPrecision
 		schemaCurrency.Active = (*source).Active
 		pSchemaCurrency = &schemaCurrency
 	}
@@ -484,7 +478,6 @@ func pSchemaAssetToPMdv4Asset(source *schema.Asset) *v4.Asset {
 		mdv4Asset.Name = (*source).Name
 		mdv4Asset.Notes = (*source).Notes
 		mdv4Asset.DisplayPrecision = (*source).DisplayPrecision
-		mdv4Asset.CalculationPrecision = (*source).CalculationPrecision
 		mdv4Asset.Active = (*source).Active
 		mdv4Asset.Currency = pSchemaCurrencyToPMdv4Currency((*source).Currency)
 		pMdv4Asset = &mdv4Asset
@@ -517,7 +510,6 @@ func pSchemaCurrencyToPMdv4Currency(source *schema.Currency) *v4.Currency {
 		mdv4Currency.Code = (*source).Code
 		mdv4Currency.Symbol = (*source).Symbol
 		mdv4Currency.DisplayPrecision = (*source).DisplayPrecision
-		mdv4Currency.CalculationPrecision = (*source).CalculationPrecision
 		mdv4Currency.Active = (*source).Active
 		pMdv4Currency = &mdv4Currency
 	}

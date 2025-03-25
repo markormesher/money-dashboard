@@ -38,11 +38,10 @@ func (db *DB) GetAllCurrencies(ctx context.Context) ([]schema.Currency, error) {
 
 func (db *DB) UpsertCurrency(ctx context.Context, currency schema.Currency) error {
 	return db.queries.UpsertCurrency(ctx, database_gen.UpsertCurrencyParams{
-		ID:                   currency.ID,
-		Code:                 currency.Code,
-		Symbol:               currency.Symbol,
-		DisplayPrecision:     currency.DisplayPrecision,
-		CalculationPrecision: currency.CalculationPrecision,
-		Active:               currency.Active,
+		ID:               currency.ID,
+		Code:             currency.Code,
+		Symbol:           currency.Symbol,
+		DisplayPrecision: currency.DisplayPrecision,
+		Active:           currency.Active,
 	})
 }

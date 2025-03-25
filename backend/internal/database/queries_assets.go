@@ -50,12 +50,11 @@ func (db *DB) GetAllAssets(ctx context.Context) ([]schema.Asset, error) {
 
 func (db *DB) UpsertAsset(ctx context.Context, asset schema.Asset) error {
 	return db.queries.UpsertAsset(ctx, database_gen.UpsertAssetParams{
-		ID:                   asset.ID,
-		Name:                 asset.Name,
-		Notes:                asset.Notes,
-		DisplayPrecision:     asset.DisplayPrecision,
-		CalculationPrecision: asset.CalculationPrecision,
-		CurrencyID:           asset.Currency.ID,
-		Active:               asset.Active,
+		ID:               asset.ID,
+		Name:             asset.Name,
+		Notes:            asset.Notes,
+		DisplayPrecision: asset.DisplayPrecision,
+		CurrencyID:       asset.Currency.ID,
+		Active:           asset.Active,
 	})
 }

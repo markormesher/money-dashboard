@@ -45,7 +45,6 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
         name: "",
         notes: "",
         displayPrecision: 2,
-        calculationPrecision: 4,
         active: true,
         currency: undefined,
       });
@@ -144,14 +143,13 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
           />
 
           <Input
-            label={"Calculation Precision"}
+            label={"Active"}
             formState={form}
-            fieldName={"calculationPrecision"}
-            type={"number"}
-            step={1}
-            min={0}
-            value={safeNumberValue(form.model?.calculationPrecision)}
-            onChange={(evt) => form.patchModel({ calculationPrecision: parseInt(evt.target.value) ?? null })}
+            fieldName={"active"}
+            type={"checkbox"}
+            role={"switch"}
+            checked={form.model?.active ?? false}
+            onChange={(evt) => form.patchModel({ active: evt.target.checked })}
           />
         </fieldset>
 
@@ -163,18 +161,6 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
             placeholder={""}
             value={form.model?.notes}
             onChange={(evt) => form.patchModel({ notes: evt.target.value })}
-          />
-        </fieldset>
-
-        <fieldset className={"grid"}>
-          <Input
-            label={"Active"}
-            formState={form}
-            fieldName={"active"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.active ?? false}
-            onChange={(evt) => form.patchModel({ active: evt.target.checked })}
           />
         </fieldset>
 

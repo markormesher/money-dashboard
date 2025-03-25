@@ -13,8 +13,8 @@ import (
 
 const getAllAssets = `-- name: GetAllAssets :many
 SELECT
-  asset.id, asset.name, asset.notes, asset.display_precision, asset.calculation_precision, asset.currency_id, asset.active,
-  currency.id, currency.code, currency.symbol, currency.display_precision, currency.active, currency.calculation_precision
+  asset.id, asset.name, asset.notes, asset.display_precision, asset.currency_id, asset.active,
+  currency.id, currency.code, currency.symbol, currency.display_precision, currency.active
 FROM
   asset JOIN currency on asset.currency_id = currency.id
 `
@@ -38,7 +38,6 @@ func (q *Queries) GetAllAssets(ctx context.Context) ([]GetAllAssetsRow, error) {
 			&i.Asset.Name,
 			&i.Asset.Notes,
 			&i.Asset.DisplayPrecision,
-			&i.Asset.CalculationPrecision,
 			&i.Asset.CurrencyID,
 			&i.Asset.Active,
 			&i.Currency.ID,
@@ -46,7 +45,6 @@ func (q *Queries) GetAllAssets(ctx context.Context) ([]GetAllAssetsRow, error) {
 			&i.Currency.Symbol,
 			&i.Currency.DisplayPrecision,
 			&i.Currency.Active,
-			&i.Currency.CalculationPrecision,
 		); err != nil {
 			return nil, err
 		}
@@ -60,8 +58,8 @@ func (q *Queries) GetAllAssets(ctx context.Context) ([]GetAllAssetsRow, error) {
 
 const getAssetById = `-- name: GetAssetById :one
 SELECT
-  asset.id, asset.name, asset.notes, asset.display_precision, asset.calculation_precision, asset.currency_id, asset.active,
-  currency.id, currency.code, currency.symbol, currency.display_precision, currency.active, currency.calculation_precision
+  asset.id, asset.name, asset.notes, asset.display_precision, asset.currency_id, asset.active,
+  currency.id, currency.code, currency.symbol, currency.display_precision, currency.active
 FROM
   asset JOIN currency on asset.currency_id = currency.id
 WHERE
@@ -81,7 +79,6 @@ func (q *Queries) GetAssetById(ctx context.Context, id uuid.UUID) (GetAssetByIdR
 		&i.Asset.Name,
 		&i.Asset.Notes,
 		&i.Asset.DisplayPrecision,
-		&i.Asset.CalculationPrecision,
 		&i.Asset.CurrencyID,
 		&i.Asset.Active,
 		&i.Currency.ID,
@@ -89,33 +86,30 @@ func (q *Queries) GetAssetById(ctx context.Context, id uuid.UUID) (GetAssetByIdR
 		&i.Currency.Symbol,
 		&i.Currency.DisplayPrecision,
 		&i.Currency.Active,
-		&i.Currency.CalculationPrecision,
 	)
 	return i, err
 }
 
 const upsertAsset = `-- name: UpsertAsset :exec
 INSERT INTO asset (
-  id, name, notes, display_precision, calculation_precision, currency_id, active
+  id, name, notes, display_precision, currency_id, active
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7
+  $1, $2, $3, $4, $5, $6
 ) ON CONFLICT (id) DO UPDATE SET
   name = $2,
   notes = $3,
   display_precision = $4,
-  calculation_precision = $5,
-  currency_id = $6,
-  active = $7
+  currency_id = $5,
+  active = $6
 `
 
 type UpsertAssetParams struct {
-	ID                   uuid.UUID
-	Name                 string
-	Notes                string
-	DisplayPrecision     int32
-	CalculationPrecision int32
-	CurrencyID           uuid.UUID
-	Active               bool
+	ID               uuid.UUID
+	Name             string
+	Notes            string
+	DisplayPrecision int32
+	CurrencyID       uuid.UUID
+	Active           bool
 }
 
 func (q *Queries) UpsertAsset(ctx context.Context, arg UpsertAssetParams) error {
@@ -124,7 +118,6 @@ func (q *Queries) UpsertAsset(ctx context.Context, arg UpsertAssetParams) error 
 		arg.Name,
 		arg.Notes,
 		arg.DisplayPrecision,
-		arg.CalculationPrecision,
 		arg.CurrencyID,
 		arg.Active,
 	)

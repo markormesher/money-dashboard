@@ -98,7 +98,7 @@ function AssetsPage(): ReactElement {
                     <>
                       <li>
                         {a.currency?.symbol}
-                        {rate.rate.toFixed(a.calculationPrecision)}
+                        {rate.rate.toFixed(a.displayPrecision)}
                       </li>
                       <li>Updated {formatDateFromProto(rate.date)}</li>
                     </>
