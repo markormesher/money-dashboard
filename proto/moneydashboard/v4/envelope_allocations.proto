@@ -1,0 +1,41 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+import "moneydashboard/v4/categories.proto";
+import "moneydashboard/v4/envelopes.proto";
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message EnvelopeAllocation {
+  string id = 1;
+  int64 start_date = 2;
+
+  Category category = 3;
+  Envelope envelope = 4;
+}
+
+message GetEnvelopeAllocationByIdRequest {
+  string id = 1;
+}
+
+message GetEnvelopeAllocationByIdResponse {
+  EnvelopeAllocation envelope_allocation = 1;
+}
+
+message GetAllEnvelopeAllocationsRequest {}
+
+message GetAllEnvelopeAllocationsResponse {
+  repeated EnvelopeAllocation envelope_allocations = 1;
+}
+
+message UpsertEnvelopeAllocationRequest {
+  EnvelopeAllocation envelope_allocation = 1;
+}
+
+message UpsertEnvelopeAllocationResponse {}
+
+service MDEnvelopeAllocationService {
+  rpc GetEnvelopeAllocationById(GetEnvelopeAllocationByIdRequest) returns (GetEnvelopeAllocationByIdResponse);
+  rpc GetAllEnvelopeAllocations(GetAllEnvelopeAllocationsRequest) returns (GetAllEnvelopeAllocationsResponse);
+  rpc UpsertEnvelopeAllocation(UpsertEnvelopeAllocationRequest) returns (UpsertEnvelopeAllocationResponse);
+}

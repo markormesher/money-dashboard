@@ -1,0 +1,5 @@
+.loading-panel {
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--pico-muted-color);
+}

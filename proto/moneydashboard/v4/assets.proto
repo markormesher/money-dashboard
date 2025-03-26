@@ -1,0 +1,42 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+import "moneydashboard/v4/currencies.proto";
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message Asset {
+  string id = 1;
+  string name = 2;
+  string notes = 3;
+  int32 display_precision = 4;
+  bool active = 6;
+
+  Currency currency = 7;
+}
+
+message GetAssetByIdRequest {
+  string id = 1;
+}
+
+message GetAssetByIdResponse {
+  Asset asset = 1;
+}
+
+message GetAllAssetsRequest {}
+
+message GetAllAssetsResponse {
+  repeated Asset assets = 1;
+}
+
+message UpsertAssetRequest {
+  Asset asset = 1;
+}
+
+message UpsertAssetResponse {}
+
+service MDAssetService {
+  rpc GetAssetById(GetAssetByIdRequest) returns (GetAssetByIdResponse);
+  rpc GetAllAssets(GetAllAssetsRequest) returns (GetAllAssetsResponse);
+  rpc UpsertAsset(UpsertAssetRequest) returns (UpsertAssetResponse);
+}

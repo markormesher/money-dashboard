@@ -1,0 +1,11 @@
+article.dashboard-envelope-balances-tile {
+  div.balances {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+  }
+
+  *:last-child {
+    margin-bottom: 0;
+  }
+}

@@ -1,0 +1,32 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+import "moneydashboard/v4/profiles.proto";
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message User {
+  string id = 1;
+  string external_username = 2;
+  string display_name = 3;
+  bool deleted = 4;
+
+  Profile active_profile = 5;
+}
+
+message GetUserRequest {}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message SetActiveProfileRequest {
+  Profile profile = 1;
+}
+
+message SetActiveProfileResponse {}
+
+service MDUserService {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc SetActiveProfile(SetActiveProfileRequest) returns (SetActiveProfileResponse);
+}

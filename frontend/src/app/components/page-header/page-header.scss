@@ -1,0 +1,79 @@
+@use "../../../settings.scss" as settings;
+
+div.page-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+
+  @include settings.mobile-only {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  span.sub-pages {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+
+    span.sub-page {
+      color: var(--pico-muted-color);
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      &.active {
+        color: inherit !important;
+      }
+    }
+  }
+
+  div[role="group"] {
+    width: auto;
+
+    button:not(:last-child) {
+      border-right: none;
+    }
+  }
+
+  * {
+    margin-bottom: 0;
+  }
+}
+
+article.page-options {
+  display: flex;
+  align-items: center;
+  gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+
+  * {
+    width: auto;
+  }
+
+  @include settings.mobile-only {
+    flex-direction: column;
+    align-items: start;
+
+    * {
+      width: 100%;
+    }
+  }
+
+  .search-input {
+    margin-left: auto;
+  }
+
+  fieldset {
+    margin-bottom: 0;
+
+    label,
+    input,
+    button {
+      margin-bottom: 0;
+    }
+  }
+}

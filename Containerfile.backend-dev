@@ -1,0 +1,9 @@
+FROM docker.io/golang:1.24.0
+WORKDIR /app
+
+RUN go install github.com/air-verse/air@latest
+
+COPY ./backend/go.mod ./backend/go.sum ./backend/
+RUN cd backend && go mod download
+
+CMD ["bash", "-c", "cd backend ; air --build.cmd 'go build -o ./build/main ./cmd' --build.bin './build/main'"]

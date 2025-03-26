@@ -1,0 +1,40 @@
+article.dashboard-balances-tile {
+  .group-header {
+    margin-top: var(--pico-block-spacing-vertical);
+    margin-bottom: calc(var(--pico-block-spacing-vertical) / 2);
+  }
+
+  .balance-row {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: auto auto;
+    padding: 2px;
+
+    &:hover {
+      background-color: var(--pico-table-row-stripped-background-color);
+    }
+
+    &.with-children {
+      grid-template-rows: auto auto;
+      grid-template-columns: auto;
+    }
+
+    .row-label {
+    }
+
+    .row-children {
+      padding-left: calc(var(--pico-block-spacing-horizontal) / 2);
+    }
+
+    .row-value {
+      font-family: monospace;
+      text-align: right;
+    }
+  }
+
+  .total-balance {
+    font-family: monospace;
+    text-align: right;
+    font-size: 1.2rem;
+  }
+}

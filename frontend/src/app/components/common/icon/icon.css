@@ -1,0 +1,18 @@
+@import "material-symbols/outlined.css";
+
+.material-symbols-outlined {
+  font-size: inherit !important;
+}
+
+.icon-group {
+  display: flex;
+  align-items: center;
+
+  > * {
+    margin: 0;
+  }
+
+  > *:not(:last-child) {
+    margin-right: 0.4em;
+  }
+}

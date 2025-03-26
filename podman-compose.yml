@@ -1,0 +1,38 @@
+version: 3.7
+
+services:
+  backend:
+    build:
+      context: "."
+      dockerfile: "Containerfile.backend-dev"
+    restart: "always"
+    environment:
+      - "POSTGRES_CONNECTION_STRING=postgresql://money_dashboard:foobar@postgres/money_dashboard"
+      - "DEV_MODE=yes"
+      - "FRONTEND_DIST_PATH=/app/frontend/dist"
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./backend:/app/backend"
+      - "./frontend:/app/frontend:ro"
+      - "./sql:/app/sql:ro"
+
+  frontend:
+    build:
+      context: "."
+      dockerfile: "Containerfile.frontend-dev"
+    restart: "always"
+    volumes:
+      - "./frontend:/app/frontend"
+
+  postgres:
+    image: "docker.io/library/postgres:17.2"
+    environment:
+      - "POSTGRES_DATABASE=money_dashboard"
+      - "POSTGRES_USER=money_dashboard"
+      - "POSTGRES_PASSWORD=foobar"
+    volumes:
+      - "postgres-data:/var/lib/postgresql/data"
+
+volumes:
+  postgres-data: {}

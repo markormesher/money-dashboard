@@ -1,27 +1,10 @@
-# Generated code
-build/
-node_modules/
+backend/build/
+backend/tmp/
 
-# Test outputs
-coverage/
-.nyc_output/
+frontend/node_modules/
+frontend/dist/
 
-# Logs
-yarn-*.log*
-logs/**
-!logs/.gitkeep
+.task/
+.imgrefs
 
-# IntelliJ
-*.iml
-.idea/
-
-# Linux
-*~
-.Trash-*
-
-# OSX
-.DS_Store
-._*
-
-# Local dev
-docker-compose.dev.yml
+dump.sql

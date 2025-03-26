@@ -1,0 +1,9 @@
+.empty-results {
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--pico-muted-color);
+
+  p {
+    margin-bottom: 0;
+  }
+}

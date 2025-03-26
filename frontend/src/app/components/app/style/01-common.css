@@ -1,0 +1,98 @@
+:root {
+  --mobile-breakpoint: 1024px;
+}
+
+.muted {
+  color: var(--pico-muted-color);
+}
+
+.semi-transparent {
+  opacity: 0.5;
+}
+
+.mb0 {
+  margin-bottom: 0;
+}
+
+ul.horizonal {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+
+  padding: 0;
+
+  li {
+    list-style-type: none;
+    margin: 0;
+  }
+}
+
+ul.labels {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+
+  padding: 0;
+
+  &:empty {
+    display: none;
+  }
+
+  li {
+    list-style-type: none;
+    margin: 0;
+
+    padding: calc(var(--pico-block-spacing-vertical) * 0.25)
+      calc(var(--pico-block-spacing-horizontal) * 0.5);
+    background-color: color-mix(
+      in srgb,
+      var(--pico-muted-color) 15%,
+      transparent
+    );
+    border-radius: var(--pico-border-radius);
+  }
+}
+
+span.separator {
+  margin: 0 calc(var(--pico-block-spacing-horizontal) * 0.5);
+  color: var(--pico-muted-color);
+}
+
+.amount {
+  font-family: monospace;
+}
+
+.colour-red {
+  /* pico-color-red-500 */
+  color: rgb(217, 53, 38);
+}
+
+/* tables */
+
+td.amount-cell {
+  font-family: monospace;
+
+  .amount {
+    float: right;
+  }
+
+  .amount-prefix {
+    float: left;
+    margin-right: calc(var(--pico-block-spacing-horizontal) * 0.5);
+    color: var(--pico-muted-color);
+  }
+}
+
+td.actions-cell {
+  a {
+    text-decoration: none;
+
+    &:hover {
+      span:not(.icon) {
+        text-decoration: underline;
+      }
+    }
+  }
+}

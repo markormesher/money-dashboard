@@ -1,0 +1,36 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "./queries"
+    schema: "./migrations"
+    gen:
+      go:
+        package: "database_gen"
+        out: "../backend/internal/database_gen"
+        sql_package: "pgx/v5"
+        overrides:
+          - db_type: "uuid"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
+
+          # nullable UUIDs need to be represented as pointers, otherwise sqlc tries to insert 000... for nil values
+          - db_type: "uuid"
+            nullable: true
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
+              pointer: true
+
+          - db_type: "pg_catalog.numeric"
+            go_type:
+              import: "github.com/govalues/decimal"
+              type: "Decimal"
+
+          - db_type: "date"
+            go_type:
+              type: "time.Time"
+
+          - db_type: "pg_catalog.timestamp"
+            go_type:
+              type: "time.Time"

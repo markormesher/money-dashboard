@@ -1,112 +1,199 @@
-version: 2.1
+# This file is maintained by Tedium - manual edits will be overwritten!
 
-defaults: &defaults
-  working_directory: ~/money-dashboard
-  docker:
-    - image: cimg/node:16.14.2
-
+version: "2.1"
 jobs:
-  setup:
-    <<: *defaults
+  checkout:
+    docker:
+      - image: cimg/base:2024.12
     steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - dependency-cache-{{ checksum "yarn.lock" }}
-            - dependency-cache
-      - run:
-          name: Install dependencies
-          command: yarn install
-      - save_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
+      - checkout:
+          path: .
       - persist_to_workspace:
           root: .
           paths:
             - .
-
-  lint:
-    <<: *defaults
+  ci-all:
+    docker:
+      - image: cimg/base:2024.12
     steps:
       - attach_workspace:
           at: .
       - run:
-          name: Check linters
-          command: yarn lint
-
-  check-lockfile:
-    <<: *defaults
+          command: echo "Done"
+  deps-go:
+    docker:
+      - image: docker.io/golang:1.24.0
     steps:
       - attach_workspace:
           at: .
       - run:
-          name: Run lockfile linter
-          command: yarn lockfile-lint -p yarn.lock
-      - run:
-          name: Check for duplicate dependencies
-          command: yarn yarn-deduplicate -f -l
-
-  test:
-    <<: *defaults
+          command: |-
+            export GOPATH=$(pwd)/.go
+            ./task deps-go
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./.go
+  deps-js:
+    docker:
+      - image: docker.io/node:23.7.0-slim
     steps:
       - attach_workspace:
           at: .
       - run:
-          name: Run Tests
-          command: yarn test
-
-  build:
-    <<: *defaults
+          command: |-
+            corepack enable
+            ./task deps-js
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./node_modules
+            - ./**/node_modules
+  fetch-task:
+    docker:
+      - image: ghcr.io/markormesher/task-fetcher:v0.4.1
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          command: cp /task .
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./task
+  imgbuild-imgpush:
+    docker:
+      - image: cimg/base:2024.12
     steps:
       - attach_workspace:
           at: .
       - setup_remote_docker:
           docker_layer_caching: true
-          version: 20.10.12
       - run:
-          name: Build Docker image
-          command: |
-            docker build . -t ghcr.io/markormesher/money-dashboard:$(git describe)
-            docker image ls
-      - run:
-          name: Maybe publish Docker image
-          command: |
-            # publish tagged commits only
-            if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
+          command: |-
             echo "${GHCR_PUBLISH_TOKEN}" | docker login ghcr.io -u markormesher --password-stdin
-            docker push ghcr.io/markormesher/money-dashboard:$(git describe)
-
+            ./task imgbuild
+            ./task imgpush
+  imgrefs:
+    docker:
+      - image: docker.io/alpine/git:v2.47.1
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          command: ./task imgrefs
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./.imgrefs
+            - ./**/.imgrefs
+  lint-buf:
+    docker:
+      - image: docker.io/bufbuild/buf:1.48.0
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          command: ./task lint-buf
+  lint-go:
+    docker:
+      - image: docker.io/golang:1.24.0
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          command: |-
+            export GOPATH=$(pwd)/.go
+            ./task lint-go
+  lint-js:
+    docker:
+      - image: docker.io/node:23.7.0-slim
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          command: |-
+            corepack enable
+            ./task lint-js
 workflows:
   version: 2
-  build_test:
+  main:
     jobs:
-      - setup:
+      - checkout:
+          requires: []
           filters:
             tags:
               only: /.*/
-      - lint:
-          filters:
-            tags:
-              only: /.*/
+      - fetch-task:
           requires:
-            - setup
-      - check-lockfile:
+            - checkout
           filters:
             tags:
               only: /.*/
+      - imgrefs:
           requires:
-            - setup
-      - test:
+            - checkout
+            - fetch-task
           filters:
             tags:
               only: /.*/
+      - lint-buf:
           requires:
-            - lint
-            - check-lockfile
-      - build:
+            - checkout
+            - fetch-task
           filters:
             tags:
               only: /.*/
+      - deps-go:
           requires:
-            - test
+            - checkout
+            - fetch-task
+          filters:
+            tags:
+              only: /.*/
+      - deps-js:
+          requires:
+            - checkout
+            - fetch-task
+          filters:
+            tags:
+              only: /.*/
+      - lint-go:
+          requires:
+            - checkout
+            - deps-go
+            - fetch-task
+          filters:
+            tags:
+              only: /.*/
+      - lint-js:
+          requires:
+            - checkout
+            - deps-js
+            - fetch-task
+          filters:
+            tags:
+              only: /.*/
+      - imgbuild-imgpush:
+          requires:
+            - checkout
+            - fetch-task
+            - imgrefs
+            - lint-buf
+            - lint-go
+            - lint-js
+          filters:
+            tags:
+              only: /.*/
+      - ci-all:
+          requires:
+            - deps-go
+            - deps-js
+            - imgbuild-imgpush
+            - imgrefs
+            - lint-buf
+            - lint-go
+            - lint-js
+          filters:
+            tags:
+              only: /.*/

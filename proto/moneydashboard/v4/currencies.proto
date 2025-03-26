@@ -1,0 +1,38 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message Currency {
+  string id = 1;
+  string code = 2;
+  string symbol = 3;
+  int32 display_precision = 4;
+  bool active = 6;
+}
+
+message GetCurrencyByIdRequest {
+  string id = 1;
+}
+
+message GetCurrencyByIdResponse {
+  Currency currency = 1;
+}
+
+message GetAllCurrenciesRequest {}
+
+message GetAllCurrenciesResponse {
+  repeated Currency currencies = 1;
+}
+
+message UpsertCurrencyRequest {
+  Currency currency = 1;
+}
+
+message UpsertCurrencyResponse {}
+
+service MDCurrencyService {
+  rpc GetCurrencyById(GetCurrencyByIdRequest) returns (GetCurrencyByIdResponse);
+  rpc GetAllCurrencies(GetAllCurrenciesRequest) returns (GetAllCurrenciesResponse);
+  rpc UpsertCurrency(UpsertCurrencyRequest) returns (UpsertCurrencyResponse);
+}

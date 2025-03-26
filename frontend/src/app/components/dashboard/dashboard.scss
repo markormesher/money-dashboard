@@ -1,0 +1,32 @@
+@use "../../../settings.scss" as settings;
+
+.dashboard {
+  display: grid;
+  gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+
+  @include settings.desktop-only {
+    grid-template-columns: auto 28rem;
+    grid-template-rows: auto;
+    grid-template-areas: "main sidebar";
+  }
+
+  @include settings.mobile-only {
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    grid-template-areas: "sidebar" "main";
+  }
+
+  .main {
+    grid-area: main;
+  }
+
+  .sidebar {
+    grid-area: sidebar;
+
+    @include settings.mobile-only {
+      > article:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

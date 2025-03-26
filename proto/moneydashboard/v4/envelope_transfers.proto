@@ -1,0 +1,63 @@
+syntax = "proto3";
+package moneydashboard.v4;
+
+import "moneydashboard/v4/envelopes.proto";
+
+option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
+
+message EnvelopeTransfer {
+  string id = 1;
+  int64 date = 2;
+  string notes = 3;
+  double amount = 4;
+
+  Envelope from_envelope = 5;
+  Envelope to_envelope = 6;
+}
+
+message GetEnvelopeTransferByIdRequest {
+  string id = 1;
+}
+
+message GetEnvelopeTransferByIdResponse {
+  EnvelopeTransfer envelope_transfer = 1;
+}
+
+message GetEnvelopeTransferPageRequest {
+  int32 page = 1;
+  int32 per_page = 2;
+  string search_pattern = 3;
+}
+
+message GetEnvelopeTransferPageResponse {
+  int32 total = 1;
+  int32 filtered_total = 2;
+  repeated EnvelopeTransfer filtered_entities = 3;
+}
+
+message UpsertEnvelopeTransferRequest {
+  EnvelopeTransfer envelope_transfer = 1;
+}
+
+message UpsertEnvelopeTransferResponse {}
+
+message DeleteEnvelopeTransferRequest {
+  string id = 1;
+}
+
+message DeleteEnvelopeTransferResponse {}
+
+message CloneEnvelopeTransfersRequest {
+  repeated string ids = 1;
+  int64 date = 2;
+}
+
+message CloneEnvelopeTransfersResponse {}
+
+service MDEnvelopeTransferService {
+  rpc GetEnvelopeTransferById(GetEnvelopeTransferByIdRequest) returns (GetEnvelopeTransferByIdResponse);
+  rpc GetEnvelopeTransferPage(GetEnvelopeTransferPageRequest) returns (GetEnvelopeTransferPageResponse);
+  rpc UpsertEnvelopeTransfer(UpsertEnvelopeTransferRequest) returns (UpsertEnvelopeTransferResponse);
+  rpc DeleteEnvelopeTransfer(DeleteEnvelopeTransferRequest) returns (DeleteEnvelopeTransferResponse);
+  rpc CloneEnvelopeTransfers(CloneEnvelopeTransfersRequest) returns (CloneEnvelopeTransfersResponse);
+}
