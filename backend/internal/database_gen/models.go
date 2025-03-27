@@ -190,34 +190,31 @@ type NullableEnvelopeTranferToEnvelope struct {
 }
 
 type NullableHoldingAsset struct {
-	HoldingID            uuid.UUID
-	ID                   *uuid.UUID
-	Name                 pgtype.Text
-	Notes                pgtype.Text
-	DisplayPrecision     pgtype.Int4
-	CalculationPrecision pgtype.Int4
-	CurrencyID           *uuid.UUID
-	Active               pgtype.Bool
+	HoldingID        uuid.UUID
+	ID               *uuid.UUID
+	Name             pgtype.Text
+	Notes            pgtype.Text
+	DisplayPrecision pgtype.Int4
+	CurrencyID       *uuid.UUID
+	Active           pgtype.Bool
 }
 
 type NullableHoldingAssetCurrency struct {
-	HoldingID            uuid.UUID
-	ID                   *uuid.UUID
-	Code                 pgtype.Text
-	Symbol               pgtype.Text
-	DisplayPrecision     pgtype.Int4
-	Active               pgtype.Bool
-	CalculationPrecision pgtype.Int4
+	HoldingID        uuid.UUID
+	ID               *uuid.UUID
+	Code             pgtype.Text
+	Symbol           pgtype.Text
+	DisplayPrecision pgtype.Int4
+	Active           pgtype.Bool
 }
 
 type NullableHoldingCurrency struct {
-	HoldingID            uuid.UUID
-	ID                   *uuid.UUID
-	Code                 pgtype.Text
-	Symbol               pgtype.Text
-	DisplayPrecision     pgtype.Int4
-	Active               pgtype.Bool
-	CalculationPrecision pgtype.Int4
+	HoldingID        uuid.UUID
+	ID               *uuid.UUID
+	Code             pgtype.Text
+	Symbol           pgtype.Text
+	DisplayPrecision pgtype.Int4
+	Active           pgtype.Bool
 }
 
 type Profile struct {
