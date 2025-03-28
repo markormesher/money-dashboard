@@ -22,7 +22,7 @@ RUN cd backend && go build -o ./build/main ./cmd
 
 # --
 
-FROM gcr.io/distroless/base-debian12@sha256:e9d0321de8927f69ce20e39bfc061343cce395996dfc1f0db6540e5145bc63a5
+FROM gcr.io/distroless/base-debian12@sha256:125eb09bbd8e818da4f9eac0dfc373892ca75bec4630aa642d315ecf35c1afb7
 WORKDIR /app
 
 LABEL image.registry=ghcr.io
