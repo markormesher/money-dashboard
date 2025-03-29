@@ -42,7 +42,7 @@ tasks:
   gen-goverter-backend:
     dir: '{{.ROOT_DIR}}/backend'
     cmds:
-      - cmd: go tool github.com/jmattheis/goverter/cmd/goverter gen "./internal/api/conversion" "./internal/database/conversion"
+      - cmd: go tool github.com/jmattheis/goverter/cmd/goverter gen "./internal/database/conversion" "./internal/api/conversion"
   gen-sqlc:
     cmds:
       - task: gen-sqlc-sql
