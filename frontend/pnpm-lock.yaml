@@ -21,8 +21,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       material-symbols:
-        specifier: ^0.30.0
-        version: 0.30.0
+        specifier: ^0.31.0
+        version: 0.31.0
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -1230,8 +1230,8 @@ packages:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
 
-  material-symbols@0.30.0:
-    resolution: {integrity: sha512-sxw4F39tGCuRvkr+xj7oeisDsB73aAXvP3YKIllEzPhzyRQf6SSoxzC14RCWlHzMlbXD4zc+kHJSaxSWO1uo9g==}
+  material-symbols@0.31.0:
+    resolution: {integrity: sha512-IdIuUV/qZ573wffPzYSOxJUEjJT+LhKNJFq16+aRl0q1ig7Jy7kVJ8xb5yFkKArwy10l8NBUhr3nosL5V/hwFA==}
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -2895,7 +2895,7 @@ snapshots:
     dependencies:
       js-tokens: 4.0.0
 
-  material-symbols@0.30.0: {}
+  material-symbols@0.31.0: {}
 
   math-intrinsics@1.1.0: {}
 
