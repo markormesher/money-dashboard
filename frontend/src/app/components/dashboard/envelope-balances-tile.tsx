@@ -7,7 +7,7 @@ import { ErrorPanel } from "../common/error/error.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import "./holding-balances-tile.css";
-import { formatCurrency } from "../../utils/currency.js";
+import { formatCurrencyValue } from "../../utils/currency.js";
 import "./envelope-balances-tile.css";
 import { NULL_UUID } from "../../../config/consts.js";
 import { concatClasses } from "../../utils/style.js";
@@ -55,7 +55,7 @@ function EnvelopeBalancesTile(): ReactElement | null {
               balance.gbpBalance < 0 && "colour-red",
             )}
           >
-            {formatCurrency(balance.gbpBalance, null)}
+            {formatCurrencyValue(balance.gbpBalance, null)}
           </span>
         </div>,
       );
@@ -82,7 +82,7 @@ function EnvelopeBalancesTile(): ReactElement | null {
           <p>
             <strong>Unallocated balance:</strong>{" "}
             <span className={concatClasses("amount", unallocatedBalance < 0 && "colour-red")}>
-              {formatCurrency(unallocatedBalance, null)}
+              {formatCurrencyValue(unallocatedBalance, null)}
             </span>
           </p>
         </>

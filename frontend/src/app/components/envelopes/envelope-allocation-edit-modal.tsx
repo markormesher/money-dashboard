@@ -133,7 +133,11 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
             {categories
               ?.filter((c) => c.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
-              ?.map((c) => <option value={c.id}>{c.name}</option>)}
+              ?.map((c) => (
+                <option value={c.id} selected={c.id == form.model?.category?.id}>
+                  {c.name}
+                </option>
+              ))}
           </Select>
 
           <Select
@@ -146,7 +150,11 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
             {envelopes
               ?.filter((e) => e.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
-              ?.map((e) => <option value={e.id}>{e.name}</option>)}
+              ?.map((e) => (
+                <option value={e.id} selected={e.id == form.model?.envelope?.id}>
+                  {e.name}
+                </option>
+              ))}
           </Select>
         </fieldset>
       </form>

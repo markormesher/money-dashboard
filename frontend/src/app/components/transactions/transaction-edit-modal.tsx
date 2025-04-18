@@ -194,7 +194,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
               ?.filter((h) => h.active)
               ?.sort((a, b) => `${a.account?.name} / ${a.name}`.localeCompare(`${b.account?.name} / ${b.name}`))
               ?.map((h) => (
-                <option value={h.id}>
+                <option value={h.id} selected={h.id == form.model?.holding?.id}>
                   {(holdingsPerAccount?.[h.account?.id ?? ""] ?? 0) > 1 ? (
                     <>
                       {h.account?.name} &nbsp;&nbsp;&#x2022;&nbsp;&nbsp; {h.name}
@@ -227,7 +227,11 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
             {categories
               ?.filter((c) => c.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
-              ?.map((c) => <option value={c.id}>{c.name}</option>)}
+              ?.map((c) => (
+                <option value={c.id} selected={c.id == form.model?.category?.id}>
+                  {c.name}
+                </option>
+              ))}
           </Select>
 
           <Input

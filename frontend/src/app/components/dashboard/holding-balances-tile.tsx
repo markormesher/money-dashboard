@@ -8,10 +8,10 @@ import { LoadingPanel } from "../common/loading/loading.js";
 import { concatClasses } from "../../utils/style.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
-import { formatCurrency } from "../../utils/currency.js";
+import { formatCurrencyValue } from "../../utils/currency.js";
 import "./holding-balances-tile.css";
 import { AccountGroup } from "../../../api_gen/moneydashboard/v4/account_groups_pb.js";
-import { formatAsset } from "../../utils/assets.js";
+import { formatAssetQuantity } from "../../utils/assets.js";
 import { GBP_CURRENCY, GBP_CURRENCY_ID } from "../../../config/consts.js";
 
 type Group = {
@@ -128,11 +128,11 @@ function HoldingBalancesTile(): ReactElement {
                         let conversionNote = "";
 
                         if (holding?.asset) {
-                          conversionNote = `${formatAsset(b.rawBalance, holding.asset)} ${holding.asset.name}`;
+                          conversionNote = `${formatAssetQuantity(b.rawBalance)} ${holding.asset.name}`;
                         }
 
                         if (holding?.currency && holding.currency.id != GBP_CURRENCY_ID) {
-                          conversionNote = `${formatCurrency(b.rawBalance, holding.currency)} ${holding.currency.code}`;
+                          conversionNote = `${formatCurrencyValue(b.rawBalance, holding.currency)} ${holding.currency.code}`;
                         }
 
                         return (
@@ -147,7 +147,7 @@ function HoldingBalancesTile(): ReactElement {
                                 ) : null}
                               </IconGroup>
                             </div>
-                            <div className={"row-value"}>{formatCurrency(b.gbpBalance, null)}</div>
+                            <div className={"row-value"}>{formatCurrencyValue(b.gbpBalance, null)}</div>
                           </div>
                         );
                       });
@@ -165,7 +165,7 @@ function HoldingBalancesTile(): ReactElement {
                     return (
                       <div className={"balance-row"} onClick={() => toggleOpenAccount(account.id)}>
                         {label}
-                        <div className={"row-value"}>{formatCurrency(balanceSum, null)}</div>
+                        <div className={"row-value"}>{formatCurrencyValue(balanceSum, null)}</div>
                       </div>
                     );
                   }
@@ -175,7 +175,7 @@ function HoldingBalancesTile(): ReactElement {
         })}
 
       <footer>
-        <div className={"total-balance"}>{formatCurrency(totalBalance, GBP_CURRENCY)}</div>
+        <div className={"total-balance"}>{formatCurrencyValue(totalBalance, GBP_CURRENCY)}</div>
       </footer>
     </article>
   );

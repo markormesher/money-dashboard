@@ -126,7 +126,11 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
           >
             {currencies
               ?.sort((a, b) => a.code.localeCompare(b.code))
-              ?.map((c) => <option value={c.id}>{c.code}</option>)}
+              ?.map((c) => (
+                <option value={c.id} selected={c.id == form.model?.currency?.id}>
+                  {c.code}
+                </option>
+              ))}
           </Select>
         </fieldset>
 
