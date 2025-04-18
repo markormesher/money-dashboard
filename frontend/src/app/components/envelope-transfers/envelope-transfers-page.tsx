@@ -8,7 +8,7 @@ import { LoadingPanel } from "../common/loading/loading.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { formatDateFromProto } from "../../utils/dates.js";
-import { formatCurrency } from "../../utils/currency.js";
+import { formatCurrencyValue } from "../../utils/currency.js";
 import { useHoldingList } from "../../schema/hooks.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
@@ -210,7 +210,7 @@ function EnvelopeTransfersPage(): ReactElement {
                       )}
                     </td>
                     <td className={"amount-cell"}>
-                      <span className={"amount"}>{formatCurrency(t.amount, null)}</span>
+                      <span className={"amount"}>{formatCurrencyValue(t.amount, null)}</span>
                     </td>
                     <td className={"actions-cell"}>
                       <ul className={"horizonal mb0"}>

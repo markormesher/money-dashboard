@@ -7,8 +7,8 @@ import { ErrorPanel } from "../common/error/error.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import "./holding-balances-tile.css";
-import { formatAsset } from "../../utils/assets.js";
-import { formatCurrency } from "../../utils/currency.js";
+import { formatAssetValue } from "../../utils/assets.js";
+import { formatCurrencyValue } from "../../utils/currency.js";
 import { GBP_CURRENCY_ID } from "../../../config/consts.js";
 import "./warnings-tile.css";
 
@@ -41,13 +41,13 @@ function WarningsTile(): ReactElement | null {
       let amount = "0.00";
       if (balance.asset) {
         unit = balance.asset.name;
-        amount = formatAsset(balance.rawBalance, balance.asset);
+        amount = formatAssetValue(balance.rawBalance, balance.asset);
       }
       if (balance.currency) {
         if (balance.currency.id != GBP_CURRENCY_ID) {
           unit = balance.currency.code;
         }
-        amount = formatCurrency(balance.rawBalance, balance.currency);
+        amount = formatCurrencyValue(balance.rawBalance, balance.currency);
       }
 
       warnings.push(

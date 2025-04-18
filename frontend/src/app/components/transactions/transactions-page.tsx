@@ -10,8 +10,8 @@ import { ErrorPanel } from "../common/error/error.js";
 import { GBP_CURRENCY_ID, NULL_UUID } from "../../../config/consts.js";
 import { transactionServiceClient } from "../../../api/api.js";
 import { formatDateFromProto } from "../../utils/dates.js";
-import { formatCurrency } from "../../utils/currency.js";
-import { formatAsset } from "../../utils/assets.js";
+import { formatCurrencyValue } from "../../utils/currency.js";
+import { formatAssetQuantity } from "../../utils/assets.js";
 import { concatClasses } from "../../utils/style.js";
 import { useHoldingList } from "../../schema/hooks.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
@@ -156,12 +156,12 @@ function TransactionsPage(): ReactElement {
                 let amount = "";
                 let amountPrefix = "";
                 if (t.holding?.currency) {
-                  amount = formatCurrency(t.amount, t.holding.currency);
+                  amount = formatCurrencyValue(t.amount, t.holding.currency);
                   if (t.holding.currency.id != GBP_CURRENCY_ID) {
                     amountPrefix = t.holding.currency.symbol + t.holding.currency.code;
                   }
                 } else if (t.holding?.asset) {
-                  amount = formatAsset(t.amount, t.holding.asset);
+                  amount = formatAssetQuantity(t.amount);
                   amountPrefix = t.holding.asset.name;
                 }
 
