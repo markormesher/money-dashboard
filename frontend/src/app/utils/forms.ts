@@ -10,7 +10,7 @@ function focusFieldByName(name: string): void {
   setTimeout(() => {
     const el = document.querySelector(`input[name='${name}'], select[name='${name}'], textarea[name='${name}']`);
     (el as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null)?.focus();
-  }, 50);
+  }, 100);
 }
 
 export { safeNumberValue, focusFieldByName };
