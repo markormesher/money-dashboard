@@ -142,7 +142,11 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
             {envelopes
               ?.filter((e) => e.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
-              ?.map((e) => <option value={e.id}>{e.name}</option>)}
+              ?.map((e) => (
+                <option value={e.id} selected={e.id == form.model?.fromEnvelope?.id}>
+                  {e.name}
+                </option>
+              ))}
           </Select>
 
           <Select
@@ -156,7 +160,11 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
             {envelopes
               ?.filter((e) => e.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
-              ?.map((e) => <option value={e.id}>{e.name}</option>)}
+              ?.map((e) => (
+                <option value={e.id} selected={e.id == form.model?.toEnvelope?.id}>
+                  {e.name}
+                </option>
+              ))}
           </Select>
         </fieldset>
 

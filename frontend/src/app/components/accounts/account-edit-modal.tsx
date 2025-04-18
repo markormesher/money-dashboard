@@ -126,7 +126,11 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
           >
             {accountGroups
               ?.sort((a, b) => a.displayOrder - b.displayOrder)
-              ?.map((g) => <option value={g.id}>{g.name}</option>)}
+              ?.map((g) => (
+                <option value={g.id} selected={g.id == form.model?.accountGroup?.id}>
+                  {g.name}
+                </option>
+              ))}
           </Select>
         </fieldset>
 

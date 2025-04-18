@@ -133,7 +133,11 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
             {accounts
               ?.filter((a) => a.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
-              ?.map((c) => <option value={c.id}>{c.name}</option>)}
+              ?.map((a) => (
+                <option value={a.id} selected={a.id == form.model?.account?.id}>
+                  {a.name}
+                </option>
+              ))}
           </Select>
 
           <Input
@@ -159,7 +163,11 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
             {currencies
               ?.filter((c) => c.active)
               ?.sort((a, b) => a.code.localeCompare(b.code))
-              ?.map((c) => <option value={c.id}>{c.code}</option>)}
+              ?.map((c) => (
+                <option value={c.id} selected={c.id == form.model?.currency?.id}>
+                  {c.code}
+                </option>
+              ))}
           </Select>
 
           <Select
@@ -174,7 +182,11 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
             {assets
               ?.filter((a) => a.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
-              ?.map((a) => <option value={a.id}>{a.name}</option>)}
+              ?.map((a) => (
+                <option value={a.id} selected={a.id == form.model?.asset?.id}>
+                  {a.name}
+                </option>
+              ))}
           </Select>
         </fieldset>
 
