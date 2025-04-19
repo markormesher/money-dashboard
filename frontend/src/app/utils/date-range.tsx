@@ -1,5 +1,5 @@
 import { isSameDay, subMonths, subYears } from "date-fns";
-import { PLATFORM_MINIMUM_DATE } from "../../config/consts.js";
+import { PLATFORM_MAXIMUM_DATE, PLATFORM_MINIMUM_DATE } from "../../config/consts.js";
 import { FormValidationResult } from "../components/common/form/hook.js";
 import { formatDate } from "./dates.js";
 
@@ -29,7 +29,7 @@ const dateRangePresets = [
     "All Time",
     {
       startDate: PLATFORM_MINIMUM_DATE,
-      endDate: new Date("2099-12-31"),
+      endDate: PLATFORM_MAXIMUM_DATE,
     },
   ],
 ] as const;
@@ -46,6 +46,9 @@ function validateDateRange(value: Partial<DateRange>): FormValidationResult<Date
     } else if (value.startDate.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
       result.isValid = false;
       result.errors.startDate = "Date must not be before the platform minimum";
+    } else if (value.startDate.getTime() > PLATFORM_MAXIMUM_DATE.getTime()) {
+      result.isValid = false;
+      result.errors.startDate = "Date must not be after the platform maximum";
     }
   }
 
@@ -58,6 +61,9 @@ function validateDateRange(value: Partial<DateRange>): FormValidationResult<Date
     } else if (value.endDate.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
       result.isValid = false;
       result.errors.endDate = "Date must not be before the platform minimum";
+    } else if (value.endDate.getTime() > PLATFORM_MAXIMUM_DATE.getTime()) {
+      result.isValid = false;
+      result.errors.endDate = "Date must not be after the platform maximum";
     }
   }
 

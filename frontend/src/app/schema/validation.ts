@@ -12,7 +12,7 @@ import { Envelope } from "../../api_gen/moneydashboard/v4/envelopes_pb.js";
 import { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
 import { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
 import { Transaction } from "../../api_gen/moneydashboard/v4/transactions_pb.js";
-import { PLATFORM_MINIMUM_DATE } from "../../config/consts.js";
+import { PLATFORM_MAXIMUM_DATE, PLATFORM_MINIMUM_DATE } from "../../config/consts.js";
 import { FormValidationResult } from "../components/common/form/hook.js";
 import { parseDateFromProto } from "../utils/dates.js";
 
@@ -211,6 +211,9 @@ function validateEnvelopeAllocation(value: Partial<EnvelopeAllocation>): FormVal
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
       result.isValid = false;
       result.errors.startDate = "Start date must not be before the platform minimum";
+    } else if (dateParsed.getTime() > PLATFORM_MAXIMUM_DATE.getTime()) {
+      result.isValid = false;
+      result.errors.startDate = "Start date must not be after the platform maximum";
     }
   }
 
@@ -240,6 +243,9 @@ function validateEnvelopeTransfer(value: Partial<EnvelopeTransfer>): FormValidat
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
       result.isValid = false;
       result.errors.date = "Date must not be before the platform minimum";
+    } else if (dateParsed.getTime() > PLATFORM_MAXIMUM_DATE.getTime()) {
+      result.isValid = false;
+      result.errors.date = "Date must not be after the platform maximum";
     }
   }
 
@@ -267,6 +273,9 @@ function validateCloneEnvelopeTransfersRequest(
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
       result.isValid = false;
       result.errors.date = "Date must not be before the platform minimum";
+    } else if (dateParsed.getTime() > PLATFORM_MAXIMUM_DATE.getTime()) {
+      result.isValid = false;
+      result.errors.date = "Date must not be after the platform maximum";
     }
   }
 
@@ -306,6 +315,9 @@ function validateTransaction(value: Partial<Transaction>, holdings: Holding[]): 
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
       result.isValid = false;
       result.errors.date = "Date must not be before the platform minimum";
+    } else if (dateParsed.getTime() > PLATFORM_MAXIMUM_DATE.getTime()) {
+      result.isValid = false;
+      result.errors.date = "Date must not be after the platform maximum";
     }
   }
 
@@ -319,6 +331,9 @@ function validateTransaction(value: Partial<Transaction>, holdings: Holding[]): 
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
       result.isValid = false;
       result.errors.budgetDate = "Budget date must not be before the platform minimum";
+    } else if (dateParsed.getTime() > PLATFORM_MAXIMUM_DATE.getTime()) {
+      result.isValid = false;
+      result.errors.budgetDate = "Budget date must not be after the platform maximum";
     }
   }
 
