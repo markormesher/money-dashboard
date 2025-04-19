@@ -1,6 +1,10 @@
 package schema
 
-import "github.com/govalues/decimal"
+import (
+	"time"
+
+	"github.com/govalues/decimal"
+)
 
 type HoldingBalance struct {
 	Holding    Holding
@@ -17,5 +21,10 @@ type CategoryBalance struct {
 
 type EnvelopeBalance struct {
 	Envelope   Envelope
+	GbpBalance decimal.Decimal
+}
+
+type BalanceHistoryEntry struct {
+	Date       time.Time
 	GbpBalance decimal.Decimal
 }

@@ -29,12 +29,24 @@ func (t *Transaction) Validate() error {
 		return fmt.Errorf("date must not be before the platform minimum date")
 	}
 
+	if t.Date.After(PlatformMaximumDate) {
+		return fmt.Errorf("date must not be after the platform maximum date")
+	}
+
 	if t.BudgetDate.Before(PlatformMinimumDate) {
 		return fmt.Errorf("budget date must not be before the platform minimum date")
 	}
 
+	if t.BudgetDate.After(PlatformMaximumDate) {
+		return fmt.Errorf("budget date must not be after the platform maximum date")
+	}
+
 	if t.CreationDate.Before(PlatformMinimumDate) {
 		return fmt.Errorf("creation must not be before the platform minimum date")
+	}
+
+	if t.CreationDate.After(PlatformMaximumDate) {
+		return fmt.Errorf("creation must not be after the platform maximum date")
 	}
 
 	if utf8.RuneCountInString(t.Payee) < 1 {

@@ -3,15 +3,18 @@ package database
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/govalues/decimal"
 	"github.com/jackc/pgx/v5"
 	"github.com/markormesher/money-dashboard/internal/database/conversion"
+	"github.com/markormesher/money-dashboard/internal/database_gen"
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
 type HoldingBalance struct {
+	Date      time.Time
 	Balance   decimal.Decimal
 	HoldingID uuid.UUID
 }
@@ -28,8 +31,11 @@ type TransactionWithHoldingId struct {
 	HoldingID   uuid.UUID
 }
 
-func (db *DB) GetHoldingBalances(ctx context.Context, profileID uuid.UUID) ([]HoldingBalance, error) {
-	rows, err := db.queries.GetHoldingBalances(ctx, profileID)
+func (db *DB) GetHoldingBalancesBeforeDate(ctx context.Context, profileID uuid.UUID, beforeDate time.Time) ([]HoldingBalance, error) {
+	rows, err := db.queries.GetHoldingBalancesBeforeDate(ctx, database_gen.GetHoldingBalancesBeforeDateParams{
+		ProfileID:  profileID,
+		BeforeDate: beforeDate,
+	})
 	if errors.Is(err, pgx.ErrNoRows) {
 		return []HoldingBalance{}, nil
 	} else if err != nil {
@@ -40,6 +46,31 @@ func (db *DB) GetHoldingBalances(ctx context.Context, profileID uuid.UUID) ([]Ho
 
 	for i, row := range rows {
 		output[i] = HoldingBalance{
+			Balance:   row.Balance,
+			HoldingID: row.HoldingID,
+		}
+	}
+
+	return output, nil
+}
+
+func (db *DB) GetHoldingBalancesChangesBetweenDates(ctx context.Context, profileID uuid.UUID, startDate time.Time, endDate time.Time) ([]HoldingBalance, error) {
+	rows, err := db.queries.GetHoldingBalancesChangesBetweenDates(ctx, database_gen.GetHoldingBalancesChangesBetweenDatesParams{
+		ProfileID: profileID,
+		StartDate: startDate,
+		EndDate:   endDate,
+	})
+	if errors.Is(err, pgx.ErrNoRows) {
+		return []HoldingBalance{}, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	output := make([]HoldingBalance, len(rows))
+
+	for i, row := range rows {
+		output[i] = HoldingBalance{
+			Date:      row.Date,
 			Balance:   row.Balance,
 			HoldingID: row.HoldingID,
 		}

@@ -24,6 +24,10 @@ func (t *EnvelopeTransfer) Validate() error {
 		return fmt.Errorf("date must not be before the platform minimum date")
 	}
 
+	if t.Date.After(PlatformMaximumDate) {
+		return fmt.Errorf("date must not be after the platform maximum date")
+	}
+
 	if t.Amount.IsZero() {
 		return fmt.Errorf("the amount must not be zero")
 	}

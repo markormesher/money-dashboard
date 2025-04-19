@@ -21,6 +21,10 @@ func (a *EnvelopeAllocation) Validate() error {
 		return fmt.Errorf("start date must not be before the platform minimum date")
 	}
 
+	if a.StartDate.After(PlatformMaximumDate) {
+		return fmt.Errorf("start date must not be after the platform maximum date")
+	}
+
 	if a.Category == nil {
 		return fmt.Errorf("allocation must be linked to a category")
 	}

@@ -15,7 +15,7 @@ func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) (
 		return nil, err
 	}
 
-	balances, err := c.DB.GetHoldingBalances(ctx, profile.ID)
+	balances, err := c.DB.GetHoldingBalancesBeforeDate(ctx, profile.ID, schema.PlatformMaximumDate)
 	if err != nil {
 		return nil, err
 	}
@@ -239,4 +239,8 @@ func getEnvelopeForCategory(allocations []schema.EnvelopeAllocation, category sc
 	} else {
 		return bestAllocation.Envelope
 	}
+}
+
+func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.BalanceHistoryEntry, error) {
+	return nil, nil
 }

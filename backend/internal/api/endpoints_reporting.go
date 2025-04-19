@@ -7,6 +7,7 @@ import (
 	"github.com/markormesher/money-dashboard/internal/api/conversion"
 	mdv4 "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4"
 	"github.com/markormesher/money-dashboard/internal/conversiontools"
+	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
 func (s *apiServer) GetHoldingBalances(ctx context.Context, req *connect.Request[mdv4.GetHoldingBalancesRequest]) (*connect.Response[mdv4.GetHoldingBalancesResponse], error) {
@@ -56,6 +57,33 @@ func (s *apiServer) GetEnvelopeBalances(ctx context.Context, req *connect.Reques
 
 	res := connect.NewResponse(&mdv4.GetEnvelopeBalancesResponse{
 		Balances: conversiontools.ConvertSlice(balances, conversion.EnvelopeBalanceFromCore),
+	})
+	return res, nil
+}
+
+func (s *apiServer) GetBalanceHistory(ctx context.Context, req *connect.Request[mdv4.GetBalanceHistoryRequest]) (*connect.Response[mdv4.GetBalanceHistoryResponse], error) {
+	user, err := s.getReqUser(ctx, req)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	startDate := conversion.ConvertIntToTime(req.Msg.StartDate)
+	if err := schema.ValidateDate(startDate); err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
+
+	endDate := conversion.ConvertIntToTime(req.Msg.EndDate)
+	if err := schema.ValidateDate(endDate); err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
+
+	balances, err := s.core.GetBalanceHistory(ctx, *user.ActiveProfile, startDate, endDate)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	res := connect.NewResponse(&mdv4.GetBalanceHistoryResponse{
+		Entries: conversiontools.ConvertSlice(balances, conversion.BalanceHistoryEntryFromCore),
 	})
 	return res, nil
 }

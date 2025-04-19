@@ -27,6 +27,11 @@ message EnvelopeBalance {
   double gbp_balance = 2;
 }
 
+message BalanceHistoryEntry {
+  int64 date = 1;
+  double gbp_balance = 2;
+}
+
 message GetHoldingBalancesRequest {}
 
 message GetHoldingBalancesResponse {
@@ -45,8 +50,18 @@ message GetEnvelopeBalancesResponse {
   repeated EnvelopeBalance balances = 1;
 }
 
+message GetBalanceHistoryRequest {
+  int64 start_date = 1;
+  int64 end_date = 2;
+}
+
+message GetBalanceHistoryResponse {
+  repeated BalanceHistoryEntry entries = 1;
+}
+
 service MDReportingService {
   rpc GetHoldingBalances(GetHoldingBalancesRequest) returns (GetHoldingBalancesResponse);
   rpc GetNonZeroMemoBalances(GetNonZeroMemoBalancesRequest) returns (GetNonZeroMemoBalancesResponse);
   rpc GetEnvelopeBalances(GetEnvelopeBalancesRequest) returns (GetEnvelopeBalancesResponse);
+  rpc GetBalanceHistory(GetBalanceHistoryRequest) returns (GetBalanceHistoryResponse);
 }
