@@ -1,20 +1,8 @@
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-function parseDateFromProto(raw: bigint): Date {
-  // dates are passed to the API as second-precision timestamps, which are stored as bigint values
-  return new Date(Number(raw) * 1000);
-}
-
-function formatDateFromProto(raw?: bigint, format: "human" | "system" = "human"): string {
-  if (raw === undefined) {
+function formatDate(date?: Date, format: "human" | "system" = "human"): string {
+  if (date === undefined) {
     return "";
-  }
-
-  const date = parseDateFromProto(raw);
-
-  if (isNaN(date.getTime())) {
-    console.log("Cannot format invalid data from proto", raw);
-    return "invalid";
   }
 
   let out: string;
@@ -25,6 +13,25 @@ function formatDateFromProto(raw?: bigint, format: "human" | "system" = "human")
   }
 
   return out;
+}
+
+function formatDateFromProto(raw?: bigint, format: "human" | "system" = "human"): string {
+  if (raw === undefined) {
+    return "";
+  }
+
+  const date = parseDateFromProto(raw);
+  if (isNaN(date.getTime())) {
+    console.log("Cannot format invalid data from proto", raw);
+    return "invalid";
+  }
+
+  return formatDate(date, format);
+}
+
+function parseDateFromProto(raw: bigint): Date {
+  // dates are passed to the API as second-precision timestamps, which are stored as bigint values
+  return new Date(Number(raw) * 1000);
 }
 
 function convertDateToProto(raw: Date): bigint {
@@ -43,4 +50,4 @@ function convertDateStrToProto(raw: string): bigint | undefined {
   }
 }
 
-export { parseDateFromProto, formatDateFromProto, convertDateToProto, convertDateStrToProto };
+export { formatDate, formatDateFromProto, parseDateFromProto, convertDateToProto, convertDateStrToProto };

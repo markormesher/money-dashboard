@@ -1,0 +1,12 @@
+ul.preset-links {
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+
+  li {
+    list-style-type: none;
+  }
+}

@@ -13,6 +13,7 @@ import { ProfilesPage } from "../profiles/profiles-page.js";
 import { DashboardPage } from "../dashboard/dashboard.js";
 import { EnvelopesPage } from "../envelopes/envelopes-page.js";
 import { EnvelopeTransfersPage } from "../envelope-transfers/envelope-transfers-page.js";
+import { BalanceHistoryPage } from "../reports/balance-history.js";
 import { useRouter } from "./router.js";
 import { Menu } from "./menu.js";
 import { Breadcrumbs } from "./breadcrumbs.js";
@@ -42,6 +43,9 @@ function App(): ReactElement {
         return <EnvelopesPage />;
       case "/planning/envelope-transfers":
         return <EnvelopeTransfersPage />;
+
+      case "/reports/balance-history":
+        return <BalanceHistoryPage />;
 
       case "/settings/accounts":
         return <AccountsPage />;
