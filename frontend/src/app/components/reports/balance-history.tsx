@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { subYears } from "date-fns";
+import { subMonths } from "date-fns";
 import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -20,7 +20,7 @@ function BalanceHistoryPage(): ReactElement {
   }, []);
 
   const [dateRange, setDateRange] = React.useState<DateRange>({
-    startDate: subYears(new Date(), 1),
+    startDate: subMonths(new Date(), 1),
     endDate: new Date(),
   });
   const [dateRangePickerOpen, setDateRangePickerOpen] = React.useState(false);
