@@ -1,20 +1,5 @@
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-function formatDate(date?: Date, format: "human" | "system" = "human"): string {
-  if (date === undefined) {
-    return "";
-  }
-
-  let out: string;
-  if (format == "human") {
-    out = `${date.getDate() < 10 ? "0" : ""}${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
-  } else {
-    out = date.toISOString().substring(0, 10);
-  }
-
-  return out;
-}
-
 function formatDateFromProto(raw?: bigint, format: "human" | "system" = "human"): string {
   if (raw === undefined) {
     return "";
@@ -26,7 +11,14 @@ function formatDateFromProto(raw?: bigint, format: "human" | "system" = "human")
     return "invalid";
   }
 
-  return formatDate(date, format);
+  let out: string;
+  if (format == "human") {
+    out = `${date.getDate() < 10 ? "0" : ""}${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+  } else {
+    out = date.toISOString().substring(0, 10);
+  }
+
+  return out;
 }
 
 function parseDateFromProto(raw: bigint): Date {
@@ -50,4 +42,16 @@ function convertDateStrToProto(raw: string): bigint | undefined {
   }
 }
 
-export { formatDate, formatDateFromProto, parseDateFromProto, convertDateToProto, convertDateStrToProto };
+function isSameDay(d1: bigint, d2: bigint): boolean {
+  const d1d = parseDateFromProto(d1);
+  const d2d = parseDateFromProto(d2);
+  return d1d.getFullYear() == d2d.getFullYear() && d1d.getMonth() == d2d.getMonth() && d1d.getDate() == d2d.getDate();
+}
+
+function addMonths(d: bigint, n: number): bigint {
+  const date = parseDateFromProto(d);
+  date.setMonth(date.getMonth() + n);
+  return convertDateToProto(date);
+}
+
+export { formatDateFromProto, parseDateFromProto, convertDateToProto, convertDateStrToProto, isSameDay, addMonths };

@@ -1,35 +1,34 @@
-import { isSameDay, subMonths, subYears } from "date-fns";
 import { PLATFORM_MAXIMUM_DATE, PLATFORM_MINIMUM_DATE } from "../../config/consts.js";
 import { FormValidationResult } from "../components/common/form/hook.js";
-import { formatDate } from "./dates.js";
+import { addMonths, convertDateToProto, formatDateFromProto, isSameDay, parseDateFromProto } from "./dates.js";
 
 type DateRange = {
-  startDate: Date;
-  endDate: Date;
+  startDate: bigint;
+  endDate: bigint;
 };
 
-const today = new Date();
+const today = convertDateToProto(new Date());
 
 const dateRangePresets = [
   [
     "Last Month",
     {
-      startDate: subMonths(today, 1),
+      startDate: addMonths(today, -1),
       endDate: today,
     },
   ],
   [
     "Last Year",
     {
-      startDate: subYears(today, 1),
+      startDate: addMonths(today, -12),
       endDate: today,
     },
   ],
   [
     "All Time",
     {
-      startDate: PLATFORM_MINIMUM_DATE,
-      endDate: PLATFORM_MAXIMUM_DATE,
+      startDate: convertDateToProto(PLATFORM_MINIMUM_DATE),
+      endDate: convertDateToProto(PLATFORM_MAXIMUM_DATE),
     },
   ],
 ] as const;
@@ -40,13 +39,14 @@ function validateDateRange(value: Partial<DateRange>): FormValidationResult<Date
   if (value?.startDate === undefined) {
     result.isValid = false;
   } else {
-    if (isNaN(value.startDate.getTime())) {
+    const dateParsed = parseDateFromProto(value.startDate);
+    if (isNaN(dateParsed.getTime())) {
       result.isValid = false;
       result.errors.startDate = "Invalid date";
-    } else if (value.startDate.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
+    } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
       result.isValid = false;
       result.errors.startDate = "Date must not be before the platform minimum";
-    } else if (value.startDate.getTime() > PLATFORM_MAXIMUM_DATE.getTime()) {
+    } else if (dateParsed.getTime() > PLATFORM_MAXIMUM_DATE.getTime()) {
       result.isValid = false;
       result.errors.startDate = "Date must not be after the platform maximum";
     }
@@ -55,20 +55,21 @@ function validateDateRange(value: Partial<DateRange>): FormValidationResult<Date
   if (value?.endDate === undefined) {
     result.isValid = false;
   } else {
-    if (isNaN(value.endDate.getTime())) {
+    const dateParsed = parseDateFromProto(value.endDate);
+    if (isNaN(dateParsed.getTime())) {
       result.isValid = false;
       result.errors.endDate = "Invalid date";
-    } else if (value.endDate.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
+    } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
       result.isValid = false;
       result.errors.endDate = "Date must not be before the platform minimum";
-    } else if (value.endDate.getTime() > PLATFORM_MAXIMUM_DATE.getTime()) {
+    } else if (dateParsed.getTime() > PLATFORM_MAXIMUM_DATE.getTime()) {
       result.isValid = false;
       result.errors.endDate = "Date must not be after the platform maximum";
     }
   }
 
   if (!result.errors.startDate && !result.errors.endDate) {
-    if ((value.endDate?.getTime() ?? 0) < (value.startDate?.getTime() ?? 0)) {
+    if ((value.endDate ?? 0) < (value.startDate ?? 0)) {
       result.isValid = false;
       result.errors.endDate = "End date must after the start date";
     }
@@ -84,7 +85,7 @@ function describeDateRange(dr: DateRange): string {
     }
   }
 
-  return formatDate(dr.startDate) + " to " + formatDate(dr.endDate);
+  return formatDateFromProto(dr.startDate) + " to " + formatDateFromProto(dr.endDate);
 }
 
 export { type DateRange, dateRangePresets, validateDateRange, describeDateRange };

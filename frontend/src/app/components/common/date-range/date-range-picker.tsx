@@ -5,7 +5,7 @@ import { useForm } from "../form/hook.js";
 import { DateRange, dateRangePresets, validateDateRange } from "../../../utils/date-range.js";
 import { CTRLENTER, useKeyShortcut } from "../key-shortcuts/key-shortcuts.js";
 import { Input } from "../form/inputs.js";
-import { formatDate } from "../../../utils/dates.js";
+import { convertDateStrToProto, formatDateFromProto } from "../../../utils/dates.js";
 import "./date-range-picker.css";
 
 type DateRangePickerProps = {
@@ -58,10 +58,10 @@ function DateRangePicker(props: DateRangePickerProps): ReactElement {
             formState={form}
             fieldName={"startDate"}
             type={"date"}
-            value={formatDate(form.model?.startDate, "system")}
+            value={formatDateFromProto(form.model?.startDate, "system")}
             onChange={(evt) =>
               form.patchModel({
-                startDate: new Date(evt.target.value),
+                startDate: convertDateStrToProto(evt.target.value),
               })
             }
           />
@@ -71,10 +71,10 @@ function DateRangePicker(props: DateRangePickerProps): ReactElement {
             formState={form}
             fieldName={"endDate"}
             type={"date"}
-            value={formatDate(form.model?.endDate, "system")}
+            value={formatDateFromProto(form.model?.endDate, "system")}
             onChange={(evt) =>
               form.patchModel({
-                endDate: new Date(evt.target.value),
+                endDate: convertDateStrToProto(evt.target.value),
               })
             }
           />

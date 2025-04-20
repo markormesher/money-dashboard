@@ -1,5 +1,4 @@
 import React, { ReactElement } from "react";
-import { subMonths } from "date-fns";
 import {
   ChartData,
   Chart as ChartJS,
@@ -15,12 +14,12 @@ import { isNumber } from "chart.js/helpers";
 import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { DateRange, describeDateRange } from "../../utils/date-range.js";
+import { DateRange, dateRangePresets, describeDateRange } from "../../utils/date-range.js";
 import { DateRangePicker } from "../common/date-range/date-range-picker.js";
 import { BalanceHistoryEntry } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { useAsyncEffect, useWaitGroup } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
-import { convertDateToProto, formatDateFromProto } from "../../utils/dates.js";
+import { formatDateFromProto } from "../../utils/dates.js";
 import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { LoadingPanel } from "../common/loading/loading.js";
@@ -36,10 +35,7 @@ function BalanceHistoryPage(): ReactElement {
     setMeta({ parents: ["Reports"], title: "Balance History" });
   }, []);
 
-  const [dateRange, setDateRange] = React.useState<DateRange>({
-    startDate: subMonths(new Date(), 1),
-    endDate: new Date(),
-  });
+  const [dateRange, setDateRange] = React.useState<DateRange>(dateRangePresets[0][1]);
   const [dateRangePickerOpen, setDateRangePickerOpen] = React.useState(false);
 
   const wg = useWaitGroup();
@@ -50,8 +46,8 @@ function BalanceHistoryPage(): ReactElement {
     wg.add();
     try {
       const res = await reportingServiceClient.getBalanceHistory({
-        startDate: convertDateToProto(dateRange.startDate),
-        endDate: convertDateToProto(dateRange.endDate),
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
       });
       setData(res.entries);
     } catch (e) {
