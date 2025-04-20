@@ -120,10 +120,17 @@ func (c *Core) WarmRateCache(ctx context.Context) {
 	}
 
 	// fill the caches, working backwards from today
+	lastProgressReport := 0
 	date := time.Now()
 	for {
 		for _, id := range ids {
 			c.getHistoricRate(ctx, id, date)
+		}
+
+		// update progress, maybe
+		if historicRateCache.Size()-lastProgressReport >= 1000 {
+			lastProgressReport = historicRateCache.Size()
+			l.Info("rate cache warming progress", "size", historicRateCache.Size())
 		}
 
 		// avoid slamming postgres too hard
@@ -139,5 +146,5 @@ func (c *Core) WarmRateCache(ctx context.Context) {
 		}
 	}
 
-	l.Info("rate cache warming finished", "entries", historicRateCache.Size())
+	l.Info("rate cache warming finished", "size", historicRateCache.Size())
 }
