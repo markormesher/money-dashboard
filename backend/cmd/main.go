@@ -37,6 +37,8 @@ func main() {
 		DB:     db,
 	}
 
+	go core.WarmRateCache(context.Background())
+
 	// server router
 	mux := mux.NewRouter()
 
