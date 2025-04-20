@@ -1,0 +1,11 @@
+html[data-theme="dark"] canvas {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+canvas {
+  max-height: 40rem;
+
+  &.loading {
+    opacity: 0.4;
+  }
+}

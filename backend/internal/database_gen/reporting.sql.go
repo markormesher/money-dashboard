@@ -7,12 +7,13 @@ package database_gen
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/govalues/decimal"
 )
 
-const getHoldingBalances = `-- name: GetHoldingBalances :many
+const getHoldingBalancesAsOfDate = `-- name: GetHoldingBalancesAsOfDate :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
   transaction.holding_id
@@ -20,25 +21,78 @@ FROM
   transaction
 WHERE
   transaction.profile_id = $1
+  AND transaction.date <= $2
   AND transaction.deleted = FALSE
 GROUP BY transaction.holding_id
 `
 
-type GetHoldingBalancesRow struct {
+type GetHoldingBalancesAsOfDateParams struct {
+	ProfileID uuid.UUID
+	MaxDate   time.Time
+}
+
+type GetHoldingBalancesAsOfDateRow struct {
 	Balance   decimal.Decimal
 	HoldingID uuid.UUID
 }
 
-func (q *Queries) GetHoldingBalances(ctx context.Context, profileID uuid.UUID) ([]GetHoldingBalancesRow, error) {
-	rows, err := q.db.Query(ctx, getHoldingBalances, profileID)
+func (q *Queries) GetHoldingBalancesAsOfDate(ctx context.Context, arg GetHoldingBalancesAsOfDateParams) ([]GetHoldingBalancesAsOfDateRow, error) {
+	rows, err := q.db.Query(ctx, getHoldingBalancesAsOfDate, arg.ProfileID, arg.MaxDate)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetHoldingBalancesRow
+	var items []GetHoldingBalancesAsOfDateRow
 	for rows.Next() {
-		var i GetHoldingBalancesRow
+		var i GetHoldingBalancesAsOfDateRow
 		if err := rows.Scan(&i.Balance, &i.HoldingID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getHoldingBalancesChangesBetweenDates = `-- name: GetHoldingBalancesChangesBetweenDates :many
+SELECT
+  transaction.date,
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
+  transaction.holding_id
+FROM
+  transaction
+WHERE
+  transaction.profile_id = $1
+  AND transaction.date >= $2
+  AND transaction.date <= $3
+  AND transaction.deleted = FALSE
+GROUP BY transaction.date, transaction.holding_id
+`
+
+type GetHoldingBalancesChangesBetweenDatesParams struct {
+	ProfileID uuid.UUID
+	StartDate time.Time
+	EndDate   time.Time
+}
+
+type GetHoldingBalancesChangesBetweenDatesRow struct {
+	Date      time.Time
+	Balance   decimal.Decimal
+	HoldingID uuid.UUID
+}
+
+func (q *Queries) GetHoldingBalancesChangesBetweenDates(ctx context.Context, arg GetHoldingBalancesChangesBetweenDatesParams) ([]GetHoldingBalancesChangesBetweenDatesRow, error) {
+	rows, err := q.db.Query(ctx, getHoldingBalancesChangesBetweenDates, arg.ProfileID, arg.StartDate, arg.EndDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetHoldingBalancesChangesBetweenDatesRow
+	for rows.Next() {
+		var i GetHoldingBalancesChangesBetweenDatesRow
+		if err := rows.Scan(&i.Date, &i.Balance, &i.HoldingID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

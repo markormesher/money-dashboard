@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/govalues/decimal"
@@ -50,11 +51,15 @@ func (c *Core) UpsertHolding(ctx context.Context, profile schema.Profile, holdin
 	return c.DB.UpsertHolding(ctx, holding, profile.ID)
 }
 
-func (c *Core) ConvertNativeAmountToGbp(ctx context.Context, amount decimal.Decimal, holding schema.Holding) (decimal.Decimal, error) {
+func (c *Core) ConvertNativeAmountToGbp(ctx context.Context, amount decimal.Decimal, holding schema.Holding, date time.Time) (decimal.Decimal, error) {
+	if amount.IsZero() {
+		return amount, nil
+	}
+
 	var gbpAmount decimal.Decimal
 
 	if holding.Currency != nil {
-		rate, err := c.GetLatestCurrencyRate(ctx, *holding.Currency)
+		rate, err := c.getHistoricRate(ctx, holding.Currency.ID, date)
 		if err != nil {
 			return decimal.Zero, err
 		}
@@ -66,7 +71,7 @@ func (c *Core) ConvertNativeAmountToGbp(ctx context.Context, amount decimal.Deci
 	}
 
 	if holding.Asset != nil {
-		assetRate, err := c.GetLatestAssetRate(ctx, *holding.Asset)
+		assetRate, err := c.getHistoricRate(ctx, holding.Asset.ID, date)
 		if err != nil {
 			return decimal.Decimal{}, err
 		}
@@ -76,7 +81,7 @@ func (c *Core) ConvertNativeAmountToGbp(ctx context.Context, amount decimal.Deci
 			return decimal.Decimal{}, err
 		}
 
-		rate, err := c.GetLatestCurrencyRate(ctx, *holding.Asset.Currency)
+		rate, err := c.getHistoricRate(ctx, holding.Asset.Currency.ID, date)
 		if err != nil {
 			return decimal.Decimal{}, err
 		}

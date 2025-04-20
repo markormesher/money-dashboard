@@ -1,17 +1,11 @@
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-function parseDateFromProto(raw: bigint): Date {
-  // dates are passed to the API as second-precision timestamps, which are stored as bigint values
-  return new Date(Number(raw) * 1000);
-}
-
 function formatDateFromProto(raw?: bigint, format: "human" | "system" = "human"): string {
   if (raw === undefined) {
     return "";
   }
 
   const date = parseDateFromProto(raw);
-
   if (isNaN(date.getTime())) {
     console.log("Cannot format invalid data from proto", raw);
     return "invalid";
@@ -25,6 +19,11 @@ function formatDateFromProto(raw?: bigint, format: "human" | "system" = "human")
   }
 
   return out;
+}
+
+function parseDateFromProto(raw: bigint): Date {
+  // dates are passed to the API as second-precision timestamps, which are stored as bigint values
+  return new Date(Number(raw) * 1000);
 }
 
 function convertDateToProto(raw: Date): bigint {
@@ -43,4 +42,16 @@ function convertDateStrToProto(raw: string): bigint | undefined {
   }
 }
 
-export { parseDateFromProto, formatDateFromProto, convertDateToProto, convertDateStrToProto };
+function isSameDay(d1: bigint, d2: bigint): boolean {
+  const d1d = parseDateFromProto(d1);
+  const d2d = parseDateFromProto(d2);
+  return d1d.getFullYear() == d2d.getFullYear() && d1d.getMonth() == d2d.getMonth() && d1d.getDate() == d2d.getDate();
+}
+
+function addMonths(d: bigint, n: number): bigint {
+  const date = parseDateFromProto(d);
+  date.setMonth(date.getMonth() + n);
+  return convertDateToProto(date);
+}
+
+export { formatDateFromProto, parseDateFromProto, convertDateToProto, convertDateStrToProto, isSameDay, addMonths };

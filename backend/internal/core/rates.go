@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -10,15 +11,10 @@ import (
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
+// we can be aggressive with caching rates. one rate entry takes up 88 bytes, so 20 years of data for 20 rates is ~13MiB.
 var latestRates = make([]schema.Rate, 0)
-var latestRateLookup = make(map[uuid.UUID]schema.Rate, 0)
-var historicRateLookup = make(map[uuid.UUID]*Cache[time.Time, schema.Rate], 0)
-
-func (c *Core) clearCaches() {
-	latestRates = make([]schema.Rate, 0)
-	latestRateLookup = make(map[uuid.UUID]schema.Rate, 0)
-	historicRateLookup = make(map[uuid.UUID]*Cache[time.Time, schema.Rate], 0)
-}
+var historicRateCache = MakeCache[string, schema.Rate](20 * 20 * 365)
+var cacheWarmingLock sync.Mutex
 
 func (c *Core) UpsertRate(ctx context.Context, rate schema.Rate) error {
 	if err := rate.Validate(); err != nil {
@@ -33,8 +29,9 @@ func (c *Core) UpsertRate(ctx context.Context, rate schema.Rate) error {
 		rate.ID = uuid.New()
 	}
 
-	// rates are updated infrequently - we can be blunt and just wipe the caches when there are edits
-	c.clearCaches()
+	// rates are updated infrequently - we can be blunt and just rebuild the caches when there are edits
+	c.clearRateCaches()
+	go c.WarmRateCache(context.Background())
 
 	return c.DB.UpsertRate(ctx, rate)
 }
@@ -51,48 +48,8 @@ func (c *Core) GetLatestRates(ctx context.Context) ([]schema.Rate, error) {
 
 	// repopulate the cache
 	latestRates = rates
-	for _, r := range rates {
-		switch {
-		case r.CurrencyID != uuid.Nil:
-			latestRateLookup[r.CurrencyID] = r
-		case r.AssetID != uuid.Nil:
-			latestRateLookup[r.AssetID] = r
-		}
-	}
 
 	return latestRates, nil
-}
-
-func (c *Core) GetLatestCurrencyRate(ctx context.Context, currency schema.Currency) (schema.Rate, error) {
-	// thin wrapper allow us to split up currency/asset rate handlind later if needed
-	return c.getLatestRate(ctx, currency.ID)
-}
-
-func (c *Core) GetLatestAssetRate(ctx context.Context, asset schema.Asset) (schema.Rate, error) {
-	// thin wrapper allow us to split up currency/asset rate handlind later if needed
-	return c.getLatestRate(ctx, asset.ID)
-}
-
-func (c *Core) getLatestRate(ctx context.Context, assetOrCurrencyID uuid.UUID) (schema.Rate, error) {
-	// base case for GBP
-	if assetOrCurrencyID.String() == gbpCurrencyId {
-		return schema.Rate{
-			Rate: decimal.MustNew(1, 0),
-		}, nil
-	}
-
-	// populate the latest-rate cache - it's a no-op if we've done it already
-	_, err := c.GetLatestRates(ctx)
-	if err != nil {
-		return schema.Rate{}, err
-	}
-
-	rate, ok := latestRateLookup[assetOrCurrencyID]
-	if ok {
-		return rate, nil
-	}
-
-	return schema.Rate{}, fmt.Errorf("no rate data for asset/currency %s", assetOrCurrencyID)
 }
 
 func (c *Core) getHistoricRate(ctx context.Context, assetOrCurrencyID uuid.UUID, date time.Time) (schema.Rate, error) {
@@ -103,21 +60,91 @@ func (c *Core) getHistoricRate(ctx context.Context, assetOrCurrencyID uuid.UUID,
 		}, nil
 	}
 
-	cache, ok := historicRateLookup[assetOrCurrencyID]
+	cacheKey := rateCacheKey(assetOrCurrencyID, date)
+	rate, ok := historicRateCache.Get(cacheKey)
 	if !ok {
-		newCache := MakeCache[time.Time, schema.Rate](100)
-		cache = &newCache
-	}
-
-	rate, ok := cache.Get(date)
-	if !ok {
-		rate, err := c.DB.GetHistoricRate(ctx, assetOrCurrencyID, date)
+		dbRate, err := c.DB.GetHistoricRate(ctx, assetOrCurrencyID, date)
 		if err != nil {
-			return schema.Rate{}, fmt.Errorf("failed to load rate from database: %w", err)
+			return schema.Rate{}, fmt.Errorf("failed to load rate from database for '%s' at %s: %w", assetOrCurrencyID, date, err)
 		}
 
-		cache.Put(date, rate)
+		historicRateCache.Put(cacheKey, dbRate)
+		rate = dbRate
 	}
 
 	return rate, nil
+}
+
+func rateCacheKey(assetOrCurrencyID uuid.UUID, date time.Time) string {
+	return fmt.Sprintf("%s-%d-%d-%d", assetOrCurrencyID.String(), date.Year(), date.Month(), date.Day())
+}
+
+func (c *Core) clearRateCaches() {
+	latestRates = make([]schema.Rate, 0)
+	historicRateCache.EvictAll()
+}
+
+func (c *Core) WarmRateCache(ctx context.Context) {
+	locked := cacheWarmingLock.TryLock()
+	if !locked {
+		// someone else is already warming the cache
+		return
+	}
+
+	defer cacheWarmingLock.Unlock()
+
+	// pause before warming - we usually get multiple rate updates at once
+	l.Info("warming rate cache in 30 seconds...")
+	time.Sleep(time.Duration(30) * time.Second)
+	l.Info("warming rate cache now")
+
+	// gather IDs
+	assets, err := c.GetAllAssets(ctx)
+	if err != nil {
+		l.Error("rate cache warming failed", "error", err)
+		return
+	}
+
+	currencies, err := c.GetAllCurrencies(ctx)
+	if err != nil {
+		l.Error("rate cache warming failed", "error", err)
+		return
+	}
+
+	ids := make([]uuid.UUID, 0)
+	for _, a := range assets {
+		ids = append(ids, a.ID)
+	}
+	for _, c := range currencies {
+		ids = append(ids, c.ID)
+	}
+
+	// fill the caches, working backwards from today
+	lastProgressReport := 0
+	date := time.Now()
+	for {
+		for _, id := range ids {
+			c.getHistoricRate(ctx, id, date)
+		}
+
+		// update progress, maybe
+		if historicRateCache.Size()-lastProgressReport >= 1000 {
+			lastProgressReport = historicRateCache.Size()
+			l.Info("rate cache warming progress", "size", historicRateCache.Size())
+		}
+
+		// avoid slamming postgres too hard
+		time.Sleep(time.Duration(200) * time.Millisecond)
+		date = date.AddDate(0, 0, -1)
+
+		if date.Before(schema.PlatformMinimumDate) {
+			break
+		}
+
+		if historicRateCache.Size() >= historicRateCache.Capacity {
+			break
+		}
+	}
+
+	l.Info("rate cache warming finished", "size", historicRateCache.Size())
 }

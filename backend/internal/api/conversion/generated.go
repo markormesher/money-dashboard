@@ -78,6 +78,12 @@ func AssetToCore(source *v4.Asset) schema.Asset {
 	}
 	return schemaAsset
 }
+func BalanceHistoryEntryFromCore(source schema.BalanceHistoryEntry) *v4.BalanceHistoryEntry {
+	var mdv4BalanceHistoryEntry v4.BalanceHistoryEntry
+	mdv4BalanceHistoryEntry.Date = ConvertTimeToInt(source.Date)
+	mdv4BalanceHistoryEntry.GbpBalance = ConvertDecimalToFloat(source.GbpBalance)
+	return &mdv4BalanceHistoryEntry
+}
 func CategoryBalanceFromCore(source schema.CategoryBalance) *v4.CategoryBalance {
 	var mdv4CategoryBalance v4.CategoryBalance
 	mdv4CategoryBalance.Category = CategoryFromCore(source.Category)

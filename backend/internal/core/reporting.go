@@ -3,8 +3,10 @@ package core
 import (
 	"context"
 	"fmt"
+	"math"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/govalues/decimal"
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
@@ -15,7 +17,7 @@ func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) (
 		return nil, err
 	}
 
-	balances, err := c.DB.GetHoldingBalances(ctx, profile.ID)
+	balances, err := c.DB.GetHoldingBalancesAsOfDate(ctx, profile.ID, schema.PlatformMaximumDate)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +30,7 @@ func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) (
 			return nil, fmt.Errorf("unknown holding: %s", b.HoldingID)
 		}
 
-		gbpBalance, err := c.ConvertNativeAmountToGbp(ctx, b.Balance, holding)
+		gbpBalance, err := c.ConvertNativeAmountToGbp(ctx, b.Balance, holding, time.Now())
 		if err != nil {
 			return nil, err
 		}
@@ -181,7 +183,7 @@ func (c *Core) GetEnvelopeBalances(ctx context.Context, profile schema.Profile) 
 			return nil, fmt.Errorf("unknown holding: %s", t.HoldingID)
 		}
 
-		gbpAmount, err := c.ConvertNativeAmountToGbp(ctx, txn.Amount, holding)
+		gbpAmount, err := c.ConvertNativeAmountToGbp(ctx, txn.Amount, holding, time.Now())
 		if err != nil {
 			return nil, err
 		}
@@ -239,4 +241,99 @@ func getEnvelopeForCategory(allocations []schema.EnvelopeAllocation, category sc
 	} else {
 		return bestAllocation.Envelope
 	}
+}
+
+func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.BalanceHistoryEntry, error) {
+	// we will build up an array of objects - each entry in the array is one day, and each entry in the object is the diff on that day for a given holding
+	// then we will go through and maintain a running total per holding and compute the GBP value
+
+	days := int(math.Round(endDate.Sub(startDate).Hours()/24)) + 1
+	if days <= 0 {
+		return nil, nil
+	}
+
+	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
+	if err != nil {
+		return nil, err
+	}
+
+	initBalances, err := c.DB.GetHoldingBalancesAsOfDate(ctx, profile.ID, startDate)
+	if err != nil {
+		return nil, err
+	}
+
+	dailyChanges, err := c.DB.GetHoldingBalancesChangesBetweenDates(ctx, profile.ID, startDate.AddDate(0, 0, 1), endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	diffs := make([]map[uuid.UUID]decimal.Decimal, days)
+
+	// day zero: sum of holdings up to this point
+	diffs[0] = make(map[uuid.UUID]decimal.Decimal, 0)
+	for _, b := range initBalances {
+		prev, _ := diffs[0][b.HoldingID]
+		diffs[0][b.HoldingID], err = prev.Add(b.Balance)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// day 1+: sum of each day's changes
+	for _, change := range dailyChanges {
+		day := int(math.Round(change.Date.Sub(startDate).Hours() / 24))
+
+		if diffs[day] == nil {
+			diffs[day] = make(map[uuid.UUID]decimal.Decimal, 0)
+		}
+
+		prev, _ := diffs[day][change.HoldingID]
+		diffs[day][change.HoldingID], err = prev.Add(change.Balance)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// generate running totals and GBP values
+	runningTotal := make(map[uuid.UUID]decimal.Decimal, 0)
+	output := make([]schema.BalanceHistoryEntry, days)
+
+	for d := range days {
+		date := startDate.AddDate(0, 0, d)
+		gbpBalance := decimal.Decimal{}
+
+		for holdingId, diff := range diffs[d] {
+			prev, _ := runningTotal[holdingId]
+			runningTotal[holdingId], err = prev.Add(diff)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		for holdingId, total := range runningTotal {
+			holding, ok := holdings[holdingId]
+			if !ok {
+				return nil, fmt.Errorf("unknown holding: %s", holdingId)
+			}
+
+			gbpTotal, err := c.ConvertNativeAmountToGbp(ctx, total, holding, date)
+			if err != nil {
+				return nil, err
+			}
+
+			gbpBalance, err = gbpBalance.Add(gbpTotal)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		output[d].Date = truncateToDay(date)
+		output[d].GbpBalance = gbpBalance
+	}
+
+	return output, nil
+}
+
+func truncateToDay(t time.Time) time.Time {
+	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
 }

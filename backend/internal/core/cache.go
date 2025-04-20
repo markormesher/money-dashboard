@@ -75,6 +75,10 @@ func (c *Cache[K, V]) EvictAll() {
 	}
 }
 
+func (c *Cache[K, V]) Size() int {
+	return len(c.lookup)
+}
+
 func (c *Cache[K, V]) promote(key K) {
 	entry, ok := c.lookup[key]
 	if !ok {
@@ -105,7 +109,7 @@ func (c *Cache[K, V]) promote(key K) {
 	c.headEntry = entry
 
 	// special case: if this is the only element, set it as the tail too
-	if len(c.lookup) == 1 {
+	if c.Size() == 1 {
 		c.tailEntry = entry
 	}
 }
@@ -116,7 +120,7 @@ func (c *Cache[K, V]) enforceCapacity() {
 	}
 
 	for {
-		if len(c.lookup) <= c.Capacity {
+		if c.Size() <= c.Capacity {
 			return
 		}
 

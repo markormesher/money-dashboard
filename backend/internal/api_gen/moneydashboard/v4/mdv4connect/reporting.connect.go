@@ -42,6 +42,9 @@ const (
 	// MDReportingServiceGetEnvelopeBalancesProcedure is the fully-qualified name of the
 	// MDReportingService's GetEnvelopeBalances RPC.
 	MDReportingServiceGetEnvelopeBalancesProcedure = "/moneydashboard.v4.MDReportingService/GetEnvelopeBalances"
+	// MDReportingServiceGetBalanceHistoryProcedure is the fully-qualified name of the
+	// MDReportingService's GetBalanceHistory RPC.
+	MDReportingServiceGetBalanceHistoryProcedure = "/moneydashboard.v4.MDReportingService/GetBalanceHistory"
 )
 
 // MDReportingServiceClient is a client for the moneydashboard.v4.MDReportingService service.
@@ -49,6 +52,7 @@ type MDReportingServiceClient interface {
 	GetHoldingBalances(context.Context, *connect.Request[v4.GetHoldingBalancesRequest]) (*connect.Response[v4.GetHoldingBalancesResponse], error)
 	GetNonZeroMemoBalances(context.Context, *connect.Request[v4.GetNonZeroMemoBalancesRequest]) (*connect.Response[v4.GetNonZeroMemoBalancesResponse], error)
 	GetEnvelopeBalances(context.Context, *connect.Request[v4.GetEnvelopeBalancesRequest]) (*connect.Response[v4.GetEnvelopeBalancesResponse], error)
+	GetBalanceHistory(context.Context, *connect.Request[v4.GetBalanceHistoryRequest]) (*connect.Response[v4.GetBalanceHistoryResponse], error)
 }
 
 // NewMDReportingServiceClient constructs a client for the moneydashboard.v4.MDReportingService
@@ -80,6 +84,12 @@ func NewMDReportingServiceClient(httpClient connect.HTTPClient, baseURL string, 
 			connect.WithSchema(mDReportingServiceMethods.ByName("GetEnvelopeBalances")),
 			connect.WithClientOptions(opts...),
 		),
+		getBalanceHistory: connect.NewClient[v4.GetBalanceHistoryRequest, v4.GetBalanceHistoryResponse](
+			httpClient,
+			baseURL+MDReportingServiceGetBalanceHistoryProcedure,
+			connect.WithSchema(mDReportingServiceMethods.ByName("GetBalanceHistory")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -88,6 +98,7 @@ type mDReportingServiceClient struct {
 	getHoldingBalances     *connect.Client[v4.GetHoldingBalancesRequest, v4.GetHoldingBalancesResponse]
 	getNonZeroMemoBalances *connect.Client[v4.GetNonZeroMemoBalancesRequest, v4.GetNonZeroMemoBalancesResponse]
 	getEnvelopeBalances    *connect.Client[v4.GetEnvelopeBalancesRequest, v4.GetEnvelopeBalancesResponse]
+	getBalanceHistory      *connect.Client[v4.GetBalanceHistoryRequest, v4.GetBalanceHistoryResponse]
 }
 
 // GetHoldingBalances calls moneydashboard.v4.MDReportingService.GetHoldingBalances.
@@ -105,12 +116,18 @@ func (c *mDReportingServiceClient) GetEnvelopeBalances(ctx context.Context, req 
 	return c.getEnvelopeBalances.CallUnary(ctx, req)
 }
 
+// GetBalanceHistory calls moneydashboard.v4.MDReportingService.GetBalanceHistory.
+func (c *mDReportingServiceClient) GetBalanceHistory(ctx context.Context, req *connect.Request[v4.GetBalanceHistoryRequest]) (*connect.Response[v4.GetBalanceHistoryResponse], error) {
+	return c.getBalanceHistory.CallUnary(ctx, req)
+}
+
 // MDReportingServiceHandler is an implementation of the moneydashboard.v4.MDReportingService
 // service.
 type MDReportingServiceHandler interface {
 	GetHoldingBalances(context.Context, *connect.Request[v4.GetHoldingBalancesRequest]) (*connect.Response[v4.GetHoldingBalancesResponse], error)
 	GetNonZeroMemoBalances(context.Context, *connect.Request[v4.GetNonZeroMemoBalancesRequest]) (*connect.Response[v4.GetNonZeroMemoBalancesResponse], error)
 	GetEnvelopeBalances(context.Context, *connect.Request[v4.GetEnvelopeBalancesRequest]) (*connect.Response[v4.GetEnvelopeBalancesResponse], error)
+	GetBalanceHistory(context.Context, *connect.Request[v4.GetBalanceHistoryRequest]) (*connect.Response[v4.GetBalanceHistoryResponse], error)
 }
 
 // NewMDReportingServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -138,6 +155,12 @@ func NewMDReportingServiceHandler(svc MDReportingServiceHandler, opts ...connect
 		connect.WithSchema(mDReportingServiceMethods.ByName("GetEnvelopeBalances")),
 		connect.WithHandlerOptions(opts...),
 	)
+	mDReportingServiceGetBalanceHistoryHandler := connect.NewUnaryHandler(
+		MDReportingServiceGetBalanceHistoryProcedure,
+		svc.GetBalanceHistory,
+		connect.WithSchema(mDReportingServiceMethods.ByName("GetBalanceHistory")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/moneydashboard.v4.MDReportingService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MDReportingServiceGetHoldingBalancesProcedure:
@@ -146,6 +169,8 @@ func NewMDReportingServiceHandler(svc MDReportingServiceHandler, opts ...connect
 			mDReportingServiceGetNonZeroMemoBalancesHandler.ServeHTTP(w, r)
 		case MDReportingServiceGetEnvelopeBalancesProcedure:
 			mDReportingServiceGetEnvelopeBalancesHandler.ServeHTTP(w, r)
+		case MDReportingServiceGetBalanceHistoryProcedure:
+			mDReportingServiceGetBalanceHistoryHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -165,4 +190,8 @@ func (UnimplementedMDReportingServiceHandler) GetNonZeroMemoBalances(context.Con
 
 func (UnimplementedMDReportingServiceHandler) GetEnvelopeBalances(context.Context, *connect.Request[v4.GetEnvelopeBalancesRequest]) (*connect.Response[v4.GetEnvelopeBalancesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDReportingService.GetEnvelopeBalances is not implemented"))
+}
+
+func (UnimplementedMDReportingServiceHandler) GetBalanceHistory(context.Context, *connect.Request[v4.GetBalanceHistoryRequest]) (*connect.Response[v4.GetBalanceHistoryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDReportingService.GetBalanceHistory is not implemented"))
 }

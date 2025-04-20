@@ -71,6 +71,7 @@ type converterSpec interface {
 	HoldingBalanceFromCore(source schema.HoldingBalance) *mdv4.HoldingBalance
 	CategoryBalanceFromCore(source schema.CategoryBalance) *mdv4.CategoryBalance
 	EnvelopeBalanceFromCore(source schema.EnvelopeBalance) *mdv4.EnvelopeBalance
+	BalanceHistoryEntryFromCore(source schema.BalanceHistoryEntry) *mdv4.BalanceHistoryEntry
 }
 
 // utility methods to convert between core and api types

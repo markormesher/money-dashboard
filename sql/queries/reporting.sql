@@ -1,4 +1,4 @@
--- name: GetHoldingBalances :many
+-- name: GetHoldingBalancesAsOfDate :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
   transaction.holding_id
@@ -6,8 +6,24 @@ FROM
   transaction
 WHERE
   transaction.profile_id = @profile_id
+  AND transaction.date <= @max_date
   AND transaction.deleted = FALSE
 GROUP BY transaction.holding_id
+;
+
+-- name: GetHoldingBalancesChangesBetweenDates :many
+SELECT
+  transaction.date,
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
+  transaction.holding_id
+FROM
+  transaction
+WHERE
+  transaction.profile_id = @profile_id
+  AND transaction.date >= @start_date
+  AND transaction.date <= @end_date
+  AND transaction.deleted = FALSE
+GROUP BY transaction.date, transaction.holding_id
 ;
 
 -- name: GetMemoBalances :many
