@@ -65,7 +65,7 @@ func (c *Core) getHistoricRate(ctx context.Context, assetOrCurrencyID uuid.UUID,
 	if !ok {
 		dbRate, err := c.DB.GetHistoricRate(ctx, assetOrCurrencyID, date)
 		if err != nil {
-			return schema.Rate{}, fmt.Errorf("failed to load rate from database: %w", err)
+			return schema.Rate{}, fmt.Errorf("failed to load rate from database for '%s' at %s: %w", assetOrCurrencyID, date, err)
 		}
 
 		historicRateCache.Put(cacheKey, dbRate)

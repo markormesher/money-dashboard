@@ -52,6 +52,10 @@ func (c *Core) UpsertHolding(ctx context.Context, profile schema.Profile, holdin
 }
 
 func (c *Core) ConvertNativeAmountToGbp(ctx context.Context, amount decimal.Decimal, holding schema.Holding, date time.Time) (decimal.Decimal, error) {
+	if amount.IsZero() {
+		return amount, nil
+	}
+
 	var gbpAmount decimal.Decimal
 
 	if holding.Currency != nil {
