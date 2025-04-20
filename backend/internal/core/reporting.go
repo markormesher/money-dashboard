@@ -247,7 +247,7 @@ func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, st
 	// we will build up an array of objects - each entry in the array is one day, and each entry in the object is the diff on that day for a given holding
 	// then we will go through and maintain a running total per holding and compute the GBP value
 
-	days := int(math.Round(endDate.Sub(startDate).Hours() / 24))
+	days := int(math.Round(endDate.Sub(startDate).Hours()/24)) + 1
 	if days <= 0 {
 		return nil, nil
 	}
@@ -257,22 +257,38 @@ func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, st
 		return nil, err
 	}
 
-	diffs := make([]map[uuid.UUID]decimal.Decimal, days)
-
-	// entry zero: balance on the first day
-	diffs[0] = make(map[uuid.UUID]decimal.Decimal, 0)
 	initBalances, err := c.DB.GetHoldingBalancesAsOfDate(ctx, profile.ID, startDate)
 	if err != nil {
 		return nil, err
 	}
+
+	dailyChanges, err := c.DB.GetHoldingBalancesChangesBetweenDates(ctx, profile.ID, startDate.AddDate(0, 0, 1), endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	diffs := make([]map[uuid.UUID]decimal.Decimal, days)
+
+	// day zero: sum of holdings up to this point
+	diffs[0] = make(map[uuid.UUID]decimal.Decimal, 0)
 	for _, b := range initBalances {
-		holding, ok := holdings[b.HoldingID]
-		if !ok {
-			return nil, fmt.Errorf("unknown holding: %s", b.HoldingID)
+		prev, _ := diffs[0][b.HoldingID]
+		diffs[0][b.HoldingID], err = prev.Add(b.Balance)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// day 1+: sum of each day's changes
+	for _, change := range dailyChanges {
+		day := int(math.Round(change.Date.Sub(startDate).Hours() / 24))
+
+		if diffs[day] == nil {
+			diffs[day] = make(map[uuid.UUID]decimal.Decimal, 0)
 		}
 
-		prev, _ := diffs[0][holding.ID]
-		diffs[0][holding.ID], err = prev.Add(b.Balance)
+		prev, _ := diffs[day][change.HoldingID]
+		diffs[day][change.HoldingID], err = prev.Add(change.Balance)
 		if err != nil {
 			return nil, err
 		}
@@ -283,7 +299,7 @@ func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, st
 	output := make([]schema.BalanceHistoryEntry, days)
 
 	for d := range days {
-		date := startDate.AddDate(0, 0, 1)
+		date := startDate.AddDate(0, 0, d)
 		gbpBalance := decimal.Decimal{}
 
 		for holdingId, diff := range diffs[d] {
@@ -311,9 +327,13 @@ func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, st
 			}
 		}
 
-		output[d].Date = date
+		output[d].Date = truncateToDay(date)
 		output[d].GbpBalance = gbpBalance
 	}
 
 	return output, nil
+}
+
+func truncateToDay(t time.Time) time.Time {
+	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
 }
