@@ -1,4 +1,4 @@
--- name: GetHoldingBalancesBeforeDate :many
+-- name: GetHoldingBalancesAsOfDate :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
   transaction.holding_id
@@ -6,7 +6,7 @@ FROM
   transaction
 WHERE
   transaction.profile_id = @profile_id
-  AND transaction.date < @before_date
+  AND transaction.date <= @max_date
   AND transaction.deleted = FALSE
 GROUP BY transaction.holding_id
 ;

@@ -8,7 +8,7 @@ import { DateRangePicker } from "../common/date-range/date-range-picker.js";
 import { BalanceHistoryEntry } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { useAsyncEffect, useWaitGroup } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
-import { convertDateToProto } from "../../utils/dates.js";
+import { convertDateToProto, parseDateFromProto } from "../../utils/dates.js";
 import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { LoadingPanel } from "../common/loading/loading.js";
@@ -60,7 +60,18 @@ function BalanceHistoryPage(): ReactElement {
   } else if (!data) {
     body = <LoadingPanel />;
   } else {
-    body = <pre>{JSON.stringify(data, null, 2)}</pre>;
+    body = (
+      <pre>
+        {JSON.stringify(
+          data.map((b) => ({
+            date: parseDateFromProto(b.date),
+            balance: b.gbpBalance,
+          })),
+          null,
+          2,
+        )}
+      </pre>
+    );
   }
 
   return (

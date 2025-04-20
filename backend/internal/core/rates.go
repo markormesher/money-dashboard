@@ -63,38 +63,6 @@ func (c *Core) GetLatestRates(ctx context.Context) ([]schema.Rate, error) {
 	return latestRates, nil
 }
 
-func (c *Core) GetLatestCurrencyRate(ctx context.Context, currency schema.Currency) (schema.Rate, error) {
-	// thin wrapper allow us to split up currency/asset rate handlind later if needed
-	return c.getLatestRate(ctx, currency.ID)
-}
-
-func (c *Core) GetLatestAssetRate(ctx context.Context, asset schema.Asset) (schema.Rate, error) {
-	// thin wrapper allow us to split up currency/asset rate handlind later if needed
-	return c.getLatestRate(ctx, asset.ID)
-}
-
-func (c *Core) getLatestRate(ctx context.Context, assetOrCurrencyID uuid.UUID) (schema.Rate, error) {
-	// base case for GBP
-	if assetOrCurrencyID.String() == gbpCurrencyId {
-		return schema.Rate{
-			Rate: decimal.MustNew(1, 0),
-		}, nil
-	}
-
-	// populate the latest-rate cache - it's a no-op if we've done it already
-	_, err := c.GetLatestRates(ctx)
-	if err != nil {
-		return schema.Rate{}, err
-	}
-
-	rate, ok := latestRateLookup[assetOrCurrencyID]
-	if ok {
-		return rate, nil
-	}
-
-	return schema.Rate{}, fmt.Errorf("no rate data for asset/currency %s", assetOrCurrencyID)
-}
-
 func (c *Core) getHistoricRate(ctx context.Context, assetOrCurrencyID uuid.UUID, date time.Time) (schema.Rate, error) {
 	// base case for GBP
 	if assetOrCurrencyID.String() == gbpCurrencyId {
@@ -111,7 +79,8 @@ func (c *Core) getHistoricRate(ctx context.Context, assetOrCurrencyID uuid.UUID,
 
 	rate, ok := cache.Get(date)
 	if !ok {
-		rate, err := c.DB.GetHistoricRate(ctx, assetOrCurrencyID, date)
+		var err error
+		rate, err = c.DB.GetHistoricRate(ctx, assetOrCurrencyID, date)
 		if err != nil {
 			return schema.Rate{}, fmt.Errorf("failed to load rate from database: %w", err)
 		}

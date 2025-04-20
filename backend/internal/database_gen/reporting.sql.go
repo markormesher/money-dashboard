@@ -13,7 +13,7 @@ import (
 	"github.com/govalues/decimal"
 )
 
-const getHoldingBalancesBeforeDate = `-- name: GetHoldingBalancesBeforeDate :many
+const getHoldingBalancesAsOfDate = `-- name: GetHoldingBalancesAsOfDate :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
   transaction.holding_id
@@ -21,30 +21,30 @@ FROM
   transaction
 WHERE
   transaction.profile_id = $1
-  AND transaction.date < $2
+  AND transaction.date <= $2
   AND transaction.deleted = FALSE
 GROUP BY transaction.holding_id
 `
 
-type GetHoldingBalancesBeforeDateParams struct {
-	ProfileID  uuid.UUID
-	BeforeDate time.Time
+type GetHoldingBalancesAsOfDateParams struct {
+	ProfileID uuid.UUID
+	MaxDate   time.Time
 }
 
-type GetHoldingBalancesBeforeDateRow struct {
+type GetHoldingBalancesAsOfDateRow struct {
 	Balance   decimal.Decimal
 	HoldingID uuid.UUID
 }
 
-func (q *Queries) GetHoldingBalancesBeforeDate(ctx context.Context, arg GetHoldingBalancesBeforeDateParams) ([]GetHoldingBalancesBeforeDateRow, error) {
-	rows, err := q.db.Query(ctx, getHoldingBalancesBeforeDate, arg.ProfileID, arg.BeforeDate)
+func (q *Queries) GetHoldingBalancesAsOfDate(ctx context.Context, arg GetHoldingBalancesAsOfDateParams) ([]GetHoldingBalancesAsOfDateRow, error) {
+	rows, err := q.db.Query(ctx, getHoldingBalancesAsOfDate, arg.ProfileID, arg.MaxDate)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetHoldingBalancesBeforeDateRow
+	var items []GetHoldingBalancesAsOfDateRow
 	for rows.Next() {
-		var i GetHoldingBalancesBeforeDateRow
+		var i GetHoldingBalancesAsOfDateRow
 		if err := rows.Scan(&i.Balance, &i.HoldingID); err != nil {
 			return nil, err
 		}

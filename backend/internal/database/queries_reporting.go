@@ -31,10 +31,10 @@ type TransactionWithHoldingId struct {
 	HoldingID   uuid.UUID
 }
 
-func (db *DB) GetHoldingBalancesBeforeDate(ctx context.Context, profileID uuid.UUID, beforeDate time.Time) ([]HoldingBalance, error) {
-	rows, err := db.queries.GetHoldingBalancesBeforeDate(ctx, database_gen.GetHoldingBalancesBeforeDateParams{
-		ProfileID:  profileID,
-		BeforeDate: beforeDate,
+func (db *DB) GetHoldingBalancesAsOfDate(ctx context.Context, profileID uuid.UUID, maxDate time.Time) ([]HoldingBalance, error) {
+	rows, err := db.queries.GetHoldingBalancesAsOfDate(ctx, database_gen.GetHoldingBalancesAsOfDateParams{
+		ProfileID: profileID,
+		MaxDate:   maxDate,
 	})
 	if errors.Is(err, pgx.ErrNoRows) {
 		return []HoldingBalance{}, nil

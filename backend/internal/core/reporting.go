@@ -3,8 +3,10 @@ package core
 import (
 	"context"
 	"fmt"
+	"math"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/govalues/decimal"
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
@@ -15,7 +17,7 @@ func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) (
 		return nil, err
 	}
 
-	balances, err := c.DB.GetHoldingBalancesBeforeDate(ctx, profile.ID, schema.PlatformMaximumDate)
+	balances, err := c.DB.GetHoldingBalancesAsOfDate(ctx, profile.ID, schema.PlatformMaximumDate)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +30,7 @@ func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) (
 			return nil, fmt.Errorf("unknown holding: %s", b.HoldingID)
 		}
 
-		gbpBalance, err := c.ConvertNativeAmountToGbp(ctx, b.Balance, holding)
+		gbpBalance, err := c.ConvertNativeAmountToGbp(ctx, b.Balance, holding, time.Now())
 		if err != nil {
 			return nil, err
 		}
@@ -181,7 +183,7 @@ func (c *Core) GetEnvelopeBalances(ctx context.Context, profile schema.Profile) 
 			return nil, fmt.Errorf("unknown holding: %s", t.HoldingID)
 		}
 
-		gbpAmount, err := c.ConvertNativeAmountToGbp(ctx, txn.Amount, holding)
+		gbpAmount, err := c.ConvertNativeAmountToGbp(ctx, txn.Amount, holding, time.Now())
 		if err != nil {
 			return nil, err
 		}
@@ -242,5 +244,76 @@ func getEnvelopeForCategory(allocations []schema.EnvelopeAllocation, category sc
 }
 
 func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.BalanceHistoryEntry, error) {
-	return nil, nil
+	// we will build up an array of objects - each entry in the array is one day, and each entry in the object is the diff on that day for a given holding
+	// then we will go through and maintain a running total per holding and compute the GBP value
+
+	days := int(math.Round(endDate.Sub(startDate).Hours() / 24))
+	if days <= 0 {
+		return nil, nil
+	}
+
+	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
+	if err != nil {
+		return nil, err
+	}
+
+	diffs := make([]map[uuid.UUID]decimal.Decimal, days)
+
+	// entry zero: balance on the first day
+	diffs[0] = make(map[uuid.UUID]decimal.Decimal, 0)
+	initBalances, err := c.DB.GetHoldingBalancesAsOfDate(ctx, profile.ID, startDate)
+	if err != nil {
+		return nil, err
+	}
+	for _, b := range initBalances {
+		holding, ok := holdings[b.HoldingID]
+		if !ok {
+			return nil, fmt.Errorf("unknown holding: %s", b.HoldingID)
+		}
+
+		prev, _ := diffs[0][holding.ID]
+		diffs[0][holding.ID], err = prev.Add(b.Balance)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// generate running totals and GBP values
+	runningTotal := make(map[uuid.UUID]decimal.Decimal, 0)
+	output := make([]schema.BalanceHistoryEntry, days)
+
+	for d := range days {
+		date := startDate.AddDate(0, 0, 1)
+		gbpBalance := decimal.Decimal{}
+
+		for holdingId, diff := range diffs[d] {
+			prev, _ := runningTotal[holdingId]
+			runningTotal[holdingId], err = prev.Add(diff)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		for holdingId, total := range runningTotal {
+			holding, ok := holdings[holdingId]
+			if !ok {
+				return nil, fmt.Errorf("unknown holding: %s", holdingId)
+			}
+
+			gbpTotal, err := c.ConvertNativeAmountToGbp(ctx, total, holding, date)
+			if err != nil {
+				return nil, err
+			}
+
+			gbpBalance, err = gbpBalance.Add(gbpTotal)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		output[d].Date = date
+		output[d].GbpBalance = gbpBalance
+	}
+
+	return output, nil
 }
