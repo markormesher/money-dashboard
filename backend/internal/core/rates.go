@@ -95,7 +95,9 @@ func (c *Core) WarmRateCache(ctx context.Context) {
 
 	// pause before warming - we usually get multiple rate updates at once
 	l.Info("warming rate cache in 30 seconds...")
-	time.Sleep(time.Duration(30) * time.Second)
+	if !c.Config.DevMode {
+		time.Sleep(time.Duration(30) * time.Second)
+	}
 	l.Info("warming rate cache now")
 
 	// gather IDs
@@ -134,7 +136,7 @@ func (c *Core) WarmRateCache(ctx context.Context) {
 		}
 
 		// avoid slamming postgres too hard
-		time.Sleep(time.Duration(200) * time.Millisecond)
+		time.Sleep(time.Duration(50) * time.Millisecond)
 		date = date.AddDate(0, 0, -1)
 
 		if date.Before(schema.PlatformMinimumDate) {
