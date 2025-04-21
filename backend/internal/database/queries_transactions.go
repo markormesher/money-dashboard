@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -34,6 +35,15 @@ func (db *DB) GetTransactionById(ctx context.Context, id uuid.UUID, profileID uu
 	transaction.Profile = &profile
 
 	return transaction, true, nil
+}
+
+func (db *DB) GetTransactionDateRange(ctx context.Context, profileID uuid.UUID) (time.Time, time.Time, error) {
+	row, err := db.queries.GetTransactionDateRange(ctx, profileID)
+	if err != nil {
+		return time.Time{}, time.Time{}, err
+	}
+
+	return row.MinDate, row.MaxDate, nil
 }
 
 func (db *DB) GetTransactionPageTotal(ctx context.Context, profileID uuid.UUID) (int32, error) {
