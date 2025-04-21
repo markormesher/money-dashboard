@@ -127,6 +127,29 @@ func (q *Queries) GetTransactionById(ctx context.Context, arg GetTransactionById
 	return i, err
 }
 
+const getTransactionDateRange = `-- name: GetTransactionDateRange :one
+SELECT
+  MIN(date)::DATE AS min_date,
+  MAX(date)::DATE AS max_date
+FROM
+  transaction
+WHERE
+  transaction.profile_id = $1
+  AND transaction.deleted = FALSE
+`
+
+type GetTransactionDateRangeRow struct {
+	MinDate time.Time
+	MaxDate time.Time
+}
+
+func (q *Queries) GetTransactionDateRange(ctx context.Context, profileID uuid.UUID) (GetTransactionDateRangeRow, error) {
+	row := q.db.QueryRow(ctx, getTransactionDateRange, profileID)
+	var i GetTransactionDateRangeRow
+	err := row.Scan(&i.MinDate, &i.MaxDate)
+	return i, err
+}
+
 const getTransactionPageFilteredEntities = `-- name: GetTransactionPageFilteredEntities :many
 SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,

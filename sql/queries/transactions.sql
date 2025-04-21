@@ -15,6 +15,17 @@ WHERE
   AND transaction.deleted = FALSE
 ;
 
+-- name: GetTransactionDateRange :one
+SELECT
+  MIN(date)::DATE AS min_date,
+  MAX(date)::DATE AS max_date
+FROM
+  transaction
+WHERE
+  transaction.profile_id = @profile_id
+  AND transaction.deleted = FALSE
+;
+
 -- name: GetTransactionPageTotal :one
 SELECT
   count(*)

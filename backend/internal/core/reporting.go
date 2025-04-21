@@ -244,14 +244,27 @@ func getEnvelopeForCategory(allocations []schema.EnvelopeAllocation, category sc
 }
 
 func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.BalanceHistoryEntry, error) {
-	// we will build up an array of objects - each entry in the array is one day, and each entry in the object is the diff on that day for a given holding
-	// then we will go through and maintain a running total per holding and compute the GBP value
-
-	days := int(math.Round(endDate.Sub(startDate).Hours()/24)) + 1
-	if days <= 0 {
+	// clamp dates to the range the profile actually has transactions for
+	minDate, maxDate, err := c.DB.GetTransactionDateRange(ctx, profile.ID)
+	if err != nil {
 		return nil, nil
 	}
 
+	if startDate.Before(minDate) {
+		startDate = minDate
+	}
+
+	if endDate.After(maxDate) {
+		endDate = maxDate
+	}
+
+	// days will be counter as 0 to N for most of the logic here
+	days := int(math.Round(endDate.Sub(startDate).Hours()/24)) + 1
+	if days <= 0 {
+		return nil, fmt.Errorf("invalid date range")
+	}
+
+	// load in the data we need
 	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
 	if err != nil {
 		return nil, err
@@ -267,6 +280,7 @@ func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, st
 		return nil, err
 	}
 
+	// this array of maps stores, for each day 0 to N, the **changes** in balance per holding on that day
 	diffs := make([]map[uuid.UUID]decimal.Decimal, days)
 
 	// day zero: sum of holdings up to this point

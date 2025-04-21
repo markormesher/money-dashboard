@@ -44,6 +44,7 @@ function BalanceHistoryPage(): ReactElement {
 
   useAsyncEffect(async () => {
     wg.add();
+    setError(null);
     try {
       const res = await reportingServiceClient.getBalanceHistory({
         startDate: dateRange.startDate,
@@ -59,7 +60,7 @@ function BalanceHistoryPage(): ReactElement {
   }, [dateRange]);
 
   const buttons = [
-    <button className={"outline"} onClick={() => setDateRangePickerOpen(true)}>
+    <button className={"outline"} onClick={() => setDateRangePickerOpen(true)} disabled={wg.count > 0}>
       <IconGroup>
         <Icon name={"calendar_month"} />
         <span>{describeDateRange(dateRange)}</span>

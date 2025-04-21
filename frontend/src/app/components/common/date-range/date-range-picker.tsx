@@ -22,6 +22,13 @@ function DateRangePicker(props: DateRangePickerProps): ReactElement {
   });
   React.useEffect(() => form.setModel(dateRange), [dateRange]);
 
+  const [saveOnNextRender, setSaveOnNextRender] = React.useState(false);
+  React.useEffect(() => {
+    if (saveOnNextRender) {
+      save();
+    }
+  }, [form.model]);
+
   const save = () => {
     if (form.wg.count > 0 || !form.valid || !form.model) {
       return;
@@ -42,7 +49,13 @@ function DateRangePicker(props: DateRangePickerProps): ReactElement {
   const presetLinks = dateRangePresets.map((p) => {
     return (
       <li>
-        <a href={"#"} onClick={() => form.patchModel(p[1])}>
+        <a
+          href={"#"}
+          onClick={() => {
+            setSaveOnNextRender(true);
+            form.patchModel(p[1]);
+          }}
+        >
           {p[0]}
         </a>
       </li>

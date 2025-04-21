@@ -18,9 +18,30 @@ const dateRangePresets = [
     },
   ],
   [
+    "Last 6 Months",
+    {
+      startDate: addMonths(today, -6),
+      endDate: today,
+    },
+  ],
+  [
     "Last Year",
     {
       startDate: addMonths(today, -12),
+      endDate: today,
+    },
+  ],
+  [
+    "Last 2 Years",
+    {
+      startDate: addMonths(today, -24),
+      endDate: today,
+    },
+  ],
+  [
+    "Last 5 Years",
+    {
+      startDate: addMonths(today, -60),
       endDate: today,
     },
   ],
