@@ -126,7 +126,8 @@ func (c *Core) WarmRateCache(ctx context.Context) {
 	date := time.Now()
 	for {
 		for _, id := range ids {
-			c.getHistoricRate(ctx, id, date)
+			// we don't care right now if this errors
+			_, _ = c.getHistoricRate(ctx, id, date)
 		}
 
 		// update progress, maybe

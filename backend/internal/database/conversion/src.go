@@ -18,6 +18,8 @@ import (
 // goverter:extend ConvertPgTextToPrimitive
 // goverter:extend ConvertPgIntToPrimitive
 // goverter:extend ConvertPgBoolToPrimitive
+//
+//lint:ignore U1000 this is "unused" directly but is used for code generation
 type converterSpec interface {
 	AccountToCore(source database_gen.Account) schema.Account
 

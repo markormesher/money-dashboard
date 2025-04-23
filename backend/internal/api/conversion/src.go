@@ -24,6 +24,8 @@ import (
 // goverter:ignoreUnexported yes
 // goverter:ignoreMissing yes
 // goverter:useZeroValueOnPointerInconsistency yes
+//
+//lint:ignore U1000 this is "unused" directly but is used for code generation
 type converterSpec interface {
 	// core entites
 
