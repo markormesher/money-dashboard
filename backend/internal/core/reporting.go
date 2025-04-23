@@ -286,7 +286,7 @@ func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, st
 	// day zero: sum of holdings up to this point
 	diffs[0] = make(map[uuid.UUID]decimal.Decimal, 0)
 	for _, b := range initBalances {
-		prev, _ := diffs[0][b.HoldingID]
+		prev := diffs[0][b.HoldingID]
 		diffs[0][b.HoldingID], err = prev.Add(b.Balance)
 		if err != nil {
 			return nil, err
@@ -301,7 +301,7 @@ func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, st
 			diffs[day] = make(map[uuid.UUID]decimal.Decimal, 0)
 		}
 
-		prev, _ := diffs[day][change.HoldingID]
+		prev := diffs[day][change.HoldingID]
 		diffs[day][change.HoldingID], err = prev.Add(change.Balance)
 		if err != nil {
 			return nil, err
@@ -317,7 +317,7 @@ func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, st
 		gbpBalance := decimal.Decimal{}
 
 		for holdingId, diff := range diffs[d] {
-			prev, _ := runningTotal[holdingId]
+			prev := runningTotal[holdingId]
 			runningTotal[holdingId], err = prev.Add(diff)
 			if err != nil {
 				return nil, err
