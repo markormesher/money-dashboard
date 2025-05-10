@@ -348,6 +348,75 @@ func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, st
 	return output, nil
 }
 
+func (c *Core) GetTaxReport(ctx context.Context, profile schema.Profile, taxYear int) (schema.TaxReport, error) {
+	startDate := time.Date(taxYear, 4, 6, 0, 0, 0, 0, time.UTC)
+	endDate := time.Date(taxYear+1, 4, 5, 0, 0, 0, 0, time.UTC)
+
+	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
+	if err != nil {
+		return schema.TaxReport{}, err
+	}
+
+	// interest income
+
+	interestIncome := make([]schema.HoldingBalance, 0)
+	interestIncomeRaw, err := c.DB.GetInterestIncomeSumsPerHolding(ctx, profile.ID, startDate, endDate)
+	if err != nil {
+		return schema.TaxReport{}, err
+	}
+
+	for _, b := range interestIncomeRaw {
+		holding, ok := holdings[b.HoldingID]
+		if !ok {
+			return schema.TaxReport{}, fmt.Errorf("unknown holding: %s", b.HoldingID)
+		}
+
+		gbpBalance, err := c.ConvertNativeAmountToGbp(ctx, b.Balance, holding, time.Now())
+		if err != nil {
+			return schema.TaxReport{}, err
+		}
+
+		interestIncome = append(interestIncome, schema.HoldingBalance{
+			Holding:    holding,
+			RawBalance: b.Balance,
+			GbpBalance: gbpBalance,
+		})
+	}
+
+	// dividend income
+
+	dividendIncome := make([]schema.HoldingBalance, 0)
+	dividendIncomeRaw, err := c.DB.GetDividendIncomeSumsPerHolding(ctx, profile.ID, startDate, endDate)
+	if err != nil {
+		return schema.TaxReport{}, err
+	}
+
+	for _, b := range dividendIncomeRaw {
+		holding, ok := holdings[b.HoldingID]
+		if !ok {
+			return schema.TaxReport{}, fmt.Errorf("unknown holding: %s", b.HoldingID)
+		}
+
+		gbpBalance, err := c.ConvertNativeAmountToGbp(ctx, b.Balance, holding, time.Now())
+		if err != nil {
+			return schema.TaxReport{}, err
+		}
+
+		dividendIncome = append(dividendIncome, schema.HoldingBalance{
+			Holding:    holding,
+			RawBalance: b.Balance,
+			GbpBalance: gbpBalance,
+		})
+	}
+
+	// done, at last
+
+	return schema.TaxReport{
+		InterestIncome: interestIncome,
+		DividendIncome: dividendIncome,
+	}, nil
+}
+
 func truncateToDay(t time.Time) time.Time {
 	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
 }

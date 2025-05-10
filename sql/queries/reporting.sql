@@ -61,3 +61,43 @@ WHERE
   AND transaction.profile_id = @profile_id
   AND transaction.deleted = FALSE
 ;
+
+-- name: GetInterestIncomeSumsPerHolding :many
+SELECT
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
+  transaction.holding_id
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+    JOIN holding on transaction.holding_id = holding.id -- not exposed - just used to join to accounts
+    JOIN account ON holding.account_id = account.id
+WHERE
+  transaction.profile_id = @profile_id
+  AND transaction.date >= @min_date
+  AND transaction.date <= @max_date
+  AND transaction.deleted = FALSE
+  AND category.is_interest_income = TRUE
+  AND account.is_isa = FALSE
+  AND account.is_pension = FALSE
+GROUP BY transaction.holding_id
+;
+
+-- name: GetDividendIncomeSumsPerHolding :many
+SELECT
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
+  transaction.holding_id
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+    JOIN holding on transaction.holding_id = holding.id -- not exposed - just used to join to accounts
+    JOIN account ON holding.account_id = account.id
+WHERE
+  transaction.profile_id = @profile_id
+  AND transaction.date >= @min_date
+  AND transaction.date <= @max_date
+  AND transaction.deleted = FALSE
+  AND category.is_dividend_income = TRUE
+  AND account.is_isa = FALSE
+  AND account.is_pension = FALSE
+GROUP BY transaction.holding_id
+;
