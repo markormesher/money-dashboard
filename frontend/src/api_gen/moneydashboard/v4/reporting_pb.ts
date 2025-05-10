@@ -20,7 +20,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file moneydashboard/v4/reporting.proto.
  */
 export const file_moneydashboard_v4_reporting: GenFile = /*@__PURE__*/
-  fileDesc("CiFtb25leWRhc2hib2FyZC92NC9yZXBvcnRpbmcucHJvdG8SEW1vbmV5ZGFzaGJvYXJkLnY0ImcKDkhvbGRpbmdCYWxhbmNlEisKB2hvbGRpbmcYASABKAsyGi5tb25leWRhc2hib2FyZC52NC5Ib2xkaW5nEhMKC3Jhd19iYWxhbmNlGAIgASgBEhMKC2dicF9iYWxhbmNlGAMgASgBIq0BCg9DYXRlZ29yeUJhbGFuY2USLQoIY2F0ZWdvcnkYASABKAsyGy5tb25leWRhc2hib2FyZC52NC5DYXRlZ29yeRInCgVhc3NldBgCIAEoCzIYLm1vbmV5ZGFzaGJvYXJkLnY0LkFzc2V0Ei0KCGN1cnJlbmN5GAMgASgLMhsubW9uZXlkYXNoYm9hcmQudjQuQ3VycmVuY3kSEwoLcmF3X2JhbGFuY2UYBCABKAEiVQoPRW52ZWxvcGVCYWxhbmNlEi0KCGVudmVsb3BlGAEgASgLMhsubW9uZXlkYXNoYm9hcmQudjQuRW52ZWxvcGUSEwoLZ2JwX2JhbGFuY2UYAiABKAEiOAoTQmFsYW5jZUhpc3RvcnlFbnRyeRIMCgRkYXRlGAEgASgDEhMKC2dicF9iYWxhbmNlGAIgASgBIhsKGUdldEhvbGRpbmdCYWxhbmNlc1JlcXVlc3QiUQoaR2V0SG9sZGluZ0JhbGFuY2VzUmVzcG9uc2USMwoIYmFsYW5jZXMYASADKAsyIS5tb25leWRhc2hib2FyZC52NC5Ib2xkaW5nQmFsYW5jZSIfCh1HZXROb25aZXJvTWVtb0JhbGFuY2VzUmVxdWVzdCJWCh5HZXROb25aZXJvTWVtb0JhbGFuY2VzUmVzcG9uc2USNAoIYmFsYW5jZXMYASADKAsyIi5tb25leWRhc2hib2FyZC52NC5DYXRlZ29yeUJhbGFuY2UiHAoaR2V0RW52ZWxvcGVCYWxhbmNlc1JlcXVlc3QiUwobR2V0RW52ZWxvcGVCYWxhbmNlc1Jlc3BvbnNlEjQKCGJhbGFuY2VzGAEgAygLMiIubW9uZXlkYXNoYm9hcmQudjQuRW52ZWxvcGVCYWxhbmNlIkAKGEdldEJhbGFuY2VIaXN0b3J5UmVxdWVzdBISCgpzdGFydF9kYXRlGAEgASgDEhAKCGVuZF9kYXRlGAIgASgDIlQKGUdldEJhbGFuY2VIaXN0b3J5UmVzcG9uc2USNwoHZW50cmllcxgBIAMoCzImLm1vbmV5ZGFzaGJvYXJkLnY0LkJhbGFuY2VIaXN0b3J5RW50cnkiJwoTR2V0VGF4UmVwb3J0UmVxdWVzdBIQCgh0YXhfeWVhchgBIAEoBSKqAQoUR2V0VGF4UmVwb3J0UmVzcG9uc2USSAoYaW50ZXJlc3RfaW5jb21lX2JhbGFuY2VzGAEgAygLMiYubW9uZXlkYXNoYm9hcmQudjQuQmFsYW5jZUhpc3RvcnlFbnRyeRJIChhkaXZpZGVuZF9pbmNvbWVfYmFsYW5jZXMYAiADKAsyJi5tb25leWRhc2hib2FyZC52NC5CYWxhbmNlSGlzdG9yeUVudHJ5Ms0EChJNRFJlcG9ydGluZ1NlcnZpY2UScQoSR2V0SG9sZGluZ0JhbGFuY2VzEiwubW9uZXlkYXNoYm9hcmQudjQuR2V0SG9sZGluZ0JhbGFuY2VzUmVxdWVzdBotLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEhvbGRpbmdCYWxhbmNlc1Jlc3BvbnNlEn0KFkdldE5vblplcm9NZW1vQmFsYW5jZXMSMC5tb25leWRhc2hib2FyZC52NC5HZXROb25aZXJvTWVtb0JhbGFuY2VzUmVxdWVzdBoxLm1vbmV5ZGFzaGJvYXJkLnY0LkdldE5vblplcm9NZW1vQmFsYW5jZXNSZXNwb25zZRJ0ChNHZXRFbnZlbG9wZUJhbGFuY2VzEi0ubW9uZXlkYXNoYm9hcmQudjQuR2V0RW52ZWxvcGVCYWxhbmNlc1JlcXVlc3QaLi5tb25leWRhc2hib2FyZC52NC5HZXRFbnZlbG9wZUJhbGFuY2VzUmVzcG9uc2USbgoRR2V0QmFsYW5jZUhpc3RvcnkSKy5tb25leWRhc2hib2FyZC52NC5HZXRCYWxhbmNlSGlzdG9yeVJlcXVlc3QaLC5tb25leWRhc2hib2FyZC52NC5HZXRCYWxhbmNlSGlzdG9yeVJlc3BvbnNlEl8KDEdldFRheFJlcG9ydBImLm1vbmV5ZGFzaGJvYXJkLnY0LkdldFRheFJlcG9ydFJlcXVlc3QaJy5tb25leWRhc2hib2FyZC52NC5HZXRUYXhSZXBvcnRSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM", [file_moneydashboard_v4_assets, file_moneydashboard_v4_categories, file_moneydashboard_v4_currencies, file_moneydashboard_v4_envelopes, file_moneydashboard_v4_holdings]);
+  fileDesc("CiFtb25leWRhc2hib2FyZC92NC9yZXBvcnRpbmcucHJvdG8SEW1vbmV5ZGFzaGJvYXJkLnY0ImcKDkhvbGRpbmdCYWxhbmNlEisKB2hvbGRpbmcYASABKAsyGi5tb25leWRhc2hib2FyZC52NC5Ib2xkaW5nEhMKC3Jhd19iYWxhbmNlGAIgASgBEhMKC2dicF9iYWxhbmNlGAMgASgBIq0BCg9DYXRlZ29yeUJhbGFuY2USLQoIY2F0ZWdvcnkYASABKAsyGy5tb25leWRhc2hib2FyZC52NC5DYXRlZ29yeRInCgVhc3NldBgCIAEoCzIYLm1vbmV5ZGFzaGJvYXJkLnY0LkFzc2V0Ei0KCGN1cnJlbmN5GAMgASgLMhsubW9uZXlkYXNoYm9hcmQudjQuQ3VycmVuY3kSEwoLcmF3X2JhbGFuY2UYBCABKAEiVQoPRW52ZWxvcGVCYWxhbmNlEi0KCGVudmVsb3BlGAEgASgLMhsubW9uZXlkYXNoYm9hcmQudjQuRW52ZWxvcGUSEwoLZ2JwX2JhbGFuY2UYAiABKAEiOAoTQmFsYW5jZUhpc3RvcnlFbnRyeRIMCgRkYXRlGAEgASgDEhMKC2dicF9iYWxhbmNlGAIgASgBIoMBCglUYXhSZXBvcnQSOgoPaW50ZXJlc3RfaW5jb21lGAEgAygLMiEubW9uZXlkYXNoYm9hcmQudjQuSG9sZGluZ0JhbGFuY2USOgoPZGl2aWRlbmRfaW5jb21lGAIgAygLMiEubW9uZXlkYXNoYm9hcmQudjQuSG9sZGluZ0JhbGFuY2UiGwoZR2V0SG9sZGluZ0JhbGFuY2VzUmVxdWVzdCJRChpHZXRIb2xkaW5nQmFsYW5jZXNSZXNwb25zZRIzCghiYWxhbmNlcxgBIAMoCzIhLm1vbmV5ZGFzaGJvYXJkLnY0LkhvbGRpbmdCYWxhbmNlIh8KHUdldE5vblplcm9NZW1vQmFsYW5jZXNSZXF1ZXN0IlYKHkdldE5vblplcm9NZW1vQmFsYW5jZXNSZXNwb25zZRI0CghiYWxhbmNlcxgBIAMoCzIiLm1vbmV5ZGFzaGJvYXJkLnY0LkNhdGVnb3J5QmFsYW5jZSIcChpHZXRFbnZlbG9wZUJhbGFuY2VzUmVxdWVzdCJTChtHZXRFbnZlbG9wZUJhbGFuY2VzUmVzcG9uc2USNAoIYmFsYW5jZXMYASADKAsyIi5tb25leWRhc2hib2FyZC52NC5FbnZlbG9wZUJhbGFuY2UiQAoYR2V0QmFsYW5jZUhpc3RvcnlSZXF1ZXN0EhIKCnN0YXJ0X2RhdGUYASABKAMSEAoIZW5kX2RhdGUYAiABKAMiVAoZR2V0QmFsYW5jZUhpc3RvcnlSZXNwb25zZRI3CgdlbnRyaWVzGAEgAygLMiYubW9uZXlkYXNoYm9hcmQudjQuQmFsYW5jZUhpc3RvcnlFbnRyeSInChNHZXRUYXhSZXBvcnRSZXF1ZXN0EhAKCHRheF95ZWFyGAEgASgFIkgKFEdldFRheFJlcG9ydFJlc3BvbnNlEjAKCnRheF9yZXBvcnQYASABKAsyHC5tb25leWRhc2hib2FyZC52NC5UYXhSZXBvcnQyzQQKEk1EUmVwb3J0aW5nU2VydmljZRJxChJHZXRIb2xkaW5nQmFsYW5jZXMSLC5tb25leWRhc2hib2FyZC52NC5HZXRIb2xkaW5nQmFsYW5jZXNSZXF1ZXN0Gi0ubW9uZXlkYXNoYm9hcmQudjQuR2V0SG9sZGluZ0JhbGFuY2VzUmVzcG9uc2USfQoWR2V0Tm9uWmVyb01lbW9CYWxhbmNlcxIwLm1vbmV5ZGFzaGJvYXJkLnY0LkdldE5vblplcm9NZW1vQmFsYW5jZXNSZXF1ZXN0GjEubW9uZXlkYXNoYm9hcmQudjQuR2V0Tm9uWmVyb01lbW9CYWxhbmNlc1Jlc3BvbnNlEnQKE0dldEVudmVsb3BlQmFsYW5jZXMSLS5tb25leWRhc2hib2FyZC52NC5HZXRFbnZlbG9wZUJhbGFuY2VzUmVxdWVzdBouLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEVudmVsb3BlQmFsYW5jZXNSZXNwb25zZRJuChFHZXRCYWxhbmNlSGlzdG9yeRIrLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEJhbGFuY2VIaXN0b3J5UmVxdWVzdBosLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEJhbGFuY2VIaXN0b3J5UmVzcG9uc2USXwoMR2V0VGF4UmVwb3J0EiYubW9uZXlkYXNoYm9hcmQudjQuR2V0VGF4UmVwb3J0UmVxdWVzdBonLm1vbmV5ZGFzaGJvYXJkLnY0LkdldFRheFJlcG9ydFJlc3BvbnNlQlFaT2dpdGh1Yi5jb20vbWFya29ybWVzaGVyL21vbmV5LWRhc2hib2FyZC9pbnRlcm5hbC9hcGlfZ2VuL21vbmV5ZGFzaGJvYXJkL3Y0O21kdjRiBnByb3RvMw", [file_moneydashboard_v4_assets, file_moneydashboard_v4_categories, file_moneydashboard_v4_currencies, file_moneydashboard_v4_envelopes, file_moneydashboard_v4_holdings]);
 
 /**
  * @generated from message moneydashboard.v4.HoldingBalance
@@ -126,6 +126,28 @@ export const BalanceHistoryEntrySchema: GenMessage<BalanceHistoryEntry> = /*@__P
   messageDesc(file_moneydashboard_v4_reporting, 3);
 
 /**
+ * @generated from message moneydashboard.v4.TaxReport
+ */
+export type TaxReport = Message<"moneydashboard.v4.TaxReport"> & {
+  /**
+   * @generated from field: repeated moneydashboard.v4.HoldingBalance interest_income = 1;
+   */
+  interestIncome: HoldingBalance[];
+
+  /**
+   * @generated from field: repeated moneydashboard.v4.HoldingBalance dividend_income = 2;
+   */
+  dividendIncome: HoldingBalance[];
+};
+
+/**
+ * Describes the message moneydashboard.v4.TaxReport.
+ * Use `create(TaxReportSchema)` to create a new message.
+ */
+export const TaxReportSchema: GenMessage<TaxReport> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_reporting, 4);
+
+/**
  * @generated from message moneydashboard.v4.GetHoldingBalancesRequest
  */
 export type GetHoldingBalancesRequest = Message<"moneydashboard.v4.GetHoldingBalancesRequest"> & {
@@ -136,7 +158,7 @@ export type GetHoldingBalancesRequest = Message<"moneydashboard.v4.GetHoldingBal
  * Use `create(GetHoldingBalancesRequestSchema)` to create a new message.
  */
 export const GetHoldingBalancesRequestSchema: GenMessage<GetHoldingBalancesRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_reporting, 4);
+  messageDesc(file_moneydashboard_v4_reporting, 5);
 
 /**
  * @generated from message moneydashboard.v4.GetHoldingBalancesResponse
@@ -153,7 +175,7 @@ export type GetHoldingBalancesResponse = Message<"moneydashboard.v4.GetHoldingBa
  * Use `create(GetHoldingBalancesResponseSchema)` to create a new message.
  */
 export const GetHoldingBalancesResponseSchema: GenMessage<GetHoldingBalancesResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_reporting, 5);
+  messageDesc(file_moneydashboard_v4_reporting, 6);
 
 /**
  * @generated from message moneydashboard.v4.GetNonZeroMemoBalancesRequest
@@ -166,7 +188,7 @@ export type GetNonZeroMemoBalancesRequest = Message<"moneydashboard.v4.GetNonZer
  * Use `create(GetNonZeroMemoBalancesRequestSchema)` to create a new message.
  */
 export const GetNonZeroMemoBalancesRequestSchema: GenMessage<GetNonZeroMemoBalancesRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_reporting, 6);
+  messageDesc(file_moneydashboard_v4_reporting, 7);
 
 /**
  * @generated from message moneydashboard.v4.GetNonZeroMemoBalancesResponse
@@ -183,7 +205,7 @@ export type GetNonZeroMemoBalancesResponse = Message<"moneydashboard.v4.GetNonZe
  * Use `create(GetNonZeroMemoBalancesResponseSchema)` to create a new message.
  */
 export const GetNonZeroMemoBalancesResponseSchema: GenMessage<GetNonZeroMemoBalancesResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_reporting, 7);
+  messageDesc(file_moneydashboard_v4_reporting, 8);
 
 /**
  * @generated from message moneydashboard.v4.GetEnvelopeBalancesRequest
@@ -196,7 +218,7 @@ export type GetEnvelopeBalancesRequest = Message<"moneydashboard.v4.GetEnvelopeB
  * Use `create(GetEnvelopeBalancesRequestSchema)` to create a new message.
  */
 export const GetEnvelopeBalancesRequestSchema: GenMessage<GetEnvelopeBalancesRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_reporting, 8);
+  messageDesc(file_moneydashboard_v4_reporting, 9);
 
 /**
  * @generated from message moneydashboard.v4.GetEnvelopeBalancesResponse
@@ -213,7 +235,7 @@ export type GetEnvelopeBalancesResponse = Message<"moneydashboard.v4.GetEnvelope
  * Use `create(GetEnvelopeBalancesResponseSchema)` to create a new message.
  */
 export const GetEnvelopeBalancesResponseSchema: GenMessage<GetEnvelopeBalancesResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_reporting, 9);
+  messageDesc(file_moneydashboard_v4_reporting, 10);
 
 /**
  * @generated from message moneydashboard.v4.GetBalanceHistoryRequest
@@ -235,7 +257,7 @@ export type GetBalanceHistoryRequest = Message<"moneydashboard.v4.GetBalanceHist
  * Use `create(GetBalanceHistoryRequestSchema)` to create a new message.
  */
 export const GetBalanceHistoryRequestSchema: GenMessage<GetBalanceHistoryRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_reporting, 10);
+  messageDesc(file_moneydashboard_v4_reporting, 11);
 
 /**
  * @generated from message moneydashboard.v4.GetBalanceHistoryResponse
@@ -252,7 +274,7 @@ export type GetBalanceHistoryResponse = Message<"moneydashboard.v4.GetBalanceHis
  * Use `create(GetBalanceHistoryResponseSchema)` to create a new message.
  */
 export const GetBalanceHistoryResponseSchema: GenMessage<GetBalanceHistoryResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_reporting, 11);
+  messageDesc(file_moneydashboard_v4_reporting, 12);
 
 /**
  * @generated from message moneydashboard.v4.GetTaxReportRequest
@@ -269,21 +291,16 @@ export type GetTaxReportRequest = Message<"moneydashboard.v4.GetTaxReportRequest
  * Use `create(GetTaxReportRequestSchema)` to create a new message.
  */
 export const GetTaxReportRequestSchema: GenMessage<GetTaxReportRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_reporting, 12);
+  messageDesc(file_moneydashboard_v4_reporting, 13);
 
 /**
  * @generated from message moneydashboard.v4.GetTaxReportResponse
  */
 export type GetTaxReportResponse = Message<"moneydashboard.v4.GetTaxReportResponse"> & {
   /**
-   * @generated from field: repeated moneydashboard.v4.BalanceHistoryEntry interest_income_balances = 1;
+   * @generated from field: moneydashboard.v4.TaxReport tax_report = 1;
    */
-  interestIncomeBalances: BalanceHistoryEntry[];
-
-  /**
-   * @generated from field: repeated moneydashboard.v4.BalanceHistoryEntry dividend_income_balances = 2;
-   */
-  dividendIncomeBalances: BalanceHistoryEntry[];
+  taxReport?: TaxReport;
 };
 
 /**
@@ -291,7 +308,7 @@ export type GetTaxReportResponse = Message<"moneydashboard.v4.GetTaxReportRespon
  * Use `create(GetTaxReportResponseSchema)` to create a new message.
  */
 export const GetTaxReportResponseSchema: GenMessage<GetTaxReportResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_reporting, 13);
+  messageDesc(file_moneydashboard_v4_reporting, 14);
 
 /**
  * @generated from service moneydashboard.v4.MDReportingService

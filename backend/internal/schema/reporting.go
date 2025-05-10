@@ -28,3 +28,8 @@ type BalanceHistoryEntry struct {
 	Date       time.Time
 	GbpBalance decimal.Decimal
 }
+
+type TaxReport struct {
+	InterestIncome []HoldingBalance
+	DividendIncome []HoldingBalance
+}

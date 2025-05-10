@@ -32,6 +32,11 @@ message BalanceHistoryEntry {
   double gbp_balance = 2;
 }
 
+message TaxReport {
+  repeated HoldingBalance interest_income = 1;
+  repeated HoldingBalance dividend_income = 2;
+}
+
 message GetHoldingBalancesRequest {}
 
 message GetHoldingBalancesResponse {
@@ -64,8 +69,7 @@ message GetTaxReportRequest {
 }
 
 message GetTaxReportResponse {
-  repeated BalanceHistoryEntry interest_income_balances = 1;
-  repeated BalanceHistoryEntry dividend_income_balances = 2;
+  TaxReport tax_report = 1;
 }
 
 service MDReportingService {

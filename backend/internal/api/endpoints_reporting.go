@@ -89,6 +89,18 @@ func (s *apiServer) GetBalanceHistory(ctx context.Context, req *connect.Request[
 }
 
 func (s *apiServer) GetTaxReport(ctx context.Context, req *connect.Request[mdv4.GetTaxReportRequest]) (*connect.Response[mdv4.GetTaxReportResponse], error) {
-	res := connect.NewResponse(&mdv4.GetTaxReportResponse{})
+	user, err := s.getReqUser(ctx, req)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	report, err := s.core.GetTaxReport(ctx, *user.ActiveProfile, int(req.Msg.GetTaxYear()))
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	res := connect.NewResponse(&mdv4.GetTaxReportResponse{
+		TaxReport: conversion.TaxReportFromCore(report),
+	})
 	return res, nil
 }

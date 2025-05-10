@@ -285,6 +285,22 @@ func RateToCore(source *v4.Rate) schema.Rate {
 	}
 	return schemaRate
 }
+func TaxReportFromCore(source schema.TaxReport) *v4.TaxReport {
+	var mdv4TaxReport v4.TaxReport
+	if source.InterestIncome != nil {
+		mdv4TaxReport.InterestIncome = make([]*v4.HoldingBalance, len(source.InterestIncome))
+		for i := 0; i < len(source.InterestIncome); i++ {
+			mdv4TaxReport.InterestIncome[i] = HoldingBalanceFromCore(source.InterestIncome[i])
+		}
+	}
+	if source.DividendIncome != nil {
+		mdv4TaxReport.DividendIncome = make([]*v4.HoldingBalance, len(source.DividendIncome))
+		for j := 0; j < len(source.DividendIncome); j++ {
+			mdv4TaxReport.DividendIncome[j] = HoldingBalanceFromCore(source.DividendIncome[j])
+		}
+	}
+	return &mdv4TaxReport
+}
 func TransactionFromCore(source schema.Transaction) *v4.Transaction {
 	var mdv4Transaction v4.Transaction
 	mdv4Transaction.Id = ConvertUUIDToString(source.ID)

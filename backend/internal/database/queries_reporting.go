@@ -127,3 +127,51 @@ func (db *DB) GetTransactionsForEnvelopeBalances(ctx context.Context, profileID 
 
 	return transactions, nil
 }
+
+func (db *DB) GetInterestIncomeSumsPerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
+	rows, err := db.queries.GetInterestIncomeSumsPerHolding(ctx, database_gen.GetInterestIncomeSumsPerHoldingParams{
+		ProfileID: profileID,
+		MinDate:   minDate,
+		MaxDate:   maxDate,
+	})
+	if errors.Is(err, pgx.ErrNoRows) {
+		return []HoldingBalance{}, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	output := make([]HoldingBalance, len(rows))
+
+	for i, row := range rows {
+		output[i] = HoldingBalance{
+			Balance:   row.Balance,
+			HoldingID: row.HoldingID,
+		}
+	}
+
+	return output, nil
+}
+
+func (db *DB) GetDividendIncomeSumsPerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
+	rows, err := db.queries.GetDividendIncomeSumsPerHolding(ctx, database_gen.GetDividendIncomeSumsPerHoldingParams{
+		ProfileID: profileID,
+		MinDate:   minDate,
+		MaxDate:   maxDate,
+	})
+	if errors.Is(err, pgx.ErrNoRows) {
+		return []HoldingBalance{}, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	output := make([]HoldingBalance, len(rows))
+
+	for i, row := range rows {
+		output[i] = HoldingBalance{
+			Balance:   row.Balance,
+			HoldingID: row.HoldingID,
+		}
+	}
+
+	return output, nil
+}

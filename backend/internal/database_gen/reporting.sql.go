@@ -13,6 +13,53 @@ import (
 	"github.com/govalues/decimal"
 )
 
+const getDividendIncomeSumsPerHolding = `-- name: GetDividendIncomeSumsPerHolding :many
+SELECT
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
+  transaction.holding_id
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+WHERE
+  transaction.profile_id = $1
+  AND transaction.date >= $2
+  AND transaction.date <= $3
+  AND transaction.deleted = FALSE
+  AND category.is_dividend_income = TRUE
+GROUP BY transaction.holding_id
+`
+
+type GetDividendIncomeSumsPerHoldingParams struct {
+	ProfileID uuid.UUID
+	MinDate   time.Time
+	MaxDate   time.Time
+}
+
+type GetDividendIncomeSumsPerHoldingRow struct {
+	Balance   decimal.Decimal
+	HoldingID uuid.UUID
+}
+
+func (q *Queries) GetDividendIncomeSumsPerHolding(ctx context.Context, arg GetDividendIncomeSumsPerHoldingParams) ([]GetDividendIncomeSumsPerHoldingRow, error) {
+	rows, err := q.db.Query(ctx, getDividendIncomeSumsPerHolding, arg.ProfileID, arg.MinDate, arg.MaxDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetDividendIncomeSumsPerHoldingRow
+	for rows.Next() {
+		var i GetDividendIncomeSumsPerHoldingRow
+		if err := rows.Scan(&i.Balance, &i.HoldingID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getHoldingBalancesAsOfDate = `-- name: GetHoldingBalancesAsOfDate :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
@@ -93,6 +140,53 @@ func (q *Queries) GetHoldingBalancesChangesBetweenDates(ctx context.Context, arg
 	for rows.Next() {
 		var i GetHoldingBalancesChangesBetweenDatesRow
 		if err := rows.Scan(&i.Date, &i.Balance, &i.HoldingID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getInterestIncomeSumsPerHolding = `-- name: GetInterestIncomeSumsPerHolding :many
+SELECT
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
+  transaction.holding_id
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+WHERE
+  transaction.profile_id = $1
+  AND transaction.date >= $2
+  AND transaction.date <= $3
+  AND transaction.deleted = FALSE
+  AND category.is_interest_income = TRUE
+GROUP BY transaction.holding_id
+`
+
+type GetInterestIncomeSumsPerHoldingParams struct {
+	ProfileID uuid.UUID
+	MinDate   time.Time
+	MaxDate   time.Time
+}
+
+type GetInterestIncomeSumsPerHoldingRow struct {
+	Balance   decimal.Decimal
+	HoldingID uuid.UUID
+}
+
+func (q *Queries) GetInterestIncomeSumsPerHolding(ctx context.Context, arg GetInterestIncomeSumsPerHoldingParams) ([]GetInterestIncomeSumsPerHoldingRow, error) {
+	rows, err := q.db.Query(ctx, getInterestIncomeSumsPerHolding, arg.ProfileID, arg.MinDate, arg.MaxDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetInterestIncomeSumsPerHoldingRow
+	for rows.Next() {
+		var i GetInterestIncomeSumsPerHoldingRow
+		if err := rows.Scan(&i.Balance, &i.HoldingID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
