@@ -20,12 +20,16 @@ SELECT
 FROM
   transaction
     JOIN category on transaction.category_id = category.id
+    JOIN holding on transaction.holding_id = holding.id -- not exposed - just used to join to accounts
+    JOIN account ON holding.account_id = account.id
 WHERE
   transaction.profile_id = $1
   AND transaction.date >= $2
   AND transaction.date <= $3
   AND transaction.deleted = FALSE
   AND category.is_dividend_income = TRUE
+  AND account.is_isa = FALSE
+  AND account.is_pension = FALSE
 GROUP BY transaction.holding_id
 `
 
@@ -157,12 +161,16 @@ SELECT
 FROM
   transaction
     JOIN category on transaction.category_id = category.id
+    JOIN holding on transaction.holding_id = holding.id -- not exposed - just used to join to accounts
+    JOIN account ON holding.account_id = account.id
 WHERE
   transaction.profile_id = $1
   AND transaction.date >= $2
   AND transaction.date <= $3
   AND transaction.deleted = FALSE
   AND category.is_interest_income = TRUE
+  AND account.is_isa = FALSE
+  AND account.is_pension = FALSE
 GROUP BY transaction.holding_id
 `
 

@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
-import { Icon } from "../common/icon/icon.js";
+import { Icon, IconGroup } from "../common/icon/icon.js";
 import { TaxReport } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { useAsyncEffect, useWaitGroup } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
@@ -173,6 +173,17 @@ function TaxHelperPage(): ReactElement {
       <div id={"content"} className={"overflow-auto"}>
         <PageHeader title={"Tax Helper"} icon={"monitoring"} options={pageOptions} />
         {body}
+        <hr />
+        <section>
+          <p>
+            <IconGroup>
+              <Icon name={"info"} className={"muted"} />
+              <span>
+                Interest and dividend income only includes taxable sources; income in ISAs and pensions is not shown.
+              </span>
+            </IconGroup>
+          </p>
+        </section>
       </div>
     </>
   );
