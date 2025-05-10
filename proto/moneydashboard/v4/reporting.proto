@@ -59,9 +59,19 @@ message GetBalanceHistoryResponse {
   repeated BalanceHistoryEntry entries = 1;
 }
 
+message GetTaxReportRequest {
+  int32 tax_year = 1;
+}
+
+message GetTaxReportResponse {
+  repeated BalanceHistoryEntry interest_income_balances = 1;
+  repeated BalanceHistoryEntry dividend_income_balances = 2;
+}
+
 service MDReportingService {
   rpc GetHoldingBalances(GetHoldingBalancesRequest) returns (GetHoldingBalancesResponse);
   rpc GetNonZeroMemoBalances(GetNonZeroMemoBalancesRequest) returns (GetNonZeroMemoBalancesResponse);
   rpc GetEnvelopeBalances(GetEnvelopeBalancesRequest) returns (GetEnvelopeBalancesResponse);
   rpc GetBalanceHistory(GetBalanceHistoryRequest) returns (GetBalanceHistoryResponse);
+  rpc GetTaxReport(GetTaxReportRequest) returns (GetTaxReportResponse);
 }

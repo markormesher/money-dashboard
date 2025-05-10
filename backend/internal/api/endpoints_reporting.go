@@ -87,3 +87,8 @@ func (s *apiServer) GetBalanceHistory(ctx context.Context, req *connect.Request[
 	})
 	return res, nil
 }
+
+func (s *apiServer) GetTaxReport(ctx context.Context, req *connect.Request[mdv4.GetTaxReportRequest]) (*connect.Response[mdv4.GetTaxReportResponse], error) {
+	res := connect.NewResponse(&mdv4.GetTaxReportResponse{})
+	return res, nil
+}
