@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
 import { Icon } from "../common/icon/icon.js";
-import { GetTaxReportResponse } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
+import { TaxReport } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { useAsyncEffect, useWaitGroup } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -12,6 +12,7 @@ import "./reports.css";
 import { convertDateToProto } from "../../utils/dates.js";
 import { getTaxYear } from "../../utils/tax.js";
 import { PLATFORM_MINIMUM_DATE } from "../../../config/consts.js";
+import { formatCurrencyValue } from "../../utils/currency.js";
 
 function TaxHelperPage(): ReactElement {
   const { setMeta } = useRouter();
@@ -24,14 +25,14 @@ function TaxHelperPage(): ReactElement {
 
   const wg = useWaitGroup();
   const [error, setError] = React.useState<unknown>();
-  const [data, setData] = React.useState<GetTaxReportResponse>();
+  const [data, setData] = React.useState<TaxReport>();
 
   useAsyncEffect(async () => {
     wg.add();
     setError(null);
     try {
       const res = await reportingServiceClient.getTaxReport({ taxYear: taxYear });
-      setData(res);
+      setData(res.taxReport);
     } catch (e) {
       toastBus.error("Failed to load report data.");
       setError(e);
@@ -66,7 +67,105 @@ function TaxHelperPage(): ReactElement {
   } else if (!data) {
     body = <LoadingPanel />;
   } else {
-    body = <pre>{JSON.stringify(data, null, 2)}</pre>;
+    body = (
+      <>
+        <h4>Interest Income</h4>
+        {data.interestIncome.length > 0 ? (
+          <table className={"striped"}>
+            <thead>
+              <tr>
+                <td>Account</td>
+                <td>Holding</td>
+                <td>Amount</td>
+              </tr>
+            </thead>
+            <tbody>
+              {data.interestIncome
+                .sort((a, b) => a.holding?.account?.name?.localeCompare(b.holding?.account?.name ?? "") ?? 0)
+                .map((b) => {
+                  return (
+                    <tr>
+                      <td>{b.holding?.account?.name}</td>
+                      <td>{b.holding?.name}</td>
+                      <td className={"amount-cell"}>
+                        <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td className={"amount-cell"}>
+                  <span className={"amount"}>
+                    <strong>
+                      {formatCurrencyValue(
+                        data.interestIncome.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
+                        null,
+                      )}
+                    </strong>
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        ) : (
+          <p>
+            <em>None.</em>
+          </p>
+        )}
+
+        <h4>Dividend Income</h4>
+        {data.dividendIncome.length > 0 ? (
+          <table className={"striped"}>
+            <thead>
+              <tr>
+                <td>Account</td>
+                <td>Holding</td>
+                <td>Amount</td>
+              </tr>
+            </thead>
+            <tbody>
+              {data.dividendIncome
+                .sort((a, b) => a.holding?.account?.name?.localeCompare(b.holding?.account?.name ?? "") ?? 0)
+                .map((b) => {
+                  return (
+                    <tr>
+                      <td>{b.holding?.account?.name}</td>
+                      <td>{b.holding?.name}</td>
+                      <td className={"amount-cell"}>
+                        <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td className={"amount-cell"}>
+                  <span className={"amount"}>
+                    <strong>
+                      {formatCurrencyValue(
+                        data.dividendIncome.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
+                        null,
+                      )}
+                    </strong>
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        ) : (
+          <p>
+            <em>None.</em>
+          </p>
+        )}
+      </>
+    );
   }
 
   return (
