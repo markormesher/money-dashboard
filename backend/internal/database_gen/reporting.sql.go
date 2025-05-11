@@ -20,7 +20,7 @@ SELECT
 FROM
   transaction
     JOIN category on transaction.category_id = category.id
-    JOIN holding on transaction.holding_id = holding.id -- not exposed - just used to join to accounts
+    JOIN holding on transaction.holding_id = holding.id
     JOIN account ON holding.account_id = account.id
 WHERE
   transaction.profile_id = $1
@@ -161,7 +161,7 @@ SELECT
 FROM
   transaction
     JOIN category on transaction.category_id = category.id
-    JOIN holding on transaction.holding_id = holding.id -- not exposed - just used to join to accounts
+    JOIN holding on transaction.holding_id = holding.id
     JOIN account ON holding.account_id = account.id
 WHERE
   transaction.profile_id = $1
