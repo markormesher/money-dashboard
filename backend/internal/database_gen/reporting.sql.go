@@ -254,6 +254,66 @@ func (q *Queries) GetMemoBalances(ctx context.Context, profileID uuid.UUID) ([]G
 	return items, nil
 }
 
+const getTaxableCapitalTransactions = `-- name: GetTaxableCapitalTransactions :many
+SELECT
+  transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+    JOIN holding on transaction.holding_id = holding.id
+    JOIN account ON holding.account_id = account.id
+WHERE
+  transaction.profile_id = $1
+  AND transaction.date >= $2
+  AND transaction.date <= $3
+  AND transaction.deleted = FALSE
+  AND (
+    category.is_capital_event = TRUE
+    OR category.is_capital_event_fee = TRUE
+  )
+  AND account.is_isa = FALSE
+  AND account.is_pension = FALSE
+`
+
+type GetTaxableCapitalTransactionsParams struct {
+	ProfileID uuid.UUID
+	MinDate   time.Time
+	MaxDate   time.Time
+}
+
+func (q *Queries) GetTaxableCapitalTransactions(ctx context.Context, arg GetTaxableCapitalTransactionsParams) ([]Transaction, error) {
+	rows, err := q.db.Query(ctx, getTaxableCapitalTransactions, arg.ProfileID, arg.MinDate, arg.MaxDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Transaction
+	for rows.Next() {
+		var i Transaction
+		if err := rows.Scan(
+			&i.ID,
+			&i.Date,
+			&i.BudgetDate,
+			&i.CreationDate,
+			&i.Payee,
+			&i.Notes,
+			&i.Amount,
+			&i.UnitValue,
+			&i.HoldingID,
+			&i.CategoryID,
+			&i.ProfileID,
+			&i.Deleted,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTransactionsForEnvelopeBalances = `-- name: GetTransactionsForEnvelopeBalances :many
 SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,

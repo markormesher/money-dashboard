@@ -101,3 +101,24 @@ WHERE
   AND account.is_pension = FALSE
 GROUP BY transaction.holding_id
 ;
+
+-- name: GetTaxableCapitalTransactions :many
+SELECT
+  transaction.*
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+    JOIN holding on transaction.holding_id = holding.id
+    JOIN account ON holding.account_id = account.id
+WHERE
+  transaction.profile_id = @profile_id
+  AND transaction.date >= @min_date
+  AND transaction.date <= @max_date
+  AND transaction.deleted = FALSE
+  AND (
+    category.is_capital_event = TRUE
+    OR category.is_capital_event_fee = TRUE
+  )
+  AND account.is_isa = FALSE
+  AND account.is_pension = FALSE
+;
