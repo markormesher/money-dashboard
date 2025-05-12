@@ -129,8 +129,8 @@ func (db *DB) GetTransactionsForEnvelopeBalances(ctx context.Context, profileID 
 	return transactions, nil
 }
 
-func (db *DB) GetInterestIncomeSumsPerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
-	rows, err := db.queries.GetInterestIncomeSumsPerHolding(ctx, database_gen.GetInterestIncomeSumsPerHoldingParams{
+func (db *DB) GetTaxableInterestIncomePerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
+	rows, err := db.queries.GetTaxableInterestIncomePerHolding(ctx, database_gen.GetTaxableInterestIncomePerHoldingParams{
 		ProfileID: profileID,
 		MinDate:   minDate,
 		MaxDate:   maxDate,
@@ -153,8 +153,8 @@ func (db *DB) GetInterestIncomeSumsPerHolding(ctx context.Context, profileID uui
 	return output, nil
 }
 
-func (db *DB) GetDividendIncomeSumsPerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
-	rows, err := db.queries.GetDividendIncomeSumsPerHolding(ctx, database_gen.GetDividendIncomeSumsPerHoldingParams{
+func (db *DB) GetTaxableDividendIncomePerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
+	rows, err := db.queries.GetTaxableDividendIncomePerHolding(ctx, database_gen.GetTaxableDividendIncomePerHoldingParams{
 		ProfileID: profileID,
 		MinDate:   minDate,
 		MaxDate:   maxDate,

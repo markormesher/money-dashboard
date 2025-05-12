@@ -62,7 +62,7 @@ WHERE
   AND transaction.deleted = FALSE
 ;
 
--- name: GetInterestIncomeSumsPerHolding :many
+-- name: GetTaxableInterestIncomePerHolding :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
   transaction.holding_id
@@ -82,7 +82,7 @@ WHERE
 GROUP BY transaction.holding_id
 ;
 
--- name: GetDividendIncomeSumsPerHolding :many
+-- name: GetTaxableDividendIncomePerHolding :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
   transaction.holding_id

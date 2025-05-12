@@ -360,7 +360,7 @@ func (c *Core) GetTaxReport(ctx context.Context, profile schema.Profile, taxYear
 	// interest income
 
 	interestIncome := make([]schema.HoldingBalance, 0)
-	interestIncomeRaw, err := c.DB.GetInterestIncomeSumsPerHolding(ctx, profile.ID, startDate, endDate)
+	interestIncomeRaw, err := c.DB.GetTaxableInterestIncomePerHolding(ctx, profile.ID, startDate, endDate)
 	if err != nil {
 		return schema.TaxReport{}, err
 	}
@@ -386,7 +386,7 @@ func (c *Core) GetTaxReport(ctx context.Context, profile schema.Profile, taxYear
 	// dividend income
 
 	dividendIncome := make([]schema.HoldingBalance, 0)
-	dividendIncomeRaw, err := c.DB.GetDividendIncomeSumsPerHolding(ctx, profile.ID, startDate, endDate)
+	dividendIncomeRaw, err := c.DB.GetTaxableDividendIncomePerHolding(ctx, profile.ID, startDate, endDate)
 	if err != nil {
 		return schema.TaxReport{}, err
 	}
