@@ -297,6 +297,12 @@ func TaxReportFromCore(source schema.TaxReport) *v4.TaxReport {
 			mdv4TaxReport.DividendIncome[j] = HoldingBalanceFromCore(source.DividendIncome[j])
 		}
 	}
+	if source.CapitalDebugging != nil {
+		mdv4TaxReport.CapitalDebugging = make([]string, len(source.CapitalDebugging))
+		for k := 0; k < len(source.CapitalDebugging); k++ {
+			mdv4TaxReport.CapitalDebugging[k] = source.CapitalDebugging[k]
+		}
+	}
 	return &mdv4TaxReport
 }
 func TransactionFromCore(source schema.Transaction) *v4.Transaction {

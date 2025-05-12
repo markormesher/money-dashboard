@@ -164,6 +164,9 @@ function TaxHelperPage(): ReactElement {
             <em>None.</em>
           </p>
         )}
+
+        <h4>Capital Events</h4>
+        <pre>{data.capitalDebugging.join("\n")}</pre>
       </>
     );
   }

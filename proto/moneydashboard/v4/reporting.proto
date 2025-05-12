@@ -35,6 +35,7 @@ message BalanceHistoryEntry {
 message TaxReport {
   repeated HoldingBalance interest_income = 1;
   repeated HoldingBalance dividend_income = 2;
+  repeated string capital_debugging = 3;
 }
 
 message GetHoldingBalancesRequest {}

@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/govalues/decimal"
 	"github.com/jackc/pgx/v5"
-	"github.com/markormesher/money-dashboard/internal/conversiontools"
 	"github.com/markormesher/money-dashboard/internal/database/conversion"
 	"github.com/markormesher/money-dashboard/internal/database_gen"
 	"github.com/markormesher/money-dashboard/internal/schema"
@@ -177,17 +176,39 @@ func (db *DB) GetTaxableDividendIncomePerHolding(ctx context.Context, profileID 
 	return output, nil
 }
 
-func (db *DB) GetTaxableCapitalTransactions(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]schema.Transaction, bool, error) {
-	rows, err := db.queries.GetTaxableCapitalTransactions(ctx, database_gen.GetTaxableCapitalTransactionsParams{
-		ProfileID: profileID,
-		MinDate:   minDate,
-		MaxDate:   maxDate,
-	})
+func (db *DB) GetTaxableCapitalTransactions(ctx context.Context, profileID uuid.UUID) ([]schema.Transaction, error) {
+	rows, err := db.queries.GetTaxableCapitalTransactions(ctx, profileID)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return nil, false, nil
+		return nil, nil
 	} else if err != nil {
-		return nil, false, err
+		return nil, err
 	}
 
-	return conversiontools.ConvertSlice(rows, conversion.TransactionToCore), true, nil
+	transactions := make([]schema.Transaction, len(rows))
+	for i, row := range rows {
+		transaction := conversion.TransactionToCore(row.Transaction)
+
+		category := conversion.CategoryToCore(row.Category)
+		transaction.Category = &category
+
+		holding := conversion.HoldingToCore(row.Holding)
+		transaction.Holding = &holding
+
+		holdingAccount := conversion.AccountToCore(row.Account)
+		transaction.Holding.Account = &holdingAccount
+
+		if row.NullableHoldingAsset.ID != nil {
+			holdingAsset := conversion.NullableHoldingAssetToCore(row.NullableHoldingAsset)
+			transaction.Holding.Asset = &holdingAsset
+		}
+
+		if row.NullableHoldingCurrency.ID != nil {
+			holdingCurrency := conversion.NullableHoldingCurrencyToCore(row.NullableHoldingCurrency)
+			transaction.Holding.Currency = &holdingCurrency
+		}
+
+		transactions[i] = transaction
+	}
+
+	return transactions, nil
 }

@@ -104,16 +104,25 @@ GROUP BY transaction.holding_id
 
 -- name: GetTaxableCapitalTransactions :many
 SELECT
-  transaction.*
+  sqlc.embed(transaction),
+  sqlc.embed(category),
+
+  -- holding fields
+  sqlc.embed(holding),
+  sqlc.embed(account),
+  sqlc.embed(nullable_holding_asset),
+  sqlc.embed(nullable_holding_currency)
 FROM
   transaction
     JOIN category on transaction.category_id = category.id
+
+    -- holding fields
     JOIN holding on transaction.holding_id = holding.id
     JOIN account ON holding.account_id = account.id
+    LEFT JOIN nullable_holding_asset ON holding.id = nullable_holding_asset.holding_id
+    LEFT JOIN nullable_holding_currency ON holding.id = nullable_holding_currency.holding_id
 WHERE
   transaction.profile_id = @profile_id
-  AND transaction.date >= @min_date
-  AND transaction.date <= @max_date
   AND transaction.deleted = FALSE
   AND (
     category.is_capital_event = TRUE

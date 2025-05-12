@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/govalues/decimal"
+	"github.com/markormesher/money-dashboard/internal/database"
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
@@ -352,69 +353,114 @@ func (c *Core) GetTaxReport(ctx context.Context, profile schema.Profile, taxYear
 	startDate := time.Date(taxYear, 4, 6, 0, 0, 0, 0, time.UTC)
 	endDate := time.Date(taxYear+1, 4, 5, 0, 0, 0, 0, time.UTC)
 
-	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
+	interestIncome, err := c.getInterestOrDividendIncomeForTaxReport(ctx, "interest", profile, startDate, endDate)
 	if err != nil {
 		return schema.TaxReport{}, err
 	}
 
-	// interest income
-
-	interestIncome := make([]schema.HoldingBalance, 0)
-	interestIncomeRaw, err := c.DB.GetTaxableInterestIncomePerHolding(ctx, profile.ID, startDate, endDate)
+	dividendIncome, err := c.getInterestOrDividendIncomeForTaxReport(ctx, "dividend", profile, startDate, endDate)
 	if err != nil {
 		return schema.TaxReport{}, err
 	}
 
-	for _, b := range interestIncomeRaw {
-		holding, ok := holdings[b.HoldingID]
-		if !ok {
-			return schema.TaxReport{}, fmt.Errorf("unknown holding: %s", b.HoldingID)
-		}
-
-		gbpBalance, err := c.ConvertNativeAmountToGbp(ctx, b.Balance, holding, time.Now())
-		if err != nil {
-			return schema.TaxReport{}, err
-		}
-
-		interestIncome = append(interestIncome, schema.HoldingBalance{
-			Holding:    holding,
-			RawBalance: b.Balance,
-			GbpBalance: gbpBalance,
-		})
-	}
-
-	// dividend income
-
-	dividendIncome := make([]schema.HoldingBalance, 0)
-	dividendIncomeRaw, err := c.DB.GetTaxableDividendIncomePerHolding(ctx, profile.ID, startDate, endDate)
+	capitalDebugging, err := c.getCaptialReportForTaxReport(ctx, profile, startDate, endDate)
 	if err != nil {
 		return schema.TaxReport{}, err
 	}
-
-	for _, b := range dividendIncomeRaw {
-		holding, ok := holdings[b.HoldingID]
-		if !ok {
-			return schema.TaxReport{}, fmt.Errorf("unknown holding: %s", b.HoldingID)
-		}
-
-		gbpBalance, err := c.ConvertNativeAmountToGbp(ctx, b.Balance, holding, time.Now())
-		if err != nil {
-			return schema.TaxReport{}, err
-		}
-
-		dividendIncome = append(dividendIncome, schema.HoldingBalance{
-			Holding:    holding,
-			RawBalance: b.Balance,
-			GbpBalance: gbpBalance,
-		})
-	}
-
-	// done, at last
 
 	return schema.TaxReport{
-		InterestIncome: interestIncome,
-		DividendIncome: dividendIncome,
+		InterestIncome:   interestIncome,
+		DividendIncome:   dividendIncome,
+		CapitalDebugging: capitalDebugging,
 	}, nil
+}
+
+func (c *Core) getInterestOrDividendIncomeForTaxReport(ctx context.Context, which string, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.HoldingBalance, error) {
+	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
+	if err != nil {
+		return nil, err
+	}
+
+	output := make([]schema.HoldingBalance, 0)
+	var data []database.HoldingBalance
+	if which == "interest" {
+		data, err = c.DB.GetTaxableInterestIncomePerHolding(ctx, profile.ID, startDate, endDate)
+	} else {
+		data, err = c.DB.GetTaxableDividendIncomePerHolding(ctx, profile.ID, startDate, endDate)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	for _, b := range data {
+		holding, ok := holdings[b.HoldingID]
+		if !ok {
+			return nil, fmt.Errorf("unknown holding: %s", b.HoldingID)
+		}
+
+		gbpBalance, err := c.ConvertNativeAmountToGbp(ctx, b.Balance, holding, time.Now())
+		if err != nil {
+			return nil, err
+		}
+
+		output = append(output, schema.HoldingBalance{
+			Holding:    holding,
+			RawBalance: b.Balance,
+			GbpBalance: gbpBalance,
+		})
+	}
+
+	return output, nil
+}
+
+func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.Profile, startDate time.Time, endDate time.Time) ([]string, error) {
+	transactions, err := c.DB.GetTaxableCapitalTransactions(ctx, profile.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	type s104Pot struct {
+		qty   decimal.Decimal
+		value decimal.Decimal
+	}
+	s104Pots := make(map[uuid.UUID]s104Pot, 0)
+
+	for _, t := range transactions {
+		if t.Holding.Currency != nil {
+			// cash event, nothing to do here
+			continue
+		}
+
+		txnValue, err := t.Amount.Mul(t.UnitValue)
+		if err != nil {
+			return nil, err
+		}
+
+		currentPot, _ := s104Pots[t.Holding.ID]
+
+		potQty, err := currentPot.qty.Add(t.Amount)
+		if err != nil {
+			return nil, err
+		}
+
+		potValue, err := currentPot.value.Add(txnValue)
+		if err != nil {
+			return nil, err
+		}
+
+		s104Pots[t.Holding.ID] = s104Pot{
+			qty:   potQty,
+			value: potValue,
+		}
+	}
+
+	out := make([]string, 0)
+
+	for id, pot := range s104Pots {
+		out = append(out, fmt.Sprintf("%s: %v units = %v total\n", id, pot.qty, pot.value))
+	}
+
+	return out, nil
 }
 
 func truncateToDay(t time.Time) time.Time {
