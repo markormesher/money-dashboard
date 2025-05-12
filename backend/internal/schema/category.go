@@ -13,8 +13,7 @@ type Category struct {
 	IsMemo                 bool
 	IsInterestIncome       bool
 	IsDividendIncome       bool
-	IsCapitalAcquisition   bool
-	IsCapitalDisposal      bool
+	IsCapitalEvent         bool
 	IsCapitalEventFee      bool
 	IsSyntheticAssetUpdate bool
 	Profile                *Profile
@@ -27,7 +26,7 @@ func (c *Category) Validate() error {
 	}
 
 	mutuallyExclusiveFlags := []bool{
-		c.IsMemo, c.IsInterestIncome, c.IsDividendIncome, c.IsCapitalAcquisition, c.IsCapitalDisposal, c.IsCapitalEventFee, c.IsSyntheticAssetUpdate,
+		c.IsMemo, c.IsInterestIncome, c.IsDividendIncome, c.IsCapitalEvent, c.IsCapitalEventFee, c.IsSyntheticAssetUpdate,
 	}
 	mutuallyExclusiveCount := 0
 	for _, v := range mutuallyExclusiveFlags {

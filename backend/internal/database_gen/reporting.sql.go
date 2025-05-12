@@ -155,7 +155,7 @@ func (q *Queries) GetMemoBalances(ctx context.Context, profileID uuid.UUID) ([]G
 const getTransactionsForEnvelopeBalances = `-- name: GetTransactionsForEnvelopeBalances :many
 SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,
-  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event,
   profile.id, profile.name, profile.deleted,
   account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
   transaction.holding_id
@@ -206,12 +206,11 @@ func (q *Queries) GetTransactionsForEnvelopeBalances(ctx context.Context, profil
 			&i.Category.IsMemo,
 			&i.Category.IsInterestIncome,
 			&i.Category.IsDividendIncome,
-			&i.Category.IsCapitalAcquisition,
-			&i.Category.IsCapitalDisposal,
 			&i.Category.IsCapitalEventFee,
 			&i.Category.ProfileID,
 			&i.Category.Active,
 			&i.Category.IsSyntheticAssetUpdate,
+			&i.Category.IsCapitalEvent,
 			&i.Profile.ID,
 			&i.Profile.Name,
 			&i.Profile.Deleted,
