@@ -9,11 +9,10 @@ message Category {
   bool is_memo = 3;
   bool is_interest_income = 4;
   bool is_dividend_income = 5;
-  bool is_capital_acquisition = 6;
-  bool is_capital_disposal = 7;
-  bool is_capital_event_fee = 8;
-  bool is_synthetic_asset_update = 9;
-  bool active = 10;
+  bool is_capital_event = 6;
+  bool is_capital_event_fee = 7;
+  bool is_synthetic_asset_update = 8;
+  bool active = 9;
 }
 
 message GetCategoryByIdRequest {
