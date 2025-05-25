@@ -36,7 +36,7 @@ jobs:
             - ./.go
   deps-js:
     docker:
-      - image: docker.io/node:24.0.1-slim
+      - image: docker.io/node:24.0.2-slim
     steps:
       - attach_workspace:
           at: .
@@ -89,7 +89,7 @@ jobs:
             - ./**/.imgrefs
   lint-buf:
     docker:
-      - image: docker.io/bufbuild/buf:1.53.0
+      - image: docker.io/bufbuild/buf:1.54.0
     steps:
       - attach_workspace:
           at: .
@@ -107,7 +107,7 @@ jobs:
             ./task lint-go
   lint-js:
     docker:
-      - image: docker.io/node:24.0.1-slim
+      - image: docker.io/node:24.0.2-slim
     steps:
       - attach_workspace:
           at: .

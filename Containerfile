@@ -1,4 +1,4 @@
-FROM docker.io/node:24.0.1-slim@sha256:f403f3b5054f8f35ebe8dd167e0c608945a8fd992f3d278d2a8652b58b80dc92 AS frontend-builder
+FROM docker.io/node:24.0.2-slim@sha256:083430e81f23ca4f309c6de17614d20706ddd544b2adc71fb9fdd86e2371360a AS frontend-builder
 WORKDIR /app
 
 RUN corepack enable
@@ -11,7 +11,7 @@ RUN cd frontend && pnpm build
 
 # --
 
-FROM docker.io/golang:1.24.3@sha256:39d9e7d9c5d9c9e4baf0d8fff579f06d5032c0f4425cdec9e86732e8e4e374dc AS backend-builder
+FROM docker.io/golang:1.24.3@sha256:4c0a1814a7c6c65ece28b3bfea14ee3cf83b5e80b81418453f0e9d5255a5d7b8 AS backend-builder
 WORKDIR /app
 
 COPY ./backend/go.mod ./backend/go.sum ./backend/
@@ -22,7 +22,7 @@ RUN cd backend && go build -o ./build/main ./cmd
 
 # --
 
-FROM gcr.io/distroless/base-debian12@sha256:27769871031f67460f1545a52dfacead6d18a9f197db77110cfc649ca2a91f44
+FROM gcr.io/distroless/base-debian12@sha256:cef75d12148305c54ef5769e6511a5ac3c820f39bf5c8a4fbfd5b76b4b8da843
 WORKDIR /app
 
 LABEL image.registry=ghcr.io
