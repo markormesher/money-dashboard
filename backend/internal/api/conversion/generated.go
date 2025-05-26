@@ -283,6 +283,31 @@ func RateToCore(source *v4.Rate) schema.Rate {
 	}
 	return schemaRate
 }
+func TaxReportCapitalEventFromCore(source schema.TaxReportCapitalEvent) *v4.TaxReportCapitalEvent {
+	var mdv4TaxReportCapitalEvent v4.TaxReportCapitalEvent
+	mdv4TaxReportCapitalEvent.Holding = HoldingFromCore(source.Holding)
+	mdv4TaxReportCapitalEvent.Type = source.Type
+	mdv4TaxReportCapitalEvent.Date = ConvertTimeToInt(source.Date)
+	mdv4TaxReportCapitalEvent.Qty = ConvertDecimalToFloat(source.Qty)
+	mdv4TaxReportCapitalEvent.AvgOriginalUnitPrice = ConvertDecimalToFloat(source.AvgOriginalUnitPrice)
+	mdv4TaxReportCapitalEvent.AvgGbpUnitPrice = ConvertDecimalToFloat(source.AvgGbpUnitPrice)
+	mdv4TaxReportCapitalEvent.QtyMatched = ConvertDecimalToFloat(source.QtyMatched)
+	if source.Matches != nil {
+		mdv4TaxReportCapitalEvent.Matches = make([]*v4.TaxReportCapitalEventMatch, len(source.Matches))
+		for i := 0; i < len(source.Matches); i++ {
+			mdv4TaxReportCapitalEvent.Matches[i] = TaxReportCapitalEventMatchFromCore(source.Matches[i])
+		}
+	}
+	return &mdv4TaxReportCapitalEvent
+}
+func TaxReportCapitalEventMatchFromCore(source schema.TaxReportCapitalEventMatch) *v4.TaxReportCapitalEventMatch {
+	var mdv4TaxReportCapitalEventMatch v4.TaxReportCapitalEventMatch
+	mdv4TaxReportCapitalEventMatch.Qty = ConvertDecimalToFloat(source.Qty)
+	mdv4TaxReportCapitalEventMatch.Date = ConvertTimeToInt(source.Date)
+	mdv4TaxReportCapitalEventMatch.Price = ConvertDecimalToFloat(source.Price)
+	mdv4TaxReportCapitalEventMatch.Note = source.Note
+	return &mdv4TaxReportCapitalEventMatch
+}
 func TaxReportFromCore(source schema.TaxReport) *v4.TaxReport {
 	var mdv4TaxReport v4.TaxReport
 	if source.InterestIncome != nil {
@@ -297,10 +322,10 @@ func TaxReportFromCore(source schema.TaxReport) *v4.TaxReport {
 			mdv4TaxReport.DividendIncome[j] = HoldingBalanceFromCore(source.DividendIncome[j])
 		}
 	}
-	if source.CapitalDebugging != nil {
-		mdv4TaxReport.CapitalDebugging = make([]string, len(source.CapitalDebugging))
-		for k := 0; k < len(source.CapitalDebugging); k++ {
-			mdv4TaxReport.CapitalDebugging[k] = source.CapitalDebugging[k]
+	if source.CapitalEvents != nil {
+		mdv4TaxReport.CapitalEvents = make([]*v4.TaxReportCapitalEvent, len(source.CapitalEvents))
+		for k := 0; k < len(source.CapitalEvents); k++ {
+			mdv4TaxReport.CapitalEvents[k] = TaxReportCapitalEventFromCore(source.CapitalEvents[k])
 		}
 	}
 	return &mdv4TaxReport

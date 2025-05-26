@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -363,15 +364,15 @@ func (c *Core) GetTaxReport(ctx context.Context, profile schema.Profile, taxYear
 		return schema.TaxReport{}, err
 	}
 
-	capitalDebugging, err := c.getCaptialReportForTaxReport(ctx, profile, startDate, endDate)
+	capitalEvents, err := c.getCaptialReportForTaxReport(ctx, profile, startDate, endDate)
 	if err != nil {
 		return schema.TaxReport{}, err
 	}
 
 	return schema.TaxReport{
-		InterestIncome:   interestIncome,
-		DividendIncome:   dividendIncome,
-		CapitalDebugging: capitalDebugging,
+		InterestIncome: interestIncome,
+		DividendIncome: dividendIncome,
+		CapitalEvents:  capitalEvents,
 	}, nil
 }
 
@@ -413,51 +414,241 @@ func (c *Core) getInterestOrDividendIncomeForTaxReport(ctx context.Context, whic
 	return output, nil
 }
 
-func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.Profile, startDate time.Time, endDate time.Time) ([]string, error) {
+type CapitalEvent struct {
+	date time.Time
+
+	qty                  decimal.Decimal
+	avgOriginalUnitPrice decimal.Decimal
+	avgGbpUnitPrice      decimal.Decimal
+
+	qtyMatched decimal.Decimal
+	matches    []CapitalEventMatch
+}
+
+func (ce CapitalEvent) availableToMatch() decimal.Decimal {
+	out, err := ce.qty.Sub(ce.qtyMatched)
+	if err != nil {
+		panic("maths error: could not subtract: " + err.Error())
+	}
+	return out
+}
+
+type CapitalEventMatch struct {
+	qty   decimal.Decimal
+	date  time.Time
+	price decimal.Decimal
+	note  string
+}
+
+func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.TaxReportCapitalEvent, error) {
+	// share matching and S104 pots don't are about tax year bounaries, so we need to
+	// get the full history and build the full report, then return the events for the
+	// year in question
+
 	transactions, err := c.DB.GetTaxableCapitalTransactions(ctx, profile.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	type s104Pot struct {
-		qty   decimal.Decimal
-		value decimal.Decimal
-	}
-	s104Pots := make(map[uuid.UUID]s104Pot, 0)
-
+	// split transactions into acquisitions and disposals
+	acquisitionTxns := make([]schema.Transaction, 0)
+	disposalTxns := make([]schema.Transaction, 0)
 	for _, t := range transactions {
-		if t.Holding.Currency != nil {
-			// cash event, nothing to do here
-			continue
-		}
-
-		txnValue, err := t.Amount.Mul(t.UnitValue)
-		if err != nil {
-			return nil, err
-		}
-
-		currentPot, _ := s104Pots[t.Holding.ID]
-
-		potQty, err := currentPot.qty.Add(t.Amount)
-		if err != nil {
-			return nil, err
-		}
-
-		potValue, err := currentPot.value.Add(txnValue)
-		if err != nil {
-			return nil, err
-		}
-
-		s104Pots[t.Holding.ID] = s104Pot{
-			qty:   potQty,
-			value: potValue,
+		if t.Amount.IsPos() {
+			acquisitionTxns = append(acquisitionTxns, t)
+		} else {
+			disposalTxns = append(disposalTxns, t)
 		}
 	}
 
-	out := make([]string, 0)
+	/*
+		Step 1: convert all transactions into captial events by merging transactions that
+		happened on the same day, and calculating the GBP vaue of each transaction as of the day
+		it happened.
 
-	for id, pot := range s104Pots {
-		out = append(out, fmt.Sprintf("%s: %v units = %v total\n", id, pot.qty, pot.value))
+		---
+
+		All shares of the same class in the same company acquired by the same person on the same
+		day and in the same capacity are treated as though they were acquired by a single
+		transaction, TCGA92/S105 (1)(a).
+
+		All shares of the same class in the same company disposed of by the same person on the
+		same day and in the same capacity are also treated as though they were disposed of by
+		a single transaction, TCGA92/S105 (1)(a).
+	*/
+
+	acquisitionEventsPerHolding, err := c.convertCapitalTransactionsToEvents(ctx, acquisitionTxns)
+	if err != nil {
+		return nil, err
+	}
+
+	disposalEventsPerHolding, err := c.convertCapitalTransactionsToEvents(ctx, disposalTxns)
+	if err != nil {
+		return nil, err
+	}
+
+	/*
+		Step 2: match disposals against any acquisitions that happened on the same day.
+
+		---
+
+		If there is an acquisition and a disposal on the same day the disposal is identified
+		first against the acquisition on the same day, TCGA92/S105 (1)(b).
+
+		If the number of shares disposed of exceeds the number acquired on the same day the
+		excess shares will be identified in the normal way.
+
+		If the number of shares acquired exceeds the number sold on the same day the surplus
+		is added to the Section 104 holding, unless they are identified with disposals under
+		the 'bed and breakfast' rule, see below.
+	*/
+
+	for holdingId, disposalEvents := range disposalEventsPerHolding {
+		acquisitionEvents, ok := acquisitionEventsPerHolding[holdingId]
+		if !ok {
+			return nil, fmt.Errorf("cannot dispose of an asset that wasn't acquired (holding: %v)", holdingId)
+		}
+
+		for d := range disposalEvents {
+			disposal := &disposalEvents[d]
+
+			for a := range acquisitionEvents {
+				acquisition := &acquisitionEvents[a]
+
+				if acquisition.date == disposal.date {
+					var qtyMatched decimal.Decimal
+					if acquisition.availableToMatch().Cmp(disposal.availableToMatch()) < 0 {
+						qtyMatched = acquisition.availableToMatch()
+					} else {
+						qtyMatched = disposal.availableToMatch()
+					}
+
+					if qtyMatched.IsZero() {
+						break
+					}
+
+					// work out the new matched quantities for each side
+					disposalTotalMatched, err := disposal.qtyMatched.Add(qtyMatched)
+					if err != nil {
+						return nil, err
+					}
+					disposal.qtyMatched = disposalTotalMatched
+
+					acquisitionTotalMatched, err := acquisition.qtyMatched.Add(qtyMatched)
+					if err != nil {
+						return nil, err
+					}
+					acquisition.qtyMatched = acquisitionTotalMatched
+
+					// append match records
+					disposal.matches = append(disposal.matches, CapitalEventMatch{
+						qty:   qtyMatched,
+						date:  disposal.date,
+						price: acquisition.avgGbpUnitPrice,
+						note:  "Same-day",
+					})
+
+					acquisition.matches = append(acquisition.matches, CapitalEventMatch{
+						qty:  qtyMatched,
+						date: disposal.date,
+						note: "Same-day",
+					})
+
+					break
+				}
+			}
+		}
+	}
+
+	/*
+		Step 3: as above, but now we match disposals against acquisitions in the last 30 days.
+
+		---
+
+		Disposals must be identified with acquisitions of shares of the same class,
+		acquired by the same person in the same capacity, and acquired within the 30 days
+		after the disposal.
+
+		This rule has priority over all other identification rules except the 'same day'
+		rule in TCGA92/S105(1).
+	*/
+
+	// TODO
+
+	/*
+		Step 4: walk through all remaining acquisitions and disposals and count them
+		against the S104 pot.
+	*/
+
+	// TODO
+
+	// rebuild result
+
+	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]schema.TaxReportCapitalEvent, 0)
+
+	for holdingId, acquisitions := range acquisitionEventsPerHolding {
+		holding, ok := holdings[holdingId]
+		if !ok {
+			return nil, fmt.Errorf("unknown holding: %v", holdingId)
+		}
+
+		for _, acquisition := range acquisitions {
+			evt := schema.TaxReportCapitalEvent{
+				Holding:              holding,
+				Type:                 "acquisition",
+				Date:                 acquisition.date,
+				Qty:                  acquisition.qty,
+				AvgOriginalUnitPrice: acquisition.avgOriginalUnitPrice,
+				AvgGbpUnitPrice:      acquisition.avgGbpUnitPrice,
+				QtyMatched:           acquisition.qtyMatched,
+			}
+
+			for _, m := range acquisition.matches {
+				evt.Matches = append(evt.Matches, schema.TaxReportCapitalEventMatch{
+					Qty:   m.qty,
+					Date:  m.date,
+					Price: m.price,
+					Note:  m.note,
+				})
+			}
+
+			out = append(out, evt)
+		}
+	}
+
+	for holdingId, disposals := range disposalEventsPerHolding {
+		holding, ok := holdings[holdingId]
+		if !ok {
+			return nil, fmt.Errorf("unknown holding: %v", holdingId)
+		}
+
+		for _, disposal := range disposals {
+			evt := schema.TaxReportCapitalEvent{
+				Holding:              holding,
+				Type:                 "disposal",
+				Date:                 disposal.date,
+				Qty:                  disposal.qty,
+				AvgOriginalUnitPrice: disposal.avgOriginalUnitPrice,
+				AvgGbpUnitPrice:      disposal.avgGbpUnitPrice,
+				QtyMatched:           disposal.qtyMatched,
+			}
+
+			for _, m := range disposal.matches {
+				evt.Matches = append(evt.Matches, schema.TaxReportCapitalEventMatch{
+					Qty:   m.qty,
+					Date:  m.date,
+					Price: m.price,
+					Note:  m.note,
+				})
+			}
+
+			out = append(out, evt)
+		}
 	}
 
 	return out, nil
@@ -465,4 +656,111 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 
 func truncateToDay(t time.Time) time.Time {
 	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+}
+
+func (c *Core) convertCapitalTransactionsToEvents(ctx context.Context, txns []schema.Transaction) (map[uuid.UUID][]CapitalEvent, error) {
+	sort.Slice(txns, func(a, b int) bool {
+		return txns[a].Date.Before(txns[b].Date)
+	})
+
+	type MergeState struct {
+		date               time.Time
+		qty                decimal.Decimal
+		totalOriginalValue decimal.Decimal
+		totalGbpValue      decimal.Decimal
+	}
+
+	mergedStatesPerHolding := make(map[uuid.UUID][]MergeState, 0)
+
+	for _, t := range txns {
+		mergedStates, ok := mergedStatesPerHolding[t.Holding.ID]
+		if !ok {
+			mergedStates = make([]MergeState, 0)
+		}
+
+		tDate := truncateToDay(t.Date)
+
+		if len(mergedStates) == 0 || mergedStates[len(mergedStates)-1].date != tDate {
+			mergedStates = append(mergedStates, MergeState{
+				date:               tDate,
+				qty:                decimal.Zero,
+				totalOriginalValue: decimal.Zero,
+			})
+		}
+
+		// qty is easy - just add them up
+
+		qty, err := mergedStates[len(mergedStates)-1].qty.Add(t.Amount.Abs())
+		if err != nil {
+			return nil, err
+		}
+
+		// total value is harder - we need to do it for the original currency and for GBP
+
+		var currency schema.Currency
+		if t.Holding.Currency != nil {
+			currency = *t.Holding.Currency
+		} else {
+			currency = *t.Holding.Asset.Currency
+		}
+
+		rate, err := c.getHistoricRate(ctx, currency.ID, tDate)
+		if err != nil {
+			return nil, err
+		}
+
+		originalValue, err := t.Amount.Mul(t.UnitValue)
+		if err != nil {
+			return nil, err
+		}
+
+		gbpValue, err := originalValue.Mul(rate.Rate)
+		if err != nil {
+			return nil, err
+		}
+
+		totalOriginalValue, err := mergedStates[len(mergedStates)-1].totalOriginalValue.Add(originalValue)
+		if err != nil {
+			return nil, err
+		}
+
+		totalGbpValue, err := mergedStates[len(mergedStates)-1].totalGbpValue.Add(gbpValue)
+		if err != nil {
+			return nil, err
+		}
+
+		mergedStates[len(mergedStates)-1].qty = qty
+		mergedStates[len(mergedStates)-1].totalOriginalValue = totalOriginalValue
+		mergedStates[len(mergedStates)-1].totalGbpValue = totalGbpValue
+		mergedStatesPerHolding[t.Holding.ID] = mergedStates
+	}
+
+	out := make(map[uuid.UUID][]CapitalEvent, 0)
+
+	for holdingId, mergedStates := range mergedStatesPerHolding {
+		holdingStates := make([]CapitalEvent, len(mergedStates))
+
+		for i, mergedState := range mergedStates {
+			avgOriginalUnitPrice, err := mergedState.totalOriginalValue.Quo(mergedState.qty)
+			if err != nil {
+				return nil, err
+			}
+
+			avgGbpUnitPrice, err := mergedState.totalGbpValue.Quo(mergedState.qty)
+			if err != nil {
+				return nil, err
+			}
+
+			holdingStates[i] = CapitalEvent{
+				date:                 mergedState.date,
+				qty:                  mergedState.qty,
+				avgOriginalUnitPrice: avgOriginalUnitPrice,
+				avgGbpUnitPrice:      avgGbpUnitPrice,
+			}
+		}
+
+		out[holdingId] = holdingStates
+	}
+
+	return out, nil
 }

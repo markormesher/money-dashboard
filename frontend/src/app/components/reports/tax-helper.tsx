@@ -13,6 +13,7 @@ import { convertDateToProto } from "../../utils/dates.js";
 import { getTaxYear } from "../../utils/tax.js";
 import { PLATFORM_MINIMUM_DATE } from "../../../config/consts.js";
 import { formatCurrencyValue } from "../../utils/currency.js";
+import { safeJsonStringify } from "../../utils/text.js";
 
 function TaxHelperPage(): ReactElement {
   const { setMeta } = useRouter();
@@ -166,7 +167,7 @@ function TaxHelperPage(): ReactElement {
         )}
 
         <h4>Capital Events</h4>
-        <pre>{data.capitalDebugging.join("\n")}</pre>
+        <pre>{safeJsonStringify(data.capitalEvents)}</pre>
       </>
     );
   }
@@ -181,9 +182,7 @@ function TaxHelperPage(): ReactElement {
           <p>
             <IconGroup>
               <Icon name={"info"} className={"muted"} />
-              <span>
-                Interest and dividend income only includes taxable sources; income in ISAs and pensions is not shown.
-              </span>
+              <span>This report only includes taxable sources; ISAs and pensions are not shown.</span>
             </IconGroup>
           </p>
         </section>

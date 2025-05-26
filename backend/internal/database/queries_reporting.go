@@ -200,6 +200,11 @@ func (db *DB) GetTaxableCapitalTransactions(ctx context.Context, profileID uuid.
 		if row.NullableHoldingAsset.ID != nil {
 			holdingAsset := conversion.NullableHoldingAssetToCore(row.NullableHoldingAsset)
 			transaction.Holding.Asset = &holdingAsset
+
+			if row.NullableHoldingAssetCurrency.ID != nil {
+				assetCurrency := conversion.NullableHoldingAssetCurrencyToCore(row.NullableHoldingAssetCurrency)
+				transaction.Holding.Asset.Currency = &assetCurrency
+			}
 		}
 
 		if row.NullableHoldingCurrency.ID != nil {

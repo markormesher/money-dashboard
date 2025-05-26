@@ -111,6 +111,7 @@ SELECT
   sqlc.embed(holding),
   sqlc.embed(account),
   sqlc.embed(nullable_holding_asset),
+  sqlc.embed(nullable_holding_asset_currency),
   sqlc.embed(nullable_holding_currency)
 FROM
   transaction
@@ -120,14 +121,12 @@ FROM
     JOIN holding on transaction.holding_id = holding.id
     JOIN account ON holding.account_id = account.id
     LEFT JOIN nullable_holding_asset ON holding.id = nullable_holding_asset.holding_id
+    LEFT JOIN nullable_holding_asset_currency ON holding.id = nullable_holding_asset_currency.holding_id
     LEFT JOIN nullable_holding_currency ON holding.id = nullable_holding_currency.holding_id
 WHERE
   transaction.profile_id = @profile_id
   AND transaction.deleted = FALSE
-  AND (
-    category.is_capital_event = TRUE
-    OR category.is_capital_event_fee = TRUE
-  )
+  AND category.is_capital_event = TRUE
   AND account.is_isa = FALSE
   AND account.is_pension = FALSE
 ;

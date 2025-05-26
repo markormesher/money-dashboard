@@ -30,7 +30,25 @@ type BalanceHistoryEntry struct {
 }
 
 type TaxReport struct {
-	InterestIncome   []HoldingBalance
-	DividendIncome   []HoldingBalance
-	CapitalDebugging []string
+	InterestIncome []HoldingBalance
+	DividendIncome []HoldingBalance
+	CapitalEvents  []TaxReportCapitalEvent
+}
+
+type TaxReportCapitalEvent struct {
+	Holding              Holding
+	Type                 string
+	Date                 time.Time
+	Qty                  decimal.Decimal
+	AvgOriginalUnitPrice decimal.Decimal
+	AvgGbpUnitPrice      decimal.Decimal
+	QtyMatched           decimal.Decimal
+	Matches              []TaxReportCapitalEventMatch
+}
+
+type TaxReportCapitalEventMatch struct {
+	Qty   decimal.Decimal
+	Date  time.Time
+	Price decimal.Decimal
+	Note  string
 }

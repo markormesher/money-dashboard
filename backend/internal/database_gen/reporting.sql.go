@@ -161,6 +161,7 @@ SELECT
   holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
   account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
   nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
+  nullable_holding_asset_currency.holding_id, nullable_holding_asset_currency.id, nullable_holding_asset_currency.code, nullable_holding_asset_currency.symbol, nullable_holding_asset_currency.display_precision, nullable_holding_asset_currency.active,
   nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active
 FROM
   transaction
@@ -170,25 +171,24 @@ FROM
     JOIN holding on transaction.holding_id = holding.id
     JOIN account ON holding.account_id = account.id
     LEFT JOIN nullable_holding_asset ON holding.id = nullable_holding_asset.holding_id
+    LEFT JOIN nullable_holding_asset_currency ON holding.id = nullable_holding_asset_currency.holding_id
     LEFT JOIN nullable_holding_currency ON holding.id = nullable_holding_currency.holding_id
 WHERE
   transaction.profile_id = $1
   AND transaction.deleted = FALSE
-  AND (
-    category.is_capital_event = TRUE
-    OR category.is_capital_event_fee = TRUE
-  )
+  AND category.is_capital_event = TRUE
   AND account.is_isa = FALSE
   AND account.is_pension = FALSE
 `
 
 type GetTaxableCapitalTransactionsRow struct {
-	Transaction             Transaction
-	Category                Category
-	Holding                 Holding
-	Account                 Account
-	NullableHoldingAsset    NullableHoldingAsset
-	NullableHoldingCurrency NullableHoldingCurrency
+	Transaction                  Transaction
+	Category                     Category
+	Holding                      Holding
+	Account                      Account
+	NullableHoldingAsset         NullableHoldingAsset
+	NullableHoldingAssetCurrency NullableHoldingAssetCurrency
+	NullableHoldingCurrency      NullableHoldingCurrency
 }
 
 func (q *Queries) GetTaxableCapitalTransactions(ctx context.Context, profileID uuid.UUID) ([]GetTaxableCapitalTransactionsRow, error) {
@@ -246,6 +246,12 @@ func (q *Queries) GetTaxableCapitalTransactions(ctx context.Context, profileID u
 			&i.NullableHoldingAsset.DisplayPrecision,
 			&i.NullableHoldingAsset.CurrencyID,
 			&i.NullableHoldingAsset.Active,
+			&i.NullableHoldingAssetCurrency.HoldingID,
+			&i.NullableHoldingAssetCurrency.ID,
+			&i.NullableHoldingAssetCurrency.Code,
+			&i.NullableHoldingAssetCurrency.Symbol,
+			&i.NullableHoldingAssetCurrency.DisplayPrecision,
+			&i.NullableHoldingAssetCurrency.Active,
 			&i.NullableHoldingCurrency.HoldingID,
 			&i.NullableHoldingCurrency.ID,
 			&i.NullableHoldingCurrency.Code,
