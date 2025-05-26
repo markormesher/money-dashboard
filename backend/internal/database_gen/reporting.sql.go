@@ -152,10 +152,229 @@ func (q *Queries) GetMemoBalances(ctx context.Context, profileID uuid.UUID) ([]G
 	return items, nil
 }
 
+const getTaxableCapitalTransactions = `-- name: GetTaxableCapitalTransactions :many
+SELECT
+  transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event,
+
+  -- holding fields
+  holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
+  nullable_holding_asset_currency.holding_id, nullable_holding_asset_currency.id, nullable_holding_asset_currency.code, nullable_holding_asset_currency.symbol, nullable_holding_asset_currency.display_precision, nullable_holding_asset_currency.active,
+  nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+
+    -- holding fields
+    JOIN holding on transaction.holding_id = holding.id
+    JOIN account ON holding.account_id = account.id
+    LEFT JOIN nullable_holding_asset ON holding.id = nullable_holding_asset.holding_id
+    LEFT JOIN nullable_holding_asset_currency ON holding.id = nullable_holding_asset_currency.holding_id
+    LEFT JOIN nullable_holding_currency ON holding.id = nullable_holding_currency.holding_id
+WHERE
+  transaction.profile_id = $1
+  AND transaction.deleted = FALSE
+  AND category.is_capital_event = TRUE
+  AND account.is_isa = FALSE
+  AND account.is_pension = FALSE
+`
+
+type GetTaxableCapitalTransactionsRow struct {
+	Transaction                  Transaction
+	Category                     Category
+	Holding                      Holding
+	Account                      Account
+	NullableHoldingAsset         NullableHoldingAsset
+	NullableHoldingAssetCurrency NullableHoldingAssetCurrency
+	NullableHoldingCurrency      NullableHoldingCurrency
+}
+
+func (q *Queries) GetTaxableCapitalTransactions(ctx context.Context, profileID uuid.UUID) ([]GetTaxableCapitalTransactionsRow, error) {
+	rows, err := q.db.Query(ctx, getTaxableCapitalTransactions, profileID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetTaxableCapitalTransactionsRow
+	for rows.Next() {
+		var i GetTaxableCapitalTransactionsRow
+		if err := rows.Scan(
+			&i.Transaction.ID,
+			&i.Transaction.Date,
+			&i.Transaction.BudgetDate,
+			&i.Transaction.CreationDate,
+			&i.Transaction.Payee,
+			&i.Transaction.Notes,
+			&i.Transaction.Amount,
+			&i.Transaction.UnitValue,
+			&i.Transaction.HoldingID,
+			&i.Transaction.CategoryID,
+			&i.Transaction.ProfileID,
+			&i.Transaction.Deleted,
+			&i.Category.ID,
+			&i.Category.Name,
+			&i.Category.IsMemo,
+			&i.Category.IsInterestIncome,
+			&i.Category.IsDividendIncome,
+			&i.Category.IsCapitalEventFee,
+			&i.Category.ProfileID,
+			&i.Category.Active,
+			&i.Category.IsSyntheticAssetUpdate,
+			&i.Category.IsCapitalEvent,
+			&i.Holding.ID,
+			&i.Holding.Name,
+			&i.Holding.CurrencyID,
+			&i.Holding.AssetID,
+			&i.Holding.AccountID,
+			&i.Holding.ProfileID,
+			&i.Holding.Active,
+			&i.Account.ID,
+			&i.Account.Name,
+			&i.Account.Notes,
+			&i.Account.IsIsa,
+			&i.Account.IsPension,
+			&i.Account.ExcludeFromEnvelopes,
+			&i.Account.ProfileID,
+			&i.Account.Active,
+			&i.Account.AccountGroupID,
+			&i.NullableHoldingAsset.HoldingID,
+			&i.NullableHoldingAsset.ID,
+			&i.NullableHoldingAsset.Name,
+			&i.NullableHoldingAsset.Notes,
+			&i.NullableHoldingAsset.DisplayPrecision,
+			&i.NullableHoldingAsset.CurrencyID,
+			&i.NullableHoldingAsset.Active,
+			&i.NullableHoldingAssetCurrency.HoldingID,
+			&i.NullableHoldingAssetCurrency.ID,
+			&i.NullableHoldingAssetCurrency.Code,
+			&i.NullableHoldingAssetCurrency.Symbol,
+			&i.NullableHoldingAssetCurrency.DisplayPrecision,
+			&i.NullableHoldingAssetCurrency.Active,
+			&i.NullableHoldingCurrency.HoldingID,
+			&i.NullableHoldingCurrency.ID,
+			&i.NullableHoldingCurrency.Code,
+			&i.NullableHoldingCurrency.Symbol,
+			&i.NullableHoldingCurrency.DisplayPrecision,
+			&i.NullableHoldingCurrency.Active,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getTaxableDividendIncomePerHolding = `-- name: GetTaxableDividendIncomePerHolding :many
+SELECT
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
+  transaction.holding_id
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+    JOIN holding on transaction.holding_id = holding.id
+    JOIN account ON holding.account_id = account.id
+WHERE
+  transaction.profile_id = $1
+  AND transaction.date >= $2
+  AND transaction.date <= $3
+  AND transaction.deleted = FALSE
+  AND category.is_dividend_income = TRUE
+  AND account.is_isa = FALSE
+  AND account.is_pension = FALSE
+GROUP BY transaction.holding_id
+`
+
+type GetTaxableDividendIncomePerHoldingParams struct {
+	ProfileID uuid.UUID
+	MinDate   time.Time
+	MaxDate   time.Time
+}
+
+type GetTaxableDividendIncomePerHoldingRow struct {
+	Balance   decimal.Decimal
+	HoldingID uuid.UUID
+}
+
+func (q *Queries) GetTaxableDividendIncomePerHolding(ctx context.Context, arg GetTaxableDividendIncomePerHoldingParams) ([]GetTaxableDividendIncomePerHoldingRow, error) {
+	rows, err := q.db.Query(ctx, getTaxableDividendIncomePerHolding, arg.ProfileID, arg.MinDate, arg.MaxDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetTaxableDividendIncomePerHoldingRow
+	for rows.Next() {
+		var i GetTaxableDividendIncomePerHoldingRow
+		if err := rows.Scan(&i.Balance, &i.HoldingID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getTaxableInterestIncomePerHolding = `-- name: GetTaxableInterestIncomePerHolding :many
+SELECT
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
+  transaction.holding_id
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+    JOIN holding on transaction.holding_id = holding.id
+    JOIN account ON holding.account_id = account.id
+WHERE
+  transaction.profile_id = $1
+  AND transaction.date >= $2
+  AND transaction.date <= $3
+  AND transaction.deleted = FALSE
+  AND category.is_interest_income = TRUE
+  AND account.is_isa = FALSE
+  AND account.is_pension = FALSE
+GROUP BY transaction.holding_id
+`
+
+type GetTaxableInterestIncomePerHoldingParams struct {
+	ProfileID uuid.UUID
+	MinDate   time.Time
+	MaxDate   time.Time
+}
+
+type GetTaxableInterestIncomePerHoldingRow struct {
+	Balance   decimal.Decimal
+	HoldingID uuid.UUID
+}
+
+func (q *Queries) GetTaxableInterestIncomePerHolding(ctx context.Context, arg GetTaxableInterestIncomePerHoldingParams) ([]GetTaxableInterestIncomePerHoldingRow, error) {
+	rows, err := q.db.Query(ctx, getTaxableInterestIncomePerHolding, arg.ProfileID, arg.MinDate, arg.MaxDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetTaxableInterestIncomePerHoldingRow
+	for rows.Next() {
+		var i GetTaxableInterestIncomePerHoldingRow
+		if err := rows.Scan(&i.Balance, &i.HoldingID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTransactionsForEnvelopeBalances = `-- name: GetTransactionsForEnvelopeBalances :many
 SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,
-  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_acquisition, category.is_capital_disposal, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event,
   profile.id, profile.name, profile.deleted,
   account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
   transaction.holding_id
@@ -206,12 +425,11 @@ func (q *Queries) GetTransactionsForEnvelopeBalances(ctx context.Context, profil
 			&i.Category.IsMemo,
 			&i.Category.IsInterestIncome,
 			&i.Category.IsDividendIncome,
-			&i.Category.IsCapitalAcquisition,
-			&i.Category.IsCapitalDisposal,
 			&i.Category.IsCapitalEventFee,
 			&i.Category.ProfileID,
 			&i.Category.Active,
 			&i.Category.IsSyntheticAssetUpdate,
+			&i.Category.IsCapitalEvent,
 			&i.Profile.ID,
 			&i.Profile.Name,
 			&i.Profile.Deleted,

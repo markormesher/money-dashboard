@@ -53,15 +53,14 @@ func (db *DB) GetAllCategories(ctx context.Context, profileID uuid.UUID) ([]sche
 
 func (db *DB) UpsertCategory(ctx context.Context, category schema.Category, profileID uuid.UUID) error {
 	return db.queries.UpsertCategory(ctx, database_gen.UpsertCategoryParams{
-		ID:                   category.ID,
-		Name:                 category.Name,
-		IsMemo:               category.IsMemo,
-		IsInterestIncome:     category.IsInterestIncome,
-		IsDividendIncome:     category.IsDividendIncome,
-		IsCapitalAcquisition: category.IsCapitalAcquisition,
-		IsCapitalDisposal:    category.IsCapitalDisposal,
-		IsCapitalEventFee:    category.IsCapitalEventFee,
-		Active:               category.Active,
-		ProfileID:            profileID,
+		ID:                category.ID,
+		Name:              category.Name,
+		IsMemo:            category.IsMemo,
+		IsInterestIncome:  category.IsInterestIncome,
+		IsDividendIncome:  category.IsDividendIncome,
+		IsCapitalEvent:    category.IsCapitalEvent,
+		IsCapitalEventFee: category.IsCapitalEventFee,
+		Active:            category.Active,
+		ProfileID:         profileID,
 	})
 }

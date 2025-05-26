@@ -99,8 +99,7 @@ func CategoryFromCore(source schema.Category) *v4.Category {
 	mdv4Category.IsMemo = source.IsMemo
 	mdv4Category.IsInterestIncome = source.IsInterestIncome
 	mdv4Category.IsDividendIncome = source.IsDividendIncome
-	mdv4Category.IsCapitalAcquisition = source.IsCapitalAcquisition
-	mdv4Category.IsCapitalDisposal = source.IsCapitalDisposal
+	mdv4Category.IsCapitalEvent = source.IsCapitalEvent
 	mdv4Category.IsCapitalEventFee = source.IsCapitalEventFee
 	mdv4Category.IsSyntheticAssetUpdate = source.IsSyntheticAssetUpdate
 	mdv4Category.Active = source.Active
@@ -115,8 +114,7 @@ func CategoryToCore(source *v4.Category) schema.Category {
 		schemaCategory2.IsMemo = (*source).IsMemo
 		schemaCategory2.IsInterestIncome = (*source).IsInterestIncome
 		schemaCategory2.IsDividendIncome = (*source).IsDividendIncome
-		schemaCategory2.IsCapitalAcquisition = (*source).IsCapitalAcquisition
-		schemaCategory2.IsCapitalDisposal = (*source).IsCapitalDisposal
+		schemaCategory2.IsCapitalEvent = (*source).IsCapitalEvent
 		schemaCategory2.IsCapitalEventFee = (*source).IsCapitalEventFee
 		schemaCategory2.IsSyntheticAssetUpdate = (*source).IsSyntheticAssetUpdate
 		schemaCategory2.Active = (*source).Active
@@ -285,6 +283,53 @@ func RateToCore(source *v4.Rate) schema.Rate {
 	}
 	return schemaRate
 }
+func TaxReportCapitalEventFromCore(source schema.TaxReportCapitalEvent) *v4.TaxReportCapitalEvent {
+	var mdv4TaxReportCapitalEvent v4.TaxReportCapitalEvent
+	mdv4TaxReportCapitalEvent.Holding = HoldingFromCore(source.Holding)
+	mdv4TaxReportCapitalEvent.Type = source.Type
+	mdv4TaxReportCapitalEvent.Date = ConvertTimeToInt(source.Date)
+	mdv4TaxReportCapitalEvent.Qty = ConvertDecimalToFloat(source.Qty)
+	mdv4TaxReportCapitalEvent.AvgOriginalUnitPrice = ConvertDecimalToFloat(source.AvgOriginalUnitPrice)
+	mdv4TaxReportCapitalEvent.AvgGbpUnitPrice = ConvertDecimalToFloat(source.AvgGbpUnitPrice)
+	mdv4TaxReportCapitalEvent.QtyMatched = ConvertDecimalToFloat(source.QtyMatched)
+	if source.Matches != nil {
+		mdv4TaxReportCapitalEvent.Matches = make([]*v4.TaxReportCapitalEventMatch, len(source.Matches))
+		for i := 0; i < len(source.Matches); i++ {
+			mdv4TaxReportCapitalEvent.Matches[i] = TaxReportCapitalEventMatchFromCore(source.Matches[i])
+		}
+	}
+	return &mdv4TaxReportCapitalEvent
+}
+func TaxReportCapitalEventMatchFromCore(source schema.TaxReportCapitalEventMatch) *v4.TaxReportCapitalEventMatch {
+	var mdv4TaxReportCapitalEventMatch v4.TaxReportCapitalEventMatch
+	mdv4TaxReportCapitalEventMatch.Qty = ConvertDecimalToFloat(source.Qty)
+	mdv4TaxReportCapitalEventMatch.Date = ConvertTimeToInt(source.Date)
+	mdv4TaxReportCapitalEventMatch.Price = ConvertDecimalToFloat(source.Price)
+	mdv4TaxReportCapitalEventMatch.Note = source.Note
+	return &mdv4TaxReportCapitalEventMatch
+}
+func TaxReportFromCore(source schema.TaxReport) *v4.TaxReport {
+	var mdv4TaxReport v4.TaxReport
+	if source.InterestIncome != nil {
+		mdv4TaxReport.InterestIncome = make([]*v4.HoldingBalance, len(source.InterestIncome))
+		for i := 0; i < len(source.InterestIncome); i++ {
+			mdv4TaxReport.InterestIncome[i] = HoldingBalanceFromCore(source.InterestIncome[i])
+		}
+	}
+	if source.DividendIncome != nil {
+		mdv4TaxReport.DividendIncome = make([]*v4.HoldingBalance, len(source.DividendIncome))
+		for j := 0; j < len(source.DividendIncome); j++ {
+			mdv4TaxReport.DividendIncome[j] = HoldingBalanceFromCore(source.DividendIncome[j])
+		}
+	}
+	if source.CapitalEvents != nil {
+		mdv4TaxReport.CapitalEvents = make([]*v4.TaxReportCapitalEvent, len(source.CapitalEvents))
+		for k := 0; k < len(source.CapitalEvents); k++ {
+			mdv4TaxReport.CapitalEvents[k] = TaxReportCapitalEventFromCore(source.CapitalEvents[k])
+		}
+	}
+	return &mdv4TaxReport
+}
 func TransactionFromCore(source schema.Transaction) *v4.Transaction {
 	var mdv4Transaction v4.Transaction
 	mdv4Transaction.Id = ConvertUUIDToString(source.ID)
@@ -391,8 +436,7 @@ func pMdv4CategoryToPSchemaCategory(source *v4.Category) *schema.Category {
 		schemaCategory.IsMemo = (*source).IsMemo
 		schemaCategory.IsInterestIncome = (*source).IsInterestIncome
 		schemaCategory.IsDividendIncome = (*source).IsDividendIncome
-		schemaCategory.IsCapitalAcquisition = (*source).IsCapitalAcquisition
-		schemaCategory.IsCapitalDisposal = (*source).IsCapitalDisposal
+		schemaCategory.IsCapitalEvent = (*source).IsCapitalEvent
 		schemaCategory.IsCapitalEventFee = (*source).IsCapitalEventFee
 		schemaCategory.IsSyntheticAssetUpdate = (*source).IsSyntheticAssetUpdate
 		schemaCategory.Active = (*source).Active
@@ -499,8 +543,7 @@ func pSchemaCategoryToPMdv4Category(source *schema.Category) *v4.Category {
 		mdv4Category.IsMemo = (*source).IsMemo
 		mdv4Category.IsInterestIncome = (*source).IsInterestIncome
 		mdv4Category.IsDividendIncome = (*source).IsDividendIncome
-		mdv4Category.IsCapitalAcquisition = (*source).IsCapitalAcquisition
-		mdv4Category.IsCapitalDisposal = (*source).IsCapitalDisposal
+		mdv4Category.IsCapitalEvent = (*source).IsCapitalEvent
 		mdv4Category.IsCapitalEventFee = (*source).IsCapitalEventFee
 		mdv4Category.IsSyntheticAssetUpdate = (*source).IsSyntheticAssetUpdate
 		mdv4Category.Active = (*source).Active

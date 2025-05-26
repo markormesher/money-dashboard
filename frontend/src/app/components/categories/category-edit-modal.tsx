@@ -33,8 +33,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
       | "isMemo"
       | "isInterestIncome"
       | "isDividendIncome"
-      | "isCapitalAcquisition"
-      | "isCapitalDisposal"
+      | "isCapitalEvent"
       | "isCapitalEventFee"
       | "isSyntheticAssetUpdate",
     value: boolean,
@@ -43,8 +42,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
       isMemo: false,
       isInterestIncome: false,
       isDividendIncome: false,
-      isCapitalAcquisition: false,
-      isCapitalDisposal: false,
+      isCapitalEvent: false,
       isCapitalEventFee: false,
       isSyntheticAssetUpdate: false,
       [flag]: value,
@@ -60,8 +58,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
         isMemo: false,
         isInterestIncome: false,
         isDividendIncome: false,
-        isCapitalAcquisition: false,
-        isCapitalDisposal: false,
+        isCapitalEvent: false,
         isCapitalEventFee: false,
         isSyntheticAssetUpdate: false,
         active: true,
@@ -159,27 +156,15 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
 
         <fieldset className={"grid"}>
           <Input
-            label={"Capital Acquisition"}
+            label={"Capital Event"}
             formState={form}
-            fieldName={"isCapitalAcquisition"}
+            fieldName={"isCapitalEvent"}
             type={"checkbox"}
             role={"switch"}
-            checked={form.model?.isCapitalAcquisition ?? false}
-            onChange={(evt) => patchMutuallyExclusiveFlag("isCapitalAcquisition", evt.target.checked)}
+            checked={form.model?.isCapitalEvent ?? false}
+            onChange={(evt) => patchMutuallyExclusiveFlag("isCapitalEvent", evt.target.checked)}
           />
 
-          <Input
-            label={"Capital Disposal"}
-            formState={form}
-            fieldName={"isCapitalDisposal"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.isCapitalDisposal ?? false}
-            onChange={(evt) => patchMutuallyExclusiveFlag("isCapitalDisposal", evt.target.checked)}
-          />
-        </fieldset>
-
-        <fieldset className={"grid"}>
           <Input
             label={"Capital Event Fee"}
             formState={form}
@@ -189,7 +174,9 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
             checked={form.model?.isCapitalEventFee ?? false}
             onChange={(evt) => patchMutuallyExclusiveFlag("isCapitalEventFee", evt.target.checked)}
           />
+        </fieldset>
 
+        <fieldset className={"grid"}>
           <Input
             label={"Memo"}
             formState={form}
@@ -199,9 +186,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
             checked={form.model?.isMemo ?? false}
             onChange={(evt) => patchMutuallyExclusiveFlag("isMemo", evt.target.checked)}
           />
-        </fieldset>
 
-        <fieldset className={"grid"}>
           <Input
             label={"Synthetic Asset Update"}
             formState={form}
@@ -211,7 +196,9 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
             checked={form.model?.isSyntheticAssetUpdate ?? false}
             onChange={(evt) => patchMutuallyExclusiveFlag("isSyntheticAssetUpdate", evt.target.checked)}
           />
+        </fieldset>
 
+        <fieldset className={"grid"}>
           <Input
             label={"Active"}
             formState={form}

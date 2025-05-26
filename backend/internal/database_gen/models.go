@@ -60,12 +60,11 @@ type Category struct {
 	IsMemo                 bool
 	IsInterestIncome       bool
 	IsDividendIncome       bool
-	IsCapitalAcquisition   bool
-	IsCapitalDisposal      bool
 	IsCapitalEventFee      bool
 	ProfileID              uuid.UUID
 	Active                 bool
 	IsSyntheticAssetUpdate bool
+	IsCapitalEvent         bool
 }
 
 type CategoryOld struct {

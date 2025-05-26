@@ -11,6 +11,9 @@ import (
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
+// set to true for dev work
+const WARM_CACHE_IN_DEV_MODE = false
+
 // we can be aggressive with caching rates. one rate entry takes up 88 bytes, so 20 years of data for 20 rates is ~13MiB.
 var latestRates = make([]schema.Rate, 0)
 var historicRateCache = MakeCache[string, schema.Rate](20 * 20 * 365)
@@ -85,6 +88,11 @@ func (c *Core) clearRateCaches() {
 }
 
 func (c *Core) WarmRateCache(ctx context.Context) {
+	if c.Config.DevMode && !WARM_CACHE_IN_DEV_MODE {
+		l.Info("skipping cache warming in dev mode")
+		return
+	}
+
 	locked := cacheWarmingLock.TryLock()
 	if !locked {
 		// someone else is already warming the cache

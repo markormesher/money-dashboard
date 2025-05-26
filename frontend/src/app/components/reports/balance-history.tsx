@@ -59,7 +59,7 @@ function BalanceHistoryPage(): ReactElement {
     wg.done();
   }, [dateRange]);
 
-  const buttons = [
+  const options = [
     <button className={"outline"} onClick={() => setDateRangePickerOpen(true)} disabled={wg.count > 0}>
       <IconGroup>
         <Icon name={"calendar_month"} />
@@ -148,7 +148,7 @@ function BalanceHistoryPage(): ReactElement {
   return (
     <>
       <div id={"content"} className={"overflow-auto"}>
-        <PageHeader title={"Balance History"} icon={"monitoring"} buttons={buttons} />
+        <PageHeader title={"Balance History"} icon={"monitoring"} options={options} />
 
         {body}
 

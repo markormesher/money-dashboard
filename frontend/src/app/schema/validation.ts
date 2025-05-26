@@ -104,8 +104,7 @@ function validateCategory(value: Partial<Category>): FormValidationResult<Curren
     value?.isMemo,
     value?.isInterestIncome,
     value?.isDividendIncome,
-    value?.isCapitalAcquisition,
-    value?.isCapitalDisposal,
+    value?.isCapitalEvent,
     value?.isCapitalEventFee,
   ].filter((v) => !!v).length;
   if (mutuallyExclusiveFlags > 1) {
@@ -378,21 +377,6 @@ function validateTransaction(value: Partial<Transaction>, holdings: Holding[]): 
   }
 
   // combination rules
-
-  if ((value?.category?.isCapitalAcquisition || value?.category?.isCapitalDisposal) && !value?.holding?.asset) {
-    result.isValid = false;
-    result.errors.category = "This category is only valid for asset-backed holdings";
-  }
-
-  if (value?.category?.isCapitalAcquisition && (value?.amount ?? 0) <= 0) {
-    result.isValid = false;
-    result.errors.amount = "Capital acquisitions must be positive";
-  }
-
-  if (value?.category?.isCapitalDisposal && (value?.amount ?? 0) >= 0) {
-    result.isValid = false;
-    result.errors.amount = "Capital disposals must be negative";
-  }
 
   if (value?.category?.isCapitalEventFee && (value?.amount ?? 0) >= 0) {
     result.isValid = false;

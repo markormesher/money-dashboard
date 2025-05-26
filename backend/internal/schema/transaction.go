@@ -65,18 +65,6 @@ func (t *Transaction) Validate() error {
 		return fmt.Errorf("unit value must be positive")
 	}
 
-	if (t.Category.IsCapitalAcquisition || t.Category.IsCapitalDisposal) && t.Holding.Asset == nil {
-		return fmt.Errorf("category requires an asset-backed holding")
-	}
-
-	if t.Category.IsCapitalAcquisition && t.Amount.IsNeg() {
-		return fmt.Errorf("capital acquisitions must be positive")
-	}
-
-	if t.Category.IsCapitalDisposal && t.Amount.IsPos() {
-		return fmt.Errorf("capital disposals must be negative")
-	}
-
 	if t.Category.IsCapitalEventFee && t.Amount.IsPos() {
 		return fmt.Errorf("capital event fees must be negative")
 	}

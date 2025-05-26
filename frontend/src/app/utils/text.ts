@@ -22,4 +22,8 @@ function copyToClipboard(str: string): void {
     });
 }
 
-export { copyToClipboard };
+function safeJsonStringify(v: unknown): string {
+  return JSON.stringify(v, (_, value: unknown) => (typeof value === "bigint" ? value.toString() : value), 2);
+}
+
+export { copyToClipboard, safeJsonStringify };
