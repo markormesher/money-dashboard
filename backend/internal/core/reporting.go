@@ -573,7 +573,76 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 		rule in TCGA92/S105(1).
 	*/
 
-	// TODO
+	for holdingId, disposalEvents := range disposalEventsPerHolding {
+		acquisitionEvents, ok := acquisitionEventsPerHolding[holdingId]
+		if !ok {
+			return nil, fmt.Errorf("cannot dispose of an asset that wasn't acquired (holding: %v)", holdingId)
+		}
+
+		for d := range disposalEvents {
+			disposal := &disposalEvents[d]
+
+			for a := range acquisitionEvents {
+				acquisition := &acquisitionEvents[a]
+
+				if disposal.availableToMatch().IsZero() {
+					continue
+				}
+
+				if acquisition.availableToMatch().IsZero() {
+					continue
+				}
+
+				daysAfterSale := acquisition.date.Sub(disposal.date).Hours() / 24
+
+				if daysAfterSale < 0 {
+					continue
+				}
+
+				if daysAfterSale > 30 {
+					continue
+				}
+
+				var qtyMatched decimal.Decimal
+				if acquisition.availableToMatch().Cmp(disposal.availableToMatch()) < 0 {
+					qtyMatched = acquisition.availableToMatch()
+				} else {
+					qtyMatched = disposal.availableToMatch()
+				}
+
+				if qtyMatched.IsZero() {
+					continue
+				}
+
+				// work out the new matched quantities for each side
+				disposalTotalMatched, err := disposal.qtyMatched.Add(qtyMatched)
+				if err != nil {
+					return nil, err
+				}
+				disposal.qtyMatched = disposalTotalMatched
+
+				acquisitionTotalMatched, err := acquisition.qtyMatched.Add(qtyMatched)
+				if err != nil {
+					return nil, err
+				}
+				acquisition.qtyMatched = acquisitionTotalMatched
+
+				// append match records
+				disposal.matches = append(disposal.matches, CapitalEventMatch{
+					qty:   qtyMatched,
+					date:  disposal.date,
+					price: acquisition.avgGbpUnitPrice,
+					note:  "B&B",
+				})
+
+				acquisition.matches = append(acquisition.matches, CapitalEventMatch{
+					qty:  qtyMatched,
+					date: disposal.date,
+					note: "B&B",
+				})
+			}
+		}
+	}
 
 	/*
 		Step 4: walk through all remaining acquisitions and disposals and count them
