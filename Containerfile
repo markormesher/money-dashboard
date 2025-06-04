@@ -1,4 +1,4 @@
-FROM docker.io/node:24.0.2-slim@sha256:083430e81f23ca4f309c6de17614d20706ddd544b2adc71fb9fdd86e2371360a AS frontend-builder
+FROM docker.io/node:24.1.0-slim@sha256:5ae787590295f944e7dc200bf54861bac09bf21b5fdb4c9b97aee7781b6d95a2 AS frontend-builder
 WORKDIR /app
 
 RUN corepack enable
@@ -11,7 +11,7 @@ RUN cd frontend && pnpm build
 
 # --
 
-FROM docker.io/golang:1.24.3@sha256:4c0a1814a7c6c65ece28b3bfea14ee3cf83b5e80b81418453f0e9d5255a5d7b8 AS backend-builder
+FROM docker.io/golang:1.24.3@sha256:81bf5927dc91aefb42e2bc3a5abdbe9bb3bae8ba8b107e2a4cf43ce3402534c6 AS backend-builder
 WORKDIR /app
 
 COPY ./backend/go.mod ./backend/go.sum ./backend/
