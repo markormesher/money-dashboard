@@ -415,7 +415,8 @@ func (c *Core) getInterestOrDividendIncomeForTaxReport(ctx context.Context, whic
 }
 
 type CapitalEvent struct {
-	date time.Time
+	date      time.Time
+	holdingID uuid.UUID
 
 	qty                  decimal.Decimal
 	avgOriginalUnitPrice decimal.Decimal
@@ -426,10 +427,12 @@ type CapitalEvent struct {
 }
 
 func (ce CapitalEvent) availableToMatch() decimal.Decimal {
-	out, err := ce.qty.Sub(ce.qtyMatched)
+	// note: we need the absolute value of the event, because disposals are negative
+	out, err := ce.qty.Abs().Sub(ce.qtyMatched)
 	if err != nil {
 		panic("maths error: could not subtract: " + err.Error())
 	}
+
 	return out
 }
 
@@ -440,6 +443,11 @@ type CapitalEventMatch struct {
 	note  string
 }
 
+type CaptialS104Pot struct {
+	qty       decimal.Decimal
+	unitPrice decimal.Decimal
+}
+
 func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.TaxReportCapitalEvent, error) {
 	// share matching and S104 pots don't are about tax year bounaries, so we need to
 	// get the full history and build the full report, then return the events for the
@@ -448,17 +456,6 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 	transactions, err := c.DB.GetTaxableCapitalTransactions(ctx, profile.ID)
 	if err != nil {
 		return nil, err
-	}
-
-	// split transactions into acquisitions and disposals
-	acquisitionTxns := make([]schema.Transaction, 0)
-	disposalTxns := make([]schema.Transaction, 0)
-	for _, t := range transactions {
-		if t.Amount.IsPos() {
-			acquisitionTxns = append(acquisitionTxns, t)
-		} else {
-			disposalTxns = append(disposalTxns, t)
-		}
 	}
 
 	/*
@@ -477,12 +474,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 		a single transaction, TCGA92/S105 (1)(a).
 	*/
 
-	acquisitionEventsPerHolding, err := c.convertCapitalTransactionsToEvents(ctx, acquisitionTxns)
-	if err != nil {
-		return nil, err
-	}
-
-	disposalEventsPerHolding, err := c.convertCapitalTransactionsToEvents(ctx, disposalTxns)
+	events, err := c.convertCapitalTransactionsToEvents(ctx, transactions)
 	if err != nil {
 		return nil, err
 	}
@@ -503,65 +495,57 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 		the 'bed and breakfast' rule, see below.
 	*/
 
-	for holdingId, disposalEvents := range disposalEventsPerHolding {
-		acquisitionEvents, ok := acquisitionEventsPerHolding[holdingId]
-		if !ok {
-			return nil, fmt.Errorf("cannot dispose of an asset that wasn't acquired (holding: %v)", holdingId)
+	for d := range events {
+		disposal := &events[d]
+
+		// is this actually a disposal?
+		if !disposal.qty.IsNeg() {
+			continue
 		}
 
-		for d := range disposalEvents {
-			disposal := &disposalEvents[d]
+		// is there any work to do?
+		if disposal.availableToMatch().IsZero() {
+			continue
+		}
 
-			for a := range acquisitionEvents {
-				acquisition := &acquisitionEvents[a]
+		for a := range events {
+			acquisition := &events[a]
 
-				if acquisition.date == disposal.date {
-					var qtyMatched decimal.Decimal
-					if acquisition.availableToMatch().Cmp(disposal.availableToMatch()) < 0 {
-						qtyMatched = acquisition.availableToMatch()
-					} else {
-						qtyMatched = disposal.availableToMatch()
-					}
+			// is this actually an acqisition?
+			if !acquisition.qty.IsPos() {
+				continue
+			}
 
-					if qtyMatched.IsZero() {
-						break
-					}
+			// is there any work to do?
+			if acquisition.availableToMatch().IsZero() {
+				continue
+			}
 
-					// work out the new matched quantities for each side
-					disposalTotalMatched, err := disposal.qtyMatched.Add(qtyMatched)
-					if err != nil {
-						return nil, err
-					}
-					disposal.qtyMatched = disposalTotalMatched
+			// is it for the right holding?
+			if acquisition.holdingID != disposal.holdingID {
+				continue
+			}
 
-					acquisitionTotalMatched, err := acquisition.qtyMatched.Add(qtyMatched)
-					if err != nil {
-						return nil, err
-					}
-					acquisition.qtyMatched = acquisitionTotalMatched
+			// is it for the right date?
+			if acquisition.date != disposal.date {
+				continue
+			}
 
-					// append match records
-					disposal.matches = append(disposal.matches, CapitalEventMatch{
-						qty:   qtyMatched,
-						date:  disposal.date,
-						price: acquisition.avgGbpUnitPrice,
-						note:  "Same-day",
-					})
+			// are we already past any potential same-day matches?
+			if acquisition.date.After(disposal.date) {
+				break
+			}
 
-					acquisition.matches = append(acquisition.matches, CapitalEventMatch{
-						qty:  qtyMatched,
-						date: disposal.date,
-						note: "Same-day",
-					})
-
-					break
-				}
+			// ok, we actually have a match
+			err := matchCapitalEvents(events, d, a, "Same-day")
+			if err != nil {
+				return nil, err
 			}
 		}
 	}
 
 	/*
-		Step 3: as above, but now we match disposals against acquisitions in the last 30 days.
+		Step 3: as above, but now we match disposals against acquisitions in the following 30 days.
 
 		---
 
@@ -573,73 +557,49 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 		rule in TCGA92/S105(1).
 	*/
 
-	for holdingId, disposalEvents := range disposalEventsPerHolding {
-		acquisitionEvents, ok := acquisitionEventsPerHolding[holdingId]
-		if !ok {
-			return nil, fmt.Errorf("cannot dispose of an asset that wasn't acquired (holding: %v)", holdingId)
+	for d := range events {
+		disposal := &events[d]
+
+		// is this actually a disposal?
+		if !disposal.qty.IsNeg() {
+			continue
 		}
 
-		for d := range disposalEvents {
-			disposal := &disposalEvents[d]
+		// is there any work to do?
+		if disposal.availableToMatch().IsZero() {
+			continue
+		}
 
-			for a := range acquisitionEvents {
-				acquisition := &acquisitionEvents[a]
+		for a := range events {
+			acquisition := &events[a]
 
-				if disposal.availableToMatch().IsZero() {
-					continue
-				}
+			// is this actually an acqisition?
+			if !acquisition.qty.IsPos() {
+				continue
+			}
 
-				if acquisition.availableToMatch().IsZero() {
-					continue
-				}
+			// is there any work to do?
+			if acquisition.availableToMatch().IsZero() {
+				continue
+			}
 
-				daysAfterSale := acquisition.date.Sub(disposal.date).Hours() / 24
+			// is it for the right holding?
+			if acquisition.holdingID != disposal.holdingID {
+				continue
+			}
 
-				if daysAfterSale < 0 {
-					continue
-				}
+			// is it for the right date?
+			daysAfterDisposal := acquisition.date.Sub(disposal.date).Hours() / 24
+			if daysAfterDisposal < 0 {
+				continue
+			} else if daysAfterDisposal > 30 {
+				break
+			}
 
-				if daysAfterSale > 30 {
-					continue
-				}
-
-				var qtyMatched decimal.Decimal
-				if acquisition.availableToMatch().Cmp(disposal.availableToMatch()) < 0 {
-					qtyMatched = acquisition.availableToMatch()
-				} else {
-					qtyMatched = disposal.availableToMatch()
-				}
-
-				if qtyMatched.IsZero() {
-					continue
-				}
-
-				// work out the new matched quantities for each side
-				disposalTotalMatched, err := disposal.qtyMatched.Add(qtyMatched)
-				if err != nil {
-					return nil, err
-				}
-				disposal.qtyMatched = disposalTotalMatched
-
-				acquisitionTotalMatched, err := acquisition.qtyMatched.Add(qtyMatched)
-				if err != nil {
-					return nil, err
-				}
-				acquisition.qtyMatched = acquisitionTotalMatched
-
-				// append match records
-				disposal.matches = append(disposal.matches, CapitalEventMatch{
-					qty:   qtyMatched,
-					date:  disposal.date,
-					price: acquisition.avgGbpUnitPrice,
-					note:  "B&B",
-				})
-
-				acquisition.matches = append(acquisition.matches, CapitalEventMatch{
-					qty:  qtyMatched,
-					date: disposal.date,
-					note: "B&B",
-				})
+			// ok, we actually have a match
+			err := matchCapitalEvents(events, d, a, "B&B")
+			if err != nil {
+				return nil, err
 			}
 		}
 	}
@@ -649,75 +609,132 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 		against the S104 pot.
 	*/
 
-	// TODO
-
-	// rebuild result
-
 	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
 	if err != nil {
 		return nil, err
 	}
 
-	out := make([]schema.TaxReportCapitalEvent, 0)
+	pots := make(map[uuid.UUID]CaptialS104Pot, 0)
 
-	for holdingId, acquisitions := range acquisitionEventsPerHolding {
-		holding, ok := holdings[holdingId]
+	for e := range events {
+		event := &events[e]
+
+		// is there any work to do?
+		if event.availableToMatch().IsZero() {
+			continue
+		}
+
+		pot, ok := pots[event.holdingID]
 		if !ok {
-			return nil, fmt.Errorf("unknown holding: %v", holdingId)
+			pots[event.holdingID] = CaptialS104Pot{}
 		}
 
-		for _, acquisition := range acquisitions {
-			evt := schema.TaxReportCapitalEvent{
-				Holding:              holding,
-				Type:                 "acquisition",
-				Date:                 acquisition.date,
-				Qty:                  acquisition.qty,
-				AvgOriginalUnitPrice: acquisition.avgOriginalUnitPrice,
-				AvgGbpUnitPrice:      acquisition.avgGbpUnitPrice,
-				QtyMatched:           acquisition.qtyMatched,
+		// handle acquisitions - add them to the pot
+		if event.qty.IsPos() {
+			currentPotValue, err := pot.qty.Mul(pot.unitPrice)
+			if err != nil {
+				return nil, err
 			}
 
-			for _, m := range acquisition.matches {
-				evt.Matches = append(evt.Matches, schema.TaxReportCapitalEventMatch{
-					Qty:   m.qty,
-					Date:  m.date,
-					Price: m.price,
-					Note:  m.note,
-				})
+			availableEventValue, err := event.availableToMatch().Mul(event.avgGbpUnitPrice)
+			if err != nil {
+				return nil, err
 			}
 
-			out = append(out, evt)
+			newPotQty, err := pot.qty.Add(event.availableToMatch())
+			if err != nil {
+				return nil, err
+			}
+
+			newPotValue, err := currentPotValue.Add(availableEventValue)
+			if err != nil {
+				return nil, err
+			}
+
+			newPotUnitPrice, err := newPotValue.Quo(newPotQty)
+			if err != nil {
+				return nil, err
+			}
+
+			pot.qty = newPotQty
+			pot.unitPrice = newPotUnitPrice
+
+			event.matches = append(event.matches, CapitalEventMatch{
+				qty:   event.availableToMatch(),
+				date:  event.date,
+				price: event.avgGbpUnitPrice,
+				note:  "S104",
+			})
 		}
+
+		// handle disposals - match them against the pot and decrease the pot size
+		if event.qty.IsNeg() {
+			newPotQty, err := pot.qty.Sub(event.availableToMatch())
+			if err != nil {
+				return nil, err
+			}
+
+			if newPotQty.IsNeg() {
+				return nil, fmt.Errorf("S104 pot has gone negaive - this should not happen")
+			}
+
+			pot.qty = newPotQty
+
+			event.matches = append(event.matches, CapitalEventMatch{
+				qty:   event.availableToMatch(),
+				date:  event.date,
+				price: pot.unitPrice,
+				note:  "S104",
+			})
+		}
+
+		// we used all remaining units, so we know these two are equal now
+		event.qtyMatched = event.qty.Abs()
+
+		pots[event.holdingID] = pot
 	}
 
-	for holdingId, disposals := range disposalEventsPerHolding {
-		holding, ok := holdings[holdingId]
+	// rebuild result
+
+	out := make([]schema.TaxReportCapitalEvent, 0)
+
+	for _, event := range events {
+		if event.date.Before(startDate) || event.date.After(endDate) {
+			continue
+		}
+
+		holding, ok := holdings[event.holdingID]
 		if !ok {
-			return nil, fmt.Errorf("unknown holding: %v", holdingId)
+			return nil, fmt.Errorf("unknown holding: %v", event.holdingID)
 		}
 
-		for _, disposal := range disposals {
-			evt := schema.TaxReportCapitalEvent{
-				Holding:              holding,
-				Type:                 "disposal",
-				Date:                 disposal.date,
-				Qty:                  disposal.qty,
-				AvgOriginalUnitPrice: disposal.avgOriginalUnitPrice,
-				AvgGbpUnitPrice:      disposal.avgGbpUnitPrice,
-				QtyMatched:           disposal.qtyMatched,
-			}
-
-			for _, m := range disposal.matches {
-				evt.Matches = append(evt.Matches, schema.TaxReportCapitalEventMatch{
-					Qty:   m.qty,
-					Date:  m.date,
-					Price: m.price,
-					Note:  m.note,
-				})
-			}
-
-			out = append(out, evt)
+		var eventType string
+		if event.qty.IsNeg() {
+			eventType = "disposal"
+		} else {
+			eventType = "acquisition"
 		}
+
+		outputEvent := schema.TaxReportCapitalEvent{
+			Holding:              holding,
+			Type:                 eventType,
+			Date:                 event.date,
+			Qty:                  event.qty,
+			AvgOriginalUnitPrice: event.avgOriginalUnitPrice,
+			AvgGbpUnitPrice:      event.avgGbpUnitPrice,
+			QtyMatched:           event.qtyMatched,
+		}
+
+		for _, m := range event.matches {
+			outputEvent.Matches = append(outputEvent.Matches, schema.TaxReportCapitalEventMatch{
+				Qty:   m.qty,
+				Date:  m.date,
+				Price: m.price,
+				Note:  m.note,
+			})
+		}
+
+		out = append(out, outputEvent)
 	}
 
 	return out, nil
@@ -727,39 +744,39 @@ func truncateToDay(t time.Time) time.Time {
 	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
 }
 
-func (c *Core) convertCapitalTransactionsToEvents(ctx context.Context, txns []schema.Transaction) (map[uuid.UUID][]CapitalEvent, error) {
-	sort.Slice(txns, func(a, b int) bool {
-		return txns[a].Date.Before(txns[b].Date)
-	})
+func (c *Core) convertCapitalTransactionsToEvents(ctx context.Context, txns []schema.Transaction) ([]CapitalEvent, error) {
+	makeKey := func(txn schema.Transaction) string {
+		// this method is effectively the "group by" clause for merging transactions into events
+		return fmt.Sprintf("%v/%v/%v", txn.Holding.ID, truncateToDay(txn.Date), txn.Amount.Sign())
+	}
 
 	type MergeState struct {
 		date               time.Time
+		holdingID          uuid.UUID
 		qty                decimal.Decimal
 		totalOriginalValue decimal.Decimal
 		totalGbpValue      decimal.Decimal
 	}
 
-	mergedStatesPerHolding := make(map[uuid.UUID][]MergeState, 0)
+	mergeStates := make(map[string]MergeState, 0)
 
 	for _, t := range txns {
-		mergedStates, ok := mergedStatesPerHolding[t.Holding.ID]
-		if !ok {
-			mergedStates = make([]MergeState, 0)
-		}
-
 		tDate := truncateToDay(t.Date)
+		key := makeKey(t)
 
-		if len(mergedStates) == 0 || mergedStates[len(mergedStates)-1].date != tDate {
-			mergedStates = append(mergedStates, MergeState{
+		mergeState, ok := mergeStates[key]
+		if !ok {
+			mergeState = MergeState{
 				date:               tDate,
+				holdingID:          t.Holding.ID,
 				qty:                decimal.Zero,
 				totalOriginalValue: decimal.Zero,
-			})
+			}
 		}
 
 		// qty is easy - just add them up
 
-		qty, err := mergedStates[len(mergedStates)-1].qty.Add(t.Amount.Abs())
+		qty, err := mergeState.qty.Add(t.Amount)
 		if err != nil {
 			return nil, err
 		}
@@ -788,48 +805,95 @@ func (c *Core) convertCapitalTransactionsToEvents(ctx context.Context, txns []sc
 			return nil, err
 		}
 
-		totalOriginalValue, err := mergedStates[len(mergedStates)-1].totalOriginalValue.Add(originalValue)
+		totalOriginalValue, err := mergeState.totalOriginalValue.Add(originalValue)
 		if err != nil {
 			return nil, err
 		}
 
-		totalGbpValue, err := mergedStates[len(mergedStates)-1].totalGbpValue.Add(gbpValue)
+		totalGbpValue, err := mergeState.totalGbpValue.Add(gbpValue)
 		if err != nil {
 			return nil, err
 		}
 
-		mergedStates[len(mergedStates)-1].qty = qty
-		mergedStates[len(mergedStates)-1].totalOriginalValue = totalOriginalValue
-		mergedStates[len(mergedStates)-1].totalGbpValue = totalGbpValue
-		mergedStatesPerHolding[t.Holding.ID] = mergedStates
+		// store the new merge state
+
+		mergeState.qty = qty
+		mergeState.totalOriginalValue = totalOriginalValue
+		mergeState.totalGbpValue = totalGbpValue
+
+		mergeStates[key] = mergeState
 	}
 
-	out := make(map[uuid.UUID][]CapitalEvent, 0)
+	out := make([]CapitalEvent, 0)
 
-	for holdingId, mergedStates := range mergedStatesPerHolding {
-		holdingStates := make([]CapitalEvent, len(mergedStates))
-
-		for i, mergedState := range mergedStates {
-			avgOriginalUnitPrice, err := mergedState.totalOriginalValue.Quo(mergedState.qty)
-			if err != nil {
-				return nil, err
-			}
-
-			avgGbpUnitPrice, err := mergedState.totalGbpValue.Quo(mergedState.qty)
-			if err != nil {
-				return nil, err
-			}
-
-			holdingStates[i] = CapitalEvent{
-				date:                 mergedState.date,
-				qty:                  mergedState.qty,
-				avgOriginalUnitPrice: avgOriginalUnitPrice,
-				avgGbpUnitPrice:      avgGbpUnitPrice,
-			}
+	for _, mergedState := range mergeStates {
+		avgOriginalUnitPrice, err := mergedState.totalOriginalValue.Quo(mergedState.qty)
+		if err != nil {
+			return nil, err
 		}
 
-		out[holdingId] = holdingStates
+		avgGbpUnitPrice, err := mergedState.totalGbpValue.Quo(mergedState.qty)
+		if err != nil {
+			return nil, err
+		}
+
+		out = append(out, CapitalEvent{
+			date:                 mergedState.date,
+			holdingID:            mergedState.holdingID,
+			qty:                  mergedState.qty,
+			avgOriginalUnitPrice: avgOriginalUnitPrice,
+			avgGbpUnitPrice:      avgGbpUnitPrice,
+		})
 	}
+
+	sort.Slice(out, func(a, b int) bool {
+		return out[a].date.Before(out[b].date)
+	})
 
 	return out, nil
+}
+
+func matchCapitalEvents(events []CapitalEvent, disposalId int, acquisitionId int, note string) error {
+	disposal := &events[disposalId]
+	acquisition := &events[acquisitionId]
+
+	var qtyMatched decimal.Decimal
+	if acquisition.availableToMatch().Cmp(disposal.availableToMatch()) < 0 {
+		qtyMatched = acquisition.availableToMatch()
+	} else {
+		qtyMatched = disposal.availableToMatch()
+	}
+
+	if qtyMatched.IsZero() {
+		return nil
+	}
+
+	// work out the new matched quantities for each side
+	disposalTotalMatched, err := disposal.qtyMatched.Add(qtyMatched)
+	if err != nil {
+		return err
+	}
+	disposal.qtyMatched = disposalTotalMatched
+
+	acquisitionTotalMatched, err := acquisition.qtyMatched.Add(qtyMatched)
+	if err != nil {
+		return err
+	}
+	acquisition.qtyMatched = acquisitionTotalMatched
+
+	// append match records
+	disposal.matches = append(disposal.matches, CapitalEventMatch{
+		qty:   qtyMatched,
+		date:  disposal.date,
+		price: acquisition.avgGbpUnitPrice,
+		note:  note,
+	})
+
+	acquisition.matches = append(acquisition.matches, CapitalEventMatch{
+		qty:  qtyMatched,
+		date: disposal.date,
+		note: note,
+	})
+
+	return nil
 }
