@@ -135,7 +135,7 @@ function BalanceHistoryPage(): ReactElement {
         {
           data: data.map((e) => e.gbpBalance),
           fill: true,
-          borderColor: "#018CD4", // pico azuer 400
+          borderColor: "#018CD4", // pico azure 400
           backgroundColor: "#9BCCFD", // pico azure 200
           pointStyle: false,
         },

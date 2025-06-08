@@ -734,6 +734,10 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 			})
 		}
 
+		sort.Slice(event.matches, func(i, j int) bool {
+			return event.matches[i].date.Before(event.matches[j].date)
+		})
+
 		out = append(out, outputEvent)
 	}
 

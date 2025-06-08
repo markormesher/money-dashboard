@@ -9,11 +9,11 @@ import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import "./reports.css";
-import { convertDateToProto } from "../../utils/dates.js";
+import { convertDateToProto, formatDateFromProto } from "../../utils/dates.js";
 import { getTaxYear } from "../../utils/tax.js";
 import { PLATFORM_MINIMUM_DATE } from "../../../config/consts.js";
 import { formatCurrencyValue } from "../../utils/currency.js";
-import { safeJsonStringify } from "../../utils/text.js";
+import { formatAssetQuantity } from "../../utils/assets.js";
 
 function TaxHelperPage(): ReactElement {
   const { setMeta } = useRouter();
@@ -167,7 +167,125 @@ function TaxHelperPage(): ReactElement {
         )}
 
         <h4>Capital Events</h4>
-        <pre>{safeJsonStringify(data.capitalEvents)}</pre>
+        {data.capitalEvents.length > 0 ? (
+          data.capitalEvents.map((e, i, a) => {
+            const proceeds = -1 * e.qty * e.avgGbpUnitPrice;
+            const costs = e.matches.map((m) => m.qty * m.price).reduce((a, b) => a + b);
+            const totalMatches = e.matches.map((m) => m.qty).reduce((a, b) => a + b);
+            const avgMatchPrice = costs / totalMatches;
+
+            return (
+              <>
+                <details>
+                  <summary>
+                    <IconGroup>
+                      <Icon
+                        name={e.type == "disposal" ? "upload" : "download"}
+                        className={e.type == "disposal" ? "tax-disposal-icon" : "tax-acquisition-icon"}
+                      />
+                      <span>
+                        {formatDateFromProto(e.date)}
+                        <span className={"separator"}>&#x2022;</span>
+                        {e.holding?.name ?? "Unknown Holding"}
+                        <span className={"separator"}>&#x2022;</span>
+                        {e.type == "disposal" ? "Disposal" : "Acquisition"} of {formatAssetQuantity(Math.abs(e.qty))}{" "}
+                        unit{e.qty == 1 ? "" : "s"} @ {formatCurrencyValue(e.avgGbpUnitPrice, null)}
+                      </span>
+                    </IconGroup>
+                  </summary>
+
+                  <div className={"grid"}>
+                    {e.type == "disposal" ? (
+                      <div>
+                        <table className={"auto-width"}>
+                          <thead>
+                            <tr>
+                              <td colSpan={999} style={{ textAlign: "center" }}>
+                                P/L Summary
+                              </td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Proceeds</td>
+                              <td className={"amount-cell"}>
+                                <span className={"amount"}>{formatCurrencyValue(proceeds, null)}</span>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Costs</td>
+                              <td className={"amount-cell"}>
+                                <span className={"amount"}>{formatCurrencyValue(costs, null)}</span>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>P/L</td>
+                              <td className={"amount-cell"}>
+                                <span className={"amount"}>{formatCurrencyValue(proceeds - costs, null)}</span>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : null}
+
+                    <div>
+                      <table className={"auto-width"}>
+                        <thead>
+                          <tr>
+                            <td colSpan={999} style={{ textAlign: "center" }}>
+                              Event Matches
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Date</th>
+                            <th>Rule</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {e.matches.map((m) => {
+                            return (
+                              <tr>
+                                <td>{formatDateFromProto(m.date)}</td>
+                                <td>{m.note}</td>
+                                <td className={"amount-cell"}>
+                                  <span className={"amount"}>{formatAssetQuantity(m.qty)}</span>
+                                </td>
+                                <td className={"amount-cell"}>
+                                  <span className={"amount"}>{formatCurrencyValue(m.price, null)}</span>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td></td>
+                            <td></td>
+                            <td className={"amount-cell"}>
+                              <span className={"amount"}>{formatAssetQuantity(totalMatches)}</span>
+                            </td>
+                            <td className={"amount-cell"}>
+                              <span className={"amount"}>{formatCurrencyValue(avgMatchPrice, null)}</span>
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                </details>
+
+                {i < a.length - 1 ? <hr /> : null}
+              </>
+            );
+          })
+        ) : (
+          <p>
+            <em>None.</em>
+          </p>
+        )}
       </>
     );
   }
