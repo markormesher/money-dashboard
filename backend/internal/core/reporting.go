@@ -661,7 +661,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 
 			event.matches = append(event.matches, CapitalEventMatch{
 				qty:   event.availableToMatch(),
-				date:  event.date,
+				date:  time.Unix(0, 0),
 				price: event.avgGbpUnitPrice,
 				note:  "S104",
 			})
@@ -682,7 +682,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 
 			event.matches = append(event.matches, CapitalEventMatch{
 				qty:   event.availableToMatch(),
-				date:  event.date,
+				date:  time.Unix(0, 0),
 				price: pot.unitPrice,
 				note:  "S104",
 			})
@@ -734,8 +734,14 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 			})
 		}
 
-		sort.Slice(event.matches, func(i, j int) bool {
-			return event.matches[i].date.Before(event.matches[j].date)
+		sort.Slice(outputEvent.Matches, func(i, j int) bool {
+			// always sort the 0-time S104 matches last
+			if outputEvent.Matches[i].Date.Unix() == 0 {
+				return false
+			}
+
+			// otherwise, sort by date as normal
+			return outputEvent.Matches[i].Date.Before(outputEvent.Matches[j].Date)
 		})
 
 		out = append(out, outputEvent)
@@ -888,7 +894,7 @@ func matchCapitalEvents(events []CapitalEvent, disposalId int, acquisitionId int
 	// append match records
 	disposal.matches = append(disposal.matches, CapitalEventMatch{
 		qty:   qtyMatched,
-		date:  disposal.date,
+		date:  acquisition.date,
 		price: acquisition.avgGbpUnitPrice,
 		note:  note,
 	})

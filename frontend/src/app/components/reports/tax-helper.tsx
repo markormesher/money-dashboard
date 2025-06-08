@@ -238,7 +238,7 @@ function TaxHelperPage(): ReactElement {
                             </td>
                           </tr>
                           <tr>
-                            <th>Date</th>
+                            <th>{e.type == "disposal" ? "Acquisition" : "Disposal"} Date</th>
                             <th>Rule</th>
                             <th>Quantity</th>
                             <th>Unit Price</th>
@@ -248,7 +248,7 @@ function TaxHelperPage(): ReactElement {
                           {e.matches.map((m) => {
                             return (
                               <tr>
-                                <td>{formatDateFromProto(m.date)}</td>
+                                <td>{m.date == BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
                                 <td>{m.note}</td>
                                 <td className={"amount-cell"}>
                                   <span className={"amount"}>{formatAssetQuantity(m.qty)}</span>
