@@ -32,6 +32,30 @@ message BalanceHistoryEntry {
   double gbp_balance = 2;
 }
 
+message TaxReport {
+  repeated HoldingBalance interest_income = 1;
+  repeated HoldingBalance dividend_income = 2;
+  repeated TaxReportCapitalEvent capital_events = 3;
+}
+
+message TaxReportCapitalEvent {
+  Holding holding = 1;
+  string type = 2;
+  int64 date = 3;
+  double qty = 4;
+  double avg_original_unit_price = 5;
+  double avg_gbp_unit_price = 6;
+  double qty_matched = 7;
+  repeated TaxReportCapitalEventMatch matches = 8;
+}
+
+message TaxReportCapitalEventMatch {
+  double qty = 1;
+  int64 date = 2;
+  double price = 3;
+  string note = 4;
+}
+
 message GetHoldingBalancesRequest {}
 
 message GetHoldingBalancesResponse {
@@ -59,9 +83,18 @@ message GetBalanceHistoryResponse {
   repeated BalanceHistoryEntry entries = 1;
 }
 
+message GetTaxReportRequest {
+  int32 tax_year = 1;
+}
+
+message GetTaxReportResponse {
+  TaxReport tax_report = 1;
+}
+
 service MDReportingService {
   rpc GetHoldingBalances(GetHoldingBalancesRequest) returns (GetHoldingBalancesResponse);
   rpc GetNonZeroMemoBalances(GetNonZeroMemoBalancesRequest) returns (GetNonZeroMemoBalancesResponse);
   rpc GetEnvelopeBalances(GetEnvelopeBalancesRequest) returns (GetEnvelopeBalancesResponse);
   rpc GetBalanceHistory(GetBalanceHistoryRequest) returns (GetBalanceHistoryResponse);
+  rpc GetTaxReport(GetTaxReportRequest) returns (GetTaxReportResponse);
 }

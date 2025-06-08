@@ -71,6 +71,10 @@ span.separator {
 
 /* tables */
 
+table.auto-width {
+  width: auto;
+}
+
 td.amount-cell {
   font-family: monospace;
 

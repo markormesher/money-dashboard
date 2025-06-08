@@ -127,3 +127,93 @@ func (db *DB) GetTransactionsForEnvelopeBalances(ctx context.Context, profileID 
 
 	return transactions, nil
 }
+
+func (db *DB) GetTaxableInterestIncomePerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
+	rows, err := db.queries.GetTaxableInterestIncomePerHolding(ctx, database_gen.GetTaxableInterestIncomePerHoldingParams{
+		ProfileID: profileID,
+		MinDate:   minDate,
+		MaxDate:   maxDate,
+	})
+	if errors.Is(err, pgx.ErrNoRows) {
+		return []HoldingBalance{}, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	output := make([]HoldingBalance, len(rows))
+
+	for i, row := range rows {
+		output[i] = HoldingBalance{
+			Balance:   row.Balance,
+			HoldingID: row.HoldingID,
+		}
+	}
+
+	return output, nil
+}
+
+func (db *DB) GetTaxableDividendIncomePerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
+	rows, err := db.queries.GetTaxableDividendIncomePerHolding(ctx, database_gen.GetTaxableDividendIncomePerHoldingParams{
+		ProfileID: profileID,
+		MinDate:   minDate,
+		MaxDate:   maxDate,
+	})
+	if errors.Is(err, pgx.ErrNoRows) {
+		return []HoldingBalance{}, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	output := make([]HoldingBalance, len(rows))
+
+	for i, row := range rows {
+		output[i] = HoldingBalance{
+			Balance:   row.Balance,
+			HoldingID: row.HoldingID,
+		}
+	}
+
+	return output, nil
+}
+
+func (db *DB) GetTaxableCapitalTransactions(ctx context.Context, profileID uuid.UUID) ([]schema.Transaction, error) {
+	rows, err := db.queries.GetTaxableCapitalTransactions(ctx, profileID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	transactions := make([]schema.Transaction, len(rows))
+	for i, row := range rows {
+		transaction := conversion.TransactionToCore(row.Transaction)
+
+		category := conversion.CategoryToCore(row.Category)
+		transaction.Category = &category
+
+		holding := conversion.HoldingToCore(row.Holding)
+		transaction.Holding = &holding
+
+		holdingAccount := conversion.AccountToCore(row.Account)
+		transaction.Holding.Account = &holdingAccount
+
+		if row.NullableHoldingAsset.ID != nil {
+			holdingAsset := conversion.NullableHoldingAssetToCore(row.NullableHoldingAsset)
+			transaction.Holding.Asset = &holdingAsset
+
+			if row.NullableHoldingAssetCurrency.ID != nil {
+				assetCurrency := conversion.NullableHoldingAssetCurrencyToCore(row.NullableHoldingAssetCurrency)
+				transaction.Holding.Asset.Currency = &assetCurrency
+			}
+		}
+
+		if row.NullableHoldingCurrency.ID != nil {
+			holdingCurrency := conversion.NullableHoldingCurrencyToCore(row.NullableHoldingCurrency)
+			transaction.Holding.Currency = &holdingCurrency
+		}
+
+		transactions[i] = transaction
+	}
+
+	return transactions, nil
+}

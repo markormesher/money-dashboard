@@ -245,7 +245,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
           />
         </fieldset>
 
-        {form.model?.category?.isCapitalAcquisition || form.model?.category?.isCapitalDisposal ? (
+        {form.model?.category?.isCapitalEvent && form.model.holding?.asset ? (
           <fieldset className={"grid"}>
             <Input
               label={"Unit Value"}
@@ -260,9 +260,8 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
             <IconGroup>
               <Icon name={"info"} />
               <small>
-                This is the {form.model?.category?.isCapitalAcquisition ? "acquisition cost" : "disposal value"} of{" "}
-                <u>each</u> unit of the asset {form.model?.category?.isCapitalAcquisition ? "acquired" : "disposed of"}{" "}
-                in this transaction.
+                This is the acquisition cost or disposal value of
+                <u>each</u> unit of the asset in this transaction.
               </small>
             </IconGroup>
           </fieldset>

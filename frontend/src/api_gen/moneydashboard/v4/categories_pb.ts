@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file moneydashboard/v4/categories.proto.
  */
 export const file_moneydashboard_v4_categories: GenFile = /*@__PURE__*/
-  fileDesc("CiJtb25leWRhc2hib2FyZC92NC9jYXRlZ29yaWVzLnByb3RvEhFtb25leWRhc2hib2FyZC52NCL7AQoIQ2F0ZWdvcnkSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdpc19tZW1vGAMgASgIEhoKEmlzX2ludGVyZXN0X2luY29tZRgEIAEoCBIaChJpc19kaXZpZGVuZF9pbmNvbWUYBSABKAgSHgoWaXNfY2FwaXRhbF9hY3F1aXNpdGlvbhgGIAEoCBIbChNpc19jYXBpdGFsX2Rpc3Bvc2FsGAcgASgIEhwKFGlzX2NhcGl0YWxfZXZlbnRfZmVlGAggASgIEiEKGWlzX3N5bnRoZXRpY19hc3NldF91cGRhdGUYCSABKAgSDgoGYWN0aXZlGAogASgIIiQKFkdldENhdGVnb3J5QnlJZFJlcXVlc3QSCgoCaWQYASABKAkiSAoXR2V0Q2F0ZWdvcnlCeUlkUmVzcG9uc2USLQoIY2F0ZWdvcnkYASABKAsyGy5tb25leWRhc2hib2FyZC52NC5DYXRlZ29yeSIZChdHZXRBbGxDYXRlZ29yaWVzUmVxdWVzdCJLChhHZXRBbGxDYXRlZ29yaWVzUmVzcG9uc2USLwoKY2F0ZWdvcmllcxgBIAMoCzIbLm1vbmV5ZGFzaGJvYXJkLnY0LkNhdGVnb3J5IkYKFVVwc2VydENhdGVnb3J5UmVxdWVzdBItCghjYXRlZ29yeRgBIAEoCzIbLm1vbmV5ZGFzaGJvYXJkLnY0LkNhdGVnb3J5IhgKFlVwc2VydENhdGVnb3J5UmVzcG9uc2Uy0QIKEU1EQ2F0ZWdvcnlTZXJ2aWNlEmgKD0dldENhdGVnb3J5QnlJZBIpLm1vbmV5ZGFzaGJvYXJkLnY0LkdldENhdGVnb3J5QnlJZFJlcXVlc3QaKi5tb25leWRhc2hib2FyZC52NC5HZXRDYXRlZ29yeUJ5SWRSZXNwb25zZRJrChBHZXRBbGxDYXRlZ29yaWVzEioubW9uZXlkYXNoYm9hcmQudjQuR2V0QWxsQ2F0ZWdvcmllc1JlcXVlc3QaKy5tb25leWRhc2hib2FyZC52NC5HZXRBbGxDYXRlZ29yaWVzUmVzcG9uc2USZQoOVXBzZXJ0Q2F0ZWdvcnkSKC5tb25leWRhc2hib2FyZC52NC5VcHNlcnRDYXRlZ29yeVJlcXVlc3QaKS5tb25leWRhc2hib2FyZC52NC5VcHNlcnRDYXRlZ29yeVJlc3BvbnNlQlFaT2dpdGh1Yi5jb20vbWFya29ybWVzaGVyL21vbmV5LWRhc2hib2FyZC9pbnRlcm5hbC9hcGlfZ2VuL21vbmV5ZGFzaGJvYXJkL3Y0O21kdjRiBnByb3RvMw");
+  fileDesc("CiJtb25leWRhc2hib2FyZC92NC9jYXRlZ29yaWVzLnByb3RvEhFtb25leWRhc2hib2FyZC52NCLYAQoIQ2F0ZWdvcnkSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdpc19tZW1vGAMgASgIEhoKEmlzX2ludGVyZXN0X2luY29tZRgEIAEoCBIaChJpc19kaXZpZGVuZF9pbmNvbWUYBSABKAgSGAoQaXNfY2FwaXRhbF9ldmVudBgGIAEoCBIcChRpc19jYXBpdGFsX2V2ZW50X2ZlZRgHIAEoCBIhChlpc19zeW50aGV0aWNfYXNzZXRfdXBkYXRlGAggASgIEg4KBmFjdGl2ZRgJIAEoCCIkChZHZXRDYXRlZ29yeUJ5SWRSZXF1ZXN0EgoKAmlkGAEgASgJIkgKF0dldENhdGVnb3J5QnlJZFJlc3BvbnNlEi0KCGNhdGVnb3J5GAEgASgLMhsubW9uZXlkYXNoYm9hcmQudjQuQ2F0ZWdvcnkiGQoXR2V0QWxsQ2F0ZWdvcmllc1JlcXVlc3QiSwoYR2V0QWxsQ2F0ZWdvcmllc1Jlc3BvbnNlEi8KCmNhdGVnb3JpZXMYASADKAsyGy5tb25leWRhc2hib2FyZC52NC5DYXRlZ29yeSJGChVVcHNlcnRDYXRlZ29yeVJlcXVlc3QSLQoIY2F0ZWdvcnkYASABKAsyGy5tb25leWRhc2hib2FyZC52NC5DYXRlZ29yeSIYChZVcHNlcnRDYXRlZ29yeVJlc3BvbnNlMtECChFNRENhdGVnb3J5U2VydmljZRJoCg9HZXRDYXRlZ29yeUJ5SWQSKS5tb25leWRhc2hib2FyZC52NC5HZXRDYXRlZ29yeUJ5SWRSZXF1ZXN0GioubW9uZXlkYXNoYm9hcmQudjQuR2V0Q2F0ZWdvcnlCeUlkUmVzcG9uc2USawoQR2V0QWxsQ2F0ZWdvcmllcxIqLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEFsbENhdGVnb3JpZXNSZXF1ZXN0GisubW9uZXlkYXNoYm9hcmQudjQuR2V0QWxsQ2F0ZWdvcmllc1Jlc3BvbnNlEmUKDlVwc2VydENhdGVnb3J5EigubW9uZXlkYXNoYm9hcmQudjQuVXBzZXJ0Q2F0ZWdvcnlSZXF1ZXN0GikubW9uZXlkYXNoYm9hcmQudjQuVXBzZXJ0Q2F0ZWdvcnlSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM");
 
 /**
  * @generated from message moneydashboard.v4.Category
@@ -42,27 +42,22 @@ export type Category = Message<"moneydashboard.v4.Category"> & {
   isDividendIncome: boolean;
 
   /**
-   * @generated from field: bool is_capital_acquisition = 6;
+   * @generated from field: bool is_capital_event = 6;
    */
-  isCapitalAcquisition: boolean;
+  isCapitalEvent: boolean;
 
   /**
-   * @generated from field: bool is_capital_disposal = 7;
-   */
-  isCapitalDisposal: boolean;
-
-  /**
-   * @generated from field: bool is_capital_event_fee = 8;
+   * @generated from field: bool is_capital_event_fee = 7;
    */
   isCapitalEventFee: boolean;
 
   /**
-   * @generated from field: bool is_synthetic_asset_update = 9;
+   * @generated from field: bool is_synthetic_asset_update = 8;
    */
   isSyntheticAssetUpdate: boolean;
 
   /**
-   * @generated from field: bool active = 10;
+   * @generated from field: bool active = 9;
    */
   active: boolean;
 };

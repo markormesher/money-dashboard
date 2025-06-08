@@ -9,3 +9,13 @@ canvas {
     opacity: 0.4;
   }
 }
+
+.tax-acquisition-icon {
+  color: #00895a; /* pico jade 500 */
+  rotate: 270deg;
+}
+
+.tax-disposal-icon {
+  color: #d93526; /* pico red 500 */
+  rotate: 270deg;
+}
