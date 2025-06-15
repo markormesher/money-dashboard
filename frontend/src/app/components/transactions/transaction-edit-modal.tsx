@@ -260,8 +260,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
             <IconGroup>
               <Icon name={"info"} />
               <small>
-                This is the acquisition cost or disposal value of
-                <u>each</u> unit of the asset in this transaction.
+                This is the acquisition cost or disposal value of <u>each</u> unit of the asset in this transaction.
               </small>
             </IconGroup>
           </fieldset>

@@ -1,8 +1,8 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { TaxReport } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
+import { TaxReport, TaxReportCapitalEvent } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { useAsyncEffect, useWaitGroup } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -26,14 +26,17 @@ function TaxHelperPage(): ReactElement {
 
   const wg = useWaitGroup();
   const [error, setError] = React.useState<unknown>();
-  const [data, setData] = React.useState<TaxReport>();
+  const [taxReport, setTaxReport] = React.useState<TaxReport>();
+  const [capitalEvents, setCapitalEvents] = React.useState<TaxReportCapitalEvent[]>();
+
+  const [showDisposalsOnly, setShowCapitcalAcquisitions] = React.useState(false);
 
   useAsyncEffect(async () => {
     wg.add();
     setError(null);
     try {
       const res = await reportingServiceClient.getTaxReport({ taxYear: taxYear });
-      setData(res.taxReport);
+      setTaxReport(res.taxReport);
     } catch (e) {
       toastBus.error("Failed to load report data.");
       setError(e);
@@ -41,6 +44,10 @@ function TaxHelperPage(): ReactElement {
     }
     wg.done();
   }, [taxYear]);
+
+  useEffect(() => {
+    setCapitalEvents(taxReport?.capitalEvents.filter((e) => e.type == "disposal" || !showDisposalsOnly));
+  }, [taxReport, showDisposalsOnly]);
 
   const pageOptions = [
     <fieldset role={"group"}>
@@ -65,13 +72,13 @@ function TaxHelperPage(): ReactElement {
   let body: ReactElement | null = null;
   if (error) {
     body = <ErrorPanel error={error} />;
-  } else if (!data) {
+  } else if (!taxReport || !capitalEvents) {
     body = <LoadingPanel />;
   } else {
     body = (
       <>
         <h4>Interest Income</h4>
-        {data.interestIncome.length > 0 ? (
+        {taxReport.interestIncome.length > 0 ? (
           <table className={"striped"}>
             <thead>
               <tr>
@@ -81,7 +88,7 @@ function TaxHelperPage(): ReactElement {
               </tr>
             </thead>
             <tbody>
-              {data.interestIncome
+              {taxReport.interestIncome
                 .sort((a, b) => a.holding?.account?.name?.localeCompare(b.holding?.account?.name ?? "") ?? 0)
                 .map((b) => {
                   return (
@@ -103,7 +110,7 @@ function TaxHelperPage(): ReactElement {
                   <span className={"amount"}>
                     <strong>
                       {formatCurrencyValue(
-                        data.interestIncome.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
+                        taxReport.interestIncome.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
                         null,
                       )}
                     </strong>
@@ -119,7 +126,7 @@ function TaxHelperPage(): ReactElement {
         )}
 
         <h4>Dividend Income</h4>
-        {data.dividendIncome.length > 0 ? (
+        {taxReport.dividendIncome.length > 0 ? (
           <table className={"striped"}>
             <thead>
               <tr>
@@ -129,7 +136,7 @@ function TaxHelperPage(): ReactElement {
               </tr>
             </thead>
             <tbody>
-              {data.dividendIncome
+              {taxReport.dividendIncome
                 .sort((a, b) => a.holding?.account?.name?.localeCompare(b.holding?.account?.name ?? "") ?? 0)
                 .map((b) => {
                   return (
@@ -151,7 +158,7 @@ function TaxHelperPage(): ReactElement {
                   <span className={"amount"}>
                     <strong>
                       {formatCurrencyValue(
-                        data.dividendIncome.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
+                        taxReport.dividendIncome.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
                         null,
                       )}
                     </strong>
@@ -167,8 +174,21 @@ function TaxHelperPage(): ReactElement {
         )}
 
         <h4>Capital Events</h4>
-        {data.capitalEvents.length > 0 ? (
-          data.capitalEvents.map((e, i, a) => {
+
+        <fieldset>
+          <label>
+            <input
+              type={"checkbox"}
+              role={"switch"}
+              checked={showDisposalsOnly}
+              onChange={(evt) => setShowCapitcalAcquisitions(evt.target.checked)}
+            />
+            <span className={"muted"}>Disposals only</span>
+          </label>
+        </fieldset>
+
+        {capitalEvents.length > 0 ? (
+          capitalEvents.map((e, i, a) => {
             const proceeds = -1 * e.qty * e.avgGbpUnitPrice;
             const costs = e.matches.map((m) => m.qty * m.price).reduce((a, b) => a + b);
             const totalMatches = e.matches.map((m) => m.qty).reduce((a, b) => a + b);
