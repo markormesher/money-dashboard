@@ -39,6 +39,7 @@ tasks:
     dir: '{{.ROOT_DIR}}/backend'
     cmds:
       - cmd: go mod tidy && go mod download --json
+      - cmd: (go tool || true) | (grep '\.' || true) | while read t; do go build -o /dev/null $t; done
   deps-js:
     cmds:
       - task: deps-js-frontend
