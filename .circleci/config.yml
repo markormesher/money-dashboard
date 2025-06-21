@@ -38,14 +38,14 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-go-v2-{{ checksum ".task-meta-cachekey-go" }}
-            - deps-go-v2-
+            - deps-go-v3-{{ checksum ".task-meta-cachekey-go" }}
+            - deps-go-v3-
       - run:
           command: |-
             export GOPATH=/.go
             ./task deps-go
       - save_cache:
-          key: deps-go-v2-{{ checksum ".task-meta-cachekey-go" }}
+          key: deps-go-v3-{{ checksum ".task-meta-cachekey-go" }}
           paths:
             - /.go
   deps-js:
@@ -56,17 +56,16 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-js-v2-{{ checksum ".task-meta-cachekey-js" }}
-            - deps-js-v2-
+            - deps-js-v3-{{ checksum ".task-meta-cachekey-js" }}
+            - deps-js-v3-
       - run:
           command: |-
             corepack enable
             ./task deps-js
-            command -v pnpm
       - save_cache:
-          key: deps-js-v2-{{ checksum ".task-meta-cachekey-js" }}
+          key: deps-js-v3-{{ checksum ".task-meta-cachekey-js" }}
           paths:
-            - /usr/local/bin/pnpm
+            - /usr/local/lib/node_modules
             - frontend/node_modules
   fetch-task:
     docker:
@@ -114,8 +113,8 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-buf-v2-{{ checksum ".task-meta-cachekey-buf" }}
-            - deps-buf-v2-
+            - deps-buf-v3-{{ checksum ".task-meta-cachekey-buf" }}
+            - deps-buf-v3-
       - run:
           command: ./task lint-buf
   lint-go:
@@ -126,8 +125,8 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-go-v2-{{ checksum ".task-meta-cachekey-go" }}
-            - deps-go-v2-
+            - deps-go-v3-{{ checksum ".task-meta-cachekey-go" }}
+            - deps-go-v3-
       - run:
           command: |-
             export GOPATH=/.go
@@ -140,8 +139,8 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-js-v2-{{ checksum ".task-meta-cachekey-js" }}
-            - deps-js-v2-
+            - deps-js-v3-{{ checksum ".task-meta-cachekey-js" }}
+            - deps-js-v3-
       - run:
           command: |-
             corepack enable
