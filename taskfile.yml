@@ -10,6 +10,7 @@ tasks:
     cmds:
       - cmd: rm -f "{{.ROOT_DIR}}/.task-meta-cachekey"*
       - task: cachekey-go-backend
+      - task: cachekey-js-frontend
   cachekey-go:
     cmds:
       - task: cachekey-go-backend
@@ -18,6 +19,15 @@ tasks:
     cmds:
       - cmd: sha256sum go.mod | awk '{print $1}' >> "{{.ROOT_DIR}}/.task-meta-cachekey-go"
       - cmd: if [[ -f go.sum ]]; then sha256sum go.sum | awk '{print $1}' >> "{{.ROOT_DIR}}/.task-meta-cachekey-go"; fi
+  cachekey-js:
+    cmds:
+      - task: cachekey-js-frontend
+  cachekey-js-frontend:
+    dir: '{{.ROOT_DIR}}/frontend'
+    cmds:
+      - cmd: sha256sum package.json | awk '{print $1}' >> "{{.ROOT_DIR}}/.task-meta-cachekey-js"
+      - cmd: if [[ -f pnpm-lock.yaml ]]; then sha256sum pnpm-lock.yaml | awk '{print $1}' >> "{{.ROOT_DIR}}/.task-meta-cachekey-js"; fi
+      - cmd: if [[ -f yarn.lock ]]; then sha256sum yarn.lock | awk '{print $1}' >> "{{.ROOT_DIR}}/.task-meta-cachekey-js"; fi
   deps:
     cmds:
       - task: deps-go-backend
