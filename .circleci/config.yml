@@ -38,16 +38,18 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-go-v4-{{ checksum ".task-meta-cachekey-go" }}
-            - deps-go-v4-
+            - deps-go-v5-{{ checksum ".task-meta-cachekey-go" }}
+            - deps-go-v5-
       - run:
           command: |-
             export GOPATH=/.go
+            export GOCACHE=/.gocache
             ./task deps-go
       - save_cache:
-          key: deps-go-v4-{{ checksum ".task-meta-cachekey-go" }}
+          key: deps-go-v5-{{ checksum ".task-meta-cachekey-go" }}
           paths:
             - /.go
+            - /.gocache
   deps-js:
     docker:
       - image: docker.io/node:24.2.0-slim
@@ -56,14 +58,14 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-js-v4-{{ checksum ".task-meta-cachekey-js" }}
-            - deps-js-v4-
+            - deps-js-v5-{{ checksum ".task-meta-cachekey-js" }}
+            - deps-js-v5-
       - run:
           command: |-
             corepack enable
             ./task deps-js
       - save_cache:
-          key: deps-js-v4-{{ checksum ".task-meta-cachekey-js" }}
+          key: deps-js-v5-{{ checksum ".task-meta-cachekey-js" }}
           paths:
             - /usr/local/lib/node_modules
             - frontend/node_modules
@@ -113,8 +115,8 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-buf-v4-{{ checksum ".task-meta-cachekey-buf" }}
-            - deps-buf-v4-
+            - deps-buf-v5-{{ checksum ".task-meta-cachekey-buf" }}
+            - deps-buf-v5-
       - run:
           command: ./task lint-buf
   lint-go:
@@ -125,11 +127,12 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-go-v4-{{ checksum ".task-meta-cachekey-go" }}
-            - deps-go-v4-
+            - deps-go-v5-{{ checksum ".task-meta-cachekey-go" }}
+            - deps-go-v5-
       - run:
           command: |-
             export GOPATH=/.go
+            export GOCACHE=/.gocache
             ./task lint-go
   lint-js:
     docker:
@@ -139,8 +142,8 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-js-v4-{{ checksum ".task-meta-cachekey-js" }}
-            - deps-js-v4-
+            - deps-js-v5-{{ checksum ".task-meta-cachekey-js" }}
+            - deps-js-v5-
       - run:
           command: |-
             corepack enable
