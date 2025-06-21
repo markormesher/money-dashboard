@@ -62,6 +62,7 @@ jobs:
           command: |-
             corepack enable
             ./task deps-js
+            command -v pnpm
       - save_cache:
           key: deps-js-v2-{{ checksum ".task-meta-cachekey-js" }}
           paths:
