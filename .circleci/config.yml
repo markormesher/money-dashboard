@@ -16,8 +16,6 @@ jobs:
     docker:
       - image: cimg/base:2025.06
     steps:
-      - attach_workspace:
-          at: .
       - run:
           command: echo "Done"
   deps-go:
@@ -28,12 +26,11 @@ jobs:
           at: .
       - run:
           command: |-
-            export GOPATH=$(pwd)/.go
             ./task deps-go
-      - persist_to_workspace:
-          root: .
+      - save_cache:
+          key: go-deps
           paths:
-            - ./.go
+            - $HOME/.go
   deps-js:
     docker:
       - image: docker.io/node:24.2.0-slim
