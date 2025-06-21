@@ -36,6 +36,10 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            - deps-go-{{ checksum ".task-meta-cachekey-go" }}
+            - deps-go-
       - run:
           command: |-
             export GOPATH=/.go
@@ -103,6 +107,10 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            - deps-buf-{{ checksum ".task-meta-checksum-buf" }}
+            - deps-buf-
       - run:
           command: ./task lint-buf
   lint-go:
@@ -111,6 +119,10 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            - deps-go-{{ checksum ".task-meta-checksum-go" }}
+            - deps-go-
       - run:
           command: |-
             export GOPATH=/.go
@@ -121,6 +133,10 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            - deps-js-{{ checksum ".task-meta-checksum-js" }}
+            - deps-js-
       - run:
           command: |-
             corepack enable
