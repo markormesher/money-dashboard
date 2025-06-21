@@ -109,7 +109,7 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-buf-{{ checksum ".task-meta-checksum-buf" }}
+            - deps-buf-{{ checksum ".task-meta-cachekey-buf" }}
             - deps-buf-
       - run:
           command: ./task lint-buf
@@ -121,7 +121,7 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-go-{{ checksum ".task-meta-checksum-go" }}
+            - deps-go-{{ checksum ".task-meta-cachekey-go" }}
             - deps-go-
       - run:
           command: |-
@@ -135,7 +135,7 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-js-{{ checksum ".task-meta-checksum-js" }}
+            - deps-js-{{ checksum ".task-meta-cachekey-js" }}
             - deps-js-
       - run:
           command: |-
@@ -151,8 +151,7 @@ workflows:
             tags:
               only: /.*/
       - fetch-task:
-          requires:
-            - checkout
+          requires: []
           filters:
             tags:
               only: /.*/
