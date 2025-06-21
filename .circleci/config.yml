@@ -38,14 +38,14 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-go-{{ checksum ".task-meta-cachekey-go" }}
-            - deps-go-
+            - deps-go-v1-{{ checksum ".task-meta-cachekey-go" }}
+            - deps-go-v1-
       - run:
           command: |-
             export GOPATH=/.go
             ./task deps-go
       - save_cache:
-          key: deps-go-{{ checksum ".task-meta-cachekey-go" }}
+          key: deps-go-v1-{{ checksum ".task-meta-cachekey-go" }}
           paths:
             - /.go
   deps-js:
@@ -56,14 +56,14 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-js-{{ checksum ".task-meta-cachekey-js" }}
-            - deps-js-
+            - deps-js-v1-{{ checksum ".task-meta-cachekey-js" }}
+            - deps-js-v1-
       - run:
           command: |-
             corepack enable
             ./task deps-js
       - save_cache:
-          key: deps-js-{{ checksum ".task-meta-cachekey-js" }}
+          key: deps-js-v1-{{ checksum ".task-meta-cachekey-js" }}
           paths:
             - frontend/node_modules
   fetch-task:
@@ -112,8 +112,8 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-buf-{{ checksum ".task-meta-cachekey-buf" }}
-            - deps-buf-
+            - deps-buf-v1-{{ checksum ".task-meta-cachekey-buf" }}
+            - deps-buf-v1-
       - run:
           command: ./task lint-buf
   lint-go:
@@ -124,8 +124,8 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-go-{{ checksum ".task-meta-cachekey-go" }}
-            - deps-go-
+            - deps-go-v1-{{ checksum ".task-meta-cachekey-go" }}
+            - deps-go-v1-
       - run:
           command: |-
             export GOPATH=/.go
@@ -138,8 +138,8 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - deps-js-{{ checksum ".task-meta-cachekey-js" }}
-            - deps-js-
+            - deps-js-v1-{{ checksum ".task-meta-cachekey-js" }}
+            - deps-js-v1-
       - run:
           command: |-
             corepack enable
