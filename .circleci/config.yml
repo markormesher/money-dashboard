@@ -54,12 +54,16 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            - deps-js-{{ checksum ".task-meta-cachekey-js" }}
+            - deps-js-
       - run:
           command: |-
             corepack enable
             ./task deps-js
-      - persist_to_workspace:
-          root: .
+      - save_cache:
+          key: deps-js-{{ checksum ".task-meta-cachekey-js" }}
           paths:
             - ./node_modules
             - ./**/node_modules
