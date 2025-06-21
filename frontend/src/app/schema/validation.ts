@@ -300,8 +300,11 @@ function validateTransaction(value: Partial<Transaction>, holdings: Holding[]): 
   const result: FormValidationResult<Transaction> = { isValid: true, errors: {} };
 
   // set the detailed holding on the input value to make sure we have asset/currency data as well
-  if (value) {
-    value.holding = holdings.find((h) => h.id == value?.holding?.id);
+  if (value?.holding) {
+    const realHolding = holdings.find((h) => h.id == value?.holding?.id);
+    if (realHolding) {
+      value.holding = realHolding;
+    }
   }
 
   if (value?.date === undefined) {
