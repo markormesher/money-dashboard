@@ -2,6 +2,18 @@
 
 version: "2.1"
 jobs:
+  cachekey:
+    docker:
+      - image: cimg/base:2025.06
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          command: ./task cachekey
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./.task-meta-cachekey*
   checkout:
     docker:
       - image: cimg/base:2025.06
@@ -26,11 +38,12 @@ jobs:
           at: .
       - run:
           command: |-
+            export GOPATH=/.go
             ./task deps-go
-      - save_cache:
-          key: go-deps
+      - persist_to_workspace:
+          root: .
           paths:
-            - $HOME/.go
+            - ./.go
   deps-js:
     docker:
       - image: docker.io/node:24.2.0-slim
@@ -100,7 +113,7 @@ jobs:
           at: .
       - run:
           command: |-
-            export GOPATH=$(pwd)/.go
+            export GOPATH=/.go
             ./task lint-go
   lint-js:
     docker:
@@ -141,8 +154,16 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - cachekey:
+          requires:
+            - checkout
+            - fetch-task
+          filters:
+            tags:
+              only: /.*/
       - deps-go:
           requires:
+            - cachekey
             - checkout
             - fetch-task
           filters:
@@ -150,6 +171,7 @@ workflows:
               only: /.*/
       - deps-js:
           requires:
+            - cachekey
             - checkout
             - fetch-task
           filters:
