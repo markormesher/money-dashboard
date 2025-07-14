@@ -675,7 +675,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 			}
 
 			if newPotQty.IsNeg() {
-				return nil, fmt.Errorf("S104 pot has gone negaive - this should not happen")
+				return nil, fmt.Errorf("S104 pot has gone negative - this should not happen (holding: %s, date: %s)", event.holdingID, event.date)
 			}
 
 			pot.qty = newPotQty
