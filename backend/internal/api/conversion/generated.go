@@ -16,6 +16,7 @@ func AccountFromCore(source schema.Account) *v4.Account {
 	mdv4Account.IsIsa = source.IsIsa
 	mdv4Account.IsPension = source.IsPension
 	mdv4Account.ExcludeFromEnvelopes = source.ExcludeFromEnvelopes
+	mdv4Account.ExcludeFromReports = source.ExcludeFromReports
 	mdv4Account.Active = source.Active
 	mdv4Account.AccountGroup = pSchemaAccountGroupToPMdv4AccountGroup(source.AccountGroup)
 	return &mdv4Account
@@ -48,6 +49,7 @@ func AccountToCore(source *v4.Account) schema.Account {
 		schemaAccount2.IsIsa = (*source).IsIsa
 		schemaAccount2.IsPension = (*source).IsPension
 		schemaAccount2.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
+		schemaAccount2.ExcludeFromReports = (*source).ExcludeFromReports
 		schemaAccount2.AccountGroup = pMdv4AccountGroupToPSchemaAccountGroup((*source).AccountGroup)
 		schemaAccount2.Active = (*source).Active
 		schemaAccount = schemaAccount2
@@ -407,6 +409,7 @@ func pMdv4AccountToPSchemaAccount(source *v4.Account) *schema.Account {
 		schemaAccount.IsIsa = (*source).IsIsa
 		schemaAccount.IsPension = (*source).IsPension
 		schemaAccount.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
+		schemaAccount.ExcludeFromReports = (*source).ExcludeFromReports
 		schemaAccount.AccountGroup = pMdv4AccountGroupToPSchemaAccountGroup((*source).AccountGroup)
 		schemaAccount.Active = (*source).Active
 		pSchemaAccount = &schemaAccount
@@ -514,6 +517,7 @@ func pSchemaAccountToPMdv4Account(source *schema.Account) *v4.Account {
 		mdv4Account.IsIsa = (*source).IsIsa
 		mdv4Account.IsPension = (*source).IsPension
 		mdv4Account.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
+		mdv4Account.ExcludeFromReports = (*source).ExcludeFromReports
 		mdv4Account.Active = (*source).Active
 		mdv4Account.AccountGroup = pSchemaAccountGroupToPMdv4AccountGroup((*source).AccountGroup)
 		pMdv4Account = &mdv4Account

@@ -13,7 +13,7 @@ import (
 
 const getAccountById = `-- name: GetAccountById :one
 SELECT
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
   account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
@@ -49,6 +49,7 @@ func (q *Queries) GetAccountById(ctx context.Context, arg GetAccountByIdParams) 
 		&i.Account.ProfileID,
 		&i.Account.Active,
 		&i.Account.AccountGroupID,
+		&i.Account.ExcludeFromReports,
 		&i.AccountGroup.ID,
 		&i.AccountGroup.Name,
 		&i.AccountGroup.DisplayOrder,
@@ -62,7 +63,7 @@ func (q *Queries) GetAccountById(ctx context.Context, arg GetAccountByIdParams) 
 
 const getAllAccounts = `-- name: GetAllAccounts :many
 SELECT
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
   account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
@@ -98,6 +99,7 @@ func (q *Queries) GetAllAccounts(ctx context.Context, profileID uuid.UUID) ([]Ge
 			&i.Account.ProfileID,
 			&i.Account.Active,
 			&i.Account.AccountGroupID,
+			&i.Account.ExcludeFromReports,
 			&i.AccountGroup.ID,
 			&i.AccountGroup.Name,
 			&i.AccountGroup.DisplayOrder,
@@ -124,6 +126,7 @@ INSERT INTO account (
   is_isa,
   is_pension,
   exclude_from_envelopes,
+  exclude_from_reports,
   account_group_id,
   profile_id,
   active
@@ -136,7 +139,8 @@ INSERT INTO account (
   $6,
   $7,
   $8,
-  $9
+  $9,
+  $10
 ) ON CONFLICT (id) DO UPDATE SET
   id = $1,
   name = $2,
@@ -144,9 +148,10 @@ INSERT INTO account (
   is_isa = $4,
   is_pension = $5,
   exclude_from_envelopes = $6,
-  account_group_id = $7,
-  profile_id = $8,
-  active = $9
+  exclude_from_reports = $7,
+  account_group_id = $8,
+  profile_id = $9,
+  active = $10
 `
 
 type UpsertAccountParams struct {
@@ -156,6 +161,7 @@ type UpsertAccountParams struct {
 	IsIsa                bool
 	IsPension            bool
 	ExcludeFromEnvelopes bool
+	ExcludeFromReports   bool
 	AccountGroupID       uuid.UUID
 	ProfileID            uuid.UUID
 	Active               bool
@@ -169,6 +175,7 @@ func (q *Queries) UpsertAccount(ctx context.Context, arg UpsertAccountParams) er
 		arg.IsIsa,
 		arg.IsPension,
 		arg.ExcludeFromEnvelopes,
+		arg.ExcludeFromReports,
 		arg.AccountGroupID,
 		arg.ProfileID,
 		arg.Active,

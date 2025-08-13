@@ -12,9 +12,10 @@ message Account {
   bool is_isa = 4;
   bool is_pension = 5;
   bool exclude_from_envelopes = 6;
-  bool active = 7;
+  bool exclude_from_reports = 7;
+  bool active = 8;
 
-  AccountGroup account_group = 8;
+  AccountGroup account_group = 9;
 }
 
 message GetAccountByIdRequest {

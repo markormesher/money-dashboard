@@ -22,6 +22,7 @@ type Account struct {
 	ProfileID            uuid.UUID
 	Active               bool
 	AccountGroupID       uuid.UUID
+	ExcludeFromReports   bool
 }
 
 type AccountGroup struct {

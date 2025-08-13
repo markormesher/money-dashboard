@@ -157,7 +157,7 @@ SELECT
 
   -- holding fields
   holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
   nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
   nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active
 FROM
@@ -261,6 +261,7 @@ func (q *Queries) GetTransactionPageFilteredEntities(ctx context.Context, arg Ge
 			&i.Account.ProfileID,
 			&i.Account.Active,
 			&i.Account.AccountGroupID,
+			&i.Account.ExcludeFromReports,
 			&i.NullableHoldingAsset.HoldingID,
 			&i.NullableHoldingAsset.ID,
 			&i.NullableHoldingAsset.Name,
