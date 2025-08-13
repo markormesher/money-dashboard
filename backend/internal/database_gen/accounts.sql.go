@@ -13,7 +13,7 @@ import (
 
 const getAccountById = `-- name: GetAccountById :one
 SELECT
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
   account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
@@ -49,6 +49,7 @@ func (q *Queries) GetAccountById(ctx context.Context, arg GetAccountByIdParams) 
 		&i.Account.ProfileID,
 		&i.Account.Active,
 		&i.Account.AccountGroupID,
+		&i.Account.ExcludeFromReports,
 		&i.AccountGroup.ID,
 		&i.AccountGroup.Name,
 		&i.AccountGroup.DisplayOrder,
@@ -62,7 +63,7 @@ func (q *Queries) GetAccountById(ctx context.Context, arg GetAccountByIdParams) 
 
 const getAllAccounts = `-- name: GetAllAccounts :many
 SELECT
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
   account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
@@ -98,6 +99,7 @@ func (q *Queries) GetAllAccounts(ctx context.Context, profileID uuid.UUID) ([]Ge
 			&i.Account.ProfileID,
 			&i.Account.Active,
 			&i.Account.AccountGroupID,
+			&i.Account.ExcludeFromReports,
 			&i.AccountGroup.ID,
 			&i.AccountGroup.Name,
 			&i.AccountGroup.DisplayOrder,

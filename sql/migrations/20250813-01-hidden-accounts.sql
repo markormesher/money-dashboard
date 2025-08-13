@@ -1,0 +1,1 @@
+ALTER TABLE account ADD COLUMN exclude_from_reports BOOLEAN NOT NULL DEFAULT FALSE;

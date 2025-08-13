@@ -159,7 +159,7 @@ SELECT
 
   -- holding fields
   holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
   nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
   nullable_holding_asset_currency.holding_id, nullable_holding_asset_currency.id, nullable_holding_asset_currency.code, nullable_holding_asset_currency.symbol, nullable_holding_asset_currency.display_precision, nullable_holding_asset_currency.active,
   nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active
@@ -239,6 +239,7 @@ func (q *Queries) GetTaxableCapitalTransactions(ctx context.Context, profileID u
 			&i.Account.ProfileID,
 			&i.Account.Active,
 			&i.Account.AccountGroupID,
+			&i.Account.ExcludeFromReports,
 			&i.NullableHoldingAsset.HoldingID,
 			&i.NullableHoldingAsset.ID,
 			&i.NullableHoldingAsset.Name,
@@ -376,7 +377,7 @@ SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,
   category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event,
   profile.id, profile.name, profile.deleted,
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
   transaction.holding_id
 FROM
   transaction
@@ -442,6 +443,7 @@ func (q *Queries) GetTransactionsForEnvelopeBalances(ctx context.Context, profil
 			&i.Account.ProfileID,
 			&i.Account.Active,
 			&i.Account.AccountGroupID,
+			&i.Account.ExcludeFromReports,
 			&i.HoldingID,
 		); err != nil {
 			return nil, err

@@ -14,6 +14,7 @@ type Account struct {
 	IsIsa                bool
 	IsPension            bool
 	ExcludeFromEnvelopes bool
+	ExcludeFromReports   bool
 	AccountGroup         *AccountGroup
 	Profile              *Profile
 	Active               bool

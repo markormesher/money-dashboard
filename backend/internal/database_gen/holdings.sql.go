@@ -17,7 +17,7 @@ SELECT
   nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active,
   nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
   nullable_holding_asset_currency.holding_id, nullable_holding_asset_currency.id, nullable_holding_asset_currency.code, nullable_holding_asset_currency.symbol, nullable_holding_asset_currency.display_precision, nullable_holding_asset_currency.active,
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
   account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
@@ -87,6 +87,7 @@ func (q *Queries) GetAllHoldings(ctx context.Context, profileID uuid.UUID) ([]Ge
 			&i.Account.ProfileID,
 			&i.Account.Active,
 			&i.Account.AccountGroupID,
+			&i.Account.ExcludeFromReports,
 			&i.AccountGroup.ID,
 			&i.AccountGroup.Name,
 			&i.AccountGroup.DisplayOrder,
@@ -111,7 +112,7 @@ SELECT
   nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active,
   nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
   nullable_holding_asset_currency.holding_id, nullable_holding_asset_currency.id, nullable_holding_asset_currency.code, nullable_holding_asset_currency.symbol, nullable_holding_asset_currency.display_precision, nullable_holding_asset_currency.active,
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
   account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
@@ -181,6 +182,7 @@ func (q *Queries) GetHoldingById(ctx context.Context, arg GetHoldingByIdParams) 
 		&i.Account.ProfileID,
 		&i.Account.Active,
 		&i.Account.AccountGroupID,
+		&i.Account.ExcludeFromReports,
 		&i.AccountGroup.ID,
 		&i.AccountGroup.Name,
 		&i.AccountGroup.DisplayOrder,
