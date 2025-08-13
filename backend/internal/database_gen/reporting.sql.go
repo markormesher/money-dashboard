@@ -19,10 +19,13 @@ SELECT
   transaction.holding_id
 FROM
   transaction
+    JOIN holding on transaction.holding_id = holding.id
+    JOIN account ON holding.account_id = account.id
 WHERE
   transaction.profile_id = $1
   AND transaction.date <= $2
   AND transaction.deleted = FALSE
+  AND account.exclude_from_reports = FALSE
 GROUP BY transaction.holding_id
 `
 
@@ -63,11 +66,14 @@ SELECT
   transaction.holding_id
 FROM
   transaction
+    JOIN holding on transaction.holding_id = holding.id
+    JOIN account ON holding.account_id = account.id
 WHERE
   transaction.profile_id = $1
   AND transaction.date >= $2
   AND transaction.date <= $3
   AND transaction.deleted = FALSE
+  AND account.exclude_from_reports = FALSE
 GROUP BY transaction.date, transaction.holding_id
 `
 
