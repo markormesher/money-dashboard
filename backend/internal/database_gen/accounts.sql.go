@@ -126,6 +126,7 @@ INSERT INTO account (
   is_isa,
   is_pension,
   exclude_from_envelopes,
+  exclude_from_reports,
   account_group_id,
   profile_id,
   active
@@ -138,7 +139,8 @@ INSERT INTO account (
   $6,
   $7,
   $8,
-  $9
+  $9,
+  $10
 ) ON CONFLICT (id) DO UPDATE SET
   id = $1,
   name = $2,
@@ -146,9 +148,10 @@ INSERT INTO account (
   is_isa = $4,
   is_pension = $5,
   exclude_from_envelopes = $6,
-  account_group_id = $7,
-  profile_id = $8,
-  active = $9
+  exclude_from_reports = $7,
+  account_group_id = $8,
+  profile_id = $9,
+  active = $10
 `
 
 type UpsertAccountParams struct {
@@ -158,6 +161,7 @@ type UpsertAccountParams struct {
 	IsIsa                bool
 	IsPension            bool
 	ExcludeFromEnvelopes bool
+	ExcludeFromReports   bool
 	AccountGroupID       uuid.UUID
 	ProfileID            uuid.UUID
 	Active               bool
@@ -171,6 +175,7 @@ func (q *Queries) UpsertAccount(ctx context.Context, arg UpsertAccountParams) er
 		arg.IsIsa,
 		arg.IsPension,
 		arg.ExcludeFromEnvelopes,
+		arg.ExcludeFromReports,
 		arg.AccountGroupID,
 		arg.ProfileID,
 		arg.Active,

@@ -26,6 +26,7 @@ func AccountToCore(source databasegen.Account) schema.Account {
 	schemaAccount.IsIsa = source.IsIsa
 	schemaAccount.IsPension = source.IsPension
 	schemaAccount.ExcludeFromEnvelopes = source.ExcludeFromEnvelopes
+	schemaAccount.ExcludeFromReports = source.ExcludeFromReports
 	schemaAccount.Active = source.Active
 	return schemaAccount
 }
