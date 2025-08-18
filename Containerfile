@@ -14,6 +14,8 @@ RUN cd frontend && pnpm build
 FROM docker.io/golang:1.25.0@sha256:9e56f0d0f043a68bb8c47c819e47dc29f6e8f5129b8885bed9d43f058f7f3ed6 AS backend-builder
 WORKDIR /app
 
+ARG CGO_ENABLED=0
+
 COPY ./backend/go.mod ./backend/go.sum ./backend/
 RUN cd backend && go mod download
 
@@ -22,7 +24,7 @@ RUN cd backend && go build -o ./build/main ./cmd
 
 # --
 
-FROM gcr.io/distroless/base-debian12@sha256:4f6e739881403e7d50f52a4e574c4e3c88266031fd555303ee2f1ba262523d6a
+FROM ghcr.io/markormesher/scratch:v0.1.0
 WORKDIR /app
 
 LABEL image.registry=ghcr.io
