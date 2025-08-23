@@ -13,6 +13,7 @@ type Category struct {
 	IsMemo                 bool
 	IsInterestIncome       bool
 	IsDividendIncome       bool
+	IsPensionContribution  bool
 	IsCapitalEvent         bool
 	IsCapitalEventFee      bool
 	IsSyntheticAssetUpdate bool

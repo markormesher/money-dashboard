@@ -46,6 +46,7 @@ func CategoryToCore(source databasegen.Category) schema.Category {
 	schemaCategory.IsMemo = source.IsMemo
 	schemaCategory.IsInterestIncome = source.IsInterestIncome
 	schemaCategory.IsDividendIncome = source.IsDividendIncome
+	schemaCategory.IsPensionContribution = source.IsPensionContribution
 	schemaCategory.IsCapitalEvent = source.IsCapitalEvent
 	schemaCategory.IsCapitalEventFee = source.IsCapitalEventFee
 	schemaCategory.IsSyntheticAssetUpdate = source.IsSyntheticAssetUpdate

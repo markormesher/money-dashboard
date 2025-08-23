@@ -61,7 +61,7 @@ const getTransactionById = `-- name: GetTransactionById :one
 SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,
   holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
-  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event, category.is_pension_contribution,
   profile.id, profile.name, profile.deleted
 FROM
   transaction
@@ -119,6 +119,7 @@ func (q *Queries) GetTransactionById(ctx context.Context, arg GetTransactionById
 		&i.Category.Active,
 		&i.Category.IsSyntheticAssetUpdate,
 		&i.Category.IsCapitalEvent,
+		&i.Category.IsPensionContribution,
 		&i.Profile.ID,
 		&i.Profile.Name,
 		&i.Profile.Deleted,
@@ -152,7 +153,7 @@ func (q *Queries) GetTransactionDateRange(ctx context.Context, profileID uuid.UU
 const getTransactionPageFilteredEntities = `-- name: GetTransactionPageFilteredEntities :many
 SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,
-  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event, category.is_pension_contribution,
   profile.id, profile.name, profile.deleted,
 
   -- holding fields
@@ -242,6 +243,7 @@ func (q *Queries) GetTransactionPageFilteredEntities(ctx context.Context, arg Ge
 			&i.Category.Active,
 			&i.Category.IsSyntheticAssetUpdate,
 			&i.Category.IsCapitalEvent,
+			&i.Category.IsPensionContribution,
 			&i.Profile.ID,
 			&i.Profile.Name,
 			&i.Profile.Deleted,

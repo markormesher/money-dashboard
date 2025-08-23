@@ -81,6 +81,10 @@ func (t *Transaction) Validate() error {
 		return fmt.Errorf("dividend income must be positive")
 	}
 
+	if t.Category.IsPensionContribution && t.Amount.IsNeg() {
+		return fmt.Errorf("pension contribution must be be positive")
+	}
+
 	return nil
 }
 
