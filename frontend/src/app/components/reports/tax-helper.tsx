@@ -29,7 +29,7 @@ function TaxHelperPage(): ReactElement {
   const [taxReport, setTaxReport] = React.useState<TaxReport>();
   const [capitalEvents, setCapitalEvents] = React.useState<TaxReportCapitalEvent[]>();
 
-  const [showDisposalsOnly, setShowCapitcalAcquisitions] = React.useState(false);
+  const [showDisposalsOnly, setShowCapitcalAcquisitions] = React.useState(true);
 
   useAsyncEffect(async () => {
     wg.add();
