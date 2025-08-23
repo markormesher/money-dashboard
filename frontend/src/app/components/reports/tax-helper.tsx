@@ -126,6 +126,8 @@ function TaxHelperPage(): ReactElement {
           </p>
         )}
 
+        <hr />
+
         <h4>Dividend Income</h4>
 
         {taxReport.dividendIncome.length > 0 ? (
@@ -175,6 +177,8 @@ function TaxHelperPage(): ReactElement {
           </p>
         )}
 
+        <hr />
+
         <h4>Pension Contributions</h4>
 
         {taxReport.pensionContributions.length > 0 ? (
@@ -223,6 +227,8 @@ function TaxHelperPage(): ReactElement {
             <em>None.</em>
           </p>
         )}
+
+        <hr />
 
         <h4>Capital Events</h4>
 
