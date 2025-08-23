@@ -78,6 +78,7 @@ function TaxHelperPage(): ReactElement {
     body = (
       <>
         <h4>Interest Income</h4>
+
         {taxReport.interestIncome.length > 0 ? (
           <table className={"striped"}>
             <thead>
@@ -126,6 +127,7 @@ function TaxHelperPage(): ReactElement {
         )}
 
         <h4>Dividend Income</h4>
+
         {taxReport.dividendIncome.length > 0 ? (
           <table className={"striped"}>
             <thead>
@@ -159,6 +161,55 @@ function TaxHelperPage(): ReactElement {
                     <strong>
                       {formatCurrencyValue(
                         taxReport.dividendIncome.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
+                        null,
+                      )}
+                    </strong>
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        ) : (
+          <p>
+            <em>None.</em>
+          </p>
+        )}
+
+        <h4>Pension Contributions</h4>
+
+        {taxReport.pensionContributions.length > 0 ? (
+          <table className={"striped"}>
+            <thead>
+              <tr>
+                <td>Account</td>
+                <td>Holding</td>
+                <td>Amount</td>
+              </tr>
+            </thead>
+            <tbody>
+              {taxReport.pensionContributions
+                .sort((a, b) => a.holding?.account?.name?.localeCompare(b.holding?.account?.name ?? "") ?? 0)
+                .map((b) => {
+                  return (
+                    <tr>
+                      <td>{b.holding?.account?.name}</td>
+                      <td>{b.holding?.name}</td>
+                      <td className={"amount-cell"}>
+                        <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td className={"amount-cell"}>
+                  <span className={"amount"}>
+                    <strong>
+                      {formatCurrencyValue(
+                        taxReport.pensionContributions.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
                         null,
                       )}
                     </strong>

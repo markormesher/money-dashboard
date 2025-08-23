@@ -176,6 +176,30 @@ func (db *DB) GetTaxableDividendIncomePerHolding(ctx context.Context, profileID 
 	return output, nil
 }
 
+func (db *DB) GetPensionContributionsPerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
+	rows, err := db.queries.GetPensionContributionsPerHolding(ctx, database_gen.GetPensionContributionsPerHoldingParams{
+		ProfileID: profileID,
+		MinDate:   minDate,
+		MaxDate:   maxDate,
+	})
+	if errors.Is(err, pgx.ErrNoRows) {
+		return []HoldingBalance{}, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	output := make([]HoldingBalance, len(rows))
+
+	for i, row := range rows {
+		output[i] = HoldingBalance{
+			Balance:   row.Balance,
+			HoldingID: row.HoldingID,
+		}
+	}
+
+	return output, nil
+}
+
 func (db *DB) GetTaxableCapitalTransactions(ctx context.Context, profileID uuid.UUID) ([]schema.Transaction, error) {
 	rows, err := db.queries.GetTaxableCapitalTransactions(ctx, profileID)
 	if errors.Is(err, pgx.ErrNoRows) {

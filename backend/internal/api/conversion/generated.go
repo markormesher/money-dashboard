@@ -326,10 +326,16 @@ func TaxReportFromCore(source schema.TaxReport) *v4.TaxReport {
 			mdv4TaxReport.DividendIncome[j] = HoldingBalanceFromCore(source.DividendIncome[j])
 		}
 	}
+	if source.PensionContributions != nil {
+		mdv4TaxReport.PensionContributions = make([]*v4.HoldingBalance, len(source.PensionContributions))
+		for k := 0; k < len(source.PensionContributions); k++ {
+			mdv4TaxReport.PensionContributions[k] = HoldingBalanceFromCore(source.PensionContributions[k])
+		}
+	}
 	if source.CapitalEvents != nil {
 		mdv4TaxReport.CapitalEvents = make([]*v4.TaxReportCapitalEvent, len(source.CapitalEvents))
-		for k := 0; k < len(source.CapitalEvents); k++ {
-			mdv4TaxReport.CapitalEvents[k] = TaxReportCapitalEventFromCore(source.CapitalEvents[k])
+		for l := 0; l < len(source.CapitalEvents); l++ {
+			mdv4TaxReport.CapitalEvents[l] = TaxReportCapitalEventFromCore(source.CapitalEvents[l])
 		}
 	}
 	return &mdv4TaxReport

@@ -108,6 +108,24 @@ WHERE
 GROUP BY transaction.holding_id
 ;
 
+-- name: GetPensionContributionsPerHolding :many
+SELECT
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
+  transaction.holding_id
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+    JOIN holding on transaction.holding_id = holding.id
+    JOIN account ON holding.account_id = account.id
+WHERE
+  transaction.profile_id = @profile_id
+  AND transaction.date >= @min_date
+  AND transaction.date <= @max_date
+  AND transaction.deleted = FALSE
+  AND category.is_pension_contribution = TRUE
+GROUP BY transaction.holding_id
+;
+
 -- name: GetTaxableCapitalTransactions :many
 SELECT
   sqlc.embed(transaction),
