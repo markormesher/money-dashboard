@@ -35,7 +35,8 @@ message BalanceHistoryEntry {
 message TaxReport {
   repeated HoldingBalance interest_income = 1;
   repeated HoldingBalance dividend_income = 2;
-  repeated TaxReportCapitalEvent capital_events = 3;
+  repeated HoldingBalance pension_contributions = 3;
+  repeated TaxReportCapitalEvent capital_events = 4;
 }
 
 message TaxReportCapitalEvent {

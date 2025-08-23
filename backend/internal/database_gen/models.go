@@ -66,6 +66,7 @@ type Category struct {
 	Active                 bool
 	IsSyntheticAssetUpdate bool
 	IsCapitalEvent         bool
+	IsPensionContribution  bool
 }
 
 type CategoryOld struct {

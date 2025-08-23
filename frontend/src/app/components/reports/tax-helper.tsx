@@ -23,13 +23,19 @@ function TaxHelperPage(): ReactElement {
 
   const today = convertDateToProto(new Date());
   const [taxYear, setTaxYear] = React.useState(getTaxYear(today));
+  const [showDisposalsOnly, setShowCapitcalAcquisitions] = React.useState(true);
 
   const wg = useWaitGroup();
   const [error, setError] = React.useState<unknown>();
   const [taxReport, setTaxReport] = React.useState<TaxReport>();
   const [capitalEvents, setCapitalEvents] = React.useState<TaxReportCapitalEvent[]>();
 
-  const [showDisposalsOnly, setShowCapitcalAcquisitions] = React.useState(false);
+  // derived captial event fields
+  const [qtyDisposals, setQtyDisposals] = React.useState(0);
+  const [totalDisposalProceeds, setTotalDisposalProceeds] = React.useState(0);
+  const [totalDisposalCosts, setTotalDisposalCosts] = React.useState(0);
+  const [totalDisposalGains, setTotalDisposalGains] = React.useState(0);
+  const [totalDisposalLosses, setTotalDisposalLosses] = React.useState(0);
 
   useAsyncEffect(async () => {
     wg.add();
@@ -48,6 +54,38 @@ function TaxHelperPage(): ReactElement {
   useEffect(() => {
     setCapitalEvents(taxReport?.capitalEvents.filter((e) => e.type == "disposal" || !showDisposalsOnly));
   }, [taxReport, showDisposalsOnly]);
+
+  useEffect(() => {
+    let qtyDisposals = 0;
+    let totalDisposalProceeds = 0;
+    let totalDisposalCosts = 0;
+    let totalDisposalGains = 0;
+    let totalDisposalLosses = 0;
+
+    taxReport?.capitalEvents.forEach((e) => {
+      if (e.qty < 0) {
+        ++qtyDisposals;
+
+        const proceeds = -1 * e.qty * e.avgGbpUnitPrice;
+        const costs = e.matches.map((m) => m.qty * m.price).reduce((a, b) => a + b);
+
+        totalDisposalProceeds += proceeds;
+        totalDisposalCosts += costs;
+
+        if (proceeds > costs) {
+          totalDisposalGains += proceeds - costs;
+        } else {
+          totalDisposalLosses -= proceeds - costs;
+        }
+      }
+    });
+
+    setQtyDisposals(qtyDisposals);
+    setTotalDisposalProceeds(totalDisposalProceeds);
+    setTotalDisposalCosts(totalDisposalCosts);
+    setTotalDisposalGains(totalDisposalGains);
+    setTotalDisposalLosses(totalDisposalLosses);
+  }, [taxReport]);
 
   const pageOptions = [
     <fieldset role={"group"}>
@@ -78,6 +116,7 @@ function TaxHelperPage(): ReactElement {
     body = (
       <>
         <h4>Interest Income</h4>
+
         {taxReport.interestIncome.length > 0 ? (
           <table className={"striped"}>
             <thead>
@@ -125,7 +164,10 @@ function TaxHelperPage(): ReactElement {
           </p>
         )}
 
+        <hr />
+
         <h4>Dividend Income</h4>
+
         {taxReport.dividendIncome.length > 0 ? (
           <table className={"striped"}>
             <thead>
@@ -173,6 +215,59 @@ function TaxHelperPage(): ReactElement {
           </p>
         )}
 
+        <hr />
+
+        <h4>Pension Contributions</h4>
+
+        {taxReport.pensionContributions.length > 0 ? (
+          <table className={"striped"}>
+            <thead>
+              <tr>
+                <td>Account</td>
+                <td>Holding</td>
+                <td>Amount</td>
+              </tr>
+            </thead>
+            <tbody>
+              {taxReport.pensionContributions
+                .sort((a, b) => a.holding?.account?.name?.localeCompare(b.holding?.account?.name ?? "") ?? 0)
+                .map((b) => {
+                  return (
+                    <tr>
+                      <td>{b.holding?.account?.name}</td>
+                      <td>{b.holding?.name}</td>
+                      <td className={"amount-cell"}>
+                        <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td className={"amount-cell"}>
+                  <span className={"amount"}>
+                    <strong>
+                      {formatCurrencyValue(
+                        taxReport.pensionContributions.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
+                        null,
+                      )}
+                    </strong>
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        ) : (
+          <p>
+            <em>None.</em>
+          </p>
+        )}
+
+        <hr />
+
         <h4>Capital Events</h4>
 
         <fieldset>
@@ -188,7 +283,7 @@ function TaxHelperPage(): ReactElement {
         </fieldset>
 
         {capitalEvents.length > 0 ? (
-          capitalEvents.map((e, i, a) => {
+          capitalEvents.map((e) => {
             const proceeds = -1 * e.qty * e.avgGbpUnitPrice;
             const costs = e.matches.map((m) => m.qty * m.price).reduce((a, b) => a + b);
             const totalMatches = e.matches.map((m) => m.qty).reduce((a, b) => a + b);
@@ -297,7 +392,7 @@ function TaxHelperPage(): ReactElement {
                   </div>
                 </details>
 
-                {i < a.length - 1 ? <hr /> : null}
+                <hr />
               </>
             );
           })
@@ -306,6 +401,50 @@ function TaxHelperPage(): ReactElement {
             <em>None.</em>
           </p>
         )}
+
+        {qtyDisposals > 0 ? (
+          <table className={"auto-width"}>
+            <thead>
+              <tr>
+                <td colSpan={999} style={{ textAlign: "center" }}>
+                  Disposal Summary
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>QTY Disposals</td>
+                <td className={"amount-cell"}>
+                  <span className={"amount"}>{qtyDisposals}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>Total Proceeds</td>
+                <td className={"amount-cell"}>
+                  <span className={"amount"}>{formatCurrencyValue(totalDisposalProceeds, null)}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>Total Costs</td>
+                <td className={"amount-cell"}>
+                  <span className={"amount"}>{formatCurrencyValue(totalDisposalCosts, null)}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>Total Gains</td>
+                <td className={"amount-cell"}>
+                  <span className={"amount"}>{formatCurrencyValue(totalDisposalGains, null)}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>Total Losses</td>
+                <td className={"amount-cell"}>
+                  <span className={"amount"}>{formatCurrencyValue(totalDisposalLosses, null)}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        ) : null}
       </>
     );
   }

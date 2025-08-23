@@ -1,0 +1,1 @@
+ALTER TABLE category ADD COLUMN is_pension_contribution BOOLEAN NOT NULL DEFAULT FALSE;

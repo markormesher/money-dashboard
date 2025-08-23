@@ -30,9 +30,10 @@ type BalanceHistoryEntry struct {
 }
 
 type TaxReport struct {
-	InterestIncome []HoldingBalance
-	DividendIncome []HoldingBalance
-	CapitalEvents  []TaxReportCapitalEvent
+	InterestIncome       []HoldingBalance
+	DividendIncome       []HoldingBalance
+	PensionContributions []HoldingBalance
+	CapitalEvents        []TaxReportCapitalEvent
 }
 
 type TaxReportCapitalEvent struct {

@@ -354,12 +354,17 @@ func (c *Core) GetTaxReport(ctx context.Context, profile schema.Profile, taxYear
 	startDate := time.Date(taxYear, 4, 6, 0, 0, 0, 0, time.UTC)
 	endDate := time.Date(taxYear+1, 4, 5, 0, 0, 0, 0, time.UTC)
 
-	interestIncome, err := c.getInterestOrDividendIncomeForTaxReport(ctx, "interest", profile, startDate, endDate)
+	interestIncome, err := c.getHoldingBalancesForTaxReport(ctx, "interest", profile, startDate, endDate)
 	if err != nil {
 		return schema.TaxReport{}, err
 	}
 
-	dividendIncome, err := c.getInterestOrDividendIncomeForTaxReport(ctx, "dividend", profile, startDate, endDate)
+	dividendIncome, err := c.getHoldingBalancesForTaxReport(ctx, "dividend", profile, startDate, endDate)
+	if err != nil {
+		return schema.TaxReport{}, err
+	}
+
+	pensionContributions, err := c.getHoldingBalancesForTaxReport(ctx, "pension_contributions", profile, startDate, endDate)
 	if err != nil {
 		return schema.TaxReport{}, err
 	}
@@ -370,13 +375,14 @@ func (c *Core) GetTaxReport(ctx context.Context, profile schema.Profile, taxYear
 	}
 
 	return schema.TaxReport{
-		InterestIncome: interestIncome,
-		DividendIncome: dividendIncome,
-		CapitalEvents:  capitalEvents,
+		InterestIncome:       interestIncome,
+		DividendIncome:       dividendIncome,
+		PensionContributions: pensionContributions,
+		CapitalEvents:        capitalEvents,
 	}, nil
 }
 
-func (c *Core) getInterestOrDividendIncomeForTaxReport(ctx context.Context, which string, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.HoldingBalance, error) {
+func (c *Core) getHoldingBalancesForTaxReport(ctx context.Context, which string, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.HoldingBalance, error) {
 	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
 	if err != nil {
 		return nil, err
@@ -384,11 +390,20 @@ func (c *Core) getInterestOrDividendIncomeForTaxReport(ctx context.Context, whic
 
 	output := make([]schema.HoldingBalance, 0)
 	var data []database.HoldingBalance
-	if which == "interest" {
+	switch which {
+	case "interest":
 		data, err = c.DB.GetTaxableInterestIncomePerHolding(ctx, profile.ID, startDate, endDate)
-	} else {
+
+	case "dividend":
 		data, err = c.DB.GetTaxableDividendIncomePerHolding(ctx, profile.ID, startDate, endDate)
+
+	case "pension_contributions":
+		data, err = c.DB.GetPensionContributionsPerHolding(ctx, profile.ID, startDate, endDate)
+
+	default:
+		return nil, fmt.Errorf("unrecognised reporting type: %s", which)
 	}
+
 	if err != nil {
 		return nil, err
 	}

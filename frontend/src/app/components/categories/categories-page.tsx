@@ -86,6 +86,7 @@ function CategoriesPage(): ReactElement {
                   {c.isMemo ? <li>Memo</li> : null}
                   {c.isInterestIncome ? <li>Interest Income</li> : null}
                   {c.isDividendIncome ? <li>Dividend Income</li> : null}
+                  {c.isPensionContribution ? <li>Pension Contribution</li> : null}
                   {c.isCapitalEvent ? <li>Capital Event</li> : null}
                   {c.isCapitalEventFee ? <li>Capital Event Fee</li> : null}
                   {c.isSyntheticAssetUpdate ? <li>Synthetic Asset Update</li> : null}

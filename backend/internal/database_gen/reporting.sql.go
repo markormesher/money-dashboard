@@ -158,10 +158,59 @@ func (q *Queries) GetMemoBalances(ctx context.Context, profileID uuid.UUID) ([]G
 	return items, nil
 }
 
+const getPensionContributionsPerHolding = `-- name: GetPensionContributionsPerHolding :many
+SELECT
+  CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
+  transaction.holding_id
+FROM
+  transaction
+    JOIN category on transaction.category_id = category.id
+    JOIN holding on transaction.holding_id = holding.id
+    JOIN account ON holding.account_id = account.id
+WHERE
+  transaction.profile_id = $1
+  AND transaction.date >= $2
+  AND transaction.date <= $3
+  AND transaction.deleted = FALSE
+  AND category.is_pension_contribution = TRUE
+GROUP BY transaction.holding_id
+`
+
+type GetPensionContributionsPerHoldingParams struct {
+	ProfileID uuid.UUID
+	MinDate   time.Time
+	MaxDate   time.Time
+}
+
+type GetPensionContributionsPerHoldingRow struct {
+	Balance   decimal.Decimal
+	HoldingID uuid.UUID
+}
+
+func (q *Queries) GetPensionContributionsPerHolding(ctx context.Context, arg GetPensionContributionsPerHoldingParams) ([]GetPensionContributionsPerHoldingRow, error) {
+	rows, err := q.db.Query(ctx, getPensionContributionsPerHolding, arg.ProfileID, arg.MinDate, arg.MaxDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetPensionContributionsPerHoldingRow
+	for rows.Next() {
+		var i GetPensionContributionsPerHoldingRow
+		if err := rows.Scan(&i.Balance, &i.HoldingID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTaxableCapitalTransactions = `-- name: GetTaxableCapitalTransactions :many
 SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,
-  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event, category.is_pension_contribution,
 
   -- holding fields
   holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
@@ -229,6 +278,7 @@ func (q *Queries) GetTaxableCapitalTransactions(ctx context.Context, profileID u
 			&i.Category.Active,
 			&i.Category.IsSyntheticAssetUpdate,
 			&i.Category.IsCapitalEvent,
+			&i.Category.IsPensionContribution,
 			&i.Holding.ID,
 			&i.Holding.Name,
 			&i.Holding.CurrencyID,
@@ -381,7 +431,7 @@ func (q *Queries) GetTaxableInterestIncomePerHolding(ctx context.Context, arg Ge
 const getTransactionsForEnvelopeBalances = `-- name: GetTransactionsForEnvelopeBalances :many
 SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,
-  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event,
+  category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event, category.is_pension_contribution,
   profile.id, profile.name, profile.deleted,
   account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
   transaction.holding_id
@@ -437,6 +487,7 @@ func (q *Queries) GetTransactionsForEnvelopeBalances(ctx context.Context, profil
 			&i.Category.Active,
 			&i.Category.IsSyntheticAssetUpdate,
 			&i.Category.IsCapitalEvent,
+			&i.Category.IsPensionContribution,
 			&i.Profile.ID,
 			&i.Profile.Name,
 			&i.Profile.Deleted,
