@@ -101,6 +101,7 @@ func CategoryFromCore(source schema.Category) *v4.Category {
 	mdv4Category.IsMemo = source.IsMemo
 	mdv4Category.IsInterestIncome = source.IsInterestIncome
 	mdv4Category.IsDividendIncome = source.IsDividendIncome
+	mdv4Category.IsPensionContribution = source.IsPensionContribution
 	mdv4Category.IsCapitalEvent = source.IsCapitalEvent
 	mdv4Category.IsCapitalEventFee = source.IsCapitalEventFee
 	mdv4Category.IsSyntheticAssetUpdate = source.IsSyntheticAssetUpdate
@@ -116,6 +117,7 @@ func CategoryToCore(source *v4.Category) schema.Category {
 		schemaCategory2.IsMemo = (*source).IsMemo
 		schemaCategory2.IsInterestIncome = (*source).IsInterestIncome
 		schemaCategory2.IsDividendIncome = (*source).IsDividendIncome
+		schemaCategory2.IsPensionContribution = (*source).IsPensionContribution
 		schemaCategory2.IsCapitalEvent = (*source).IsCapitalEvent
 		schemaCategory2.IsCapitalEventFee = (*source).IsCapitalEventFee
 		schemaCategory2.IsSyntheticAssetUpdate = (*source).IsSyntheticAssetUpdate
@@ -439,6 +441,7 @@ func pMdv4CategoryToPSchemaCategory(source *v4.Category) *schema.Category {
 		schemaCategory.IsMemo = (*source).IsMemo
 		schemaCategory.IsInterestIncome = (*source).IsInterestIncome
 		schemaCategory.IsDividendIncome = (*source).IsDividendIncome
+		schemaCategory.IsPensionContribution = (*source).IsPensionContribution
 		schemaCategory.IsCapitalEvent = (*source).IsCapitalEvent
 		schemaCategory.IsCapitalEventFee = (*source).IsCapitalEventFee
 		schemaCategory.IsSyntheticAssetUpdate = (*source).IsSyntheticAssetUpdate
@@ -547,6 +550,7 @@ func pSchemaCategoryToPMdv4Category(source *schema.Category) *v4.Category {
 		mdv4Category.IsMemo = (*source).IsMemo
 		mdv4Category.IsInterestIncome = (*source).IsInterestIncome
 		mdv4Category.IsDividendIncome = (*source).IsDividendIncome
+		mdv4Category.IsPensionContribution = (*source).IsPensionContribution
 		mdv4Category.IsCapitalEvent = (*source).IsCapitalEvent
 		mdv4Category.IsCapitalEventFee = (*source).IsCapitalEventFee
 		mdv4Category.IsSyntheticAssetUpdate = (*source).IsSyntheticAssetUpdate
