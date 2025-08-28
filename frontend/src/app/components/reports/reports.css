@@ -2,20 +2,26 @@ html[data-theme="dark"] canvas {
   filter: invert(1) hue-rotate(180deg);
 }
 
-canvas {
-  max-height: 40rem;
+canvas.loading {
+  opacity: 0.4;
+}
 
-  &.loading {
-    opacity: 0.4;
-  }
+canvas.line {
+  max-height: 40rem;
+}
+
+canvas.pie {
+  max-height: 20rem;
 }
 
 .tax-acquisition-icon {
-  color: #00895a; /* pico jade 500 */
+  color: #00895a;
+  /* pico jade 500 */
   rotate: 270deg;
 }
 
 .tax-disposal-icon {
-  color: #d93526; /* pico red 500 */
+  color: #d93526;
+  /* pico red 500 */
   rotate: 270deg;
 }

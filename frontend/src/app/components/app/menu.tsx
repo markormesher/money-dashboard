@@ -81,6 +81,7 @@ function Menu(props: MenuProps): ReactElement {
             <summary>Reports</summary>
             <ul>
               {link("/reports/balance-history", "Balance History", "monitoring")}
+              {link("/reports/portfolio-summary", "Portfolio Summary", "data_usage")}
               {link("/reports/tax-helper", "Tax Helper", "receipt_long")}
             </ul>
           </details>

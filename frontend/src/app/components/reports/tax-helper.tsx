@@ -452,7 +452,7 @@ function TaxHelperPage(): ReactElement {
   return (
     <>
       <div id={"content"} className={"overflow-auto"}>
-        <PageHeader title={"Tax Helper"} icon={"monitoring"} options={pageOptions} />
+        <PageHeader title={"Tax Helper"} icon={"receipt_long"} options={pageOptions} />
         {body}
         <hr />
         <section>
