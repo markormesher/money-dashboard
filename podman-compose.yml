@@ -7,7 +7,7 @@ services:
       dockerfile: "Containerfile.backend-dev"
     restart: "always"
     environment:
-      - "POSTGRES_CONNECTION_STRING=postgresql://money_dashboard:foobar@postgres/money_dashboard"
+      - "POSTGRES_CONNECTION_STRING=postgresql://app:foobar@postgres/app"
       - "DEV_MODE=yes"
       - "FRONTEND_DIST_PATH=/app/frontend/dist"
     ports:
@@ -28,8 +28,8 @@ services:
   postgres:
     image: "docker.io/library/postgres:17.2"
     environment:
-      - "POSTGRES_DATABASE=money_dashboard"
-      - "POSTGRES_USER=money_dashboard"
+      - "POSTGRES_DATABASE=app"
+      - "POSTGRES_USER=app"
       - "POSTGRES_PASSWORD=foobar"
     volumes:
       - "postgres-data:/var/lib/postgresql/data"

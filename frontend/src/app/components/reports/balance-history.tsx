@@ -142,7 +142,9 @@ function BalanceHistoryPage(): ReactElement {
       ],
     };
 
-    body = <Line options={chartOptions} data={chartData} className={concatClasses(wg.count > 0 && "loading")} />;
+    body = (
+      <Line options={chartOptions} data={chartData} className={concatClasses("line", wg.count > 0 && "loading")} />
+    );
   }
 
   return (
