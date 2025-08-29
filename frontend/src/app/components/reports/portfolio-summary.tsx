@@ -110,9 +110,9 @@ function PortfolioSummaryPage(): ReactElement {
   } else if (!allBalances.length) {
     body = <LoadingPanel />;
   } else {
-    const totalBalance = allBalances.map((b) => b.gbpBalance).reduce((a, b) => a + b);
-    const totalAssetBalance = assetBalances.map((b) => b.gbpBalance).reduce((a, b) => a + b);
-    const totalCashBalance = cashBalances.map((b) => b.gbpBalance).reduce((a, b) => a + b);
+    const totalBalance = allBalances.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0);
+    const totalAssetBalance = assetBalances.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0);
+    const totalCashBalance = cashBalances.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0);
 
     // assets vs cash
 
@@ -239,51 +239,53 @@ function PortfolioSummaryPage(): ReactElement {
             </table>
           </article>
 
-          <article>
-            <header>
-              <h4 className={"mb0"}>Asset Details</h4>
-            </header>
+          {assetBalances.length > 0 ? (
+            <article>
+              <header>
+                <h4 className={"mb0"}>Asset Details</h4>
+              </header>
 
-            <Doughnut options={assetDetailsChartOptions} data={assetDetailsChartData} className={"pie"} />
+              <Doughnut options={assetDetailsChartOptions} data={assetDetailsChartData} className={"pie"} />
 
-            <table>
-              {assetBalances.map((b, i) => {
-                return (
+              <table>
+                {assetBalances.map((b, i) => {
+                  return (
+                    <tr>
+                      <td>
+                        <span style={{ color: seriesColours[i % seriesColours.length], marginRight: "0.5rem" }}>●</span>
+                        {b.notes.length > 0 ? (
+                          <IconGroup>
+                            <span>{b.name}</span>
+                            <span data-tooltip={b.notes}>
+                              <Icon name={"info"} className={"muted"} />
+                            </span>
+                          </IconGroup>
+                        ) : (
+                          b.name
+                        )}
+                      </td>
+                      <td className={"amount-cell"}>
+                        <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+                      </td>
+                      <td className={"amount-cell"}>
+                        <span className={"amount"}>{Math.round((b.gbpBalance / totalAssetBalance) * 100)}%</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+
+                <tfoot>
                   <tr>
-                    <td>
-                      <span style={{ color: seriesColours[i % seriesColours.length], marginRight: "0.5rem" }}>●</span>
-                      {b.notes.length > 0 ? (
-                        <IconGroup>
-                          <span>{b.name}</span>
-                          <span data-tooltip={b.notes}>
-                            <Icon name={"info"} className={"muted"} />
-                          </span>
-                        </IconGroup>
-                      ) : (
-                        b.name
-                      )}
-                    </td>
+                    <td></td>
                     <td className={"amount-cell"}>
-                      <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+                      <span className={"amount"}>{formatCurrencyValue(totalAssetBalance, null)}</span>
                     </td>
-                    <td className={"amount-cell"}>
-                      <span className={"amount"}>{Math.round((b.gbpBalance / totalAssetBalance) * 100)}%</span>
-                    </td>
+                    <td></td>
                   </tr>
-                );
-              })}
-
-              <tfoot>
-                <tr>
-                  <td></td>
-                  <td className={"amount-cell"}>
-                    <span className={"amount"}>{formatCurrencyValue(totalAssetBalance, null)}</span>
-                  </td>
-                  <td></td>
-                </tr>
-              </tfoot>
-            </table>
-          </article>
+                </tfoot>
+              </table>
+            </article>
+          ) : null}
         </div>
       </>
     );
