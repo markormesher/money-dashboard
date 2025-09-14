@@ -123,6 +123,7 @@ function AccountsPage(): ReactElement {
                   {a.isIsa ? <li>ISA</li> : null}
                   {a.isPension ? <li>Pension</li> : null}
                   {a.excludeFromEnvelopes ? <li>Excluded from envelopes</li> : null}
+                  {a.excludeFromReports ? <li>Excluded from reports</li> : null}
                 </ul>
                 {!!a.notes ? <small>{a.notes}</small> : null}
                 <footer>
