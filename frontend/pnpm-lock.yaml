@@ -46,8 +46,8 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3(@bufbuild/protobuf@2.2.3)
       '@markormesher/eslint-config':
-        specifier: ^0.2.0
-        version: 0.2.1(eslint@9.18.0)(typescript@5.7.3)
+        specifier: github:markormesher/eslint-config#semver:^v0.2.0
+        version: https://codeload.github.com/markormesher/eslint-config/tar.gz/0e03984217b36e168b060cdbcde27abdd8cafd5b(eslint@9.18.0)(typescript@5.7.3)
       '@tsconfig/strictest':
         specifier: ^2.0.5
         version: 2.0.5
@@ -362,8 +362,9 @@ packages:
   '@kurkle/color@0.3.4':
     resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
-  '@markormesher/eslint-config@0.2.1':
-    resolution: {integrity: sha512-YUuL0PVVKleuXw6Rlmku4Avax9POA6qwcrl5mdh204M1vgpGFffpmHSwccyHqIZ71qtom5KgBKl5Ec5mgAJVdQ==}
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/0e03984217b36e168b060cdbcde27abdd8cafd5b':
+    resolution: {tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/0e03984217b36e168b060cdbcde27abdd8cafd5b}
+    version: 0.2.1
     peerDependencies:
       eslint: '>=8.0.0 <10.0.0'
       typescript: '>=3.3.1'
@@ -1883,7 +1884,7 @@ snapshots:
 
   '@kurkle/color@0.3.4': {}
 
-  '@markormesher/eslint-config@0.2.1(eslint@9.18.0)(typescript@5.7.3)':
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/0e03984217b36e168b060cdbcde27abdd8cafd5b(eslint@9.18.0)(typescript@5.7.3)':
     dependencies:
       '@eslint/js': 9.18.0
       '@typescript-eslint/eslint-plugin': 8.20.0(@typescript-eslint/parser@8.20.0(eslint@9.18.0)(typescript@5.7.3))(eslint@9.18.0)(typescript@5.7.3)
