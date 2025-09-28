@@ -3,7 +3,7 @@ module github.com/markormesher/money-dashboard
 go 1.25.1
 
 require (
-	connectrpc.com/connect v1.18.1
+	connectrpc.com/connect v1.19.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.1
 	github.com/govalues/decimal v0.1.36
