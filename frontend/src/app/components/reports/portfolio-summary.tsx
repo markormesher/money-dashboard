@@ -138,7 +138,7 @@ function PortfolioSummaryPage(): ReactElement {
               }
             },
             label: (ctx) => {
-              return formatCurrencyValue(assetsVsCashChartBalances[ctx.datasetIndex]?.gbpBalance ?? 0, null);
+              return formatCurrencyValue(assetsVsCashChartBalances[ctx.dataIndex]?.gbpBalance ?? 0, null);
             },
           },
         },
@@ -172,7 +172,7 @@ function PortfolioSummaryPage(): ReactElement {
               }
             },
             label: (ctx) => {
-              return formatCurrencyValue(assetBalances[ctx.datasetIndex]?.gbpBalance ?? 0, null);
+              return formatCurrencyValue(assetBalances[ctx.dataIndex]?.gbpBalance ?? 0, null);
             },
           },
         },
