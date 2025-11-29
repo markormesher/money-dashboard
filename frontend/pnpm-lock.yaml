@@ -46,13 +46,13 @@ importers:
         specifier: 2.10.1
         version: 2.10.1(@bufbuild/protobuf@2.10.1)
       '@markormesher/eslint-config':
-        specifier: github:markormesher/eslint-config#semver:^v0.2.0
+        specifier: github:markormesher/eslint-config#semver:v0.2.1
         version: https://codeload.github.com/markormesher/eslint-config/tar.gz/0e03984217b36e168b060cdbcde27abdd8cafd5b(eslint@9.18.0)(typescript@5.7.3)
       '@tsconfig/strictest':
-        specifier: ^2.0.5
+        specifier: 2.0.5
         version: 2.0.5
       '@types/node':
-        specifier: ^22.10.7
+        specifier: 22.10.7
         version: 22.10.7
       '@types/react':
         specifier: 19.2.7
@@ -61,22 +61,22 @@ importers:
         specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.7)
       eslint:
-        specifier: ^9.18.0
+        specifier: 9.18.0
         version: 9.18.0
       prettier:
-        specifier: ^3.4.2
+        specifier: 3.4.2
         version: 3.4.2
       sass:
-        specifier: ^1.83.4
+        specifier: 1.83.4
         version: 1.83.4
       ts-proto:
-        specifier: ^2.6.1
+        specifier: 2.6.1
         version: 2.6.1
       typescript:
-        specifier: ^5.7.3
+        specifier: 5.7.3
         version: 5.7.3
       vite:
-        specifier: ^6.0.7
+        specifier: 6.4.1
         version: 6.4.1(@types/node@22.10.7)(sass@1.83.4)
 
 packages:
@@ -591,9 +591,6 @@ packages:
 
   '@tsconfig/strictest@2.0.5':
     resolution: {integrity: sha512-ec4tjL2Rr0pkZ5hww65c+EEPYwxOi4Ryv+0MtjeaSQRJyq322Q27eOQiFbuNgw2hpL4hB1/W/HBGk3VKS43osg==}
-
-  '@types/estree@1.0.6':
-    resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
@@ -2094,8 +2091,6 @@ snapshots:
 
   '@tsconfig/strictest@2.0.5': {}
 
-  '@types/estree@1.0.6': {}
-
   '@types/estree@1.0.8': {}
 
   '@types/json-schema@7.0.15': {}
@@ -2642,7 +2637,7 @@ snapshots:
       '@humanfs/node': 0.16.6
       '@humanwhocodes/module-importer': 1.0.1
       '@humanwhocodes/retry': 0.4.1
-      '@types/estree': 1.0.6
+      '@types/estree': 1.0.8
       '@types/json-schema': 7.0.15
       ajv: 6.12.6
       chalk: 4.1.2
