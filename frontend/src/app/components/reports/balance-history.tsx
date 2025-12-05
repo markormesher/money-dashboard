@@ -94,7 +94,11 @@ function BalanceHistoryPage(): ReactElement {
               }
             },
             label: (ctx) => {
-              return formatCurrencyValue(ctx.parsed.y, null);
+              if (isNumber(ctx.parsed.y)) {
+                return formatCurrencyValue(ctx.parsed.y, null);
+              } else {
+                return "???";
+              }
             },
           },
         },

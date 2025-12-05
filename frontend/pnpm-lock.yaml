@@ -22,7 +22,7 @@ importers:
         version: 2.1.1
       chart.js:
         specifier: ^4.4.9
-        version: 4.4.9
+        version: 4.5.1
       material-symbols:
         specifier: ^0.40.0
         version: 0.40.0
@@ -31,7 +31,7 @@ importers:
         version: 19.2.0
       react-chartjs-2:
         specifier: ^5.3.0
-        version: 5.3.1(chart.js@4.4.9)(react@19.2.0)
+        version: 5.3.1(chart.js@4.5.1)(react@19.2.0)
       react-dom:
         specifier: ^19.0.0
         version: 19.2.0(react@19.2.0)
@@ -856,8 +856,8 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
-  chart.js@4.4.9:
-    resolution: {integrity: sha512-EyZ9wWKgpAU0fLJ43YAEIF8sr5F2W3LqbS40ZJyHIner2lY14ufqv2VMp69MAiZ2rpwxEUxEhIH/0U3xyRynxg==}
+  chart.js@4.5.1:
+    resolution: {integrity: sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==}
     engines: {pnpm: '>=8'}
 
   chokidar@4.0.3:
@@ -2609,7 +2609,7 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
-  chart.js@4.4.9:
+  chart.js@4.5.1:
     dependencies:
       '@kurkle/color': 0.3.4
 
@@ -3442,9 +3442,9 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  react-chartjs-2@5.3.1(chart.js@4.4.9)(react@19.2.0):
+  react-chartjs-2@5.3.1(chart.js@4.5.1)(react@19.2.0):
     dependencies:
-      chart.js: 4.4.9
+      chart.js: 4.5.1
       react: 19.2.0
 
   react-dom@19.2.0(react@19.2.0):
