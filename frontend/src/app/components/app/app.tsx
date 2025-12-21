@@ -16,6 +16,7 @@ import { EnvelopeTransfersPage } from "../envelope-transfers/envelope-transfers-
 import { BalanceHistoryPage } from "../reports/balance-history.js";
 import { TaxHelperPage } from "../reports/tax-helper.js";
 import { PortfolioSummaryPage } from "../reports/portfolio-summary.js";
+import { setPrefValue, usePrefValue } from "../../utils/prefs.js";
 import { useRouter } from "./router.js";
 import { Menu } from "./menu.js";
 import { Breadcrumbs } from "./breadcrumbs.js";
@@ -27,11 +28,33 @@ function App(): ReactElement {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const { path } = useRouter();
 
-  const [theme, setTheme] = React.useState("light");
-  const toggleTheme = () => setTheme((curr) => (curr == "light" ? "dark" : "light"));
+  const theme = usePrefValue("theme");
 
   React.useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
+    switch (theme) {
+      case "auto":
+        delete document.documentElement.dataset["theme"];
+        break;
+
+      case "light":
+        document.documentElement.dataset["theme"] = "light";
+        break;
+
+      case "dark":
+        document.documentElement.dataset["theme"] = "dark";
+        break;
+    }
+  }, [theme]);
+
+  const toggleTheme = React.useCallback(() => {
+    // auto -> dark -> light -> repeat
+    if (theme == "dark") {
+      setPrefValue("theme", "light");
+    } else if (theme == "light") {
+      setPrefValue("theme", "auto");
+    } else {
+      setPrefValue("theme", "dark");
+    }
   }, [theme]);
 
   function getContent(): ReactElement {
@@ -93,7 +116,7 @@ function App(): ReactElement {
             <ul>
               <li>
                 <a href={"#"} onClick={toggleTheme} className={"secondary"} style={{ opacity: 0.7 }}>
-                  <Icon name={"brightness_medium"} />
+                  <Icon name={theme == "dark" ? "dark_mode" : theme == "light" ? "light_mode" : "brightness_auto"} />
                 </a>
               </li>
             </ul>
