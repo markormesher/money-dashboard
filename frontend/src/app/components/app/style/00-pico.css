@@ -84,7 +84,7 @@ textarea {
   /* Original: var(--pico-spacing) */
 }
 
-:where(input, select, textarea, fieldset, .grid)+small {
+:where(input, select, textarea, fieldset, .grid) + small {
   margin-top: calc(var(--pico-form-element-spacing-vertical) * 0.25);
   /* Original: calc(var(--pico-spacing) * -.75) */
 
