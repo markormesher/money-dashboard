@@ -1,5 +1,41 @@
 @import "@picocss/pico";
 
+/* light/dark theme */
+
+html {
+  --background-colour: #ffffff;
+  --timer-colour: #9BCCFD;
+  --divider-colour: rgba(0, 0, 0, 0.3);
+  --text-color: #000000;
+  --footer-background-colour: rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="dark"] {
+  --background-colour: #111111;
+  --timer-colour: #014063;
+  --divider-colour: rgba(255, 255, 255, 0.3);
+  --text-color: #ffffff;
+  --footer-background-colour: rgba(255, 255, 255, 0.1);
+
+  canvas {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    --background-colour: #111111;
+    --timer-colour: #014063;
+    --divider-colour: rgba(255, 255, 255, 0.3);
+    --text-color: #ffffff;
+    --footer-background-colour: rgba(255, 255, 255, 0.1);
+
+    canvas {
+      filter: invert(1) hue-rotate(180deg);
+    }
+  }
+}
+
 /* pico overrides */
 
 :root {
@@ -68,7 +104,7 @@ textarea {
   /* Original: var(--pico-spacing) */
 }
 
-:where(input, select, textarea, fieldset, .grid) + small {
+:where(input, select, textarea, fieldset, .grid)+small {
   margin-top: calc(var(--pico-form-element-spacing-vertical) * 0.25);
   /* Original: calc(var(--pico-spacing) * -.75) */
 
