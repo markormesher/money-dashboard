@@ -1,3 +1,23 @@
+html[data-theme="dark"] {
+  canvas {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
+
+html[data-theme="light"] {
+  canvas {
+    filter: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    canvas {
+      filter: invert(1) hue-rotate(180deg);
+    }
+  }
+}
+
 canvas.loading {
   opacity: 0.4;
 }

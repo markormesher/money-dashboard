@@ -1,21 +1,5 @@
 @import "@picocss/pico";
 
-/* light/dark theme */
-
-html[data-theme="dark"] {
-  canvas {
-    filter: invert(1) hue-rotate(180deg);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    canvas {
-      filter: invert(1) hue-rotate(180deg);
-    }
-  }
-}
-
 /* pico overrides */
 
 :root {
