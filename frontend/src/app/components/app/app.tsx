@@ -33,7 +33,7 @@ function App(): ReactElement {
   React.useEffect(() => {
     switch (theme) {
       case "auto":
-        document.documentElement.dataset["theme"] = "";
+        delete document.documentElement.dataset["theme"];
         break;
 
       case "light":
