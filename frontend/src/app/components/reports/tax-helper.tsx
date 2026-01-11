@@ -344,51 +344,92 @@ function TaxHelperPage(): ReactElement {
                       </div>
                     ) : null}
 
-                    <div>
-                      <table className={"auto-width"}>
-                        <thead>
-                          <tr>
-                            <td colSpan={999} style={{ textAlign: "center" }}>
-                              Event Matches
-                            </td>
-                          </tr>
-                          <tr>
-                            <th>{e.type == "disposal" ? "Acquisition" : "Disposal"} Date</th>
-                            <th>Rule</th>
-                            <th>Quantity</th>
-                            <th>Unit Price</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {e.matches.map((m) => {
-                            return (
-                              <tr>
-                                <td>{m.date == BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
-                                <td>{m.note}</td>
-                                <td className={"amount-cell"}>
-                                  <span className={"amount"}>{formatAssetQuantity(m.qty)}</span>
-                                </td>
-                                <td className={"amount-cell"}>
-                                  <span className={"amount"}>{formatCurrencyValue(m.price, null)}</span>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                        <tfoot>
-                          <tr>
-                            <td></td>
-                            <td></td>
-                            <td className={"amount-cell"}>
-                              <span className={"amount"}>{formatAssetQuantity(totalMatches)}</span>
-                            </td>
-                            <td className={"amount-cell"}>
-                              <span className={"amount"}>{formatCurrencyValue(avgMatchPrice, null)}</span>
-                            </td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
+                    {e.type == "disposal" ? (
+                      <div>
+                        <table className={"auto-width"}>
+                          <thead>
+                            <tr>
+                              <td colSpan={999} style={{ textAlign: "center" }}>
+                                Matched Acquisitions
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Acquisition Date</th>
+                              <th>Rule</th>
+                              <th>Quantity</th>
+                              <th>Avg. Unit Price</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {e.matches.map((m) => {
+                              return (
+                                <tr>
+                                  <td>{m.date == BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
+                                  <td>{m.note}</td>
+                                  <td className={"amount-cell"}>
+                                    <span className={"amount"}>{formatAssetQuantity(m.qty)}</span>
+                                  </td>
+                                  <td className={"amount-cell"}>
+                                    <span className={"amount"}>{formatCurrencyValue(m.price, null)}</span>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td className={"amount-cell"}>
+                                <span className={"amount"}>{formatAssetQuantity(totalMatches)}</span>
+                              </td>
+                              <td className={"amount-cell"}>
+                                <span className={"amount"}>{formatCurrencyValue(avgMatchPrice, null)}</span>
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+                    ) : (
+                      <div>
+                        <table className={"auto-width"}>
+                          <thead>
+                            <tr>
+                              <td colSpan={999} style={{ textAlign: "center" }}>
+                                Matched Disposals
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Disposal Date</th>
+                              <th>Rule</th>
+                              <th>Quantity</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {e.matches.map((m) => {
+                              return (
+                                <tr>
+                                  <td>{m.date == BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
+                                  <td>{m.note}</td>
+                                  <td className={"amount-cell"}>
+                                    <span className={"amount"}>{formatAssetQuantity(m.qty)}</span>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td className={"amount-cell"}>
+                                <span className={"amount"}>{formatAssetQuantity(totalMatches)}</span>
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </details>
 
