@@ -316,7 +316,20 @@ func TaxReportFromCore(source schema.TaxReport) *v4.TaxReport {
 			mdv4TaxReport.CapitalEvents[l] = TaxReportCapitalEventFromCore(source.CapitalEvents[l])
 		}
 	}
+	if source.S104Balances != nil {
+		mdv4TaxReport.S104Balances = make([]*v4.TaxReportS104Balance, len(source.S104Balances))
+		for m := 0; m < len(source.S104Balances); m++ {
+			mdv4TaxReport.S104Balances[m] = TaxReportS104BalanceFromCore(source.S104Balances[m])
+		}
+	}
 	return &mdv4TaxReport
+}
+func TaxReportS104BalanceFromCore(source schema.TaxReportS104Balance) *v4.TaxReportS104Balance {
+	var mdv4TaxReportS104Balance v4.TaxReportS104Balance
+	mdv4TaxReportS104Balance.Holding = HoldingFromCore(source.Holding)
+	mdv4TaxReportS104Balance.Qty = ConvertDecimalToFloat(source.Qty)
+	mdv4TaxReportS104Balance.AvgGbpUnitPrice = ConvertDecimalToFloat(source.AvgGbpUnitPrice)
+	return &mdv4TaxReportS104Balance
 }
 func TransactionFromCore(source schema.Transaction) *v4.Transaction {
 	var mdv4Transaction v4.Transaction
