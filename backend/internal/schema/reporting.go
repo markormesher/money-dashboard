@@ -34,6 +34,7 @@ type TaxReport struct {
 	DividendIncome       []HoldingBalance
 	PensionContributions []HoldingBalance
 	CapitalEvents        []TaxReportCapitalEvent
+	S104Balances         []TaxReportS104Balance
 }
 
 type TaxReportCapitalEvent struct {
@@ -52,4 +53,10 @@ type TaxReportCapitalEventMatch struct {
 	Date  time.Time
 	Price decimal.Decimal
 	Note  string
+}
+
+type TaxReportS104Balance struct {
+	Holding         Holding
+	Qty             decimal.Decimal
+	AvgGbpUnitPrice decimal.Decimal
 }

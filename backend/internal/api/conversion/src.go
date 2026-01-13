@@ -77,6 +77,7 @@ type converterSpec interface {
 	TaxReportFromCore(source schema.TaxReport) *mdv4.TaxReport
 	TaxReportCapitalEventFromCore(source schema.TaxReportCapitalEvent) *mdv4.TaxReportCapitalEvent
 	TaxReportCapitalEventMatchFromCore(source schema.TaxReportCapitalEventMatch) *mdv4.TaxReportCapitalEventMatch
+	TaxReportS104BalanceFromCore(source schema.TaxReportS104Balance) *mdv4.TaxReportS104Balance
 }
 
 // utility methods to convert between core and api types

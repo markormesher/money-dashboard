@@ -37,6 +37,7 @@ message TaxReport {
   repeated HoldingBalance dividend_income = 2;
   repeated HoldingBalance pension_contributions = 3;
   repeated TaxReportCapitalEvent capital_events = 4;
+  repeated TaxReportS104Balance s104_balances = 5;
 }
 
 message TaxReportCapitalEvent {
@@ -55,6 +56,12 @@ message TaxReportCapitalEventMatch {
   int64 date = 2;
   double price = 3;
   string note = 4;
+}
+
+message TaxReportS104Balance {
+  Holding holding = 1;
+  double qty = 2;
+  double avg_gbp_unit_price = 3;
 }
 
 message GetHoldingBalancesRequest {}
