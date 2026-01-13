@@ -62,7 +62,7 @@ function TaxHelperPage(): ReactElement {
   }, [taxReport, showDisposalsOnly]);
 
   useEffect(() => {
-    setS104Balances(taxReport?.s104Balances ?? []);
+    setS104Balances(taxReport?.s104Balances?.filter((b) => b.qty > 0) ?? []);
   }, [taxReport, setS104Balances]);
 
   useEffect(() => {
@@ -519,7 +519,7 @@ function TaxHelperPage(): ReactElement {
                       <tr>
                         <td>{b.holding?.name}</td>
                         <td className={"amount-cell"}>
-                          <span className={"amount"}>{b.qty}</span>
+                          <span className={"amount"}>{formatAssetQuantity(b.qty)}</span>
                         </td>
                         <td className={"amount-cell"}>
                           <span className={"amount"}>{formatCurrencyValue(b.avgGbpUnitPrice, null)}</span>
