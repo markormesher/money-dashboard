@@ -369,7 +369,7 @@ func (c *Core) GetTaxReport(ctx context.Context, profile schema.Profile, taxYear
 		return schema.TaxReport{}, err
 	}
 
-	capitalEvents, err := c.getCaptialReportForTaxReport(ctx, profile, startDate, endDate)
+	capitalEvents, s104Balances, err := c.getCaptialReportForTaxReport(ctx, profile, startDate, endDate)
 	if err != nil {
 		return schema.TaxReport{}, err
 	}
@@ -379,6 +379,7 @@ func (c *Core) GetTaxReport(ctx context.Context, profile schema.Profile, taxYear
 		DividendIncome:       dividendIncome,
 		PensionContributions: pensionContributions,
 		CapitalEvents:        capitalEvents,
+		S104Balances:         s104Balances,
 	}, nil
 }
 
@@ -463,14 +464,14 @@ type CaptialS104Pot struct {
 	unitPrice decimal.Decimal
 }
 
-func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.TaxReportCapitalEvent, error) {
+func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.TaxReportCapitalEvent, []schema.TaxReportS104Balance, error) {
 	// share matching and S104 pots don't are about tax year bounaries, so we need to
 	// get the full history and build the full report, then return the events for the
 	// year in question
 
 	transactions, err := c.DB.GetTaxableCapitalTransactions(ctx, profile.ID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	/*
@@ -491,7 +492,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 
 	events, err := c.convertCapitalTransactionsToEvents(ctx, transactions)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	/*
@@ -554,7 +555,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 			// ok, we actually have a match
 			err := matchCapitalEvents(events, d, a, "Same-day")
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 		}
 	}
@@ -614,7 +615,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 			// ok, we actually have a match
 			err := matchCapitalEvents(events, d, a, "B&B")
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 		}
 	}
@@ -626,7 +627,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 
 	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	pots := make(map[uuid.UUID]CaptialS104Pot, 0)
@@ -648,27 +649,27 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 		if event.qty.IsPos() {
 			currentPotValue, err := pot.qty.Mul(pot.unitPrice)
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 
 			availableEventValue, err := event.availableToMatch().Mul(event.avgGbpUnitPrice)
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 
 			newPotQty, err := pot.qty.Add(event.availableToMatch())
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 
 			newPotValue, err := currentPotValue.Add(availableEventValue)
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 
 			newPotUnitPrice, err := newPotValue.Quo(newPotQty)
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 
 			pot.qty = newPotQty
@@ -686,11 +687,11 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 		if event.qty.IsNeg() {
 			newPotQty, err := pot.qty.Sub(event.availableToMatch())
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 
 			if newPotQty.IsNeg() {
-				return nil, fmt.Errorf("S104 pot has gone negative - this should not happen (holding: %s, date: %s)", event.holdingID, event.date)
+				return nil, nil, fmt.Errorf("S104 pot has gone negative - this should not happen (holding: %s, date: %s)", event.holdingID, event.date)
 			}
 
 			pot.qty = newPotQty
@@ -711,8 +712,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 
 	// rebuild result
 
-	out := make([]schema.TaxReportCapitalEvent, 0)
-
+	outEvents := make([]schema.TaxReportCapitalEvent, 0)
 	for _, event := range events {
 		if event.date.Before(startDate) || event.date.After(endDate) {
 			continue
@@ -720,7 +720,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 
 		holding, ok := holdings[event.holdingID]
 		if !ok {
-			return nil, fmt.Errorf("unknown holding: %v", event.holdingID)
+			return nil, nil, fmt.Errorf("unknown holding: %v", event.holdingID)
 		}
 
 		var eventType string
@@ -759,10 +759,24 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 			return outputEvent.Matches[i].Date.Before(outputEvent.Matches[j].Date)
 		})
 
-		out = append(out, outputEvent)
+		outEvents = append(outEvents, outputEvent)
 	}
 
-	return out, nil
+	outS104Balances := make([]schema.TaxReportS104Balance, 0)
+	for holdingID, pot := range pots {
+		holding, ok := holdings[holdingID]
+		if !ok {
+			return nil, nil, fmt.Errorf("unknown holding: %v", holdingID)
+		}
+
+		outS104Balances = append(outS104Balances, schema.TaxReportS104Balance{
+			Holding:         holding,
+			Qty:             pot.qty,
+			AvgGbpUnitPrice: pot.unitPrice,
+		})
+	}
+
+	return outEvents, outS104Balances, nil
 }
 
 func truncateToDay(t time.Time) time.Time {

@@ -2,7 +2,11 @@ import React, { ReactElement, useEffect } from "react";
 import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { TaxReport, TaxReportCapitalEvent } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
+import {
+  TaxReport,
+  TaxReportCapitalEvent,
+  TaxReportS104Balance,
+} from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { useAsyncEffect, useWaitGroup } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -22,13 +26,15 @@ function TaxHelperPage(): ReactElement {
   }, []);
 
   const today = convertDateToProto(new Date());
-  const [taxYear, setTaxYear] = React.useState(getTaxYear(today));
+  const currentTaxYear = getTaxYear(today);
+  const [taxYear, setTaxYear] = React.useState(currentTaxYear);
   const [showDisposalsOnly, setShowCapitcalAcquisitions] = React.useState(true);
 
   const wg = useWaitGroup();
   const [error, setError] = React.useState<unknown>();
   const [taxReport, setTaxReport] = React.useState<TaxReport>();
-  const [capitalEvents, setCapitalEvents] = React.useState<TaxReportCapitalEvent[]>();
+  const [capitalEvents, setCapitalEvents] = React.useState<TaxReportCapitalEvent[]>([]);
+  const [s104Balances, setS104Balances] = React.useState<TaxReportS104Balance[]>([]);
 
   // derived captial event fields
   const [qtyDisposals, setQtyDisposals] = React.useState(0);
@@ -52,8 +58,12 @@ function TaxHelperPage(): ReactElement {
   }, [taxYear]);
 
   useEffect(() => {
-    setCapitalEvents(taxReport?.capitalEvents.filter((e) => e.type == "disposal" || !showDisposalsOnly));
+    setCapitalEvents(taxReport?.capitalEvents.filter((e) => e.type == "disposal" || !showDisposalsOnly) ?? []);
   }, [taxReport, showDisposalsOnly]);
+
+  useEffect(() => {
+    setS104Balances(taxReport?.s104Balances ?? []);
+  }, [taxReport, setS104Balances]);
 
   useEffect(() => {
     let qtyDisposals = 0;
@@ -485,6 +495,41 @@ function TaxHelperPage(): ReactElement {
               </tr>
             </tbody>
           </table>
+        ) : null}
+
+        {taxYear == currentTaxYear && s104Balances?.length > 0 ? (
+          <>
+            <hr />
+
+            <h4>Current S104 Balances</h4>
+
+            <table className={"auto-width"}>
+              <thead>
+                <tr>
+                  <th>Holding</th>
+                  <th>Quantity</th>
+                  <th>Avg. Unit Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {s104Balances
+                  .sort((a, b) => (a.holding?.name ?? "").localeCompare(b.holding?.name ?? ""))
+                  .map((b) => {
+                    return (
+                      <tr>
+                        <td>{b.holding?.name}</td>
+                        <td className={"amount-cell"}>
+                          <span className={"amount"}>{b.qty}</span>
+                        </td>
+                        <td className={"amount-cell"}>
+                          <span className={"amount"}>{formatCurrencyValue(b.avgGbpUnitPrice, null)}</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </>
         ) : null}
       </>
     );
