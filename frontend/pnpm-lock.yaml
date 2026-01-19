@@ -46,8 +46,8 @@ importers:
         specifier: 2.10.2
         version: 2.10.2(@bufbuild/protobuf@2.10.2)
       '@markormesher/eslint-config':
-        specifier: github:markormesher/eslint-config#semver:v0.3.24
-        version: https://codeload.github.com/markormesher/eslint-config/tar.gz/43a62c87150913d840793467006cd6bcb8c0d05b(eslint@9.39.2)(typescript@5.9.3)
+        specifier: github:markormesher/eslint-config#semver:v0.3.25
+        version: https://codeload.github.com/markormesher/eslint-config/tar.gz/232a6ea9acdbeaa924cc15c6910e15dae31eb1ff(eslint@9.39.2)(typescript@5.9.3)
       '@tsconfig/strictest':
         specifier: 2.0.8
         version: 2.0.8
@@ -455,8 +455,8 @@ packages:
   '@kurkle/color@0.3.4':
     resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
-  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/43a62c87150913d840793467006cd6bcb8c0d05b':
-    resolution: {tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/43a62c87150913d840793467006cd6bcb8c0d05b}
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/232a6ea9acdbeaa924cc15c6910e15dae31eb1ff':
+    resolution: {tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/232a6ea9acdbeaa924cc15c6910e15dae31eb1ff}
     version: 0.0.0
     peerDependencies:
       eslint: '>=8.0.0 <10.0.0'
@@ -2201,7 +2201,7 @@ snapshots:
 
   '@kurkle/color@0.3.4': {}
 
-  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/43a62c87150913d840793467006cd6bcb8c0d05b(eslint@9.39.2)(typescript@5.9.3)':
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/232a6ea9acdbeaa924cc15c6910e15dae31eb1ff(eslint@9.39.2)(typescript@5.9.3)':
     dependencies:
       '@eslint/js': 9.39.2
       '@typescript-eslint/eslint-plugin': 8.20.0(@typescript-eslint/parser@8.20.0(eslint@9.39.2)(typescript@5.9.3))(eslint@9.39.2)(typescript@5.9.3)
