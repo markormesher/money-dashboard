@@ -74,14 +74,12 @@ function PortfolioSummaryPage(): ReactElement {
         return;
       }
 
-      if (!balances[id]) {
-        balances[id] = {
-          isCash: !!h.holding.currency,
-          name: h.holding.asset?.name ?? h.holding.currency?.code ?? "???",
-          notes: h.holding.asset?.notes ?? "",
-          gbpBalance: 0,
-        };
-      }
+      balances[id] ??= {
+        isCash: !!h.holding.currency,
+        name: h.holding.asset?.name ?? h.holding.currency?.code ?? "???",
+        notes: h.holding.asset?.notes ?? "",
+        gbpBalance: 0,
+      };
 
       const b = balances[id];
       if (b) {
