@@ -46,8 +46,8 @@ importers:
         specifier: 2.11.0
         version: 2.11.0(@bufbuild/protobuf@2.11.0)
       '@markormesher/eslint-config':
-        specifier: github:markormesher/eslint-config#semver:v0.5.0
-        version: https://codeload.github.com/markormesher/eslint-config/tar.gz/328de24df9e612f281a01e5a80b59656886d22f3(eslint@9.39.2)(typescript@5.9.3)
+        specifier: github:markormesher/eslint-config#semver:v0.5.1
+        version: https://codeload.github.com/markormesher/eslint-config/tar.gz/9b2f06dd416a0ff39fe4d368ab99048eee0f39e9(eslint@9.39.2)(typescript@5.9.3)
       '@tsconfig/strictest':
         specifier: 2.0.8
         version: 2.0.8
@@ -451,8 +451,8 @@ packages:
   '@kurkle/color@0.3.4':
     resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
-  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/328de24df9e612f281a01e5a80b59656886d22f3':
-    resolution: {tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/328de24df9e612f281a01e5a80b59656886d22f3}
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/9b2f06dd416a0ff39fe4d368ab99048eee0f39e9':
+    resolution: {tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/9b2f06dd416a0ff39fe4d368ab99048eee0f39e9}
     version: 0.0.0
     peerDependencies:
       eslint: ^9.0.0
@@ -2200,7 +2200,7 @@ snapshots:
 
   '@kurkle/color@0.3.4': {}
 
-  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/328de24df9e612f281a01e5a80b59656886d22f3(eslint@9.39.2)(typescript@5.9.3)':
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/9b2f06dd416a0ff39fe4d368ab99048eee0f39e9(eslint@9.39.2)(typescript@5.9.3)':
     dependencies:
       '@eslint/js': 9.39.2
       '@typescript-eslint/eslint-plugin': 8.55.0(@typescript-eslint/parser@8.55.0(eslint@9.39.2)(typescript@5.9.3))(eslint@9.39.2)(typescript@5.9.3)
