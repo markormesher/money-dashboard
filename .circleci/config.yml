@@ -4,7 +4,7 @@ version: "2.1"
 jobs:
   cachekey:
     docker:
-      - image: cimg/base:2026.01@sha256:959f18d011f0a451351f3d0cc6720c3e80729bbcd01f06b94472bb62e12135ff
+      - image: cimg/base:2026.02@sha256:f333644c849b6f418f3ed937201c0d182448d7b2805d6494b04dc55b2c588f0e
     steps:
       - attach_workspace:
           at: .
@@ -16,7 +16,7 @@ jobs:
             - ./.task-meta-cachekey*
   checkout:
     docker:
-      - image: cimg/base:2026.01@sha256:959f18d011f0a451351f3d0cc6720c3e80729bbcd01f06b94472bb62e12135ff
+      - image: cimg/base:2026.02@sha256:f333644c849b6f418f3ed937201c0d182448d7b2805d6494b04dc55b2c588f0e
     steps:
       - checkout:
           path: .
@@ -26,13 +26,13 @@ jobs:
             - .
   ci-all:
     docker:
-      - image: cimg/base:2026.01@sha256:959f18d011f0a451351f3d0cc6720c3e80729bbcd01f06b94472bb62e12135ff
+      - image: cimg/base:2026.02@sha256:f333644c849b6f418f3ed937201c0d182448d7b2805d6494b04dc55b2c588f0e
     steps:
       - run:
           command: echo "Done"
   deps-go:
     docker:
-      - image: docker.io/golang:1.25.6@sha256:ce63a16e0f7063787ebb4eb28e72d477b00b4726f79874b3205a965ffd797ab2
+      - image: docker.io/golang:1.26.0@sha256:c83e68f3ebb6943a2904fa66348867d108119890a2c6a2e6f07b38d0eb6c25c5
     steps:
       - attach_workspace:
           at: .
@@ -52,7 +52,7 @@ jobs:
             - /.gocache
   deps-js:
     docker:
-      - image: docker.io/node:24.13.0-slim@sha256:bf22df20270b654c4e9da59d8d4a3516cce6ba2852e159b27288d645b7a7eedc
+      - image: docker.io/node:24.13.1-slim@sha256:a81a03dd965b4052269a57fac857004022b522a4bf06e7a739e25e18bce45af2
     steps:
       - attach_workspace:
           at: .
@@ -71,7 +71,7 @@ jobs:
             - frontend/node_modules
   fetch-task:
     docker:
-      - image: ghcr.io/markormesher/task-fetcher:v0.5.58@sha256:ce250a76b376845c341b50704bd4bc4cb586a66e04c64c085a3a4d9db5173706
+      - image: ghcr.io/markormesher/task-fetcher:v0.6.2@sha256:f3a51299e2abfb8f439c2264a1f477048c4d95066afebb9b7e906ea38b3c237a
     steps:
       - attach_workspace:
           at: .
@@ -83,7 +83,7 @@ jobs:
             - ./task
   imgbuild-imgpush:
     docker:
-      - image: cimg/base:2026.01@sha256:959f18d011f0a451351f3d0cc6720c3e80729bbcd01f06b94472bb62e12135ff
+      - image: cimg/base:2026.02@sha256:f333644c849b6f418f3ed937201c0d182448d7b2805d6494b04dc55b2c588f0e
     steps:
       - attach_workspace:
           at: .
@@ -96,7 +96,7 @@ jobs:
             ./task imgpush
   imgrefs:
     docker:
-      - image: docker.io/alpine/git:v2.52.0@sha256:49ba4b12ebea1d120da797a13e2cb480d74aae4c29c8d67f1646980b96060e92
+      - image: docker.io/alpine/git:v2.52.0@sha256:f1c2b32c4de330955342b3b073ccbdaf772030bd48619f2809231e88578911ba
     steps:
       - attach_workspace:
           at: .
@@ -109,7 +109,7 @@ jobs:
             - ./**/.task-meta-imgrefs
   lint-buf:
     docker:
-      - image: docker.io/bufbuild/buf:1.64.0@sha256:d5641ea97b505a94a7cd2beb761f70d56bc770dd217c239aca59627dab028d6b
+      - image: docker.io/bufbuild/buf:1.65.0@sha256:8237e37d15d73e9d3a536332d352c6a4fae2d37ed041cf17a5066ffa4403ea40
     steps:
       - attach_workspace:
           at: .
@@ -121,7 +121,7 @@ jobs:
           command: ./task lint-buf
   lint-go:
     docker:
-      - image: docker.io/golang:1.25.6@sha256:ce63a16e0f7063787ebb4eb28e72d477b00b4726f79874b3205a965ffd797ab2
+      - image: docker.io/golang:1.26.0@sha256:c83e68f3ebb6943a2904fa66348867d108119890a2c6a2e6f07b38d0eb6c25c5
     steps:
       - attach_workspace:
           at: .
@@ -136,7 +136,7 @@ jobs:
             ./task lint-go
   lint-js:
     docker:
-      - image: docker.io/node:24.13.0-slim@sha256:bf22df20270b654c4e9da59d8d4a3516cce6ba2852e159b27288d645b7a7eedc
+      - image: docker.io/node:24.13.1-slim@sha256:a81a03dd965b4052269a57fac857004022b522a4bf06e7a739e25e18bce45af2
     steps:
       - attach_workspace:
           at: .
