@@ -60,7 +60,7 @@ func (q *Queries) GetPayees(ctx context.Context, profileID uuid.UUID) ([]string,
 const getTransactionById = `-- name: GetTransactionById :one
 SELECT
   transaction.id, transaction.date, transaction.budget_date, transaction.creation_date, transaction.payee, transaction.notes, transaction.amount, transaction.unit_value, transaction.holding_id, transaction.category_id, transaction.profile_id, transaction.deleted,
-  holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
+  holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active, holding.exclude_from_reports, holding.exclude_from_envelopes,
   category.id, category.name, category.is_memo, category.is_interest_income, category.is_dividend_income, category.is_capital_event_fee, category.profile_id, category.active, category.is_synthetic_asset_update, category.is_capital_event, category.is_pension_contribution,
   profile.id, profile.name, profile.deleted
 FROM
@@ -109,6 +109,8 @@ func (q *Queries) GetTransactionById(ctx context.Context, arg GetTransactionById
 		&i.Holding.AccountID,
 		&i.Holding.ProfileID,
 		&i.Holding.Active,
+		&i.Holding.ExcludeFromReports,
+		&i.Holding.ExcludeFromEnvelopes,
 		&i.Category.ID,
 		&i.Category.Name,
 		&i.Category.IsMemo,
@@ -157,8 +159,8 @@ SELECT
   profile.id, profile.name, profile.deleted,
 
   -- holding fields
-  holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
+  holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active, holding.exclude_from_reports, holding.exclude_from_envelopes,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.profile_id, account.active, account.account_group_id,
   nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
   nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active
 FROM
@@ -254,16 +256,16 @@ func (q *Queries) GetTransactionPageFilteredEntities(ctx context.Context, arg Ge
 			&i.Holding.AccountID,
 			&i.Holding.ProfileID,
 			&i.Holding.Active,
+			&i.Holding.ExcludeFromReports,
+			&i.Holding.ExcludeFromEnvelopes,
 			&i.Account.ID,
 			&i.Account.Name,
 			&i.Account.Notes,
 			&i.Account.IsIsa,
 			&i.Account.IsPension,
-			&i.Account.ExcludeFromEnvelopes,
 			&i.Account.ProfileID,
 			&i.Account.Active,
 			&i.Account.AccountGroupID,
-			&i.Account.ExcludeFromReports,
 			&i.NullableHoldingAsset.HoldingID,
 			&i.NullableHoldingAsset.ID,
 			&i.NullableHoldingAsset.Name,

@@ -49,6 +49,8 @@ INSERT INTO holding (
   asset_id,
   account_id,
   profile_id,
+  exclude_from_envelopes,
+  exclude_from_reports,
   active
 ) VALUES (
   @id,
@@ -57,6 +59,8 @@ INSERT INTO holding (
   @asset_id,
   @account_id,
   @profile_id,
+  @exclude_from_envelopes,
+  @exclude_from_reports,
   @active
 ) ON CONFLICT (id) DO UPDATE SET
   id = @id,
@@ -65,5 +69,7 @@ INSERT INTO holding (
   asset_id = @asset_id,
   account_id = @account_id,
   profile_id = @profile_id,
+  exclude_from_envelopes = @exclude_from_envelopes,
+  exclude_from_reports = @exclude_from_reports,
   active = @active
 ;

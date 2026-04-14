@@ -32,8 +32,6 @@ INSERT INTO account (
   notes,
   is_isa,
   is_pension,
-  exclude_from_envelopes,
-  exclude_from_reports,
   account_group_id,
   profile_id,
   active
@@ -43,8 +41,6 @@ INSERT INTO account (
   @notes,
   @is_isa,
   @is_pension,
-  @exclude_from_envelopes,
-  @exclude_from_reports,
   @account_group_id,
   @profile_id,
   @active
@@ -54,8 +50,6 @@ INSERT INTO account (
   notes = @notes,
   is_isa = @is_isa,
   is_pension = @is_pension,
-  exclude_from_envelopes = @exclude_from_envelopes,
-  exclude_from_reports = @exclude_from_reports,
   account_group_id = @account_group_id,
   profile_id = @profile_id,
   active = @active

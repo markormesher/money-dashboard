@@ -22,18 +22,16 @@ const (
 )
 
 type Account struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
-	Id                   string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name                 string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Notes                string                 `protobuf:"bytes,3,opt,name=notes,proto3" json:"notes,omitempty"`
-	IsIsa                bool                   `protobuf:"varint,4,opt,name=is_isa,json=isIsa,proto3" json:"is_isa,omitempty"`
-	IsPension            bool                   `protobuf:"varint,5,opt,name=is_pension,json=isPension,proto3" json:"is_pension,omitempty"`
-	ExcludeFromEnvelopes bool                   `protobuf:"varint,6,opt,name=exclude_from_envelopes,json=excludeFromEnvelopes,proto3" json:"exclude_from_envelopes,omitempty"`
-	ExcludeFromReports   bool                   `protobuf:"varint,7,opt,name=exclude_from_reports,json=excludeFromReports,proto3" json:"exclude_from_reports,omitempty"`
-	Active               bool                   `protobuf:"varint,8,opt,name=active,proto3" json:"active,omitempty"`
-	AccountGroup         *AccountGroup          `protobuf:"bytes,9,opt,name=account_group,json=accountGroup,proto3" json:"account_group,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Notes         string                 `protobuf:"bytes,3,opt,name=notes,proto3" json:"notes,omitempty"`
+	IsIsa         bool                   `protobuf:"varint,4,opt,name=is_isa,json=isIsa,proto3" json:"is_isa,omitempty"`
+	IsPension     bool                   `protobuf:"varint,5,opt,name=is_pension,json=isPension,proto3" json:"is_pension,omitempty"`
+	Active        bool                   `protobuf:"varint,8,opt,name=active,proto3" json:"active,omitempty"`
+	AccountGroup  *AccountGroup          `protobuf:"bytes,9,opt,name=account_group,json=accountGroup,proto3" json:"account_group,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Account) Reset() {
@@ -97,20 +95,6 @@ func (x *Account) GetIsIsa() bool {
 func (x *Account) GetIsPension() bool {
 	if x != nil {
 		return x.IsPension
-	}
-	return false
-}
-
-func (x *Account) GetExcludeFromEnvelopes() bool {
-	if x != nil {
-		return x.ExcludeFromEnvelopes
-	}
-	return false
-}
-
-func (x *Account) GetExcludeFromReports() bool {
-	if x != nil {
-		return x.ExcludeFromReports
 	}
 	return false
 }
@@ -381,16 +365,14 @@ var File_moneydashboard_v4_accounts_proto protoreflect.FileDescriptor
 
 const file_moneydashboard_v4_accounts_proto_rawDesc = "" +
 	"\n" +
-	" moneydashboard/v4/accounts.proto\x12\x11moneydashboard.v4\x1a&moneydashboard/v4/account_groups.proto\"\xbf\x02\n" +
+	" moneydashboard/v4/accounts.proto\x12\x11moneydashboard.v4\x1a&moneydashboard/v4/account_groups.proto\"\xd7\x01\n" +
 	"\aAccount\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
 	"\x05notes\x18\x03 \x01(\tR\x05notes\x12\x15\n" +
 	"\x06is_isa\x18\x04 \x01(\bR\x05isIsa\x12\x1d\n" +
 	"\n" +
-	"is_pension\x18\x05 \x01(\bR\tisPension\x124\n" +
-	"\x16exclude_from_envelopes\x18\x06 \x01(\bR\x14excludeFromEnvelopes\x120\n" +
-	"\x14exclude_from_reports\x18\a \x01(\bR\x12excludeFromReports\x12\x16\n" +
+	"is_pension\x18\x05 \x01(\bR\tisPension\x12\x16\n" +
 	"\x06active\x18\b \x01(\bR\x06active\x12D\n" +
 	"\raccount_group\x18\t \x01(\v2\x1f.moneydashboard.v4.AccountGroupR\faccountGroup\"'\n" +
 	"\x15GetAccountByIdRequest\x12\x0e\n" +

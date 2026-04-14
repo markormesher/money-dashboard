@@ -8,16 +8,14 @@ import (
 )
 
 type Account struct {
-	ID                   uuid.UUID
-	Name                 string
-	Notes                string
-	IsIsa                bool
-	IsPension            bool
-	ExcludeFromEnvelopes bool
-	ExcludeFromReports   bool
-	AccountGroup         *AccountGroup
-	Profile              *Profile
-	Active               bool
+	ID           uuid.UUID
+	Name         string
+	Notes        string
+	IsIsa        bool
+	IsPension    bool
+	AccountGroup *AccountGroup
+	Profile      *Profile
+	Active       bool
 }
 
 func (a *Account) Validate() error {

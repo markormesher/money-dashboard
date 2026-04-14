@@ -77,23 +77,25 @@ function HoldingsPage(): ReactElement {
     } else {
       body = (
         <TileSet>
-          {filteredHoldings.map((c) => {
+          {filteredHoldings.map((h) => {
             return (
-              <Tile key={c.id} className={concatClasses(!c.active && "semi-transparent")}>
+              <Tile key={h.id} className={concatClasses(!h.active && "semi-transparent")}>
                 <h4>
-                  <span>{c.account?.name}</span>
+                  <span>{h.account?.name}</span>
                   <span className={"separator"}>&#x2022;</span>
-                  <span>{c.name}</span>
+                  <span>{h.name}</span>
                 </h4>
                 <ul className={"labels"}>
-                  {!c.active ? <li>Inactive</li> : null}
-                  {c.currency ? <li>{c.currency.code}</li> : null}
-                  {c.asset ? <li>{c.asset.name}</li> : null}
+                  {!h.active ? <li>Inactive</li> : null}
+                  {h.currency ? <li>{h.currency.code}</li> : null}
+                  {h.asset ? <li>{h.asset.name}</li> : null}
+                  {h.excludeFromEnvelopes ? <li>Excluded from envelopes</li> : null}
+                  {h.excludeFromReports ? <li>Excluded from reports</li> : null}
                 </ul>
                 <footer>
                   <ul className={"horizonal mb0"}>
                     <li>
-                      <a href={""} className={"secondary"} onClick={() => setEditingId(c.id)}>
+                      <a href={""} className={"secondary"} onClick={() => setEditingId(h.id)}>
                         <IconGroup>
                           <Icon name={"edit"} />
                           <span>Edit</span>
@@ -102,7 +104,7 @@ function HoldingsPage(): ReactElement {
                     </li>
 
                     <li>
-                      <a href={""} className={"secondary"} onClick={() => copyToClipboard(c.id)}>
+                      <a href={""} className={"secondary"} onClick={() => copyToClipboard(h.id)}>
                         <IconGroup>
                           <Icon name={"content_copy"} />
                           <span>Copy ID</span>
