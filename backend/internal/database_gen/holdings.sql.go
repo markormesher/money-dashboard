@@ -13,11 +13,11 @@ import (
 
 const getAllHoldings = `-- name: GetAllHoldings :many
 SELECT
-  holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
+  holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active, holding.exclude_from_reports, holding.exclude_from_envelopes,
   nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active,
   nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
   nullable_holding_asset_currency.holding_id, nullable_holding_asset_currency.id, nullable_holding_asset_currency.code, nullable_holding_asset_currency.symbol, nullable_holding_asset_currency.display_precision, nullable_holding_asset_currency.active,
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.profile_id, account.active, account.account_group_id,
   account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
@@ -59,6 +59,8 @@ func (q *Queries) GetAllHoldings(ctx context.Context, profileID uuid.UUID) ([]Ge
 			&i.Holding.AccountID,
 			&i.Holding.ProfileID,
 			&i.Holding.Active,
+			&i.Holding.ExcludeFromReports,
+			&i.Holding.ExcludeFromEnvelopes,
 			&i.NullableHoldingCurrency.HoldingID,
 			&i.NullableHoldingCurrency.ID,
 			&i.NullableHoldingCurrency.Code,
@@ -83,11 +85,9 @@ func (q *Queries) GetAllHoldings(ctx context.Context, profileID uuid.UUID) ([]Ge
 			&i.Account.Notes,
 			&i.Account.IsIsa,
 			&i.Account.IsPension,
-			&i.Account.ExcludeFromEnvelopes,
 			&i.Account.ProfileID,
 			&i.Account.Active,
 			&i.Account.AccountGroupID,
-			&i.Account.ExcludeFromReports,
 			&i.AccountGroup.ID,
 			&i.AccountGroup.Name,
 			&i.AccountGroup.DisplayOrder,
@@ -108,11 +108,11 @@ func (q *Queries) GetAllHoldings(ctx context.Context, profileID uuid.UUID) ([]Ge
 
 const getHoldingById = `-- name: GetHoldingById :one
 SELECT
-  holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active,
+  holding.id, holding.name, holding.currency_id, holding.asset_id, holding.account_id, holding.profile_id, holding.active, holding.exclude_from_reports, holding.exclude_from_envelopes,
   nullable_holding_currency.holding_id, nullable_holding_currency.id, nullable_holding_currency.code, nullable_holding_currency.symbol, nullable_holding_currency.display_precision, nullable_holding_currency.active,
   nullable_holding_asset.holding_id, nullable_holding_asset.id, nullable_holding_asset.name, nullable_holding_asset.notes, nullable_holding_asset.display_precision, nullable_holding_asset.currency_id, nullable_holding_asset.active,
   nullable_holding_asset_currency.holding_id, nullable_holding_asset_currency.id, nullable_holding_asset_currency.code, nullable_holding_asset_currency.symbol, nullable_holding_asset_currency.display_precision, nullable_holding_asset_currency.active,
-  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.exclude_from_envelopes, account.profile_id, account.active, account.account_group_id, account.exclude_from_reports,
+  account.id, account.name, account.notes, account.is_isa, account.is_pension, account.profile_id, account.active, account.account_group_id,
   account_group.id, account_group.name, account_group.display_order, account_group.profile_id,
   profile.id, profile.name, profile.deleted
 FROM
@@ -154,6 +154,8 @@ func (q *Queries) GetHoldingById(ctx context.Context, arg GetHoldingByIdParams) 
 		&i.Holding.AccountID,
 		&i.Holding.ProfileID,
 		&i.Holding.Active,
+		&i.Holding.ExcludeFromReports,
+		&i.Holding.ExcludeFromEnvelopes,
 		&i.NullableHoldingCurrency.HoldingID,
 		&i.NullableHoldingCurrency.ID,
 		&i.NullableHoldingCurrency.Code,
@@ -178,11 +180,9 @@ func (q *Queries) GetHoldingById(ctx context.Context, arg GetHoldingByIdParams) 
 		&i.Account.Notes,
 		&i.Account.IsIsa,
 		&i.Account.IsPension,
-		&i.Account.ExcludeFromEnvelopes,
 		&i.Account.ProfileID,
 		&i.Account.Active,
 		&i.Account.AccountGroupID,
-		&i.Account.ExcludeFromReports,
 		&i.AccountGroup.ID,
 		&i.AccountGroup.Name,
 		&i.AccountGroup.DisplayOrder,
@@ -202,6 +202,8 @@ INSERT INTO holding (
   asset_id,
   account_id,
   profile_id,
+  exclude_from_envelopes,
+  exclude_from_reports,
   active
 ) VALUES (
   $1,
@@ -210,7 +212,9 @@ INSERT INTO holding (
   $4,
   $5,
   $6,
-  $7
+  $7,
+  $8,
+  $9
 ) ON CONFLICT (id) DO UPDATE SET
   id = $1,
   name = $2,
@@ -218,17 +222,21 @@ INSERT INTO holding (
   asset_id = $4,
   account_id = $5,
   profile_id = $6,
-  active = $7
+  exclude_from_envelopes = $7,
+  exclude_from_reports = $8,
+  active = $9
 `
 
 type UpsertHoldingParams struct {
-	ID         uuid.UUID
-	Name       string
-	CurrencyID *uuid.UUID
-	AssetID    *uuid.UUID
-	AccountID  uuid.UUID
-	ProfileID  uuid.UUID
-	Active     bool
+	ID                   uuid.UUID
+	Name                 string
+	CurrencyID           *uuid.UUID
+	AssetID              *uuid.UUID
+	AccountID            uuid.UUID
+	ProfileID            uuid.UUID
+	ExcludeFromEnvelopes bool
+	ExcludeFromReports   bool
+	Active               bool
 }
 
 func (q *Queries) UpsertHolding(ctx context.Context, arg UpsertHoldingParams) error {
@@ -239,6 +247,8 @@ func (q *Queries) UpsertHolding(ctx context.Context, arg UpsertHoldingParams) er
 		arg.AssetID,
 		arg.AccountID,
 		arg.ProfileID,
+		arg.ExcludeFromEnvelopes,
+		arg.ExcludeFromReports,
 		arg.Active,
 	)
 	return err

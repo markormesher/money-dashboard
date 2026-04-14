@@ -22,15 +22,17 @@ const (
 )
 
 type Holding struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Active        bool                   `protobuf:"varint,3,opt,name=active,proto3" json:"active,omitempty"`
-	Currency      *Currency              `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
-	Asset         *Asset                 `protobuf:"bytes,5,opt,name=asset,proto3" json:"asset,omitempty"`
-	Account       *Account               `protobuf:"bytes,6,opt,name=account,proto3" json:"account,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Id                   string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ExcludeFromEnvelopes bool                   `protobuf:"varint,3,opt,name=exclude_from_envelopes,json=excludeFromEnvelopes,proto3" json:"exclude_from_envelopes,omitempty"`
+	ExcludeFromReports   bool                   `protobuf:"varint,4,opt,name=exclude_from_reports,json=excludeFromReports,proto3" json:"exclude_from_reports,omitempty"`
+	Active               bool                   `protobuf:"varint,5,opt,name=active,proto3" json:"active,omitempty"`
+	Currency             *Currency              `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
+	Asset                *Asset                 `protobuf:"bytes,7,opt,name=asset,proto3" json:"asset,omitempty"`
+	Account              *Account               `protobuf:"bytes,8,opt,name=account,proto3" json:"account,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *Holding) Reset() {
@@ -75,6 +77,20 @@ func (x *Holding) GetName() string {
 		return x.Name
 	}
 	return ""
+}
+
+func (x *Holding) GetExcludeFromEnvelopes() bool {
+	if x != nil {
+		return x.ExcludeFromEnvelopes
+	}
+	return false
+}
+
+func (x *Holding) GetExcludeFromReports() bool {
+	if x != nil {
+		return x.ExcludeFromReports
+	}
+	return false
 }
 
 func (x *Holding) GetActive() bool {
@@ -357,14 +373,16 @@ var File_moneydashboard_v4_holdings_proto protoreflect.FileDescriptor
 
 const file_moneydashboard_v4_holdings_proto_rawDesc = "" +
 	"\n" +
-	" moneydashboard/v4/holdings.proto\x12\x11moneydashboard.v4\x1a moneydashboard/v4/accounts.proto\x1a\x1emoneydashboard/v4/assets.proto\x1a\"moneydashboard/v4/currencies.proto\"\xe4\x01\n" +
+	" moneydashboard/v4/holdings.proto\x12\x11moneydashboard.v4\x1a moneydashboard/v4/accounts.proto\x1a\x1emoneydashboard/v4/assets.proto\x1a\"moneydashboard/v4/currencies.proto\"\xcc\x02\n" +
 	"\aHolding\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
-	"\x06active\x18\x03 \x01(\bR\x06active\x127\n" +
-	"\bcurrency\x18\x04 \x01(\v2\x1b.moneydashboard.v4.CurrencyR\bcurrency\x12.\n" +
-	"\x05asset\x18\x05 \x01(\v2\x18.moneydashboard.v4.AssetR\x05asset\x124\n" +
-	"\aaccount\x18\x06 \x01(\v2\x1a.moneydashboard.v4.AccountR\aaccount\"'\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x124\n" +
+	"\x16exclude_from_envelopes\x18\x03 \x01(\bR\x14excludeFromEnvelopes\x120\n" +
+	"\x14exclude_from_reports\x18\x04 \x01(\bR\x12excludeFromReports\x12\x16\n" +
+	"\x06active\x18\x05 \x01(\bR\x06active\x127\n" +
+	"\bcurrency\x18\x06 \x01(\v2\x1b.moneydashboard.v4.CurrencyR\bcurrency\x12.\n" +
+	"\x05asset\x18\a \x01(\v2\x18.moneydashboard.v4.AssetR\x05asset\x124\n" +
+	"\aaccount\x18\b \x01(\v2\x1a.moneydashboard.v4.AccountR\aaccount\"'\n" +
 	"\x15GetHoldingByIdRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"N\n" +
 	"\x16GetHoldingByIdResponse\x124\n" +

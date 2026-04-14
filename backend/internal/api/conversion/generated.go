@@ -15,8 +15,6 @@ func AccountFromCore(source schema.Account) *v4.Account {
 	mdv4Account.Notes = source.Notes
 	mdv4Account.IsIsa = source.IsIsa
 	mdv4Account.IsPension = source.IsPension
-	mdv4Account.ExcludeFromEnvelopes = source.ExcludeFromEnvelopes
-	mdv4Account.ExcludeFromReports = source.ExcludeFromReports
 	mdv4Account.Active = source.Active
 	mdv4Account.AccountGroup = pSchemaAccountGroupToPMdv4AccountGroup(source.AccountGroup)
 	return &mdv4Account
@@ -45,8 +43,6 @@ func AccountToCore(source *v4.Account) schema.Account {
 		schemaAccount.Notes = (*source).Notes
 		schemaAccount.IsIsa = (*source).IsIsa
 		schemaAccount.IsPension = (*source).IsPension
-		schemaAccount.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
-		schemaAccount.ExcludeFromReports = (*source).ExcludeFromReports
 		schemaAccount.AccountGroup = pMdv4AccountGroupToPSchemaAccountGroup((*source).AccountGroup)
 		schemaAccount.Active = (*source).Active
 	}
@@ -211,6 +207,8 @@ func HoldingFromCore(source schema.Holding) *v4.Holding {
 	var mdv4Holding v4.Holding
 	mdv4Holding.Id = ConvertUUIDToString(source.ID)
 	mdv4Holding.Name = source.Name
+	mdv4Holding.ExcludeFromEnvelopes = source.ExcludeFromEnvelopes
+	mdv4Holding.ExcludeFromReports = source.ExcludeFromReports
 	mdv4Holding.Active = source.Active
 	mdv4Holding.Currency = pSchemaCurrencyToPMdv4Currency(source.Currency)
 	mdv4Holding.Asset = pSchemaAssetToPMdv4Asset(source.Asset)
@@ -222,6 +220,8 @@ func HoldingToCore(source *v4.Holding) schema.Holding {
 	if source != nil {
 		schemaHolding.ID = ConvertStringToUUID((*source).Id)
 		schemaHolding.Name = (*source).Name
+		schemaHolding.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
+		schemaHolding.ExcludeFromReports = (*source).ExcludeFromReports
 		schemaHolding.Currency = pMdv4CurrencyToPSchemaCurrency((*source).Currency)
 		schemaHolding.Asset = pMdv4AssetToPSchemaAsset((*source).Asset)
 		schemaHolding.Account = pMdv4AccountToPSchemaAccount((*source).Account)
@@ -403,8 +403,6 @@ func pMdv4AccountToPSchemaAccount(source *v4.Account) *schema.Account {
 		schemaAccount.Notes = (*source).Notes
 		schemaAccount.IsIsa = (*source).IsIsa
 		schemaAccount.IsPension = (*source).IsPension
-		schemaAccount.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
-		schemaAccount.ExcludeFromReports = (*source).ExcludeFromReports
 		schemaAccount.AccountGroup = pMdv4AccountGroupToPSchemaAccountGroup((*source).AccountGroup)
 		schemaAccount.Active = (*source).Active
 		pSchemaAccount = &schemaAccount
@@ -473,6 +471,8 @@ func pMdv4HoldingToPSchemaHolding(source *v4.Holding) *schema.Holding {
 		var schemaHolding schema.Holding
 		schemaHolding.ID = ConvertStringToUUID((*source).Id)
 		schemaHolding.Name = (*source).Name
+		schemaHolding.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
+		schemaHolding.ExcludeFromReports = (*source).ExcludeFromReports
 		schemaHolding.Currency = pMdv4CurrencyToPSchemaCurrency((*source).Currency)
 		schemaHolding.Asset = pMdv4AssetToPSchemaAsset((*source).Asset)
 		schemaHolding.Account = pMdv4AccountToPSchemaAccount((*source).Account)
@@ -512,8 +512,6 @@ func pSchemaAccountToPMdv4Account(source *schema.Account) *v4.Account {
 		mdv4Account.Notes = (*source).Notes
 		mdv4Account.IsIsa = (*source).IsIsa
 		mdv4Account.IsPension = (*source).IsPension
-		mdv4Account.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
-		mdv4Account.ExcludeFromReports = (*source).ExcludeFromReports
 		mdv4Account.Active = (*source).Active
 		mdv4Account.AccountGroup = pSchemaAccountGroupToPMdv4AccountGroup((*source).AccountGroup)
 		pMdv4Account = &mdv4Account
@@ -582,6 +580,8 @@ func pSchemaHoldingToPMdv4Holding(source *schema.Holding) *v4.Holding {
 		var mdv4Holding v4.Holding
 		mdv4Holding.Id = ConvertUUIDToString((*source).ID)
 		mdv4Holding.Name = (*source).Name
+		mdv4Holding.ExcludeFromEnvelopes = (*source).ExcludeFromEnvelopes
+		mdv4Holding.ExcludeFromReports = (*source).ExcludeFromReports
 		mdv4Holding.Active = (*source).Active
 		mdv4Holding.Currency = pSchemaCurrencyToPMdv4Currency((*source).Currency)
 		mdv4Holding.Asset = pSchemaAssetToPMdv4Asset((*source).Asset)

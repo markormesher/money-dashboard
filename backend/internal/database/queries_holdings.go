@@ -108,12 +108,14 @@ func (db *DB) UpsertHolding(ctx context.Context, holding schema.Holding, profile
 	}
 
 	return db.queries.UpsertHolding(ctx, database_gen.UpsertHoldingParams{
-		ID:         holding.ID,
-		Name:       holding.Name,
-		CurrencyID: currencyId,
-		AssetID:    assetId,
-		AccountID:  holding.Account.ID,
-		ProfileID:  profileID,
-		Active:     holding.Active,
+		ID:                   holding.ID,
+		Name:                 holding.Name,
+		CurrencyID:           currencyId,
+		AssetID:              assetId,
+		AccountID:            holding.Account.ID,
+		ProfileID:            profileID,
+		ExcludeFromEnvelopes: holding.ExcludeFromEnvelopes,
+		ExcludeFromReports:   holding.ExcludeFromReports,
+		Active:               holding.Active,
 	})
 }
