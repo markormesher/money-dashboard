@@ -4,6 +4,7 @@
     "rootDir": "./src",
     "noEmit": true,
     "jsx": "react",
+    "types": ["node"],
     "exactOptionalPropertyTypes": false,
     "noUncheckedSideEffectImports": false
   },
