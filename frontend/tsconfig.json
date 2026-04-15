@@ -1,13 +1,12 @@
 {
   "extends": "@tsconfig/strictest/tsconfig.json",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "rootDir": "./src",
     "noEmit": true,
     "jsx": "react",
-    "baseUrl": "./",
-    "exactOptionalPropertyTypes": false
+    "types": ["node"],
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedSideEffectImports": false
   },
   "include": [
     "./src/**/*.ts",
