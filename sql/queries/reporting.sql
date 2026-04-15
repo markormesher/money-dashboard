@@ -10,7 +10,7 @@ WHERE
   transaction.profile_id = @profile_id
   AND transaction.date <= @max_date
   AND transaction.deleted = FALSE
-  AND account.exclude_from_reports = FALSE
+  AND holding.exclude_from_reports = FALSE
 GROUP BY transaction.holding_id
 ;
 
@@ -28,7 +28,7 @@ WHERE
   AND transaction.date >= @start_date
   AND transaction.date <= @end_date
   AND transaction.deleted = FALSE
-  AND account.exclude_from_reports = FALSE
+  AND holding.exclude_from_reports = FALSE
 GROUP BY transaction.date, transaction.holding_id
 ;
 
@@ -60,10 +60,10 @@ FROM
   transaction
     JOIN category on transaction.category_id = category.id
     JOIN profile on transaction.profile_id = profile.id
-    JOIN holding on transaction.holding_id = holding.id -- not exposed - just used to join to accounts
+    JOIN holding on transaction.holding_id = holding.id
     JOIN account ON holding.account_id = account.id
 WHERE
-  account.exclude_from_envelopes = FALSE
+  holding.exclude_from_envelopes = FALSE
   AND transaction.profile_id = @profile_id
   AND transaction.deleted = FALSE
 ;

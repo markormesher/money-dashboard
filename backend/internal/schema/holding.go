@@ -8,13 +8,15 @@ import (
 )
 
 type Holding struct {
-	ID       uuid.UUID
-	Name     string
-	Currency *Currency
-	Asset    *Asset
-	Account  *Account
-	Profile  *Profile
-	Active   bool
+	ID                   uuid.UUID
+	Name                 string
+	ExcludeFromEnvelopes bool
+	ExcludeFromReports   bool
+	Currency             *Currency
+	Asset                *Asset
+	Account              *Account
+	Profile              *Profile
+	Active               bool
 }
 
 func (h *Holding) Validate() error {

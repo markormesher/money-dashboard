@@ -25,8 +25,6 @@ func AccountToCore(source databasegen.Account) schema.Account {
 	schemaAccount.Notes = source.Notes
 	schemaAccount.IsIsa = source.IsIsa
 	schemaAccount.IsPension = source.IsPension
-	schemaAccount.ExcludeFromEnvelopes = source.ExcludeFromEnvelopes
-	schemaAccount.ExcludeFromReports = source.ExcludeFromReports
 	schemaAccount.Active = source.Active
 	return schemaAccount
 }
@@ -89,6 +87,8 @@ func HoldingToCore(source databasegen.Holding) schema.Holding {
 	var schemaHolding schema.Holding
 	schemaHolding.ID = source.ID
 	schemaHolding.Name = source.Name
+	schemaHolding.ExcludeFromEnvelopes = source.ExcludeFromEnvelopes
+	schemaHolding.ExcludeFromReports = source.ExcludeFromReports
 	schemaHolding.Active = source.Active
 	return schemaHolding
 }

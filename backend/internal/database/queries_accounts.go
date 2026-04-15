@@ -59,15 +59,13 @@ func (db *DB) GetAllAccounts(ctx context.Context, profileID uuid.UUID) ([]schema
 
 func (db *DB) UpsertAccount(ctx context.Context, account schema.Account, profileID uuid.UUID) error {
 	return db.queries.UpsertAccount(ctx, database_gen.UpsertAccountParams{
-		ID:                   account.ID,
-		Name:                 account.Name,
-		Notes:                account.Notes,
-		IsIsa:                account.IsIsa,
-		IsPension:            account.IsPension,
-		ExcludeFromEnvelopes: account.ExcludeFromEnvelopes,
-		ExcludeFromReports:   account.ExcludeFromReports,
-		AccountGroupID:       account.AccountGroup.ID,
-		Active:               account.Active,
-		ProfileID:            profileID,
+		ID:             account.ID,
+		Name:           account.Name,
+		Notes:          account.Notes,
+		IsIsa:          account.IsIsa,
+		IsPension:      account.IsPension,
+		AccountGroupID: account.AccountGroup.ID,
+		Active:         account.Active,
+		ProfileID:      profileID,
 	})
 }

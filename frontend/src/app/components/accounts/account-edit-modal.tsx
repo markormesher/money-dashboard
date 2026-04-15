@@ -46,8 +46,6 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
         notes: "",
         isIsa: false,
         isPension: false,
-        excludeFromEnvelopes: false,
-        excludeFromReports: false,
         active: true,
       });
       setFocusOnNextRender("name");
@@ -154,28 +152,6 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
             role={"switch"}
             checked={form.model?.isPension ?? false}
             onChange={(evt) => form.patchModel({ isIsa: false, isPension: evt.target.checked })}
-          />
-        </fieldset>
-
-        <fieldset className={"grid"}>
-          <Input
-            label={"Exclude from Envelopes"}
-            formState={form}
-            fieldName={"excludeFromEnvelopes"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.excludeFromEnvelopes ?? false}
-            onChange={(evt) => form.patchModel({ excludeFromEnvelopes: evt.target.checked })}
-          />
-
-          <Input
-            label={"Exclude from Reports"}
-            formState={form}
-            fieldName={"excludeFromReports"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.excludeFromReports ?? false}
-            onChange={(evt) => form.patchModel({ excludeFromReports: evt.target.checked })}
           />
         </fieldset>
 

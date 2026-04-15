@@ -14,17 +14,17 @@
   "devDependencies": {
     "@bufbuild/buf": "1.67.0",
     "@bufbuild/protoc-gen-es": "2.11.0",
-    "@markormesher/eslint-config": "github:markormesher/eslint-config#semver:v0.5.21",
+    "@markormesher/eslint-config": "github:markormesher/eslint-config#semver:v0.5.22",
     "@tsconfig/strictest": "2.0.8",
     "@types/node": "24.12.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.4",
-    "prettier": "3.8.1",
+    "prettier": "3.8.2",
     "sass": "1.99.0",
     "ts-proto": "2.11.6",
     "typescript": "6.0.2",
-    "vite": "8.0.7"
+    "vite": "8.0.8"
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.2.3",

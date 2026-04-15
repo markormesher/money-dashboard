@@ -10,11 +10,13 @@ option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/mo
 message Holding {
   string id = 1;
   string name = 2;
-  bool active = 3;
+  bool exclude_from_envelopes = 3;
+  bool exclude_from_reports = 4;
+  bool active = 5;
 
-  Currency currency = 4;
-  Asset asset = 5;
-  Account account = 6;
+  Currency currency = 6;
+  Asset asset = 7;
+  Account account = 8;
 }
 
 message GetHoldingByIdRequest {

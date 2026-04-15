@@ -13,16 +13,14 @@ import (
 )
 
 type Account struct {
-	ID                   uuid.UUID
-	Name                 string
-	Notes                string
-	IsIsa                bool
-	IsPension            bool
-	ExcludeFromEnvelopes bool
-	ProfileID            uuid.UUID
-	Active               bool
-	AccountGroupID       uuid.UUID
-	ExcludeFromReports   bool
+	ID             uuid.UUID
+	Name           string
+	Notes          string
+	IsIsa          bool
+	IsPension      bool
+	ProfileID      uuid.UUID
+	Active         bool
+	AccountGroupID uuid.UUID
 }
 
 type AccountGroup struct {
@@ -150,13 +148,15 @@ type ExchangeRate struct {
 }
 
 type Holding struct {
-	ID         uuid.UUID
-	Name       string
-	CurrencyID *uuid.UUID
-	AssetID    *uuid.UUID
-	AccountID  uuid.UUID
-	ProfileID  uuid.UUID
-	Active     bool
+	ID                   uuid.UUID
+	Name                 string
+	CurrencyID           *uuid.UUID
+	AssetID              *uuid.UUID
+	AccountID            uuid.UUID
+	ProfileID            uuid.UUID
+	Active               bool
+	ExcludeFromReports   bool
+	ExcludeFromEnvelopes bool
 }
 
 type LegacyBudget struct {

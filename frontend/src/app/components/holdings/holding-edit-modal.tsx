@@ -62,6 +62,8 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
         currency: undefined,
         asset: undefined,
         account: undefined,
+        excludeFromEnvelopes: false,
+        excludeFromReports: false,
         active: true,
       });
       setFocusOnNextRender("account");
@@ -188,6 +190,28 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
                 </option>
               ))}
           </Select>
+        </fieldset>
+
+        <fieldset className={"grid"}>
+          <Input
+            label={"Exclude from Envelopes"}
+            formState={form}
+            fieldName={"excludeFromEnvelopes"}
+            type={"checkbox"}
+            role={"switch"}
+            checked={form.model?.excludeFromEnvelopes ?? false}
+            onChange={(evt) => form.patchModel({ excludeFromEnvelopes: evt.target.checked })}
+          />
+
+          <Input
+            label={"Exclude from Reports"}
+            formState={form}
+            fieldName={"excludeFromReports"}
+            type={"checkbox"}
+            role={"switch"}
+            checked={form.model?.excludeFromReports ?? false}
+            onChange={(evt) => form.patchModel({ excludeFromReports: evt.target.checked })}
+          />
         </fieldset>
 
         <fieldset className={"grid"}>
