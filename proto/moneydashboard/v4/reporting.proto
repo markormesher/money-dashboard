@@ -9,17 +9,13 @@ import "moneydashboard/v4/holdings.proto";
 
 option go_package = "github.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4";
 
-message HoldingBalance {
+message SummaryBalance {
   Holding holding = 1;
-  double raw_balance = 2;
-  double gbp_balance = 3;
-}
-
-message CategoryBalance {
-  Category category = 1;
-  Asset asset = 2;
-  Currency currency = 3;
-  double raw_balance = 4;
+  Category category = 2;
+  Asset asset = 3;
+  Currency currency = 4;
+  double raw_balance = 5;
+  double gbp_balance = 6;
 }
 
 message EnvelopeBalance {
@@ -30,14 +26,6 @@ message EnvelopeBalance {
 message BalanceHistoryEntry {
   int64 date = 1;
   double gbp_balance = 2;
-}
-
-message TaxReport {
-  repeated HoldingBalance interest_income = 1;
-  repeated HoldingBalance dividend_income = 2;
-  repeated HoldingBalance pension_contributions = 3;
-  repeated TaxReportCapitalEvent capital_events = 4;
-  repeated TaxReportS104Balance s104_balances = 5;
 }
 
 message TaxReportCapitalEvent {
@@ -64,16 +52,24 @@ message TaxReportS104Balance {
   double avg_gbp_unit_price = 3;
 }
 
+message TaxReport {
+  repeated SummaryBalance interest_income = 1;
+  repeated SummaryBalance dividend_income = 2;
+  repeated SummaryBalance pension_contributions = 3;
+  repeated TaxReportCapitalEvent capital_events = 4;
+  repeated TaxReportS104Balance s104_balances = 5;
+}
+
 message GetHoldingBalancesRequest {}
 
 message GetHoldingBalancesResponse {
-  repeated HoldingBalance balances = 1;
+  repeated SummaryBalance balances = 1;
 }
 
 message GetNonZeroMemoBalancesRequest {}
 
 message GetNonZeroMemoBalancesResponse {
-  repeated CategoryBalance balances = 1;
+  repeated SummaryBalance balances = 1;
 }
 
 message GetEnvelopeBalancesRequest {}

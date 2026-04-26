@@ -13,7 +13,7 @@ import (
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
-func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) ([]schema.HoldingBalance, error) {
+func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) ([]schema.SummaryBalance, error) {
 	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) (
 		return nil, err
 	}
 
-	outputBalances := make([]schema.HoldingBalance, len(balances))
+	outputBalances := make([]schema.SummaryBalance, len(balances))
 
 	for i, b := range balances {
 		holding, ok := holdings[b.HoldingID]
@@ -37,8 +37,8 @@ func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) (
 			return nil, err
 		}
 
-		outputBalances[i] = schema.HoldingBalance{
-			Holding:    holding,
+		outputBalances[i] = schema.SummaryBalance{
+			Holding:    &holding,
 			RawBalance: b.Balance,
 			GbpBalance: gbpBalance,
 		}
@@ -47,7 +47,7 @@ func (c *Core) GetHoldingBalances(ctx context.Context, profile schema.Profile) (
 	return outputBalances, nil
 }
 
-func (c *Core) GetNonZeroMemoBalances(ctx context.Context, profile schema.Profile) ([]schema.CategoryBalance, error) {
+func (c *Core) GetNonZeroMemoBalances(ctx context.Context, profile schema.Profile) ([]schema.SummaryBalance, error) {
 	categories, err := c.GetAllCategoriesAsMap(ctx, profile)
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (c *Core) GetNonZeroMemoBalances(ctx context.Context, profile schema.Profil
 		return nil, err
 	}
 
-	outputBalances := make([]schema.CategoryBalance, 0)
+	outputBalances := make([]schema.SummaryBalance, 0)
 
 	for _, b := range balances {
 		if b.Balance.IsZero() {
@@ -80,8 +80,8 @@ func (c *Core) GetNonZeroMemoBalances(ctx context.Context, profile schema.Profil
 			return nil, fmt.Errorf("unknown category: %s", b.CategoryID)
 		}
 
-		out := schema.CategoryBalance{
-			Category:   category,
+		out := schema.SummaryBalance{
+			Category:   &category,
 			RawBalance: b.Balance,
 		}
 
@@ -383,14 +383,14 @@ func (c *Core) GetTaxReport(ctx context.Context, profile schema.Profile, taxYear
 	}, nil
 }
 
-func (c *Core) getHoldingBalancesForTaxReport(ctx context.Context, which string, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.HoldingBalance, error) {
+func (c *Core) getHoldingBalancesForTaxReport(ctx context.Context, which string, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.SummaryBalance, error) {
 	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
 	if err != nil {
 		return nil, err
 	}
 
-	output := make([]schema.HoldingBalance, 0)
-	var data []database.HoldingBalance
+	output := make([]schema.SummaryBalance, 0)
+	var data []database.SummaryBalance
 	switch which {
 	case "interest":
 		data, err = c.DB.GetTaxableInterestIncomePerHolding(ctx, profile.ID, startDate, endDate)
@@ -420,8 +420,8 @@ func (c *Core) getHoldingBalancesForTaxReport(ctx context.Context, which string,
 			return nil, err
 		}
 
-		output = append(output, schema.HoldingBalance{
-			Holding:    holding,
+		output = append(output, schema.SummaryBalance{
+			Holding:    &holding,
 			RawBalance: b.Balance,
 			GbpBalance: gbpBalance,
 		})

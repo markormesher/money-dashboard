@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { CategoryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
+import { SummaryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { useAsyncEffect } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -14,7 +14,7 @@ import "./warnings-tile.css";
 
 function WarningsTile(): ReactElement | null {
   const [error, setError] = React.useState<unknown>();
-  const [nonZeroMemoBalances, setNonZeroMemoBalances] = React.useState<CategoryBalance[]>();
+  const [nonZeroMemoBalances, setNonZeroMemoBalances] = React.useState<SummaryBalance[]>();
   useAsyncEffect(async () => {
     try {
       const res = await reportingServiceClient.getNonZeroMemoBalances({});

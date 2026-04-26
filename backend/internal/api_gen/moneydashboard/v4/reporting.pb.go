@@ -21,29 +21,32 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type HoldingBalance struct {
+type SummaryBalance struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Holding       *Holding               `protobuf:"bytes,1,opt,name=holding,proto3" json:"holding,omitempty"`
-	RawBalance    float64                `protobuf:"fixed64,2,opt,name=raw_balance,json=rawBalance,proto3" json:"raw_balance,omitempty"`
-	GbpBalance    float64                `protobuf:"fixed64,3,opt,name=gbp_balance,json=gbpBalance,proto3" json:"gbp_balance,omitempty"`
+	Category      *Category              `protobuf:"bytes,2,opt,name=category,proto3" json:"category,omitempty"`
+	Asset         *Asset                 `protobuf:"bytes,3,opt,name=asset,proto3" json:"asset,omitempty"`
+	Currency      *Currency              `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
+	RawBalance    float64                `protobuf:"fixed64,5,opt,name=raw_balance,json=rawBalance,proto3" json:"raw_balance,omitempty"`
+	GbpBalance    float64                `protobuf:"fixed64,6,opt,name=gbp_balance,json=gbpBalance,proto3" json:"gbp_balance,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *HoldingBalance) Reset() {
-	*x = HoldingBalance{}
+func (x *SummaryBalance) Reset() {
+	*x = SummaryBalance{}
 	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *HoldingBalance) String() string {
+func (x *SummaryBalance) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*HoldingBalance) ProtoMessage() {}
+func (*SummaryBalance) ProtoMessage() {}
 
-func (x *HoldingBalance) ProtoReflect() protoreflect.Message {
+func (x *SummaryBalance) ProtoReflect() protoreflect.Message {
 	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,96 +58,49 @@ func (x *HoldingBalance) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use HoldingBalance.ProtoReflect.Descriptor instead.
-func (*HoldingBalance) Descriptor() ([]byte, []int) {
+// Deprecated: Use SummaryBalance.ProtoReflect.Descriptor instead.
+func (*SummaryBalance) Descriptor() ([]byte, []int) {
 	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *HoldingBalance) GetHolding() *Holding {
+func (x *SummaryBalance) GetHolding() *Holding {
 	if x != nil {
 		return x.Holding
 	}
 	return nil
 }
 
-func (x *HoldingBalance) GetRawBalance() float64 {
-	if x != nil {
-		return x.RawBalance
-	}
-	return 0
-}
-
-func (x *HoldingBalance) GetGbpBalance() float64 {
-	if x != nil {
-		return x.GbpBalance
-	}
-	return 0
-}
-
-type CategoryBalance struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Category      *Category              `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
-	Asset         *Asset                 `protobuf:"bytes,2,opt,name=asset,proto3" json:"asset,omitempty"`
-	Currency      *Currency              `protobuf:"bytes,3,opt,name=currency,proto3" json:"currency,omitempty"`
-	RawBalance    float64                `protobuf:"fixed64,4,opt,name=raw_balance,json=rawBalance,proto3" json:"raw_balance,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CategoryBalance) Reset() {
-	*x = CategoryBalance{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CategoryBalance) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CategoryBalance) ProtoMessage() {}
-
-func (x *CategoryBalance) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CategoryBalance.ProtoReflect.Descriptor instead.
-func (*CategoryBalance) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *CategoryBalance) GetCategory() *Category {
+func (x *SummaryBalance) GetCategory() *Category {
 	if x != nil {
 		return x.Category
 	}
 	return nil
 }
 
-func (x *CategoryBalance) GetAsset() *Asset {
+func (x *SummaryBalance) GetAsset() *Asset {
 	if x != nil {
 		return x.Asset
 	}
 	return nil
 }
 
-func (x *CategoryBalance) GetCurrency() *Currency {
+func (x *SummaryBalance) GetCurrency() *Currency {
 	if x != nil {
 		return x.Currency
 	}
 	return nil
 }
 
-func (x *CategoryBalance) GetRawBalance() float64 {
+func (x *SummaryBalance) GetRawBalance() float64 {
 	if x != nil {
 		return x.RawBalance
+	}
+	return 0
+}
+
+func (x *SummaryBalance) GetGbpBalance() float64 {
+	if x != nil {
+		return x.GbpBalance
 	}
 	return 0
 }
@@ -159,7 +115,7 @@ type EnvelopeBalance struct {
 
 func (x *EnvelopeBalance) Reset() {
 	*x = EnvelopeBalance{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[2]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -171,7 +127,7 @@ func (x *EnvelopeBalance) String() string {
 func (*EnvelopeBalance) ProtoMessage() {}
 
 func (x *EnvelopeBalance) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[2]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -184,7 +140,7 @@ func (x *EnvelopeBalance) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnvelopeBalance.ProtoReflect.Descriptor instead.
 func (*EnvelopeBalance) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{2}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *EnvelopeBalance) GetEnvelope() *Envelope {
@@ -211,7 +167,7 @@ type BalanceHistoryEntry struct {
 
 func (x *BalanceHistoryEntry) Reset() {
 	*x = BalanceHistoryEntry{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[3]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -223,7 +179,7 @@ func (x *BalanceHistoryEntry) String() string {
 func (*BalanceHistoryEntry) ProtoMessage() {}
 
 func (x *BalanceHistoryEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[3]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -236,7 +192,7 @@ func (x *BalanceHistoryEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BalanceHistoryEntry.ProtoReflect.Descriptor instead.
 func (*BalanceHistoryEntry) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{3}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *BalanceHistoryEntry) GetDate() int64 {
@@ -251,82 +207,6 @@ func (x *BalanceHistoryEntry) GetGbpBalance() float64 {
 		return x.GbpBalance
 	}
 	return 0
-}
-
-type TaxReport struct {
-	state                protoimpl.MessageState   `protogen:"open.v1"`
-	InterestIncome       []*HoldingBalance        `protobuf:"bytes,1,rep,name=interest_income,json=interestIncome,proto3" json:"interest_income,omitempty"`
-	DividendIncome       []*HoldingBalance        `protobuf:"bytes,2,rep,name=dividend_income,json=dividendIncome,proto3" json:"dividend_income,omitempty"`
-	PensionContributions []*HoldingBalance        `protobuf:"bytes,3,rep,name=pension_contributions,json=pensionContributions,proto3" json:"pension_contributions,omitempty"`
-	CapitalEvents        []*TaxReportCapitalEvent `protobuf:"bytes,4,rep,name=capital_events,json=capitalEvents,proto3" json:"capital_events,omitempty"`
-	S104Balances         []*TaxReportS104Balance  `protobuf:"bytes,5,rep,name=s104_balances,json=s104Balances,proto3" json:"s104_balances,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
-}
-
-func (x *TaxReport) Reset() {
-	*x = TaxReport{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TaxReport) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TaxReport) ProtoMessage() {}
-
-func (x *TaxReport) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TaxReport.ProtoReflect.Descriptor instead.
-func (*TaxReport) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *TaxReport) GetInterestIncome() []*HoldingBalance {
-	if x != nil {
-		return x.InterestIncome
-	}
-	return nil
-}
-
-func (x *TaxReport) GetDividendIncome() []*HoldingBalance {
-	if x != nil {
-		return x.DividendIncome
-	}
-	return nil
-}
-
-func (x *TaxReport) GetPensionContributions() []*HoldingBalance {
-	if x != nil {
-		return x.PensionContributions
-	}
-	return nil
-}
-
-func (x *TaxReport) GetCapitalEvents() []*TaxReportCapitalEvent {
-	if x != nil {
-		return x.CapitalEvents
-	}
-	return nil
-}
-
-func (x *TaxReport) GetS104Balances() []*TaxReportS104Balance {
-	if x != nil {
-		return x.S104Balances
-	}
-	return nil
 }
 
 type TaxReportCapitalEvent struct {
@@ -345,7 +225,7 @@ type TaxReportCapitalEvent struct {
 
 func (x *TaxReportCapitalEvent) Reset() {
 	*x = TaxReportCapitalEvent{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[5]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -357,7 +237,7 @@ func (x *TaxReportCapitalEvent) String() string {
 func (*TaxReportCapitalEvent) ProtoMessage() {}
 
 func (x *TaxReportCapitalEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[5]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -370,7 +250,7 @@ func (x *TaxReportCapitalEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaxReportCapitalEvent.ProtoReflect.Descriptor instead.
 func (*TaxReportCapitalEvent) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{5}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *TaxReportCapitalEvent) GetHolding() *Holding {
@@ -441,7 +321,7 @@ type TaxReportCapitalEventMatch struct {
 
 func (x *TaxReportCapitalEventMatch) Reset() {
 	*x = TaxReportCapitalEventMatch{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[6]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -453,7 +333,7 @@ func (x *TaxReportCapitalEventMatch) String() string {
 func (*TaxReportCapitalEventMatch) ProtoMessage() {}
 
 func (x *TaxReportCapitalEventMatch) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[6]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -466,7 +346,7 @@ func (x *TaxReportCapitalEventMatch) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaxReportCapitalEventMatch.ProtoReflect.Descriptor instead.
 func (*TaxReportCapitalEventMatch) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{6}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *TaxReportCapitalEventMatch) GetQty() float64 {
@@ -508,7 +388,7 @@ type TaxReportS104Balance struct {
 
 func (x *TaxReportS104Balance) Reset() {
 	*x = TaxReportS104Balance{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[7]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -520,7 +400,7 @@ func (x *TaxReportS104Balance) String() string {
 func (*TaxReportS104Balance) ProtoMessage() {}
 
 func (x *TaxReportS104Balance) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[7]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -533,7 +413,7 @@ func (x *TaxReportS104Balance) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaxReportS104Balance.ProtoReflect.Descriptor instead.
 func (*TaxReportS104Balance) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{7}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *TaxReportS104Balance) GetHolding() *Holding {
@@ -557,6 +437,82 @@ func (x *TaxReportS104Balance) GetAvgGbpUnitPrice() float64 {
 	return 0
 }
 
+type TaxReport struct {
+	state                protoimpl.MessageState   `protogen:"open.v1"`
+	InterestIncome       []*SummaryBalance        `protobuf:"bytes,1,rep,name=interest_income,json=interestIncome,proto3" json:"interest_income,omitempty"`
+	DividendIncome       []*SummaryBalance        `protobuf:"bytes,2,rep,name=dividend_income,json=dividendIncome,proto3" json:"dividend_income,omitempty"`
+	PensionContributions []*SummaryBalance        `protobuf:"bytes,3,rep,name=pension_contributions,json=pensionContributions,proto3" json:"pension_contributions,omitempty"`
+	CapitalEvents        []*TaxReportCapitalEvent `protobuf:"bytes,4,rep,name=capital_events,json=capitalEvents,proto3" json:"capital_events,omitempty"`
+	S104Balances         []*TaxReportS104Balance  `protobuf:"bytes,5,rep,name=s104_balances,json=s104Balances,proto3" json:"s104_balances,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *TaxReport) Reset() {
+	*x = TaxReport{}
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TaxReport) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TaxReport) ProtoMessage() {}
+
+func (x *TaxReport) ProtoReflect() protoreflect.Message {
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TaxReport.ProtoReflect.Descriptor instead.
+func (*TaxReport) Descriptor() ([]byte, []int) {
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *TaxReport) GetInterestIncome() []*SummaryBalance {
+	if x != nil {
+		return x.InterestIncome
+	}
+	return nil
+}
+
+func (x *TaxReport) GetDividendIncome() []*SummaryBalance {
+	if x != nil {
+		return x.DividendIncome
+	}
+	return nil
+}
+
+func (x *TaxReport) GetPensionContributions() []*SummaryBalance {
+	if x != nil {
+		return x.PensionContributions
+	}
+	return nil
+}
+
+func (x *TaxReport) GetCapitalEvents() []*TaxReportCapitalEvent {
+	if x != nil {
+		return x.CapitalEvents
+	}
+	return nil
+}
+
+func (x *TaxReport) GetS104Balances() []*TaxReportS104Balance {
+	if x != nil {
+		return x.S104Balances
+	}
+	return nil
+}
+
 type GetHoldingBalancesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -565,7 +521,7 @@ type GetHoldingBalancesRequest struct {
 
 func (x *GetHoldingBalancesRequest) Reset() {
 	*x = GetHoldingBalancesRequest{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[8]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -577,7 +533,7 @@ func (x *GetHoldingBalancesRequest) String() string {
 func (*GetHoldingBalancesRequest) ProtoMessage() {}
 
 func (x *GetHoldingBalancesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[8]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -590,19 +546,19 @@ func (x *GetHoldingBalancesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHoldingBalancesRequest.ProtoReflect.Descriptor instead.
 func (*GetHoldingBalancesRequest) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{8}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{7}
 }
 
 type GetHoldingBalancesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Balances      []*HoldingBalance      `protobuf:"bytes,1,rep,name=balances,proto3" json:"balances,omitempty"`
+	Balances      []*SummaryBalance      `protobuf:"bytes,1,rep,name=balances,proto3" json:"balances,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetHoldingBalancesResponse) Reset() {
 	*x = GetHoldingBalancesResponse{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[9]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -614,7 +570,7 @@ func (x *GetHoldingBalancesResponse) String() string {
 func (*GetHoldingBalancesResponse) ProtoMessage() {}
 
 func (x *GetHoldingBalancesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[9]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -627,10 +583,10 @@ func (x *GetHoldingBalancesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHoldingBalancesResponse.ProtoReflect.Descriptor instead.
 func (*GetHoldingBalancesResponse) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{9}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *GetHoldingBalancesResponse) GetBalances() []*HoldingBalance {
+func (x *GetHoldingBalancesResponse) GetBalances() []*SummaryBalance {
 	if x != nil {
 		return x.Balances
 	}
@@ -645,7 +601,7 @@ type GetNonZeroMemoBalancesRequest struct {
 
 func (x *GetNonZeroMemoBalancesRequest) Reset() {
 	*x = GetNonZeroMemoBalancesRequest{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[10]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -657,7 +613,7 @@ func (x *GetNonZeroMemoBalancesRequest) String() string {
 func (*GetNonZeroMemoBalancesRequest) ProtoMessage() {}
 
 func (x *GetNonZeroMemoBalancesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[10]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -670,19 +626,19 @@ func (x *GetNonZeroMemoBalancesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetNonZeroMemoBalancesRequest.ProtoReflect.Descriptor instead.
 func (*GetNonZeroMemoBalancesRequest) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{10}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{9}
 }
 
 type GetNonZeroMemoBalancesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Balances      []*CategoryBalance     `protobuf:"bytes,1,rep,name=balances,proto3" json:"balances,omitempty"`
+	Balances      []*SummaryBalance      `protobuf:"bytes,1,rep,name=balances,proto3" json:"balances,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetNonZeroMemoBalancesResponse) Reset() {
 	*x = GetNonZeroMemoBalancesResponse{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[11]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -694,7 +650,7 @@ func (x *GetNonZeroMemoBalancesResponse) String() string {
 func (*GetNonZeroMemoBalancesResponse) ProtoMessage() {}
 
 func (x *GetNonZeroMemoBalancesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[11]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -707,10 +663,10 @@ func (x *GetNonZeroMemoBalancesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetNonZeroMemoBalancesResponse.ProtoReflect.Descriptor instead.
 func (*GetNonZeroMemoBalancesResponse) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{11}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *GetNonZeroMemoBalancesResponse) GetBalances() []*CategoryBalance {
+func (x *GetNonZeroMemoBalancesResponse) GetBalances() []*SummaryBalance {
 	if x != nil {
 		return x.Balances
 	}
@@ -725,7 +681,7 @@ type GetEnvelopeBalancesRequest struct {
 
 func (x *GetEnvelopeBalancesRequest) Reset() {
 	*x = GetEnvelopeBalancesRequest{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[12]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -737,7 +693,7 @@ func (x *GetEnvelopeBalancesRequest) String() string {
 func (*GetEnvelopeBalancesRequest) ProtoMessage() {}
 
 func (x *GetEnvelopeBalancesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[12]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -750,7 +706,7 @@ func (x *GetEnvelopeBalancesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEnvelopeBalancesRequest.ProtoReflect.Descriptor instead.
 func (*GetEnvelopeBalancesRequest) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{12}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{11}
 }
 
 type GetEnvelopeBalancesResponse struct {
@@ -762,7 +718,7 @@ type GetEnvelopeBalancesResponse struct {
 
 func (x *GetEnvelopeBalancesResponse) Reset() {
 	*x = GetEnvelopeBalancesResponse{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[13]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -774,7 +730,7 @@ func (x *GetEnvelopeBalancesResponse) String() string {
 func (*GetEnvelopeBalancesResponse) ProtoMessage() {}
 
 func (x *GetEnvelopeBalancesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[13]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -787,7 +743,7 @@ func (x *GetEnvelopeBalancesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEnvelopeBalancesResponse.ProtoReflect.Descriptor instead.
 func (*GetEnvelopeBalancesResponse) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{13}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetEnvelopeBalancesResponse) GetBalances() []*EnvelopeBalance {
@@ -807,7 +763,7 @@ type GetBalanceHistoryRequest struct {
 
 func (x *GetBalanceHistoryRequest) Reset() {
 	*x = GetBalanceHistoryRequest{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[14]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -819,7 +775,7 @@ func (x *GetBalanceHistoryRequest) String() string {
 func (*GetBalanceHistoryRequest) ProtoMessage() {}
 
 func (x *GetBalanceHistoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[14]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -832,7 +788,7 @@ func (x *GetBalanceHistoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBalanceHistoryRequest.ProtoReflect.Descriptor instead.
 func (*GetBalanceHistoryRequest) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{14}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetBalanceHistoryRequest) GetStartDate() int64 {
@@ -858,7 +814,7 @@ type GetBalanceHistoryResponse struct {
 
 func (x *GetBalanceHistoryResponse) Reset() {
 	*x = GetBalanceHistoryResponse{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[15]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -870,7 +826,7 @@ func (x *GetBalanceHistoryResponse) String() string {
 func (*GetBalanceHistoryResponse) ProtoMessage() {}
 
 func (x *GetBalanceHistoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[15]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -883,7 +839,7 @@ func (x *GetBalanceHistoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBalanceHistoryResponse.ProtoReflect.Descriptor instead.
 func (*GetBalanceHistoryResponse) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{15}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetBalanceHistoryResponse) GetEntries() []*BalanceHistoryEntry {
@@ -902,7 +858,7 @@ type GetTaxReportRequest struct {
 
 func (x *GetTaxReportRequest) Reset() {
 	*x = GetTaxReportRequest{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[16]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -914,7 +870,7 @@ func (x *GetTaxReportRequest) String() string {
 func (*GetTaxReportRequest) ProtoMessage() {}
 
 func (x *GetTaxReportRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[16]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -927,7 +883,7 @@ func (x *GetTaxReportRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTaxReportRequest.ProtoReflect.Descriptor instead.
 func (*GetTaxReportRequest) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{16}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetTaxReportRequest) GetTaxYear() int32 {
@@ -946,7 +902,7 @@ type GetTaxReportResponse struct {
 
 func (x *GetTaxReportResponse) Reset() {
 	*x = GetTaxReportResponse{}
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[17]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -958,7 +914,7 @@ func (x *GetTaxReportResponse) String() string {
 func (*GetTaxReportResponse) ProtoMessage() {}
 
 func (x *GetTaxReportResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[17]
+	mi := &file_moneydashboard_v4_reporting_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -971,7 +927,7 @@ func (x *GetTaxReportResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTaxReportResponse.ProtoReflect.Descriptor instead.
 func (*GetTaxReportResponse) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{17}
+	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetTaxReportResponse) GetTaxReport() *TaxReport {
@@ -985,19 +941,16 @@ var File_moneydashboard_v4_reporting_proto protoreflect.FileDescriptor
 
 const file_moneydashboard_v4_reporting_proto_rawDesc = "" +
 	"\n" +
-	"!moneydashboard/v4/reporting.proto\x12\x11moneydashboard.v4\x1a\x1emoneydashboard/v4/assets.proto\x1a\"moneydashboard/v4/categories.proto\x1a\"moneydashboard/v4/currencies.proto\x1a!moneydashboard/v4/envelopes.proto\x1a moneydashboard/v4/holdings.proto\"\x88\x01\n" +
-	"\x0eHoldingBalance\x124\n" +
-	"\aholding\x18\x01 \x01(\v2\x1a.moneydashboard.v4.HoldingR\aholding\x12\x1f\n" +
-	"\vraw_balance\x18\x02 \x01(\x01R\n" +
+	"!moneydashboard/v4/reporting.proto\x12\x11moneydashboard.v4\x1a\x1emoneydashboard/v4/assets.proto\x1a\"moneydashboard/v4/categories.proto\x1a\"moneydashboard/v4/currencies.proto\x1a!moneydashboard/v4/envelopes.proto\x1a moneydashboard/v4/holdings.proto\"\xaa\x02\n" +
+	"\x0eSummaryBalance\x124\n" +
+	"\aholding\x18\x01 \x01(\v2\x1a.moneydashboard.v4.HoldingR\aholding\x127\n" +
+	"\bcategory\x18\x02 \x01(\v2\x1b.moneydashboard.v4.CategoryR\bcategory\x12.\n" +
+	"\x05asset\x18\x03 \x01(\v2\x18.moneydashboard.v4.AssetR\x05asset\x127\n" +
+	"\bcurrency\x18\x04 \x01(\v2\x1b.moneydashboard.v4.CurrencyR\bcurrency\x12\x1f\n" +
+	"\vraw_balance\x18\x05 \x01(\x01R\n" +
 	"rawBalance\x12\x1f\n" +
-	"\vgbp_balance\x18\x03 \x01(\x01R\n" +
-	"gbpBalance\"\xd4\x01\n" +
-	"\x0fCategoryBalance\x127\n" +
-	"\bcategory\x18\x01 \x01(\v2\x1b.moneydashboard.v4.CategoryR\bcategory\x12.\n" +
-	"\x05asset\x18\x02 \x01(\v2\x18.moneydashboard.v4.AssetR\x05asset\x127\n" +
-	"\bcurrency\x18\x03 \x01(\v2\x1b.moneydashboard.v4.CurrencyR\bcurrency\x12\x1f\n" +
-	"\vraw_balance\x18\x04 \x01(\x01R\n" +
-	"rawBalance\"k\n" +
+	"\vgbp_balance\x18\x06 \x01(\x01R\n" +
+	"gbpBalance\"k\n" +
 	"\x0fEnvelopeBalance\x127\n" +
 	"\benvelope\x18\x01 \x01(\v2\x1b.moneydashboard.v4.EnvelopeR\benvelope\x12\x1f\n" +
 	"\vgbp_balance\x18\x02 \x01(\x01R\n" +
@@ -1005,13 +958,7 @@ const file_moneydashboard_v4_reporting_proto_rawDesc = "" +
 	"\x13BalanceHistoryEntry\x12\x12\n" +
 	"\x04date\x18\x01 \x01(\x03R\x04date\x12\x1f\n" +
 	"\vgbp_balance\x18\x02 \x01(\x01R\n" +
-	"gbpBalance\"\x9a\x03\n" +
-	"\tTaxReport\x12J\n" +
-	"\x0finterest_income\x18\x01 \x03(\v2!.moneydashboard.v4.HoldingBalanceR\x0einterestIncome\x12J\n" +
-	"\x0fdividend_income\x18\x02 \x03(\v2!.moneydashboard.v4.HoldingBalanceR\x0edividendIncome\x12V\n" +
-	"\x15pension_contributions\x18\x03 \x03(\v2!.moneydashboard.v4.HoldingBalanceR\x14pensionContributions\x12O\n" +
-	"\x0ecapital_events\x18\x04 \x03(\v2(.moneydashboard.v4.TaxReportCapitalEventR\rcapitalEvents\x12L\n" +
-	"\rs104_balances\x18\x05 \x03(\v2'.moneydashboard.v4.TaxReportS104BalanceR\fs104Balances\"\xd5\x02\n" +
+	"gbpBalance\"\xd5\x02\n" +
 	"\x15TaxReportCapitalEvent\x124\n" +
 	"\aholding\x18\x01 \x01(\v2\x1a.moneydashboard.v4.HoldingR\aholding\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x12\n" +
@@ -1030,13 +977,19 @@ const file_moneydashboard_v4_reporting_proto_rawDesc = "" +
 	"\x14TaxReportS104Balance\x124\n" +
 	"\aholding\x18\x01 \x01(\v2\x1a.moneydashboard.v4.HoldingR\aholding\x12\x10\n" +
 	"\x03qty\x18\x02 \x01(\x01R\x03qty\x12+\n" +
-	"\x12avg_gbp_unit_price\x18\x03 \x01(\x01R\x0favgGbpUnitPrice\"\x1b\n" +
+	"\x12avg_gbp_unit_price\x18\x03 \x01(\x01R\x0favgGbpUnitPrice\"\x9a\x03\n" +
+	"\tTaxReport\x12J\n" +
+	"\x0finterest_income\x18\x01 \x03(\v2!.moneydashboard.v4.SummaryBalanceR\x0einterestIncome\x12J\n" +
+	"\x0fdividend_income\x18\x02 \x03(\v2!.moneydashboard.v4.SummaryBalanceR\x0edividendIncome\x12V\n" +
+	"\x15pension_contributions\x18\x03 \x03(\v2!.moneydashboard.v4.SummaryBalanceR\x14pensionContributions\x12O\n" +
+	"\x0ecapital_events\x18\x04 \x03(\v2(.moneydashboard.v4.TaxReportCapitalEventR\rcapitalEvents\x12L\n" +
+	"\rs104_balances\x18\x05 \x03(\v2'.moneydashboard.v4.TaxReportS104BalanceR\fs104Balances\"\x1b\n" +
 	"\x19GetHoldingBalancesRequest\"[\n" +
 	"\x1aGetHoldingBalancesResponse\x12=\n" +
-	"\bbalances\x18\x01 \x03(\v2!.moneydashboard.v4.HoldingBalanceR\bbalances\"\x1f\n" +
-	"\x1dGetNonZeroMemoBalancesRequest\"`\n" +
-	"\x1eGetNonZeroMemoBalancesResponse\x12>\n" +
-	"\bbalances\x18\x01 \x03(\v2\".moneydashboard.v4.CategoryBalanceR\bbalances\"\x1c\n" +
+	"\bbalances\x18\x01 \x03(\v2!.moneydashboard.v4.SummaryBalanceR\bbalances\"\x1f\n" +
+	"\x1dGetNonZeroMemoBalancesRequest\"_\n" +
+	"\x1eGetNonZeroMemoBalancesResponse\x12=\n" +
+	"\bbalances\x18\x01 \x03(\v2!.moneydashboard.v4.SummaryBalanceR\bbalances\"\x1c\n" +
 	"\x1aGetEnvelopeBalancesRequest\"]\n" +
 	"\x1bGetEnvelopeBalancesResponse\x12>\n" +
 	"\bbalances\x18\x01 \x03(\v2\".moneydashboard.v4.EnvelopeBalanceR\bbalances\"T\n" +
@@ -1070,61 +1023,60 @@ func file_moneydashboard_v4_reporting_proto_rawDescGZIP() []byte {
 	return file_moneydashboard_v4_reporting_proto_rawDescData
 }
 
-var file_moneydashboard_v4_reporting_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_moneydashboard_v4_reporting_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_moneydashboard_v4_reporting_proto_goTypes = []any{
-	(*HoldingBalance)(nil),                 // 0: moneydashboard.v4.HoldingBalance
-	(*CategoryBalance)(nil),                // 1: moneydashboard.v4.CategoryBalance
-	(*EnvelopeBalance)(nil),                // 2: moneydashboard.v4.EnvelopeBalance
-	(*BalanceHistoryEntry)(nil),            // 3: moneydashboard.v4.BalanceHistoryEntry
-	(*TaxReport)(nil),                      // 4: moneydashboard.v4.TaxReport
-	(*TaxReportCapitalEvent)(nil),          // 5: moneydashboard.v4.TaxReportCapitalEvent
-	(*TaxReportCapitalEventMatch)(nil),     // 6: moneydashboard.v4.TaxReportCapitalEventMatch
-	(*TaxReportS104Balance)(nil),           // 7: moneydashboard.v4.TaxReportS104Balance
-	(*GetHoldingBalancesRequest)(nil),      // 8: moneydashboard.v4.GetHoldingBalancesRequest
-	(*GetHoldingBalancesResponse)(nil),     // 9: moneydashboard.v4.GetHoldingBalancesResponse
-	(*GetNonZeroMemoBalancesRequest)(nil),  // 10: moneydashboard.v4.GetNonZeroMemoBalancesRequest
-	(*GetNonZeroMemoBalancesResponse)(nil), // 11: moneydashboard.v4.GetNonZeroMemoBalancesResponse
-	(*GetEnvelopeBalancesRequest)(nil),     // 12: moneydashboard.v4.GetEnvelopeBalancesRequest
-	(*GetEnvelopeBalancesResponse)(nil),    // 13: moneydashboard.v4.GetEnvelopeBalancesResponse
-	(*GetBalanceHistoryRequest)(nil),       // 14: moneydashboard.v4.GetBalanceHistoryRequest
-	(*GetBalanceHistoryResponse)(nil),      // 15: moneydashboard.v4.GetBalanceHistoryResponse
-	(*GetTaxReportRequest)(nil),            // 16: moneydashboard.v4.GetTaxReportRequest
-	(*GetTaxReportResponse)(nil),           // 17: moneydashboard.v4.GetTaxReportResponse
-	(*Holding)(nil),                        // 18: moneydashboard.v4.Holding
-	(*Category)(nil),                       // 19: moneydashboard.v4.Category
-	(*Asset)(nil),                          // 20: moneydashboard.v4.Asset
-	(*Currency)(nil),                       // 21: moneydashboard.v4.Currency
-	(*Envelope)(nil),                       // 22: moneydashboard.v4.Envelope
+	(*SummaryBalance)(nil),                 // 0: moneydashboard.v4.SummaryBalance
+	(*EnvelopeBalance)(nil),                // 1: moneydashboard.v4.EnvelopeBalance
+	(*BalanceHistoryEntry)(nil),            // 2: moneydashboard.v4.BalanceHistoryEntry
+	(*TaxReportCapitalEvent)(nil),          // 3: moneydashboard.v4.TaxReportCapitalEvent
+	(*TaxReportCapitalEventMatch)(nil),     // 4: moneydashboard.v4.TaxReportCapitalEventMatch
+	(*TaxReportS104Balance)(nil),           // 5: moneydashboard.v4.TaxReportS104Balance
+	(*TaxReport)(nil),                      // 6: moneydashboard.v4.TaxReport
+	(*GetHoldingBalancesRequest)(nil),      // 7: moneydashboard.v4.GetHoldingBalancesRequest
+	(*GetHoldingBalancesResponse)(nil),     // 8: moneydashboard.v4.GetHoldingBalancesResponse
+	(*GetNonZeroMemoBalancesRequest)(nil),  // 9: moneydashboard.v4.GetNonZeroMemoBalancesRequest
+	(*GetNonZeroMemoBalancesResponse)(nil), // 10: moneydashboard.v4.GetNonZeroMemoBalancesResponse
+	(*GetEnvelopeBalancesRequest)(nil),     // 11: moneydashboard.v4.GetEnvelopeBalancesRequest
+	(*GetEnvelopeBalancesResponse)(nil),    // 12: moneydashboard.v4.GetEnvelopeBalancesResponse
+	(*GetBalanceHistoryRequest)(nil),       // 13: moneydashboard.v4.GetBalanceHistoryRequest
+	(*GetBalanceHistoryResponse)(nil),      // 14: moneydashboard.v4.GetBalanceHistoryResponse
+	(*GetTaxReportRequest)(nil),            // 15: moneydashboard.v4.GetTaxReportRequest
+	(*GetTaxReportResponse)(nil),           // 16: moneydashboard.v4.GetTaxReportResponse
+	(*Holding)(nil),                        // 17: moneydashboard.v4.Holding
+	(*Category)(nil),                       // 18: moneydashboard.v4.Category
+	(*Asset)(nil),                          // 19: moneydashboard.v4.Asset
+	(*Currency)(nil),                       // 20: moneydashboard.v4.Currency
+	(*Envelope)(nil),                       // 21: moneydashboard.v4.Envelope
 }
 var file_moneydashboard_v4_reporting_proto_depIdxs = []int32{
-	18, // 0: moneydashboard.v4.HoldingBalance.holding:type_name -> moneydashboard.v4.Holding
-	19, // 1: moneydashboard.v4.CategoryBalance.category:type_name -> moneydashboard.v4.Category
-	20, // 2: moneydashboard.v4.CategoryBalance.asset:type_name -> moneydashboard.v4.Asset
-	21, // 3: moneydashboard.v4.CategoryBalance.currency:type_name -> moneydashboard.v4.Currency
-	22, // 4: moneydashboard.v4.EnvelopeBalance.envelope:type_name -> moneydashboard.v4.Envelope
-	0,  // 5: moneydashboard.v4.TaxReport.interest_income:type_name -> moneydashboard.v4.HoldingBalance
-	0,  // 6: moneydashboard.v4.TaxReport.dividend_income:type_name -> moneydashboard.v4.HoldingBalance
-	0,  // 7: moneydashboard.v4.TaxReport.pension_contributions:type_name -> moneydashboard.v4.HoldingBalance
-	5,  // 8: moneydashboard.v4.TaxReport.capital_events:type_name -> moneydashboard.v4.TaxReportCapitalEvent
-	7,  // 9: moneydashboard.v4.TaxReport.s104_balances:type_name -> moneydashboard.v4.TaxReportS104Balance
-	18, // 10: moneydashboard.v4.TaxReportCapitalEvent.holding:type_name -> moneydashboard.v4.Holding
-	6,  // 11: moneydashboard.v4.TaxReportCapitalEvent.matches:type_name -> moneydashboard.v4.TaxReportCapitalEventMatch
-	18, // 12: moneydashboard.v4.TaxReportS104Balance.holding:type_name -> moneydashboard.v4.Holding
-	0,  // 13: moneydashboard.v4.GetHoldingBalancesResponse.balances:type_name -> moneydashboard.v4.HoldingBalance
-	1,  // 14: moneydashboard.v4.GetNonZeroMemoBalancesResponse.balances:type_name -> moneydashboard.v4.CategoryBalance
-	2,  // 15: moneydashboard.v4.GetEnvelopeBalancesResponse.balances:type_name -> moneydashboard.v4.EnvelopeBalance
-	3,  // 16: moneydashboard.v4.GetBalanceHistoryResponse.entries:type_name -> moneydashboard.v4.BalanceHistoryEntry
-	4,  // 17: moneydashboard.v4.GetTaxReportResponse.tax_report:type_name -> moneydashboard.v4.TaxReport
-	8,  // 18: moneydashboard.v4.MDReportingService.GetHoldingBalances:input_type -> moneydashboard.v4.GetHoldingBalancesRequest
-	10, // 19: moneydashboard.v4.MDReportingService.GetNonZeroMemoBalances:input_type -> moneydashboard.v4.GetNonZeroMemoBalancesRequest
-	12, // 20: moneydashboard.v4.MDReportingService.GetEnvelopeBalances:input_type -> moneydashboard.v4.GetEnvelopeBalancesRequest
-	14, // 21: moneydashboard.v4.MDReportingService.GetBalanceHistory:input_type -> moneydashboard.v4.GetBalanceHistoryRequest
-	16, // 22: moneydashboard.v4.MDReportingService.GetTaxReport:input_type -> moneydashboard.v4.GetTaxReportRequest
-	9,  // 23: moneydashboard.v4.MDReportingService.GetHoldingBalances:output_type -> moneydashboard.v4.GetHoldingBalancesResponse
-	11, // 24: moneydashboard.v4.MDReportingService.GetNonZeroMemoBalances:output_type -> moneydashboard.v4.GetNonZeroMemoBalancesResponse
-	13, // 25: moneydashboard.v4.MDReportingService.GetEnvelopeBalances:output_type -> moneydashboard.v4.GetEnvelopeBalancesResponse
-	15, // 26: moneydashboard.v4.MDReportingService.GetBalanceHistory:output_type -> moneydashboard.v4.GetBalanceHistoryResponse
-	17, // 27: moneydashboard.v4.MDReportingService.GetTaxReport:output_type -> moneydashboard.v4.GetTaxReportResponse
+	17, // 0: moneydashboard.v4.SummaryBalance.holding:type_name -> moneydashboard.v4.Holding
+	18, // 1: moneydashboard.v4.SummaryBalance.category:type_name -> moneydashboard.v4.Category
+	19, // 2: moneydashboard.v4.SummaryBalance.asset:type_name -> moneydashboard.v4.Asset
+	20, // 3: moneydashboard.v4.SummaryBalance.currency:type_name -> moneydashboard.v4.Currency
+	21, // 4: moneydashboard.v4.EnvelopeBalance.envelope:type_name -> moneydashboard.v4.Envelope
+	17, // 5: moneydashboard.v4.TaxReportCapitalEvent.holding:type_name -> moneydashboard.v4.Holding
+	4,  // 6: moneydashboard.v4.TaxReportCapitalEvent.matches:type_name -> moneydashboard.v4.TaxReportCapitalEventMatch
+	17, // 7: moneydashboard.v4.TaxReportS104Balance.holding:type_name -> moneydashboard.v4.Holding
+	0,  // 8: moneydashboard.v4.TaxReport.interest_income:type_name -> moneydashboard.v4.SummaryBalance
+	0,  // 9: moneydashboard.v4.TaxReport.dividend_income:type_name -> moneydashboard.v4.SummaryBalance
+	0,  // 10: moneydashboard.v4.TaxReport.pension_contributions:type_name -> moneydashboard.v4.SummaryBalance
+	3,  // 11: moneydashboard.v4.TaxReport.capital_events:type_name -> moneydashboard.v4.TaxReportCapitalEvent
+	5,  // 12: moneydashboard.v4.TaxReport.s104_balances:type_name -> moneydashboard.v4.TaxReportS104Balance
+	0,  // 13: moneydashboard.v4.GetHoldingBalancesResponse.balances:type_name -> moneydashboard.v4.SummaryBalance
+	0,  // 14: moneydashboard.v4.GetNonZeroMemoBalancesResponse.balances:type_name -> moneydashboard.v4.SummaryBalance
+	1,  // 15: moneydashboard.v4.GetEnvelopeBalancesResponse.balances:type_name -> moneydashboard.v4.EnvelopeBalance
+	2,  // 16: moneydashboard.v4.GetBalanceHistoryResponse.entries:type_name -> moneydashboard.v4.BalanceHistoryEntry
+	6,  // 17: moneydashboard.v4.GetTaxReportResponse.tax_report:type_name -> moneydashboard.v4.TaxReport
+	7,  // 18: moneydashboard.v4.MDReportingService.GetHoldingBalances:input_type -> moneydashboard.v4.GetHoldingBalancesRequest
+	9,  // 19: moneydashboard.v4.MDReportingService.GetNonZeroMemoBalances:input_type -> moneydashboard.v4.GetNonZeroMemoBalancesRequest
+	11, // 20: moneydashboard.v4.MDReportingService.GetEnvelopeBalances:input_type -> moneydashboard.v4.GetEnvelopeBalancesRequest
+	13, // 21: moneydashboard.v4.MDReportingService.GetBalanceHistory:input_type -> moneydashboard.v4.GetBalanceHistoryRequest
+	15, // 22: moneydashboard.v4.MDReportingService.GetTaxReport:input_type -> moneydashboard.v4.GetTaxReportRequest
+	8,  // 23: moneydashboard.v4.MDReportingService.GetHoldingBalances:output_type -> moneydashboard.v4.GetHoldingBalancesResponse
+	10, // 24: moneydashboard.v4.MDReportingService.GetNonZeroMemoBalances:output_type -> moneydashboard.v4.GetNonZeroMemoBalancesResponse
+	12, // 25: moneydashboard.v4.MDReportingService.GetEnvelopeBalances:output_type -> moneydashboard.v4.GetEnvelopeBalancesResponse
+	14, // 26: moneydashboard.v4.MDReportingService.GetBalanceHistory:output_type -> moneydashboard.v4.GetBalanceHistoryResponse
+	16, // 27: moneydashboard.v4.MDReportingService.GetTaxReport:output_type -> moneydashboard.v4.GetTaxReportResponse
 	23, // [23:28] is the sub-list for method output_type
 	18, // [18:23] is the sub-list for method input_type
 	18, // [18:18] is the sub-list for extension type_name
@@ -1148,7 +1100,7 @@ func file_moneydashboard_v4_reporting_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_moneydashboard_v4_reporting_proto_rawDesc), len(file_moneydashboard_v4_reporting_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   18,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

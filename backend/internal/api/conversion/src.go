@@ -70,8 +70,7 @@ type converterSpec interface {
 
 	// reporting
 
-	HoldingBalanceFromCore(source schema.HoldingBalance) *mdv4.HoldingBalance
-	CategoryBalanceFromCore(source schema.CategoryBalance) *mdv4.CategoryBalance
+	SummaryBalanceFromCore(source schema.SummaryBalance) *mdv4.SummaryBalance
 	EnvelopeBalanceFromCore(source schema.EnvelopeBalance) *mdv4.EnvelopeBalance
 	BalanceHistoryEntryFromCore(source schema.BalanceHistoryEntry) *mdv4.BalanceHistoryEntry
 	TaxReportFromCore(source schema.TaxReport) *mdv4.TaxReport

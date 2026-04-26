@@ -6,17 +6,16 @@ import (
 	"github.com/govalues/decimal"
 )
 
-type HoldingBalance struct {
-	Holding    Holding
+// SummaryBalance stores a balance groups by category, holding or both. If per-holding, asset/currency will be populated.
+type SummaryBalance struct {
+	Category *Category
+
+	Holding  *Holding
+	Asset    *Asset
+	Currency *Currency
+
 	RawBalance decimal.Decimal
 	GbpBalance decimal.Decimal
-}
-
-type CategoryBalance struct {
-	Category   Category
-	Asset      *Asset
-	Currency   *Currency
-	RawBalance decimal.Decimal
 }
 
 type EnvelopeBalance struct {
@@ -30,9 +29,9 @@ type BalanceHistoryEntry struct {
 }
 
 type TaxReport struct {
-	InterestIncome       []HoldingBalance
-	DividendIncome       []HoldingBalance
-	PensionContributions []HoldingBalance
+	InterestIncome       []SummaryBalance
+	DividendIncome       []SummaryBalance
+	PensionContributions []SummaryBalance
 	CapitalEvents        []TaxReportCapitalEvent
 	S104Balances         []TaxReportS104Balance
 }

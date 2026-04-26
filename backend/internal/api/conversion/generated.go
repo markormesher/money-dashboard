@@ -76,14 +76,6 @@ func BalanceHistoryEntryFromCore(source schema.BalanceHistoryEntry) *v4.BalanceH
 	mdv4BalanceHistoryEntry.GbpBalance = ConvertDecimalToFloat(source.GbpBalance)
 	return &mdv4BalanceHistoryEntry
 }
-func CategoryBalanceFromCore(source schema.CategoryBalance) *v4.CategoryBalance {
-	var mdv4CategoryBalance v4.CategoryBalance
-	mdv4CategoryBalance.Category = CategoryFromCore(source.Category)
-	mdv4CategoryBalance.Asset = pSchemaAssetToPMdv4Asset(source.Asset)
-	mdv4CategoryBalance.Currency = pSchemaCurrencyToPMdv4Currency(source.Currency)
-	mdv4CategoryBalance.RawBalance = ConvertDecimalToFloat(source.RawBalance)
-	return &mdv4CategoryBalance
-}
 func CategoryFromCore(source schema.Category) *v4.Category {
 	var mdv4Category v4.Category
 	mdv4Category.Id = ConvertUUIDToString(source.ID)
@@ -196,13 +188,6 @@ func EnvelopeTransferToCore(source *v4.EnvelopeTransfer) schema.EnvelopeTransfer
 	}
 	return schemaEnvelopeTransfer
 }
-func HoldingBalanceFromCore(source schema.HoldingBalance) *v4.HoldingBalance {
-	var mdv4HoldingBalance v4.HoldingBalance
-	mdv4HoldingBalance.Holding = HoldingFromCore(source.Holding)
-	mdv4HoldingBalance.RawBalance = ConvertDecimalToFloat(source.RawBalance)
-	mdv4HoldingBalance.GbpBalance = ConvertDecimalToFloat(source.GbpBalance)
-	return &mdv4HoldingBalance
-}
 func HoldingFromCore(source schema.Holding) *v4.Holding {
 	var mdv4Holding v4.Holding
 	mdv4Holding.Id = ConvertUUIDToString(source.ID)
@@ -265,6 +250,16 @@ func RateToCore(source *v4.Rate) schema.Rate {
 	}
 	return schemaRate
 }
+func SummaryBalanceFromCore(source schema.SummaryBalance) *v4.SummaryBalance {
+	var mdv4SummaryBalance v4.SummaryBalance
+	mdv4SummaryBalance.Holding = pSchemaHoldingToPMdv4Holding(source.Holding)
+	mdv4SummaryBalance.Category = pSchemaCategoryToPMdv4Category(source.Category)
+	mdv4SummaryBalance.Asset = pSchemaAssetToPMdv4Asset(source.Asset)
+	mdv4SummaryBalance.Currency = pSchemaCurrencyToPMdv4Currency(source.Currency)
+	mdv4SummaryBalance.RawBalance = ConvertDecimalToFloat(source.RawBalance)
+	mdv4SummaryBalance.GbpBalance = ConvertDecimalToFloat(source.GbpBalance)
+	return &mdv4SummaryBalance
+}
 func TaxReportCapitalEventFromCore(source schema.TaxReportCapitalEvent) *v4.TaxReportCapitalEvent {
 	var mdv4TaxReportCapitalEvent v4.TaxReportCapitalEvent
 	mdv4TaxReportCapitalEvent.Holding = HoldingFromCore(source.Holding)
@@ -293,21 +288,21 @@ func TaxReportCapitalEventMatchFromCore(source schema.TaxReportCapitalEventMatch
 func TaxReportFromCore(source schema.TaxReport) *v4.TaxReport {
 	var mdv4TaxReport v4.TaxReport
 	if source.InterestIncome != nil {
-		mdv4TaxReport.InterestIncome = make([]*v4.HoldingBalance, len(source.InterestIncome))
+		mdv4TaxReport.InterestIncome = make([]*v4.SummaryBalance, len(source.InterestIncome))
 		for i := 0; i < len(source.InterestIncome); i++ {
-			mdv4TaxReport.InterestIncome[i] = HoldingBalanceFromCore(source.InterestIncome[i])
+			mdv4TaxReport.InterestIncome[i] = SummaryBalanceFromCore(source.InterestIncome[i])
 		}
 	}
 	if source.DividendIncome != nil {
-		mdv4TaxReport.DividendIncome = make([]*v4.HoldingBalance, len(source.DividendIncome))
+		mdv4TaxReport.DividendIncome = make([]*v4.SummaryBalance, len(source.DividendIncome))
 		for j := 0; j < len(source.DividendIncome); j++ {
-			mdv4TaxReport.DividendIncome[j] = HoldingBalanceFromCore(source.DividendIncome[j])
+			mdv4TaxReport.DividendIncome[j] = SummaryBalanceFromCore(source.DividendIncome[j])
 		}
 	}
 	if source.PensionContributions != nil {
-		mdv4TaxReport.PensionContributions = make([]*v4.HoldingBalance, len(source.PensionContributions))
+		mdv4TaxReport.PensionContributions = make([]*v4.SummaryBalance, len(source.PensionContributions))
 		for k := 0; k < len(source.PensionContributions); k++ {
-			mdv4TaxReport.PensionContributions[k] = HoldingBalanceFromCore(source.PensionContributions[k])
+			mdv4TaxReport.PensionContributions[k] = SummaryBalanceFromCore(source.PensionContributions[k])
 		}
 	}
 	if source.CapitalEvents != nil {

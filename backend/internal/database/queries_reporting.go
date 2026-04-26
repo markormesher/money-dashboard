@@ -13,39 +13,36 @@ import (
 	"github.com/markormesher/money-dashboard/internal/schema"
 )
 
-type HoldingBalance struct {
-	Date      time.Time
-	Balance   decimal.Decimal
-	HoldingID uuid.UUID
-}
+type SummaryBalance struct {
+	Date    time.Time
+	Balance decimal.Decimal
 
-type CategoryBalance struct {
-	Balance    decimal.Decimal
+	HoldingID  uuid.UUID
 	CategoryID uuid.UUID
 	AssetID    *uuid.UUID
 	CurrencyID *uuid.UUID
 }
 
-type TransactionWithHoldingId struct {
+type TransactionWithHoldingID struct {
 	Transaction schema.Transaction
 	HoldingID   uuid.UUID
 }
 
-func (db *DB) GetHoldingBalancesAsOfDate(ctx context.Context, profileID uuid.UUID, maxDate time.Time) ([]HoldingBalance, error) {
+func (db *DB) GetHoldingBalancesAsOfDate(ctx context.Context, profileID uuid.UUID, maxDate time.Time) ([]SummaryBalance, error) {
 	rows, err := db.queries.GetHoldingBalancesAsOfDate(ctx, database_gen.GetHoldingBalancesAsOfDateParams{
 		ProfileID: profileID,
 		MaxDate:   maxDate,
 	})
 	if errors.Is(err, pgx.ErrNoRows) {
-		return []HoldingBalance{}, nil
+		return []SummaryBalance{}, nil
 	} else if err != nil {
 		return nil, err
 	}
 
-	output := make([]HoldingBalance, len(rows))
+	output := make([]SummaryBalance, len(rows))
 
 	for i, row := range rows {
-		output[i] = HoldingBalance{
+		output[i] = SummaryBalance{
 			Balance:   row.Balance,
 			HoldingID: row.HoldingID,
 		}
@@ -54,22 +51,22 @@ func (db *DB) GetHoldingBalancesAsOfDate(ctx context.Context, profileID uuid.UUI
 	return output, nil
 }
 
-func (db *DB) GetHoldingBalancesChangesBetweenDates(ctx context.Context, profileID uuid.UUID, startDate time.Time, endDate time.Time) ([]HoldingBalance, error) {
+func (db *DB) GetHoldingBalancesChangesBetweenDates(ctx context.Context, profileID uuid.UUID, startDate time.Time, endDate time.Time) ([]SummaryBalance, error) {
 	rows, err := db.queries.GetHoldingBalancesChangesBetweenDates(ctx, database_gen.GetHoldingBalancesChangesBetweenDatesParams{
 		ProfileID: profileID,
 		StartDate: startDate,
 		EndDate:   endDate,
 	})
 	if errors.Is(err, pgx.ErrNoRows) {
-		return []HoldingBalance{}, nil
+		return []SummaryBalance{}, nil
 	} else if err != nil {
 		return nil, err
 	}
 
-	output := make([]HoldingBalance, len(rows))
+	output := make([]SummaryBalance, len(rows))
 
 	for i, row := range rows {
-		output[i] = HoldingBalance{
+		output[i] = SummaryBalance{
 			Date:      row.Date,
 			Balance:   row.Balance,
 			HoldingID: row.HoldingID,
@@ -79,18 +76,18 @@ func (db *DB) GetHoldingBalancesChangesBetweenDates(ctx context.Context, profile
 	return output, nil
 }
 
-func (db *DB) GetMemoBalances(ctx context.Context, profileID uuid.UUID) ([]CategoryBalance, error) {
+func (db *DB) GetMemoBalances(ctx context.Context, profileID uuid.UUID) ([]SummaryBalance, error) {
 	rows, err := db.queries.GetMemoBalances(ctx, profileID)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return []CategoryBalance{}, nil
+		return []SummaryBalance{}, nil
 	} else if err != nil {
 		return nil, err
 	}
 
-	output := make([]CategoryBalance, len(rows))
+	output := make([]SummaryBalance, len(rows))
 
 	for i, row := range rows {
-		output[i] = CategoryBalance{
+		output[i] = SummaryBalance{
 			Balance:    row.Balance,
 			CategoryID: row.CategoryID,
 			AssetID:    row.AssetID,
@@ -101,7 +98,7 @@ func (db *DB) GetMemoBalances(ctx context.Context, profileID uuid.UUID) ([]Categ
 	return output, nil
 }
 
-func (db *DB) GetTransactionsForEnvelopeBalances(ctx context.Context, profileID uuid.UUID) ([]TransactionWithHoldingId, error) {
+func (db *DB) GetTransactionsForEnvelopeBalances(ctx context.Context, profileID uuid.UUID) ([]TransactionWithHoldingID, error) {
 	rows, err := db.queries.GetTransactionsForEnvelopeBalances(ctx, profileID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
@@ -109,7 +106,7 @@ func (db *DB) GetTransactionsForEnvelopeBalances(ctx context.Context, profileID 
 		return nil, err
 	}
 
-	transactions := make([]TransactionWithHoldingId, len(rows))
+	transactions := make([]TransactionWithHoldingID, len(rows))
 	for i, row := range rows {
 		transaction := conversion.TransactionToCore(row.Transaction)
 
@@ -119,7 +116,7 @@ func (db *DB) GetTransactionsForEnvelopeBalances(ctx context.Context, profileID 
 		profile := conversion.ProfileToCore(row.Profile)
 		transaction.Profile = &profile
 
-		transactions[i] = TransactionWithHoldingId{
+		transactions[i] = TransactionWithHoldingID{
 			Transaction: transaction,
 			HoldingID:   row.HoldingID,
 		}
@@ -128,22 +125,22 @@ func (db *DB) GetTransactionsForEnvelopeBalances(ctx context.Context, profileID 
 	return transactions, nil
 }
 
-func (db *DB) GetTaxableInterestIncomePerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
+func (db *DB) GetTaxableInterestIncomePerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]SummaryBalance, error) {
 	rows, err := db.queries.GetTaxableInterestIncomePerHolding(ctx, database_gen.GetTaxableInterestIncomePerHoldingParams{
 		ProfileID: profileID,
 		MinDate:   minDate,
 		MaxDate:   maxDate,
 	})
 	if errors.Is(err, pgx.ErrNoRows) {
-		return []HoldingBalance{}, nil
+		return []SummaryBalance{}, nil
 	} else if err != nil {
 		return nil, err
 	}
 
-	output := make([]HoldingBalance, len(rows))
+	output := make([]SummaryBalance, len(rows))
 
 	for i, row := range rows {
-		output[i] = HoldingBalance{
+		output[i] = SummaryBalance{
 			Balance:   row.Balance,
 			HoldingID: row.HoldingID,
 		}
@@ -152,22 +149,22 @@ func (db *DB) GetTaxableInterestIncomePerHolding(ctx context.Context, profileID 
 	return output, nil
 }
 
-func (db *DB) GetTaxableDividendIncomePerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
+func (db *DB) GetTaxableDividendIncomePerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]SummaryBalance, error) {
 	rows, err := db.queries.GetTaxableDividendIncomePerHolding(ctx, database_gen.GetTaxableDividendIncomePerHoldingParams{
 		ProfileID: profileID,
 		MinDate:   minDate,
 		MaxDate:   maxDate,
 	})
 	if errors.Is(err, pgx.ErrNoRows) {
-		return []HoldingBalance{}, nil
+		return []SummaryBalance{}, nil
 	} else if err != nil {
 		return nil, err
 	}
 
-	output := make([]HoldingBalance, len(rows))
+	output := make([]SummaryBalance, len(rows))
 
 	for i, row := range rows {
-		output[i] = HoldingBalance{
+		output[i] = SummaryBalance{
 			Balance:   row.Balance,
 			HoldingID: row.HoldingID,
 		}
@@ -176,22 +173,22 @@ func (db *DB) GetTaxableDividendIncomePerHolding(ctx context.Context, profileID 
 	return output, nil
 }
 
-func (db *DB) GetPensionContributionsPerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]HoldingBalance, error) {
+func (db *DB) GetPensionContributionsPerHolding(ctx context.Context, profileID uuid.UUID, minDate time.Time, maxDate time.Time) ([]SummaryBalance, error) {
 	rows, err := db.queries.GetPensionContributionsPerHolding(ctx, database_gen.GetPensionContributionsPerHoldingParams{
 		ProfileID: profileID,
 		MinDate:   minDate,
 		MaxDate:   maxDate,
 	})
 	if errors.Is(err, pgx.ErrNoRows) {
-		return []HoldingBalance{}, nil
+		return []SummaryBalance{}, nil
 	} else if err != nil {
 		return nil, err
 	}
 
-	output := make([]HoldingBalance, len(rows))
+	output := make([]SummaryBalance, len(rows))
 
 	for i, row := range rows {
-		output[i] = HoldingBalance{
+		output[i] = SummaryBalance{
 			Balance:   row.Balance,
 			HoldingID: row.HoldingID,
 		}
