@@ -55,8 +55,8 @@ func (c *Core) GetLatestRates(ctx context.Context) ([]schema.Rate, error) {
 	return latestRates, nil
 }
 
-func (c *Core) GetHistoricalAverageRates(ctx context.Context) ([]schema.Rate, error) {
-	rates, err := c.DB.GetHistoricalAverageRates(ctx)
+func (c *Core) GetHistoricAverageRates(ctx context.Context) ([]schema.Rate, error) {
+	rates, err := c.DB.GetHistoricAverageRates(ctx)
 	if err != nil {
 		return nil, err
 	}

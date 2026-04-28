@@ -13,7 +13,7 @@ import { NULL_UUID } from "../../../config/consts.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { concatClasses } from "../../utils/style.js";
 import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
-import { useAssetList, useLatestRates } from "../../schema/hooks.js";
+import { useAssetList, useHistoricAverageRates, useLatestRates } from "../../schema/hooks.js";
 import { AssetEditModal } from "./asset-edit-modal.js";
 
 function AssetsPage(): ReactElement {
@@ -39,10 +39,18 @@ function AssetsPage(): ReactElement {
     },
   });
 
-  const rates = useLatestRates({
+  const latestRates = useLatestRates({
     dependencies: [nudgeValue],
     onError: (e) => {
-      toastBus.error("Failed to load asset rates.");
+      toastBus.error("Failed to load latest asset rates.");
+      setError(e);
+    },
+  });
+
+  const historicAvgRates = useHistoricAverageRates({
+    dependencies: [nudgeValue],
+    onError: (e) => {
+      toastBus.error("Failed to load historical average asset rates.");
       setError(e);
     },
   });
@@ -73,7 +81,7 @@ function AssetsPage(): ReactElement {
   let body: ReactElement;
   if (error) {
     body = <ErrorPanel error={error} />;
-  } else if (!assets || !rates) {
+  } else if (!assets || !latestRates || !historicAvgRates) {
     body = <LoadingPanel />;
   } else {
     const filteredAssets = assets
@@ -87,7 +95,8 @@ function AssetsPage(): ReactElement {
       body = (
         <TileSet>
           {filteredAssets.map((a) => {
-            const rate = rates[a.id];
+            const rate = latestRates[a.id];
+            const avgRate = historicAvgRates[a.id];
             return (
               <Tile key={a.id} className={concatClasses(!a.active && "semi-transparent")}>
                 <h4>{a.name}</h4>
@@ -95,16 +104,19 @@ function AssetsPage(): ReactElement {
                   {!a.active ? <li>Inactive</li> : null}
                   <li>{a.currency?.code}</li>
                   {rate !== undefined ? (
-                    <>
-                      <li>
-                        {a.currency?.symbol}
-                        {rate.rate.toFixed(a.displayPrecision)}
-                      </li>
-                      <li>Updated {formatDateFromProto(rate.date)}</li>
-                    </>
-                  ) : (
-                    <li>No rate data</li>
-                  )}
+                    <li>
+                      {a.currency?.symbol}
+                      {rate.rate.toFixed(a.displayPrecision)}
+                    </li>
+                  ) : null}
+                  {avgRate !== undefined ? (
+                    <li>
+                      90d avg:
+                      {a.currency?.symbol}
+                      {avgRate.rate.toFixed(a.displayPrecision)}
+                    </li>
+                  ) : null}
+                  {rate !== undefined ? <li>Updated {formatDateFromProto(rate.date)}</li> : null}
                 </ul>
                 {!!a.notes ? <small>{a.notes}</small> : null}
                 <footer>

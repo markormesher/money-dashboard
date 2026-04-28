@@ -155,7 +155,7 @@ WHERE
   AND account.is_pension = FALSE
 ;
 
--- name: GetHistoricalAverageRates :many
+-- name: GetHistoricAverageRates :many
 SELECT
   asset_id,
   currency_id,

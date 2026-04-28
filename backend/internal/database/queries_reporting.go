@@ -242,8 +242,8 @@ func (db *DB) GetTaxableCapitalTransactions(ctx context.Context, profileID uuid.
 	return transactions, nil
 }
 
-func (db *DB) GetHistoricalAverageRates(ctx context.Context) ([]schema.Rate, error) {
-	rows, err := db.queries.GetHistoricalAverageRates(ctx)
+func (db *DB) GetHistoricAverageRates(ctx context.Context) ([]schema.Rate, error) {
+	rows, err := db.queries.GetHistoricAverageRates(ctx)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	} else if err != nil {
