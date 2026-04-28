@@ -22,7 +22,7 @@ func (s *apiServer) GetHoldingBalances(ctx context.Context, req *connect.Request
 	}
 
 	res := connect.NewResponse(&mdv4.GetHoldingBalancesResponse{
-		Balances: conversiontools.ConvertSlice(balances, conversion.HoldingBalanceFromCore),
+		Balances: conversiontools.ConvertSlice(balances, conversion.SummaryBalanceFromCore),
 	})
 	return res, nil
 }
@@ -39,7 +39,7 @@ func (s *apiServer) GetNonZeroMemoBalances(ctx context.Context, req *connect.Req
 	}
 
 	res := connect.NewResponse(&mdv4.GetNonZeroMemoBalancesResponse{
-		Balances: conversiontools.ConvertSlice(balances, conversion.CategoryBalanceFromCore),
+		Balances: conversiontools.ConvertSlice(balances, conversion.SummaryBalanceFromCore),
 	})
 	return res, nil
 }

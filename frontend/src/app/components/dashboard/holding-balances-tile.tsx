@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { HoldingBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
+import { SummaryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { useAsyncEffect } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -21,13 +21,13 @@ type Group = {
 
 type GroupRow = {
   account: Account;
-  balances: HoldingBalance[];
+  balances: SummaryBalance[];
   balanceSum: number;
 };
 
 function HoldingBalancesTile(): ReactElement {
   const [error, setError] = React.useState<unknown>();
-  const [holdingBalances, setHoldingBalances] = React.useState<HoldingBalance[]>();
+  const [holdingBalances, setHoldingBalances] = React.useState<SummaryBalance[]>();
   useAsyncEffect(async () => {
     try {
       const res = await reportingServiceClient.getHoldingBalances({});

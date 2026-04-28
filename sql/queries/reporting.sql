@@ -71,7 +71,8 @@ WHERE
 -- name: GetTaxableInterestIncomePerHolding :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
-  transaction.holding_id
+  transaction.holding_id,
+  transaction.category_id
 FROM
   transaction
     JOIN category on transaction.category_id = category.id
@@ -85,13 +86,14 @@ WHERE
   AND category.is_interest_income = TRUE
   AND account.is_isa = FALSE
   AND account.is_pension = FALSE
-GROUP BY transaction.holding_id
+GROUP BY transaction.holding_id, transaction.category_id
 ;
 
 -- name: GetTaxableDividendIncomePerHolding :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
-  transaction.holding_id
+  transaction.holding_id,
+  transaction.category_id
 FROM
   transaction
     JOIN category on transaction.category_id = category.id
@@ -105,13 +107,14 @@ WHERE
   AND category.is_dividend_income = TRUE
   AND account.is_isa = FALSE
   AND account.is_pension = FALSE
-GROUP BY transaction.holding_id
+GROUP BY transaction.holding_id, transaction.category_id
 ;
 
 -- name: GetPensionContributionsPerHolding :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
-  transaction.holding_id
+  transaction.holding_id,
+  transaction.category_id
 FROM
   transaction
     JOIN category on transaction.category_id = category.id
@@ -123,7 +126,7 @@ WHERE
   AND transaction.date <= @max_date
   AND transaction.deleted = FALSE
   AND category.is_pension_contribution = TRUE
-GROUP BY transaction.holding_id
+GROUP BY transaction.holding_id, transaction.category_id
 ;
 
 -- name: GetTaxableCapitalTransactions :many

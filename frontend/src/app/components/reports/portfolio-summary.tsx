@@ -9,7 +9,7 @@ import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import "./reports.css";
-import { HoldingBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
+import { SummaryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { formatCurrencyValue } from "../../utils/currency.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 
@@ -39,7 +39,7 @@ function PortfolioSummaryPage(): ReactElement {
 
   const [error, setError] = React.useState<unknown>();
 
-  const [holdingBalances, setHoldingBalances] = React.useState<HoldingBalance[]>();
+  const [holdingBalances, setHoldingBalances] = React.useState<SummaryBalance[]>();
   useAsyncEffect(async () => {
     try {
       const res = await reportingServiceClient.getHoldingBalances({});
