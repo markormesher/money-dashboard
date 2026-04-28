@@ -3,6 +3,7 @@ import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import {
+  SummaryBalance,
   TaxReport,
   TaxReportCapitalEvent,
   TaxReportS104Balance,
@@ -127,6 +128,21 @@ function TaxHelperPage(): ReactElement {
     const showDividendCategories = new Set(taxReport.dividendIncome.map((b) => b.category?.id ?? "")).size > 1;
     const showPensionCategories = new Set(taxReport.pensionContributions.map((b) => b.category?.id ?? "")).size > 1;
 
+    const sortBalances = (a: SummaryBalance, b: SummaryBalance): number => {
+      let cmp = a.holding?.account?.name.localeCompare(b.holding?.account?.name ?? "") ?? 0;
+      if (cmp != 0) {
+        return cmp;
+      }
+
+      cmp = a.holding?.name.localeCompare(b.holding?.name ?? "") ?? 0;
+      if (cmp != 0) {
+        return cmp;
+      }
+
+      cmp = a.category?.name.localeCompare(b.category?.name ?? "") ?? 0;
+      return cmp;
+    };
+
     body = (
       <>
         <h4>Interest Income</h4>
@@ -142,20 +158,18 @@ function TaxHelperPage(): ReactElement {
               </tr>
             </thead>
             <tbody>
-              {taxReport.interestIncome
-                .sort((a, b) => a.holding?.account?.name?.localeCompare(b.holding?.account?.name ?? "") ?? 0)
-                .map((b) => {
-                  return (
-                    <tr>
-                      <td>{b.holding?.account?.name}</td>
-                      <td>{b.holding?.name}</td>
-                      {showInterestCategories ? <td>{b.category?.name}</td> : null}
-                      <td className={"amount-cell"}>
-                        <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
-                      </td>
-                    </tr>
-                  );
-                })}
+              {taxReport.interestIncome.sort(sortBalances).map((b) => {
+                return (
+                  <tr>
+                    <td>{b.holding?.account?.name}</td>
+                    <td>{b.holding?.name}</td>
+                    {showInterestCategories ? <td>{b.category?.name}</td> : null}
+                    <td className={"amount-cell"}>
+                      <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
             <tfoot>
               <tr>
@@ -195,20 +209,18 @@ function TaxHelperPage(): ReactElement {
               </tr>
             </thead>
             <tbody>
-              {taxReport.dividendIncome
-                .sort((a, b) => a.holding?.account?.name?.localeCompare(b.holding?.account?.name ?? "") ?? 0)
-                .map((b) => {
-                  return (
-                    <tr>
-                      <td>{b.holding?.account?.name}</td>
-                      <td>{b.holding?.name}</td>
-                      {showDividendCategories ? <td>{b.category?.name}</td> : null}
-                      <td className={"amount-cell"}>
-                        <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
-                      </td>
-                    </tr>
-                  );
-                })}
+              {taxReport.dividendIncome.sort(sortBalances).map((b) => {
+                return (
+                  <tr>
+                    <td>{b.holding?.account?.name}</td>
+                    <td>{b.holding?.name}</td>
+                    {showDividendCategories ? <td>{b.category?.name}</td> : null}
+                    <td className={"amount-cell"}>
+                      <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
             <tfoot>
               <tr>
@@ -248,20 +260,18 @@ function TaxHelperPage(): ReactElement {
               </tr>
             </thead>
             <tbody>
-              {taxReport.pensionContributions
-                .sort((a, b) => a.holding?.account?.name?.localeCompare(b.holding?.account?.name ?? "") ?? 0)
-                .map((b) => {
-                  return (
-                    <tr>
-                      <td>{b.holding?.account?.name}</td>
-                      <td>{b.holding?.name}</td>
-                      {showPensionCategories ? <td>{b.category?.name}</td> : null}
-                      <td className={"amount-cell"}>
-                        <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
-                      </td>
-                    </tr>
-                  );
-                })}
+              {taxReport.pensionContributions.sort(sortBalances).map((b) => {
+                return (
+                  <tr>
+                    <td>{b.holding?.account?.name}</td>
+                    <td>{b.holding?.name}</td>
+                    {showPensionCategories ? <td>{b.category?.name}</td> : null}
+                    <td className={"amount-cell"}>
+                      <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
             <tfoot>
               <tr>
