@@ -141,8 +141,9 @@ func (db *DB) GetTaxableInterestIncomePerHolding(ctx context.Context, profileID 
 
 	for i, row := range rows {
 		output[i] = SummaryBalance{
-			Balance:   row.Balance,
-			HoldingID: row.HoldingID,
+			Balance:    row.Balance,
+			HoldingID:  row.HoldingID,
+			CategoryID: row.CategoryID,
 		}
 	}
 
@@ -165,8 +166,9 @@ func (db *DB) GetTaxableDividendIncomePerHolding(ctx context.Context, profileID 
 
 	for i, row := range rows {
 		output[i] = SummaryBalance{
-			Balance:   row.Balance,
-			HoldingID: row.HoldingID,
+			Balance:    row.Balance,
+			HoldingID:  row.HoldingID,
+			CategoryID: row.CategoryID,
 		}
 	}
 
@@ -189,8 +191,9 @@ func (db *DB) GetPensionContributionsPerHolding(ctx context.Context, profileID u
 
 	for i, row := range rows {
 		output[i] = SummaryBalance{
-			Balance:   row.Balance,
-			HoldingID: row.HoldingID,
+			Balance:    row.Balance,
+			HoldingID:  row.HoldingID,
+			CategoryID: row.CategoryID,
 		}
 	}
 

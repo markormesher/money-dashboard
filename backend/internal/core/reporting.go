@@ -260,7 +260,7 @@ func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, st
 		endDate = maxDate
 	}
 
-	// days will be counter as 0 to N for most of the logic here
+	// days will be counted as 0 to N for most of the logic here
 	days := int(math.Round(endDate.Sub(startDate).Hours()/24)) + 1
 	if days <= 0 {
 		return nil, fmt.Errorf("invalid date range")
@@ -318,18 +318,18 @@ func (c *Core) GetBalanceHistory(ctx context.Context, profile schema.Profile, st
 		date := startDate.AddDate(0, 0, d)
 		gbpBalance := decimal.Decimal{}
 
-		for holdingId, diff := range diffs[d] {
-			prev := runningTotal[holdingId]
-			runningTotal[holdingId], err = prev.Add(diff)
+		for holdingID, diff := range diffs[d] {
+			prev := runningTotal[holdingID]
+			runningTotal[holdingID], err = prev.Add(diff)
 			if err != nil {
 				return nil, err
 			}
 		}
 
-		for holdingId, total := range runningTotal {
-			holding, ok := holdings[holdingId]
+		for holdingID, total := range runningTotal {
+			holding, ok := holdings[holdingID]
 			if !ok {
-				return nil, fmt.Errorf("unknown holding: %s", holdingId)
+				return nil, fmt.Errorf("unknown holding: %s", holdingID)
 			}
 
 			gbpTotal, err := c.ConvertNativeAmountToGbp(ctx, total, holding, date)
@@ -389,6 +389,11 @@ func (c *Core) getHoldingBalancesForTaxReport(ctx context.Context, which string,
 		return nil, err
 	}
 
+	categories, err := c.GetAllCategoriesAsMap(ctx, profile)
+	if err != nil {
+		return nil, err
+	}
+
 	output := make([]schema.SummaryBalance, 0)
 	var data []database.SummaryBalance
 	switch which {
@@ -415,6 +420,11 @@ func (c *Core) getHoldingBalancesForTaxReport(ctx context.Context, which string,
 			return nil, fmt.Errorf("unknown holding: %s", b.HoldingID)
 		}
 
+		category, ok := categories[b.CategoryID]
+		if !ok {
+			return nil, fmt.Errorf("unknown category: %s", b.CategoryID)
+		}
+
 		gbpBalance, err := c.ConvertNativeAmountToGbp(ctx, b.Balance, holding, time.Now())
 		if err != nil {
 			return nil, err
@@ -422,6 +432,7 @@ func (c *Core) getHoldingBalancesForTaxReport(ctx context.Context, which string,
 
 		output = append(output, schema.SummaryBalance{
 			Holding:    &holding,
+			Category:   &category,
 			RawBalance: b.Balance,
 			GbpBalance: gbpBalance,
 		})

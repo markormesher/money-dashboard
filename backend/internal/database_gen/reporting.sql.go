@@ -161,7 +161,8 @@ func (q *Queries) GetMemoBalances(ctx context.Context, profileID uuid.UUID) ([]G
 const getPensionContributionsPerHolding = `-- name: GetPensionContributionsPerHolding :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
-  transaction.holding_id
+  transaction.holding_id,
+  transaction.category_id
 FROM
   transaction
     JOIN category on transaction.category_id = category.id
@@ -173,7 +174,7 @@ WHERE
   AND transaction.date <= $3
   AND transaction.deleted = FALSE
   AND category.is_pension_contribution = TRUE
-GROUP BY transaction.holding_id
+GROUP BY transaction.holding_id, transaction.category_id
 `
 
 type GetPensionContributionsPerHoldingParams struct {
@@ -183,8 +184,9 @@ type GetPensionContributionsPerHoldingParams struct {
 }
 
 type GetPensionContributionsPerHoldingRow struct {
-	Balance   decimal.Decimal
-	HoldingID uuid.UUID
+	Balance    decimal.Decimal
+	HoldingID  uuid.UUID
+	CategoryID uuid.UUID
 }
 
 func (q *Queries) GetPensionContributionsPerHolding(ctx context.Context, arg GetPensionContributionsPerHoldingParams) ([]GetPensionContributionsPerHoldingRow, error) {
@@ -196,7 +198,7 @@ func (q *Queries) GetPensionContributionsPerHolding(ctx context.Context, arg Get
 	var items []GetPensionContributionsPerHoldingRow
 	for rows.Next() {
 		var i GetPensionContributionsPerHoldingRow
-		if err := rows.Scan(&i.Balance, &i.HoldingID); err != nil {
+		if err := rows.Scan(&i.Balance, &i.HoldingID, &i.CategoryID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -329,7 +331,8 @@ func (q *Queries) GetTaxableCapitalTransactions(ctx context.Context, profileID u
 const getTaxableDividendIncomePerHolding = `-- name: GetTaxableDividendIncomePerHolding :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
-  transaction.holding_id
+  transaction.holding_id,
+  transaction.category_id
 FROM
   transaction
     JOIN category on transaction.category_id = category.id
@@ -343,7 +346,7 @@ WHERE
   AND category.is_dividend_income = TRUE
   AND account.is_isa = FALSE
   AND account.is_pension = FALSE
-GROUP BY transaction.holding_id
+GROUP BY transaction.holding_id, transaction.category_id
 `
 
 type GetTaxableDividendIncomePerHoldingParams struct {
@@ -353,8 +356,9 @@ type GetTaxableDividendIncomePerHoldingParams struct {
 }
 
 type GetTaxableDividendIncomePerHoldingRow struct {
-	Balance   decimal.Decimal
-	HoldingID uuid.UUID
+	Balance    decimal.Decimal
+	HoldingID  uuid.UUID
+	CategoryID uuid.UUID
 }
 
 func (q *Queries) GetTaxableDividendIncomePerHolding(ctx context.Context, arg GetTaxableDividendIncomePerHoldingParams) ([]GetTaxableDividendIncomePerHoldingRow, error) {
@@ -366,7 +370,7 @@ func (q *Queries) GetTaxableDividendIncomePerHolding(ctx context.Context, arg Ge
 	var items []GetTaxableDividendIncomePerHoldingRow
 	for rows.Next() {
 		var i GetTaxableDividendIncomePerHoldingRow
-		if err := rows.Scan(&i.Balance, &i.HoldingID); err != nil {
+		if err := rows.Scan(&i.Balance, &i.HoldingID, &i.CategoryID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -380,7 +384,8 @@ func (q *Queries) GetTaxableDividendIncomePerHolding(ctx context.Context, arg Ge
 const getTaxableInterestIncomePerHolding = `-- name: GetTaxableInterestIncomePerHolding :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,
-  transaction.holding_id
+  transaction.holding_id,
+  transaction.category_id
 FROM
   transaction
     JOIN category on transaction.category_id = category.id
@@ -394,7 +399,7 @@ WHERE
   AND category.is_interest_income = TRUE
   AND account.is_isa = FALSE
   AND account.is_pension = FALSE
-GROUP BY transaction.holding_id
+GROUP BY transaction.holding_id, transaction.category_id
 `
 
 type GetTaxableInterestIncomePerHoldingParams struct {
@@ -404,8 +409,9 @@ type GetTaxableInterestIncomePerHoldingParams struct {
 }
 
 type GetTaxableInterestIncomePerHoldingRow struct {
-	Balance   decimal.Decimal
-	HoldingID uuid.UUID
+	Balance    decimal.Decimal
+	HoldingID  uuid.UUID
+	CategoryID uuid.UUID
 }
 
 func (q *Queries) GetTaxableInterestIncomePerHolding(ctx context.Context, arg GetTaxableInterestIncomePerHoldingParams) ([]GetTaxableInterestIncomePerHoldingRow, error) {
@@ -417,7 +423,7 @@ func (q *Queries) GetTaxableInterestIncomePerHolding(ctx context.Context, arg Ge
 	var items []GetTaxableInterestIncomePerHoldingRow
 	for rows.Next() {
 		var i GetTaxableInterestIncomePerHoldingRow
-		if err := rows.Scan(&i.Balance, &i.HoldingID); err != nil {
+		if err := rows.Scan(&i.Balance, &i.HoldingID, &i.CategoryID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
