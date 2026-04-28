@@ -13,6 +13,44 @@ import (
 	"github.com/govalues/decimal"
 )
 
+const getHistoricalAverageRates = `-- name: GetHistoricalAverageRates :many
+SELECT
+  asset_id,
+  currency_id,
+  CAST(AVG(rate) AS NUMERIC(20, 10)) AS rate
+FROM
+  rate
+WHERE
+  date >= NOW() - INTERVAL '90 days'
+GROUP BY asset_id, currency_id
+`
+
+type GetHistoricalAverageRatesRow struct {
+	AssetID    *uuid.UUID
+	CurrencyID *uuid.UUID
+	Rate       decimal.Decimal
+}
+
+func (q *Queries) GetHistoricalAverageRates(ctx context.Context) ([]GetHistoricalAverageRatesRow, error) {
+	rows, err := q.db.Query(ctx, getHistoricalAverageRates)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetHistoricalAverageRatesRow
+	for rows.Next() {
+		var i GetHistoricalAverageRatesRow
+		if err := rows.Scan(&i.AssetID, &i.CurrencyID, &i.Rate); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getHoldingBalancesAsOfDate = `-- name: GetHoldingBalancesAsOfDate :many
 SELECT
   CAST(SUM(transaction.amount) AS NUMERIC(20, 10)) AS balance,

@@ -241,3 +241,23 @@ func (db *DB) GetTaxableCapitalTransactions(ctx context.Context, profileID uuid.
 
 	return transactions, nil
 }
+
+func (db *DB) GetHistoricalAverageRates(ctx context.Context) ([]schema.Rate, error) {
+	rows, err := db.queries.GetHistoricalAverageRates(ctx)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	rates := make([]schema.Rate, len(rows))
+	for i, row := range rows {
+		rates[i] = schema.Rate{
+			AssetID:    *row.AssetID,
+			CurrencyID: *row.CurrencyID,
+			Rate:       row.Rate,
+		}
+	}
+
+	return rates, nil
+}

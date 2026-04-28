@@ -36,6 +36,9 @@ const (
 	// MDRateServiceGetLatestRatesProcedure is the fully-qualified name of the MDRateService's
 	// GetLatestRates RPC.
 	MDRateServiceGetLatestRatesProcedure = "/moneydashboard.v4.MDRateService/GetLatestRates"
+	// MDRateServiceGetHistoricalAverageRatesProcedure is the fully-qualified name of the
+	// MDRateService's GetHistoricalAverageRates RPC.
+	MDRateServiceGetHistoricalAverageRatesProcedure = "/moneydashboard.v4.MDRateService/GetHistoricalAverageRates"
 	// MDRateServiceUpsertRateProcedure is the fully-qualified name of the MDRateService's UpsertRate
 	// RPC.
 	MDRateServiceUpsertRateProcedure = "/moneydashboard.v4.MDRateService/UpsertRate"
@@ -44,6 +47,7 @@ const (
 // MDRateServiceClient is a client for the moneydashboard.v4.MDRateService service.
 type MDRateServiceClient interface {
 	GetLatestRates(context.Context, *connect.Request[v4.GetLatestRatesRequest]) (*connect.Response[v4.GetLatestRatesResponse], error)
+	GetHistoricalAverageRates(context.Context, *connect.Request[v4.GetHistoricalAverageRatesRequest]) (*connect.Response[v4.GetHistoricalAverageRatesResponse], error)
 	UpsertRate(context.Context, *connect.Request[v4.UpsertRateRequest]) (*connect.Response[v4.UpsertRateResponse], error)
 }
 
@@ -64,6 +68,12 @@ func NewMDRateServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(mDRateServiceMethods.ByName("GetLatestRates")),
 			connect.WithClientOptions(opts...),
 		),
+		getHistoricalAverageRates: connect.NewClient[v4.GetHistoricalAverageRatesRequest, v4.GetHistoricalAverageRatesResponse](
+			httpClient,
+			baseURL+MDRateServiceGetHistoricalAverageRatesProcedure,
+			connect.WithSchema(mDRateServiceMethods.ByName("GetHistoricalAverageRates")),
+			connect.WithClientOptions(opts...),
+		),
 		upsertRate: connect.NewClient[v4.UpsertRateRequest, v4.UpsertRateResponse](
 			httpClient,
 			baseURL+MDRateServiceUpsertRateProcedure,
@@ -75,13 +85,19 @@ func NewMDRateServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 
 // mDRateServiceClient implements MDRateServiceClient.
 type mDRateServiceClient struct {
-	getLatestRates *connect.Client[v4.GetLatestRatesRequest, v4.GetLatestRatesResponse]
-	upsertRate     *connect.Client[v4.UpsertRateRequest, v4.UpsertRateResponse]
+	getLatestRates            *connect.Client[v4.GetLatestRatesRequest, v4.GetLatestRatesResponse]
+	getHistoricalAverageRates *connect.Client[v4.GetHistoricalAverageRatesRequest, v4.GetHistoricalAverageRatesResponse]
+	upsertRate                *connect.Client[v4.UpsertRateRequest, v4.UpsertRateResponse]
 }
 
 // GetLatestRates calls moneydashboard.v4.MDRateService.GetLatestRates.
 func (c *mDRateServiceClient) GetLatestRates(ctx context.Context, req *connect.Request[v4.GetLatestRatesRequest]) (*connect.Response[v4.GetLatestRatesResponse], error) {
 	return c.getLatestRates.CallUnary(ctx, req)
+}
+
+// GetHistoricalAverageRates calls moneydashboard.v4.MDRateService.GetHistoricalAverageRates.
+func (c *mDRateServiceClient) GetHistoricalAverageRates(ctx context.Context, req *connect.Request[v4.GetHistoricalAverageRatesRequest]) (*connect.Response[v4.GetHistoricalAverageRatesResponse], error) {
+	return c.getHistoricalAverageRates.CallUnary(ctx, req)
 }
 
 // UpsertRate calls moneydashboard.v4.MDRateService.UpsertRate.
@@ -92,6 +108,7 @@ func (c *mDRateServiceClient) UpsertRate(ctx context.Context, req *connect.Reque
 // MDRateServiceHandler is an implementation of the moneydashboard.v4.MDRateService service.
 type MDRateServiceHandler interface {
 	GetLatestRates(context.Context, *connect.Request[v4.GetLatestRatesRequest]) (*connect.Response[v4.GetLatestRatesResponse], error)
+	GetHistoricalAverageRates(context.Context, *connect.Request[v4.GetHistoricalAverageRatesRequest]) (*connect.Response[v4.GetHistoricalAverageRatesResponse], error)
 	UpsertRate(context.Context, *connect.Request[v4.UpsertRateRequest]) (*connect.Response[v4.UpsertRateResponse], error)
 }
 
@@ -108,6 +125,12 @@ func NewMDRateServiceHandler(svc MDRateServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(mDRateServiceMethods.ByName("GetLatestRates")),
 		connect.WithHandlerOptions(opts...),
 	)
+	mDRateServiceGetHistoricalAverageRatesHandler := connect.NewUnaryHandler(
+		MDRateServiceGetHistoricalAverageRatesProcedure,
+		svc.GetHistoricalAverageRates,
+		connect.WithSchema(mDRateServiceMethods.ByName("GetHistoricalAverageRates")),
+		connect.WithHandlerOptions(opts...),
+	)
 	mDRateServiceUpsertRateHandler := connect.NewUnaryHandler(
 		MDRateServiceUpsertRateProcedure,
 		svc.UpsertRate,
@@ -118,6 +141,8 @@ func NewMDRateServiceHandler(svc MDRateServiceHandler, opts ...connect.HandlerOp
 		switch r.URL.Path {
 		case MDRateServiceGetLatestRatesProcedure:
 			mDRateServiceGetLatestRatesHandler.ServeHTTP(w, r)
+		case MDRateServiceGetHistoricalAverageRatesProcedure:
+			mDRateServiceGetHistoricalAverageRatesHandler.ServeHTTP(w, r)
 		case MDRateServiceUpsertRateProcedure:
 			mDRateServiceUpsertRateHandler.ServeHTTP(w, r)
 		default:
@@ -131,6 +156,10 @@ type UnimplementedMDRateServiceHandler struct{}
 
 func (UnimplementedMDRateServiceHandler) GetLatestRates(context.Context, *connect.Request[v4.GetLatestRatesRequest]) (*connect.Response[v4.GetLatestRatesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDRateService.GetLatestRates is not implemented"))
+}
+
+func (UnimplementedMDRateServiceHandler) GetHistoricalAverageRates(context.Context, *connect.Request[v4.GetHistoricalAverageRatesRequest]) (*connect.Response[v4.GetHistoricalAverageRatesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("moneydashboard.v4.MDRateService.GetHistoricalAverageRates is not implemented"))
 }
 
 func (UnimplementedMDRateServiceHandler) UpsertRate(context.Context, *connect.Request[v4.UpsertRateRequest]) (*connect.Response[v4.UpsertRateResponse], error) {

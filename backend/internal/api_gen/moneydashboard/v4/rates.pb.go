@@ -177,6 +177,86 @@ func (x *GetLatestRatesResponse) GetRates() []*Rate {
 	return nil
 }
 
+type GetHistoricalAverageRatesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetHistoricalAverageRatesRequest) Reset() {
+	*x = GetHistoricalAverageRatesRequest{}
+	mi := &file_moneydashboard_v4_rates_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetHistoricalAverageRatesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHistoricalAverageRatesRequest) ProtoMessage() {}
+
+func (x *GetHistoricalAverageRatesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_moneydashboard_v4_rates_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHistoricalAverageRatesRequest.ProtoReflect.Descriptor instead.
+func (*GetHistoricalAverageRatesRequest) Descriptor() ([]byte, []int) {
+	return file_moneydashboard_v4_rates_proto_rawDescGZIP(), []int{3}
+}
+
+type GetHistoricalAverageRatesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Rates         []*Rate                `protobuf:"bytes,1,rep,name=rates,proto3" json:"rates,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetHistoricalAverageRatesResponse) Reset() {
+	*x = GetHistoricalAverageRatesResponse{}
+	mi := &file_moneydashboard_v4_rates_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetHistoricalAverageRatesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHistoricalAverageRatesResponse) ProtoMessage() {}
+
+func (x *GetHistoricalAverageRatesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_moneydashboard_v4_rates_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHistoricalAverageRatesResponse.ProtoReflect.Descriptor instead.
+func (*GetHistoricalAverageRatesResponse) Descriptor() ([]byte, []int) {
+	return file_moneydashboard_v4_rates_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetHistoricalAverageRatesResponse) GetRates() []*Rate {
+	if x != nil {
+		return x.Rates
+	}
+	return nil
+}
+
 type UpsertRateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Rate          *Rate                  `protobuf:"bytes,1,opt,name=rate,proto3" json:"rate,omitempty"`
@@ -186,7 +266,7 @@ type UpsertRateRequest struct {
 
 func (x *UpsertRateRequest) Reset() {
 	*x = UpsertRateRequest{}
-	mi := &file_moneydashboard_v4_rates_proto_msgTypes[3]
+	mi := &file_moneydashboard_v4_rates_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -198,7 +278,7 @@ func (x *UpsertRateRequest) String() string {
 func (*UpsertRateRequest) ProtoMessage() {}
 
 func (x *UpsertRateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_rates_proto_msgTypes[3]
+	mi := &file_moneydashboard_v4_rates_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -211,7 +291,7 @@ func (x *UpsertRateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertRateRequest.ProtoReflect.Descriptor instead.
 func (*UpsertRateRequest) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_rates_proto_rawDescGZIP(), []int{3}
+	return file_moneydashboard_v4_rates_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpsertRateRequest) GetRate() *Rate {
@@ -229,7 +309,7 @@ type UpsertRateResponse struct {
 
 func (x *UpsertRateResponse) Reset() {
 	*x = UpsertRateResponse{}
-	mi := &file_moneydashboard_v4_rates_proto_msgTypes[4]
+	mi := &file_moneydashboard_v4_rates_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -241,7 +321,7 @@ func (x *UpsertRateResponse) String() string {
 func (*UpsertRateResponse) ProtoMessage() {}
 
 func (x *UpsertRateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_moneydashboard_v4_rates_proto_msgTypes[4]
+	mi := &file_moneydashboard_v4_rates_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -254,7 +334,7 @@ func (x *UpsertRateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertRateResponse.ProtoReflect.Descriptor instead.
 func (*UpsertRateResponse) Descriptor() ([]byte, []int) {
-	return file_moneydashboard_v4_rates_proto_rawDescGZIP(), []int{4}
+	return file_moneydashboard_v4_rates_proto_rawDescGZIP(), []int{6}
 }
 
 var File_moneydashboard_v4_rates_proto protoreflect.FileDescriptor
@@ -271,12 +351,16 @@ const file_moneydashboard_v4_rates_proto_rawDesc = "" +
 	"\x04rate\x18\x05 \x01(\x01R\x04rate\"\x17\n" +
 	"\x15GetLatestRatesRequest\"G\n" +
 	"\x16GetLatestRatesResponse\x12-\n" +
+	"\x05rates\x18\x01 \x03(\v2\x17.moneydashboard.v4.RateR\x05rates\"\"\n" +
+	" GetHistoricalAverageRatesRequest\"R\n" +
+	"!GetHistoricalAverageRatesResponse\x12-\n" +
 	"\x05rates\x18\x01 \x03(\v2\x17.moneydashboard.v4.RateR\x05rates\"@\n" +
 	"\x11UpsertRateRequest\x12+\n" +
 	"\x04rate\x18\x01 \x01(\v2\x17.moneydashboard.v4.RateR\x04rate\"\x14\n" +
-	"\x12UpsertRateResponse2\xd1\x01\n" +
+	"\x12UpsertRateResponse2\xda\x02\n" +
 	"\rMDRateService\x12e\n" +
-	"\x0eGetLatestRates\x12(.moneydashboard.v4.GetLatestRatesRequest\x1a).moneydashboard.v4.GetLatestRatesResponse\x12Y\n" +
+	"\x0eGetLatestRates\x12(.moneydashboard.v4.GetLatestRatesRequest\x1a).moneydashboard.v4.GetLatestRatesResponse\x12\x86\x01\n" +
+	"\x19GetHistoricalAverageRates\x123.moneydashboard.v4.GetHistoricalAverageRatesRequest\x1a4.moneydashboard.v4.GetHistoricalAverageRatesResponse\x12Y\n" +
 	"\n" +
 	"UpsertRate\x12$.moneydashboard.v4.UpsertRateRequest\x1a%.moneydashboard.v4.UpsertRateResponseBQZOgithub.com/markormesher/money-dashboard/internal/api_gen/moneydashboard/v4;mdv4b\x06proto3"
 
@@ -292,26 +376,31 @@ func file_moneydashboard_v4_rates_proto_rawDescGZIP() []byte {
 	return file_moneydashboard_v4_rates_proto_rawDescData
 }
 
-var file_moneydashboard_v4_rates_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_moneydashboard_v4_rates_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_moneydashboard_v4_rates_proto_goTypes = []any{
-	(*Rate)(nil),                   // 0: moneydashboard.v4.Rate
-	(*GetLatestRatesRequest)(nil),  // 1: moneydashboard.v4.GetLatestRatesRequest
-	(*GetLatestRatesResponse)(nil), // 2: moneydashboard.v4.GetLatestRatesResponse
-	(*UpsertRateRequest)(nil),      // 3: moneydashboard.v4.UpsertRateRequest
-	(*UpsertRateResponse)(nil),     // 4: moneydashboard.v4.UpsertRateResponse
+	(*Rate)(nil),                              // 0: moneydashboard.v4.Rate
+	(*GetLatestRatesRequest)(nil),             // 1: moneydashboard.v4.GetLatestRatesRequest
+	(*GetLatestRatesResponse)(nil),            // 2: moneydashboard.v4.GetLatestRatesResponse
+	(*GetHistoricalAverageRatesRequest)(nil),  // 3: moneydashboard.v4.GetHistoricalAverageRatesRequest
+	(*GetHistoricalAverageRatesResponse)(nil), // 4: moneydashboard.v4.GetHistoricalAverageRatesResponse
+	(*UpsertRateRequest)(nil),                 // 5: moneydashboard.v4.UpsertRateRequest
+	(*UpsertRateResponse)(nil),                // 6: moneydashboard.v4.UpsertRateResponse
 }
 var file_moneydashboard_v4_rates_proto_depIdxs = []int32{
 	0, // 0: moneydashboard.v4.GetLatestRatesResponse.rates:type_name -> moneydashboard.v4.Rate
-	0, // 1: moneydashboard.v4.UpsertRateRequest.rate:type_name -> moneydashboard.v4.Rate
-	1, // 2: moneydashboard.v4.MDRateService.GetLatestRates:input_type -> moneydashboard.v4.GetLatestRatesRequest
-	3, // 3: moneydashboard.v4.MDRateService.UpsertRate:input_type -> moneydashboard.v4.UpsertRateRequest
-	2, // 4: moneydashboard.v4.MDRateService.GetLatestRates:output_type -> moneydashboard.v4.GetLatestRatesResponse
-	4, // 5: moneydashboard.v4.MDRateService.UpsertRate:output_type -> moneydashboard.v4.UpsertRateResponse
-	4, // [4:6] is the sub-list for method output_type
-	2, // [2:4] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 1: moneydashboard.v4.GetHistoricalAverageRatesResponse.rates:type_name -> moneydashboard.v4.Rate
+	0, // 2: moneydashboard.v4.UpsertRateRequest.rate:type_name -> moneydashboard.v4.Rate
+	1, // 3: moneydashboard.v4.MDRateService.GetLatestRates:input_type -> moneydashboard.v4.GetLatestRatesRequest
+	3, // 4: moneydashboard.v4.MDRateService.GetHistoricalAverageRates:input_type -> moneydashboard.v4.GetHistoricalAverageRatesRequest
+	5, // 5: moneydashboard.v4.MDRateService.UpsertRate:input_type -> moneydashboard.v4.UpsertRateRequest
+	2, // 6: moneydashboard.v4.MDRateService.GetLatestRates:output_type -> moneydashboard.v4.GetLatestRatesResponse
+	4, // 7: moneydashboard.v4.MDRateService.GetHistoricalAverageRates:output_type -> moneydashboard.v4.GetHistoricalAverageRatesResponse
+	6, // 8: moneydashboard.v4.MDRateService.UpsertRate:output_type -> moneydashboard.v4.UpsertRateResponse
+	6, // [6:9] is the sub-list for method output_type
+	3, // [3:6] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_moneydashboard_v4_rates_proto_init() }
@@ -325,7 +414,7 @@ func file_moneydashboard_v4_rates_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_moneydashboard_v4_rates_proto_rawDesc), len(file_moneydashboard_v4_rates_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
