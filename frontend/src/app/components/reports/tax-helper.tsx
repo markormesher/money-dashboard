@@ -175,6 +175,7 @@ function TaxHelperPage(): ReactElement {
               <tr>
                 <td></td>
                 <td></td>
+                {showInterestCategories ? <td></td> : null}
                 <td className={"amount-cell"}>
                   <span className={"amount"}>
                     <strong>
@@ -226,6 +227,7 @@ function TaxHelperPage(): ReactElement {
               <tr>
                 <td></td>
                 <td></td>
+                {showDividendCategories ? <td></td> : null}
                 <td className={"amount-cell"}>
                   <span className={"amount"}>
                     <strong>
@@ -277,6 +279,7 @@ function TaxHelperPage(): ReactElement {
               <tr>
                 <td></td>
                 <td></td>
+                {showPensionCategories ? <td></td> : null}
                 <td className={"amount-cell"}>
                   <span className={"amount"}>
                     <strong>
