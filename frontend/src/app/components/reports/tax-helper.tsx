@@ -123,6 +123,10 @@ function TaxHelperPage(): ReactElement {
   } else if (!taxReport || !capitalEvents) {
     body = <LoadingPanel />;
   } else {
+    const showInterestCategories = new Set(taxReport.interestIncome.map((b) => b.category?.id ?? "")).size > 1;
+    const showDividendCategories = new Set(taxReport.interestIncome.map((b) => b.category?.id ?? "")).size > 1;
+    const showPensionCategories = new Set(taxReport.interestIncome.map((b) => b.category?.id ?? "")).size > 1;
+
     body = (
       <>
         <h4>Interest Income</h4>
@@ -133,6 +137,7 @@ function TaxHelperPage(): ReactElement {
               <tr>
                 <td>Account</td>
                 <td>Holding</td>
+                {showInterestCategories ? <td>Category</td> : null}
                 <td>Amount</td>
               </tr>
             </thead>
@@ -144,6 +149,7 @@ function TaxHelperPage(): ReactElement {
                     <tr>
                       <td>{b.holding?.account?.name}</td>
                       <td>{b.holding?.name}</td>
+                      {showInterestCategories ? <td>{b.category?.name}</td> : null}
                       <td className={"amount-cell"}>
                         <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
                       </td>
@@ -184,6 +190,7 @@ function TaxHelperPage(): ReactElement {
               <tr>
                 <td>Account</td>
                 <td>Holding</td>
+                {showDividendCategories ? <td>Category</td> : null}
                 <td>Amount</td>
               </tr>
             </thead>
@@ -195,6 +202,7 @@ function TaxHelperPage(): ReactElement {
                     <tr>
                       <td>{b.holding?.account?.name}</td>
                       <td>{b.holding?.name}</td>
+                      {showDividendCategories ? <td>{b.category?.name}</td> : null}
                       <td className={"amount-cell"}>
                         <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
                       </td>
@@ -235,6 +243,7 @@ function TaxHelperPage(): ReactElement {
               <tr>
                 <td>Account</td>
                 <td>Holding</td>
+                {showPensionCategories ? <td>Category</td> : null}
                 <td>Amount</td>
               </tr>
             </thead>
@@ -246,6 +255,7 @@ function TaxHelperPage(): ReactElement {
                     <tr>
                       <td>{b.holding?.account?.name}</td>
                       <td>{b.holding?.name}</td>
+                      {showPensionCategories ? <td>{b.category?.name}</td> : null}
                       <td className={"amount-cell"}>
                         <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
                       </td>
