@@ -154,15 +154,3 @@ WHERE
   AND account.is_isa = FALSE
   AND account.is_pension = FALSE
 ;
-
--- name: GetHistoricAverageRates :many
-SELECT
-  asset_id,
-  currency_id,
-  CAST(AVG(rate) AS NUMERIC(20, 10)) AS rate
-FROM
-  rate
-WHERE
-  date >= NOW() - INTERVAL '90 days'
-GROUP BY asset_id, currency_id
-;
