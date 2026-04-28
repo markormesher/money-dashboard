@@ -124,8 +124,8 @@ function TaxHelperPage(): ReactElement {
     body = <LoadingPanel />;
   } else {
     const showInterestCategories = new Set(taxReport.interestIncome.map((b) => b.category?.id ?? "")).size > 1;
-    const showDividendCategories = new Set(taxReport.interestIncome.map((b) => b.category?.id ?? "")).size > 1;
-    const showPensionCategories = new Set(taxReport.interestIncome.map((b) => b.category?.id ?? "")).size > 1;
+    const showDividendCategories = new Set(taxReport.dividendIncome.map((b) => b.category?.id ?? "")).size > 1;
+    const showPensionCategories = new Set(taxReport.pensionContributions.map((b) => b.category?.id ?? "")).size > 1;
 
     body = (
       <>
