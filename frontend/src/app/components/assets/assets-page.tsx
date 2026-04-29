@@ -105,15 +105,12 @@ function AssetsPage(): ReactElement {
                   <li>{a.currency?.code}</li>
                   {rate !== undefined ? (
                     <li>
-                      {a.currency?.symbol}
-                      {rate.rate.toFixed(a.displayPrecision)}
+                      {a.currency?.symbol} {rate.rate.toFixed(a.displayPrecision)}
                     </li>
                   ) : null}
                   {avgRate !== undefined ? (
                     <li>
-                      90d avg:
-                      {a.currency?.symbol}
-                      {avgRate.rate.toFixed(a.displayPrecision)}
+                      90d avg: {a.currency?.symbol} {avgRate.rate.toFixed(a.displayPrecision)}
                     </li>
                   ) : null}
                   {rate !== undefined ? <li>Updated {formatDateFromProto(rate.date)}</li> : null}
