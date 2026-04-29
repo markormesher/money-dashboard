@@ -40,8 +40,34 @@ func (db *DB) GetLatestRates(ctx context.Context) ([]schema.Rate, error) {
 		return nil, err
 	}
 
-	currencies := conversiontools.ConvertSlice(rows, conversion.RateToCore)
-	return currencies, nil
+	rates := conversiontools.ConvertSlice(rows, conversion.RateToCore)
+	return rates, nil
+}
+
+func (db *DB) GetHistoricAverageRates(ctx context.Context) ([]schema.Rate, error) {
+	rows, err := db.queries.GetHistoricAverageRates(ctx)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	rates := make([]schema.Rate, len(rows))
+	for i, row := range rows {
+		rates[i] = schema.Rate{
+			Rate: row.Rate,
+		}
+
+		if row.AssetID != nil {
+			rates[i].AssetID = *row.AssetID
+		}
+
+		if row.CurrencyID != nil {
+			rates[i].AssetID = *row.CurrencyID
+		}
+	}
+
+	return rates, nil
 }
 
 func (db *DB) GetHistoricRate(ctx context.Context, assetOrCurrencyID uuid.UUID, date time.Time) (schema.Rate, error) {

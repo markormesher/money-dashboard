@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file moneydashboard/v4/rates.proto.
  */
 export const file_moneydashboard_v4_rates: GenFile = /*@__PURE__*/
-  fileDesc("Ch1tb25leWRhc2hib2FyZC92NC9yYXRlcy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiVQoEUmF0ZRIKCgJpZBgBIAEoCRIQCghhc3NldF9pZBgCIAEoCRITCgtjdXJyZW5jeV9pZBgDIAEoCRIMCgRkYXRlGAQgASgDEgwKBHJhdGUYBSABKAEiFwoVR2V0TGF0ZXN0UmF0ZXNSZXF1ZXN0IkAKFkdldExhdGVzdFJhdGVzUmVzcG9uc2USJgoFcmF0ZXMYASADKAsyFy5tb25leWRhc2hib2FyZC52NC5SYXRlIjoKEVVwc2VydFJhdGVSZXF1ZXN0EiUKBHJhdGUYASABKAsyFy5tb25leWRhc2hib2FyZC52NC5SYXRlIhQKElVwc2VydFJhdGVSZXNwb25zZTLRAQoNTURSYXRlU2VydmljZRJlCg5HZXRMYXRlc3RSYXRlcxIoLm1vbmV5ZGFzaGJvYXJkLnY0LkdldExhdGVzdFJhdGVzUmVxdWVzdBopLm1vbmV5ZGFzaGJvYXJkLnY0LkdldExhdGVzdFJhdGVzUmVzcG9uc2USWQoKVXBzZXJ0UmF0ZRIkLm1vbmV5ZGFzaGJvYXJkLnY0LlVwc2VydFJhdGVSZXF1ZXN0GiUubW9uZXlkYXNoYm9hcmQudjQuVXBzZXJ0UmF0ZVJlc3BvbnNlQlFaT2dpdGh1Yi5jb20vbWFya29ybWVzaGVyL21vbmV5LWRhc2hib2FyZC9pbnRlcm5hbC9hcGlfZ2VuL21vbmV5ZGFzaGJvYXJkL3Y0O21kdjRiBnByb3RvMw");
+  fileDesc("Ch1tb25leWRhc2hib2FyZC92NC9yYXRlcy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiVQoEUmF0ZRIKCgJpZBgBIAEoCRIQCghhc3NldF9pZBgCIAEoCRITCgtjdXJyZW5jeV9pZBgDIAEoCRIMCgRkYXRlGAQgASgDEgwKBHJhdGUYBSABKAEiFwoVR2V0TGF0ZXN0UmF0ZXNSZXF1ZXN0IkAKFkdldExhdGVzdFJhdGVzUmVzcG9uc2USJgoFcmF0ZXMYASADKAsyFy5tb25leWRhc2hib2FyZC52NC5SYXRlIiAKHkdldEhpc3RvcmljQXZlcmFnZVJhdGVzUmVxdWVzdCJJCh9HZXRIaXN0b3JpY0F2ZXJhZ2VSYXRlc1Jlc3BvbnNlEiYKBXJhdGVzGAEgAygLMhcubW9uZXlkYXNoYm9hcmQudjQuUmF0ZSI6ChFVcHNlcnRSYXRlUmVxdWVzdBIlCgRyYXRlGAEgASgLMhcubW9uZXlkYXNoYm9hcmQudjQuUmF0ZSIUChJVcHNlcnRSYXRlUmVzcG9uc2Uy1AIKDU1EUmF0ZVNlcnZpY2USZQoOR2V0TGF0ZXN0UmF0ZXMSKC5tb25leWRhc2hib2FyZC52NC5HZXRMYXRlc3RSYXRlc1JlcXVlc3QaKS5tb25leWRhc2hib2FyZC52NC5HZXRMYXRlc3RSYXRlc1Jlc3BvbnNlEoABChdHZXRIaXN0b3JpY0F2ZXJhZ2VSYXRlcxIxLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEhpc3RvcmljQXZlcmFnZVJhdGVzUmVxdWVzdBoyLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEhpc3RvcmljQXZlcmFnZVJhdGVzUmVzcG9uc2USWQoKVXBzZXJ0UmF0ZRIkLm1vbmV5ZGFzaGJvYXJkLnY0LlVwc2VydFJhdGVSZXF1ZXN0GiUubW9uZXlkYXNoYm9hcmQudjQuVXBzZXJ0UmF0ZVJlc3BvbnNlQlFaT2dpdGh1Yi5jb20vbWFya29ybWVzaGVyL21vbmV5LWRhc2hib2FyZC9pbnRlcm5hbC9hcGlfZ2VuL21vbmV5ZGFzaGJvYXJkL3Y0O21kdjRiBnByb3RvMw");
 
 /**
  * @generated from message moneydashboard.v4.Rate
@@ -80,6 +80,36 @@ export const GetLatestRatesResponseSchema: GenMessage<GetLatestRatesResponse> = 
   messageDesc(file_moneydashboard_v4_rates, 2);
 
 /**
+ * @generated from message moneydashboard.v4.GetHistoricAverageRatesRequest
+ */
+export type GetHistoricAverageRatesRequest = Message<"moneydashboard.v4.GetHistoricAverageRatesRequest"> & {
+};
+
+/**
+ * Describes the message moneydashboard.v4.GetHistoricAverageRatesRequest.
+ * Use `create(GetHistoricAverageRatesRequestSchema)` to create a new message.
+ */
+export const GetHistoricAverageRatesRequestSchema: GenMessage<GetHistoricAverageRatesRequest> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_rates, 3);
+
+/**
+ * @generated from message moneydashboard.v4.GetHistoricAverageRatesResponse
+ */
+export type GetHistoricAverageRatesResponse = Message<"moneydashboard.v4.GetHistoricAverageRatesResponse"> & {
+  /**
+   * @generated from field: repeated moneydashboard.v4.Rate rates = 1;
+   */
+  rates: Rate[];
+};
+
+/**
+ * Describes the message moneydashboard.v4.GetHistoricAverageRatesResponse.
+ * Use `create(GetHistoricAverageRatesResponseSchema)` to create a new message.
+ */
+export const GetHistoricAverageRatesResponseSchema: GenMessage<GetHistoricAverageRatesResponse> = /*@__PURE__*/
+  messageDesc(file_moneydashboard_v4_rates, 4);
+
+/**
  * @generated from message moneydashboard.v4.UpsertRateRequest
  */
 export type UpsertRateRequest = Message<"moneydashboard.v4.UpsertRateRequest"> & {
@@ -94,7 +124,7 @@ export type UpsertRateRequest = Message<"moneydashboard.v4.UpsertRateRequest"> &
  * Use `create(UpsertRateRequestSchema)` to create a new message.
  */
 export const UpsertRateRequestSchema: GenMessage<UpsertRateRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_rates, 3);
+  messageDesc(file_moneydashboard_v4_rates, 5);
 
 /**
  * @generated from message moneydashboard.v4.UpsertRateResponse
@@ -107,7 +137,7 @@ export type UpsertRateResponse = Message<"moneydashboard.v4.UpsertRateResponse">
  * Use `create(UpsertRateResponseSchema)` to create a new message.
  */
 export const UpsertRateResponseSchema: GenMessage<UpsertRateResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_rates, 4);
+  messageDesc(file_moneydashboard_v4_rates, 6);
 
 /**
  * @generated from service moneydashboard.v4.MDRateService
@@ -120,6 +150,14 @@ export const MDRateService: GenService<{
     methodKind: "unary";
     input: typeof GetLatestRatesRequestSchema;
     output: typeof GetLatestRatesResponseSchema;
+  },
+  /**
+   * @generated from rpc moneydashboard.v4.MDRateService.GetHistoricAverageRates
+   */
+  getHistoricAverageRates: {
+    methodKind: "unary";
+    input: typeof GetHistoricAverageRatesRequestSchema;
+    output: typeof GetHistoricAverageRatesResponseSchema;
   },
   /**
    * @generated from rpc moneydashboard.v4.MDRateService.UpsertRate

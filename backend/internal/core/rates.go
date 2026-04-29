@@ -55,6 +55,15 @@ func (c *Core) GetLatestRates(ctx context.Context) ([]schema.Rate, error) {
 	return latestRates, nil
 }
 
+func (c *Core) GetHistoricAverageRates(ctx context.Context) ([]schema.Rate, error) {
+	rates, err := c.DB.GetHistoricAverageRates(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return rates, nil
+}
+
 func (c *Core) getHistoricRate(ctx context.Context, assetOrCurrencyID uuid.UUID, date time.Time) (schema.Rate, error) {
 	// base case for GBP
 	if assetOrCurrencyID.String() == gbpCurrencyId {

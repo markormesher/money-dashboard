@@ -226,6 +226,31 @@ function useLatestRates(options: UseListOptions): Record<string, Rate> | undefin
   return rates;
 }
 
+function useHistoricAverageRates(options: UseListOptions): Record<string, Rate> | undefined {
+  const [rates, setRates] = React.useState<Record<string, Rate>>();
+  useAsyncEffect(async () => {
+    options.wg?.add();
+    try {
+      const res = await rateServiceClient.getHistoricAverageRates({});
+      const rates: Record<string, Rate> = {};
+      res.rates.forEach((r) => {
+        if (r.currencyId != NULL_UUID) {
+          rates[r.currencyId] = r;
+        }
+        if (r.assetId != NULL_UUID) {
+          rates[r.assetId] = r;
+        }
+      });
+      setRates(rates);
+    } catch (e) {
+      options.onError(e);
+      console.log(e);
+    }
+    options.wg?.done();
+  }, options.dependencies ?? []);
+  return rates;
+}
+
 export {
   useAccountList,
   useAccountGroupList,
@@ -238,4 +263,5 @@ export {
   usePayeeList,
   useProfileList,
   useLatestRates,
+  useHistoricAverageRates,
 };

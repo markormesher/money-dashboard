@@ -26,6 +26,23 @@ func (s *apiServer) GetLatestRates(ctx context.Context, req *connect.Request[mdv
 	return res, nil
 }
 
+func (s *apiServer) GetHistoricAverageRates(ctx context.Context, req *connect.Request[mdv4.GetHistoricAverageRatesRequest]) (*connect.Response[mdv4.GetHistoricAverageRatesResponse], error) {
+	_, err := s.getReqUser(ctx, req)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	rates, err := s.core.GetHistoricAverageRates(ctx)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	res := connect.NewResponse(&mdv4.GetHistoricAverageRatesResponse{
+		Rates: conversiontools.ConvertSlice(rates, conversion.RateFromCore),
+	})
+	return res, nil
+}
+
 func (s *apiServer) UpsertRate(ctx context.Context, req *connect.Request[mdv4.UpsertRateRequest]) (*connect.Response[mdv4.UpsertRateResponse], error) {
 	secret := req.Header().Get("x-api-key")
 	if secret != s.core.Config.ExternalDataSecret {
