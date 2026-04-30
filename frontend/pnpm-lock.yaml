@@ -46,8 +46,8 @@ importers:
         specifier: 2.12.0
         version: 2.12.0(@bufbuild/protobuf@2.12.0)
       '@markormesher/eslint-config':
-        specifier: github:markormesher/eslint-config#semver:v0.5.30
-        version: https://codeload.github.com/markormesher/eslint-config/tar.gz/865c275ad05c58296ebc51076c79e9259dde90d0(eslint@9.39.4)(typescript@6.0.3)
+        specifier: github:markormesher/eslint-config#semver:v0.5.31
+        version: https://codeload.github.com/markormesher/eslint-config/tar.gz/1f628aef8e92d8696fea2071805504976c572fed(eslint@9.39.4)(typescript@6.0.3)
       '@tsconfig/strictest':
         specifier: 2.0.8
         version: 2.0.8
@@ -308,8 +308,8 @@ packages:
   '@kurkle/color@0.3.4':
     resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
-  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/865c275ad05c58296ebc51076c79e9259dde90d0':
-    resolution: {tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/865c275ad05c58296ebc51076c79e9259dde90d0}
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/1f628aef8e92d8696fea2071805504976c572fed':
+    resolution: {tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/1f628aef8e92d8696fea2071805504976c572fed}
     version: 0.0.0
     peerDependencies:
       eslint: ^9.0.0
@@ -2057,7 +2057,7 @@ snapshots:
 
   '@kurkle/color@0.3.4': {}
 
-  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/865c275ad05c58296ebc51076c79e9259dde90d0(eslint@9.39.4)(typescript@6.0.3)':
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/1f628aef8e92d8696fea2071805504976c572fed(eslint@9.39.4)(typescript@6.0.3)':
     dependencies:
       '@eslint/js': 9.39.4
       '@typescript-eslint/eslint-plugin': 8.59.0(@typescript-eslint/parser@8.59.0(eslint@9.39.4)(typescript@6.0.3))(eslint@9.39.4)(typescript@6.0.3)
