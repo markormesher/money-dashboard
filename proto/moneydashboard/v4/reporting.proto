@@ -47,7 +47,7 @@ message TaxReportCapitalEventMatch {
 }
 
 message TaxReportS104Balance {
-  Holding holding = 1;
+  Asset asset = 1;
   double qty = 2;
   double avg_gbp_unit_price = 3;
 }

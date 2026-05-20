@@ -476,6 +476,16 @@ type CaptialS104Pot struct {
 }
 
 func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.Profile, startDate time.Time, endDate time.Time) ([]schema.TaxReportCapitalEvent, []schema.TaxReportS104Balance, error) {
+	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	assets, err := c.GetAllAssetsAsMap(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	// share matching and S104 pots don't are about tax year bounaries, so we need to
 	// get the full history and build the full report, then return the events for the
 	// year in question
@@ -636,11 +646,6 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 		against the S104 pot.
 	*/
 
-	holdings, err := c.GetAllHoldingsAsMap(ctx, profile)
-	if err != nil {
-		return nil, nil, err
-	}
-
 	pots := make(map[uuid.UUID]CaptialS104Pot, 0)
 
 	for e := range events {
@@ -651,9 +656,19 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 			continue
 		}
 
-		pot, ok := pots[event.holdingID]
+		holding, ok := holdings[event.holdingID]
 		if !ok {
-			pots[event.holdingID] = CaptialS104Pot{}
+			return nil, nil, fmt.Errorf("unknown holding: %v", event.holdingID)
+		}
+
+		if holding.Asset == nil {
+			return nil, nil, fmt.Errorf("cannot compute S104 pot for a non-asset holding: %v", event.holdingID)
+		}
+		assetID := holding.Asset.ID
+
+		pot, ok := pots[assetID]
+		if !ok {
+			pots[assetID] = CaptialS104Pot{}
 		}
 
 		// handle acquisitions - add them to the pot
@@ -702,7 +717,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 			}
 
 			if newPotQty.IsNeg() {
-				return nil, nil, fmt.Errorf("S104 pot has gone negative - this should not happen (holding: %s, date: %s)", event.holdingID, event.date)
+				return nil, nil, fmt.Errorf("S104 pot has gone negative - this should not happen (asset: %s, holding: %s, date: %s)", assetID, event.holdingID, event.date)
 			}
 
 			pot.qty = newPotQty
@@ -718,7 +733,7 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 		// we used all remaining units, so we know these two are equal now
 		event.qtyMatched = event.qty.Abs()
 
-		pots[event.holdingID] = pot
+		pots[assetID] = pot
 	}
 
 	// rebuild result
@@ -774,14 +789,14 @@ func (c *Core) getCaptialReportForTaxReport(ctx context.Context, profile schema.
 	}
 
 	outS104Balances := make([]schema.TaxReportS104Balance, 0)
-	for holdingID, pot := range pots {
-		holding, ok := holdings[holdingID]
+	for assetID, pot := range pots {
+		asset, ok := assets[assetID]
 		if !ok {
-			return nil, nil, fmt.Errorf("unknown holding: %v", holdingID)
+			return nil, nil, fmt.Errorf("unknown asset: %v", assetID)
 		}
 
 		outS104Balances = append(outS104Balances, schema.TaxReportS104Balance{
-			Holding:         holding,
+			Asset:           asset,
 			Qty:             pot.qty,
 			AvgGbpUnitPrice: pot.unitPrice,
 		})

@@ -55,7 +55,7 @@ type TaxReportCapitalEventMatch struct {
 }
 
 type TaxReportS104Balance struct {
-	Holding         Holding
+	Asset           Asset
 	Qty             decimal.Decimal
 	AvgGbpUnitPrice decimal.Decimal
 }

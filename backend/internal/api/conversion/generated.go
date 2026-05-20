@@ -321,7 +321,7 @@ func TaxReportFromCore(source schema.TaxReport) *v4.TaxReport {
 }
 func TaxReportS104BalanceFromCore(source schema.TaxReportS104Balance) *v4.TaxReportS104Balance {
 	var mdv4TaxReportS104Balance v4.TaxReportS104Balance
-	mdv4TaxReportS104Balance.Holding = HoldingFromCore(source.Holding)
+	mdv4TaxReportS104Balance.Asset = AssetFromCore(source.Asset)
 	mdv4TaxReportS104Balance.Qty = ConvertDecimalToFloat(source.Qty)
 	mdv4TaxReportS104Balance.AvgGbpUnitPrice = ConvertDecimalToFloat(source.AvgGbpUnitPrice)
 	return &mdv4TaxReportS104Balance
