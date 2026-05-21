@@ -379,7 +379,7 @@ func (x *TaxReportCapitalEventMatch) GetNote() string {
 
 type TaxReportS104Balance struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Holding         *Holding               `protobuf:"bytes,1,opt,name=holding,proto3" json:"holding,omitempty"`
+	Asset           *Asset                 `protobuf:"bytes,1,opt,name=asset,proto3" json:"asset,omitempty"`
 	Qty             float64                `protobuf:"fixed64,2,opt,name=qty,proto3" json:"qty,omitempty"`
 	AvgGbpUnitPrice float64                `protobuf:"fixed64,3,opt,name=avg_gbp_unit_price,json=avgGbpUnitPrice,proto3" json:"avg_gbp_unit_price,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -416,9 +416,9 @@ func (*TaxReportS104Balance) Descriptor() ([]byte, []int) {
 	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *TaxReportS104Balance) GetHolding() *Holding {
+func (x *TaxReportS104Balance) GetAsset() *Asset {
 	if x != nil {
-		return x.Holding
+		return x.Asset
 	}
 	return nil
 }
@@ -973,9 +973,9 @@ const file_moneydashboard_v4_reporting_proto_rawDesc = "" +
 	"\x03qty\x18\x01 \x01(\x01R\x03qty\x12\x12\n" +
 	"\x04date\x18\x02 \x01(\x03R\x04date\x12\x14\n" +
 	"\x05price\x18\x03 \x01(\x01R\x05price\x12\x12\n" +
-	"\x04note\x18\x04 \x01(\tR\x04note\"\x8b\x01\n" +
-	"\x14TaxReportS104Balance\x124\n" +
-	"\aholding\x18\x01 \x01(\v2\x1a.moneydashboard.v4.HoldingR\aholding\x12\x10\n" +
+	"\x04note\x18\x04 \x01(\tR\x04note\"\x85\x01\n" +
+	"\x14TaxReportS104Balance\x12.\n" +
+	"\x05asset\x18\x01 \x01(\v2\x18.moneydashboard.v4.AssetR\x05asset\x12\x10\n" +
 	"\x03qty\x18\x02 \x01(\x01R\x03qty\x12+\n" +
 	"\x12avg_gbp_unit_price\x18\x03 \x01(\x01R\x0favgGbpUnitPrice\"\x9a\x03\n" +
 	"\tTaxReport\x12J\n" +
@@ -1056,7 +1056,7 @@ var file_moneydashboard_v4_reporting_proto_depIdxs = []int32{
 	21, // 4: moneydashboard.v4.EnvelopeBalance.envelope:type_name -> moneydashboard.v4.Envelope
 	17, // 5: moneydashboard.v4.TaxReportCapitalEvent.holding:type_name -> moneydashboard.v4.Holding
 	4,  // 6: moneydashboard.v4.TaxReportCapitalEvent.matches:type_name -> moneydashboard.v4.TaxReportCapitalEventMatch
-	17, // 7: moneydashboard.v4.TaxReportS104Balance.holding:type_name -> moneydashboard.v4.Holding
+	19, // 7: moneydashboard.v4.TaxReportS104Balance.asset:type_name -> moneydashboard.v4.Asset
 	0,  // 8: moneydashboard.v4.TaxReport.interest_income:type_name -> moneydashboard.v4.SummaryBalance
 	0,  // 9: moneydashboard.v4.TaxReport.dividend_income:type_name -> moneydashboard.v4.SummaryBalance
 	0,  // 10: moneydashboard.v4.TaxReport.pension_contributions:type_name -> moneydashboard.v4.SummaryBalance

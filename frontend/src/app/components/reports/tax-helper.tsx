@@ -529,18 +529,18 @@ function TaxHelperPage(): ReactElement {
             <table className={"auto-width"}>
               <thead>
                 <tr>
-                  <th>Holding</th>
+                  <th>Asset</th>
                   <th>Quantity</th>
                   <th>Avg. Unit Price</th>
                 </tr>
               </thead>
               <tbody>
                 {s104Balances
-                  .sort((a, b) => (a.holding?.name ?? "").localeCompare(b.holding?.name ?? ""))
+                  .sort((a, b) => (a.asset?.name ?? "").localeCompare(b.asset?.name ?? ""))
                   .map((b) => {
                     return (
                       <tr>
-                        <td>{b.holding?.name}</td>
+                        <td>{b.asset?.name}</td>
                         <td className={"amount-cell"}>
                           <span className={"amount"}>{formatAssetQuantity(b.qty)}</span>
                         </td>
