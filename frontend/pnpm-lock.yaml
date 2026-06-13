@@ -46,8 +46,8 @@ importers:
         specifier: 2.12.0
         version: 2.12.0(@bufbuild/protobuf@2.12.0)
       '@markormesher/eslint-config':
-        specifier: github:markormesher/eslint-config#semver:v0.5.44
-        version: https://codeload.github.com/markormesher/eslint-config/tar.gz/615f8e25b5b2785dbfbc36e0447edc4366700e7d(eslint@9.39.4)(typescript@6.0.3)
+        specifier: github:markormesher/eslint-config#semver:v0.5.46
+        version: https://codeload.github.com/markormesher/eslint-config/tar.gz/9f03feabb2d948fe732c78bcfabc28acfb78e912(eslint@9.39.4)(typescript@6.0.3)
       '@tsconfig/strictest':
         specifier: 2.0.8
         version: 2.0.8
@@ -308,8 +308,8 @@ packages:
   '@kurkle/color@0.3.4':
     resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
-  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/615f8e25b5b2785dbfbc36e0447edc4366700e7d':
-    resolution: {gitHosted: true, integrity: sha512-UYcLZ6uelcX/59jCda3hrIm1OmkEjZjQCKOOeE4fNDeJv7b32BXFC3ETJOb2X36GHHFu6MAco/OYYS77QBgOUw==, tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/615f8e25b5b2785dbfbc36e0447edc4366700e7d}
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/9f03feabb2d948fe732c78bcfabc28acfb78e912':
+    resolution: {gitHosted: true, integrity: sha512-c9HpiW8PmjjiVspOKFTDS0VFr4Szo44hJn4HE20Ghwi2cQQb7OT8c3i9Jb0z35nMfWfadBJFKIDbgFKZIIQGqQ==, tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/9f03feabb2d948fe732c78bcfabc28acfb78e912}
     version: 0.0.0
     peerDependencies:
       eslint: ^9.0.0
@@ -2058,7 +2058,7 @@ snapshots:
 
   '@kurkle/color@0.3.4': {}
 
-  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/615f8e25b5b2785dbfbc36e0447edc4366700e7d(eslint@9.39.4)(typescript@6.0.3)':
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/9f03feabb2d948fe732c78bcfabc28acfb78e912(eslint@9.39.4)(typescript@6.0.3)':
     dependencies:
       '@eslint/js': 9.39.4
       '@typescript-eslint/eslint-plugin': 8.60.1(@typescript-eslint/parser@8.60.1(eslint@9.39.4)(typescript@6.0.3))(eslint@9.39.4)(typescript@6.0.3)
