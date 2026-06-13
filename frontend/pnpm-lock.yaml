@@ -24,8 +24,8 @@ importers:
         specifier: ^4.4.9
         version: 4.5.1
       material-symbols:
-        specifier: ^0.44.0
-        version: 0.44.12
+        specifier: ^0.45.0
+        version: 0.45.0
       react:
         specifier: ^19.0.0
         version: 19.2.7
@@ -1346,8 +1346,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  material-symbols@0.44.12:
-    resolution: {integrity: sha512-lZkS9BwISNU2Jbup+IlwZrr9z1oAK6zx38qPpe7mNzkXwiIEnQaxPz1Sf3bNZ0MX15LNlJQNjKI3MWLgmo83+Q==}
+  material-symbols@0.45.0:
+    resolution: {integrity: sha512-D4w5Uny7S7qwvTV6kMjGDzqpFFOxFNxRGMWrcMxW5UoEv8WyVV7o/IuOnO1jVAoz8XIUaBO5a3Wi/uR76WmYgg==}
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -3176,7 +3176,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  material-symbols@0.44.12: {}
+  material-symbols@0.45.0: {}
 
   math-intrinsics@1.1.0: {}
 
