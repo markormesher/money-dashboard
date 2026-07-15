@@ -25,7 +25,7 @@ importers:
         version: 4.5.1
       material-symbols:
         specifier: ^0.45.0
-        version: 0.45.7
+        version: 0.45.8
       react:
         specifier: ^19.0.0
         version: 19.2.7
@@ -309,7 +309,7 @@ packages:
     resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
   '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/9bc265746e230e869324aef975bf7b9eecd00c8c':
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/9bc265746e230e869324aef975bf7b9eecd00c8c}
+    resolution: {gitHosted: true, integrity: sha512-ax/mps+62hsO9+hxMTIRmQYiZN75FbIGMsHpiLgOXmSdXDaQQQY5pL2UUKyVBhXa/VGIZFTzgtpyjvU+FI4zGg==, tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/9bc265746e230e869324aef975bf7b9eecd00c8c}
     version: 0.0.0
     peerDependencies:
       eslint: ^9.0.0
@@ -1354,8 +1354,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  material-symbols@0.45.7:
-    resolution: {integrity: sha512-aaBSgZEVLb0Ngdn1WlIILfExd3ni77KVAJih/+ONE7UgbKLRm7/0jPN0fErrn7Idame/ElibxEn6k7jhpNxBpg==}
+  material-symbols@0.45.8:
+    resolution: {integrity: sha512-1kpL3jl+/f6W34fmENPYMyftCmBNXUannoZ8XzlMsuEEFlIxesX+Z6ZCj2qSJGxzqwJ5yE/3x1XzVPsycieG2g==}
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -3201,7 +3201,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  material-symbols@0.45.7: {}
+  material-symbols@0.45.8: {}
 
   math-intrinsics@1.1.0: {}
 
