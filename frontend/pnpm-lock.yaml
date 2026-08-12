@@ -46,8 +46,8 @@ importers:
         specifier: 2.13.0
         version: 2.13.0(@bufbuild/protobuf@2.13.0)(supports-color@7.2.0)
       '@markormesher/eslint-config':
-        specifier: github:markormesher/eslint-config#semver:v0.5.61
-        version: https://codeload.github.com/markormesher/eslint-config/tar.gz/ff24ab288b31eff3ae957d9e9d5be6de3c9323f6(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
+        specifier: github:markormesher/eslint-config#semver:v0.5.62
+        version: https://codeload.github.com/markormesher/eslint-config/tar.gz/bfa7e6a577bf298df08b69291a7ed1b4fcd67589(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
       '@tsconfig/strictest':
         specifier: 2.0.8
         version: 2.0.8
@@ -308,8 +308,8 @@ packages:
   '@kurkle/color@0.3.4':
     resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
-  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/ff24ab288b31eff3ae957d9e9d5be6de3c9323f6':
-    resolution: {gitHosted: true, integrity: sha512-xSpZuNp/QIF+7wQa7Ll/Gj5REQCT1Dm+epxjeiLF7QXUq4pd8iP6hoSz8+YxPWXwp4HSoOZ3qeRJQPmRxCbpDA==, tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/ff24ab288b31eff3ae957d9e9d5be6de3c9323f6}
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/bfa7e6a577bf298df08b69291a7ed1b4fcd67589':
+    resolution: {gitHosted: true, integrity: sha512-9I7pnAZHT3dma4HMs0GRIJcH9ktxcYXVwJ9hIqVkEqf/JAzJOq/FCDMGhx99CXodUqDGzDh+B7tLxyDsfbKCWg==, tarball: https://codeload.github.com/markormesher/eslint-config/tar.gz/bfa7e6a577bf298df08b69291a7ed1b4fcd67589}
     version: 0.0.0
     peerDependencies:
       eslint: ^9.0.0
@@ -2060,7 +2060,7 @@ snapshots:
 
   '@kurkle/color@0.3.4': {}
 
-  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/ff24ab288b31eff3ae957d9e9d5be6de3c9323f6(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
+  '@markormesher/eslint-config@https://codeload.github.com/markormesher/eslint-config/tar.gz/bfa7e6a577bf298df08b69291a7ed1b4fcd67589(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
     dependencies:
       '@eslint/js': 9.39.5
       '@typescript-eslint/eslint-plugin': 8.65.0(@typescript-eslint/parser@8.65.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
