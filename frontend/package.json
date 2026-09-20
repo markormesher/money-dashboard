@@ -16,7 +16,7 @@
     "@bufbuild/protoc-gen-es": "2.15.0",
     "@markormesher/eslint-config": "github:markormesher/eslint-config#semver:v0.5.71",
     "@tsconfig/strictest": "2.0.8",
-    "@types/node": "24.13.5",
+    "@types/node": "24.13.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "eslint": "9.39.5",
