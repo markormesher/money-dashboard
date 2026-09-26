@@ -1,7 +1,7 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
+import type { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { accountServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -22,7 +22,7 @@ type AccountEditModalProps = {
 
 function AccountEditModal(props: AccountEditModalProps): ReactElement {
   const { accountId, onSaveFinished, onCancel } = props;
-  const createNew = accountId == NULL_UUID;
+  const createNew = accountId === NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Account>({
@@ -66,7 +66,7 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
   }, [accountId]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }
@@ -121,12 +121,12 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
             formState={form}
             fieldName={"accountGroup"}
             value={form.model?.accountGroup?.id}
-            onChange={(evt) => form.patchModel({ accountGroup: accountGroups?.find((g) => g.id == evt.target.value) })}
+            onChange={(evt) => form.patchModel({ accountGroup: accountGroups?.find((g) => g.id === evt.target.value) })}
           >
             {accountGroups
               ?.sort((a, b) => a.displayOrder - b.displayOrder)
               ?.map((g) => (
-                <option value={g.id} selected={g.id == form.model?.accountGroup?.id}>
+                <option key={g.id} value={g.id} selected={g.id === form.model?.accountGroup?.id}>
                   {g.name}
                 </option>
               ))}

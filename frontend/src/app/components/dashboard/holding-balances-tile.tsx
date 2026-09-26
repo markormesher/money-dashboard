@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react";
-import { SummaryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
+import React, { type ReactElement } from "react";
+import type { SummaryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { useAsyncEffect } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -7,10 +7,10 @@ import { ErrorPanel } from "../common/error/error.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import { concatClasses } from "../../utils/style.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
+import type { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
 import { formatCurrencyValue } from "../../utils/currency.js";
 import "./holding-balances-tile.css";
-import { AccountGroup } from "../../../api_gen/moneydashboard/v4/account_groups_pb.js";
+import type { AccountGroup } from "../../../api_gen/moneydashboard/v4/account_groups_pb.js";
 import { formatAssetQuantity } from "../../utils/assets.js";
 import { GBP_CURRENCY, GBP_CURRENCY_ID } from "../../../config/consts.js";
 
@@ -31,7 +31,7 @@ function HoldingBalancesTile(): ReactElement {
   useAsyncEffect(async () => {
     try {
       const res = await reportingServiceClient.getHoldingBalances({});
-      setHoldingBalances(res.balances.filter((b) => b.gbpBalance != 0));
+      setHoldingBalances(res.balances.filter((b) => b.gbpBalance !== 0));
     } catch (e) {
       toastBus.error("Failed to load holding balances.");
       setError(e);
@@ -43,7 +43,7 @@ function HoldingBalancesTile(): ReactElement {
 
   function toggleOpenAccount(id: string) {
     if (openAccounts.includes(id)) {
-      setOpenAccounts(openAccounts.filter((a) => a != id));
+      setOpenAccounts(openAccounts.filter((a) => a !== id));
     } else {
       setOpenAccounts([...openAccounts, id]);
     }
@@ -131,7 +131,7 @@ function HoldingBalancesTile(): ReactElement {
                           conversionNote = `${formatAssetQuantity(b.rawBalance)} ${holding.asset.name}`;
                         }
 
-                        if (holding?.currency && holding.currency.id != GBP_CURRENCY_ID) {
+                        if (holding?.currency && holding.currency.id !== GBP_CURRENCY_ID) {
                           conversionNote = `${formatCurrencyValue(b.rawBalance, holding.currency)} ${holding.currency.code}`;
                         }
 

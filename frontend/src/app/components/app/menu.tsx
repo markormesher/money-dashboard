@@ -1,11 +1,11 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { concatClasses } from "../../utils/style.js";
 import { userServiceClient } from "../../../api/api.js";
 import { ProfileChooser } from "../profile-chooser/profile-chooser.js";
 import { useAsyncEffect } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
-import { User } from "../../../api_gen/moneydashboard/v4/users_pb.js";
+import type { User } from "../../../api_gen/moneydashboard/v4/users_pb.js";
 import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
 import { useRouter } from "./router.js";
 
@@ -43,7 +43,7 @@ function Menu(props: MenuProps): ReactElement {
 
   function link(path: string, text: string, icon: string): ReactElement {
     return (
-      <li className={concatClasses(path == currentPath && "active")} key={path}>
+      <li className={concatClasses(path === currentPath && "active")} key={path}>
         <IconGroup>
           <Icon name={icon} />
           <a href={path} onClick={() => props.setMenuOpen(false)}>

@@ -1,19 +1,19 @@
-import { AccountGroup } from "../../api_gen/moneydashboard/v4/account_groups_pb.js";
-import { Account } from "../../api_gen/moneydashboard/v4/accounts_pb.js";
-import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
-import { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
-import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
-import { EnvelopeAllocation } from "../../api_gen/moneydashboard/v4/envelope_allocations_pb.js";
-import {
+import type { AccountGroup } from "../../api_gen/moneydashboard/v4/account_groups_pb.js";
+import type { Account } from "../../api_gen/moneydashboard/v4/accounts_pb.js";
+import type { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
+import type { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
+import type { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
+import type { EnvelopeAllocation } from "../../api_gen/moneydashboard/v4/envelope_allocations_pb.js";
+import type {
   CloneEnvelopeTransfersRequest,
   EnvelopeTransfer,
 } from "../../api_gen/moneydashboard/v4/envelope_transfers_pb.js";
-import { Envelope } from "../../api_gen/moneydashboard/v4/envelopes_pb.js";
-import { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
-import { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
-import { Transaction } from "../../api_gen/moneydashboard/v4/transactions_pb.js";
+import type { Envelope } from "../../api_gen/moneydashboard/v4/envelopes_pb.js";
+import type { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
+import type { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
+import type { Transaction } from "../../api_gen/moneydashboard/v4/transactions_pb.js";
 import { PLATFORM_MAXIMUM_DATE, PLATFORM_MINIMUM_DATE } from "../../config/consts.js";
-import { FormValidationResult } from "../components/common/form/hook.js";
+import type { FormValidationResult } from "../components/common/form/hook.js";
 import { parseDateFromProto } from "../utils/dates.js";
 
 function validateAccount(value: Partial<Account>): FormValidationResult<Account> {
@@ -76,7 +76,7 @@ function validateAsset(value: Partial<Asset>): FormValidationResult<Asset> {
   if (value?.displayPrecision === undefined) {
     result.isValid = false;
   } else {
-    if (isNaN(value.displayPrecision)) {
+    if (Number.isNaN(value.displayPrecision)) {
       result.isValid = false;
       result.errors.displayPrecision = "Display precision must be a valid number";
     } else if (value.displayPrecision < 0) {
@@ -145,7 +145,7 @@ function validateCurrency(value: Partial<Currency>): FormValidationResult<Curren
   if (value?.displayPrecision === undefined) {
     result.isValid = false;
   } else {
-    if (isNaN(value.displayPrecision)) {
+    if (Number.isNaN(value.displayPrecision)) {
       result.isValid = false;
       result.errors.displayPrecision = "Display precision must be a valid number";
     } else if (value.displayPrecision < 0) {
@@ -204,7 +204,7 @@ function validateEnvelopeAllocation(value: Partial<EnvelopeAllocation>): FormVal
     result.isValid = false;
   } else {
     const dateParsed = parseDateFromProto(value.startDate);
-    if (isNaN(dateParsed.getTime())) {
+    if (Number.isNaN(dateParsed.getTime())) {
       result.isValid = false;
       result.errors.startDate = "Invalid start date";
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
@@ -236,7 +236,7 @@ function validateEnvelopeTransfer(value: Partial<EnvelopeTransfer>): FormValidat
     result.isValid = false;
   } else {
     const dateParsed = parseDateFromProto(value.date);
-    if (isNaN(dateParsed.getTime())) {
+    if (Number.isNaN(dateParsed.getTime())) {
       result.isValid = false;
       result.errors.date = "Invalid date";
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
@@ -266,7 +266,7 @@ function validateCloneEnvelopeTransfersRequest(
     result.isValid = false;
   } else {
     const dateParsed = parseDateFromProto(value.date);
-    if (isNaN(dateParsed.getTime())) {
+    if (Number.isNaN(dateParsed.getTime())) {
       result.isValid = false;
       result.errors.date = "Invalid date";
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
@@ -301,7 +301,7 @@ function validateTransaction(value: Partial<Transaction>, holdings: Holding[]): 
 
   // set the detailed holding on the input value to make sure we have asset/currency data as well
   if (value?.holding) {
-    const realHolding = holdings.find((h) => h.id == value?.holding?.id);
+    const realHolding = holdings.find((h) => h.id === value?.holding?.id);
     if (realHolding) {
       value.holding = realHolding;
     }
@@ -311,7 +311,7 @@ function validateTransaction(value: Partial<Transaction>, holdings: Holding[]): 
     result.isValid = false;
   } else {
     const dateParsed = parseDateFromProto(value.date);
-    if (isNaN(dateParsed.getTime())) {
+    if (Number.isNaN(dateParsed.getTime())) {
       result.isValid = false;
       result.errors.date = "Invalid date";
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
@@ -327,7 +327,7 @@ function validateTransaction(value: Partial<Transaction>, holdings: Holding[]): 
     result.isValid = false;
   } else {
     const dateParsed = parseDateFromProto(value.budgetDate);
-    if (isNaN(dateParsed.getTime())) {
+    if (Number.isNaN(dateParsed.getTime())) {
       result.isValid = false;
       result.errors.budgetDate = "Invalid budget date";
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
@@ -361,7 +361,7 @@ function validateTransaction(value: Partial<Transaction>, holdings: Holding[]): 
   if (value?.amount === undefined) {
     result.isValid = false;
   } else {
-    if (isNaN(value.amount)) {
+    if (Number.isNaN(value.amount)) {
       result.isValid = false;
       result.errors.amount = "Amount must be valid";
     }
@@ -370,7 +370,7 @@ function validateTransaction(value: Partial<Transaction>, holdings: Holding[]): 
   if (value?.unitValue === undefined) {
     result.isValid = false;
   } else {
-    if (isNaN(value.unitValue)) {
+    if (Number.isNaN(value.unitValue)) {
       result.isValid = false;
       result.errors.unitValue = "Unit value must be valid";
     } else if (value.unitValue < 0) {

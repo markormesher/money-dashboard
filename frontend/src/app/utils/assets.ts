@@ -1,4 +1,4 @@
-import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
+import type { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
 
 function formatAssetValue(amount: number, asset: Asset): string {
   return amount.toLocaleString(undefined, {
@@ -15,7 +15,7 @@ function formatAssetQuantity(amount: number): string {
 }
 
 function getPrecision(v: number): number {
-  if (isNaN(v) || !isFinite(v)) {
+  if (Number.isNaN(v) || !Number.isFinite(v)) {
     return 0;
   }
   let e = 1;

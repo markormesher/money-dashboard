@@ -1,7 +1,7 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { Holding } from "../../../api_gen/moneydashboard/v4/holdings_pb.js";
+import type { Holding } from "../../../api_gen/moneydashboard/v4/holdings_pb.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { holdingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -22,7 +22,7 @@ type HoldingEditModalProps = {
 
 function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
   const { holdingId, onSaveFinished, onCancel } = props;
-  const createNew = holdingId == NULL_UUID;
+  const createNew = holdingId === NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Holding>({
@@ -84,7 +84,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
   }, [holdingId]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }
@@ -130,13 +130,13 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
             formState={form}
             fieldName={"account"}
             value={form.model?.account?.id}
-            onChange={(evt) => form.patchModel({ account: accounts?.find((c) => c.id == evt.target.value) })}
+            onChange={(evt) => form.patchModel({ account: accounts?.find((c) => c.id === evt.target.value) })}
           >
             {accounts
               ?.filter((a) => a.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
               ?.map((a) => (
-                <option value={a.id} selected={a.id == form.model?.account?.id}>
+                <option value={a.id} selected={a.id === form.model?.account?.id}>
                   {a.name}
                 </option>
               ))}
@@ -159,14 +159,14 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
             fieldName={"currency"}
             value={form.model?.currency?.id}
             onChange={(evt) =>
-              form.patchModel({ asset: undefined, currency: currencies?.find((c) => c.id == evt.target.value) })
+              form.patchModel({ asset: undefined, currency: currencies?.find((c) => c.id === evt.target.value) })
             }
           >
             {currencies
               ?.filter((c) => c.active)
               ?.sort((a, b) => a.code.localeCompare(b.code))
               ?.map((c) => (
-                <option value={c.id} selected={c.id == form.model?.currency?.id}>
+                <option value={c.id} selected={c.id === form.model?.currency?.id}>
                   {c.code}
                 </option>
               ))}
@@ -178,14 +178,14 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
             fieldName={"asset"}
             value={form.model?.asset?.id}
             onChange={(evt) =>
-              form.patchModel({ currency: undefined, asset: assets?.find((a) => a.id == evt.target.value) })
+              form.patchModel({ currency: undefined, asset: assets?.find((a) => a.id === evt.target.value) })
             }
           >
             {assets
               ?.filter((a) => a.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
               ?.map((a) => (
-                <option value={a.id} selected={a.id == form.model?.asset?.id}>
+                <option value={a.id} selected={a.id === form.model?.asset?.id}>
                   {a.name}
                 </option>
               ))}

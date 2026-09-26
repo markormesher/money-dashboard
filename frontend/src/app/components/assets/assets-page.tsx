@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -20,7 +20,7 @@ function AssetsPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: ["Metadata"], title: "Assets" });
-  }, []);
+  }, [setMeta]);
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
@@ -56,7 +56,7 @@ function AssetsPage(): ReactElement {
   });
 
   const pageButtons = [
-    <button className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
+    <button key={"new"} className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
       <IconGroup>
         <Icon name={"add"} />
         <span>New</span>
@@ -65,14 +65,9 @@ function AssetsPage(): ReactElement {
   ];
 
   const pageOptions = [
-    <fieldset>
+    <fieldset key={"show-inactive"}>
       <label>
-        <input
-          type={"checkbox"}
-          role={"switch"}
-          checked={showInactive}
-          onChange={(evt) => setShowInactive(evt.target.checked)}
-        />
+        <input type={"checkbox"} role={"switch"} checked={showInactive} onChange={(evt) => setShowInactive(evt.target.checked)} />
         Show inactive
       </label>
     </fieldset>,
@@ -89,7 +84,7 @@ function AssetsPage(): ReactElement {
       .filter((a) => searchPattern?.test(a.name) ?? true)
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    if (filteredAssets.length == 0) {
+    if (filteredAssets.length === 0) {
       body = <EmptyResultsPanel pluralNoun={"assets"} />;
     } else {
       body = (
@@ -115,7 +110,7 @@ function AssetsPage(): ReactElement {
                   ) : null}
                   {rate !== undefined ? <li>Updated {formatDateFromProto(rate.date)}</li> : null}
                 </ul>
-                {!!a.notes ? <small>{a.notes}</small> : null}
+                {a.notes ? <small>{a.notes}</small> : null}
                 <footer>
                   <ul className={"horizonal mb0"}>
                     <li>
@@ -162,8 +157,8 @@ function AssetsPage(): ReactElement {
             <IconGroup>
               <Icon name={"info"} className={"muted"} />
               <span>
-                Assets represent one unit of a non-cash instrument with a value that changes over time, such as a house
-                or a share in a company.
+                Assets represent one unit of a non-cash instrument with a value that changes over time, such as a house or a share in a
+                company.
               </span>
             </IconGroup>
           </p>

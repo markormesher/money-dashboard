@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react";
-import "./page-header.scss";
+import React, { type ReactElement } from "react";
+import "./page-header.css";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { focusFieldByName } from "../../utils/forms.js";
 import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
@@ -19,7 +19,7 @@ type PageHeaderProps = {
 };
 
 function PageHeader(props: React.PropsWithChildren<PageHeaderProps>): ReactElement {
-  const [showOptions, setShowOptions] = React.useState(props.optionsStartClosed === true ? false : true);
+  const [showOptions, setShowOptions] = React.useState(props.optionsStartClosed !== true);
   const [searchString, setSearchString] = React.useState("");
   const [regexValid, setRegexValid] = React.useState(false);
 
@@ -32,7 +32,7 @@ function PageHeader(props: React.PropsWithChildren<PageHeaderProps>): ReactEleme
       setRegexValid(false);
       props.onSearchTextChange?.(undefined);
     }
-  }, [searchString]);
+  }, [searchString, props.onSearchTextChange]);
 
   useKeyShortcut("/", () => focusFieldByName("search"));
 
@@ -76,12 +76,12 @@ function PageHeader(props: React.PropsWithChildren<PageHeaderProps>): ReactEleme
                     <>
                       <span
                         key={p}
-                        className={concatClasses("sub-page", p == props.title && "active")}
+                        className={concatClasses("sub-page", p === props.title && "active")}
                         onClick={() => props.onSubPageSelected?.(p)}
                       >
                         {p}
                       </span>
-                      {i == arr.length - 1 ? null : <span className={"separator"}>&bull;</span>}
+                      {i === arr.length - 1 ? null : <span className={"separator"}>&bull;</span>}
                     </>
                   ))}
                 </span>

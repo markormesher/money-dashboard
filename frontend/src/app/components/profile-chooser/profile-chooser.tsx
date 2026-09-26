@@ -1,11 +1,11 @@
-import React, { ReactElement } from "react";
-import { ExternalModalProps, Modal } from "../common/modal/modal.js";
+import React, { type ReactElement } from "react";
+import { type ExternalModalProps, Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { userServiceClient } from "../../../api/api.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
-import { User } from "../../../api_gen/moneydashboard/v4/users_pb.js";
-import { Profile } from "../../../api_gen/moneydashboard/v4/profiles_pb.js";
+import type { User } from "../../../api_gen/moneydashboard/v4/users_pb.js";
+import type { Profile } from "../../../api_gen/moneydashboard/v4/profiles_pb.js";
 import { useProfileList } from "../../schema/hooks.js";
 import { Tile, TileSet } from "../common/tile-set/tile-set.js";
 
@@ -62,7 +62,7 @@ function ProfileChooser(props: ProfileChooserProps): ReactElement {
         {profiles
           .sort((a, b) => a.name.localeCompare(b.name))
           .map((p) => {
-            if (p.id == user?.activeProfile?.id) {
+            if (p.id === user?.activeProfile?.id) {
               return (
                 <Tile>
                   {p.name}

@@ -1,7 +1,7 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { Currency } from "../../../api_gen/moneydashboard/v4/currencies_pb.js";
+import type { Currency } from "../../../api_gen/moneydashboard/v4/currencies_pb.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { currencyServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -21,7 +21,7 @@ type CurrencyEditModalProps = {
 
 function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
   const { currencyId, onSaveFinished, onCancel } = props;
-  const createNew = currencyId == NULL_UUID;
+  const createNew = currencyId === NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Currency>({
@@ -56,7 +56,7 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
   }, [currencyId]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }
@@ -127,7 +127,7 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
             step={1}
             min={0}
             value={safeNumberValue(form.model?.displayPrecision)}
-            onChange={(evt) => form.patchModel({ displayPrecision: parseInt(evt.target.value) ?? null })}
+            onChange={(evt) => form.patchModel({ displayPrecision: parseInt(evt.target.value, 10) ?? null })}
           />
 
           <Input

@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import type { ReactElement } from "react";
 import { Icon } from "../common/icon/icon.js";
 import { useRouter } from "./router.js";
 
@@ -19,7 +19,7 @@ function Breadcrumbs(props: BreadcrumbProps): ReactElement {
           </a>
         </li>
         {meta.parents?.map((p) => (
-          <li>
+          <li key={p}>
             <a className={"secondary"} onClick={() => setMenuOpen(true)}>
               {p}
             </a>

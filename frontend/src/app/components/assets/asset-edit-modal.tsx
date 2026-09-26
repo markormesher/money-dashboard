@@ -1,7 +1,7 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { Asset } from "../../../api_gen/moneydashboard/v4/assets_pb.js";
+import type { Asset } from "../../../api_gen/moneydashboard/v4/assets_pb.js";
 import { assetServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName, safeNumberValue } from "../../utils/forms.js";
@@ -22,7 +22,7 @@ type AssetEditModalProps = {
 
 function AssetEditModal(props: AssetEditModalProps): ReactElement {
   const { assetId, onSaveFinished, onCancel } = props;
-  const createNew = assetId == NULL_UUID;
+  const createNew = assetId === NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Asset>({
@@ -66,7 +66,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
   }, [assetId]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }
@@ -122,12 +122,12 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
             formState={form}
             fieldName={"currency"}
             value={form.model?.currency?.id}
-            onChange={(evt) => form.patchModel({ currency: currencies?.find((c) => c.id == evt.target.value) })}
+            onChange={(evt) => form.patchModel({ currency: currencies?.find((c) => c.id === evt.target.value) })}
           >
             {currencies
               ?.sort((a, b) => a.code.localeCompare(b.code))
               ?.map((c) => (
-                <option value={c.id} selected={c.id == form.model?.currency?.id}>
+                <option key={c.id} value={c.id} selected={c.id === form.model?.currency?.id}>
                   {c.code}
                 </option>
               ))}
@@ -143,7 +143,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
             step={1}
             min={0}
             value={safeNumberValue(form.model?.displayPrecision)}
-            onChange={(evt) => form.patchModel({ displayPrecision: parseInt(evt.target.value) ?? null })}
+            onChange={(evt) => form.patchModel({ displayPrecision: parseInt(evt.target.value, 10) ?? null })}
           />
 
           <Input
@@ -172,8 +172,8 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
           <hgroup>
             <h6>Note</h6>
             <small>
-              Assets are shared across all users and profiles. They <strong>cannot be deleted</strong> after creation;
-              they can only be marked as inactive, which will prevent them from being used on new holdings.
+              Assets are shared across all users and profiles. They <strong>cannot be deleted</strong> after creation; they can only be
+              marked as inactive, which will prevent them from being used on new holdings.
             </small>
           </hgroup>
         ) : null}

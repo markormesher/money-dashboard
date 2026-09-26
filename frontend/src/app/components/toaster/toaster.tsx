@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { v4 } from "uuid";
 import "./toaster.css";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -15,9 +15,9 @@ type Toast = {
   expiryTs: number;
 };
 
-const toastBus = (function () {
+const toastBus = (() => {
   type ToastListener = (t: Toast) => void;
-  let listener: ToastListener | undefined = undefined;
+  let listener: ToastListener | undefined ;
 
   function setListener(l: ToastListener) {
     listener = l;
@@ -26,7 +26,7 @@ const toastBus = (function () {
   function emit(t: Omit<Toast, "id" | "expiryTs">) {
     listener?.call(null, {
       id: v4(),
-      expiryTs: new Date().getTime() + toastDurationMs,
+      expiryTs: Date.now()+ toastDurationMs,
       ...t,
     });
   }
@@ -53,10 +53,10 @@ const toastBus = (function () {
 })();
 
 function Toaster(): ReactElement {
-  const [renderToken, setRenderToken] = React.useState(0);
+  const [_renderToken, setRenderToken] = React.useState(0);
   const [toasts, setToasts] = React.useState<Toast[]>([]);
 
-  const triggerRender = () => setRenderToken(new Date().getTime());
+  const triggerRender = () => setRenderToken(Date.now());
 
   // toast listener
   React.useEffect(() => {
@@ -65,13 +65,13 @@ function Toaster(): ReactElement {
       triggerRender();
     };
     toastBus.setListener(listener);
-  }, []);
+  }, [triggerRender]);
 
   // toast reaper + re-render
   // this is used to avoid any effects running when there are no toasts to care about
   React.useEffect(() => {
     // remove toasts that are past expiry + animation grace
-    const nowTs = new Date().getTime();
+    const nowTs = Date.now();
     setToasts((curr) => curr.filter((t) => t.expiryTs + animationGraceMs >= nowTs));
 
     // trigger another loop if there are still toasts to display
@@ -85,11 +85,11 @@ function Toaster(): ReactElement {
         clearTimeout(t);
       }
     };
-  }, [renderToken]);
+  }, [triggerRender, toasts.length]);
 
   const toastOutput: ReactElement[] = [];
   let toastsVisible = 0;
-  const nowTs = new Date().getTime();
+  const nowTs = Date.now();
   for (const t of toasts) {
     const remainingLifeMs = t.expiryTs - nowTs;
     const visible = remainingLifeMs > 0;

@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -20,7 +20,7 @@ function AccountsPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: ["Settings"], title: "Accounts" });
-  }, []);
+  }, [setMeta]);
 
   const [page, setPage] = React.useState("Accounts");
 
@@ -33,9 +33,9 @@ function AccountsPage(): ReactElement {
   const [accountEditingId, setAccountEditingId] = React.useState<string>();
   const [accountGroupEditingId, setAccountGroupEditingId] = React.useState<string>();
   useKeyShortcut("c", () => {
-    if (page == "Accounts") {
+    if (page === "Accounts") {
       setAccountEditingId(NULL_UUID);
-    } else if (page == "Account Groups") {
+    } else if (page === "Account Groups") {
       setAccountGroupEditingId(NULL_UUID);
     }
   });
@@ -62,7 +62,7 @@ function AccountsPage(): ReactElement {
   switch (page) {
     case "Accounts":
       pageButtons = [
-        <button className={"outline"} onClick={() => setAccountEditingId(NULL_UUID)}>
+        <button key={"new"} className={"outline"} onClick={() => setAccountEditingId(NULL_UUID)}>
           <IconGroup>
             <Icon name={"add"} />
             <span>New</span>
@@ -71,14 +71,9 @@ function AccountsPage(): ReactElement {
       ];
 
       pageOptions = [
-        <fieldset>
+        <fieldset key={"show-inactive"}>
           <label>
-            <input
-              type={"checkbox"}
-              role={"switch"}
-              checked={showInactive}
-              onChange={(evt) => setShowInactive(evt.target.checked)}
-            />
+            <input type={"checkbox"} role={"switch"} checked={showInactive} onChange={(evt) => setShowInactive(evt.target.checked)} />
             Show inactive
           </label>
         </fieldset>,
@@ -87,7 +82,7 @@ function AccountsPage(): ReactElement {
 
     case "Account Groups":
       pageButtons = [
-        <button className={"outline"} onClick={() => setAccountGroupEditingId(NULL_UUID)}>
+        <button key={"new"} className={"outline"} onClick={() => setAccountGroupEditingId(NULL_UUID)}>
           <IconGroup>
             <Icon name={"add"} />
             <span>New</span>
@@ -102,13 +97,13 @@ function AccountsPage(): ReactElement {
     body = <ErrorPanel error={error} />;
   } else if (!accounts || !accountGroups) {
     body = <LoadingPanel />;
-  } else if (page == "Accounts") {
+  } else if (page === "Accounts") {
     const filteredAccounts = accounts
       .filter((a) => showInactive || a.active)
       .filter((a) => searchPattern?.test(a.name) ?? true)
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    if (filteredAccounts.length == 0) {
+    if (filteredAccounts.length === 0) {
       body = <EmptyResultsPanel pluralNoun={"accounts"} />;
     } else {
       body = (
@@ -123,7 +118,7 @@ function AccountsPage(): ReactElement {
                   {a.isIsa ? <li>ISA</li> : null}
                   {a.isPension ? <li>Pension</li> : null}
                 </ul>
-                {!!a.notes ? <small>{a.notes}</small> : null}
+                {a.notes ? <small>{a.notes}</small> : null}
                 <footer>
                   <ul className={"horizonal mb0"}>
                     <li>
@@ -151,12 +146,10 @@ function AccountsPage(): ReactElement {
         </TileSet>
       );
     }
-  } else if (page == "Account Groups") {
-    const filteredGroups = accountGroups
-      .filter((g) => searchPattern?.test(g.name) ?? true)
-      .sort((a, b) => a.displayOrder - b.displayOrder);
+  } else if (page === "Account Groups") {
+    const filteredGroups = accountGroups.filter((g) => searchPattern?.test(g.name) ?? true).sort((a, b) => a.displayOrder - b.displayOrder);
 
-    if (filteredGroups.length == 0) {
+    if (filteredGroups.length === 0) {
       body = <EmptyResultsPanel pluralNoun={"account groups"} />;
     } else {
       body = (
@@ -219,8 +212,8 @@ function AccountsPage(): ReactElement {
             <IconGroup>
               <Icon name={"info"} className={"muted"} />
               <span>
-                Accounts are a wrapper around a collection of one or more <a href={"/settings/holdings"}>holdings</a>;
-                usually 1:1 with an actual account held at a financial institution.
+                Accounts are a wrapper around a collection of one or more <a href={"/settings/holdings"}>holdings</a>; usually 1:1 with an
+                actual account held at a financial institution.
               </span>
             </IconGroup>
           </p>
@@ -229,8 +222,8 @@ function AccountsPage(): ReactElement {
             <IconGroup>
               <Icon name={"info"} className={"muted"} />
               <span>
-                Accounts groups are named collections of accounts. They are only used to customise dashboard diplays;
-                they have no financial meaning.
+                Accounts groups are named collections of accounts. They are only used to customise dashboard diplays; they have no financial
+                meaning.
               </span>
             </IconGroup>
           </p>

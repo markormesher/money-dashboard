@@ -1,8 +1,8 @@
-import React, { ReactElement, useEffect } from "react";
+import React, { type ReactElement, useEffect } from "react";
 import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import {
+import type {
   SummaryBalance,
   TaxReport,
   TaxReportCapitalEvent,
@@ -24,7 +24,7 @@ function TaxHelperPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: ["Reports"], title: "Tax Helper" });
-  }, []);
+  }, [setMeta]);
 
   const today = convertDateToProto(new Date());
   const currentTaxYear = getTaxYear(today);
@@ -59,12 +59,12 @@ function TaxHelperPage(): ReactElement {
   }, [taxYear]);
 
   useEffect(() => {
-    setCapitalEvents(taxReport?.capitalEvents.filter((e) => e.type == "disposal" || !showDisposalsOnly) ?? []);
+    setCapitalEvents(taxReport?.capitalEvents.filter((e) => e.type === "disposal" || !showDisposalsOnly) ?? []);
   }, [taxReport, showDisposalsOnly]);
 
   useEffect(() => {
     setS104Balances(taxReport?.s104Balances?.filter((b) => b.qty > 0) ?? []);
-  }, [taxReport, setS104Balances]);
+  }, [taxReport]);
 
   useEffect(() => {
     let qtyDisposals = 0;
@@ -130,12 +130,12 @@ function TaxHelperPage(): ReactElement {
 
     const sortBalances = (a: SummaryBalance, b: SummaryBalance): number => {
       let cmp = a.holding?.account?.name.localeCompare(b.holding?.account?.name ?? "") ?? 0;
-      if (cmp != 0) {
+      if (cmp !== 0) {
         return cmp;
       }
 
       cmp = a.holding?.name.localeCompare(b.holding?.name ?? "") ?? 0;
-      if (cmp != 0) {
+      if (cmp !== 0) {
         return cmp;
       }
 
@@ -328,22 +328,22 @@ function TaxHelperPage(): ReactElement {
                   <summary>
                     <IconGroup>
                       <Icon
-                        name={e.type == "disposal" ? "upload" : "download"}
-                        className={e.type == "disposal" ? "tax-disposal-icon" : "tax-acquisition-icon"}
+                        name={e.type === "disposal" ? "upload" : "download"}
+                        className={e.type === "disposal" ? "tax-disposal-icon" : "tax-acquisition-icon"}
                       />
                       <span>
                         {formatDateFromProto(e.date)}
                         <span className={"separator"}>&#x2022;</span>
                         {e.holding?.name ?? "Unknown Holding"}
                         <span className={"separator"}>&#x2022;</span>
-                        {e.type == "disposal" ? "Disposal" : "Acquisition"} of {formatAssetQuantity(Math.abs(e.qty))}{" "}
-                        unit{e.qty == 1 ? "" : "s"} @ {formatCurrencyValue(e.avgGbpUnitPrice, null)}
+                        {e.type === "disposal" ? "Disposal" : "Acquisition"} of {formatAssetQuantity(Math.abs(e.qty))}{" "}
+                        unit{e.qty === 1 ? "" : "s"} @ {formatCurrencyValue(e.avgGbpUnitPrice, null)}
                       </span>
                     </IconGroup>
                   </summary>
 
                   <div className={"grid"}>
-                    {e.type == "disposal" ? (
+                    {e.type === "disposal" ? (
                       <div>
                         <table className={"auto-width"}>
                           <thead>
@@ -377,7 +377,7 @@ function TaxHelperPage(): ReactElement {
                       </div>
                     ) : null}
 
-                    {e.type == "disposal" ? (
+                    {e.type === "disposal" ? (
                       <div>
                         <table className={"auto-width"}>
                           <thead>
@@ -397,7 +397,7 @@ function TaxHelperPage(): ReactElement {
                             {e.matches.map((m) => {
                               return (
                                 <tr>
-                                  <td>{m.date == BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
+                                  <td>{m.date === BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
                                   <td>{m.note}</td>
                                   <td className={"amount-cell"}>
                                     <span className={"amount"}>{formatAssetQuantity(m.qty)}</span>
@@ -442,7 +442,7 @@ function TaxHelperPage(): ReactElement {
                             {e.matches.map((m) => {
                               return (
                                 <tr>
-                                  <td>{m.date == BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
+                                  <td>{m.date === BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
                                   <td>{m.note}</td>
                                   <td className={"amount-cell"}>
                                     <span className={"amount"}>{formatAssetQuantity(m.qty)}</span>
@@ -520,7 +520,7 @@ function TaxHelperPage(): ReactElement {
           </table>
         ) : null}
 
-        {taxYear == currentTaxYear && s104Balances?.length > 0 ? (
+        {taxYear === currentTaxYear && s104Balances?.length > 0 ? (
           <>
             <hr />
 
@@ -559,8 +559,7 @@ function TaxHelperPage(): ReactElement {
   }
 
   return (
-    <>
-      <div id={"content"} className={"overflow-auto"}>
+    <div id={"content"} className={"overflow-auto"}>
         <PageHeader title={"Tax Helper"} icon={"receipt_long"} options={pageOptions} />
         {body}
         <hr />
@@ -573,7 +572,6 @@ function TaxHelperPage(): ReactElement {
           </p>
         </section>
       </div>
-    </>
   );
 }
 

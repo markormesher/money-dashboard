@@ -41,7 +41,7 @@ function useWaitGroup(): WaitGroup {
 function useNudge(): [number, () => void] {
   const [nudgeValue, setNudge] = React.useState(0);
   const nudge = () => {
-    setNudge(new Date().getTime());
+    setNudge(Date.now());
   };
 
   return [nudgeValue, nudge];

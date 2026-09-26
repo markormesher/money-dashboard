@@ -1,7 +1,7 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { Envelope } from "../../../api_gen/moneydashboard/v4/envelopes_pb.js";
+import type { Envelope } from "../../../api_gen/moneydashboard/v4/envelopes_pb.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { envelopeServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -21,7 +21,7 @@ type EnvelopeEditModalProps = {
 
 function EnvelopeEditModal(props: EnvelopeEditModalProps): ReactElement {
   const { envelopeId, onSaveFinished, onCancel } = props;
-  const createNew = envelopeId == NULL_UUID;
+  const createNew = envelopeId === NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Envelope>({
@@ -54,7 +54,7 @@ function EnvelopeEditModal(props: EnvelopeEditModalProps): ReactElement {
   }, [envelopeId]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }

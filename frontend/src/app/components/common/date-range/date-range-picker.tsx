@@ -1,8 +1,8 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../modal/modal.js";
 import { Icon, IconGroup } from "../icon/icon.js";
 import { useForm } from "../form/hook.js";
-import { DateRange, dateRangePresets, validateDateRange } from "../../../utils/date-range.js";
+import { type DateRange, dateRangePresets, validateDateRange } from "../../../utils/date-range.js";
 import { CTRLENTER, useKeyShortcut } from "../key-shortcuts/key-shortcuts.js";
 import { Input } from "../form/inputs.js";
 import { convertDateStrToProto, formatDateFromProto } from "../../../utils/dates.js";
@@ -20,14 +20,14 @@ function DateRangePicker(props: DateRangePickerProps): ReactElement {
   const form = useForm<DateRange>({
     validator: validateDateRange,
   });
-  React.useEffect(() => form.setModel(dateRange), [dateRange]);
+  React.useEffect(() => form.setModel(dateRange), [dateRange, form.setModel]);
 
   const [saveOnNextRender, setSaveOnNextRender] = React.useState(false);
   React.useEffect(() => {
     if (saveOnNextRender) {
       save();
     }
-  }, [form.model]);
+  }, [saveOnNextRender, save]);
 
   const save = () => {
     if (form.wg.count > 0 || !form.valid || !form.model) {

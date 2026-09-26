@@ -1,12 +1,12 @@
 import React, {
-  ChangeEvent,
-  InputHTMLAttributes,
-  ReactElement,
-  SelectHTMLAttributes,
-  TextareaHTMLAttributes,
+  type ChangeEvent,
+  type InputHTMLAttributes,
+  type ReactElement,
+  type SelectHTMLAttributes,
+  type TextareaHTMLAttributes,
 } from "react";
 import { concatClasses } from "../../../utils/style.js";
-import { FormState } from "./hook.js";
+import type { FormState } from "./hook.js";
 import "./inputs.css";
 
 type FormInputProps<T> = {
@@ -25,7 +25,7 @@ function Input<T>(props: InputProps<T>): ReactElement {
   const hasError = !!error;
   const showError = lastModelIterationTouched >= formState.modelIteration;
 
-  const labelAfterInput = props.type == "checkbox";
+  const labelAfterInput = props.type === "checkbox";
 
   return (
     <label aria-disabled={formState.wg.count > 0}>
@@ -139,8 +139,7 @@ function SuggestionTextInput<T>(props: SuggestionTextInputProps<T>): ReactElemen
 
     // if the previously-selected suggestion is still in the list, keep it selected
     const newSelectedSuggestionIndex = selectedSuggestion ? newSuggestions.indexOf(selectedSuggestion) : -1;
-    const newSelectedSuggestion =
-      newSelectedSuggestionIndex >= 0 ? newSuggestions[newSelectedSuggestionIndex] : undefined;
+    const newSelectedSuggestion = newSelectedSuggestionIndex >= 0 ? newSuggestions[newSelectedSuggestionIndex] : undefined;
 
     setSuggestions(newSuggestions);
     setSelectedSuggestion(newSelectedSuggestion);
@@ -226,10 +225,7 @@ function SuggestionTextInput<T>(props: SuggestionTextInputProps<T>): ReactElemen
             const letters: ReactElement[] = [];
             let searchIdx = 0;
             for (let suggestionIdx = 0; suggestionIdx < suggestion.length; ++suggestionIdx) {
-              if (
-                suggestion.charAt(suggestionIdx).toLowerCase() ==
-                props?.value?.toString()?.charAt(searchIdx)?.toLowerCase()
-              ) {
+              if (suggestion.charAt(suggestionIdx).toLowerCase() === props?.value?.toString()?.charAt(searchIdx)?.toLowerCase()) {
                 ++searchIdx;
                 letters.push(<span className={"highlight-letter"}>{suggestion.charAt(suggestionIdx)}</span>);
               } else {
@@ -239,7 +235,8 @@ function SuggestionTextInput<T>(props: SuggestionTextInputProps<T>): ReactElemen
 
             return (
               <li
-                className={concatClasses(i == selectedSuggestionIndex && "active")}
+                key={suggestion}
+                className={concatClasses(i === selectedSuggestionIndex && "active")}
                 onClick={() => selectSuggestion(suggestion)}
               >
                 {letters}
@@ -263,13 +260,13 @@ function fuzzyScore(candidate: string, search: string): number {
   let lastMatchedPosition = -2;
 
   while (c < candidate.length && s < search.length) {
-    if (candidate.charAt(c) == search.charAt(s)) {
-      if (c == 0) {
+    if (candidate.charAt(c) === search.charAt(s)) {
+      if (c === 0) {
         // bonus point for being at the beginning of the string
         ++score;
       }
 
-      if (c == lastMatchedPosition + 1) {
+      if (c === lastMatchedPosition + 1) {
         // bonus point each continuous letter
         ++score;
       }

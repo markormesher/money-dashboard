@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
@@ -11,7 +11,7 @@ import { Input } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
-import { AccountGroup } from "../../../api_gen/moneydashboard/v4/account_groups_pb.js";
+import type { AccountGroup } from "../../../api_gen/moneydashboard/v4/account_groups_pb.js";
 
 type AccountGroupEditModalProps = {
   accountGroupId: string;
@@ -21,7 +21,7 @@ type AccountGroupEditModalProps = {
 
 function AccountGroupEditModal(props: AccountGroupEditModalProps): ReactElement {
   const { accountGroupId, onSaveFinished, onCancel } = props;
-  const createNew = accountGroupId == NULL_UUID;
+  const createNew = accountGroupId === NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<AccountGroup>({
@@ -54,7 +54,7 @@ function AccountGroupEditModal(props: AccountGroupEditModalProps): ReactElement 
   }, [accountGroupId]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }
@@ -111,7 +111,7 @@ function AccountGroupEditModal(props: AccountGroupEditModalProps): ReactElement 
             type={"number"}
             step={"0"}
             value={safeNumberValue(form.model?.displayOrder)}
-            onChange={(evt) => form.patchModel({ displayOrder: parseInt(evt.target.value) })}
+            onChange={(evt) => form.patchModel({ displayOrder: parseInt(evt.target.value, 10) })}
           />
         </fieldset>
       </form>

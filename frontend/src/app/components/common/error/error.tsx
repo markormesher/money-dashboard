@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import type { ReactElement } from "react";
 import "./error.css";
 import { Icon, IconGroup } from "../icon/icon.js";
 

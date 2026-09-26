@@ -1,7 +1,7 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { Transaction } from "../../../api_gen/moneydashboard/v4/transactions_pb.js";
+import type { Transaction } from "../../../api_gen/moneydashboard/v4/transactions_pb.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { transactionServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -24,7 +24,7 @@ type TransactionEditModalProps = {
 
 function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
   const { transactionId, onCreateFinished, onEditFinished, onCancel } = props;
-  const createNew = transactionId == NULL_UUID;
+  const createNew = transactionId === NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Transaction>({
@@ -101,7 +101,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
   }, [transactionId]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }
@@ -117,7 +117,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
     try {
       await transactionServiceClient.upsertTransaction({ transaction: form.model });
       toastBus.success("Saved transaction.");
-      if (transactionId == NULL_UUID) {
+      if (transactionId === NULL_UUID) {
         // clear SOME of the record to get ready to edit again
         form.setModel({
           ...form.model,
@@ -188,13 +188,13 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
             formState={form}
             fieldName={"holding"}
             value={form.model?.holding?.id}
-            onChange={(evt) => form.patchModel({ holding: holdings?.find((c) => c.id == evt.target.value) })}
+            onChange={(evt) => form.patchModel({ holding: holdings?.find((c) => c.id === evt.target.value) })}
           >
             {holdings
               ?.filter((h) => h.active)
               ?.sort((a, b) => `${a.account?.name} / ${a.name}`.localeCompare(`${b.account?.name} / ${b.name}`))
               ?.map((h) => (
-                <option value={h.id} selected={h.id == form.model?.holding?.id}>
+                <option value={h.id} selected={h.id === form.model?.holding?.id}>
                   {(holdingsPerAccount?.[h.account?.id ?? ""] ?? 0) > 1 ? (
                     <>
                       {h.account?.name} &nbsp;&nbsp;&#x2022;&nbsp;&nbsp; {h.name}
@@ -222,13 +222,13 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
             formState={form}
             fieldName={"category"}
             value={form.model?.category?.id}
-            onChange={(evt) => form.patchModel({ category: categories?.find((c) => c.id == evt.target.value) })}
+            onChange={(evt) => form.patchModel({ category: categories?.find((c) => c.id === evt.target.value) })}
           >
             {categories
               ?.filter((c) => c.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
               ?.map((c) => (
-                <option value={c.id} selected={c.id == form.model?.category?.id}>
+                <option value={c.id} selected={c.id === form.model?.category?.id}>
                   {c.name}
                 </option>
               ))}

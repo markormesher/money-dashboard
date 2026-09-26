@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -19,7 +19,7 @@ function CategoriesPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: ["Settings"], title: "Categories" });
-  }, []);
+  }, [setMeta]);
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
@@ -72,7 +72,7 @@ function CategoriesPage(): ReactElement {
       .filter((a) => searchPattern?.test(a.name) ?? true)
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    if (filteredCategories.length == 0) {
+    if (filteredCategories.length === 0) {
       body = <EmptyResultsPanel pluralNoun={"categories"} />;
     } else {
       body = (
