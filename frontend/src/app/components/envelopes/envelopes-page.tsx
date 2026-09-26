@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -21,7 +21,7 @@ function EnvelopesPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: ["Planning"], title: "Envelopes" });
-  }, []);
+  }, [setMeta]);
 
   const [page, setPage] = React.useState("Envelopes");
 
@@ -34,9 +34,9 @@ function EnvelopesPage(): ReactElement {
   const [envelopeEditingId, setEnvelopeEditingId] = React.useState<string>();
   const [envelopeAllocationEditingId, setEnvelopeAllocationEditingId] = React.useState<string>();
   useKeyShortcut("c", () => {
-    if (page == "Envelopes") {
+    if (page === "Envelopes") {
       setEnvelopeEditingId(NULL_UUID);
-    } else if (page == "Envelope Allocations") {
+    } else if (page === "Envelope Allocations") {
       setEnvelopeAllocationEditingId(NULL_UUID);
     }
   });
@@ -103,13 +103,13 @@ function EnvelopesPage(): ReactElement {
     body = <ErrorPanel error={error} />;
   } else if (!envelopes || !envelopeAllocations) {
     body = <LoadingPanel />;
-  } else if (page == "Envelopes") {
+  } else if (page === "Envelopes") {
     const filteredEnvelopes = envelopes
       .filter((a) => showInactive || a.active)
       .filter((a) => searchPattern?.test(a.name) ?? true)
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    if (filteredEnvelopes.length == 0) {
+    if (filteredEnvelopes.length === 0) {
       body = <EmptyResultsPanel pluralNoun={"envelopes"} />;
     } else {
       body = (
@@ -146,7 +146,7 @@ function EnvelopesPage(): ReactElement {
         </TileSet>
       );
     }
-  } else if (page == "Envelope Allocations") {
+  } else if (page === "Envelope Allocations") {
     const filteredAllocations = envelopeAllocations
       .filter(
         (a) =>
@@ -154,7 +154,7 @@ function EnvelopesPage(): ReactElement {
           (searchPattern?.test(a.envelope?.name ?? "") ?? true),
       )
       .sort((a, b) => {
-        if (a.startDate == b.startDate) {
+        if (a.startDate === b.startDate) {
           return a.category?.name?.localeCompare(b.category?.name ?? "") ?? 0;
         } else {
           return a.startDate < b.startDate ? 1 : -1;
@@ -172,7 +172,7 @@ function EnvelopesPage(): ReactElement {
           </tr>
         </thead>
         <tbody>
-          {!filteredAllocations || filteredAllocations.length == 0 ? (
+          {!filteredAllocations || filteredAllocations.length === 0 ? (
             <td colSpan={99}>
               <EmptyResultsPanel pluralNoun={"envelope allocations"} />
             </td>

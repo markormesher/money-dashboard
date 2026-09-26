@@ -10,11 +10,11 @@ function usePrefValue(key: string): string {
 
   const update = React.useCallback(() => {
     setValue(localStorage.getItem(key) ?? "");
-  }, [key, setValue]);
+  }, [key]);
 
   React.useEffect(() => {
     const listener = (evt: CustomEventInit<{ key: string }>) => {
-      if (evt?.detail?.key == key) {
+      if (evt?.detail?.key === key) {
         update();
       }
     };

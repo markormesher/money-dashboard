@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useAsyncHandler } from "../../utils/hooks.js";
@@ -11,7 +11,7 @@ import { Input } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { convertDateStrToProto, convertDateToProto, formatDateFromProto } from "../../utils/dates.js";
 import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
-import { CloneEnvelopeTransfersRequest } from "../../../api_gen/moneydashboard/v4/envelope_transfers_pb.js";
+import type { CloneEnvelopeTransfersRequest } from "../../../api_gen/moneydashboard/v4/envelope_transfers_pb.js";
 
 type EnvelopeTransferCloneModalProps = {
   envelopeTransferIds: string[];
@@ -34,10 +34,10 @@ function EnvelopeTransferCloneModal(props: EnvelopeTransferCloneModalProps): Rea
       date: convertDateToProto(new Date()),
     });
     setFocusOnNextRender("date");
-  }, [envelopeTransferIds]);
+  }, [envelopeTransferIds, form.setModel]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }

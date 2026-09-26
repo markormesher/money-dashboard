@@ -1,5 +1,5 @@
 function safeNumberValue(v: number | undefined): number | string {
-  if (v !== undefined && !isNaN(v)) {
+  if (v !== undefined && !Number.isNaN(v)) {
     return v;
   } else {
     return "";

@@ -1,4 +1,4 @@
-import { Currency } from "../api_gen/moneydashboard/v4/currencies_pb.js";
+import type { Currency } from "../api_gen/moneydashboard/v4/currencies_pb.js";
 
 const GBP_CURRENCY_ID = "b3092a40-1802-46fd-9967-11c7ac3522c5";
 

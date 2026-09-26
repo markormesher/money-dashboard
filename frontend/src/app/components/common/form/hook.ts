@@ -1,6 +1,6 @@
 import React from "react";
 import { deepEqual } from "../../../utils/utils.js";
-import { useWaitGroup, WaitGroup } from "../../../utils/hooks.js";
+import { useWaitGroup, type WaitGroup } from "../../../utils/hooks.js";
 
 type ErrorKey<T> = "global" | Extract<keyof T, string>;
 
@@ -75,7 +75,7 @@ function useForm<T>(options: FormHookOptions<T> = {}): FormState<T> {
       setValidationResult({ isValid: true, errors: {} });
     }
     setModified(!deepEqual(model, originalModel));
-  }, [model]);
+  }, [model, validator, originalModel]);
 
   React.useEffect(() => {
     setValid(validationResult.isValid);

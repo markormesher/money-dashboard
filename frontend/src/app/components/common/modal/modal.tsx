@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import "./modal.css";
 import { useFresh } from "../../../utils/hooks.js";
 import { ESCAPE, useKeyShortcut } from "../key-shortcuts/key-shortcuts.js";

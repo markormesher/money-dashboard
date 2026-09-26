@@ -6,13 +6,13 @@ function formatDateFromProto(raw?: bigint, format: "human" | "system" = "human")
   }
 
   const date = parseDateFromProto(raw);
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     console.log("Cannot format invalid data from proto", raw);
     return "invalid";
   }
 
   let out: string;
-  if (format == "human") {
+  if (format === "human") {
     out = `${date.getDate() < 10 ? "0" : ""}${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
   } else {
     out = date.toISOString().substring(0, 10);
@@ -27,7 +27,7 @@ function parseDateFromProto(raw: bigint): Date {
 }
 
 function convertDateToProto(raw: Date): bigint {
-  if (isNaN(raw.getTime())) {
+  if (Number.isNaN(raw.getTime())) {
     return BigInt("0");
   } else {
     return BigInt(Math.floor(raw.getTime() / 1000).toString());
@@ -35,7 +35,7 @@ function convertDateToProto(raw: Date): bigint {
 }
 
 function convertDateStrToProto(raw: string): bigint | undefined {
-  if (!raw || raw.trim() == "") {
+  if (!raw || raw.trim() === "") {
     return undefined;
   } else {
     return convertDateToProto(new Date(raw));
@@ -45,7 +45,7 @@ function convertDateStrToProto(raw: string): bigint | undefined {
 function isSameDay(d1: bigint, d2: bigint): boolean {
   const d1d = parseDateFromProto(d1);
   const d2d = parseDateFromProto(d2);
-  return d1d.getFullYear() == d2d.getFullYear() && d1d.getMonth() == d2d.getMonth() && d1d.getDate() == d2d.getDate();
+  return d1d.getFullYear() === d2d.getFullYear() && d1d.getMonth() === d2d.getMonth() && d1d.getDate() === d2d.getDate();
 }
 
 function addMonths(d: bigint, n: number): bigint {

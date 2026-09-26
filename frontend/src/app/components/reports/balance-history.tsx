@@ -1,8 +1,8 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import {
-  ChartData,
+  type ChartData,
   Chart as ChartJS,
-  ChartOptions,
+  type ChartOptions,
   Filler,
   LinearScale,
   LineElement,
@@ -14,9 +14,9 @@ import { isNumber } from "chart.js/helpers";
 import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { DateRange, dateRangePresets, describeDateRange } from "../../utils/date-range.js";
+import { type DateRange, dateRangePresets, describeDateRange } from "../../utils/date-range.js";
 import { DateRangePicker } from "../common/date-range/date-range-picker.js";
-import { BalanceHistoryEntry } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
+import type { BalanceHistoryEntry } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { useAsyncEffect, useWaitGroup } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { formatDateFromProto } from "../../utils/dates.js";
@@ -33,7 +33,7 @@ function BalanceHistoryPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: ["Reports"], title: "Balance History" });
-  }, []);
+  }, [setMeta]);
 
   const [dateRange, setDateRange] = React.useState<DateRange>(dateRangePresets[0][1]);
   const [dateRangePickerOpen, setDateRangePickerOpen] = React.useState(false);
@@ -152,8 +152,7 @@ function BalanceHistoryPage(): ReactElement {
   }
 
   return (
-    <>
-      <div id={"content"} className={"overflow-auto"}>
+    <div id={"content"} className={"overflow-auto"}>
         <PageHeader title={"Balance History"} icon={"monitoring"} options={options} />
 
         {body}
@@ -171,7 +170,6 @@ function BalanceHistoryPage(): ReactElement {
           />
         ) : null}
       </div>
-    </>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { useAsyncEffect, useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -12,7 +12,7 @@ import { formatCurrencyValue } from "../../utils/currency.js";
 import { useHoldingList } from "../../schema/hooks.js";
 import { EmptyResultsPanel } from "../common/empty/empty-results.js";
 import { useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
-import { EnvelopeTransfer } from "../../../api_gen/moneydashboard/v4/envelope_transfers_pb.js";
+import type { EnvelopeTransfer } from "../../../api_gen/moneydashboard/v4/envelope_transfers_pb.js";
 import { envelopeTransferServiceClient } from "../../../api/api.js";
 import { concatClasses } from "../../utils/style.js";
 import { EnvelopeTransferEditModal } from "./envelope-transfer-edit-modal.js";
@@ -24,7 +24,7 @@ function EnvelopeTransfersPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: [], title: "Envelope Transfers" });
-  }, []);
+  }, [setMeta]);
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
@@ -47,7 +47,7 @@ function EnvelopeTransfersPage(): ReactElement {
   const [lastSelectedIndexForClone, setLastSelectedIndexForClone] = React.useState(-1);
   const toggleClonePending = (id: string, index: number, shiftSelect: boolean) => {
     if (clonePendingIds.includes(id)) {
-      setClonePendingIds(clonePendingIds.filter((a) => a != id));
+      setClonePendingIds(clonePendingIds.filter((a) => a !== id));
       setLastSelectedIndexForClone(-1);
     } else {
       if (shiftSelect && lastSelectedIndexForClone >= 0) {
@@ -69,7 +69,7 @@ function EnvelopeTransfersPage(): ReactElement {
   React.useEffect(() => {
     // clear the shift-select state on page change
     setLastSelectedIndexForClone(-1);
-  }, [page]);
+  }, []);
 
   const holdings = useHoldingList({ onError: (e) => setError(e) });
   const [holdingsPerAccount, setHoldingsPerAccount] = React.useState<Record<string, number>>();
@@ -107,7 +107,7 @@ function EnvelopeTransfersPage(): ReactElement {
   }, [nudgeValue, page, searchPattern]);
 
   const deleteEnvelopeTransfer = (id: string) => {
-    if (deletePendingId != id) {
+    if (deletePendingId !== id) {
       setDeletePendingId(id);
       if (clearDeletePendingId.current) {
         clearTimeout(clearDeletePendingId.current);
@@ -134,17 +134,17 @@ function EnvelopeTransfersPage(): ReactElement {
         <span>New</span>
       </IconGroup>
     </button>,
-    <button className={"outline"} onClick={() => setCloneModalOpen(true)} disabled={clonePendingIds.length == 0}>
+    <button className={"outline"} onClick={() => setCloneModalOpen(true)} disabled={clonePendingIds.length === 0}>
       <IconGroup>
         <Icon name={"content_copy"} />
-        <span>{clonePendingIds.length == 0 ? "Clone Selected" : `Clone ${clonePendingIds.length} Selected`}</span>
+        <span>{clonePendingIds.length === 0 ? "Clone Selected" : `Clone ${clonePendingIds.length} Selected`}</span>
       </IconGroup>
     </button>,
   ];
 
   const pageOptions = [
     <fieldset role={"group"}>
-      <button className={"outline"} onClick={() => setPage((curr) => Math.max(1, curr - 1))} disabled={page == 1}>
+      <button className={"outline"} onClick={() => setPage((curr) => Math.max(1, curr - 1))} disabled={page === 1}>
         <Icon name={"arrow_back"} />
       </button>
       <button className={"outline"}>
@@ -181,15 +181,15 @@ function EnvelopeTransfersPage(): ReactElement {
             </tr>
           </thead>
           <tbody>
-            {!envelopeTransfers || envelopeTransfers.length == 0 ? (
+            {!envelopeTransfers || envelopeTransfers.length === 0 ? (
               <td colSpan={99}>
                 <EmptyResultsPanel pluralNoun={"envelope transfers"} />
               </td>
             ) : (
               envelopeTransfers?.map((t, i, arr) => {
-                const deletePending = deletePendingId == t.id;
+                const deletePending = deletePendingId === t.id;
                 const clonePending = clonePendingIds.includes(t.id);
-                const newDate = i == 0 || arr[i - 1]?.date != t.date;
+                const newDate = i === 0 || arr[i - 1]?.date !== t.date;
 
                 return (
                   <tr>
@@ -206,7 +206,7 @@ function EnvelopeTransfersPage(): ReactElement {
                           </span>
                         </IconGroup>
                       ) : (
-                        <>{t.toEnvelope?.name ?? <em>Unallocated funds</em>}</>
+                        t.toEnvelope?.name ?? <em>Unallocated funds</em>
                       )}
                     </td>
                     <td className={"amount-cell"}>
@@ -249,7 +249,7 @@ function EnvelopeTransfersPage(): ReactElement {
         <small className={"muted"}>
           Showing rows {PER_PAGE * (page - 1) + 1} of {Math.min(filteredTotal, PER_PAGE * page)} of{" "}
           {filteredTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-          {filteredTotal != total
+          {filteredTotal !== total
             ? ` (filtered from ${total.toLocaleString(undefined, { maximumFractionDigits: 0 })} total)`
             : ""}
           .

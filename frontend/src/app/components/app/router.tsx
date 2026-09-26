@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 
 type PageMeta = {
   title: string;
@@ -32,39 +32,45 @@ function RouterProvider(props: React.PropsWithChildren): ReactElement {
   const [path, setPath] = React.useState(window.location.pathname);
   const [meta, setMetaInner] = React.useState({ title: "" });
 
-  const navigate = (newPath: string) => {
-    if (newPath !== path) {
-      window.history.pushState(null, "", newPath);
-      setPath(newPath);
-    }
-  };
+  const navigate = React.useCallback(
+    (newPath: string) => {
+      if (newPath !== path) {
+        window.history.pushState(null, "", newPath);
+        setPath(newPath);
+      }
+    },
+    [path],
+  );
 
-  const setMeta = (newMeta: PageMeta) => {
+  const setMeta = React.useCallback((newMeta: PageMeta) => {
     setMetaInner({ ...defaultMeta, ...newMeta });
-  };
+  }, []);
 
-  const handleAnchorClick = (evt: MouseEvent) => {
-    const anchor = (evt.target as Element)?.closest("a");
-    if (!anchor) {
-      return;
-    }
+  const handleAnchorClick = React.useCallback(
+    (evt: MouseEvent) => {
+      const anchor = (evt.target as Element)?.closest("a");
+      if (!anchor) {
+        return;
+      }
 
-    // links leading out of this domain are handled as normal
-    if (anchor.origin !== window.location.origin) {
-      return;
-    }
+      // links leading out of this domain are handled as normal
+      if (anchor.origin !== window.location.origin) {
+        return;
+      }
 
-    evt.preventDefault();
+      evt.preventDefault();
 
-    const url = new URL(anchor.href ?? window.location);
-    const targetPath = url.pathname;
+      const url = new URL(anchor.href ?? window.location);
+      const targetPath = url.pathname;
 
-    if (targetPath == path) {
-      return;
-    }
+      if (targetPath === path) {
+        return;
+      }
 
-    navigate(targetPath);
-  };
+      navigate(targetPath);
+    },
+    [path, navigate],
+  );
 
   // handle <a> clicks
   React.useEffect(() => {
@@ -72,7 +78,7 @@ function RouterProvider(props: React.PropsWithChildren): ReactElement {
     return function cleanup() {
       document.removeEventListener("click", handleAnchorClick);
     };
-  }, [path]);
+  }, [handleAnchorClick]);
 
   // handle forward/backward navigation
   React.useEffect(() => {

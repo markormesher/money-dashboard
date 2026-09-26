@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -20,7 +20,7 @@ function CurrenciesPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: ["Metadata"], title: "Currencies" });
-  }, []);
+  }, [setMeta]);
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
@@ -79,13 +79,13 @@ function CurrenciesPage(): ReactElement {
       .filter((c) => showInactive || c.active)
       .sort((a, b) => a.code.localeCompare(b.code));
 
-    if (filteredCurrencies.length == 0) {
+    if (filteredCurrencies.length === 0) {
       body = <EmptyResultsPanel pluralNoun={"currencies"} />;
     } else {
       body = (
         <TileSet>
           {filteredCurrencies.map((c) => {
-            const isGbp = c.id == GBP_CURRENCY_ID;
+            const isGbp = c.id === GBP_CURRENCY_ID;
             const rate = rates[c.id];
 
             return (

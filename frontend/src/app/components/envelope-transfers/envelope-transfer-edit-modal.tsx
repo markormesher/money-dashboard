@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
@@ -13,7 +13,7 @@ import { NULL_UUID } from "../../../config/consts.js";
 import { useEnvelopeList } from "../../schema/hooks.js";
 import { convertDateStrToProto, convertDateToProto, formatDateFromProto } from "../../utils/dates.js";
 import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
-import { EnvelopeTransfer } from "../../../api_gen/moneydashboard/v4/envelope_transfers_pb.js";
+import type { EnvelopeTransfer } from "../../../api_gen/moneydashboard/v4/envelope_transfers_pb.js";
 
 type EnvelopeTransferEditModalProps = {
   envelopeTransferId: string;
@@ -23,7 +23,7 @@ type EnvelopeTransferEditModalProps = {
 
 function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): ReactElement {
   const { envelopeTransferId, onSaveFinished, onCancel } = props;
-  const createNew = envelopeTransferId == NULL_UUID;
+  const createNew = envelopeTransferId === NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<EnvelopeTransfer>({
@@ -65,7 +65,7 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
   }, [envelopeTransferId]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }
@@ -137,13 +137,13 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
             formState={form}
             fieldName={"fromEnvelope"}
             value={form.model?.fromEnvelope?.id}
-            onChange={(evt) => form.patchModel({ fromEnvelope: envelopes?.find((e) => e.id == evt.target.value) })}
+            onChange={(evt) => form.patchModel({ fromEnvelope: envelopes?.find((e) => e.id === evt.target.value) })}
           >
             {envelopes
               ?.filter((e) => e.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
               ?.map((e) => (
-                <option value={e.id} selected={e.id == form.model?.fromEnvelope?.id}>
+                <option value={e.id} selected={e.id === form.model?.fromEnvelope?.id}>
                   {e.name}
                 </option>
               ))}
@@ -155,13 +155,13 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
             formState={form}
             fieldName={"toEnvelope"}
             value={form.model?.toEnvelope?.id}
-            onChange={(evt) => form.patchModel({ toEnvelope: envelopes?.find((e) => e.id == evt.target.value) })}
+            onChange={(evt) => form.patchModel({ toEnvelope: envelopes?.find((e) => e.id === evt.target.value) })}
           >
             {envelopes
               ?.filter((e) => e.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
               ?.map((e) => (
-                <option value={e.id} selected={e.id == form.model?.toEnvelope?.id}>
+                <option value={e.id} selected={e.id === form.model?.toEnvelope?.id}>
                   {e.name}
                 </option>
               ))}

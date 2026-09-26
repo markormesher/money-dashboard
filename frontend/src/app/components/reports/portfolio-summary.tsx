@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react";
-import { ArcElement, ChartData, Chart as ChartJS, ChartOptions, Filler, PointElement, Tooltip } from "chart.js";
+import React, { type ReactElement } from "react";
+import { ArcElement, type ChartData, Chart as ChartJS, type ChartOptions, Filler, PointElement, Tooltip } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
@@ -9,7 +9,7 @@ import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { LoadingPanel } from "../common/loading/loading.js";
 import "./reports.css";
-import { SummaryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
+import type { SummaryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { formatCurrencyValue } from "../../utils/currency.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 
@@ -35,7 +35,7 @@ function PortfolioSummaryPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: ["Reports"], title: "Portfolio Summary" });
-  }, []);
+  }, [setMeta]);
 
   const [error, setError] = React.useState<unknown>();
 
@@ -43,7 +43,7 @@ function PortfolioSummaryPage(): ReactElement {
   useAsyncEffect(async () => {
     try {
       const res = await reportingServiceClient.getHoldingBalances({});
-      setHoldingBalances(res.balances.filter((b) => b.gbpBalance != 0));
+      setHoldingBalances(res.balances.filter((b) => b.gbpBalance !== 0));
     } catch (e) {
       toastBus.error("Failed to load holding balances.");
       setError(e);
@@ -189,8 +189,7 @@ function PortfolioSummaryPage(): ReactElement {
     // output
 
     body = (
-      <>
-        <div className={"grid"}>
+      <div className={"grid"}>
           <article>
             <header>
               <h4 className={"mb0"}>Cash vs. Assets</h4>
@@ -285,18 +284,15 @@ function PortfolioSummaryPage(): ReactElement {
             </article>
           ) : null}
         </div>
-      </>
     );
   }
 
   return (
-    <>
-      <div id={"content"} className={"overflow-auto"}>
+    <div id={"content"} className={"overflow-auto"}>
         <PageHeader title={"Portfolio Summary"} icon={"data_usage"} />
 
         {body}
       </div>
-    </>
   );
 }
 

@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react";
-import { Transaction } from "../../../api_gen/moneydashboard/v4/transactions_pb.js";
+import React, { type ReactElement } from "react";
+import type { Transaction } from "../../../api_gen/moneydashboard/v4/transactions_pb.js";
 import { useAsyncEffect, useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -24,7 +24,7 @@ function TransactionsPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: [], title: "Transactions" });
-  }, []);
+  }, [setMeta]);
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
@@ -78,7 +78,7 @@ function TransactionsPage(): ReactElement {
   }, [nudgeValue, page, searchPattern]);
 
   const deleteTransaction = (id: string) => {
-    if (deletePendingId != id) {
+    if (deletePendingId !== id) {
       setDeletePendingId(id);
       if (clearDeletePendingId.current) {
         clearTimeout(clearDeletePendingId.current);
@@ -109,7 +109,7 @@ function TransactionsPage(): ReactElement {
 
   const pageOptions = [
     <fieldset role={"group"}>
-      <button className={"outline"} onClick={() => setPage((curr) => Math.max(1, curr - 1))} disabled={page == 1}>
+      <button className={"outline"} onClick={() => setPage((curr) => Math.max(1, curr - 1))} disabled={page === 1}>
         <Icon name={"arrow_back"} />
       </button>
       <button className={"outline"}>
@@ -147,7 +147,7 @@ function TransactionsPage(): ReactElement {
             </tr>
           </thead>
           <tbody>
-            {!transactions || transactions.length == 0 ? (
+            {!transactions || transactions.length === 0 ? (
               <td colSpan={99}>
                 <EmptyResultsPanel pluralNoun={"transactions"} />
               </td>
@@ -157,7 +157,7 @@ function TransactionsPage(): ReactElement {
                 let amountPrefix = "";
                 if (t.holding?.currency) {
                   amount = formatCurrencyValue(t.amount, t.holding.currency);
-                  if (t.holding.currency.id != GBP_CURRENCY_ID) {
+                  if (t.holding.currency.id !== GBP_CURRENCY_ID) {
                     amountPrefix = t.holding.currency.symbol + t.holding.currency.code;
                   }
                 } else if (t.holding?.asset) {
@@ -167,9 +167,9 @@ function TransactionsPage(): ReactElement {
 
                 const qtyAccountHoldings = holdingsPerAccount[t.holding?.account?.id ?? ""] ?? 999;
 
-                const deletePending = deletePendingId == t.id;
+                const deletePending = deletePendingId === t.id;
 
-                const newDate = i == 0 || arr[i - 1]?.date != t.date;
+                const newDate = i === 0 || arr[i - 1]?.date !== t.date;
 
                 return (
                   <tr>
@@ -187,7 +187,7 @@ function TransactionsPage(): ReactElement {
                         <span>{t.holding?.account?.name}</span>
                       )}
                     </td>
-                    <td className={concatClasses(t.payee == "N/A" && "muted")}>
+                    <td className={concatClasses(t.payee === "N/A" && "muted")}>
                       {t.notes.length > 0 ? (
                         <IconGroup>
                           <span>{t.payee}</span>
@@ -201,7 +201,7 @@ function TransactionsPage(): ReactElement {
                     </td>
                     <td>{t.category?.name}</td>
                     <td className={"amount-cell"}>
-                      {amountPrefix != "" ? <span className={"amount-prefix"}>{amountPrefix}</span> : null}
+                      {amountPrefix !== "" ? <span className={"amount-prefix"}>{amountPrefix}</span> : null}
                       <span className={"amount"}>{amount}</span>
                     </td>
                     <td className={"actions-cell"}>
@@ -233,7 +233,7 @@ function TransactionsPage(): ReactElement {
         <small className={"muted"}>
           Showing rows {PER_PAGE * (page - 1) + 1} of {Math.min(filteredTotal, PER_PAGE * page)} of{" "}
           {filteredTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-          {filteredTotal != total
+          {filteredTotal !== total
             ? ` (filtered from ${total.toLocaleString(undefined, { maximumFractionDigits: 0 })} total)`
             : ""}
           .

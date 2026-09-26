@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../modal/modal.js";
 import { Icon, IconGroup } from "../icon/icon.js";
 
@@ -25,8 +25,8 @@ function KeyListener(): ReactElement {
   const [modalOpen, setModalOpen] = React.useState(false);
 
   function handleKeyPress(evt: KeyboardEvent): void {
-    const isEscape = evt.key == "Escape";
-    const isCtrlEnter = evt.key == "Enter" && (evt.ctrlKey || evt.metaKey);
+    const isEscape = evt.key === "Escape";
+    const isCtrlEnter = evt.key === "Enter" && (evt.ctrlKey || evt.metaKey);
 
     // if we're inside an input, only handle some keys
     const target = evt.target;
@@ -58,7 +58,7 @@ function KeyListener(): ReactElement {
       return;
     }
 
-    if (evt.key.length == 1) {
+    if (evt.key.length === 1) {
       const newKeyBuffer = currentKeyBuffer.current + evt.key;
       const s1 = newKeyBuffer.slice(-2);
       const s2 = newKeyBuffer.slice(-1);
@@ -80,7 +80,7 @@ function KeyListener(): ReactElement {
     return function cleanup() {
       document.removeEventListener("keydown", handleKeyPress);
     };
-  }, []);
+  }, [handleKeyPress]);
 
   useKeyShortcut("?", () => setModalOpen(true));
 

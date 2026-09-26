@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useRouter } from "../app/router.js";
@@ -17,7 +17,7 @@ function ProfilesPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: ["Settings"], title: "Profiles" });
-  }, []);
+  }, [setMeta]);
 
   const [error, setError] = React.useState<unknown>();
 
@@ -49,7 +49,7 @@ function ProfilesPage(): ReactElement {
   } else {
     const filteredProfiles = profiles.sort((a, b) => a.name.localeCompare(b.name));
 
-    if (filteredProfiles.length == 0) {
+    if (filteredProfiles.length === 0) {
       body = <EmptyResultsPanel pluralNoun={"profiles"} />;
     } else {
       body = (

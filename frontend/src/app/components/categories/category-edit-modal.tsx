@@ -1,7 +1,7 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { Category } from "../../../api_gen/moneydashboard/v4/categories_pb.js";
+import type { Category } from "../../../api_gen/moneydashboard/v4/categories_pb.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { categoryServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -21,14 +21,14 @@ type CategoryEditModalProps = {
 
 function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
   const { categoryId, onSaveFinished, onCancel } = props;
-  const createNew = categoryId == NULL_UUID;
+  const createNew = categoryId === NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Category>({
     validator: validateCategory,
   });
 
-  const patchMutuallyExclusiveFlag = function (
+  const patchMutuallyExclusiveFlag = (
     flag:
       | "isMemo"
       | "isInterestIncome"
@@ -38,7 +38,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
       | "isCapitalEventFee"
       | "isSyntheticAssetUpdate",
     value: boolean,
-  ): void {
+  ): void => {
     form.patchModel({
       isMemo: false,
       isInterestIncome: false,
@@ -84,7 +84,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
   }, [categoryId]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }

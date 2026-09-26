@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react";
-import { SummaryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
+import React, { type ReactElement } from "react";
+import type { SummaryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
 import { useAsyncEffect } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -44,7 +44,7 @@ function WarningsTile(): ReactElement | null {
         amount = formatAssetValue(balance.rawBalance, balance.asset);
       }
       if (balance.currency) {
-        if (balance.currency.id != GBP_CURRENCY_ID) {
+        if (balance.currency.id !== GBP_CURRENCY_ID) {
           unit = balance.currency.code;
         }
         amount = formatCurrencyValue(balance.rawBalance, balance.currency);

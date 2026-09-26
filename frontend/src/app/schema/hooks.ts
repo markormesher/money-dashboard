@@ -1,6 +1,6 @@
 import React from "react";
-import { Account } from "../../api_gen/moneydashboard/v4/accounts_pb.js";
-import { useAsyncEffect, WaitGroup } from "../utils/hooks.js";
+import type { Account } from "../../api_gen/moneydashboard/v4/accounts_pb.js";
+import { useAsyncEffect, type WaitGroup } from "../utils/hooks.js";
 import {
   accountGroupServiceClient,
   accountServiceClient,
@@ -14,16 +14,16 @@ import {
   rateServiceClient,
   transactionServiceClient,
 } from "../../api/api.js";
-import { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
-import { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
-import { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
-import { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
-import { Rate } from "../../api_gen/moneydashboard/v4/rates_pb.js";
-import { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
-import { AccountGroup } from "../../api_gen/moneydashboard/v4/account_groups_pb.js";
+import type { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
+import type { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
+import type { Holding } from "../../api_gen/moneydashboard/v4/holdings_pb.js";
+import type { Category } from "../../api_gen/moneydashboard/v4/categories_pb.js";
+import type { Rate } from "../../api_gen/moneydashboard/v4/rates_pb.js";
+import type { Profile } from "../../api_gen/moneydashboard/v4/profiles_pb.js";
+import type { AccountGroup } from "../../api_gen/moneydashboard/v4/account_groups_pb.js";
 import { NULL_UUID } from "../../config/consts.js";
-import { Envelope } from "../../api_gen/moneydashboard/v4/envelopes_pb.js";
-import { EnvelopeAllocation } from "../../api_gen/moneydashboard/v4/envelope_allocations_pb.js";
+import type { Envelope } from "../../api_gen/moneydashboard/v4/envelopes_pb.js";
+import type { EnvelopeAllocation } from "../../api_gen/moneydashboard/v4/envelope_allocations_pb.js";
 
 type UseListOptions = {
   wg?: WaitGroup;
@@ -209,10 +209,10 @@ function useLatestRates(options: UseListOptions): Record<string, Rate> | undefin
       const res = await rateServiceClient.getLatestRates({});
       const rates: Record<string, Rate> = {};
       res.rates.forEach((r) => {
-        if (r.currencyId != NULL_UUID) {
+        if (r.currencyId !== NULL_UUID) {
           rates[r.currencyId] = r;
         }
-        if (r.assetId != NULL_UUID) {
+        if (r.assetId !== NULL_UUID) {
           rates[r.assetId] = r;
         }
       });
@@ -234,10 +234,10 @@ function useHistoricAverageRates(options: UseListOptions): Record<string, Rate> 
       const res = await rateServiceClient.getHistoricAverageRates({});
       const rates: Record<string, Rate> = {};
       res.rates.forEach((r) => {
-        if (r.currencyId != NULL_UUID) {
+        if (r.currencyId !== NULL_UUID) {
           rates[r.currencyId] = r;
         }
-        if (r.assetId != NULL_UUID) {
+        if (r.assetId !== NULL_UUID) {
           rates[r.assetId] = r;
         }
       });

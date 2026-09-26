@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import type { ReactElement } from "react";
 import "./loading.css";
 
 function LoadingPanel(): ReactElement {

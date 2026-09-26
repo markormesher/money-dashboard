@@ -1,5 +1,5 @@
 import { PLATFORM_MAXIMUM_DATE, PLATFORM_MINIMUM_DATE } from "../../config/consts.js";
-import { FormValidationResult } from "../components/common/form/hook.js";
+import type { FormValidationResult } from "../components/common/form/hook.js";
 import { addMonths, convertDateToProto, formatDateFromProto, isSameDay, parseDateFromProto } from "./dates.js";
 
 type DateRange = {
@@ -61,7 +61,7 @@ function validateDateRange(value: Partial<DateRange>): FormValidationResult<Date
     result.isValid = false;
   } else {
     const dateParsed = parseDateFromProto(value.startDate);
-    if (isNaN(dateParsed.getTime())) {
+    if (Number.isNaN(dateParsed.getTime())) {
       result.isValid = false;
       result.errors.startDate = "Invalid date";
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
@@ -77,7 +77,7 @@ function validateDateRange(value: Partial<DateRange>): FormValidationResult<Date
     result.isValid = false;
   } else {
     const dateParsed = parseDateFromProto(value.endDate);
-    if (isNaN(dateParsed.getTime())) {
+    if (Number.isNaN(dateParsed.getTime())) {
       result.isValid = false;
       result.errors.endDate = "Invalid date";
     } else if (dateParsed.getTime() < PLATFORM_MINIMUM_DATE.getTime()) {
@@ -106,7 +106,7 @@ function describeDateRange(dr: DateRange): string {
     }
   }
 
-  return formatDateFromProto(dr.startDate) + " to " + formatDateFromProto(dr.endDate);
+  return `${formatDateFromProto(dr.startDate)} to ${formatDateFromProto(dr.endDate)}`;
 }
 
 export { type DateRange, dateRangePresets, validateDateRange, describeDateRange };

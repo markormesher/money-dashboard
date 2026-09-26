@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
@@ -10,7 +10,7 @@ import { Input } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
-import { Profile } from "../../../api_gen/moneydashboard/v4/profiles_pb.js";
+import type { Profile } from "../../../api_gen/moneydashboard/v4/profiles_pb.js";
 import { profileServiceClient } from "../../../api/api.js";
 
 type ProfileEditModalProps = {
@@ -21,7 +21,7 @@ type ProfileEditModalProps = {
 
 function ProfileEditModal(props: ProfileEditModalProps): ReactElement {
   const { profileId, onSaveFinished, onCancel } = props;
-  const createNew = profileId == NULL_UUID;
+  const createNew = profileId === NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<Profile>({
@@ -54,7 +54,7 @@ function ProfileEditModal(props: ProfileEditModalProps): ReactElement {
   }, [profileId]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }

@@ -1,5 +1,5 @@
 import React from "react";
-import { ReactElement } from "react";
+import type { ReactElement } from "react";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { CurrenciesPage } from "../currencies/currencies-page.js";
 import { AssetsPage } from "../assets/assets-page.js";
@@ -22,7 +22,7 @@ import { Menu } from "./menu.js";
 import { Breadcrumbs } from "./breadcrumbs.js";
 import "./style/00-pico.css";
 import "./style/01-common.css";
-import "./style/02-app-components.scss";
+import "./style/02-app-components.css";
 
 function App(): ReactElement {
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -48,9 +48,9 @@ function App(): ReactElement {
 
   const toggleTheme = React.useCallback(() => {
     // auto -> dark -> light -> repeat
-    if (theme == "dark") {
+    if (theme === "dark") {
       setPrefValue("theme", "light");
-    } else if (theme == "light") {
+    } else if (theme === "light") {
       setPrefValue("theme", "auto");
     } else {
       setPrefValue("theme", "dark");
@@ -116,7 +116,7 @@ function App(): ReactElement {
             <ul>
               <li>
                 <a href={"#"} onClick={toggleTheme} className={"secondary"} style={{ opacity: 0.7 }}>
-                  <Icon name={theme == "dark" ? "dark_mode" : theme == "light" ? "light_mode" : "brightness_auto"} />
+                  <Icon name={theme === "dark" ? "dark_mode" : theme === "light" ? "light_mode" : "brightness_auto"} />
                 </a>
               </li>
             </ul>

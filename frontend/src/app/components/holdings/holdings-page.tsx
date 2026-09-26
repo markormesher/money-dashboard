@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
@@ -19,7 +19,7 @@ function HoldingsPage(): ReactElement {
   const { setMeta } = useRouter();
   React.useEffect(() => {
     setMeta({ parents: ["Settings"], title: "Holdings" });
-  }, []);
+  }, [setMeta]);
 
   const [nudgeValue, nudge] = useNudge();
   const [error, setError] = React.useState<unknown>();
@@ -72,7 +72,7 @@ function HoldingsPage(): ReactElement {
       .filter((a) => searchPattern?.test(`${a.account?.name} / ${a.name}`) ?? true)
       .sort((a, b) => `${a.account?.name} / ${a.name}`.localeCompare(`${b.account?.name} / ${b.name}`));
 
-    if (filteredHoldings.length == 0) {
+    if (filteredHoldings.length === 0) {
       body = <EmptyResultsPanel pluralNoun={"holdings"} />;
     } else {
       body = (

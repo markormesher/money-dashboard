@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
@@ -11,7 +11,7 @@ import { Input, Select } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
-import { EnvelopeAllocation } from "../../../api_gen/moneydashboard/v4/envelope_allocations_pb.js";
+import type { EnvelopeAllocation } from "../../../api_gen/moneydashboard/v4/envelope_allocations_pb.js";
 import { convertDateStrToProto, convertDateToProto, formatDateFromProto } from "../../utils/dates.js";
 import { useCategoryList, useEnvelopeList } from "../../schema/hooks.js";
 
@@ -23,7 +23,7 @@ type EnvelopeAllocationEditModalProps = {
 
 function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): ReactElement {
   const { envelopeAllocationId, onSaveFinished, onCancel } = props;
-  const createNew = envelopeAllocationId == NULL_UUID;
+  const createNew = envelopeAllocationId === NULL_UUID;
 
   const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
   const form = useForm<EnvelopeAllocation>({
@@ -71,7 +71,7 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
   }, [envelopeAllocationId]);
 
   React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
+    if (form.wg.count === 0 && focusOnNextRender) {
       focusFieldByName(focusOnNextRender);
       setFocusOnNextRender(undefined);
     }
@@ -128,13 +128,13 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
             formState={form}
             fieldName={"category"}
             value={form.model?.category?.id}
-            onChange={(evt) => form.patchModel({ category: categories?.find((c) => c.id == evt.target.value) })}
+            onChange={(evt) => form.patchModel({ category: categories?.find((c) => c.id === evt.target.value) })}
           >
             {categories
               ?.filter((c) => c.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
               ?.map((c) => (
-                <option value={c.id} selected={c.id == form.model?.category?.id}>
+                <option value={c.id} selected={c.id === form.model?.category?.id}>
                   {c.name}
                 </option>
               ))}
@@ -145,13 +145,13 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
             formState={form}
             fieldName={"envelope"}
             value={form.model?.envelope?.id}
-            onChange={(evt) => form.patchModel({ envelope: envelopes?.find((e) => e.id == evt.target.value) })}
+            onChange={(evt) => form.patchModel({ envelope: envelopes?.find((e) => e.id === evt.target.value) })}
           >
             {envelopes
               ?.filter((e) => e.active)
               ?.sort((a, b) => a.name.localeCompare(b.name))
               ?.map((e) => (
-                <option value={e.id} selected={e.id == form.model?.envelope?.id}>
+                <option value={e.id} selected={e.id === form.model?.envelope?.id}>
                   {e.name}
                 </option>
               ))}
