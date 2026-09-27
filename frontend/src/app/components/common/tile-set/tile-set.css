@@ -1,16 +1,16 @@
 div.tile-set {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
-  gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+	gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
 
-  article.tile {
-    margin: 0;
-    height: fit-content;
+	article.tile {
+		margin: 0;
+		height: fit-content;
 
-    footer {
-      a {
-        text-decoration: none;
-      }
-    }
-  }
+		footer {
+			a {
+				text-decoration: none;
+			}
+		}
+	}
 }

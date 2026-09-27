@@ -9,109 +9,108 @@ import { convertDateStrToProto, formatDateFromProto } from "../../../utils/dates
 import "./date-range-picker.css";
 
 type DateRangePickerProps = {
-  dateRange: DateRange;
-  onSave: (dateRange: DateRange) => void;
-  onCancel: () => void;
+	dateRange: DateRange;
+	onSave: (dateRange: DateRange) => void;
+	onCancel: () => void;
 };
 
 function DateRangePicker(props: DateRangePickerProps): ReactElement {
-  const { dateRange, onSave, onCancel } = props;
+	const { dateRange, onSave, onCancel } = props;
 
-  const form = useForm<DateRange>({
-    validator: validateDateRange,
-  });
-  React.useEffect(() => form.setModel(dateRange), [dateRange, form.setModel]);
+	const form = useForm<DateRange>({
+		validator: validateDateRange,
+	});
+	React.useEffect(() => form.setModel(dateRange), [dateRange, form.setModel]);
 
-  const [saveOnNextRender, setSaveOnNextRender] = React.useState(false);
-  React.useEffect(() => {
-    if (saveOnNextRender) {
-      save();
-    }
-  }, [saveOnNextRender, save]);
+	const [saveOnNextRender, setSaveOnNextRender] = React.useState(false);
+	const save = () => {
+		if (form.wg.count > 0 || !form.valid || !form.model) {
+			return;
+		}
 
-  const save = () => {
-    if (form.wg.count > 0 || !form.valid || !form.model) {
-      return;
-    }
+		onSave(form.model);
+	};
+	React.useEffect(() => {
+		if (saveOnNextRender) {
+			save();
+		}
+	}, [saveOnNextRender, save]);
 
-    onSave(form.model);
-  };
+	useKeyShortcut(CTRLENTER, () => save());
 
-  useKeyShortcut(CTRLENTER, () => save());
+	const header = (
+		<IconGroup>
+			<Icon name={"calendar_month"} />
+			<span>Select Date Range</span>
+		</IconGroup>
+	);
 
-  const header = (
-    <IconGroup>
-      <Icon name={"calendar_month"} />
-      <span>Select Date Range</span>
-    </IconGroup>
-  );
+	const presetLinks = dateRangePresets.map((p) => {
+		return (
+			<li>
+				<a
+					href={"#"}
+					onClick={() => {
+						setSaveOnNextRender(true);
+						form.patchModel(p[1]);
+					}}
+				>
+					{p[0]}
+				</a>
+			</li>
+		);
+	});
 
-  const presetLinks = dateRangePresets.map((p) => {
-    return (
-      <li>
-        <a
-          href={"#"}
-          onClick={() => {
-            setSaveOnNextRender(true);
-            form.patchModel(p[1]);
-          }}
-        >
-          {p[0]}
-        </a>
-      </li>
-    );
-  });
+	const body = (
+		<>
+			<form>
+				<fieldset className={"grid"}>
+					<Input
+						label={"Start"}
+						formState={form}
+						fieldName={"startDate"}
+						type={"date"}
+						value={formatDateFromProto(form.model?.startDate, "system")}
+						onChange={(evt) =>
+							form.patchModel({
+								startDate: convertDateStrToProto(evt.target.value),
+							})
+						}
+					/>
 
-  const body = (
-    <>
-      <form>
-        <fieldset className={"grid"}>
-          <Input
-            label={"Start"}
-            formState={form}
-            fieldName={"startDate"}
-            type={"date"}
-            value={formatDateFromProto(form.model?.startDate, "system")}
-            onChange={(evt) =>
-              form.patchModel({
-                startDate: convertDateStrToProto(evt.target.value),
-              })
-            }
-          />
+					<Input
+						label={"End"}
+						formState={form}
+						fieldName={"endDate"}
+						type={"date"}
+						value={formatDateFromProto(form.model?.endDate, "system")}
+						onChange={(evt) =>
+							form.patchModel({
+								endDate: convertDateStrToProto(evt.target.value),
+							})
+						}
+					/>
+				</fieldset>
+			</form>
+			<hr />
+			<ul className={"preset-links"}>{presetLinks}</ul>
+		</>
+	);
 
-          <Input
-            label={"End"}
-            formState={form}
-            fieldName={"endDate"}
-            type={"date"}
-            value={formatDateFromProto(form.model?.endDate, "system")}
-            onChange={(evt) =>
-              form.patchModel({
-                endDate: convertDateStrToProto(evt.target.value),
-              })
-            }
-          />
-        </fieldset>
-      </form>
-      <hr />
-      <ul className={"preset-links"}>{presetLinks}</ul>
-    </>
-  );
+	return (
+		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
+			{body}
 
-  return (
-    <Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
-      {body}
-
-      <footer>
-        <button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
-          <IconGroup>
-            <Icon name={"save"} />
-            <span>Save</span>
-          </IconGroup>
-        </button>
-      </footer>
-    </Modal>
-  );
+			<footer>
+				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+					<IconGroup>
+						<Icon name={"save"} />
+						<span>Save</span>
+					</IconGroup>
+				</button>
+			</footer>
+		</Modal>
+	);
 }
 
 export { DateRangePicker };

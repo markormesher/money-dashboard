@@ -1,18 +1,18 @@
 import React from "react";
 import type { Account } from "../../api_gen/moneydashboard/v4/accounts_pb.js";
-import { useAsyncEffect, type WaitGroup } from "../utils/hooks.js";
+import type { WaitGroup } from "../utils/hooks.js";
 import {
-  accountGroupServiceClient,
-  accountServiceClient,
-  assetServiceClient,
-  categoryServiceClient,
-  currencyServiceClient,
-  envelopeAllocationServiceClient,
-  envelopeServiceClient,
-  holdingServiceClient,
-  profileServiceClient,
-  rateServiceClient,
-  transactionServiceClient,
+	accountGroupServiceClient,
+	accountServiceClient,
+	assetServiceClient,
+	categoryServiceClient,
+	currencyServiceClient,
+	envelopeAllocationServiceClient,
+	envelopeServiceClient,
+	holdingServiceClient,
+	profileServiceClient,
+	rateServiceClient,
+	transactionServiceClient,
 } from "../../api/api.js";
 import type { Asset } from "../../api_gen/moneydashboard/v4/assets_pb.js";
 import type { Currency } from "../../api_gen/moneydashboard/v4/currencies_pb.js";
@@ -26,242 +26,164 @@ import type { Envelope } from "../../api_gen/moneydashboard/v4/envelopes_pb.js";
 import type { EnvelopeAllocation } from "../../api_gen/moneydashboard/v4/envelope_allocations_pb.js";
 
 type UseListOptions = {
-  wg?: WaitGroup;
-  dependencies?: React.DependencyList;
-  onError: (error: unknown) => void;
+	wg?: WaitGroup;
+	nudgeValue?: number;
+	onError: (error: unknown) => void;
 };
 
-function useAccountList(options: UseListOptions): Account[] | undefined {
-  const [accounts, setAccounts] = React.useState<Account[]>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await accountServiceClient.getAllAccounts({});
-      setAccounts(res.accounts);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
+function useList<T, V>(options: UseListOptions, fetcher: () => Promise<V>, getter: (res: V) => T): T | undefined {
+	const [out, setOut] = React.useState<T>();
 
-  return accounts;
+	React.useEffect(() => {
+		// "consume" the nudge value to make sure the linter keeps it as a dependency of this effect
+		void options.nudgeValue;
+
+		options.wg?.add();
+		fetcher()
+			.then((res) => {
+				setOut(getter(res));
+			})
+			.catch((e) => {
+				options.onError(e);
+				console.log(e);
+			})
+			.finally(() => {
+				options.wg?.done();
+			});
+	}, [fetcher, getter, options.nudgeValue, options.onError, options.wg]);
+
+	return out;
+}
+
+function useAccountList(options: UseListOptions): Account[] | undefined {
+	return useList(
+		options,
+		() => accountServiceClient.getAllAccounts({}),
+		(res) => res.accounts,
+	);
 }
 
 function useAccountGroupList(options: UseListOptions): AccountGroup[] | undefined {
-  const [accountGroups, setAccountGroups] = React.useState<AccountGroup[]>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await accountGroupServiceClient.getAllAccountGroups({});
-      setAccountGroups(res.accountGroups);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
-
-  return accountGroups;
+	return useList(
+		options,
+		() => accountGroupServiceClient.getAllAccountGroups({}),
+		(res) => res.accountGroups,
+	);
 }
 
 function useAssetList(options: UseListOptions): Asset[] | undefined {
-  const [assets, setAssets] = React.useState<Asset[]>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await assetServiceClient.getAllAssets({});
-      setAssets(res.assets);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
-
-  return assets;
+	return useList(
+		options,
+		() => assetServiceClient.getAllAssets({}),
+		(res) => res.assets,
+	);
 }
 
 function useCategoryList(options: UseListOptions): Category[] | undefined {
-  const [categories, setCategories] = React.useState<Category[]>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await categoryServiceClient.getAllCategories({});
-      setCategories(res.categories);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
-
-  return categories;
+	return useList(
+		options,
+		() => categoryServiceClient.getAllCategories({}),
+		(res) => res.categories,
+	);
 }
 
 function useCurrencyList(options: UseListOptions): Currency[] | undefined {
-  const [currencies, setCurrencies] = React.useState<Currency[]>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await currencyServiceClient.getAllCurrencies({});
-      setCurrencies(res.currencies);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
-
-  return currencies;
+	return useList(
+		options,
+		() => currencyServiceClient.getAllCurrencies({}),
+		(res) => res.currencies,
+	);
 }
 
 function useEnvelopeList(options: UseListOptions): Envelope[] | undefined {
-  const [envelopes, setEnvelopes] = React.useState<Envelope[]>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await envelopeServiceClient.getAllEnvelopes({});
-      setEnvelopes(res.envelopes);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
-
-  return envelopes;
+	return useList(
+		options,
+		() => envelopeServiceClient.getAllEnvelopes({}),
+		(res) => res.envelopes,
+	);
 }
 
 function useEnvelopeAllocationList(options: UseListOptions): EnvelopeAllocation[] | undefined {
-  const [envelopeAllocations, setEnvelopeAllocations] = React.useState<EnvelopeAllocation[]>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await envelopeAllocationServiceClient.getAllEnvelopeAllocations({});
-      setEnvelopeAllocations(res.envelopeAllocations);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
-
-  return envelopeAllocations;
+	return useList(
+		options,
+		() => envelopeAllocationServiceClient.getAllEnvelopeAllocations({}),
+		(res) => res.envelopeAllocations,
+	);
 }
 
 function useHoldingList(options: UseListOptions): Holding[] | undefined {
-  const [holdings, setHoldings] = React.useState<Holding[]>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await holdingServiceClient.getAllHoldings({});
-      setHoldings(res.holdings);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
-
-  return holdings;
+	return useList(
+		options,
+		() => holdingServiceClient.getAllHoldings({}),
+		(res) => res.holdings,
+	);
 }
 
 function usePayeeList(options: UseListOptions): string[] | undefined {
-  const [payees, setPayees] = React.useState<string[]>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await transactionServiceClient.getPayees({});
-      setPayees(res.payees);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
-
-  return payees;
+	return useList(
+		options,
+		() => transactionServiceClient.getPayees({}),
+		(res) => res.payees,
+	);
 }
 
 function useProfileList(options: UseListOptions): Profile[] | undefined {
-  const [profiles, setProfiles] = React.useState<Profile[]>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await profileServiceClient.getAllProfiles({});
-      setProfiles(res.profiles);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
-
-  return profiles;
+	return useList(
+		options,
+		() => profileServiceClient.getAllProfiles({}),
+		(res) => res.profiles,
+	);
 }
 
 function useLatestRates(options: UseListOptions): Record<string, Rate> | undefined {
-  const [rates, setRates] = React.useState<Record<string, Rate>>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await rateServiceClient.getLatestRates({});
-      const rates: Record<string, Rate> = {};
-      res.rates.forEach((r) => {
-        if (r.currencyId !== NULL_UUID) {
-          rates[r.currencyId] = r;
-        }
-        if (r.assetId !== NULL_UUID) {
-          rates[r.assetId] = r;
-        }
-      });
-      setRates(rates);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
-  return rates;
+	return useList(
+		options,
+		() => rateServiceClient.getLatestRates({}),
+		(res) => {
+			const rates: Record<string, Rate> = {};
+			res.rates.forEach((r) => {
+				if (r.currencyId !== NULL_UUID) {
+					rates[r.currencyId] = r;
+				}
+				if (r.assetId !== NULL_UUID) {
+					rates[r.assetId] = r;
+				}
+			});
+			return rates;
+		},
+	);
 }
 
 function useHistoricAverageRates(options: UseListOptions): Record<string, Rate> | undefined {
-  const [rates, setRates] = React.useState<Record<string, Rate>>();
-  useAsyncEffect(async () => {
-    options.wg?.add();
-    try {
-      const res = await rateServiceClient.getHistoricAverageRates({});
-      const rates: Record<string, Rate> = {};
-      res.rates.forEach((r) => {
-        if (r.currencyId !== NULL_UUID) {
-          rates[r.currencyId] = r;
-        }
-        if (r.assetId !== NULL_UUID) {
-          rates[r.assetId] = r;
-        }
-      });
-      setRates(rates);
-    } catch (e) {
-      options.onError(e);
-      console.log(e);
-    }
-    options.wg?.done();
-  }, options.dependencies ?? []);
-  return rates;
+	return useList(
+		options,
+		() => rateServiceClient.getHistoricAverageRates({}),
+		(res) => {
+			const rates: Record<string, Rate> = {};
+			res.rates.forEach((r) => {
+				if (r.currencyId !== NULL_UUID) {
+					rates[r.currencyId] = r;
+				}
+				if (r.assetId !== NULL_UUID) {
+					rates[r.assetId] = r;
+				}
+			});
+			return rates;
+		},
+	);
 }
 
 export {
-  useAccountList,
-  useAccountGroupList,
-  useAssetList,
-  useCategoryList,
-  useCurrencyList,
-  useHoldingList,
-  useEnvelopeList,
-  useEnvelopeAllocationList,
-  usePayeeList,
-  useProfileList,
-  useLatestRates,
-  useHistoricAverageRates,
+	useAccountList,
+	useAccountGroupList,
+	useAssetList,
+	useCategoryList,
+	useCurrencyList,
+	useHoldingList,
+	useEnvelopeList,
+	useEnvelopeAllocationList,
+	usePayeeList,
+	useProfileList,
+	useLatestRates,
+	useHistoricAverageRates,
 };

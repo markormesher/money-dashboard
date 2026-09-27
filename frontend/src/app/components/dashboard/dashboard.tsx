@@ -7,23 +7,23 @@ import { WarningsTile } from "./warnings-tile.js";
 import { EnvelopeBalancesTile } from "./envelope-balances-tile.js";
 
 function DashboardPage(): ReactElement {
-  const { setMeta } = useRouter();
-  React.useEffect(() => {
-    setMeta({ parents: [], title: "Dashboard" });
-  }, [setMeta]);
+	const { setMeta } = useRouter();
+	React.useEffect(() => {
+		setMeta({ parents: [], title: "Dashboard" });
+	}, [setMeta]);
 
-  return (
-    <div id={"content"} className={concatClasses("overflow-auto", "dashboard")}>
-      <div className={"sidebar"}>
-        <WarningsTile />
-        <HoldingBalancesTile />
-      </div>
+	return (
+		<div id={"content"} className={concatClasses("overflow-auto", "dashboard")}>
+			<div className={"sidebar"}>
+				<WarningsTile />
+				<HoldingBalancesTile />
+			</div>
 
-      <div className={"main"}>
-        <EnvelopeBalancesTile />
-      </div>
-    </div>
-  );
+			<div className={"main"}>
+				<EnvelopeBalancesTile />
+			</div>
+		</div>
+	);
 }
 
 export { DashboardPage };

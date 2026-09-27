@@ -14,102 +14,102 @@ import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts
 import type { CloneEnvelopeTransfersRequest } from "../../../api_gen/moneydashboard/v4/envelope_transfers_pb.js";
 
 type EnvelopeTransferCloneModalProps = {
-  envelopeTransferIds: string[];
-  onSaveFinished: () => void;
-  onCancel: () => void;
+	envelopeTransferIds: string[];
+	onSaveFinished: () => void;
+	onCancel: () => void;
 };
 
 function EnvelopeTransferCloneModal(props: EnvelopeTransferCloneModalProps): ReactElement {
-  const { envelopeTransferIds, onSaveFinished, onCancel } = props;
+	const { envelopeTransferIds, onSaveFinished, onCancel } = props;
 
-  const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
-  const form = useForm<CloneEnvelopeTransfersRequest>({
-    validator: validateCloneEnvelopeTransfersRequest,
-  });
+	const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
+	const form = useForm<CloneEnvelopeTransfersRequest>({
+		validator: validateCloneEnvelopeTransfersRequest,
+	});
 
-  React.useEffect(() => {
-    form.setModel({
-      $typeName: "moneydashboard.v4.CloneEnvelopeTransfersRequest",
-      ids: envelopeTransferIds,
-      date: convertDateToProto(new Date()),
-    });
-    setFocusOnNextRender("date");
-  }, [envelopeTransferIds, form.setModel]);
+	React.useEffect(() => {
+		form.setModel({
+			$typeName: "moneydashboard.v4.CloneEnvelopeTransfersRequest",
+			ids: envelopeTransferIds,
+			date: convertDateToProto(new Date()),
+		});
+		setFocusOnNextRender("date");
+	}, [envelopeTransferIds, form.setModel]);
 
-  React.useEffect(() => {
-    if (form.wg.count === 0 && focusOnNextRender) {
-      focusFieldByName(focusOnNextRender);
-      setFocusOnNextRender(undefined);
-    }
-  }, [focusOnNextRender, form.wg.count]);
+	React.useEffect(() => {
+		if (form.wg.count === 0 && focusOnNextRender) {
+			focusFieldByName(focusOnNextRender);
+			setFocusOnNextRender(undefined);
+		}
+	}, [focusOnNextRender, form.wg.count]);
 
-  const save = useAsyncHandler(async () => {
-    if (form.wg.count > 0 || !form.valid || !form.model) {
-      return;
-    }
+	const save = useAsyncHandler(async () => {
+		if (form.wg.count > 0 || !form.valid || !form.model) {
+			return;
+		}
 
-    form.wg.add();
+		form.wg.add();
 
-    try {
-      await envelopeTransferServiceClient.cloneEnvelopeTransfers(form.model);
-      toastBus.success("Cloned envelope transfers");
-      onSaveFinished();
-    } catch (e) {
-      toastBus.error("Failed to clone envelope transfers.");
-      console.log(e);
-    }
+		try {
+			await envelopeTransferServiceClient.cloneEnvelopeTransfers(form.model);
+			toastBus.success("Cloned envelope transfers");
+			onSaveFinished();
+		} catch (e) {
+			toastBus.error("Failed to clone envelope transfers.");
+			console.log(e);
+		}
 
-    form.wg.done();
-  });
+		form.wg.done();
+	});
 
-  useKeyShortcut(CTRLENTER, () => save());
+	useKeyShortcut(CTRLENTER, () => save());
 
-  const header = (
-    <IconGroup>
-      <Icon name={"swap_horiz"} />
-      <span>
-        Clone {envelopeTransferIds.length} Envelope Transfer{envelopeTransferIds.length > 1 ? "s" : ""}
-      </span>
-    </IconGroup>
-  );
+	const header = (
+		<IconGroup>
+			<Icon name={"swap_horiz"} />
+			<span>
+				Clone {envelopeTransferIds.length} Envelope Transfer{envelopeTransferIds.length > 1 ? "s" : ""}
+			</span>
+		</IconGroup>
+	);
 
-  let body: ReactElement;
-  if (form.fatalError) {
-    body = <ErrorPanel error={form.fatalError} noCard={true} />;
-  } else {
-    body = (
-      <form>
-        <fieldset className={"grid"}>
-          <Input
-            label={"Date"}
-            formState={form}
-            fieldName={"date"}
-            type={"date"}
-            value={formatDateFromProto(form.model?.date, "system")}
-            onChange={(evt) =>
-              form.patchModel({
-                date: convertDateStrToProto(evt.target.value),
-              })
-            }
-          />
-        </fieldset>
-      </form>
-    );
-  }
+	let body: ReactElement;
+	if (form.fatalError) {
+		body = <ErrorPanel error={form.fatalError} noCard={true} />;
+	} else {
+		body = (
+			<form>
+				<fieldset className={"grid"}>
+					<Input
+						label={"Date"}
+						formState={form}
+						fieldName={"date"}
+						type={"date"}
+						value={formatDateFromProto(form.model?.date, "system")}
+						onChange={(evt) =>
+							form.patchModel({
+								date: convertDateStrToProto(evt.target.value),
+							})
+						}
+					/>
+				</fieldset>
+			</form>
+		);
+	}
 
-  return (
-    <Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
-      {body}
-      <footer>
-        <button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
-          <IconGroup>
-            <Icon name={"save"} />
-            <span>Save</span>
-          </IconGroup>
-        </button>
-      </footer>
-    </Modal>
-  );
+	return (
+		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
+			{body}
+			<footer>
+				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+					<IconGroup>
+						<Icon name={"save"} />
+						<span>Save</span>
+					</IconGroup>
+				</button>
+			</footer>
+		</Modal>
+	);
 }
 
 export { EnvelopeTransferCloneModal };

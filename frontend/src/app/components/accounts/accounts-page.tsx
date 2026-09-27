@@ -17,242 +17,254 @@ import { AccountEditModal } from "./account-edit-modal.js";
 import { AccountGroupEditModal } from "./account-group-edit-modal.js";
 
 function AccountsPage(): ReactElement {
-  const { setMeta } = useRouter();
-  React.useEffect(() => {
-    setMeta({ parents: ["Settings"], title: "Accounts" });
-  }, [setMeta]);
+	const { setMeta } = useRouter();
+	React.useEffect(() => {
+		setMeta({ parents: ["Settings"], title: "Accounts" });
+	}, [setMeta]);
 
-  const [page, setPage] = React.useState("Accounts");
+	const [page, setPage] = React.useState("Accounts");
 
-  const [nudgeValue, nudge] = useNudge();
-  const [error, setError] = React.useState<unknown>();
+	const [nudgeValue, nudge] = useNudge();
+	const [error, setError] = React.useState<unknown>();
 
-  const [searchPattern, setSearchPattern] = React.useState<RegExp>();
-  const [showInactive, setShowInactive] = React.useState(false);
+	const [searchPattern, setSearchPattern] = React.useState<RegExp>();
+	const [showInactive, setShowInactive] = React.useState(false);
 
-  const [accountEditingId, setAccountEditingId] = React.useState<string>();
-  const [accountGroupEditingId, setAccountGroupEditingId] = React.useState<string>();
-  useKeyShortcut("c", () => {
-    if (page === "Accounts") {
-      setAccountEditingId(NULL_UUID);
-    } else if (page === "Account Groups") {
-      setAccountGroupEditingId(NULL_UUID);
-    }
-  });
+	const [accountEditingId, setAccountEditingId] = React.useState<string>();
+	const [accountGroupEditingId, setAccountGroupEditingId] = React.useState<string>();
 
-  const accounts = useAccountList({
-    dependencies: [nudgeValue],
-    onError: (e) => {
-      toastBus.error("Failed to load accounts.");
-      setError(e);
-    },
-  });
+	useKeyShortcut("c", () => {
+		if (page === "Accounts") {
+			setAccountEditingId(NULL_UUID);
+		} else if (page === "Account Groups") {
+			setAccountGroupEditingId(NULL_UUID);
+		}
+	});
 
-  const accountGroups = useAccountGroupList({
-    dependencies: [nudgeValue],
-    onError: (e) => {
-      toastBus.error("Failed to load account groups.");
-      setError(e);
-    },
-  });
+	const accounts = useAccountList({
+		nudgeValue,
+		onError: (e) => {
+			toastBus.error("Failed to load accounts.");
+			setError(e);
+		},
+	});
 
-  let pageButtons: ReactElement[] = [];
-  let pageOptions: ReactElement[] = [];
+	const accountGroups = useAccountGroupList({
+		nudgeValue,
+		onError: (e) => {
+			toastBus.error("Failed to load account groups.");
+			setError(e);
+		},
+	});
 
-  switch (page) {
-    case "Accounts":
-      pageButtons = [
-        <button key={"new"} className={"outline"} onClick={() => setAccountEditingId(NULL_UUID)}>
-          <IconGroup>
-            <Icon name={"add"} />
-            <span>New</span>
-          </IconGroup>
-        </button>,
-      ];
+	let pageButtons: ReactElement[] = [];
+	let pageOptions: ReactElement[] = [];
 
-      pageOptions = [
-        <fieldset key={"show-inactive"}>
-          <label>
-            <input type={"checkbox"} role={"switch"} checked={showInactive} onChange={(evt) => setShowInactive(evt.target.checked)} />
-            Show inactive
-          </label>
-        </fieldset>,
-      ];
-      break;
+	switch (page) {
+		case "Accounts":
+			pageButtons = [
+				<button key={ "new"} className = { "outline"} onClick = {() => setAccountEditingId(NULL_UUID)}>
+					<IconGroup>
+					<Icon name={ "add" } />
+						< span > New </span>
+						</IconGroup>
+						</button>,
+			];
 
-    case "Account Groups":
-      pageButtons = [
-        <button key={"new"} className={"outline"} onClick={() => setAccountGroupEditingId(NULL_UUID)}>
-          <IconGroup>
-            <Icon name={"add"} />
-            <span>New</span>
-          </IconGroup>
-        </button>,
-      ];
-      break;
-  }
+	pageOptions = [
+		<fieldset key={ "show-inactive"} >
+		<label>
+		<input type={ "checkbox"} role = { "switch"} checked = { showInactive } onChange = {(evt) => setShowInactive(evt.target.checked)} />
+						Show inactive
+	</label>
+	</fieldset>,
+			];
+break;
 
-  let body: ReactElement;
-  if (error) {
-    body = <ErrorPanel error={error} />;
-  } else if (!accounts || !accountGroups) {
-    body = <LoadingPanel />;
-  } else if (page === "Accounts") {
-    const filteredAccounts = accounts
-      .filter((a) => showInactive || a.active)
-      .filter((a) => searchPattern?.test(a.name) ?? true)
-      .sort((a, b) => a.name.localeCompare(b.name));
+		case "Account Groups":
+pageButtons = [
+	<button key={ "new"} className = { "outline"} onClick = {() => setAccountGroupEditingId(NULL_UUID)}>
+	<IconGroup>
+	<Icon name={ "add"} />
+	<span>New </span>
+	</IconGroup>
+	</button>,
+];
+break;
+	}
 
-    if (filteredAccounts.length === 0) {
-      body = <EmptyResultsPanel pluralNoun={"accounts"} />;
-    } else {
-      body = (
-        <TileSet>
-          {filteredAccounts.map((a) => {
-            return (
-              <Tile key={a.id} className={concatClasses(!a.active && "semi-transparent")}>
-                <h4>{a.name}</h4>
-                <ul className={"labels"}>
-                  <li>{a.accountGroup?.name}</li>
-                  {!a.active ? <li>Inactive</li> : null}
-                  {a.isIsa ? <li>ISA</li> : null}
-                  {a.isPension ? <li>Pension</li> : null}
-                </ul>
-                {a.notes ? <small>{a.notes}</small> : null}
-                <footer>
-                  <ul className={"horizonal mb0"}>
-                    <li>
-                      <a href={""} className={"secondary"} onClick={() => setAccountEditingId(a.id)}>
-                        <IconGroup>
-                          <Icon name={"edit"} />
-                          <span>Edit</span>
-                        </IconGroup>
-                      </a>
-                    </li>
+let body: ReactElement;
+if (error) {
+	body = <ErrorPanel error={ error } />;
+} else if (!accounts || !accountGroups) {
+	body = <LoadingPanel />;
+} else if (page === "Accounts") {
+	const filteredAccounts = accounts
+		.filter((a) => showInactive || a.active)
+		.filter((a) => searchPattern?.test(a.name) ?? true)
+		.sort((a, b) => a.name.localeCompare(b.name));
 
-                    <li>
-                      <a href={""} className={"secondary"} onClick={() => copyToClipboard(a.id)}>
-                        <IconGroup>
-                          <Icon name={"content_copy"} />
-                          <span>Copy ID</span>
-                        </IconGroup>
-                      </a>
-                    </li>
-                  </ul>
-                </footer>
-              </Tile>
-            );
-          })}
-        </TileSet>
-      );
-    }
-  } else if (page === "Account Groups") {
-    const filteredGroups = accountGroups.filter((g) => searchPattern?.test(g.name) ?? true).sort((a, b) => a.displayOrder - b.displayOrder);
+	if (filteredAccounts.length === 0) {
+		body = <EmptyResultsPanel pluralNoun={ "accounts" } />;
+	} else {
+		body = (
+			<TileSet>
+			{
+				filteredAccounts.map((a) => {
+					return (
+						<Tile key= { a.id } className = { concatClasses(!a.active && "semi-transparent")
+			} >
+			<h4>{ a.name } </h4>
+			< ul className = { "labels"} >
+				<li>{ a.accountGroup?.name } </li>
+		{ !a.active ? <li>Inactive </li> : null}
+		{ a.isIsa ? <li>ISA </li> : null}
+		{ a.isPension ? <li>Pension </li> : null}
+		</ul>
+		{ a.notes ? <small>{ a.notes } </small> : null}
+		<footer>
+			<ul className={ "horizonal mb0" }>
+				<li>
+				<a href={ "" } className = { "secondary"} onClick = {() => setAccountEditingId(a.id)
+	}>
+		<IconGroup>
+		<Icon name={ "edit" } />
+			< span > Edit </span>
+			</IconGroup>
+			</a>
+			</li>
 
-    if (filteredGroups.length === 0) {
-      body = <EmptyResultsPanel pluralNoun={"account groups"} />;
-    } else {
-      body = (
-        <TileSet>
-          {filteredGroups.map((g) => {
-            return (
-              <Tile key={g.id}>
-                <h4>{g.name}</h4>
-                <ul className={"labels"}>
-                  <li>Display order: {g.displayOrder}</li>
-                </ul>
-                <footer>
-                  <ul className={"horizonal mb0"}>
-                    <li>
-                      <a href={""} className={"secondary"} onClick={() => setAccountGroupEditingId(g.id)}>
-                        <IconGroup>
-                          <Icon name={"edit"} />
-                          <span>Edit</span>
-                        </IconGroup>
-                      </a>
-                    </li>
+			< li >
+			<a href={ "" } className = { "secondary"} onClick = {() => copyToClipboard(a.id)
+}>
+	<IconGroup>
+	<Icon name={ "content_copy" } />
+		< span > Copy ID </span>
+			</IconGroup>
+			</a>
+			</li>
+			</ul>
+			</footer>
+			</Tile>
+						);
+					})}
+</TileSet>
+			);
+		}
+	} else if (page === "Account Groups") {
+	const filteredGroups = accountGroups.filter((g) => searchPattern?.test(g.name) ?? true).sort((a, b) => a.displayOrder - b.displayOrder);
 
-                    <li>
-                      <a href={""} className={"secondary"} onClick={() => copyToClipboard(g.id)}>
-                        <IconGroup>
-                          <Icon name={"content_copy"} />
-                          <span>Copy ID</span>
-                        </IconGroup>
-                      </a>
-                    </li>
-                  </ul>
-                </footer>
-              </Tile>
-            );
-          })}
-        </TileSet>
-      );
-    }
-  } else {
-    // we shouldn't actually get here
-    body = <ErrorPanel error={"Unknown page"} />;
-  }
+	if (filteredGroups.length === 0) {
+		body = <EmptyResultsPanel pluralNoun={ "account groups" } />;
+	} else {
+		body = (
+			<TileSet>
+			{
+				filteredGroups.map((g) => {
+					return (
+						<Tile key= { g.id } >
+						<h4>{ g.name } </h4>
+						< ul className = { "labels"} >
+							<li>Display order: { g.displayOrder } </li>
+								</ul>
+								< footer >
+								<ul className={ "horizonal mb0" }>
+									<li>
+									<a href={ "" } className = { "secondary"} onClick = {() => setAccountGroupEditingId(g.id)
+				}>
+				<IconGroup>
+				<Icon name={ "edit"} />
+				<span>Edit </span>
+				</IconGroup>
+				</a>
+				</li>
 
-  return (
-    <>
-      <div id={"content"} className={"overflow-auto"}>
-        <PageHeader
-          title={page}
-          icon={"account_balance"}
-          subPages={["Accounts", "Account Groups"]}
-          onSubPageSelected={setPage}
-          buttons={pageButtons}
-          options={pageOptions}
-          onSearchTextChange={(p) => setSearchPattern(p)}
-        />
-        <section>{body}</section>
-        <hr />
-        <section>
-          <p>
-            <IconGroup>
-              <Icon name={"info"} className={"muted"} />
-              <span>
-                Accounts are a wrapper around a collection of one or more <a href={"/settings/holdings"}>holdings</a>; usually 1:1 with an
-                actual account held at a financial institution.
-              </span>
-            </IconGroup>
-          </p>
+				< li >
+				<a href={ ""} className = { "secondary"} onClick = {() => copyToClipboard(g.id)} >
+			<IconGroup>
+			<Icon name= { "content_copy"} />
+			<span>Copy ID </span>
+				</IconGroup>
+				</a>
+				</li>
+				</ul>
+				</footer>
+				</Tile>
+						);
+	})
+}
+</TileSet>
+			);
+		}
+	} else {
+	// we shouldn't actually get here
+	body = <ErrorPanel error={ "Unknown page" } />;
+}
 
-          <p>
-            <IconGroup>
-              <Icon name={"info"} className={"muted"} />
-              <span>
-                Accounts groups are named collections of accounts. They are only used to customise dashboard diplays; they have no financial
-                meaning.
-              </span>
-            </IconGroup>
-          </p>
-        </section>
-      </div>
+return (
+	<>
+	<div id= { "content"} className = { "overflow-auto"} >
+		<PageHeader
+					title={ page }
+icon = { "account_balance"}
+subPages = { ["Accounts", "Account Groups"]}
+onSubPageSelected = { setPage }
+buttons = { pageButtons }
+options = { pageOptions }
+onSearchTextChange = {(p) => setSearchPattern(p)}
+				/>
+	< section > { body } </section>
+	< hr />
+	<section>
+	<p>
+	<IconGroup>
+	<Icon name={ "info" } className = { "muted"} />
+		<span>
+		Accounts are a wrapper around a collection of one or more < a href = { "/settings/holdings"} > holdings </a>; usually 1:1 with an
+								actual account held at a financial institution.
+							</span>
+	</IconGroup>
+	</p>
 
-      {accountEditingId ? (
-        <AccountEditModal
-          accountId={accountEditingId}
-          onSaveFinished={() => {
-            nudge();
-            setAccountEditingId(undefined);
-          }}
-          onCancel={() => setAccountEditingId(undefined)}
-        />
-      ) : null}
+	< p >
+	<IconGroup>
+	<Icon name={ "info" } className = { "muted"} />
+		<span>
+		Accounts groups are named collections of accounts.They are only used to customise dashboard diplays; they have no financial
+meaning.
+							</span>
+	</IconGroup>
+	</p>
+	</section>
+	</div>
 
-      {accountGroupEditingId ? (
-        <AccountGroupEditModal
-          accountGroupId={accountGroupEditingId}
-          onSaveFinished={() => {
-            nudge();
-            setAccountGroupEditingId(undefined);
-          }}
-          onCancel={() => setAccountGroupEditingId(undefined)}
-        />
-      ) : null}
-    </>
-  );
+{
+	accountEditingId ? (
+		<AccountEditModal
+					accountId= { accountEditingId }
+					onSaveFinished = {() => {
+		nudge();
+		setAccountEditingId(undefined);
+	}
+}
+onCancel = {() => setAccountEditingId(undefined)}
+				/>
+			) : null}
+
+{
+	accountGroupEditingId ? (
+		<AccountGroupEditModal
+					accountGroupId= { accountGroupEditingId }
+					onSaveFinished = {() => {
+		nudge();
+		setAccountGroupEditingId(undefined);
+	}
+}
+onCancel = {() => setAccountGroupEditingId(undefined)}
+				/>
+			) : null}
+</>
+	);
 }
 
 export { AccountsPage };

@@ -15,185 +15,185 @@ import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts
 import { useAccountGroupList } from "../../schema/hooks.js";
 
 type AccountEditModalProps = {
-  accountId: string;
-  onSaveFinished: () => void;
-  onCancel: () => void;
+	accountId: string;
+	onSaveFinished: () => void;
+	onCancel: () => void;
 };
 
 function AccountEditModal(props: AccountEditModalProps): ReactElement {
-  const { accountId, onSaveFinished, onCancel } = props;
-  const createNew = accountId === NULL_UUID;
+	const { accountId, onSaveFinished, onCancel } = props;
+	const createNew = accountId === NULL_UUID;
 
-  const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
-  const form = useForm<Account>({
-    validator: validateAccount,
-  });
+	const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
+	const form = useForm<Account>({
+		validator: validateAccount,
+	});
 
-  const accountGroups = useAccountGroupList({
-    wg: form.wg,
-    onError: (e) => {
-      toastBus.error("Failed to load account groups.");
-      form.setFatalError(e);
-    },
-  });
+	const accountGroups = useAccountGroupList({
+		wg: form.wg,
+		onError: (e) => {
+			toastBus.error("Failed to load account groups.");
+			form.setFatalError(e);
+		},
+	});
 
-  useAsyncEffect(async () => {
-    if (createNew) {
-      form.setModel({
-        $typeName: "moneydashboard.v4.Account",
-        id: NULL_UUID,
-        name: "",
-        notes: "",
-        isIsa: false,
-        isPension: false,
-        active: true,
-      });
-      setFocusOnNextRender("name");
-      return;
-    }
+	useAsyncEffect(async () => {
+		if (createNew) {
+			form.setModel({
+				$typeName: "moneydashboard.v4.Account",
+				id: NULL_UUID,
+				name: "",
+				notes: "",
+				isIsa: false,
+				isPension: false,
+				active: true,
+			});
+			setFocusOnNextRender("name");
+			return;
+		}
 
-    try {
-      form.wg.add();
-      const res = await accountServiceClient.getAccountById({ id: accountId });
-      form.setModel(res.account);
-      form.wg.done();
-      setFocusOnNextRender("name");
-    } catch (e) {
-      toastBus.error("Failed to load account.");
-      form.setFatalError(e);
-      console.log(e);
-    }
-  }, [accountId]);
+		try {
+			form.wg.add();
+			const res = await accountServiceClient.getAccountById({ id: accountId });
+			form.setModel(res.account);
+			form.wg.done();
+			setFocusOnNextRender("name");
+		} catch (e) {
+			toastBus.error("Failed to load account.");
+			form.setFatalError(e);
+			console.log(e);
+		}
+	}, [accountId]);
 
-  React.useEffect(() => {
-    if (form.wg.count === 0 && focusOnNextRender) {
-      focusFieldByName(focusOnNextRender);
-      setFocusOnNextRender(undefined);
-    }
-  }, [focusOnNextRender, form.wg.count]);
+	React.useEffect(() => {
+		if (form.wg.count === 0 && focusOnNextRender) {
+			focusFieldByName(focusOnNextRender);
+			setFocusOnNextRender(undefined);
+		}
+	}, [focusOnNextRender, form.wg.count]);
 
-  const save = useAsyncHandler(async () => {
-    if (form.wg.count > 0 || !form.valid || !form.model) {
-      return;
-    }
+	const save = useAsyncHandler(async () => {
+		if (form.wg.count > 0 || !form.valid || !form.model) {
+			return;
+		}
 
-    form.wg.add();
+		form.wg.add();
 
-    try {
-      await accountServiceClient.upsertAccount({ account: form.model });
-      toastBus.success("Saved account.");
-      onSaveFinished();
-    } catch (e) {
-      toastBus.error("Failed to save account.");
-      console.log(e);
-    }
+		try {
+			await accountServiceClient.upsertAccount({ account: form.model });
+			toastBus.success("Saved account.");
+			onSaveFinished();
+		} catch (e) {
+			toastBus.error("Failed to save account.");
+			console.log(e);
+		}
 
-    form.wg.done();
-  });
+		form.wg.done();
+	});
 
-  useKeyShortcut(CTRLENTER, () => save());
+	useKeyShortcut(CTRLENTER, () => save());
 
-  const header = (
-    <IconGroup>
-      <Icon name={"account_balance"} />
-      <span>{createNew ? "Create" : "Edit"} Account</span>
-    </IconGroup>
-  );
+	const header = (
+		<IconGroup>
+			<Icon name={"account_balance"} />
+			<span>{createNew ? "Create" : "Edit"} Account</span>
+		</IconGroup>
+	);
 
-  let body: ReactElement;
-  if (form.fatalError) {
-    body = <ErrorPanel error={form.fatalError} noCard={true} />;
-  } else {
-    body = (
-      <form>
-        <fieldset className={"grid"}>
-          <Input
-            label={"Name"}
-            formState={form}
-            fieldName={"name"}
-            type={"text"}
-            value={form.model?.name}
-            onChange={(evt) => form.patchModel({ name: evt.target.value })}
-          />
+	let body: ReactElement;
+	if (form.fatalError) {
+		body = <ErrorPanel error={form.fatalError} noCard={true} />;
+	} else {
+		body = (
+			<form>
+				<fieldset className={"grid"}>
+					<Input
+						label={"Name"}
+						formState={form}
+						fieldName={"name"}
+						type={"text"}
+						value={form.model?.name}
+						onChange={(evt) => form.patchModel({ name: evt.target.value })}
+					/>
 
-          <Select
-            label={"Group"}
-            formState={form}
-            fieldName={"accountGroup"}
-            value={form.model?.accountGroup?.id}
-            onChange={(evt) => form.patchModel({ accountGroup: accountGroups?.find((g) => g.id === evt.target.value) })}
-          >
-            {accountGroups
-              ?.sort((a, b) => a.displayOrder - b.displayOrder)
-              ?.map((g) => (
-                <option key={g.id} value={g.id} selected={g.id === form.model?.accountGroup?.id}>
-                  {g.name}
-                </option>
-              ))}
-          </Select>
-        </fieldset>
+					<Select
+						label={"Group"}
+						formState={form}
+						fieldName={"accountGroup"}
+						value={form.model?.accountGroup?.id}
+						onChange={(evt) => form.patchModel({ accountGroup: accountGroups?.find((g) => g.id === evt.target.value) })}
+					>
+						{accountGroups
+							?.sort((a, b) => a.displayOrder - b.displayOrder)
+							?.map((g) => (
+								<option key={g.id} value={g.id} selected={g.id === form.model?.accountGroup?.id}>
+									{g.name}
+								</option>
+							))}
+					</Select>
+				</fieldset>
 
-        <fieldset className={"grid"}>
-          <Input
-            label={"ISA"}
-            formState={form}
-            fieldName={"isIsa"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.isIsa ?? false}
-            onChange={(evt) => form.patchModel({ isPension: false, isIsa: evt.target.checked })}
-          />
+				<fieldset className={"grid"}>
+					<Input
+						label={"ISA"}
+						formState={form}
+						fieldName={"isIsa"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.isIsa ?? false}
+						onChange={(evt) => form.patchModel({ isPension: false, isIsa: evt.target.checked })}
+					/>
 
-          <Input
-            label={"Pension"}
-            formState={form}
-            fieldName={"isPension"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.isPension ?? false}
-            onChange={(evt) => form.patchModel({ isIsa: false, isPension: evt.target.checked })}
-          />
-        </fieldset>
+					<Input
+						label={"Pension"}
+						formState={form}
+						fieldName={"isPension"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.isPension ?? false}
+						onChange={(evt) => form.patchModel({ isIsa: false, isPension: evt.target.checked })}
+					/>
+				</fieldset>
 
-        <fieldset>
-          <Input
-            label={"Active"}
-            formState={form}
-            fieldName={"active"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.active ?? false}
-            onChange={(evt) => form.patchModel({ active: evt.target.checked })}
-          />
-        </fieldset>
+				<fieldset>
+					<Input
+						label={"Active"}
+						formState={form}
+						fieldName={"active"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.active ?? false}
+						onChange={(evt) => form.patchModel({ active: evt.target.checked })}
+					/>
+				</fieldset>
 
-        <fieldset className={"grid"}>
-          <Textarea
-            label={"Notes"}
-            formState={form}
-            fieldName={"notes"}
-            placeholder={""}
-            value={form.model?.notes}
-            onChange={(evt) => form.patchModel({ notes: evt.target.value })}
-          />
-        </fieldset>
-      </form>
-    );
-  }
+				<fieldset className={"grid"}>
+					<Textarea
+						label={"Notes"}
+						formState={form}
+						fieldName={"notes"}
+						placeholder={""}
+						value={form.model?.notes}
+						onChange={(evt) => form.patchModel({ notes: evt.target.value })}
+					/>
+				</fieldset>
+			</form>
+		);
+	}
 
-  return (
-    <Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
-      {body}
-      <footer>
-        <button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
-          <IconGroup>
-            <Icon name={"save"} />
-            <span>Save</span>
-          </IconGroup>
-        </button>
-      </footer>
-    </Modal>
-  );
+	return (
+		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
+			{body}
+			<footer>
+				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+					<IconGroup>
+						<Icon name={"save"} />
+						<span>Save</span>
+					</IconGroup>
+				</button>
+			</footer>
+		</Modal>
+	);
 }
 
 export { AccountEditModal };

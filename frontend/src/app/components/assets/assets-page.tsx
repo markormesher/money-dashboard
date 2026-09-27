@@ -17,166 +17,166 @@ import { useAssetList, useHistoricAverageRates, useLatestRates } from "../../sch
 import { AssetEditModal } from "./asset-edit-modal.js";
 
 function AssetsPage(): ReactElement {
-  const { setMeta } = useRouter();
-  React.useEffect(() => {
-    setMeta({ parents: ["Metadata"], title: "Assets" });
-  }, [setMeta]);
+	const { setMeta } = useRouter();
+	React.useEffect(() => {
+		setMeta({ parents: ["Metadata"], title: "Assets" });
+	}, [setMeta]);
 
-  const [nudgeValue, nudge] = useNudge();
-  const [error, setError] = React.useState<unknown>();
+	const [nudgeValue, nudge] = useNudge();
+	const [error, setError] = React.useState<unknown>();
 
-  const [searchPattern, setSearchPattern] = React.useState<RegExp>();
-  const [showInactive, setShowInactive] = React.useState(false);
+	const [searchPattern, setSearchPattern] = React.useState<RegExp>();
+	const [showInactive, setShowInactive] = React.useState(false);
 
-  const [editingId, setEditingId] = React.useState<string>();
-  useKeyShortcut("c", () => setEditingId(NULL_UUID));
+	const [editingId, setEditingId] = React.useState<string>();
+	useKeyShortcut("c", () => setEditingId(NULL_UUID));
 
-  const assets = useAssetList({
-    dependencies: [nudgeValue],
-    onError: (e) => {
-      toastBus.error("Failed to load assets.");
-      setError(e);
-    },
-  });
+	const assets = useAssetList({
+		nudgeValue,
+		onError: (e) => {
+			toastBus.error("Failed to load assets.");
+			setError(e);
+		},
+	});
 
-  const latestRates = useLatestRates({
-    dependencies: [nudgeValue],
-    onError: (e) => {
-      toastBus.error("Failed to load latest asset rates.");
-      setError(e);
-    },
-  });
+	const latestRates = useLatestRates({
+		nudgeValue,
+		onError: (e) => {
+			toastBus.error("Failed to load latest asset rates.");
+			setError(e);
+		},
+	});
 
-  const historicAvgRates = useHistoricAverageRates({
-    dependencies: [nudgeValue],
-    onError: (e) => {
-      toastBus.error("Failed to load historical average asset rates.");
-      setError(e);
-    },
-  });
+	const historicAvgRates = useHistoricAverageRates({
+		nudgeValue,
+		onError: (e) => {
+			toastBus.error("Failed to load historical average asset rates.");
+			setError(e);
+		},
+	});
 
-  const pageButtons = [
-    <button key={"new"} className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
-      <IconGroup>
-        <Icon name={"add"} />
-        <span>New</span>
-      </IconGroup>
-    </button>,
-  ];
+	const pageButtons = [
+		<button key={"new"} className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
+			<IconGroup>
+				<Icon name={"add"} />
+				<span>New</span>
+			</IconGroup>
+		</button>,
+	];
 
-  const pageOptions = [
-    <fieldset key={"show-inactive"}>
-      <label>
-        <input type={"checkbox"} role={"switch"} checked={showInactive} onChange={(evt) => setShowInactive(evt.target.checked)} />
-        Show inactive
-      </label>
-    </fieldset>,
-  ];
+	const pageOptions = [
+		<fieldset key={"show-inactive"}>
+			<label>
+				<input type={"checkbox"} role={"switch"} checked={showInactive} onChange={(evt) => setShowInactive(evt.target.checked)} />
+				Show inactive
+			</label>
+		</fieldset>,
+	];
 
-  let body: ReactElement;
-  if (error) {
-    body = <ErrorPanel error={error} />;
-  } else if (!assets || !latestRates || !historicAvgRates) {
-    body = <LoadingPanel />;
-  } else {
-    const filteredAssets = assets
-      .filter((a) => showInactive || a.active)
-      .filter((a) => searchPattern?.test(a.name) ?? true)
-      .sort((a, b) => a.name.localeCompare(b.name));
+	let body: ReactElement;
+	if (error) {
+		body = <ErrorPanel error={error} />;
+	} else if (!assets || !latestRates || !historicAvgRates) {
+		body = <LoadingPanel />;
+	} else {
+		const filteredAssets = assets
+			.filter((a) => showInactive || a.active)
+			.filter((a) => searchPattern?.test(a.name) ?? true)
+			.sort((a, b) => a.name.localeCompare(b.name));
 
-    if (filteredAssets.length === 0) {
-      body = <EmptyResultsPanel pluralNoun={"assets"} />;
-    } else {
-      body = (
-        <TileSet>
-          {filteredAssets.map((a) => {
-            const rate = latestRates[a.id];
-            const avgRate = historicAvgRates[a.id];
-            return (
-              <Tile key={a.id} className={concatClasses(!a.active && "semi-transparent")}>
-                <h4>{a.name}</h4>
-                <ul className={"labels"}>
-                  {!a.active ? <li>Inactive</li> : null}
-                  <li>{a.currency?.code}</li>
-                  {rate !== undefined ? (
-                    <li>
-                      {a.currency?.symbol} {rate.rate.toFixed(a.displayPrecision)}
-                    </li>
-                  ) : null}
-                  {avgRate !== undefined ? (
-                    <li>
-                      90d avg: {a.currency?.symbol} {avgRate.rate.toFixed(a.displayPrecision)}
-                    </li>
-                  ) : null}
-                  {rate !== undefined ? <li>Updated {formatDateFromProto(rate.date)}</li> : null}
-                </ul>
-                {a.notes ? <small>{a.notes}</small> : null}
-                <footer>
-                  <ul className={"horizonal mb0"}>
-                    <li>
-                      <a href={""} className={"secondary"} onClick={() => setEditingId(a.id)}>
-                        <IconGroup>
-                          <Icon name={"edit"} />
-                          <span>Edit</span>
-                        </IconGroup>
-                      </a>
-                    </li>
+		if (filteredAssets.length === 0) {
+			body = <EmptyResultsPanel pluralNoun={"assets"} />;
+		} else {
+			body = (
+				<TileSet>
+					{filteredAssets.map((a) => {
+						const rate = latestRates[a.id];
+						const avgRate = historicAvgRates[a.id];
+						return (
+							<Tile key={a.id} className={concatClasses(!a.active && "semi-transparent")}>
+								<h4>{a.name}</h4>
+								<ul className={"labels"}>
+									{!a.active ? <li>Inactive</li> : null}
+									<li>{a.currency?.code}</li>
+									{rate !== undefined ? (
+										<li>
+											{a.currency?.symbol} {rate.rate.toFixed(a.displayPrecision)}
+										</li>
+									) : null}
+									{avgRate !== undefined ? (
+										<li>
+											90d avg: {a.currency?.symbol} {avgRate.rate.toFixed(a.displayPrecision)}
+										</li>
+									) : null}
+									{rate !== undefined ? <li>Updated {formatDateFromProto(rate.date)}</li> : null}
+								</ul>
+								{a.notes ? <small>{a.notes}</small> : null}
+								<footer>
+									<ul className={"horizonal mb0"}>
+										<li>
+											<a href={""} className={"secondary"} onClick={() => setEditingId(a.id)}>
+												<IconGroup>
+													<Icon name={"edit"} />
+													<span>Edit</span>
+												</IconGroup>
+											</a>
+										</li>
 
-                    <li>
-                      <a href={""} className={"secondary"} onClick={() => copyToClipboard(a.id)}>
-                        <IconGroup>
-                          <Icon name={"content_copy"} />
-                          <span>Copy ID</span>
-                        </IconGroup>
-                      </a>
-                    </li>
-                  </ul>
-                </footer>
-              </Tile>
-            );
-          })}
-        </TileSet>
-      );
-    }
-  }
+										<li>
+											<a href={""} className={"secondary"} onClick={() => copyToClipboard(a.id)}>
+												<IconGroup>
+													<Icon name={"content_copy"} />
+													<span>Copy ID</span>
+												</IconGroup>
+											</a>
+										</li>
+									</ul>
+								</footer>
+							</Tile>
+						);
+					})}
+				</TileSet>
+			);
+		}
+	}
 
-  return (
-    <>
-      <div id={"content"} className={"overflow-auto"}>
-        <PageHeader
-          title={"Assets"}
-          icon={"candlestick_chart"}
-          buttons={pageButtons}
-          options={pageOptions}
-          onSearchTextChange={(p) => setSearchPattern(p)}
-        />
-        <section>{body}</section>
-        <hr />
-        <section>
-          <p>
-            <IconGroup>
-              <Icon name={"info"} className={"muted"} />
-              <span>
-                Assets represent one unit of a non-cash instrument with a value that changes over time, such as a house or a share in a
-                company.
-              </span>
-            </IconGroup>
-          </p>
-        </section>
-      </div>
+	return (
+		<>
+			<div id={"content"} className={"overflow-auto"}>
+				<PageHeader
+					title={"Assets"}
+					icon={"candlestick_chart"}
+					buttons={pageButtons}
+					options={pageOptions}
+					onSearchTextChange={(p) => setSearchPattern(p)}
+				/>
+				<section>{body}</section>
+				<hr />
+				<section>
+					<p>
+						<IconGroup>
+							<Icon name={"info"} className={"muted"} />
+							<span>
+								Assets represent one unit of a non-cash instrument with a value that changes over time, such as a house or a share in a
+								company.
+							</span>
+						</IconGroup>
+					</p>
+				</section>
+			</div>
 
-      {editingId ? (
-        <AssetEditModal
-          assetId={editingId}
-          onSaveFinished={() => {
-            nudge();
-            setEditingId(undefined);
-          }}
-          onCancel={() => setEditingId(undefined)}
-        />
-      ) : null}
-    </>
-  );
+			{editingId ? (
+				<AssetEditModal
+					assetId={editingId}
+					onSaveFinished={() => {
+						nudge();
+						setEditingId(undefined);
+					}}
+					onCancel={() => setEditingId(undefined)}
+				/>
+			) : null}
+		</>
+	);
 }
 
 export { AssetsPage };

@@ -16,164 +16,164 @@ import { convertDateStrToProto, convertDateToProto, formatDateFromProto } from "
 import { useCategoryList, useEnvelopeList } from "../../schema/hooks.js";
 
 type EnvelopeAllocationEditModalProps = {
-  envelopeAllocationId: string;
-  onSaveFinished: () => void;
-  onCancel: () => void;
+	envelopeAllocationId: string;
+	onSaveFinished: () => void;
+	onCancel: () => void;
 };
 
 function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): ReactElement {
-  const { envelopeAllocationId, onSaveFinished, onCancel } = props;
-  const createNew = envelopeAllocationId === NULL_UUID;
+	const { envelopeAllocationId, onSaveFinished, onCancel } = props;
+	const createNew = envelopeAllocationId === NULL_UUID;
 
-  const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
-  const form = useForm<EnvelopeAllocation>({
-    validator: validateEnvelopeAllocation,
-  });
+	const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
+	const form = useForm<EnvelopeAllocation>({
+		validator: validateEnvelopeAllocation,
+	});
 
-  const categories = useCategoryList({
-    wg: form.wg,
-    onError: (e) => {
-      toastBus.error("Failed to load categories.");
-      form.setFatalError(e);
-    },
-  });
+	const categories = useCategoryList({
+		wg: form.wg,
+		onError: (e) => {
+			toastBus.error("Failed to load categories.");
+			form.setFatalError(e);
+		},
+	});
 
-  const envelopes = useEnvelopeList({
-    wg: form.wg,
-    onError: (e) => {
-      toastBus.error("Failed to load envelopes.");
-      form.setFatalError(e);
-    },
-  });
+	const envelopes = useEnvelopeList({
+		wg: form.wg,
+		onError: (e) => {
+			toastBus.error("Failed to load envelopes.");
+			form.setFatalError(e);
+		},
+	});
 
-  useAsyncEffect(async () => {
-    if (createNew) {
-      form.setModel({
-        $typeName: "moneydashboard.v4.EnvelopeAllocation",
-        id: NULL_UUID,
-        startDate: convertDateToProto(new Date()),
-      });
-      setFocusOnNextRender("name");
-      return;
-    }
+	useAsyncEffect(async () => {
+		if (createNew) {
+			form.setModel({
+				$typeName: "moneydashboard.v4.EnvelopeAllocation",
+				id: NULL_UUID,
+				startDate: convertDateToProto(new Date()),
+			});
+			setFocusOnNextRender("name");
+			return;
+		}
 
-    try {
-      form.wg.add();
-      const res = await envelopeAllocationServiceClient.getEnvelopeAllocationById({ id: envelopeAllocationId });
-      form.setModel(res.envelopeAllocation);
-      form.wg.done();
-      setFocusOnNextRender("name");
-    } catch (e) {
-      toastBus.error("Failed to load envelope allocation.");
-      form.setFatalError(e);
-      console.log(e);
-    }
-  }, [envelopeAllocationId]);
+		try {
+			form.wg.add();
+			const res = await envelopeAllocationServiceClient.getEnvelopeAllocationById({ id: envelopeAllocationId });
+			form.setModel(res.envelopeAllocation);
+			form.wg.done();
+			setFocusOnNextRender("name");
+		} catch (e) {
+			toastBus.error("Failed to load envelope allocation.");
+			form.setFatalError(e);
+			console.log(e);
+		}
+	}, [envelopeAllocationId]);
 
-  React.useEffect(() => {
-    if (form.wg.count === 0 && focusOnNextRender) {
-      focusFieldByName(focusOnNextRender);
-      setFocusOnNextRender(undefined);
-    }
-  }, [focusOnNextRender, form.wg.count]);
+	React.useEffect(() => {
+		if (form.wg.count === 0 && focusOnNextRender) {
+			focusFieldByName(focusOnNextRender);
+			setFocusOnNextRender(undefined);
+		}
+	}, [focusOnNextRender, form.wg.count]);
 
-  const save = useAsyncHandler(async () => {
-    if (form.wg.count > 0 || !form.valid || !form.model) {
-      return;
-    }
+	const save = useAsyncHandler(async () => {
+		if (form.wg.count > 0 || !form.valid || !form.model) {
+			return;
+		}
 
-    form.wg.add();
+		form.wg.add();
 
-    try {
-      await envelopeAllocationServiceClient.upsertEnvelopeAllocation({ envelopeAllocation: form.model });
-      toastBus.success("Saved envelope allocation.");
-      onSaveFinished();
-    } catch (e) {
-      toastBus.error("Failed to save envelope allocation.");
-      console.log(e);
-    }
+		try {
+			await envelopeAllocationServiceClient.upsertEnvelopeAllocation({ envelopeAllocation: form.model });
+			toastBus.success("Saved envelope allocation.");
+			onSaveFinished();
+		} catch (e) {
+			toastBus.error("Failed to save envelope allocation.");
+			console.log(e);
+		}
 
-    form.wg.done();
-  });
+		form.wg.done();
+	});
 
-  useKeyShortcut(CTRLENTER, () => save());
+	useKeyShortcut(CTRLENTER, () => save());
 
-  const header = (
-    <IconGroup>
-      <Icon name={"mail"} />
-      <span>{createNew ? "Create" : "Edit"} Envelope Allocation</span>
-    </IconGroup>
-  );
+	const header = (
+		<IconGroup>
+			<Icon name={"mail"} />
+			<span>{createNew ? "Create" : "Edit"} Envelope Allocation</span>
+		</IconGroup>
+	);
 
-  let body: ReactElement;
-  if (form.fatalError) {
-    body = <ErrorPanel error={form.fatalError} noCard={true} />;
-  } else {
-    body = (
-      <form>
-        <fieldset className={"grid"}>
-          <Input
-            label={"Start Date"}
-            formState={form}
-            fieldName={"startDate"}
-            type={"date"}
-            value={formatDateFromProto(form.model?.startDate, "system")}
-            onChange={(evt) => form.patchModel({ startDate: convertDateStrToProto(evt.target.value) })}
-          />
-        </fieldset>
+	let body: ReactElement;
+	if (form.fatalError) {
+		body = <ErrorPanel error={form.fatalError} noCard={true} />;
+	} else {
+		body = (
+			<form>
+				<fieldset className={"grid"}>
+					<Input
+						label={"Start Date"}
+						formState={form}
+						fieldName={"startDate"}
+						type={"date"}
+						value={formatDateFromProto(form.model?.startDate, "system")}
+						onChange={(evt) => form.patchModel({ startDate: convertDateStrToProto(evt.target.value) })}
+					/>
+				</fieldset>
 
-        <fieldset className={"grid"}>
-          <Select
-            label={"Category"}
-            formState={form}
-            fieldName={"category"}
-            value={form.model?.category?.id}
-            onChange={(evt) => form.patchModel({ category: categories?.find((c) => c.id === evt.target.value) })}
-          >
-            {categories
-              ?.filter((c) => c.active)
-              ?.sort((a, b) => a.name.localeCompare(b.name))
-              ?.map((c) => (
-                <option value={c.id} selected={c.id === form.model?.category?.id}>
-                  {c.name}
-                </option>
-              ))}
-          </Select>
+				<fieldset className={"grid"}>
+					<Select
+						label={"Category"}
+						formState={form}
+						fieldName={"category"}
+						value={form.model?.category?.id}
+						onChange={(evt) => form.patchModel({ category: categories?.find((c) => c.id === evt.target.value) })}
+					>
+						{categories
+							?.filter((c) => c.active)
+							?.sort((a, b) => a.name.localeCompare(b.name))
+							?.map((c) => (
+								<option value={c.id} selected={c.id === form.model?.category?.id}>
+									{c.name}
+								</option>
+							))}
+					</Select>
 
-          <Select
-            label={"Envelope"}
-            formState={form}
-            fieldName={"envelope"}
-            value={form.model?.envelope?.id}
-            onChange={(evt) => form.patchModel({ envelope: envelopes?.find((e) => e.id === evt.target.value) })}
-          >
-            {envelopes
-              ?.filter((e) => e.active)
-              ?.sort((a, b) => a.name.localeCompare(b.name))
-              ?.map((e) => (
-                <option value={e.id} selected={e.id === form.model?.envelope?.id}>
-                  {e.name}
-                </option>
-              ))}
-          </Select>
-        </fieldset>
-      </form>
-    );
-  }
+					<Select
+						label={"Envelope"}
+						formState={form}
+						fieldName={"envelope"}
+						value={form.model?.envelope?.id}
+						onChange={(evt) => form.patchModel({ envelope: envelopes?.find((e) => e.id === evt.target.value) })}
+					>
+						{envelopes
+							?.filter((e) => e.active)
+							?.sort((a, b) => a.name.localeCompare(b.name))
+							?.map((e) => (
+								<option value={e.id} selected={e.id === form.model?.envelope?.id}>
+									{e.name}
+								</option>
+							))}
+					</Select>
+				</fieldset>
+			</form>
+		);
+	}
 
-  return (
-    <Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
-      {body}
-      <footer>
-        <button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
-          <IconGroup>
-            <Icon name={"save"} />
-            <span>Save</span>
-          </IconGroup>
-        </button>
-      </footer>
-    </Modal>
-  );
+	return (
+		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
+			{body}
+			<footer>
+				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+					<IconGroup>
+						<Icon name={"save"} />
+						<span>Save</span>
+					</IconGroup>
+				</button>
+			</footer>
+		</Modal>
+	);
 }
 
 export { EnvelopeAllocationEditModal };
