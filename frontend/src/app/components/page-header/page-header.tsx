@@ -40,7 +40,7 @@ function PageHeader(props: React.PropsWithChildren<PageHeaderProps>): ReactEleme
 	if (props.onSearchTextChange) {
 		options = [
 			...options,
-			<fieldset className={"search-input"}>
+			<fieldset key={"search-input"} className={"search-input"}>
 				<input
 					type={"text"}
 					placeholder={"Search"}
@@ -57,7 +57,7 @@ function PageHeader(props: React.PropsWithChildren<PageHeaderProps>): ReactEleme
 	if (options.length > 0) {
 		buttons = [
 			...buttons,
-			<button className={"outline"} onClick={() => setShowOptions((c) => !c)}>
+			<button key={"show-options"} className={"outline"} onClick={() => setShowOptions((c) => !c)}>
 				<Icon name={"tune"} />
 			</button>,
 		];

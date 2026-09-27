@@ -56,16 +56,14 @@ function Toaster(): ReactElement {
 	const [_renderToken, setRenderToken] = React.useState(0);
 	const [toasts, setToasts] = React.useState<Toast[]>([]);
 
-	const triggerRender = () => setRenderToken(Date.now());
-
 	// toast listener
 	React.useEffect(() => {
 		const listener = (t: Toast) => {
 			setToasts((curr) => [t, ...curr]);
-			triggerRender();
+			setRenderToken(Date.now());
 		};
 		toastBus.setListener(listener);
-	}, [triggerRender]);
+	}, []);
 
 	// toast reaper + re-render
 	// this is used to avoid any effects running when there are no toasts to care about
@@ -77,7 +75,7 @@ function Toaster(): ReactElement {
 		// trigger another loop if there are still toasts to display
 		let t: NodeJS.Timeout;
 		if (toasts.length > 0) {
-			t = setTimeout(() => triggerRender(), 100);
+			t = setTimeout(() => setRenderToken(Date.now()), 100);
 		}
 
 		return function cleanup() {
@@ -85,7 +83,7 @@ function Toaster(): ReactElement {
 				clearTimeout(t);
 			}
 		};
-	}, [triggerRender, toasts.length]);
+	}, [toasts.length]);
 
 	const toastOutput: ReactElement[] = [];
 	let toastsVisible = 0;

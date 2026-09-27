@@ -19,9 +19,6 @@ article.dashboard-balances-tile {
 			grid-template-columns: auto;
 		}
 
-		.row-label {
-		}
-
 		.row-children {
 			padding-left: calc(var(--pico-block-spacing-horizontal) / 2);
 		}

@@ -32,7 +32,7 @@ function ProfilesPage(): ReactElement {
 	});
 
 	const pageButtons = [
-		<button className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
+		<button key={"new"} className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
 			<IconGroup>
 				<Icon name={"add"} />
 				<span>New</span>

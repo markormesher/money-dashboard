@@ -16,6 +16,7 @@ ChartJS.register(Tooltip, PointElement, Filler, ArcElement);
 
 type UnitBalance = {
 	isCash: boolean;
+	id: string;
 	name: string;
 	notes: string;
 	gbpBalance: number;
@@ -77,6 +78,7 @@ function PortfolioSummaryPage(): ReactElement {
 
 			balances[id] ??= {
 				isCash: !!h.holding.currency,
+				id: h.holding.id,
 				name: h.holding.asset?.name ?? h.holding.currency?.code ?? "???",
 				notes: h.holding.asset?.notes ?? "",
 				gbpBalance: 0,
@@ -116,8 +118,8 @@ function PortfolioSummaryPage(): ReactElement {
 		// assets vs cash
 
 		const assetsVsCashChartBalances: UnitBalance[] = [
-			{ isCash: true, name: "Cash", notes: "", gbpBalance: totalCashBalance },
-			{ isCash: false, name: "Assets", notes: "", gbpBalance: totalAssetBalance },
+			{ isCash: true, id: "cash", name: "Cash", notes: "", gbpBalance: totalCashBalance },
+			{ isCash: false, id: "assets", name: "Assets", notes: "", gbpBalance: totalAssetBalance },
 		];
 		assetsVsCashChartBalances.sort((a, b) => b.gbpBalance - a.gbpBalance);
 
@@ -201,7 +203,7 @@ function PortfolioSummaryPage(): ReactElement {
 					<table>
 						{assetsVsCashChartBalances.map((b, i) => {
 							return (
-								<tr>
+								<tr key={b.id}>
 									<td>
 										<span style={{ color: seriesColours[i % seriesColours.length], marginRight: "0.5rem" }}>●</span>
 										{b.notes.length > 0 ? (
@@ -248,7 +250,7 @@ function PortfolioSummaryPage(): ReactElement {
 						<table>
 							{assetBalances.map((b, i) => {
 								return (
-									<tr>
+									<tr key={b.id}>
 										<td>
 											<span style={{ color: seriesColours[i % seriesColours.length], marginRight: "0.5rem" }}>●</span>
 											{b.notes.length > 0 ? (

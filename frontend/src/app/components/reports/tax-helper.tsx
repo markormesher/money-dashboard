@@ -103,7 +103,7 @@ function TaxHelperPage(): ReactElement {
 	}, [taxReport]);
 
 	const pageOptions = [
-		<fieldset role={"group"}>
+		<fieldset key={"year-chooser"} role={"group"}>
 			<button
 				className={"outline"}
 				onClick={() => setTaxYear((curr) => Math.max(1, curr - 1))}
@@ -163,10 +163,14 @@ function TaxHelperPage(): ReactElement {
 						</thead>
 						<tbody>
 							{taxReport.interestIncome.sort(sortBalances).map((b) => {
+								if (!b.holding) {
+									return null;
+								}
+
 								return (
-									<tr>
-										<td>{b.holding?.account?.name}</td>
-										<td>{b.holding?.name}</td>
+									<tr key={b.holding.id}>
+										<td>{b.holding.account?.name}</td>
+										<td>{b.holding.name}</td>
 										{showInterestCategories ? <td>{b.category?.name}</td> : null}
 										<td className={"amount-cell"}>
 											<span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
@@ -215,8 +219,12 @@ function TaxHelperPage(): ReactElement {
 						</thead>
 						<tbody>
 							{taxReport.dividendIncome.sort(sortBalances).map((b) => {
+								if (!b.holding) {
+									return null;
+								}
+
 								return (
-									<tr>
+									<tr key={b.holding.id}>
 										<td>{b.holding?.account?.name}</td>
 										<td>{b.holding?.name}</td>
 										{showDividendCategories ? <td>{b.category?.name}</td> : null}
@@ -267,8 +275,12 @@ function TaxHelperPage(): ReactElement {
 						</thead>
 						<tbody>
 							{taxReport.pensionContributions.sort(sortBalances).map((b) => {
+								if (!b.holding) {
+									return null;
+								}
+
 								return (
-									<tr>
+									<tr key={b.holding.id}>
 										<td>{b.holding?.account?.name}</td>
 										<td>{b.holding?.name}</td>
 										{showPensionCategories ? <td>{b.category?.name}</td> : null}
@@ -400,7 +412,7 @@ function TaxHelperPage(): ReactElement {
 													<tbody>
 														{e.matches.map((m) => {
 															return (
-																<tr>
+																<tr key={`${m.date}${m.price}${m.qty}${m.note}`}>
 																	<td>{m.date === BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
 																	<td>{m.note}</td>
 																	<td className={"amount-cell"}>
@@ -445,7 +457,7 @@ function TaxHelperPage(): ReactElement {
 													<tbody>
 														{e.matches.map((m) => {
 															return (
-																<tr>
+																<tr key={`${m.date}${m.price}${m.qty}${m.note}`}>
 																	<td>{m.date === BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
 																	<td>{m.note}</td>
 																	<td className={"amount-cell"}>
@@ -542,9 +554,13 @@ function TaxHelperPage(): ReactElement {
 								{s104Balances
 									.sort((a, b) => (a.asset?.name ?? "").localeCompare(b.asset?.name ?? ""))
 									.map((b) => {
+										if (!b.asset) {
+											return null;
+										}
+
 										return (
-											<tr>
-												<td>{b.asset?.name}</td>
+											<tr key={b.asset.id}>
+												<td>{b.asset.name}</td>
 												<td className={"amount-cell"}>
 													<span className={"amount"}>{formatAssetQuantity(b.qty)}</span>
 												</td>

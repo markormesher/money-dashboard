@@ -11,126 +11,125 @@ import type { Message } from "@bufbuild/protobuf";
 /**
  * Describes the file moneydashboard/v4/users.proto.
  */
-export const file_moneydashboard_v4_users: GenFile = /*@__PURE__*/
-  fileDesc("Ch1tb25leWRhc2hib2FyZC92NC91c2Vycy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiiAEKBFVzZXISCgoCaWQYASABKAkSGQoRZXh0ZXJuYWxfdXNlcm5hbWUYAiABKAkSFAoMZGlzcGxheV9uYW1lGAMgASgJEg8KB2RlbGV0ZWQYBCABKAgSMgoOYWN0aXZlX3Byb2ZpbGUYBSABKAsyGi5tb25leWRhc2hib2FyZC52NC5Qcm9maWxlIhAKDkdldFVzZXJSZXF1ZXN0IjgKD0dldFVzZXJSZXNwb25zZRIlCgR1c2VyGAEgASgLMhcubW9uZXlkYXNoYm9hcmQudjQuVXNlciJGChdTZXRBY3RpdmVQcm9maWxlUmVxdWVzdBIrCgdwcm9maWxlGAEgASgLMhoubW9uZXlkYXNoYm9hcmQudjQuUHJvZmlsZSIaChhTZXRBY3RpdmVQcm9maWxlUmVzcG9uc2UyzgEKDU1EVXNlclNlcnZpY2USUAoHR2V0VXNlchIhLm1vbmV5ZGFzaGJvYXJkLnY0LkdldFVzZXJSZXF1ZXN0GiIubW9uZXlkYXNoYm9hcmQudjQuR2V0VXNlclJlc3BvbnNlEmsKEFNldEFjdGl2ZVByb2ZpbGUSKi5tb25leWRhc2hib2FyZC52NC5TZXRBY3RpdmVQcm9maWxlUmVxdWVzdBorLm1vbmV5ZGFzaGJvYXJkLnY0LlNldEFjdGl2ZVByb2ZpbGVSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM", [file_moneydashboard_v4_profiles]);
+export const file_moneydashboard_v4_users: GenFile =
+	/*@__PURE__*/
+	fileDesc(
+		"Ch1tb25leWRhc2hib2FyZC92NC91c2Vycy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQiiAEKBFVzZXISCgoCaWQYASABKAkSGQoRZXh0ZXJuYWxfdXNlcm5hbWUYAiABKAkSFAoMZGlzcGxheV9uYW1lGAMgASgJEg8KB2RlbGV0ZWQYBCABKAgSMgoOYWN0aXZlX3Byb2ZpbGUYBSABKAsyGi5tb25leWRhc2hib2FyZC52NC5Qcm9maWxlIhAKDkdldFVzZXJSZXF1ZXN0IjgKD0dldFVzZXJSZXNwb25zZRIlCgR1c2VyGAEgASgLMhcubW9uZXlkYXNoYm9hcmQudjQuVXNlciJGChdTZXRBY3RpdmVQcm9maWxlUmVxdWVzdBIrCgdwcm9maWxlGAEgASgLMhoubW9uZXlkYXNoYm9hcmQudjQuUHJvZmlsZSIaChhTZXRBY3RpdmVQcm9maWxlUmVzcG9uc2UyzgEKDU1EVXNlclNlcnZpY2USUAoHR2V0VXNlchIhLm1vbmV5ZGFzaGJvYXJkLnY0LkdldFVzZXJSZXF1ZXN0GiIubW9uZXlkYXNoYm9hcmQudjQuR2V0VXNlclJlc3BvbnNlEmsKEFNldEFjdGl2ZVByb2ZpbGUSKi5tb25leWRhc2hib2FyZC52NC5TZXRBY3RpdmVQcm9maWxlUmVxdWVzdBorLm1vbmV5ZGFzaGJvYXJkLnY0LlNldEFjdGl2ZVByb2ZpbGVSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM",
+		[file_moneydashboard_v4_profiles],
+	);
 
 /**
  * @generated from message moneydashboard.v4.User
  */
 export type User = Message<"moneydashboard.v4.User"> & {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id: string;
+	/**
+	 * @generated from field: string id = 1;
+	 */
+	id: string;
 
-  /**
-   * @generated from field: string external_username = 2;
-   */
-  externalUsername: string;
+	/**
+	 * @generated from field: string external_username = 2;
+	 */
+	externalUsername: string;
 
-  /**
-   * @generated from field: string display_name = 3;
-   */
-  displayName: string;
+	/**
+	 * @generated from field: string display_name = 3;
+	 */
+	displayName: string;
 
-  /**
-   * @generated from field: bool deleted = 4;
-   */
-  deleted: boolean;
+	/**
+	 * @generated from field: bool deleted = 4;
+	 */
+	deleted: boolean;
 
-  /**
-   * @generated from field: moneydashboard.v4.Profile active_profile = 5;
-   */
-  activeProfile?: Profile | undefined;
+	/**
+	 * @generated from field: moneydashboard.v4.Profile active_profile = 5;
+	 */
+	activeProfile?: Profile | undefined;
 };
 
 /**
  * Describes the message moneydashboard.v4.User.
  * Use `create(UserSchema)` to create a new message.
  */
-export const UserSchema: GenMessage<User> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 0);
+export const UserSchema: GenMessage<User> = /*@__PURE__*/ messageDesc(file_moneydashboard_v4_users, 0);
 
 /**
  * @generated from message moneydashboard.v4.GetUserRequest
  */
-export type GetUserRequest = Message<"moneydashboard.v4.GetUserRequest"> & {
-};
+export type GetUserRequest = Message<"moneydashboard.v4.GetUserRequest"> & {};
 
 /**
  * Describes the message moneydashboard.v4.GetUserRequest.
  * Use `create(GetUserRequestSchema)` to create a new message.
  */
-export const GetUserRequestSchema: GenMessage<GetUserRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 1);
+export const GetUserRequestSchema: GenMessage<GetUserRequest> = /*@__PURE__*/ messageDesc(file_moneydashboard_v4_users, 1);
 
 /**
  * @generated from message moneydashboard.v4.GetUserResponse
  */
 export type GetUserResponse = Message<"moneydashboard.v4.GetUserResponse"> & {
-  /**
-   * @generated from field: moneydashboard.v4.User user = 1;
-   */
-  user?: User | undefined;
+	/**
+	 * @generated from field: moneydashboard.v4.User user = 1;
+	 */
+	user?: User | undefined;
 };
 
 /**
  * Describes the message moneydashboard.v4.GetUserResponse.
  * Use `create(GetUserResponseSchema)` to create a new message.
  */
-export const GetUserResponseSchema: GenMessage<GetUserResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 2);
+export const GetUserResponseSchema: GenMessage<GetUserResponse> = /*@__PURE__*/ messageDesc(file_moneydashboard_v4_users, 2);
 
 /**
  * @generated from message moneydashboard.v4.SetActiveProfileRequest
  */
 export type SetActiveProfileRequest = Message<"moneydashboard.v4.SetActiveProfileRequest"> & {
-  /**
-   * @generated from field: moneydashboard.v4.Profile profile = 1;
-   */
-  profile?: Profile | undefined;
+	/**
+	 * @generated from field: moneydashboard.v4.Profile profile = 1;
+	 */
+	profile?: Profile | undefined;
 };
 
 /**
  * Describes the message moneydashboard.v4.SetActiveProfileRequest.
  * Use `create(SetActiveProfileRequestSchema)` to create a new message.
  */
-export const SetActiveProfileRequestSchema: GenMessage<SetActiveProfileRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 3);
+export const SetActiveProfileRequestSchema: GenMessage<SetActiveProfileRequest> =
+	/*@__PURE__*/
+	messageDesc(file_moneydashboard_v4_users, 3);
 
 /**
  * @generated from message moneydashboard.v4.SetActiveProfileResponse
  */
-export type SetActiveProfileResponse = Message<"moneydashboard.v4.SetActiveProfileResponse"> & {
-};
+export type SetActiveProfileResponse = Message<"moneydashboard.v4.SetActiveProfileResponse"> & {};
 
 /**
  * Describes the message moneydashboard.v4.SetActiveProfileResponse.
  * Use `create(SetActiveProfileResponseSchema)` to create a new message.
  */
-export const SetActiveProfileResponseSchema: GenMessage<SetActiveProfileResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_users, 4);
+export const SetActiveProfileResponseSchema: GenMessage<SetActiveProfileResponse> =
+	/*@__PURE__*/
+	messageDesc(file_moneydashboard_v4_users, 4);
 
 /**
  * @generated from service moneydashboard.v4.MDUserService
  */
 export const MDUserService: GenService<{
-  /**
-   * @generated from rpc moneydashboard.v4.MDUserService.GetUser
-   */
-  getUser: {
-    methodKind: "unary";
-    input: typeof GetUserRequestSchema;
-    output: typeof GetUserResponseSchema;
-  },
-  /**
-   * @generated from rpc moneydashboard.v4.MDUserService.SetActiveProfile
-   */
-  setActiveProfile: {
-    methodKind: "unary";
-    input: typeof SetActiveProfileRequestSchema;
-    output: typeof SetActiveProfileResponseSchema;
-  },
-}> = /*@__PURE__*/
-  serviceDesc(file_moneydashboard_v4_users, 0);
-
+	/**
+	 * @generated from rpc moneydashboard.v4.MDUserService.GetUser
+	 */
+	getUser: {
+		methodKind: "unary";
+		input: typeof GetUserRequestSchema;
+		output: typeof GetUserResponseSchema;
+	};
+	/**
+	 * @generated from rpc moneydashboard.v4.MDUserService.SetActiveProfile
+	 */
+	setActiveProfile: {
+		methodKind: "unary";
+		input: typeof SetActiveProfileRequestSchema;
+		output: typeof SetActiveProfileResponseSchema;
+	};
+}> = /*@__PURE__*/ serviceDesc(file_moneydashboard_v4_users, 0);

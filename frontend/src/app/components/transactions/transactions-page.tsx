@@ -103,7 +103,7 @@ function TransactionsPage(): ReactElement {
 	};
 
 	const pageButtons = [
-		<button className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
+		<button key={"new"} className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
 			<IconGroup>
 				<Icon name={"add"} />
 				<span>New</span>
@@ -112,7 +112,7 @@ function TransactionsPage(): ReactElement {
 	];
 
 	const pageOptions = [
-		<fieldset role={"group"}>
+		<fieldset key={"page-buttons"} role={"group"}>
 			<button className={"outline"} onClick={() => setPage((curr) => Math.max(1, curr - 1))} disabled={page === 1}>
 				<Icon name={"arrow_back"} />
 			</button>
@@ -172,7 +172,7 @@ function TransactionsPage(): ReactElement {
 								const newDate = i === 0 || arr[i - 1]?.date !== t.date;
 
 								return (
-									<tr>
+									<tr key={t.id}>
 										<td>
 											<span className={concatClasses(!newDate && "muted")}>{formatDateFromProto(t.date)}</span>
 										</td>

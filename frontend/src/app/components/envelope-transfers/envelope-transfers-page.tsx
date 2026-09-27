@@ -132,13 +132,13 @@ function EnvelopeTransfersPage(): ReactElement {
 	};
 
 	const pageButtons = [
-		<button className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
+		<button key={"new"} className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
 			<IconGroup>
 				<Icon name={"add"} />
 				<span>New</span>
 			</IconGroup>
 		</button>,
-		<button className={"outline"} onClick={() => setCloneModalOpen(true)} disabled={clonePendingIds.length === 0}>
+		<button key={"copy"} className={"outline"} onClick={() => setCloneModalOpen(true)} disabled={clonePendingIds.length === 0}>
 			<IconGroup>
 				<Icon name={"content_copy"} />
 				<span>{clonePendingIds.length === 0 ? "Clone Selected" : `Clone ${clonePendingIds.length} Selected`}</span>
@@ -147,7 +147,7 @@ function EnvelopeTransfersPage(): ReactElement {
 	];
 
 	const pageOptions = [
-		<fieldset role={"group"}>
+		<fieldset key={"arrows"} role={"group"}>
 			<button className={"outline"} onClick={() => setPage((curr) => Math.max(1, curr - 1))} disabled={page === 1}>
 				<Icon name={"arrow_back"} />
 			</button>
@@ -192,7 +192,7 @@ function EnvelopeTransfersPage(): ReactElement {
 								const newDate = i === 0 || arr[i - 1]?.date !== t.date;
 
 								return (
-									<tr>
+									<tr key={t.id}>
 										<td>
 											<span className={concatClasses(!newDate && "muted")}>{formatDateFromProto(t.date)}</span>
 										</td>

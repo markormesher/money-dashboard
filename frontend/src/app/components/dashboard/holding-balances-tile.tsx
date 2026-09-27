@@ -108,7 +108,7 @@ function HoldingBalancesTile(): ReactElement {
 									const showHoldings = openAccounts.includes(account.id);
 
 									const label = (
-										<div className={"row-label"}>
+										<div key={account.id} className={"row-label"}>
 											<IconGroup>
 												<span>{account.name}</span>
 												{account.notes ? (
@@ -126,18 +126,20 @@ function HoldingBalancesTile(): ReactElement {
 											.sort((a, b) => b.gbpBalance - a.gbpBalance)
 											.map((b) => {
 												const { holding } = b;
-												let conversionNote = "";
-
-												if (holding?.asset) {
-													conversionNote = `${formatAssetQuantity(b.rawBalance)} ${holding.asset.name}`;
+												if (!holding) {
+													return null;
 												}
 
-												if (holding?.currency && holding.currency.id !== GBP_CURRENCY_ID) {
+												let conversionNote = "";
+												if (holding.asset) {
+													conversionNote = `${formatAssetQuantity(b.rawBalance)} ${holding.asset.name}`;
+												}
+												if (holding.currency && holding.currency.id !== GBP_CURRENCY_ID) {
 													conversionNote = `${formatCurrencyValue(b.rawBalance, holding.currency)} ${holding.currency.code}`;
 												}
 
 												return (
-													<div className={"balance-row"}>
+													<div key={holding.id} className={"balance-row"}>
 														<div className={"row-label"}>
 															<IconGroup>
 																<span>{holding?.name}</span>
@@ -154,14 +156,18 @@ function HoldingBalancesTile(): ReactElement {
 											});
 
 										return (
-											<div className={concatClasses("balance-row", "with-children")} onClick={() => toggleOpenAccount(account.id)}>
+											<div
+												key={account.id}
+												className={concatClasses("balance-row", "with-children")}
+												onClick={() => toggleOpenAccount(account.id)}
+											>
 												{label}
 												<div className={"row-children"}>{subRows} </div>
 											</div>
 										);
 									} else {
 										return (
-											<div className={"balance-row"} onClick={() => toggleOpenAccount(account.id)}>
+											<div key={account.id} className={"balance-row"} onClick={() => toggleOpenAccount(account.id)}>
 												{label}
 												<div className={"row-value"}>{formatCurrencyValue(balanceSum, null)}</div>
 											</div>

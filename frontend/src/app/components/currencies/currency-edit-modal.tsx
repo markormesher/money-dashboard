@@ -92,91 +92,87 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
 
 	const header = (
 		<IconGroup>
-		<Icon name= { "payments"} />
-		<span>{ createNew? "Create": "Edit" } Currency</span>
-			</IconGroup>
+			<Icon name={"payments"} />
+			<span>{createNew ? "Create" : "Edit"} Currency</span>
+		</IconGroup>
 	);
 
 	let body: ReactElement;
 	if (form.fatalError) {
-		body = <ErrorPanel error={ form.fatalError } noCard = { true} />;
+		body = <ErrorPanel error={form.fatalError} noCard={true} />;
 	} else {
 		body = (
 			<form>
-			<fieldset className= { "grid"} >
-			<Input
-						label={ "Currency Code" }
-		formState = { form }
-		fieldName = { "code"}
-		type = { "text"}
-		placeholder = { "e.g. GBP"}
-		value = { form.model?.code }
-		onChange = {(evt) => form.patchModel({ code: evt.target.value })
-	}
+				<fieldset className={"grid"}>
+					<Input
+						label={"Currency Code"}
+						formState={form}
+						fieldName={"code"}
+						type={"text"}
+						placeholder={"e.g. GBP"}
+						value={form.model?.code}
+						onChange={(evt) => form.patchModel({ code: evt.target.value })}
 					/>
 
-		< Input
-	label = { "Symbol"}
-	formState = { form }
-	fieldName = { "symbol"}
-	type = { "text"}
-	placeholder = { "e.g. £"}
-	value = { form.model?.symbol }
-	onChange = {(evt) => form.patchModel({ symbol: evt.target.value })
-}
+					<Input
+						label={"Symbol"}
+						formState={form}
+						fieldName={"symbol"}
+						type={"text"}
+						placeholder={"e.g. £"}
+						value={form.model?.symbol}
+						onChange={(evt) => form.patchModel({ symbol: evt.target.value })}
 					/>
-	</fieldset>
+				</fieldset>
 
-	< fieldset className = { "grid"} >
-		<Input
-						label={ "Display Precision" }
-formState = { form }
-fieldName = { "displayPrecision"}
-type = { "number"}
-step = { 1}
-min = { 0}
-value = { safeNumberValue(form.model?.displayPrecision) }
-onChange = {(evt) => form.patchModel({ displayPrecision: parseInt(evt.target.value, 10) ?? null })}
+				<fieldset className={"grid"}>
+					<Input
+						label={"Display Precision"}
+						formState={form}
+						fieldName={"displayPrecision"}
+						type={"number"}
+						step={1}
+						min={0}
+						value={safeNumberValue(form.model?.displayPrecision)}
+						onChange={(evt) => form.patchModel({ displayPrecision: parseInt(evt.target.value, 10) ?? null })}
 					/>
 
-	< Input
-label = { "Active"}
-formState = { form }
-fieldName = { "active"}
-type = { "checkbox"}
-role = { "switch"}
-checked = { form.model?.active ?? false }
-onChange = {(evt) => form.patchModel({ active: evt.target.checked })}
+					<Input
+						label={"Active"}
+						formState={form}
+						fieldName={"active"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.active ?? false}
+						onChange={(evt) => form.patchModel({ active: evt.target.checked })}
 					/>
-	</fieldset>
+				</fieldset>
 
-{
-	createNew ? (
-		<hgroup>
-		<h6>Note </h6>
-		<small>
-							Currencies are shared across all users and profiles.They < strong > cannot be deleted </strong> after creation; they can only be
-	marked as inactive, which will prevent them from being used on new holdings and assets.
+				{createNew ? (
+					<hgroup>
+						<h6>Note </h6>
+						<small>
+							Currencies are shared across all users and profiles.They <strong> cannot be deleted </strong> after creation; they can only be
+							marked as inactive, which will prevent them from being used on new holdings and assets.
 						</small>
-		</hgroup>
-				) : null
-}
-</form>
+					</hgroup>
+				) : null}
+			</form>
 		);
 	}
 
-return (
-	<Modal header= { header } open = { true} onClose = { onCancel } warnOnClose = { form.modified } >
-		{ body }
-		< footer >
-		<button disabled={ form.wg.count > 0 || !form.valid } onClick = {() => save()}>
-			<IconGroup>
-			<Icon name={ "save" } />
-				< span > Save </span>
-				</IconGroup>
+	return (
+		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
+			{body}
+			<footer>
+				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+					<IconGroup>
+						<Icon name={"save"} />
+						<span> Save </span>
+					</IconGroup>
 				</button>
-				</footer>
-				</Modal>
+			</footer>
+		</Modal>
 	);
 }
 

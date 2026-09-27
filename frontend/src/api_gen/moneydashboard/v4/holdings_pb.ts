@@ -15,183 +15,180 @@ import type { Message } from "@bufbuild/protobuf";
 /**
  * Describes the file moneydashboard/v4/holdings.proto.
  */
-export const file_moneydashboard_v4_holdings: GenFile = /*@__PURE__*/
-  fileDesc("CiBtb25leWRhc2hib2FyZC92NC9ob2xkaW5ncy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQi9gEKB0hvbGRpbmcSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIeChZleGNsdWRlX2Zyb21fZW52ZWxvcGVzGAMgASgIEhwKFGV4Y2x1ZGVfZnJvbV9yZXBvcnRzGAQgASgIEg4KBmFjdGl2ZRgFIAEoCBItCghjdXJyZW5jeRgGIAEoCzIbLm1vbmV5ZGFzaGJvYXJkLnY0LkN1cnJlbmN5EicKBWFzc2V0GAcgASgLMhgubW9uZXlkYXNoYm9hcmQudjQuQXNzZXQSKwoHYWNjb3VudBgIIAEoCzIaLm1vbmV5ZGFzaGJvYXJkLnY0LkFjY291bnQiIwoVR2V0SG9sZGluZ0J5SWRSZXF1ZXN0EgoKAmlkGAEgASgJIkUKFkdldEhvbGRpbmdCeUlkUmVzcG9uc2USKwoHaG9sZGluZxgBIAEoCzIaLm1vbmV5ZGFzaGJvYXJkLnY0LkhvbGRpbmciFwoVR2V0QWxsSG9sZGluZ3NSZXF1ZXN0IkYKFkdldEFsbEhvbGRpbmdzUmVzcG9uc2USLAoIaG9sZGluZ3MYASADKAsyGi5tb25leWRhc2hib2FyZC52NC5Ib2xkaW5nIkMKFFVwc2VydEhvbGRpbmdSZXF1ZXN0EisKB2hvbGRpbmcYASABKAsyGi5tb25leWRhc2hib2FyZC52NC5Ib2xkaW5nIhcKFVVwc2VydEhvbGRpbmdSZXNwb25zZTLEAgoQTURIb2xkaW5nU2VydmljZRJlCg5HZXRIb2xkaW5nQnlJZBIoLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEhvbGRpbmdCeUlkUmVxdWVzdBopLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEhvbGRpbmdCeUlkUmVzcG9uc2USZQoOR2V0QWxsSG9sZGluZ3MSKC5tb25leWRhc2hib2FyZC52NC5HZXRBbGxIb2xkaW5nc1JlcXVlc3QaKS5tb25leWRhc2hib2FyZC52NC5HZXRBbGxIb2xkaW5nc1Jlc3BvbnNlEmIKDVVwc2VydEhvbGRpbmcSJy5tb25leWRhc2hib2FyZC52NC5VcHNlcnRIb2xkaW5nUmVxdWVzdBooLm1vbmV5ZGFzaGJvYXJkLnY0LlVwc2VydEhvbGRpbmdSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM", [file_moneydashboard_v4_accounts, file_moneydashboard_v4_assets, file_moneydashboard_v4_currencies]);
+export const file_moneydashboard_v4_holdings: GenFile =
+	/*@__PURE__*/
+	fileDesc(
+		"CiBtb25leWRhc2hib2FyZC92NC9ob2xkaW5ncy5wcm90bxIRbW9uZXlkYXNoYm9hcmQudjQi9gEKB0hvbGRpbmcSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIeChZleGNsdWRlX2Zyb21fZW52ZWxvcGVzGAMgASgIEhwKFGV4Y2x1ZGVfZnJvbV9yZXBvcnRzGAQgASgIEg4KBmFjdGl2ZRgFIAEoCBItCghjdXJyZW5jeRgGIAEoCzIbLm1vbmV5ZGFzaGJvYXJkLnY0LkN1cnJlbmN5EicKBWFzc2V0GAcgASgLMhgubW9uZXlkYXNoYm9hcmQudjQuQXNzZXQSKwoHYWNjb3VudBgIIAEoCzIaLm1vbmV5ZGFzaGJvYXJkLnY0LkFjY291bnQiIwoVR2V0SG9sZGluZ0J5SWRSZXF1ZXN0EgoKAmlkGAEgASgJIkUKFkdldEhvbGRpbmdCeUlkUmVzcG9uc2USKwoHaG9sZGluZxgBIAEoCzIaLm1vbmV5ZGFzaGJvYXJkLnY0LkhvbGRpbmciFwoVR2V0QWxsSG9sZGluZ3NSZXF1ZXN0IkYKFkdldEFsbEhvbGRpbmdzUmVzcG9uc2USLAoIaG9sZGluZ3MYASADKAsyGi5tb25leWRhc2hib2FyZC52NC5Ib2xkaW5nIkMKFFVwc2VydEhvbGRpbmdSZXF1ZXN0EisKB2hvbGRpbmcYASABKAsyGi5tb25leWRhc2hib2FyZC52NC5Ib2xkaW5nIhcKFVVwc2VydEhvbGRpbmdSZXNwb25zZTLEAgoQTURIb2xkaW5nU2VydmljZRJlCg5HZXRIb2xkaW5nQnlJZBIoLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEhvbGRpbmdCeUlkUmVxdWVzdBopLm1vbmV5ZGFzaGJvYXJkLnY0LkdldEhvbGRpbmdCeUlkUmVzcG9uc2USZQoOR2V0QWxsSG9sZGluZ3MSKC5tb25leWRhc2hib2FyZC52NC5HZXRBbGxIb2xkaW5nc1JlcXVlc3QaKS5tb25leWRhc2hib2FyZC52NC5HZXRBbGxIb2xkaW5nc1Jlc3BvbnNlEmIKDVVwc2VydEhvbGRpbmcSJy5tb25leWRhc2hib2FyZC52NC5VcHNlcnRIb2xkaW5nUmVxdWVzdBooLm1vbmV5ZGFzaGJvYXJkLnY0LlVwc2VydEhvbGRpbmdSZXNwb25zZUJRWk9naXRodWIuY29tL21hcmtvcm1lc2hlci9tb25leS1kYXNoYm9hcmQvaW50ZXJuYWwvYXBpX2dlbi9tb25leWRhc2hib2FyZC92NDttZHY0YgZwcm90bzM",
+		[file_moneydashboard_v4_accounts, file_moneydashboard_v4_assets, file_moneydashboard_v4_currencies],
+	);
 
 /**
  * @generated from message moneydashboard.v4.Holding
  */
 export type Holding = Message<"moneydashboard.v4.Holding"> & {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id: string;
+	/**
+	 * @generated from field: string id = 1;
+	 */
+	id: string;
 
-  /**
-   * @generated from field: string name = 2;
-   */
-  name: string;
+	/**
+	 * @generated from field: string name = 2;
+	 */
+	name: string;
 
-  /**
-   * @generated from field: bool exclude_from_envelopes = 3;
-   */
-  excludeFromEnvelopes: boolean;
+	/**
+	 * @generated from field: bool exclude_from_envelopes = 3;
+	 */
+	excludeFromEnvelopes: boolean;
 
-  /**
-   * @generated from field: bool exclude_from_reports = 4;
-   */
-  excludeFromReports: boolean;
+	/**
+	 * @generated from field: bool exclude_from_reports = 4;
+	 */
+	excludeFromReports: boolean;
 
-  /**
-   * @generated from field: bool active = 5;
-   */
-  active: boolean;
+	/**
+	 * @generated from field: bool active = 5;
+	 */
+	active: boolean;
 
-  /**
-   * @generated from field: moneydashboard.v4.Currency currency = 6;
-   */
-  currency?: Currency | undefined;
+	/**
+	 * @generated from field: moneydashboard.v4.Currency currency = 6;
+	 */
+	currency?: Currency | undefined;
 
-  /**
-   * @generated from field: moneydashboard.v4.Asset asset = 7;
-   */
-  asset?: Asset | undefined;
+	/**
+	 * @generated from field: moneydashboard.v4.Asset asset = 7;
+	 */
+	asset?: Asset | undefined;
 
-  /**
-   * @generated from field: moneydashboard.v4.Account account = 8;
-   */
-  account?: Account | undefined;
+	/**
+	 * @generated from field: moneydashboard.v4.Account account = 8;
+	 */
+	account?: Account | undefined;
 };
 
 /**
  * Describes the message moneydashboard.v4.Holding.
  * Use `create(HoldingSchema)` to create a new message.
  */
-export const HoldingSchema: GenMessage<Holding> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_holdings, 0);
+export const HoldingSchema: GenMessage<Holding> = /*@__PURE__*/ messageDesc(file_moneydashboard_v4_holdings, 0);
 
 /**
  * @generated from message moneydashboard.v4.GetHoldingByIdRequest
  */
 export type GetHoldingByIdRequest = Message<"moneydashboard.v4.GetHoldingByIdRequest"> & {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id: string;
+	/**
+	 * @generated from field: string id = 1;
+	 */
+	id: string;
 };
 
 /**
  * Describes the message moneydashboard.v4.GetHoldingByIdRequest.
  * Use `create(GetHoldingByIdRequestSchema)` to create a new message.
  */
-export const GetHoldingByIdRequestSchema: GenMessage<GetHoldingByIdRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_holdings, 1);
+export const GetHoldingByIdRequestSchema: GenMessage<GetHoldingByIdRequest> = /*@__PURE__*/ messageDesc(file_moneydashboard_v4_holdings, 1);
 
 /**
  * @generated from message moneydashboard.v4.GetHoldingByIdResponse
  */
 export type GetHoldingByIdResponse = Message<"moneydashboard.v4.GetHoldingByIdResponse"> & {
-  /**
-   * @generated from field: moneydashboard.v4.Holding holding = 1;
-   */
-  holding?: Holding | undefined;
+	/**
+	 * @generated from field: moneydashboard.v4.Holding holding = 1;
+	 */
+	holding?: Holding | undefined;
 };
 
 /**
  * Describes the message moneydashboard.v4.GetHoldingByIdResponse.
  * Use `create(GetHoldingByIdResponseSchema)` to create a new message.
  */
-export const GetHoldingByIdResponseSchema: GenMessage<GetHoldingByIdResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_holdings, 2);
+export const GetHoldingByIdResponseSchema: GenMessage<GetHoldingByIdResponse> =
+	/*@__PURE__*/
+	messageDesc(file_moneydashboard_v4_holdings, 2);
 
 /**
  * @generated from message moneydashboard.v4.GetAllHoldingsRequest
  */
-export type GetAllHoldingsRequest = Message<"moneydashboard.v4.GetAllHoldingsRequest"> & {
-};
+export type GetAllHoldingsRequest = Message<"moneydashboard.v4.GetAllHoldingsRequest"> & {};
 
 /**
  * Describes the message moneydashboard.v4.GetAllHoldingsRequest.
  * Use `create(GetAllHoldingsRequestSchema)` to create a new message.
  */
-export const GetAllHoldingsRequestSchema: GenMessage<GetAllHoldingsRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_holdings, 3);
+export const GetAllHoldingsRequestSchema: GenMessage<GetAllHoldingsRequest> = /*@__PURE__*/ messageDesc(file_moneydashboard_v4_holdings, 3);
 
 /**
  * @generated from message moneydashboard.v4.GetAllHoldingsResponse
  */
 export type GetAllHoldingsResponse = Message<"moneydashboard.v4.GetAllHoldingsResponse"> & {
-  /**
-   * @generated from field: repeated moneydashboard.v4.Holding holdings = 1;
-   */
-  holdings: Holding[];
+	/**
+	 * @generated from field: repeated moneydashboard.v4.Holding holdings = 1;
+	 */
+	holdings: Holding[];
 };
 
 /**
  * Describes the message moneydashboard.v4.GetAllHoldingsResponse.
  * Use `create(GetAllHoldingsResponseSchema)` to create a new message.
  */
-export const GetAllHoldingsResponseSchema: GenMessage<GetAllHoldingsResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_holdings, 4);
+export const GetAllHoldingsResponseSchema: GenMessage<GetAllHoldingsResponse> =
+	/*@__PURE__*/
+	messageDesc(file_moneydashboard_v4_holdings, 4);
 
 /**
  * @generated from message moneydashboard.v4.UpsertHoldingRequest
  */
 export type UpsertHoldingRequest = Message<"moneydashboard.v4.UpsertHoldingRequest"> & {
-  /**
-   * @generated from field: moneydashboard.v4.Holding holding = 1;
-   */
-  holding?: Holding | undefined;
+	/**
+	 * @generated from field: moneydashboard.v4.Holding holding = 1;
+	 */
+	holding?: Holding | undefined;
 };
 
 /**
  * Describes the message moneydashboard.v4.UpsertHoldingRequest.
  * Use `create(UpsertHoldingRequestSchema)` to create a new message.
  */
-export const UpsertHoldingRequestSchema: GenMessage<UpsertHoldingRequest> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_holdings, 5);
+export const UpsertHoldingRequestSchema: GenMessage<UpsertHoldingRequest> = /*@__PURE__*/ messageDesc(file_moneydashboard_v4_holdings, 5);
 
 /**
  * @generated from message moneydashboard.v4.UpsertHoldingResponse
  */
-export type UpsertHoldingResponse = Message<"moneydashboard.v4.UpsertHoldingResponse"> & {
-};
+export type UpsertHoldingResponse = Message<"moneydashboard.v4.UpsertHoldingResponse"> & {};
 
 /**
  * Describes the message moneydashboard.v4.UpsertHoldingResponse.
  * Use `create(UpsertHoldingResponseSchema)` to create a new message.
  */
-export const UpsertHoldingResponseSchema: GenMessage<UpsertHoldingResponse> = /*@__PURE__*/
-  messageDesc(file_moneydashboard_v4_holdings, 6);
+export const UpsertHoldingResponseSchema: GenMessage<UpsertHoldingResponse> = /*@__PURE__*/ messageDesc(file_moneydashboard_v4_holdings, 6);
 
 /**
  * @generated from service moneydashboard.v4.MDHoldingService
  */
 export const MDHoldingService: GenService<{
-  /**
-   * @generated from rpc moneydashboard.v4.MDHoldingService.GetHoldingById
-   */
-  getHoldingById: {
-    methodKind: "unary";
-    input: typeof GetHoldingByIdRequestSchema;
-    output: typeof GetHoldingByIdResponseSchema;
-  },
-  /**
-   * @generated from rpc moneydashboard.v4.MDHoldingService.GetAllHoldings
-   */
-  getAllHoldings: {
-    methodKind: "unary";
-    input: typeof GetAllHoldingsRequestSchema;
-    output: typeof GetAllHoldingsResponseSchema;
-  },
-  /**
-   * @generated from rpc moneydashboard.v4.MDHoldingService.UpsertHolding
-   */
-  upsertHolding: {
-    methodKind: "unary";
-    input: typeof UpsertHoldingRequestSchema;
-    output: typeof UpsertHoldingResponseSchema;
-  },
-}> = /*@__PURE__*/
-  serviceDesc(file_moneydashboard_v4_holdings, 0);
-
+	/**
+	 * @generated from rpc moneydashboard.v4.MDHoldingService.GetHoldingById
+	 */
+	getHoldingById: {
+		methodKind: "unary";
+		input: typeof GetHoldingByIdRequestSchema;
+		output: typeof GetHoldingByIdResponseSchema;
+	};
+	/**
+	 * @generated from rpc moneydashboard.v4.MDHoldingService.GetAllHoldings
+	 */
+	getAllHoldings: {
+		methodKind: "unary";
+		input: typeof GetAllHoldingsRequestSchema;
+		output: typeof GetAllHoldingsResponseSchema;
+	};
+	/**
+	 * @generated from rpc moneydashboard.v4.MDHoldingService.UpsertHolding
+	 */
+	upsertHolding: {
+		methodKind: "unary";
+		input: typeof UpsertHoldingRequestSchema;
+		output: typeof UpsertHoldingResponseSchema;
+	};
+}> = /*@__PURE__*/ serviceDesc(file_moneydashboard_v4_holdings, 0);

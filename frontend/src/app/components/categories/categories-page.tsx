@@ -39,7 +39,7 @@ function CategoriesPage(): ReactElement {
 	});
 
 	const pageButtons = [
-		<button className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
+		<button key={"new"} className={"outline"} onClick={() => setEditingId(NULL_UUID)}>
 			<IconGroup>
 				<Icon name={"add"} />
 				<span>New</span>
@@ -48,7 +48,7 @@ function CategoriesPage(): ReactElement {
 	];
 
 	const pageOptions = [
-		<fieldset>
+		<fieldset key={"show-inactive"}>
 			<label>
 				<input type={"checkbox"} role={"switch"} checked={showInactive} onChange={(evt) => setShowInactive(evt.target.checked)} />
 				Show inactive

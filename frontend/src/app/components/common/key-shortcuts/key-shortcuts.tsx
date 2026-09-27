@@ -24,7 +24,7 @@ function KeyListener(): ReactElement {
 
 	const [modalOpen, setModalOpen] = React.useState(false);
 
-	function handleKeyPress(evt: KeyboardEvent): void {
+	const handleKeyPress = React.useCallback((evt: KeyboardEvent) => {
 		const isEscape = evt.key === "Escape";
 		const isCtrlEnter = evt.key === "Enter" && (evt.ctrlKey || evt.metaKey);
 
@@ -73,7 +73,7 @@ function KeyListener(): ReactElement {
 
 			currentKeyBuffer.current = s2;
 		}
-	}
+	}, []);
 
 	React.useEffect(() => {
 		document.addEventListener("keydown", handleKeyPress);

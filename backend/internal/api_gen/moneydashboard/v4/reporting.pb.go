@@ -311,10 +311,11 @@ func (x *TaxReportCapitalEvent) GetMatches() []*TaxReportCapitalEventMatch {
 
 type TaxReportCapitalEventMatch struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Qty           float64                `protobuf:"fixed64,1,opt,name=qty,proto3" json:"qty,omitempty"`
-	Date          int64                  `protobuf:"varint,2,opt,name=date,proto3" json:"date,omitempty"`
-	Price         float64                `protobuf:"fixed64,3,opt,name=price,proto3" json:"price,omitempty"`
-	Note          string                 `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Qty           float64                `protobuf:"fixed64,2,opt,name=qty,proto3" json:"qty,omitempty"`
+	Date          int64                  `protobuf:"varint,3,opt,name=date,proto3" json:"date,omitempty"`
+	Price         float64                `protobuf:"fixed64,4,opt,name=price,proto3" json:"price,omitempty"`
+	Note          string                 `protobuf:"bytes,5,opt,name=note,proto3" json:"note,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -347,6 +348,13 @@ func (x *TaxReportCapitalEventMatch) ProtoReflect() protoreflect.Message {
 // Deprecated: Use TaxReportCapitalEventMatch.ProtoReflect.Descriptor instead.
 func (*TaxReportCapitalEventMatch) Descriptor() ([]byte, []int) {
 	return file_moneydashboard_v4_reporting_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *TaxReportCapitalEventMatch) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
 }
 
 func (x *TaxReportCapitalEventMatch) GetQty() float64 {
@@ -968,12 +976,13 @@ const file_moneydashboard_v4_reporting_proto_rawDesc = "" +
 	"\x12avg_gbp_unit_price\x18\x06 \x01(\x01R\x0favgGbpUnitPrice\x12\x1f\n" +
 	"\vqty_matched\x18\a \x01(\x01R\n" +
 	"qtyMatched\x12G\n" +
-	"\amatches\x18\b \x03(\v2-.moneydashboard.v4.TaxReportCapitalEventMatchR\amatches\"l\n" +
-	"\x1aTaxReportCapitalEventMatch\x12\x10\n" +
-	"\x03qty\x18\x01 \x01(\x01R\x03qty\x12\x12\n" +
-	"\x04date\x18\x02 \x01(\x03R\x04date\x12\x14\n" +
-	"\x05price\x18\x03 \x01(\x01R\x05price\x12\x12\n" +
-	"\x04note\x18\x04 \x01(\tR\x04note\"\x85\x01\n" +
+	"\amatches\x18\b \x03(\v2-.moneydashboard.v4.TaxReportCapitalEventMatchR\amatches\"|\n" +
+	"\x1aTaxReportCapitalEventMatch\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
+	"\x03qty\x18\x02 \x01(\x01R\x03qty\x12\x12\n" +
+	"\x04date\x18\x03 \x01(\x03R\x04date\x12\x14\n" +
+	"\x05price\x18\x04 \x01(\x01R\x05price\x12\x12\n" +
+	"\x04note\x18\x05 \x01(\tR\x04note\"\x85\x01\n" +
 	"\x14TaxReportS104Balance\x12.\n" +
 	"\x05asset\x18\x01 \x01(\v2\x18.moneydashboard.v4.AssetR\x05asset\x12\x10\n" +
 	"\x03qty\x18\x02 \x01(\x01R\x03qty\x12+\n" +

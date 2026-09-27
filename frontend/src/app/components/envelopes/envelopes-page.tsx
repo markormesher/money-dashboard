@@ -64,7 +64,7 @@ function EnvelopesPage(): ReactElement {
 	switch (page) {
 		case "Envelopes":
 			pageButtons = [
-				<button className={"outline"} onClick={() => setEnvelopeEditingId(NULL_UUID)}>
+				<button key={"new"} className={"outline"} onClick={() => setEnvelopeEditingId(NULL_UUID)}>
 					<IconGroup>
 						<Icon name={"add"} />
 						<span>New</span>
@@ -73,7 +73,7 @@ function EnvelopesPage(): ReactElement {
 			];
 
 			pageOptions = [
-				<fieldset>
+				<fieldset key={"show-inactive"}>
 					<label>
 						<input type={"checkbox"} role={"switch"} checked={showInactive} onChange={(evt) => setShowInactive(evt.target.checked)} />
 						Show inactive
@@ -84,7 +84,7 @@ function EnvelopesPage(): ReactElement {
 
 		case "Envelope Allocations":
 			pageButtons = [
-				<button className={"outline"} onClick={() => setEnvelopeAllocationEditingId(NULL_UUID)}>
+				<button key={"new"} className={"outline"} onClick={() => setEnvelopeAllocationEditingId(NULL_UUID)}>
 					<IconGroup>
 						<Icon name={"add"} />
 						<span>New</span>
@@ -171,7 +171,7 @@ function EnvelopesPage(): ReactElement {
 					) : (
 						filteredAllocations.map((a) => {
 							return (
-								<tr>
+								<tr key={a.id}>
 									<td>{formatDateFromProto(a.startDate)}</td>
 									<td>{a.category?.name}</td>
 									<td>{a.envelope?.name}</td>
