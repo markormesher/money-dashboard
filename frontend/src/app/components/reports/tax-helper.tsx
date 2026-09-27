@@ -8,7 +8,7 @@ import type {
 	TaxReportCapitalEvent,
 	TaxReportS104Balance,
 } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
-import { useAsyncEffect, useWaitGroup } from "../../utils/hooks.js";
+import { useWaitGroup } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
@@ -44,19 +44,23 @@ function TaxHelperPage(): ReactElement {
 	const [totalDisposalGains, setTotalDisposalGains] = React.useState(0);
 	const [totalDisposalLosses, setTotalDisposalLosses] = React.useState(0);
 
-	useAsyncEffect(async () => {
-		wg.add();
+	React.useEffect(() => {
 		setError(null);
-		try {
-			const res = await reportingServiceClient.getTaxReport({ taxYear: taxYear });
-			setTaxReport(res.taxReport);
-		} catch (e) {
-			toastBus.error("Failed to load report data.");
-			setError(e);
-			console.log(e);
-		}
-		wg.done();
-	}, [taxYear]);
+		wg.add();
+		reportingServiceClient
+			.getTaxReport({ taxYear: taxYear })
+			.then((res) => {
+				setTaxReport(res.taxReport);
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load report data.");
+				setError(e);
+				console.log(e);
+			})
+			.finally(() => {
+				wg.done();
+			});
+	}, [wg, taxYear]);
 
 	useEffect(() => {
 		setCapitalEvents(taxReport?.capitalEvents.filter((e) => e.type === "disposal" || !showDisposalsOnly) ?? []);

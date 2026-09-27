@@ -1,7 +1,6 @@
 import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { accountGroupServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName, safeNumberValue } from "../../utils/forms.js";
@@ -28,7 +27,7 @@ function AccountGroupEditModal(props: AccountGroupEditModalProps): ReactElement 
 		validator: validateAccountGroup,
 	});
 
-	useAsyncEffect(async () => {
+	React.useEffect(() => {
 		if (createNew) {
 			form.setModel({
 				$typeName: "moneydashboard.v4.AccountGroup",
@@ -40,18 +39,23 @@ function AccountGroupEditModal(props: AccountGroupEditModalProps): ReactElement 
 			return;
 		}
 
-		try {
-			form.wg.add();
-			const res = await accountGroupServiceClient.getAccountGroupById({ id: accountGroupId });
-			form.setModel(res.accountGroup);
-			form.wg.done();
-			setFocusOnNextRender("name");
-		} catch (e) {
-			toastBus.error("Failed to load account group.");
-			form.setFatalError(e);
-			console.log(e);
-		}
-	}, [accountGroupId]);
+		form.wg.add();
+
+		accountGroupServiceClient
+			.getAccountGroupById({ id: accountGroupId })
+			.then((res) => {
+				form.setModel(res.accountGroup);
+				setFocusOnNextRender("name");
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load account group.");
+				form.setFatalError(e);
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	}, [createNew, form, accountGroupId]);
 
 	React.useEffect(() => {
 		if (form.wg.count === 0 && focusOnNextRender) {
@@ -60,24 +64,27 @@ function AccountGroupEditModal(props: AccountGroupEditModalProps): ReactElement 
 		}
 	}, [focusOnNextRender, form.wg.count]);
 
-	const save = useAsyncHandler(async () => {
+	const save = () => {
 		if (form.wg.count > 0 || !form.valid || !form.model) {
 			return;
 		}
 
 		form.wg.add();
 
-		try {
-			await accountGroupServiceClient.upsertAccountGroup({ accountGroup: form.model });
-			toastBus.success("Saved account group.");
-			onSaveFinished();
-		} catch (e) {
-			toastBus.error("Failed to save account group.");
-			console.log(e);
-		}
-
-		form.wg.done();
-	});
+		accountGroupServiceClient
+			.upsertAccountGroup({ accountGroup: form.model })
+			.then(() => {
+				toastBus.success("Saved account group.");
+				onSaveFinished();
+			})
+			.catch((e) => {
+				toastBus.error("Failed to save account group.");
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	};
 
 	useKeyShortcut(CTRLENTER, () => save());
 

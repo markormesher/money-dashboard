@@ -1,5 +1,5 @@
 import React, { type ReactElement } from "react";
-import { useAsyncEffect, useNudge } from "../../utils/hooks.js";
+import { useNudge } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { useRouter } from "../app/router.js";
@@ -85,25 +85,29 @@ function EnvelopeTransfersPage(): ReactElement {
 		setHoldingsPerAccount(hpa);
 	}, [holdings]);
 
-	useAsyncEffect(async () => {
-		try {
-			const res = await envelopeTransferServiceClient.getEnvelopeTransferPage({
+	React.useEffect(() => {
+		void nudgeValue;
+
+		envelopeTransferServiceClient
+			.getEnvelopeTransferPage({
 				page,
 				perPage: PER_PAGE,
 				searchPattern: searchPattern?.toString()?.replace(/^\/(.*)\/i/, "$1") ?? "",
-			});
-			setTotal(res.total);
-			setFilteredTotal(res.filteredTotal);
-			setEnvelopeTransfers(res.filteredEntities);
+			})
+			.then((res) => {
+				setTotal(res.total);
+				setFilteredTotal(res.filteredTotal);
+				setEnvelopeTransfers(res.filteredEntities);
 
-			const pageCount = Math.max(Math.ceil(res.filteredTotal / PER_PAGE), 1);
-			setPageCount(pageCount);
-			setPage(Math.min(page, pageCount));
-		} catch (e) {
-			toastBus.error("Failed to load envelopeTransfers.");
-			setError(e);
-			console.log(e);
-		}
+				const pageCount = Math.max(Math.ceil(res.filteredTotal / PER_PAGE), 1);
+				setPageCount(pageCount);
+				setPage(Math.min(page, pageCount));
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load envelopeTransfers.");
+				setError(e);
+				console.log(e);
+			});
 	}, [nudgeValue, page, searchPattern]);
 
 	const deleteEnvelopeTransfer = (id: string) => {

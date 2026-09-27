@@ -2,7 +2,6 @@ import React, { type ReactElement } from "react";
 import { type ExternalModalProps, Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { userServiceClient } from "../../../api/api.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import type { User } from "../../../api_gen/moneydashboard/v4/users_pb.js";
 import type { Profile } from "../../../api_gen/moneydashboard/v4/profiles_pb.js";
@@ -14,18 +13,20 @@ type ProfileChooserProps = ExternalModalProps & {};
 function ProfileChooser(props: ProfileChooserProps): ReactElement {
 	const [user, setUser] = React.useState<User>();
 
-	useAsyncEffect(async () => {
+	React.useEffect(() => {
 		if (!props.open) {
 			return;
 		}
 
-		try {
-			const res = await userServiceClient.getUser({});
-			setUser(res.user);
-		} catch (e) {
-			toastBus.error("Failed to load user");
-			console.log(e);
-		}
+		userServiceClient
+			.getUser({})
+			.then((res) => {
+				setUser(res.user);
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load user");
+				console.log(e);
+			});
 	}, [props.open]);
 
 	const profiles = useProfileList({
@@ -34,15 +35,17 @@ function ProfileChooser(props: ProfileChooserProps): ReactElement {
 		},
 	});
 
-	const selectProfile = useAsyncHandler(async (profile: Profile) => {
-		try {
-			await userServiceClient.setActiveProfile({ profile });
-			window.location.reload();
-		} catch (e) {
-			toastBus.error("Failed to set active profile");
-			console.log(e);
-		}
-	});
+	const selectProfile = (profile: Profile) => {
+		userServiceClient
+			.setActiveProfile({ profile })
+			.then(() => {
+				window.location.reload();
+			})
+			.catch((e) => {
+				toastBus.error("Failed to set active profile");
+				console.log(e);
+			});
+	};
 
 	const header = (
 		<IconGroup>

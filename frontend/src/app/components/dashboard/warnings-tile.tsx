@@ -1,6 +1,5 @@
 import React, { type ReactElement } from "react";
 import type { SummaryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
-import { useAsyncEffect } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
@@ -15,15 +14,17 @@ import "./warnings-tile.css";
 function WarningsTile(): ReactElement | null {
 	const [error, setError] = React.useState<unknown>();
 	const [nonZeroMemoBalances, setNonZeroMemoBalances] = React.useState<SummaryBalance[]>();
-	useAsyncEffect(async () => {
-		try {
-			const res = await reportingServiceClient.getNonZeroMemoBalances({});
-			setNonZeroMemoBalances(res.balances);
-		} catch (e) {
-			toastBus.error("Failed to load memo balances.");
-			setError(e);
-			console.log(e);
-		}
+	React.useEffect(() => {
+		reportingServiceClient
+			.getNonZeroMemoBalances({})
+			.then((res) => {
+				setNonZeroMemoBalances(res.balances);
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load memo balances.");
+				setError(e);
+				console.log(e);
+			});
 	}, []);
 
 	if (error) {

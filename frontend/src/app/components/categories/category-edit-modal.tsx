@@ -2,7 +2,6 @@ import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import type { Category } from "../../../api_gen/moneydashboard/v4/categories_pb.js";
-import { useAsyncHandler } from "../../utils/hooks.js";
 import { categoryServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
@@ -93,24 +92,27 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
 		}
 	}, [focusOnNextRender, form.wg.count]);
 
-	const save = useAsyncHandler(async () => {
+	const save = () => {
 		if (form.wg.count > 0 || !form.valid || !form.model) {
 			return;
 		}
 
 		form.wg.add();
 
-		try {
-			await categoryServiceClient.upsertCategory({ category: form.model });
-			toastBus.success("Saved category.");
-			onSaveFinished();
-		} catch (e) {
-			toastBus.error("Failed to save category.");
-			console.log(e);
-		}
-
-		form.wg.done();
-	});
+		categoryServiceClient
+			.upsertCategory({ category: form.model })
+			.then(() => {
+				toastBus.success("Saved category.");
+				onSaveFinished();
+			})
+			.catch((e) => {
+				toastBus.error("Failed to save category.");
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	};
 
 	useKeyShortcut(CTRLENTER, () => save());
 

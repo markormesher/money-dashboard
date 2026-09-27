@@ -1,7 +1,6 @@
 import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { envelopeTransferServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName, safeNumberValue } from "../../utils/forms.js";
@@ -38,7 +37,7 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
 		},
 	});
 
-	useAsyncEffect(async () => {
+	React.useEffect(() => {
 		if (createNew) {
 			form.setModel({
 				$typeName: "moneydashboard.v4.EnvelopeTransfer",
@@ -51,18 +50,23 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
 			return;
 		}
 
-		try {
-			form.wg.add();
-			const res = await envelopeTransferServiceClient.getEnvelopeTransferById({ id: envelopeTransferId });
-			form.setModel(res.envelopeTransfer);
-			form.wg.done();
-			setFocusOnNextRender("holding");
-		} catch (e) {
-			toastBus.error("Failed to load envelope transfer.");
-			form.setFatalError(e);
-			console.log(e);
-		}
-	}, [envelopeTransferId]);
+		form.wg.add();
+
+		envelopeTransferServiceClient
+			.getEnvelopeTransferById({ id: envelopeTransferId })
+			.then((res) => {
+				form.setModel(res.envelopeTransfer);
+				setFocusOnNextRender("holding");
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load envelope transfer.");
+				form.setFatalError(e);
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	}, [createNew, form, envelopeTransferId]);
 
 	React.useEffect(() => {
 		if (form.wg.count === 0 && focusOnNextRender) {
@@ -71,24 +75,27 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
 		}
 	}, [focusOnNextRender, form.wg.count]);
 
-	const save = useAsyncHandler(async () => {
+	const save = () => {
 		if (form.wg.count > 0 || !form.valid || !form.model) {
 			return;
 		}
 
 		form.wg.add();
 
-		try {
-			await envelopeTransferServiceClient.upsertEnvelopeTransfer({ envelopeTransfer: form.model });
-			toastBus.success("Saved envelope transfer.");
-			onSaveFinished();
-		} catch (e) {
-			toastBus.error("Failed to save envelope transfer.");
-			console.log(e);
-		}
-
-		form.wg.done();
-	});
+		envelopeTransferServiceClient
+			.upsertEnvelopeTransfer({ envelopeTransfer: form.model })
+			.then(() => {
+				toastBus.success("Saved envelope transfer.");
+				onSaveFinished();
+			})
+			.catch((e) => {
+				toastBus.error("Failed to save envelope transfer.");
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	};
 
 	useKeyShortcut(CTRLENTER, () => save());
 
@@ -143,7 +150,7 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
 							?.filter((e) => e.active)
 							?.sort((a, b) => a.name.localeCompare(b.name))
 							?.map((e) => (
-								<option value={e.id} selected={e.id === form.model?.fromEnvelope?.id}>
+								<option key={e.id} value={e.id} selected={e.id === form.model?.fromEnvelope?.id}>
 									{e.name}
 								</option>
 							))}
@@ -161,7 +168,7 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
 							?.filter((e) => e.active)
 							?.sort((a, b) => a.name.localeCompare(b.name))
 							?.map((e) => (
-								<option value={e.id} selected={e.id === form.model?.toEnvelope?.id}>
+								<option key={e.id} value={e.id} selected={e.id === form.model?.toEnvelope?.id}>
 									{e.name}
 								</option>
 							))}

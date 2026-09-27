@@ -1,7 +1,6 @@
 import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
 import { ErrorPanel } from "../common/error/error.js";
@@ -28,7 +27,7 @@ function ProfileEditModal(props: ProfileEditModalProps): ReactElement {
 		validator: validateProfile,
 	});
 
-	useAsyncEffect(async () => {
+	React.useEffect(() => {
 		if (createNew) {
 			form.setModel({
 				$typeName: "moneydashboard.v4.Profile",
@@ -40,18 +39,23 @@ function ProfileEditModal(props: ProfileEditModalProps): ReactElement {
 			return;
 		}
 
-		try {
-			form.wg.add();
-			const res = await profileServiceClient.getProfileById({ id: profileId });
-			form.setModel(res.profile);
-			form.wg.done();
-			setFocusOnNextRender("name");
-		} catch (e) {
-			toastBus.error("Failed to load profile.");
-			form.setFatalError(e);
-			console.log(e);
-		}
-	}, [profileId]);
+		form.wg.add();
+
+		profileServiceClient
+			.getProfileById({ id: profileId })
+			.then((res) => {
+				form.setModel(res.profile);
+				setFocusOnNextRender("name");
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load profile.");
+				form.setFatalError(e);
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	}, [createNew, form, profileId]);
 
 	React.useEffect(() => {
 		if (form.wg.count === 0 && focusOnNextRender) {
@@ -60,24 +64,27 @@ function ProfileEditModal(props: ProfileEditModalProps): ReactElement {
 		}
 	}, [focusOnNextRender, form.wg.count]);
 
-	const save = useAsyncHandler(async () => {
+	const save = () => {
 		if (form.wg.count > 0 || !form.valid || !form.model) {
 			return;
 		}
 
 		form.wg.add();
 
-		try {
-			await profileServiceClient.upsertProfile({ profile: form.model });
-			toastBus.success("Saved profile.");
-			onSaveFinished();
-		} catch (e) {
-			toastBus.error("Failed to save profile.");
-			console.log(e);
-		}
-
-		form.wg.done();
-	});
+		profileServiceClient
+			.upsertProfile({ profile: form.model })
+			.then(() => {
+				toastBus.success("Saved profile.");
+				onSaveFinished();
+			})
+			.catch((e) => {
+				toastBus.error("Failed to save profile.");
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	};
 
 	useKeyShortcut(CTRLENTER, () => save());
 

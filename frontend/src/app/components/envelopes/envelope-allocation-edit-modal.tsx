@@ -1,7 +1,6 @@
 import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { envelopeAllocationServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
@@ -46,7 +45,7 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 		},
 	});
 
-	useAsyncEffect(async () => {
+	React.useEffect(() => {
 		if (createNew) {
 			form.setModel({
 				$typeName: "moneydashboard.v4.EnvelopeAllocation",
@@ -57,18 +56,23 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 			return;
 		}
 
-		try {
-			form.wg.add();
-			const res = await envelopeAllocationServiceClient.getEnvelopeAllocationById({ id: envelopeAllocationId });
-			form.setModel(res.envelopeAllocation);
-			form.wg.done();
-			setFocusOnNextRender("name");
-		} catch (e) {
-			toastBus.error("Failed to load envelope allocation.");
-			form.setFatalError(e);
-			console.log(e);
-		}
-	}, [envelopeAllocationId]);
+		form.wg.add();
+
+		envelopeAllocationServiceClient
+			.getEnvelopeAllocationById({ id: envelopeAllocationId })
+			.then((res) => {
+				form.setModel(res.envelopeAllocation);
+				setFocusOnNextRender("name");
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load envelope allocation.");
+				form.setFatalError(e);
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	}, [createNew, form, envelopeAllocationId]);
 
 	React.useEffect(() => {
 		if (form.wg.count === 0 && focusOnNextRender) {
@@ -77,24 +81,27 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 		}
 	}, [focusOnNextRender, form.wg.count]);
 
-	const save = useAsyncHandler(async () => {
+	const save = () => {
 		if (form.wg.count > 0 || !form.valid || !form.model) {
 			return;
 		}
 
 		form.wg.add();
 
-		try {
-			await envelopeAllocationServiceClient.upsertEnvelopeAllocation({ envelopeAllocation: form.model });
-			toastBus.success("Saved envelope allocation.");
-			onSaveFinished();
-		} catch (e) {
-			toastBus.error("Failed to save envelope allocation.");
-			console.log(e);
-		}
-
-		form.wg.done();
-	});
+		envelopeAllocationServiceClient
+			.upsertEnvelopeAllocation({ envelopeAllocation: form.model })
+			.then(() => {
+				toastBus.success("Saved envelope allocation.");
+				onSaveFinished();
+			})
+			.catch((e) => {
+				toastBus.error("Failed to save envelope allocation.");
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	};
 
 	useKeyShortcut(CTRLENTER, () => save());
 
@@ -134,7 +141,7 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 							?.filter((c) => c.active)
 							?.sort((a, b) => a.name.localeCompare(b.name))
 							?.map((c) => (
-								<option value={c.id} selected={c.id === form.model?.category?.id}>
+								<option key={c.id} value={c.id} selected={c.id === form.model?.category?.id}>
 									{c.name}
 								</option>
 							))}
@@ -151,7 +158,7 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 							?.filter((e) => e.active)
 							?.sort((a, b) => a.name.localeCompare(b.name))
 							?.map((e) => (
-								<option value={e.id} selected={e.id === form.model?.envelope?.id}>
+								<option key={e.id} value={e.id} selected={e.id === form.model?.envelope?.id}>
 									{e.name}
 								</option>
 							))}

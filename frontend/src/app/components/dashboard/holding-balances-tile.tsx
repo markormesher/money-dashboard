@@ -1,6 +1,5 @@
 import React, { type ReactElement } from "react";
 import type { SummaryBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
-import { useAsyncEffect } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
@@ -28,15 +27,17 @@ type GroupRow = {
 function HoldingBalancesTile(): ReactElement {
 	const [error, setError] = React.useState<unknown>();
 	const [holdingBalances, setHoldingBalances] = React.useState<SummaryBalance[]>();
-	useAsyncEffect(async () => {
-		try {
-			const res = await reportingServiceClient.getHoldingBalances({});
-			setHoldingBalances(res.balances.filter((b) => b.gbpBalance !== 0));
-		} catch (e) {
-			toastBus.error("Failed to load holding balances.");
-			setError(e);
-			console.log(e);
-		}
+	React.useEffect(() => {
+		reportingServiceClient
+			.getHoldingBalances({})
+			.then((res) => {
+				setHoldingBalances(res.balances.filter((b) => b.gbpBalance !== 0));
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load holding balances.");
+				setError(e);
+				console.log(e);
+			});
 	}, []);
 
 	const [openAccounts, setOpenAccounts] = React.useState<string[]>([]);

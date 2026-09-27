@@ -1,6 +1,5 @@
 import React, { type ReactElement } from "react";
 import type { EnvelopeBalance } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
-import { useAsyncEffect } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
@@ -15,15 +14,17 @@ import { concatClasses } from "../../utils/style.js";
 function EnvelopeBalancesTile(): ReactElement | null {
 	const [error, setError] = React.useState<unknown>();
 	const [envelopeBalances, setEnvelopeBalances] = React.useState<EnvelopeBalance[]>();
-	useAsyncEffect(async () => {
-		try {
-			const res = await reportingServiceClient.getEnvelopeBalances({});
-			setEnvelopeBalances(res.balances);
-		} catch (e) {
-			toastBus.error("Failed to load envelope balances.");
-			setError(e);
-			console.log(e);
-		}
+	React.useEffect(() => {
+		reportingServiceClient
+			.getEnvelopeBalances({})
+			.then((res) => {
+				setEnvelopeBalances(res.balances);
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load envelope balances.");
+				setError(e);
+				console.log(e);
+			});
 	}, []);
 
 	if (error) {

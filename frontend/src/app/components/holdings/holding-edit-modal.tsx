@@ -2,7 +2,6 @@ import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import type { Holding } from "../../../api_gen/moneydashboard/v4/holdings_pb.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { holdingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
@@ -53,7 +52,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 		},
 	});
 
-	useAsyncEffect(async () => {
+	React.useEffect(() => {
 		if (createNew) {
 			form.setModel({
 				$typeName: "moneydashboard.v4.Holding",
@@ -70,18 +69,23 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 			return;
 		}
 
-		try {
-			form.wg.add();
-			const res = await holdingServiceClient.getHoldingById({ id: holdingId });
-			form.setModel(res.holding);
-			form.wg.done();
-			setFocusOnNextRender("name");
-		} catch (e) {
-			toastBus.error("Failed to load holding.");
-			form.setFatalError(e);
-			console.log(e);
-		}
-	}, [holdingId]);
+		form.wg.add();
+
+		holdingServiceClient
+			.getHoldingById({ id: holdingId })
+			.then((res) => {
+				form.setModel(res.holding);
+				setFocusOnNextRender("name");
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load holding.");
+				form.setFatalError(e);
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	}, [createNew, form, holdingId]);
 
 	React.useEffect(() => {
 		if (form.wg.count === 0 && focusOnNextRender) {
@@ -90,24 +94,27 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 		}
 	}, [focusOnNextRender, form.wg.count]);
 
-	const save = useAsyncHandler(async () => {
+	const save = () => {
 		if (form.wg.count > 0 || !form.valid || !form.model) {
 			return;
 		}
 
 		form.wg.add();
 
-		try {
-			await holdingServiceClient.upsertHolding({ holding: form.model });
-			toastBus.success("Saved holding.");
-			onSaveFinished();
-		} catch (e) {
-			toastBus.error("Failed to save holding.");
-			console.log(e);
-		}
-
-		form.wg.done();
-	});
+		holdingServiceClient
+			.upsertHolding({ holding: form.model })
+			.then(() => {
+				toastBus.success("Saved holding.");
+				onSaveFinished();
+			})
+			.catch((e) => {
+				toastBus.error("Failed to save holding.");
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	};
 
 	useKeyShortcut(CTRLENTER, () => save());
 
@@ -136,7 +143,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 							?.filter((a) => a.active)
 							?.sort((a, b) => a.name.localeCompare(b.name))
 							?.map((a) => (
-								<option value={a.id} selected={a.id === form.model?.account?.id}>
+								<option key={a.id} value={a.id} selected={a.id === form.model?.account?.id}>
 									{a.name}
 								</option>
 							))}
@@ -164,7 +171,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 							?.filter((c) => c.active)
 							?.sort((a, b) => a.code.localeCompare(b.code))
 							?.map((c) => (
-								<option value={c.id} selected={c.id === form.model?.currency?.id}>
+								<option key={c.id} value={c.id} selected={c.id === form.model?.currency?.id}>
 									{c.code}
 								</option>
 							))}
@@ -181,7 +188,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 							?.filter((a) => a.active)
 							?.sort((a, b) => a.name.localeCompare(b.name))
 							?.map((a) => (
-								<option value={a.id} selected={a.id === form.model?.asset?.id}>
+								<option key={a.id} value={a.id} selected={a.id === form.model?.asset?.id}>
 									{a.name}
 								</option>
 							))}

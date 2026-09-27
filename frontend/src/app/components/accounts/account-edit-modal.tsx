@@ -2,7 +2,6 @@ import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import type { Account } from "../../../api_gen/moneydashboard/v4/accounts_pb.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { accountServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
@@ -37,7 +36,7 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
 		},
 	});
 
-	useAsyncEffect(async () => {
+	React.useEffect(() => {
 		if (createNew) {
 			form.setModel({
 				$typeName: "moneydashboard.v4.Account",
@@ -52,18 +51,23 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
 			return;
 		}
 
-		try {
-			form.wg.add();
-			const res = await accountServiceClient.getAccountById({ id: accountId });
-			form.setModel(res.account);
-			form.wg.done();
-			setFocusOnNextRender("name");
-		} catch (e) {
-			toastBus.error("Failed to load account.");
-			form.setFatalError(e);
-			console.log(e);
-		}
-	}, [accountId]);
+		form.wg.add();
+
+		accountServiceClient
+			.getAccountById({ id: accountId })
+			.then((res) => {
+				form.setModel(res.account);
+				setFocusOnNextRender("name");
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load account.");
+				form.setFatalError(e);
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	}, [createNew, form, accountId]);
 
 	React.useEffect(() => {
 		if (form.wg.count === 0 && focusOnNextRender) {
@@ -72,24 +76,27 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
 		}
 	}, [focusOnNextRender, form.wg.count]);
 
-	const save = useAsyncHandler(async () => {
+	const save = () => {
 		if (form.wg.count > 0 || !form.valid || !form.model) {
 			return;
 		}
 
 		form.wg.add();
 
-		try {
-			await accountServiceClient.upsertAccount({ account: form.model });
-			toastBus.success("Saved account.");
-			onSaveFinished();
-		} catch (e) {
-			toastBus.error("Failed to save account.");
-			console.log(e);
-		}
-
-		form.wg.done();
-	});
+		accountServiceClient
+			.upsertAccount({ account: form.model })
+			.then(() => {
+				toastBus.success("Saved account.");
+				onSaveFinished();
+			})
+			.catch((e) => {
+				toastBus.error("Failed to save account.");
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	};
 
 	useKeyShortcut(CTRLENTER, () => save());
 

@@ -1,7 +1,6 @@
 import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { useAsyncHandler } from "../../utils/hooks.js";
 import { envelopeTransferServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
@@ -43,24 +42,27 @@ function EnvelopeTransferCloneModal(props: EnvelopeTransferCloneModalProps): Rea
 		}
 	}, [focusOnNextRender, form.wg.count]);
 
-	const save = useAsyncHandler(async () => {
+	const save = () => {
 		if (form.wg.count > 0 || !form.valid || !form.model) {
 			return;
 		}
 
 		form.wg.add();
 
-		try {
-			await envelopeTransferServiceClient.cloneEnvelopeTransfers(form.model);
-			toastBus.success("Cloned envelope transfers");
-			onSaveFinished();
-		} catch (e) {
-			toastBus.error("Failed to clone envelope transfers.");
-			console.log(e);
-		}
-
-		form.wg.done();
-	});
+		envelopeTransferServiceClient
+			.cloneEnvelopeTransfers(form.model)
+			.then(() => {
+				toastBus.success("Cloned envelope transfers");
+				onSaveFinished();
+			})
+			.catch((e) => {
+				toastBus.error("Failed to clone envelope transfers.");
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	};
 
 	useKeyShortcut(CTRLENTER, () => save());
 

@@ -3,7 +3,6 @@ import { ArcElement, type ChartData, Chart as ChartJS, type ChartOptions, Filler
 import { Doughnut } from "react-chartjs-2";
 import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
-import { useAsyncEffect } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
@@ -40,15 +39,17 @@ function PortfolioSummaryPage(): ReactElement {
 	const [error, setError] = React.useState<unknown>();
 
 	const [holdingBalances, setHoldingBalances] = React.useState<SummaryBalance[]>();
-	useAsyncEffect(async () => {
-		try {
-			const res = await reportingServiceClient.getHoldingBalances({});
-			setHoldingBalances(res.balances.filter((b) => b.gbpBalance !== 0));
-		} catch (e) {
-			toastBus.error("Failed to load holding balances.");
-			setError(e);
-			console.log(e);
-		}
+	React.useEffect(() => {
+		reportingServiceClient
+			.getHoldingBalances({})
+			.then((res) => {
+				setHoldingBalances(res.balances.filter((b) => b.gbpBalance !== 0));
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load holding balances.");
+				setError(e);
+				console.log(e);
+			});
 	}, []);
 
 	const [allBalances, setAllBalances] = React.useState<UnitBalance[]>([]);

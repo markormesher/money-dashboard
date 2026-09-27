@@ -2,7 +2,6 @@ import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import type { Envelope } from "../../../api_gen/moneydashboard/v4/envelopes_pb.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { envelopeServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
@@ -28,7 +27,7 @@ function EnvelopeEditModal(props: EnvelopeEditModalProps): ReactElement {
 		validator: validateEnvelope,
 	});
 
-	useAsyncEffect(async () => {
+	React.useEffect(() => {
 		if (createNew) {
 			form.setModel({
 				$typeName: "moneydashboard.v4.Envelope",
@@ -40,18 +39,23 @@ function EnvelopeEditModal(props: EnvelopeEditModalProps): ReactElement {
 			return;
 		}
 
-		try {
-			form.wg.add();
-			const res = await envelopeServiceClient.getEnvelopeById({ id: envelopeId });
-			form.setModel(res.envelope);
-			form.wg.done();
-			setFocusOnNextRender("name");
-		} catch (e) {
-			toastBus.error("Failed to load envelope.");
-			form.setFatalError(e);
-			console.log(e);
-		}
-	}, [envelopeId]);
+		form.wg.add();
+
+		envelopeServiceClient
+			.getEnvelopeById({ id: envelopeId })
+			.then((res) => {
+				form.setModel(res.envelope);
+				setFocusOnNextRender("name");
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load envelope.");
+				form.setFatalError(e);
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	}, [createNew, form, envelopeId]);
 
 	React.useEffect(() => {
 		if (form.wg.count === 0 && focusOnNextRender) {
@@ -60,24 +64,27 @@ function EnvelopeEditModal(props: EnvelopeEditModalProps): ReactElement {
 		}
 	}, [focusOnNextRender, form.wg.count]);
 
-	const save = useAsyncHandler(async () => {
+	const save = () => {
 		if (form.wg.count > 0 || !form.valid || !form.model) {
 			return;
 		}
 
 		form.wg.add();
 
-		try {
-			await envelopeServiceClient.upsertEnvelope({ envelope: form.model });
-			toastBus.success("Saved envelope.");
-			onSaveFinished();
-		} catch (e) {
-			toastBus.error("Failed to save envelope.");
-			console.log(e);
-		}
-
-		form.wg.done();
-	});
+		envelopeServiceClient
+			.upsertEnvelope({ envelope: form.model })
+			.then(() => {
+				toastBus.success("Saved envelope.");
+				onSaveFinished();
+			})
+			.catch((e) => {
+				toastBus.error("Failed to save envelope.");
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	};
 
 	useKeyShortcut(CTRLENTER, () => save());
 

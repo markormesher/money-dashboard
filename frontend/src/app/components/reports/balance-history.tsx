@@ -8,7 +8,7 @@ import { Icon, IconGroup } from "../common/icon/icon.js";
 import { type DateRange, dateRangePresets, describeDateRange } from "../../utils/date-range.js";
 import { DateRangePicker } from "../common/date-range/date-range-picker.js";
 import type { BalanceHistoryEntry } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
-import { useAsyncEffect, useWaitGroup } from "../../utils/hooks.js";
+import { useWaitGroup } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { formatDateFromProto } from "../../utils/dates.js";
 import { toastBus } from "../toaster/toaster.js";
@@ -33,25 +33,30 @@ function BalanceHistoryPage(): ReactElement {
 	const [error, setError] = React.useState<unknown>();
 	const [data, setData] = React.useState<BalanceHistoryEntry[] | null>(null);
 
-	useAsyncEffect(async () => {
-		wg.add();
+	React.useEffect(() => {
 		setError(null);
-		try {
-			const res = await reportingServiceClient.getBalanceHistory({
+		wg.add();
+
+		reportingServiceClient
+			.getBalanceHistory({
 				startDate: dateRange.startDate,
 				endDate: dateRange.endDate,
+			})
+			.then((res) => {
+				setData(res.entries);
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load balance history.");
+				setError(e);
+				console.log(e);
+			})
+			.finally(() => {
+				wg.done();
 			});
-			setData(res.entries);
-		} catch (e) {
-			toastBus.error("Failed to load balance history.");
-			setError(e);
-			console.log(e);
-		}
-		wg.done();
-	}, [dateRange]);
+	}, [wg, dateRange]);
 
 	const options = [
-		<button className={"outline"} onClick={() => setDateRangePickerOpen(true)} disabled={wg.count > 0}>
+		<button key={"date-picker"} className={"outline"} onClick={() => setDateRangePickerOpen(true)} disabled={wg.count > 0}>
 			<IconGroup>
 				<Icon name={"calendar_month"} />
 				<span>{describeDateRange(dateRange)}</span>

@@ -2,7 +2,6 @@ import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import type { Transaction } from "../../../api_gen/moneydashboard/v4/transactions_pb.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
 import { transactionServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName, safeNumberValue } from "../../utils/forms.js";
@@ -27,6 +26,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 	const createNew = transactionId === NULL_UUID;
 
 	const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
+
 	const form = useForm<Transaction>({
 		validator: (v) => validateTransaction(v, holdings ?? []),
 	});
@@ -69,7 +69,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 		setHoldingsPerAccount(hpa);
 	}, [holdings]);
 
-	useAsyncEffect(async () => {
+	React.useEffect(() => {
 		if (createNew) {
 			form.setModel({
 				$typeName: "moneydashboard.v4.Transaction",
@@ -87,18 +87,22 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 			return;
 		}
 
-		try {
-			form.wg.add();
-			const res = await transactionServiceClient.getTransactionById({ id: transactionId });
-			form.setModel(res.transaction);
-			form.wg.done();
-			setFocusOnNextRender("holding");
-		} catch (e) {
-			toastBus.error("Failed to load transaction.");
-			form.setFatalError(e);
-			console.log(e);
-		}
-	}, [transactionId]);
+		form.wg.add();
+		transactionServiceClient
+			.getTransactionById({ id: transactionId })
+			.then((res) => {
+				form.setModel(res.transaction);
+				setFocusOnNextRender("holding");
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load transaction.");
+				form.setFatalError(e);
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	}, [createNew, form, transactionId]);
 
 	React.useEffect(() => {
 		if (form.wg.count === 0 && focusOnNextRender) {
@@ -107,39 +111,41 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 		}
 	}, [focusOnNextRender, form.wg.count]);
 
-	const save = useAsyncHandler(async () => {
+	const save = () => {
 		if (form.wg.count > 0 || !form.valid || !form.model) {
 			return;
 		}
 
 		form.wg.add();
-
-		try {
-			await transactionServiceClient.upsertTransaction({ transaction: form.model });
-			toastBus.success("Saved transaction.");
-			if (transactionId === NULL_UUID) {
-				// clear SOME of the record to get ready to edit again
-				form.setModel({
-					...form.model,
-					creationDate: convertDateToProto(new Date()),
-					payee: "",
-					category: undefined,
-					amount: 0,
-					unitValue: 0,
-					notes: "",
-				});
-				setFocusOnNextRender("payee");
-				onCreateFinished();
-			} else {
-				onEditFinished();
-			}
-		} catch (e) {
-			toastBus.error("Failed to save transaction.");
-			console.log(e);
-		}
-
-		form.wg.done();
-	});
+		transactionServiceClient
+			.upsertTransaction({ transaction: form.model })
+			.then(() => {
+				toastBus.success("Saved transaction.");
+				if (transactionId === NULL_UUID && form.model) {
+					// clear SOME of the record to get ready to edit again
+					form.setModel({
+						...form.model,
+						creationDate: convertDateToProto(new Date()),
+						payee: "",
+						category: undefined,
+						amount: 0,
+						unitValue: 0,
+						notes: "",
+					});
+					setFocusOnNextRender("payee");
+					onCreateFinished();
+				} else {
+					onEditFinished();
+				}
+			})
+			.catch((e) => {
+				toastBus.error("Failed to save transaction.");
+				console.log(e);
+			})
+			.finally(() => {
+				form.wg.done();
+			});
+	};
 
 	useKeyShortcut(CTRLENTER, () => save());
 
@@ -194,7 +200,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 							?.filter((h) => h.active)
 							?.sort((a, b) => `${a.account?.name} / ${a.name}`.localeCompare(`${b.account?.name} / ${b.name}`))
 							?.map((h) => (
-								<option value={h.id} selected={h.id === form.model?.holding?.id}>
+								<option key={h.id} value={h.id} selected={h.id === form.model?.holding?.id}>
 									{(holdingsPerAccount?.[h.account?.id ?? ""] ?? 0) > 1 ? (
 										<>
 											{h.account?.name} &nbsp;&nbsp;&#x2022;&nbsp;&nbsp; {h.name}
@@ -228,7 +234,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 							?.filter((c) => c.active)
 							?.sort((a, b) => a.name.localeCompare(b.name))
 							?.map((c) => (
-								<option value={c.id} selected={c.id === form.model?.category?.id}>
+								<option key={c.id} value={c.id} selected={c.id === form.model?.category?.id}>
 									{c.name}
 								</option>
 							))}
