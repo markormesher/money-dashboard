@@ -1,14 +1,13 @@
-import React, { ReactElement, useEffect } from "react";
+import React, { type ReactElement, useEffect } from "react";
 import { useRouter } from "../app/router.js";
 import { PageHeader } from "../page-header/page-header.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import {
-  SummaryBalance,
-  TaxReport,
-  TaxReportCapitalEvent,
-  TaxReportS104Balance,
+import type {
+	SummaryBalance,
+	TaxReport,
+	TaxReportCapitalEvent,
+	TaxReportS104Balance,
 } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
-import { useAsyncEffect, useWaitGroup } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
@@ -21,560 +20,572 @@ import { formatCurrencyValue } from "../../utils/currency.js";
 import { formatAssetQuantity } from "../../utils/assets.js";
 
 function TaxHelperPage(): ReactElement {
-  const { setMeta } = useRouter();
-  React.useEffect(() => {
-    setMeta({ parents: ["Reports"], title: "Tax Helper" });
-  }, []);
+	const { setMeta } = useRouter();
+	React.useEffect(() => {
+		setMeta({ parents: ["Reports"], title: "Tax Helper" });
+	}, [setMeta]);
 
-  const today = convertDateToProto(new Date());
-  const currentTaxYear = getTaxYear(today);
-  const [taxYear, setTaxYear] = React.useState(currentTaxYear);
-  const [showDisposalsOnly, setShowCapitcalAcquisitions] = React.useState(true);
+	const today = convertDateToProto(new Date());
+	const currentTaxYear = getTaxYear(today);
+	const [taxYear, setTaxYear] = React.useState(currentTaxYear);
+	const [showDisposalsOnly, setShowCapitcalAcquisitions] = React.useState(true);
 
-  const wg = useWaitGroup();
-  const [error, setError] = React.useState<unknown>();
-  const [taxReport, setTaxReport] = React.useState<TaxReport>();
-  const [capitalEvents, setCapitalEvents] = React.useState<TaxReportCapitalEvent[]>([]);
-  const [s104Balances, setS104Balances] = React.useState<TaxReportS104Balance[]>([]);
+	const gotoPrevTaxYear = React.useCallback(() => setTaxYear((ty) => ty - 1), []);
+	const gotoNextTaxYear = React.useCallback(() => setTaxYear((ty) => ty + 1), []);
 
-  // derived captial event fields
-  const [qtyDisposals, setQtyDisposals] = React.useState(0);
-  const [totalDisposalProceeds, setTotalDisposalProceeds] = React.useState(0);
-  const [totalDisposalCosts, setTotalDisposalCosts] = React.useState(0);
-  const [totalDisposalGains, setTotalDisposalGains] = React.useState(0);
-  const [totalDisposalLosses, setTotalDisposalLosses] = React.useState(0);
+	const [error, setError] = React.useState<unknown>();
+	const [taxReport, setTaxReport] = React.useState<TaxReport>();
+	const [capitalEvents, setCapitalEvents] = React.useState<TaxReportCapitalEvent[]>([]);
+	const [s104Balances, setS104Balances] = React.useState<TaxReportS104Balance[]>([]);
 
-  useAsyncEffect(async () => {
-    wg.add();
-    setError(null);
-    try {
-      const res = await reportingServiceClient.getTaxReport({ taxYear: taxYear });
-      setTaxReport(res.taxReport);
-    } catch (e) {
-      toastBus.error("Failed to load report data.");
-      setError(e);
-      console.log(e);
-    }
-    wg.done();
-  }, [taxYear]);
+	// derived captial event fields
+	const [qtyDisposals, setQtyDisposals] = React.useState(0);
+	const [totalDisposalProceeds, setTotalDisposalProceeds] = React.useState(0);
+	const [totalDisposalCosts, setTotalDisposalCosts] = React.useState(0);
+	const [totalDisposalGains, setTotalDisposalGains] = React.useState(0);
+	const [totalDisposalLosses, setTotalDisposalLosses] = React.useState(0);
 
-  useEffect(() => {
-    setCapitalEvents(taxReport?.capitalEvents.filter((e) => e.type == "disposal" || !showDisposalsOnly) ?? []);
-  }, [taxReport, showDisposalsOnly]);
+	React.useEffect(() => {
+		setError(null);
+		reportingServiceClient
+			.getTaxReport({ taxYear: taxYear })
+			.then((res) => {
+				setTaxReport(res.taxReport);
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load report data.");
+				setError(e);
+				console.log(e);
+			});
+	}, [taxYear]);
 
-  useEffect(() => {
-    setS104Balances(taxReport?.s104Balances?.filter((b) => b.qty > 0) ?? []);
-  }, [taxReport, setS104Balances]);
+	useEffect(() => {
+		setCapitalEvents(taxReport?.capitalEvents.filter((e) => e.type === "disposal" || !showDisposalsOnly) ?? []);
+	}, [taxReport, showDisposalsOnly]);
 
-  useEffect(() => {
-    let qtyDisposals = 0;
-    let totalDisposalProceeds = 0;
-    let totalDisposalCosts = 0;
-    let totalDisposalGains = 0;
-    let totalDisposalLosses = 0;
+	useEffect(() => {
+		setS104Balances(taxReport?.s104Balances?.filter((b) => b.qty > 0) ?? []);
+	}, [taxReport]);
 
-    taxReport?.capitalEvents.forEach((e) => {
-      if (e.qty < 0) {
-        ++qtyDisposals;
+	useEffect(() => {
+		let qtyDisposals = 0;
+		let totalDisposalProceeds = 0;
+		let totalDisposalCosts = 0;
+		let totalDisposalGains = 0;
+		let totalDisposalLosses = 0;
 
-        const proceeds = -1 * e.qty * e.avgGbpUnitPrice;
-        const costs = e.matches.map((m) => m.qty * m.price).reduce((a, b) => a + b);
+		taxReport?.capitalEvents.forEach((e) => {
+			if (e.qty < 0) {
+				++qtyDisposals;
 
-        totalDisposalProceeds += proceeds;
-        totalDisposalCosts += costs;
+				const proceeds = -1 * e.qty * e.avgGbpUnitPrice;
+				const costs = e.matches.map((m) => m.qty * m.price).reduce((a, b) => a + b);
 
-        if (proceeds > costs) {
-          totalDisposalGains += proceeds - costs;
-        } else {
-          totalDisposalLosses -= proceeds - costs;
-        }
-      }
-    });
+				totalDisposalProceeds += proceeds;
+				totalDisposalCosts += costs;
 
-    setQtyDisposals(qtyDisposals);
-    setTotalDisposalProceeds(totalDisposalProceeds);
-    setTotalDisposalCosts(totalDisposalCosts);
-    setTotalDisposalGains(totalDisposalGains);
-    setTotalDisposalLosses(totalDisposalLosses);
-  }, [taxReport]);
+				if (proceeds > costs) {
+					totalDisposalGains += proceeds - costs;
+				} else {
+					totalDisposalLosses -= proceeds - costs;
+				}
+			}
+		});
 
-  const pageOptions = [
-    <fieldset role={"group"}>
-      <button
-        className={"outline"}
-        onClick={() => setTaxYear((curr) => Math.max(1, curr - 1))}
-        disabled={taxYear <= PLATFORM_MINIMUM_DATE.getFullYear()}
-      >
-        <Icon name={"arrow_back"} />
-      </button>
-      <button className={"outline"}>
-        <span className={"muted"}>
-          {taxYear} - {taxYear + 1}
-        </span>
-      </button>
-      <button className={"outline"} onClick={() => setTaxYear((curr) => curr + 1)}>
-        <Icon name={"arrow_forward"} />
-      </button>
-    </fieldset>,
-  ];
+		setQtyDisposals(qtyDisposals);
+		setTotalDisposalProceeds(totalDisposalProceeds);
+		setTotalDisposalCosts(totalDisposalCosts);
+		setTotalDisposalGains(totalDisposalGains);
+		setTotalDisposalLosses(totalDisposalLosses);
+	}, [taxReport]);
 
-  let body: ReactElement | null = null;
-  if (error) {
-    body = <ErrorPanel error={error} />;
-  } else if (!taxReport || !capitalEvents) {
-    body = <LoadingPanel />;
-  } else {
-    const showInterestCategories = new Set(taxReport.interestIncome.map((b) => b.category?.id ?? "")).size > 1;
-    const showDividendCategories = new Set(taxReport.dividendIncome.map((b) => b.category?.id ?? "")).size > 1;
-    const showPensionCategories = new Set(taxReport.pensionContributions.map((b) => b.category?.id ?? "")).size > 1;
+	const pageOptions = [
+		<fieldset key={"year-chooser"} role={"group"}>
+			<button className={"outline"} onClick={gotoPrevTaxYear} disabled={taxYear <= PLATFORM_MINIMUM_DATE.getFullYear()}>
+				<Icon name={"arrow_back"} />
+			</button>
+			<button className={"outline"}>
+				<span className={"muted"}>
+					{taxYear} - {taxYear + 1}
+				</span>
+			</button>
+			<button className={"outline"} onClick={gotoNextTaxYear} disabled={taxYear >= currentTaxYear}>
+				<Icon name={"arrow_forward"} />
+			</button>
+		</fieldset>,
+	];
 
-    const sortBalances = (a: SummaryBalance, b: SummaryBalance): number => {
-      let cmp = a.holding?.account?.name.localeCompare(b.holding?.account?.name ?? "") ?? 0;
-      if (cmp != 0) {
-        return cmp;
-      }
+	let body: ReactElement | null = null;
+	if (error) {
+		body = <ErrorPanel error={error} />;
+	} else if (!taxReport || !capitalEvents) {
+		body = <LoadingPanel />;
+	} else {
+		const showInterestCategories = new Set(taxReport.interestIncome.map((b) => b.category?.id ?? "")).size > 1;
+		const showDividendCategories = new Set(taxReport.dividendIncome.map((b) => b.category?.id ?? "")).size > 1;
+		const showPensionCategories = new Set(taxReport.pensionContributions.map((b) => b.category?.id ?? "")).size > 1;
 
-      cmp = a.holding?.name.localeCompare(b.holding?.name ?? "") ?? 0;
-      if (cmp != 0) {
-        return cmp;
-      }
+		const sortBalances = (a: SummaryBalance, b: SummaryBalance): number => {
+			let cmp = a.holding?.account?.name.localeCompare(b.holding?.account?.name ?? "") ?? 0;
+			if (cmp !== 0) {
+				return cmp;
+			}
 
-      cmp = a.category?.name.localeCompare(b.category?.name ?? "") ?? 0;
-      return cmp;
-    };
+			cmp = a.holding?.name.localeCompare(b.holding?.name ?? "") ?? 0;
+			if (cmp !== 0) {
+				return cmp;
+			}
 
-    body = (
-      <>
-        <h4>Interest Income</h4>
+			cmp = a.category?.name.localeCompare(b.category?.name ?? "") ?? 0;
+			return cmp;
+		};
 
-        {taxReport.interestIncome.length > 0 ? (
-          <table className={"striped"}>
-            <thead>
-              <tr>
-                <td>Account</td>
-                <td>Holding</td>
-                {showInterestCategories ? <td>Category</td> : null}
-                <td>Amount</td>
-              </tr>
-            </thead>
-            <tbody>
-              {taxReport.interestIncome.sort(sortBalances).map((b) => {
-                return (
-                  <tr>
-                    <td>{b.holding?.account?.name}</td>
-                    <td>{b.holding?.name}</td>
-                    {showInterestCategories ? <td>{b.category?.name}</td> : null}
-                    <td className={"amount-cell"}>
-                      <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td></td>
-                <td></td>
-                {showInterestCategories ? <td></td> : null}
-                <td className={"amount-cell"}>
-                  <span className={"amount"}>
-                    <strong>
-                      {formatCurrencyValue(
-                        taxReport.interestIncome.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
-                        null,
-                      )}
-                    </strong>
-                  </span>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        ) : (
-          <p>
-            <em>None.</em>
-          </p>
-        )}
+		body = (
+			<>
+				<h4>Interest Income</h4>
 
-        <hr />
+				{taxReport.interestIncome.length > 0 ? (
+					<table className={"striped"}>
+						<thead>
+							<tr>
+								<td>Account</td>
+								<td>Holding</td>
+								{showInterestCategories ? <td>Category</td> : null}
+								<td>Amount</td>
+							</tr>
+						</thead>
+						<tbody>
+							{taxReport.interestIncome.sort(sortBalances).map((b) => {
+								if (!b.holding) {
+									return null;
+								}
 
-        <h4>Dividend Income</h4>
+								return (
+									<tr key={b.holding.id}>
+										<td>{b.holding.account?.name}</td>
+										<td>{b.holding.name}</td>
+										{showInterestCategories ? <td>{b.category?.name}</td> : null}
+										<td className={"amount-cell"}>
+											<span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+										</td>
+									</tr>
+								);
+							})}
+						</tbody>
+						<tfoot>
+							<tr>
+								<td></td>
+								<td></td>
+								{showInterestCategories ? <td></td> : null}
+								<td className={"amount-cell"}>
+									<span className={"amount"}>
+										<strong>
+											{formatCurrencyValue(
+												taxReport.interestIncome.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
+												null,
+											)}
+										</strong>
+									</span>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				) : (
+					<p>
+						<em>None.</em>
+					</p>
+				)}
 
-        {taxReport.dividendIncome.length > 0 ? (
-          <table className={"striped"}>
-            <thead>
-              <tr>
-                <td>Account</td>
-                <td>Holding</td>
-                {showDividendCategories ? <td>Category</td> : null}
-                <td>Amount</td>
-              </tr>
-            </thead>
-            <tbody>
-              {taxReport.dividendIncome.sort(sortBalances).map((b) => {
-                return (
-                  <tr>
-                    <td>{b.holding?.account?.name}</td>
-                    <td>{b.holding?.name}</td>
-                    {showDividendCategories ? <td>{b.category?.name}</td> : null}
-                    <td className={"amount-cell"}>
-                      <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td></td>
-                <td></td>
-                {showDividendCategories ? <td></td> : null}
-                <td className={"amount-cell"}>
-                  <span className={"amount"}>
-                    <strong>
-                      {formatCurrencyValue(
-                        taxReport.dividendIncome.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
-                        null,
-                      )}
-                    </strong>
-                  </span>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        ) : (
-          <p>
-            <em>None.</em>
-          </p>
-        )}
+				<hr />
 
-        <hr />
+				<h4>Dividend Income</h4>
 
-        <h4>Pension Contributions</h4>
+				{taxReport.dividendIncome.length > 0 ? (
+					<table className={"striped"}>
+						<thead>
+							<tr>
+								<td>Account</td>
+								<td>Holding</td>
+								{showDividendCategories ? <td>Category</td> : null}
+								<td>Amount</td>
+							</tr>
+						</thead>
+						<tbody>
+							{taxReport.dividendIncome.sort(sortBalances).map((b) => {
+								if (!b.holding) {
+									return null;
+								}
 
-        {taxReport.pensionContributions.length > 0 ? (
-          <table className={"striped"}>
-            <thead>
-              <tr>
-                <td>Account</td>
-                <td>Holding</td>
-                {showPensionCategories ? <td>Category</td> : null}
-                <td>Amount</td>
-              </tr>
-            </thead>
-            <tbody>
-              {taxReport.pensionContributions.sort(sortBalances).map((b) => {
-                return (
-                  <tr>
-                    <td>{b.holding?.account?.name}</td>
-                    <td>{b.holding?.name}</td>
-                    {showPensionCategories ? <td>{b.category?.name}</td> : null}
-                    <td className={"amount-cell"}>
-                      <span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td></td>
-                <td></td>
-                {showPensionCategories ? <td></td> : null}
-                <td className={"amount-cell"}>
-                  <span className={"amount"}>
-                    <strong>
-                      {formatCurrencyValue(
-                        taxReport.pensionContributions.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
-                        null,
-                      )}
-                    </strong>
-                  </span>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        ) : (
-          <p>
-            <em>None.</em>
-          </p>
-        )}
+								return (
+									<tr key={b.holding.id}>
+										<td>{b.holding?.account?.name}</td>
+										<td>{b.holding?.name}</td>
+										{showDividendCategories ? <td>{b.category?.name}</td> : null}
+										<td className={"amount-cell"}>
+											<span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+										</td>
+									</tr>
+								);
+							})}
+						</tbody>
+						<tfoot>
+							<tr>
+								<td></td>
+								<td></td>
+								{showDividendCategories ? <td></td> : null}
+								<td className={"amount-cell"}>
+									<span className={"amount"}>
+										<strong>
+											{formatCurrencyValue(
+												taxReport.dividendIncome.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
+												null,
+											)}
+										</strong>
+									</span>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				) : (
+					<p>
+						<em>None.</em>
+					</p>
+				)}
 
-        <hr />
+				<hr />
 
-        <h4>Capital Events</h4>
+				<h4>Pension Contributions</h4>
 
-        <fieldset>
-          <label>
-            <input
-              type={"checkbox"}
-              role={"switch"}
-              checked={showDisposalsOnly}
-              onChange={(evt) => setShowCapitcalAcquisitions(evt.target.checked)}
-            />
-            <span className={"muted"}>Disposals only</span>
-          </label>
-        </fieldset>
+				{taxReport.pensionContributions.length > 0 ? (
+					<table className={"striped"}>
+						<thead>
+							<tr>
+								<td>Account</td>
+								<td>Holding</td>
+								{showPensionCategories ? <td>Category</td> : null}
+								<td>Amount</td>
+							</tr>
+						</thead>
+						<tbody>
+							{taxReport.pensionContributions.sort(sortBalances).map((b) => {
+								if (!b.holding) {
+									return null;
+								}
 
-        {capitalEvents.length > 0 ? (
-          capitalEvents.map((e) => {
-            const proceeds = -1 * e.qty * e.avgGbpUnitPrice;
-            const costs = e.matches.map((m) => m.qty * m.price).reduce((a, b) => a + b);
-            const totalMatches = e.matches.map((m) => m.qty).reduce((a, b) => a + b);
-            const avgMatchPrice = costs / totalMatches;
+								return (
+									<tr key={b.holding.id}>
+										<td>{b.holding?.account?.name}</td>
+										<td>{b.holding?.name}</td>
+										{showPensionCategories ? <td>{b.category?.name}</td> : null}
+										<td className={"amount-cell"}>
+											<span className={"amount"}>{formatCurrencyValue(b.gbpBalance, null)}</span>
+										</td>
+									</tr>
+								);
+							})}
+						</tbody>
+						<tfoot>
+							<tr>
+								<td></td>
+								<td></td>
+								{showPensionCategories ? <td></td> : null}
+								<td className={"amount-cell"}>
+									<span className={"amount"}>
+										<strong>
+											{formatCurrencyValue(
+												taxReport.pensionContributions.map((b) => b.gbpBalance).reduce((a, b) => a + b, 0),
+												null,
+											)}
+										</strong>
+									</span>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				) : (
+					<p>
+						<em>None.</em>
+					</p>
+				)}
 
-            return (
-              <>
-                <details>
-                  <summary>
-                    <IconGroup>
-                      <Icon
-                        name={e.type == "disposal" ? "upload" : "download"}
-                        className={e.type == "disposal" ? "tax-disposal-icon" : "tax-acquisition-icon"}
-                      />
-                      <span>
-                        {formatDateFromProto(e.date)}
-                        <span className={"separator"}>&#x2022;</span>
-                        {e.holding?.name ?? "Unknown Holding"}
-                        <span className={"separator"}>&#x2022;</span>
-                        {e.type == "disposal" ? "Disposal" : "Acquisition"} of {formatAssetQuantity(Math.abs(e.qty))}{" "}
-                        unit{e.qty == 1 ? "" : "s"} @ {formatCurrencyValue(e.avgGbpUnitPrice, null)}
-                      </span>
-                    </IconGroup>
-                  </summary>
+				<hr />
 
-                  <div className={"grid"}>
-                    {e.type == "disposal" ? (
-                      <div>
-                        <table className={"auto-width"}>
-                          <thead>
-                            <tr>
-                              <td colSpan={999} style={{ textAlign: "center" }}>
-                                P/L Summary
-                              </td>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>Proceeds</td>
-                              <td className={"amount-cell"}>
-                                <span className={"amount"}>{formatCurrencyValue(proceeds, null)}</span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Costs</td>
-                              <td className={"amount-cell"}>
-                                <span className={"amount"}>{formatCurrencyValue(costs, null)}</span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>P/L</td>
-                              <td className={"amount-cell"}>
-                                <span className={"amount"}>{formatCurrencyValue(proceeds - costs, null)}</span>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    ) : null}
+				<h4>Capital Events</h4>
 
-                    {e.type == "disposal" ? (
-                      <div>
-                        <table className={"auto-width"}>
-                          <thead>
-                            <tr>
-                              <td colSpan={999} style={{ textAlign: "center" }}>
-                                Matched Acquisitions
-                              </td>
-                            </tr>
-                            <tr>
-                              <th>Acquisition Date</th>
-                              <th>Rule</th>
-                              <th>Quantity</th>
-                              <th>Avg. Unit Price</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {e.matches.map((m) => {
-                              return (
-                                <tr>
-                                  <td>{m.date == BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
-                                  <td>{m.note}</td>
-                                  <td className={"amount-cell"}>
-                                    <span className={"amount"}>{formatAssetQuantity(m.qty)}</span>
-                                  </td>
-                                  <td className={"amount-cell"}>
-                                    <span className={"amount"}>{formatCurrencyValue(m.price, null)}</span>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                          <tfoot>
-                            <tr>
-                              <td></td>
-                              <td></td>
-                              <td className={"amount-cell"}>
-                                <span className={"amount"}>{formatAssetQuantity(totalMatches)}</span>
-                              </td>
-                              <td className={"amount-cell"}>
-                                <span className={"amount"}>{formatCurrencyValue(avgMatchPrice, null)}</span>
-                              </td>
-                            </tr>
-                          </tfoot>
-                        </table>
-                      </div>
-                    ) : (
-                      <div>
-                        <table className={"auto-width"}>
-                          <thead>
-                            <tr>
-                              <td colSpan={999} style={{ textAlign: "center" }}>
-                                Matched Disposals
-                              </td>
-                            </tr>
-                            <tr>
-                              <th>Disposal Date</th>
-                              <th>Rule</th>
-                              <th>Quantity</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {e.matches.map((m) => {
-                              return (
-                                <tr>
-                                  <td>{m.date == BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
-                                  <td>{m.note}</td>
-                                  <td className={"amount-cell"}>
-                                    <span className={"amount"}>{formatAssetQuantity(m.qty)}</span>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                          <tfoot>
-                            <tr>
-                              <td></td>
-                              <td></td>
-                              <td className={"amount-cell"}>
-                                <span className={"amount"}>{formatAssetQuantity(totalMatches)}</span>
-                              </td>
-                            </tr>
-                          </tfoot>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                </details>
+				<fieldset>
+					<label>
+						<input
+							type={"checkbox"}
+							role={"switch"}
+							checked={showDisposalsOnly}
+							onChange={(evt) => setShowCapitcalAcquisitions(evt.target.checked)}
+						/>
+						<span className={"muted"}>Disposals only</span>
+					</label>
+				</fieldset>
 
-                <hr />
-              </>
-            );
-          })
-        ) : (
-          <p>
-            <em>None.</em>
-          </p>
-        )}
+				{capitalEvents.length > 0 ? (
+					capitalEvents.map((e) => {
+						const proceeds = -1 * e.qty * e.avgGbpUnitPrice;
+						const costs = e.matches.map((m) => m.qty * m.price).reduce((a, b) => a + b);
+						const totalMatches = e.matches.map((m) => m.qty).reduce((a, b) => a + b);
+						const avgMatchPrice = costs / totalMatches;
 
-        {qtyDisposals > 0 ? (
-          <table className={"auto-width"}>
-            <thead>
-              <tr>
-                <td colSpan={999} style={{ textAlign: "center" }}>
-                  Disposal Summary
-                </td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>QTY Disposals</td>
-                <td className={"amount-cell"}>
-                  <span className={"amount"}>{qtyDisposals}</span>
-                </td>
-              </tr>
-              <tr>
-                <td>Total Proceeds</td>
-                <td className={"amount-cell"}>
-                  <span className={"amount"}>{formatCurrencyValue(totalDisposalProceeds, null)}</span>
-                </td>
-              </tr>
-              <tr>
-                <td>Total Costs</td>
-                <td className={"amount-cell"}>
-                  <span className={"amount"}>{formatCurrencyValue(totalDisposalCosts, null)}</span>
-                </td>
-              </tr>
-              <tr>
-                <td>Total Gains</td>
-                <td className={"amount-cell"}>
-                  <span className={"amount"}>{formatCurrencyValue(totalDisposalGains, null)}</span>
-                </td>
-              </tr>
-              <tr>
-                <td>Total Losses</td>
-                <td className={"amount-cell"}>
-                  <span className={"amount"}>{formatCurrencyValue(totalDisposalLosses, null)}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        ) : null}
+						return (
+							<>
+								<details>
+									<summary>
+										<IconGroup>
+											<Icon
+												name={e.type === "disposal" ? "upload" : "download"}
+												className={e.type === "disposal" ? "tax-disposal-icon" : "tax-acquisition-icon"}
+											/>
+											<span>
+												{formatDateFromProto(e.date)}
+												<span className={"separator"}>&#x2022;</span>
+												{e.holding?.name ?? "Unknown Holding"}
+												<span className={"separator"}>&#x2022;</span>
+												{e.type === "disposal" ? "Disposal" : "Acquisition"} of {formatAssetQuantity(Math.abs(e.qty))} unit
+												{e.qty === 1 ? "" : "s"} @ {formatCurrencyValue(e.avgGbpUnitPrice, null)}
+											</span>
+										</IconGroup>
+									</summary>
 
-        {taxYear == currentTaxYear && s104Balances?.length > 0 ? (
-          <>
-            <hr />
+									<div className={"grid"}>
+										{e.type === "disposal" ? (
+											<div>
+												<table className={"auto-width"}>
+													<thead>
+														<tr>
+															<td colSpan={999} style={{ textAlign: "center" }}>
+																P/L Summary
+															</td>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td>Proceeds</td>
+															<td className={"amount-cell"}>
+																<span className={"amount"}>{formatCurrencyValue(proceeds, null)}</span>
+															</td>
+														</tr>
+														<tr>
+															<td>Costs</td>
+															<td className={"amount-cell"}>
+																<span className={"amount"}>{formatCurrencyValue(costs, null)}</span>
+															</td>
+														</tr>
+														<tr>
+															<td>P/L</td>
+															<td className={"amount-cell"}>
+																<span className={"amount"}>{formatCurrencyValue(proceeds - costs, null)}</span>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										) : null}
 
-            <h4>Current S104 Balances</h4>
+										{e.type === "disposal" ? (
+											<div>
+												<table className={"auto-width"}>
+													<thead>
+														<tr>
+															<td colSpan={999} style={{ textAlign: "center" }}>
+																Matched Acquisitions
+															</td>
+														</tr>
+														<tr>
+															<th>Acquisition Date</th>
+															<th>Rule</th>
+															<th>Quantity</th>
+															<th>Avg. Unit Price</th>
+														</tr>
+													</thead>
+													<tbody>
+														{e.matches.map((m) => {
+															return (
+																<tr key={`${m.date}${m.price}${m.qty}${m.note}`}>
+																	<td>{m.date === BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
+																	<td>{m.note}</td>
+																	<td className={"amount-cell"}>
+																		<span className={"amount"}>{formatAssetQuantity(m.qty)}</span>
+																	</td>
+																	<td className={"amount-cell"}>
+																		<span className={"amount"}>{formatCurrencyValue(m.price, null)}</span>
+																	</td>
+																</tr>
+															);
+														})}
+													</tbody>
+													<tfoot>
+														<tr>
+															<td></td>
+															<td></td>
+															<td className={"amount-cell"}>
+																<span className={"amount"}>{formatAssetQuantity(totalMatches)}</span>
+															</td>
+															<td className={"amount-cell"}>
+																<span className={"amount"}>{formatCurrencyValue(avgMatchPrice, null)}</span>
+															</td>
+														</tr>
+													</tfoot>
+												</table>
+											</div>
+										) : (
+											<div>
+												<table className={"auto-width"}>
+													<thead>
+														<tr>
+															<td colSpan={999} style={{ textAlign: "center" }}>
+																Matched Disposals
+															</td>
+														</tr>
+														<tr>
+															<th>Disposal Date</th>
+															<th>Rule</th>
+															<th>Quantity</th>
+														</tr>
+													</thead>
+													<tbody>
+														{e.matches.map((m) => {
+															return (
+																<tr key={`${m.date}${m.price}${m.qty}${m.note}`}>
+																	<td>{m.date === BigInt(0) ? "n/a" : formatDateFromProto(m.date)}</td>
+																	<td>{m.note}</td>
+																	<td className={"amount-cell"}>
+																		<span className={"amount"}>{formatAssetQuantity(m.qty)}</span>
+																	</td>
+																</tr>
+															);
+														})}
+													</tbody>
+													<tfoot>
+														<tr>
+															<td></td>
+															<td></td>
+															<td className={"amount-cell"}>
+																<span className={"amount"}>{formatAssetQuantity(totalMatches)}</span>
+															</td>
+														</tr>
+													</tfoot>
+												</table>
+											</div>
+										)}
+									</div>
+								</details>
 
-            <table className={"auto-width"}>
-              <thead>
-                <tr>
-                  <th>Asset</th>
-                  <th>Quantity</th>
-                  <th>Avg. Unit Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                {s104Balances
-                  .sort((a, b) => (a.asset?.name ?? "").localeCompare(b.asset?.name ?? ""))
-                  .map((b) => {
-                    return (
-                      <tr>
-                        <td>{b.asset?.name}</td>
-                        <td className={"amount-cell"}>
-                          <span className={"amount"}>{formatAssetQuantity(b.qty)}</span>
-                        </td>
-                        <td className={"amount-cell"}>
-                          <span className={"amount"}>{formatCurrencyValue(b.avgGbpUnitPrice, null)}</span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
-          </>
-        ) : null}
-      </>
-    );
-  }
+								<hr />
+							</>
+						);
+					})
+				) : (
+					<p>
+						<em>None.</em>
+					</p>
+				)}
 
-  return (
-    <>
-      <div id={"content"} className={"overflow-auto"}>
-        <PageHeader title={"Tax Helper"} icon={"receipt_long"} options={pageOptions} />
-        {body}
-        <hr />
-        <section>
-          <p>
-            <IconGroup>
-              <Icon name={"info"} className={"muted"} />
-              <span>This report only includes taxable sources; ISAs and pensions are not shown.</span>
-            </IconGroup>
-          </p>
-        </section>
-      </div>
-    </>
-  );
+				{qtyDisposals > 0 ? (
+					<table className={"auto-width"}>
+						<thead>
+							<tr>
+								<td colSpan={999} style={{ textAlign: "center" }}>
+									Disposal Summary
+								</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>QTY Disposals</td>
+								<td className={"amount-cell"}>
+									<span className={"amount"}>{qtyDisposals}</span>
+								</td>
+							</tr>
+							<tr>
+								<td>Total Proceeds</td>
+								<td className={"amount-cell"}>
+									<span className={"amount"}>{formatCurrencyValue(totalDisposalProceeds, null)}</span>
+								</td>
+							</tr>
+							<tr>
+								<td>Total Costs</td>
+								<td className={"amount-cell"}>
+									<span className={"amount"}>{formatCurrencyValue(totalDisposalCosts, null)}</span>
+								</td>
+							</tr>
+							<tr>
+								<td>Total Gains</td>
+								<td className={"amount-cell"}>
+									<span className={"amount"}>{formatCurrencyValue(totalDisposalGains, null)}</span>
+								</td>
+							</tr>
+							<tr>
+								<td>Total Losses</td>
+								<td className={"amount-cell"}>
+									<span className={"amount"}>{formatCurrencyValue(totalDisposalLosses, null)}</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				) : null}
+
+				{taxYear === currentTaxYear && s104Balances?.length > 0 ? (
+					<>
+						<hr />
+
+						<h4>Current S104 Balances</h4>
+
+						<table className={"auto-width"}>
+							<thead>
+								<tr>
+									<th>Asset</th>
+									<th>Quantity</th>
+									<th>Avg. Unit Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								{s104Balances
+									.sort((a, b) => (a.asset?.name ?? "").localeCompare(b.asset?.name ?? ""))
+									.map((b) => {
+										if (!b.asset) {
+											return null;
+										}
+
+										return (
+											<tr key={b.asset.id}>
+												<td>{b.asset.name}</td>
+												<td className={"amount-cell"}>
+													<span className={"amount"}>{formatAssetQuantity(b.qty)}</span>
+												</td>
+												<td className={"amount-cell"}>
+													<span className={"amount"}>{formatCurrencyValue(b.avgGbpUnitPrice, null)}</span>
+												</td>
+											</tr>
+										);
+									})}
+							</tbody>
+						</table>
+					</>
+				) : null}
+			</>
+		);
+	}
+
+	return (
+		<div id={"content"} className={"overflow-auto"}>
+			<PageHeader title={"Tax Helper"} icon={"receipt_long"} options={pageOptions} />
+			{body}
+			<hr />
+			<section>
+				<p>
+					<IconGroup>
+						<Icon name={"info"} className={"muted"} />
+						<span>This report only includes taxable sources; ISAs and pensions are not shown.</span>
+					</IconGroup>
+				</p>
+			</section>
+		</div>
+	);
 }
 
 export { TaxHelperPage };

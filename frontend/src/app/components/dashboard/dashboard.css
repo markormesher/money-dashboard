@@ -1,0 +1,30 @@
+.dashboard {
+	display: grid;
+	gap: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+
+	@media (min-width: 1024px) {
+		grid-template-columns: auto 28rem;
+		grid-template-rows: auto;
+		grid-template-areas: "main sidebar";
+	}
+
+	@media (max-width: 1024px) {
+		grid-template-columns: auto;
+		grid-template-rows: auto;
+		grid-template-areas: "sidebar" "main";
+	}
+
+	.main {
+		grid-area: main;
+	}
+
+	.sidebar {
+		grid-area: sidebar;
+
+		@media (max-width: 1024px) {
+			> article:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+}

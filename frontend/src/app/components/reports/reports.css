@@ -1,43 +1,43 @@
 html[data-theme="dark"] {
-  canvas {
-    filter: invert(1) hue-rotate(180deg);
-  }
+	canvas {
+		filter: invert(1) hue-rotate(180deg);
+	}
 }
 
 html[data-theme="light"] {
-  canvas {
-    filter: none;
-  }
+	canvas {
+		filter: none;
+	}
 }
 
 @media (prefers-color-scheme: dark) {
-  html {
-    canvas {
-      filter: invert(1) hue-rotate(180deg);
-    }
-  }
+	html {
+		canvas {
+			filter: invert(1) hue-rotate(180deg);
+		}
+	}
 }
 
 canvas.loading {
-  opacity: 0.4;
+	opacity: 0.4;
 }
 
 canvas.line {
-  max-height: 40rem;
+	max-height: 40rem;
 }
 
 canvas.pie {
-  max-height: 20rem;
+	max-height: 20rem;
 }
 
 .tax-acquisition-icon {
-  color: #00895a;
-  /* pico jade 500 */
-  rotate: 270deg;
+	color: #00895a;
+	/* pico jade 500 */
+	rotate: 270deg;
 }
 
 .tax-disposal-icon {
-  color: #d93526;
-  /* pico red 500 */
-  rotate: 270deg;
+	color: #d93526;
+	/* pico red 500 */
+	rotate: 270deg;
 }

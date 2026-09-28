@@ -1,8 +1,7 @@
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
-import { Category } from "../../../api_gen/moneydashboard/v4/categories_pb.js";
-import { useAsyncEffect, useAsyncHandler } from "../../utils/hooks.js";
+import type { Category } from "../../../api_gen/moneydashboard/v4/categories_pb.js";
 import { categoryServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { focusFieldByName } from "../../utils/forms.js";
@@ -14,231 +13,237 @@ import { NULL_UUID } from "../../../config/consts.js";
 import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
 
 type CategoryEditModalProps = {
-  categoryId: string;
-  onSaveFinished: () => void;
-  onCancel: () => void;
+	categoryId: string;
+	onSaveFinished: () => void;
+	onCancel: () => void;
 };
 
 function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
-  const { categoryId, onSaveFinished, onCancel } = props;
-  const createNew = categoryId == NULL_UUID;
+	const { categoryId, onSaveFinished, onCancel } = props;
+	const createNew = categoryId === NULL_UUID;
 
-  const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
-  const form = useForm<Category>({
-    validator: validateCategory,
-  });
+	const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
+	const form = useForm<Category>({
+		validator: validateCategory,
+	});
 
-  const patchMutuallyExclusiveFlag = function (
-    flag:
-      | "isMemo"
-      | "isInterestIncome"
-      | "isDividendIncome"
-      | "isPensionContribution"
-      | "isCapitalEvent"
-      | "isCapitalEventFee"
-      | "isSyntheticAssetUpdate",
-    value: boolean,
-  ): void {
-    form.patchModel({
-      isMemo: false,
-      isInterestIncome: false,
-      isDividendIncome: false,
-      isPensionContribution: false,
-      isCapitalEvent: false,
-      isCapitalEventFee: false,
-      isSyntheticAssetUpdate: false,
-      [flag]: value,
-    });
-  };
+	const patchMutuallyExclusiveFlag = (
+		flag:
+			| "isMemo"
+			| "isInterestIncome"
+			| "isDividendIncome"
+			| "isPensionContribution"
+			| "isCapitalEvent"
+			| "isCapitalEventFee"
+			| "isSyntheticAssetUpdate",
+		value: boolean,
+	): void => {
+		form.patchModel({
+			isMemo: false,
+			isInterestIncome: false,
+			isDividendIncome: false,
+			isPensionContribution: false,
+			isCapitalEvent: false,
+			isCapitalEventFee: false,
+			isSyntheticAssetUpdate: false,
+			[flag]: value,
+		});
+	};
 
-  useAsyncEffect(async () => {
-    if (createNew) {
-      form.setModel({
-        $typeName: "moneydashboard.v4.Category",
-        id: NULL_UUID,
-        name: "",
-        isMemo: false,
-        isInterestIncome: false,
-        isDividendIncome: false,
-        isPensionContribution: false,
-        isCapitalEvent: false,
-        isCapitalEventFee: false,
-        isSyntheticAssetUpdate: false,
-        active: true,
-      });
-      setFocusOnNextRender("name");
-      return;
-    }
+	React.useEffect(() => {
+		if (createNew) {
+			form.setModel({
+				$typeName: "moneydashboard.v4.Category",
+				id: NULL_UUID,
+				name: "",
+				isMemo: false,
+				isInterestIncome: false,
+				isDividendIncome: false,
+				isPensionContribution: false,
+				isCapitalEvent: false,
+				isCapitalEventFee: false,
+				isSyntheticAssetUpdate: false,
+				active: true,
+			});
+			setFocusOnNextRender("name");
+			return;
+		}
 
-    try {
-      form.wg.add();
-      const res = await categoryServiceClient.getCategoryById({ id: categoryId });
-      form.setModel(res.category);
-      form.wg.done();
-      setFocusOnNextRender("name");
-    } catch (e) {
-      toastBus.error("Failed to load category.");
-      form.setFatalError(e);
-      console.log(e);
-    }
-  }, [categoryId]);
+		form.wgAdd();
 
-  React.useEffect(() => {
-    if (form.wg.count == 0 && !!focusOnNextRender) {
-      focusFieldByName(focusOnNextRender);
-      setFocusOnNextRender(undefined);
-    }
-  }, [focusOnNextRender, form.wg.count]);
+		categoryServiceClient
+			.getCategoryById({ id: categoryId })
+			.then((res) => {
+				form.setModel(res.category);
+				form.wgDone();
+				setFocusOnNextRender("name");
+			})
+			.catch((e) => {
+				toastBus.error("Failed to load category.");
+				form.setFatalError(e);
+				console.log(e);
+			});
+	}, [createNew, form, categoryId]);
 
-  const save = useAsyncHandler(async () => {
-    if (form.wg.count > 0 || !form.valid || !form.model) {
-      return;
-    }
+	React.useEffect(() => {
+		if (form.wgCount === 0 && focusOnNextRender) {
+			focusFieldByName(focusOnNextRender);
+			setFocusOnNextRender(undefined);
+		}
+	}, [focusOnNextRender, form.wgCount]);
 
-    form.wg.add();
+	const save = () => {
+		if (form.wgCount > 0 || !form.valid || !form.model) {
+			return;
+		}
 
-    try {
-      await categoryServiceClient.upsertCategory({ category: form.model });
-      toastBus.success("Saved category.");
-      onSaveFinished();
-    } catch (e) {
-      toastBus.error("Failed to save category.");
-      console.log(e);
-    }
+		form.wgAdd();
 
-    form.wg.done();
-  });
+		categoryServiceClient
+			.upsertCategory({ category: form.model })
+			.then(() => {
+				toastBus.success("Saved category.");
+				onSaveFinished();
+			})
+			.catch((e) => {
+				toastBus.error("Failed to save category.");
+				console.log(e);
+			})
+			.finally(() => {
+				form.wgDone();
+			});
+	};
 
-  useKeyShortcut(CTRLENTER, () => save());
+	useKeyShortcut(CTRLENTER, () => save());
 
-  const header = (
-    <IconGroup>
-      <Icon name={"label"} />
-      <span>{createNew ? "Create" : "Edit"} Category</span>
-    </IconGroup>
-  );
+	const header = (
+		<IconGroup>
+			<Icon name={"label"} />
+			<span>{createNew ? "Create" : "Edit"} Category</span>
+		</IconGroup>
+	);
 
-  let body: ReactElement;
-  if (form.fatalError) {
-    body = <ErrorPanel error={form.fatalError} noCard={true} />;
-  } else {
-    body = (
-      <form>
-        <fieldset className={"grid"}>
-          <Input
-            label={"Name"}
-            formState={form}
-            fieldName={"name"}
-            type={"text"}
-            value={form.model?.name}
-            onChange={(evt) => form.patchModel({ name: evt.target.value })}
-          />
-        </fieldset>
+	let body: ReactElement;
+	if (form.fatalError) {
+		body = <ErrorPanel error={form.fatalError} noCard={true} />;
+	} else {
+		body = (
+			<form>
+				<fieldset className={"grid"}>
+					<Input
+						label={"Name"}
+						formState={form}
+						fieldName={"name"}
+						type={"text"}
+						value={form.model?.name}
+						onChange={(evt) => form.patchModel({ name: evt.target.value })}
+					/>
+				</fieldset>
 
-        <fieldset className={"grid"}>
-          <Input
-            label={"Interest Income"}
-            formState={form}
-            fieldName={"isInterestIncome"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.isInterestIncome ?? false}
-            onChange={(evt) => patchMutuallyExclusiveFlag("isInterestIncome", evt.target.checked)}
-          />
+				<fieldset className={"grid"}>
+					<Input
+						label={"Interest Income"}
+						formState={form}
+						fieldName={"isInterestIncome"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.isInterestIncome ?? false}
+						onChange={(evt) => patchMutuallyExclusiveFlag("isInterestIncome", evt.target.checked)}
+					/>
 
-          <Input
-            label={"Dividend Income"}
-            formState={form}
-            fieldName={"isDividendIncome"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.isDividendIncome ?? false}
-            onChange={(evt) => patchMutuallyExclusiveFlag("isDividendIncome", evt.target.checked)}
-          />
-        </fieldset>
+					<Input
+						label={"Dividend Income"}
+						formState={form}
+						fieldName={"isDividendIncome"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.isDividendIncome ?? false}
+						onChange={(evt) => patchMutuallyExclusiveFlag("isDividendIncome", evt.target.checked)}
+					/>
+				</fieldset>
 
-        <fieldset className={"grid"}>
-          <Input
-            label={"Pension Contribution"}
-            formState={form}
-            fieldName={"isPensionContribution"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.isPensionContribution ?? false}
-            onChange={(evt) => patchMutuallyExclusiveFlag("isPensionContribution", evt.target.checked)}
-          />
+				<fieldset className={"grid"}>
+					<Input
+						label={"Pension Contribution"}
+						formState={form}
+						fieldName={"isPensionContribution"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.isPensionContribution ?? false}
+						onChange={(evt) => patchMutuallyExclusiveFlag("isPensionContribution", evt.target.checked)}
+					/>
 
-          <Input
-            label={"Capital Event"}
-            formState={form}
-            fieldName={"isCapitalEvent"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.isCapitalEvent ?? false}
-            onChange={(evt) => patchMutuallyExclusiveFlag("isCapitalEvent", evt.target.checked)}
-          />
-        </fieldset>
+					<Input
+						label={"Capital Event"}
+						formState={form}
+						fieldName={"isCapitalEvent"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.isCapitalEvent ?? false}
+						onChange={(evt) => patchMutuallyExclusiveFlag("isCapitalEvent", evt.target.checked)}
+					/>
+				</fieldset>
 
-        <fieldset className={"grid"}>
-          <Input
-            label={"Capital Event Fee"}
-            formState={form}
-            fieldName={"isCapitalEventFee"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.isCapitalEventFee ?? false}
-            onChange={(evt) => patchMutuallyExclusiveFlag("isCapitalEventFee", evt.target.checked)}
-          />
+				<fieldset className={"grid"}>
+					<Input
+						label={"Capital Event Fee"}
+						formState={form}
+						fieldName={"isCapitalEventFee"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.isCapitalEventFee ?? false}
+						onChange={(evt) => patchMutuallyExclusiveFlag("isCapitalEventFee", evt.target.checked)}
+					/>
 
-          <Input
-            label={"Synthetic Asset Update"}
-            formState={form}
-            fieldName={"isSyntheticAssetUpdate"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.isSyntheticAssetUpdate ?? false}
-            onChange={(evt) => patchMutuallyExclusiveFlag("isSyntheticAssetUpdate", evt.target.checked)}
-          />
-        </fieldset>
+					<Input
+						label={"Synthetic Asset Update"}
+						formState={form}
+						fieldName={"isSyntheticAssetUpdate"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.isSyntheticAssetUpdate ?? false}
+						onChange={(evt) => patchMutuallyExclusiveFlag("isSyntheticAssetUpdate", evt.target.checked)}
+					/>
+				</fieldset>
 
-        <fieldset className={"grid"}>
-          <Input
-            label={"Memo"}
-            formState={form}
-            fieldName={"isMemo"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.isMemo ?? false}
-            onChange={(evt) => patchMutuallyExclusiveFlag("isMemo", evt.target.checked)}
-          />
+				<fieldset className={"grid"}>
+					<Input
+						label={"Memo"}
+						formState={form}
+						fieldName={"isMemo"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.isMemo ?? false}
+						onChange={(evt) => patchMutuallyExclusiveFlag("isMemo", evt.target.checked)}
+					/>
 
-          <Input
-            label={"Active"}
-            formState={form}
-            fieldName={"active"}
-            type={"checkbox"}
-            role={"switch"}
-            checked={form.model?.active ?? false}
-            onChange={(evt) => form.patchModel({ active: evt.target.checked })}
-          />
-        </fieldset>
-      </form>
-    );
-  }
+					<Input
+						label={"Active"}
+						formState={form}
+						fieldName={"active"}
+						type={"checkbox"}
+						role={"switch"}
+						checked={form.model?.active ?? false}
+						onChange={(evt) => form.patchModel({ active: evt.target.checked })}
+					/>
+				</fieldset>
+			</form>
+		);
+	}
 
-  return (
-    <Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
-      {body}
-      <footer>
-        <button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
-          <IconGroup>
-            <Icon name={"save"} />
-            <span>Save</span>
-          </IconGroup>
-        </button>
-      </footer>
-    </Modal>
-  );
+	return (
+		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
+			{body}
+			<footer>
+				<button disabled={form.wgCount > 0 || !form.valid} onClick={() => save()}>
+					<IconGroup>
+						<Icon name={"save"} />
+						<span>Save</span>
+					</IconGroup>
+				</button>
+			</footer>
+		</Modal>
+	);
 }
 
 export { CategoryEditModal };
