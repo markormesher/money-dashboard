@@ -39,7 +39,7 @@ function AccountGroupEditModal(props: AccountGroupEditModalProps): ReactElement 
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 
 		accountGroupServiceClient
 			.getAccountGroupById({ id: accountGroupId })
@@ -53,23 +53,23 @@ function AccountGroupEditModal(props: AccountGroupEditModalProps): ReactElement 
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	}, [createNew, form, accountGroupId]);
 
 	React.useEffect(() => {
-		if (form.wg.count === 0 && focusOnNextRender) {
+		if (form.wgCount === 0 && focusOnNextRender) {
 			focusFieldByName(focusOnNextRender);
 			setFocusOnNextRender(undefined);
 		}
-	}, [focusOnNextRender, form.wg.count]);
+	}, [focusOnNextRender, form.wgCount]);
 
 	const save = () => {
-		if (form.wg.count > 0 || !form.valid || !form.model) {
+		if (form.wgCount > 0 || !form.valid || !form.model) {
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 
 		accountGroupServiceClient
 			.upsertAccountGroup({ accountGroup: form.model })
@@ -82,7 +82,7 @@ function AccountGroupEditModal(props: AccountGroupEditModalProps): ReactElement 
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	};
 
@@ -129,7 +129,7 @@ function AccountGroupEditModal(props: AccountGroupEditModalProps): ReactElement 
 		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
 			{body}
 			<footer>
-				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+				<button disabled={form.wgCount > 0 || !form.valid} onClick={() => save()}>
 					<IconGroup>
 						<Icon name={"save"} />
 						<span>Save</span>

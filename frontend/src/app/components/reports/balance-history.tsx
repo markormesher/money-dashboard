@@ -29,13 +29,13 @@ function BalanceHistoryPage(): ReactElement {
 	const [dateRange, setDateRange] = React.useState<DateRange>(dateRangePresets[0][1]);
 	const [dateRangePickerOpen, setDateRangePickerOpen] = React.useState(false);
 
-	const wg = useWaitGroup();
+	const [wgCount, wgAdd, wgDone] = useWaitGroup();
 	const [error, setError] = React.useState<unknown>();
 	const [data, setData] = React.useState<BalanceHistoryEntry[] | null>(null);
 
 	React.useEffect(() => {
 		setError(null);
-		wg.add();
+		wgAdd();
 
 		reportingServiceClient
 			.getBalanceHistory({
@@ -51,12 +51,12 @@ function BalanceHistoryPage(): ReactElement {
 				console.log(e);
 			})
 			.finally(() => {
-				wg.done();
+				wgDone();
 			});
-	}, [wg, dateRange]);
+	}, [dateRange, wgAdd, wgDone]);
 
 	const options = [
-		<button key={"date-picker"} className={"outline"} onClick={() => setDateRangePickerOpen(true)} disabled={wg.count > 0}>
+		<button key={"date-picker"} className={"outline"} onClick={() => setDateRangePickerOpen(true)} disabled={wgCount > 0}>
 			<IconGroup>
 				<Icon name={"calendar_month"} />
 				<span>{describeDateRange(dateRange)}</span>
@@ -106,7 +106,7 @@ function BalanceHistoryPage(): ReactElement {
 					ticks: {
 						callback: (val) => {
 							if (isNumber(val)) {
-								return formatDateFromProto(BigInt(val));
+								return formatDateFromProto(BigInt(Math.round(val)));
 							} else {
 								return "???";
 							}
@@ -142,7 +142,7 @@ function BalanceHistoryPage(): ReactElement {
 			],
 		};
 
-		body = <Line options={chartOptions} data={chartData} className={concatClasses("line", wg.count > 0 && "loading")} />;
+		body = <Line options={chartOptions} data={chartData} className={concatClasses("line", wgCount > 0 && "loading")} />;
 	}
 
 	return (
@@ -155,6 +155,7 @@ function BalanceHistoryPage(): ReactElement {
 				<DateRangePicker
 					dateRange={dateRange}
 					onSave={(newDateRange: DateRange) => {
+						console.log(newDateRange);
 						setDateRange(newDateRange);
 						setDateRangePickerOpen(false);
 					}}

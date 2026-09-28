@@ -32,18 +32,18 @@ function CurrenciesPage(): ReactElement {
 
 	const currencies = useCurrencyList({
 		nudgeValue,
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load currencies.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	const rates = useLatestRates({
 		nudgeValue,
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load currency rates.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	const pageButtons = [

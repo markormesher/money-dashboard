@@ -69,13 +69,13 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 
 		categoryServiceClient
 			.getCategoryById({ id: categoryId })
 			.then((res) => {
 				form.setModel(res.category);
-				form.wg.done();
+				form.wgDone();
 				setFocusOnNextRender("name");
 			})
 			.catch((e) => {
@@ -86,18 +86,18 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
 	}, [createNew, form, categoryId]);
 
 	React.useEffect(() => {
-		if (form.wg.count === 0 && focusOnNextRender) {
+		if (form.wgCount === 0 && focusOnNextRender) {
 			focusFieldByName(focusOnNextRender);
 			setFocusOnNextRender(undefined);
 		}
-	}, [focusOnNextRender, form.wg.count]);
+	}, [focusOnNextRender, form.wgCount]);
 
 	const save = () => {
-		if (form.wg.count > 0 || !form.valid || !form.model) {
+		if (form.wgCount > 0 || !form.valid || !form.model) {
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 
 		categoryServiceClient
 			.upsertCategory({ category: form.model })
@@ -110,7 +110,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	};
 
@@ -235,7 +235,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
 		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
 			{body}
 			<footer>
-				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+				<button disabled={form.wgCount > 0 || !form.valid} onClick={() => save()}>
 					<IconGroup>
 						<Icon name={"save"} />
 						<span>Save</span>

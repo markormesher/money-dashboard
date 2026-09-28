@@ -8,7 +8,6 @@ import type {
 	TaxReportCapitalEvent,
 	TaxReportS104Balance,
 } from "../../../api_gen/moneydashboard/v4/reporting_pb.js";
-import { useWaitGroup } from "../../utils/hooks.js";
 import { reportingServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
 import { ErrorPanel } from "../common/error/error.js";
@@ -31,7 +30,9 @@ function TaxHelperPage(): ReactElement {
 	const [taxYear, setTaxYear] = React.useState(currentTaxYear);
 	const [showDisposalsOnly, setShowCapitcalAcquisitions] = React.useState(true);
 
-	const wg = useWaitGroup();
+	const gotoPrevTaxYear = React.useCallback(() => setTaxYear((ty) => ty - 1), []);
+	const gotoNextTaxYear = React.useCallback(() => setTaxYear((ty) => ty + 1), []);
+
 	const [error, setError] = React.useState<unknown>();
 	const [taxReport, setTaxReport] = React.useState<TaxReport>();
 	const [capitalEvents, setCapitalEvents] = React.useState<TaxReportCapitalEvent[]>([]);
@@ -46,7 +47,6 @@ function TaxHelperPage(): ReactElement {
 
 	React.useEffect(() => {
 		setError(null);
-		wg.add();
 		reportingServiceClient
 			.getTaxReport({ taxYear: taxYear })
 			.then((res) => {
@@ -56,11 +56,8 @@ function TaxHelperPage(): ReactElement {
 				toastBus.error("Failed to load report data.");
 				setError(e);
 				console.log(e);
-			})
-			.finally(() => {
-				wg.done();
 			});
-	}, [wg, taxYear]);
+	}, [taxYear]);
 
 	useEffect(() => {
 		setCapitalEvents(taxReport?.capitalEvents.filter((e) => e.type === "disposal" || !showDisposalsOnly) ?? []);
@@ -104,11 +101,7 @@ function TaxHelperPage(): ReactElement {
 
 	const pageOptions = [
 		<fieldset key={"year-chooser"} role={"group"}>
-			<button
-				className={"outline"}
-				onClick={() => setTaxYear((curr) => Math.max(1, curr - 1))}
-				disabled={taxYear <= PLATFORM_MINIMUM_DATE.getFullYear()}
-			>
+			<button className={"outline"} onClick={gotoPrevTaxYear} disabled={taxYear <= PLATFORM_MINIMUM_DATE.getFullYear()}>
 				<Icon name={"arrow_back"} />
 			</button>
 			<button className={"outline"}>
@@ -116,7 +109,7 @@ function TaxHelperPage(): ReactElement {
 					{taxYear} - {taxYear + 1}
 				</span>
 			</button>
-			<button className={"outline"} onClick={() => setTaxYear((curr) => curr + 1)}>
+			<button className={"outline"} onClick={gotoNextTaxYear} disabled={taxYear >= currentTaxYear}>
 				<Icon name={"arrow_forward"} />
 			</button>
 		</fieldset>,

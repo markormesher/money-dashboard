@@ -29,11 +29,15 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
 	});
 
 	const currencies = useCurrencyList({
-		wg: form.wg,
-		onError: (e) => {
-			toastBus.error("Failed to load currencies.");
-			form.setFatalError(e);
-		},
+		wgAdd: form.wgAdd,
+		wgDone: form.wgDone,
+		onError: React.useCallback(
+			(e) => {
+				toastBus.error("Failed to load currencies.");
+				form.setFatalError(e);
+			},
+			[form],
+		),
 	});
 
 	React.useEffect(() => {
@@ -51,7 +55,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 
 		assetServiceClient
 			.getAssetById({ id: assetId })
@@ -65,23 +69,23 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	}, [createNew, form, assetId]);
 
 	React.useEffect(() => {
-		if (form.wg.count === 0 && focusOnNextRender) {
+		if (form.wgCount === 0 && focusOnNextRender) {
 			focusFieldByName(focusOnNextRender);
 			setFocusOnNextRender(undefined);
 		}
-	}, [focusOnNextRender, form.wg.count]);
+	}, [focusOnNextRender, form.wgCount]);
 
 	const save = () => {
-		if (form.wg.count > 0 || !form.valid || !form.model) {
+		if (form.wgCount > 0 || !form.valid || !form.model) {
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 
 		assetServiceClient
 			.upsertAsset({ asset: form.model })
@@ -94,7 +98,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	};
 
@@ -192,7 +196,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
 		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
 			{body}
 			<footer>
-				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+				<button disabled={form.wgCount > 0 || !form.valid} onClick={() => save()}>
 					<IconGroup>
 						<Icon name={"save"} />
 						<span>Save</span>

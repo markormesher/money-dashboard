@@ -32,10 +32,10 @@ function HoldingsPage(): ReactElement {
 
 	const holdings = useHoldingList({
 		nudgeValue,
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load holdings.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	const pageButtons = [
@@ -124,7 +124,7 @@ function HoldingsPage(): ReactElement {
 					icon={"account_balance_wallet"}
 					buttons={pageButtons}
 					options={pageOptions}
-					onSearchTextChange={(p) => setSearchPattern(p)}
+					onSearchTextChange={setSearchPattern}
 				/>
 				<section>{body}</section>
 				<hr />

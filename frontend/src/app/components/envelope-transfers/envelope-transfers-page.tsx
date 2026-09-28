@@ -71,7 +71,9 @@ function EnvelopeTransfersPage(): ReactElement {
 		setLastSelectedIndexForClone(-1);
 	}, []);
 
-	const holdings = useHoldingList({ onError: (e) => setError(e) });
+	const holdings = useHoldingList({
+		onError: React.useCallback((e) => setError(e), []),
+	});
 	const [holdingsPerAccount, setHoldingsPerAccount] = React.useState<Record<string, number>>();
 	React.useEffect(() => {
 		if (!holdings) {
@@ -87,6 +89,10 @@ function EnvelopeTransfersPage(): ReactElement {
 
 	React.useEffect(() => {
 		void nudgeValue;
+
+		console.log(nudgeValue);
+		console.log(page);
+		console.log(searchPattern);
 
 		envelopeTransferServiceClient
 			.getEnvelopeTransferPage({
@@ -263,7 +269,7 @@ function EnvelopeTransfersPage(): ReactElement {
 					icon={"swap_horiz"}
 					buttons={pageButtons}
 					options={pageOptions}
-					onSearchTextChange={(p) => setSearchPattern(p)}
+					onSearchTextChange={setSearchPattern}
 				/>
 				<section>{body}</section>
 			</div>

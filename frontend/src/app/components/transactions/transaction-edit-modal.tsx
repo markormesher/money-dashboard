@@ -32,28 +32,40 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 	});
 
 	const payees = usePayeeList({
-		wg: form.wg,
+		wgAdd: form.wgAdd,
+		wgDone: form.wgDone,
 		nudgeValue: form.modelIteration,
-		onError: (e) => {
-			toastBus.error("Failed to load payees.");
-			form.setFatalError(e);
-		},
+		onError: React.useCallback(
+			(e) => {
+				toastBus.error("Failed to load payees.");
+				form.setFatalError(e);
+			},
+			[form],
+		),
 	});
 
 	const holdings = useHoldingList({
-		wg: form.wg,
-		onError: (e) => {
-			toastBus.error("Failed to load holdings.");
-			form.setFatalError(e);
-		},
+		wgAdd: form.wgAdd,
+		wgDone: form.wgDone,
+		onError: React.useCallback(
+			(e) => {
+				toastBus.error("Failed to load holdings.");
+				form.setFatalError(e);
+			},
+			[form],
+		),
 	});
 
 	const categories = useCategoryList({
-		wg: form.wg,
-		onError: (e) => {
-			toastBus.error("Failed to load categories.");
-			form.setFatalError(e);
-		},
+		wgAdd: form.wgAdd,
+		wgDone: form.wgDone,
+		onError: React.useCallback(
+			(e) => {
+				toastBus.error("Failed to load categories.");
+				form.setFatalError(e);
+			},
+			[form],
+		),
 	});
 
 	const [holdingsPerAccount, setHoldingsPerAccount] = React.useState<Record<string, number>>();
@@ -87,7 +99,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 		transactionServiceClient
 			.getTransactionById({ id: transactionId })
 			.then((res) => {
@@ -100,23 +112,23 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	}, [createNew, form, transactionId]);
 
 	React.useEffect(() => {
-		if (form.wg.count === 0 && focusOnNextRender) {
+		if (form.wgCount === 0 && focusOnNextRender) {
 			focusFieldByName(focusOnNextRender);
 			setFocusOnNextRender(undefined);
 		}
-	}, [focusOnNextRender, form.wg.count]);
+	}, [focusOnNextRender, form.wgCount]);
 
 	const save = () => {
-		if (form.wg.count > 0 || !form.valid || !form.model) {
+		if (form.wgCount > 0 || !form.valid || !form.model) {
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 		transactionServiceClient
 			.upsertTransaction({ transaction: form.model })
 			.then(() => {
@@ -143,7 +155,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	};
 
@@ -290,7 +302,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
 			{body}
 			<footer>
-				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+				<button disabled={form.wgCount > 0 || !form.valid} onClick={() => save()}>
 					<IconGroup>
 						<Icon name={"save"} />
 						<span>Save</span>

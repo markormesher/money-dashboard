@@ -43,18 +43,18 @@ function AccountsPage(): ReactElement {
 
 	const accounts = useAccountList({
 		nudgeValue,
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load accounts.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	const accountGroups = useAccountGroupList({
 		nudgeValue,
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load account groups.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	let pageButtons: ReactElement[] = [];
@@ -204,7 +204,7 @@ function AccountsPage(): ReactElement {
 					onSubPageSelected={setPage}
 					buttons={pageButtons}
 					options={pageOptions}
-					onSearchTextChange={(p) => setSearchPattern(p)}
+					onSearchTextChange={setSearchPattern}
 				/>
 				<section> {body} </section>
 				<hr />

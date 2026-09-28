@@ -30,9 +30,9 @@ function ProfileChooser(props: ProfileChooserProps): ReactElement {
 	}, [props.open]);
 
 	const profiles = useProfileList({
-		onError: () => {
+		onError: React.useCallback(() => {
 			toastBus.error("Failed to load profiles.");
-		},
+		}, []),
 	});
 
 	const selectProfile = (profile: Profile) => {

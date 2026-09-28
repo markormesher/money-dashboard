@@ -32,10 +32,10 @@ function CategoriesPage(): ReactElement {
 
 	const categories = useCategoryList({
 		nudgeValue,
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load categories.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	const pageButtons = [
@@ -118,13 +118,7 @@ function CategoriesPage(): ReactElement {
 	return (
 		<>
 			<div id={"content"} className={"overflow-auto"}>
-				<PageHeader
-					title={"Categories"}
-					icon={"label"}
-					buttons={pageButtons}
-					options={pageOptions}
-					onSearchTextChange={(p) => setSearchPattern(p)}
-				/>
+				<PageHeader title={"Categories"} icon={"label"} buttons={pageButtons} options={pageOptions} onSearchTextChange={setSearchPattern} />
 				<section>{body}</section>
 			</div>
 

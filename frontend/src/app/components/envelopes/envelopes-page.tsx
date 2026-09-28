@@ -44,18 +44,18 @@ function EnvelopesPage(): ReactElement {
 
 	const envelopes = useEnvelopeList({
 		nudgeValue,
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load envelopes.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	const envelopeAllocations = useEnvelopeAllocationList({
 		nudgeValue,
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load envelope allocations.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	let pageButtons: ReactElement[] = [];
@@ -219,7 +219,7 @@ function EnvelopesPage(): ReactElement {
 					onSubPageSelected={setPage}
 					buttons={pageButtons}
 					options={pageOptions}
-					onSearchTextChange={(p) => setSearchPattern(p)}
+					onSearchTextChange={setSearchPattern}
 				/>
 				<section>{body}</section>
 				<hr />

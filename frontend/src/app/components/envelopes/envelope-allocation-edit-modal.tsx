@@ -30,19 +30,27 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 	});
 
 	const categories = useCategoryList({
-		wg: form.wg,
-		onError: (e) => {
-			toastBus.error("Failed to load categories.");
-			form.setFatalError(e);
-		},
+		wgAdd: form.wgAdd,
+		wgDone: form.wgDone,
+		onError: React.useCallback(
+			(e) => {
+				toastBus.error("Failed to load categories.");
+				form.setFatalError(e);
+			},
+			[form],
+		),
 	});
 
 	const envelopes = useEnvelopeList({
-		wg: form.wg,
-		onError: (e) => {
-			toastBus.error("Failed to load envelopes.");
-			form.setFatalError(e);
-		},
+		wgAdd: form.wgAdd,
+		wgDone: form.wgDone,
+		onError: React.useCallback(
+			(e) => {
+				toastBus.error("Failed to load envelopes.");
+				form.setFatalError(e);
+			},
+			[form],
+		),
 	});
 
 	React.useEffect(() => {
@@ -56,7 +64,7 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 
 		envelopeAllocationServiceClient
 			.getEnvelopeAllocationById({ id: envelopeAllocationId })
@@ -70,23 +78,23 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	}, [createNew, form, envelopeAllocationId]);
 
 	React.useEffect(() => {
-		if (form.wg.count === 0 && focusOnNextRender) {
+		if (form.wgCount === 0 && focusOnNextRender) {
 			focusFieldByName(focusOnNextRender);
 			setFocusOnNextRender(undefined);
 		}
-	}, [focusOnNextRender, form.wg.count]);
+	}, [focusOnNextRender, form.wgCount]);
 
 	const save = () => {
-		if (form.wg.count > 0 || !form.valid || !form.model) {
+		if (form.wgCount > 0 || !form.valid || !form.model) {
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 
 		envelopeAllocationServiceClient
 			.upsertEnvelopeAllocation({ envelopeAllocation: form.model })
@@ -99,7 +107,7 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	};
 
@@ -172,7 +180,7 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
 			{body}
 			<footer>
-				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+				<button disabled={form.wgCount > 0 || !form.valid} onClick={() => save()}>
 					<IconGroup>
 						<Icon name={"save"} />
 						<span>Save</span>

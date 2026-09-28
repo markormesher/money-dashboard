@@ -36,18 +36,18 @@ function EnvelopeTransferCloneModal(props: EnvelopeTransferCloneModalProps): Rea
 	}, [envelopeTransferIds, form.setModel]);
 
 	React.useEffect(() => {
-		if (form.wg.count === 0 && focusOnNextRender) {
+		if (form.wgCount === 0 && focusOnNextRender) {
 			focusFieldByName(focusOnNextRender);
 			setFocusOnNextRender(undefined);
 		}
-	}, [focusOnNextRender, form.wg.count]);
+	}, [focusOnNextRender, form.wgCount]);
 
 	const save = () => {
-		if (form.wg.count > 0 || !form.valid || !form.model) {
+		if (form.wgCount > 0 || !form.valid || !form.model) {
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 
 		envelopeTransferServiceClient
 			.cloneEnvelopeTransfers(form.model)
@@ -60,7 +60,7 @@ function EnvelopeTransferCloneModal(props: EnvelopeTransferCloneModalProps): Rea
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	};
 
@@ -103,7 +103,7 @@ function EnvelopeTransferCloneModal(props: EnvelopeTransferCloneModalProps): Rea
 		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
 			{body}
 			<footer>
-				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+				<button disabled={form.wgCount > 0 || !form.valid} onClick={() => save()}>
 					<IconGroup>
 						<Icon name={"save"} />
 						<span>Save</span>

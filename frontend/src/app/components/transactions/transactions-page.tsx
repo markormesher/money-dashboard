@@ -42,7 +42,7 @@ function TransactionsPage(): ReactElement {
 	const [deletePendingId, setDeletePendingId] = React.useState<string>();
 	const clearDeletePendingId = React.useRef<number>(null);
 
-	const holdings = useHoldingList({ onError: (e) => setError(e) });
+	const holdings = useHoldingList({ onError: React.useCallback((e) => setError(e), []) });
 	const [holdingsPerAccount, setHoldingsPerAccount] = React.useState<Record<string, number>>();
 	React.useEffect(() => {
 		if (!holdings) {
@@ -247,7 +247,7 @@ function TransactionsPage(): ReactElement {
 					icon={"list"}
 					buttons={pageButtons}
 					options={pageOptions}
-					onSearchTextChange={(p) => setSearchPattern(p)}
+					onSearchTextChange={setSearchPattern}
 				/>
 				<section>{body}</section>
 			</div>

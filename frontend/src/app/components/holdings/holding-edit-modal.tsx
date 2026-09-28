@@ -29,27 +29,39 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 	});
 
 	const accounts = useAccountList({
-		wg: form.wg,
-		onError: (e) => {
-			toastBus.error("Failed to load accounts.");
-			form.setFatalError(e);
-		},
+		wgAdd: form.wgAdd,
+		wgDone: form.wgDone,
+		onError: React.useCallback(
+			(e) => {
+				toastBus.error("Failed to load accounts.");
+				form.setFatalError(e);
+			},
+			[form],
+		),
 	});
 
 	const assets = useAssetList({
-		wg: form.wg,
-		onError: (e) => {
-			toastBus.error("Failed to load assets.");
-			form.setFatalError(e);
-		},
+		wgAdd: form.wgAdd,
+		wgDone: form.wgDone,
+		onError: React.useCallback(
+			(e) => {
+				toastBus.error("Failed to load assets.");
+				form.setFatalError(e);
+			},
+			[form],
+		),
 	});
 
 	const currencies = useCurrencyList({
-		wg: form.wg,
-		onError: (e) => {
-			toastBus.error("Failed to load currencies.");
-			form.setFatalError(e);
-		},
+		wgAdd: form.wgAdd,
+		wgDone: form.wgDone,
+		onError: React.useCallback(
+			(e) => {
+				toastBus.error("Failed to load currencies.");
+				form.setFatalError(e);
+			},
+			[form],
+		),
 	});
 
 	React.useEffect(() => {
@@ -69,7 +81,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 
 		holdingServiceClient
 			.getHoldingById({ id: holdingId })
@@ -83,23 +95,23 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	}, [createNew, form, holdingId]);
 
 	React.useEffect(() => {
-		if (form.wg.count === 0 && focusOnNextRender) {
+		if (form.wgCount === 0 && focusOnNextRender) {
 			focusFieldByName(focusOnNextRender);
 			setFocusOnNextRender(undefined);
 		}
-	}, [focusOnNextRender, form.wg.count]);
+	}, [focusOnNextRender, form.wgCount]);
 
 	const save = () => {
-		if (form.wg.count > 0 || !form.valid || !form.model) {
+		if (form.wgCount > 0 || !form.valid || !form.model) {
 			return;
 		}
 
-		form.wg.add();
+		form.wgAdd();
 
 		holdingServiceClient
 			.upsertHolding({ holding: form.model })
@@ -112,7 +124,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 				console.log(e);
 			})
 			.finally(() => {
-				form.wg.done();
+				form.wgDone();
 			});
 	};
 
@@ -243,7 +255,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 		<Modal header={header} open={true} onClose={onCancel} warnOnClose={form.modified}>
 			{body}
 			<footer>
-				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+				<button disabled={form.wgCount > 0 || !form.valid} onClick={() => save()}>
 					<IconGroup>
 						<Icon name={"save"} />
 						<span>Save</span>

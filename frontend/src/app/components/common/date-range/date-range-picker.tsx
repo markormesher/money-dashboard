@@ -22,21 +22,13 @@ function DateRangePicker(props: DateRangePickerProps): ReactElement {
 	});
 	React.useEffect(() => form.setModel(dateRange), [dateRange, form.setModel]);
 
-	const [saveOnNextRender, setSaveOnNextRender] = React.useState(false);
-
 	const save = React.useCallback(() => {
-		if (form.wg.count > 0 || !form.valid || !form.model) {
+		if (form.wgCount > 0 || !form.valid || !form.model) {
 			return;
 		}
 
 		onSave(form.model);
 	}, [form, onSave]);
-
-	React.useEffect(() => {
-		if (saveOnNextRender) {
-			save();
-		}
-	}, [saveOnNextRender, save]);
 
 	useKeyShortcut(CTRLENTER, () => save());
 
@@ -50,13 +42,7 @@ function DateRangePicker(props: DateRangePickerProps): ReactElement {
 	const presetLinks = dateRangePresets.map((p) => {
 		return (
 			<li key={p[0]}>
-				<a
-					href={"#"}
-					onClick={() => {
-						setSaveOnNextRender(true);
-						form.patchModel(p[1]);
-					}}
-				>
+				<a href={"#"} onClick={() => onSave(p[1])}>
 					{p[0]}
 				</a>
 			</li>
@@ -104,7 +90,7 @@ function DateRangePicker(props: DateRangePickerProps): ReactElement {
 			{body}
 
 			<footer>
-				<button disabled={form.wg.count > 0 || !form.valid} onClick={() => save()}>
+				<button disabled={form.wgCount > 0 || !form.valid} onClick={() => save()}>
 					<IconGroup>
 						<Icon name={"save"} />
 						<span>Save</span>

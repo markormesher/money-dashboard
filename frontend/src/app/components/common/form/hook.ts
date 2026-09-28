@@ -1,6 +1,6 @@
 import React from "react";
 import { deepEqual } from "../../../utils/utils.js";
-import { useWaitGroup, type WaitGroup } from "../../../utils/hooks.js";
+import { useWaitGroup, type WaitGroupAdd, type WaitGroupDone } from "../../../utils/hooks.js";
 
 type ErrorKey<T> = "global" | Extract<keyof T, string>;
 
@@ -24,7 +24,9 @@ type FormState<T> = {
 
 	modified: boolean;
 
-	wg: WaitGroup;
+	wgCount: number;
+	wgAdd: WaitGroupAdd;
+	wgDone: WaitGroupDone;
 
 	fatalError: unknown;
 	setFatalError: (error: unknown) => void;
@@ -45,7 +47,7 @@ function useForm<T>(options: FormHookOptions<T> = {}): FormState<T> {
 
 	const [modified, setModified] = React.useState(false);
 	const [fatalError, setFatalError] = React.useState<unknown>();
-	const wg = useWaitGroup();
+	const [wgCount, wgAdd, wgDone] = useWaitGroup();
 
 	const setModel = (m: T | undefined) => {
 		setOriginalModel(m);
@@ -93,7 +95,9 @@ function useForm<T>(options: FormHookOptions<T> = {}): FormState<T> {
 		valid,
 		fieldError,
 		modified,
-		wg,
+		wgCount,
+		wgAdd,
+		wgDone,
 		fatalError,
 		setFatalError,
 	};

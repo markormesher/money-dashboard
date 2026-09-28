@@ -28,11 +28,11 @@ function Input<T>(props: InputProps<T>): ReactElement {
 	const labelAfterInput = props.type === "checkbox";
 
 	return (
-		<label aria-disabled={formState.wg.count > 0}>
+		<label aria-disabled={formState.wgCount > 0}>
 			{labelAfterInput ? null : label}
 			<input
 				name={fieldName}
-				disabled={formState.wg.count > 0}
+				disabled={formState.wgCount > 0}
 				aria-invalid={hasError && showError ? true : undefined}
 				onBlur={() => setLastModelIterationTouched(formState.modelIteration)}
 				autoComplete={"off"}
@@ -55,11 +55,11 @@ function Textarea<T>(props: TextareaProps<T>): ReactElement {
 	const showError = lastModelIterationTouched >= formState.modelIteration;
 
 	return (
-		<label aria-disabled={formState.wg.count > 0}>
+		<label aria-disabled={formState.wgCount > 0}>
 			{label}
 			<textarea
 				name={fieldName}
-				disabled={formState.wg.count > 0}
+				disabled={formState.wgCount > 0}
 				aria-invalid={hasError && showError ? true : undefined}
 				onBlur={() => setLastModelIterationTouched(formState.modelIteration)}
 				autoComplete={"off"}
@@ -84,11 +84,11 @@ function Select<T>(props: React.PropsWithChildren<SelectProps<T>>): ReactElement
 	const showError = lastModelIterationTouched >= formState.modelIteration;
 
 	return (
-		<label aria-disabled={formState.wg.count > 0}>
+		<label aria-disabled={formState.wgCount > 0}>
 			{label}
 			<select
 				name={fieldName}
-				disabled={formState.wg.count > 0}
+				disabled={formState.wgCount > 0}
 				aria-invalid={hasError && showError ? true : undefined}
 				onBlur={() => setLastModelIterationTouched(formState.modelIteration)}
 				autoComplete={"off"}
@@ -194,11 +194,11 @@ function SuggestionTextInput<T>(props: SuggestionTextInputProps<T>): ReactElemen
 	}
 
 	return (
-		<label aria-disabled={formState.wg.count > 0}>
+		<label aria-disabled={formState.wgCount > 0}>
 			{label}
 			<input
 				name={fieldName}
-				disabled={formState.wg.count > 0}
+				disabled={formState.wgCount > 0}
 				aria-invalid={hasError && showError ? true : undefined}
 				type={"text"}
 				autoComplete={"off"}

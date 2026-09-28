@@ -1,23 +1,13 @@
 import React from "react";
 
-type WaitGroup = {
-	count: number;
-	add: (qty?: number) => void;
-	done: (qty?: number) => void;
-};
+type WaitGroupAdd = () => void;
+type WaitGroupDone = () => void;
 
-function useWaitGroup(): WaitGroup {
+function useWaitGroup(): [number, WaitGroupAdd, WaitGroupDone] {
 	const [count, setCount] = React.useState(0);
-
-	const add = (qty?: number) => {
-		setCount((curr) => curr + (qty ?? 1));
-	};
-
-	const done = (qty?: number) => {
-		setCount((curr) => curr - (qty ?? 1));
-	};
-
-	return { count, add, done };
+	const add = React.useCallback(() => setCount((curr) => curr + 1), []);
+	const done = React.useCallback(() => setCount((curr) => curr - 1), []);
+	return [count, add, done];
 }
 
 function useNudge(): [number, () => void] {
@@ -38,4 +28,4 @@ function useFresh<T>(v: T): React.RefObject<T> {
 }
 
 export { useWaitGroup, useNudge, useFresh };
-export type { WaitGroup };
+export type { WaitGroupAdd, WaitGroupDone };

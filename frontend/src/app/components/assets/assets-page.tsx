@@ -33,26 +33,26 @@ function AssetsPage(): ReactElement {
 
 	const assets = useAssetList({
 		nudgeValue,
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load assets.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	const latestRates = useLatestRates({
 		nudgeValue,
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load latest asset rates.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	const historicAvgRates = useHistoricAverageRates({
 		nudgeValue,
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load historical average asset rates.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	const pageButtons = [
@@ -148,7 +148,7 @@ function AssetsPage(): ReactElement {
 					icon={"candlestick_chart"}
 					buttons={pageButtons}
 					options={pageOptions}
-					onSearchTextChange={(p) => setSearchPattern(p)}
+					onSearchTextChange={setSearchPattern}
 				/>
 				<section>{body}</section>
 				<hr />

@@ -25,10 +25,10 @@ function ProfilesPage(): ReactElement {
 	useKeyShortcut("c", () => setEditingId(NULL_UUID));
 
 	const profiles = useProfileList({
-		onError: (e) => {
+		onError: React.useCallback((e) => {
 			toastBus.error("Failed to load profiles.");
 			setError(e);
-		},
+		}, []),
 	});
 
 	const pageButtons = [
