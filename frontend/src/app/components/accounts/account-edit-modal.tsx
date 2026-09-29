@@ -36,7 +36,7 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
 				toastBus.error("Failed to load account groups.");
 				form.setFatalError(e);
 			},
-			[form],
+			[form.setFatalError],
 		),
 	});
 
@@ -71,7 +71,7 @@ function AccountEditModal(props: AccountEditModalProps): ReactElement {
 			.finally(() => {
 				form.wgDone();
 			});
-	}, [createNew, form, accountId]);
+	}, [createNew, form.wgAdd, form.wgDone, form.setFatalError, form.setModel, accountId]);
 
 	React.useEffect(() => {
 		if (form.wgCount === 0 && focusOnNextRender) {

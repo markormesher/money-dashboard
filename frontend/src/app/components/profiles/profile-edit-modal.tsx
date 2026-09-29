@@ -55,7 +55,7 @@ function ProfileEditModal(props: ProfileEditModalProps): ReactElement {
 			.finally(() => {
 				form.wgDone();
 			});
-	}, [createNew, form, profileId]);
+	}, [createNew, form.wgAdd, form.wgDone, form.setFatalError, form.setModel, profileId]);
 
 	React.useEffect(() => {
 		if (form.wgCount === 0 && focusOnNextRender) {

@@ -55,7 +55,7 @@ function AccountGroupEditModal(props: AccountGroupEditModalProps): ReactElement 
 			.finally(() => {
 				form.wgDone();
 			});
-	}, [createNew, form, accountGroupId]);
+	}, [createNew, form.wgAdd, form.wgDone, form.setModel, form.setFatalError, accountGroupId]);
 
 	React.useEffect(() => {
 		if (form.wgCount === 0 && focusOnNextRender) {

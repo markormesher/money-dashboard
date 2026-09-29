@@ -36,7 +36,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
 				toastBus.error("Failed to load currencies.");
 				form.setFatalError(e);
 			},
-			[form],
+			[form.setFatalError],
 		),
 	});
 
@@ -71,7 +71,7 @@ function AssetEditModal(props: AssetEditModalProps): ReactElement {
 			.finally(() => {
 				form.wgDone();
 			});
-	}, [createNew, form, assetId]);
+	}, [createNew, form.wgAdd, form.wgDone, form.setFatalError, form.setModel, assetId]);
 
 	React.useEffect(() => {
 		if (form.wgCount === 0 && focusOnNextRender) {
