@@ -198,7 +198,7 @@ importers:
         version: 14.0.2
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.5.14
+        specifier: 2.5.14
         version: 2.5.14
       '@bufbuild/buf':
         specifier: 1.73.0
