@@ -28,7 +28,7 @@ function DateRangePicker(props: DateRangePickerProps): ReactElement {
 		}
 
 		onSave(form.model);
-	}, [form, onSave]);
+	}, [form.wgCount, form.valid, form.model, onSave]);
 
 	useKeyShortcut(CTRLENTER, () => save());
 

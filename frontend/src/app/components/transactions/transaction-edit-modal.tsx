@@ -13,6 +13,7 @@ import { NULL_UUID } from "../../../config/consts.js";
 import { useCategoryList, useHoldingList, usePayeeList } from "../../schema/hooks.js";
 import { convertDateStrToProto, convertDateToProto, formatDateFromProto } from "../../utils/dates.js";
 import { CTRLENTER, useKeyShortcut } from "../common/key-shortcuts/key-shortcuts.js";
+import type { Holding } from "../../../api_gen/moneydashboard/v4/holdings_pb.js";
 
 type TransactionEditModalProps = {
 	transactionId: string;
@@ -27,8 +28,10 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 
 	const [focusOnNextRender, setFocusOnNextRender] = React.useState<string>();
 
+	// note: ref used to pass holdings to avoid cyclical loop
+	const holdingsRef = React.useRef<Holding[] | undefined>(null);
 	const form = useForm<Transaction>({
-		validator: (v) => validateTransaction(v, holdings ?? []),
+		validator: (v) => validateTransaction(v, holdingsRef.current ?? []),
 	});
 
 	const payees = usePayeeList({
@@ -40,7 +43,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 				toastBus.error("Failed to load payees.");
 				form.setFatalError(e);
 			},
-			[form],
+			[form.setFatalError],
 		),
 	});
 
@@ -52,9 +55,10 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 				toastBus.error("Failed to load holdings.");
 				form.setFatalError(e);
 			},
-			[form],
+			[form.setFatalError],
 		),
 	});
+	holdingsRef.current = holdings;
 
 	const categories = useCategoryList({
 		wgAdd: form.wgAdd,
@@ -64,21 +68,20 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 				toastBus.error("Failed to load categories.");
 				form.setFatalError(e);
 			},
-			[form],
+			[form.setFatalError],
 		),
 	});
 
-	const [holdingsPerAccount, setHoldingsPerAccount] = React.useState<Record<string, number>>();
-	React.useEffect(() => {
-		if (!holdings) {
-			return;
+	const holdingsPerAccount = React.useMemo<Record<string, number>>(() => {
+		const hpa: Record<string, number> = {};
+
+		if (holdings) {
+			holdings.forEach((h) => {
+				hpa[h.account?.id ?? ""] = (hpa[h.account?.id ?? ""] ?? 0) + 1;
+			});
 		}
 
-		const hpa: Record<string, number> = {};
-		holdings.forEach((h) => {
-			hpa[h.account?.id ?? ""] = (hpa[h.account?.id ?? ""] ?? 0) + 1;
-		});
-		setHoldingsPerAccount(hpa);
+		return hpa;
 	}, [holdings]);
 
 	React.useEffect(() => {
@@ -114,7 +117,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 			.finally(() => {
 				form.wgDone();
 			});
-	}, [createNew, form, transactionId]);
+	}, [createNew, form.wgAdd, form.wgDone, form.setModel, form.setFatalError, transactionId]);
 
 	React.useEffect(() => {
 		if (form.wgCount === 0 && focusOnNextRender) {

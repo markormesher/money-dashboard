@@ -83,7 +83,7 @@ function CategoryEditModal(props: CategoryEditModalProps): ReactElement {
 				form.setFatalError(e);
 				console.log(e);
 			});
-	}, [createNew, form, categoryId]);
+	}, [createNew, form.wgAdd, form.wgDone, form.setModel, form.setFatalError, categoryId]);
 
 	React.useEffect(() => {
 		if (form.wgCount === 0 && focusOnNextRender) {

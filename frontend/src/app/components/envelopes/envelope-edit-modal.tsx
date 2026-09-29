@@ -55,7 +55,7 @@ function EnvelopeEditModal(props: EnvelopeEditModalProps): ReactElement {
 			.finally(() => {
 				form.wgDone();
 			});
-	}, [createNew, form, envelopeId]);
+	}, [createNew, form.wgAdd, form.wgDone, form.setModel, form.setFatalError, envelopeId]);
 
 	React.useEffect(() => {
 		if (form.wgCount === 0 && focusOnNextRender) {

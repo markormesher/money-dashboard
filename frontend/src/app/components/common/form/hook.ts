@@ -39,23 +39,16 @@ function useForm<T>(options: FormHookOptions<T> = {}): FormState<T> {
 	const [modelIteration, setModelIteration] = React.useState(0);
 	const [model, setModelInner] = React.useState<T>();
 
-	const [validationResult, setValidationResult] = React.useState<FormValidationResult<T>>({
-		isValid: false,
-		errors: {},
-	});
-	const [valid, setValid] = React.useState(false);
-
-	const [modified, setModified] = React.useState(false);
 	const [fatalError, setFatalError] = React.useState<unknown>();
 	const [wgCount, wgAdd, wgDone] = useWaitGroup();
 
-	const setModel = (m: T | undefined) => {
+	const setModel = React.useCallback((m: T | undefined) => {
 		setOriginalModel(m);
 		setModelIteration((curr) => curr + 1);
 		setModelInner(m);
-	};
+	}, []);
 
-	const patchModel = (m: Partial<T>) => {
+	const patchModel = React.useCallback((m: Partial<T>) => {
 		setModelInner((curr) => {
 			if (!curr) {
 				console.warn("Cannot patch model when the initial model has not been set");
@@ -64,24 +57,16 @@ function useForm<T>(options: FormHookOptions<T> = {}): FormState<T> {
 
 			return { ...curr, ...m };
 		});
-	};
+	}, []);
 
-	React.useEffect(() => {
-		setModified(!deepEqual(model, originalModel));
-	}, [model, originalModel]);
+	const validationResult = React.useMemo<FormValidationResult<T>>(
+		() => (validator && model ? validator(model) : { isValid: true, errors: {} }),
+		[validator, model],
+	);
 
-	React.useEffect(() => {
-		if (validator && model) {
-			setValidationResult(validator(model));
-		} else {
-			setValidationResult({ isValid: true, errors: {} });
-		}
-		setModified(!deepEqual(model, originalModel));
-	}, [model, validator, originalModel]);
+	const modified = React.useMemo(() => !deepEqual(model, originalModel), [model, originalModel]);
 
-	React.useEffect(() => {
-		setValid(validationResult.isValid);
-	}, [validationResult]);
+	const valid = validationResult.isValid;
 
 	const fieldError = (key: ErrorKey<T>) => {
 		return validationResult.errors[key];

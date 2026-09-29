@@ -57,7 +57,7 @@ function CurrencyEditModal(props: CurrencyEditModalProps): ReactElement {
 			.finally(() => {
 				form.wgDone();
 			});
-	}, [createNew, form, currencyId]);
+	}, [createNew, form.wgAdd, form.wgDone, form.setModel, form.setFatalError, currencyId]);
 
 	React.useEffect(() => {
 		if (form.wgCount === 0 && focusOnNextRender) {

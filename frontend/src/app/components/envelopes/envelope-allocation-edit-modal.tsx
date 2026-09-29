@@ -37,7 +37,7 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 				toastBus.error("Failed to load categories.");
 				form.setFatalError(e);
 			},
-			[form],
+			[form.setFatalError],
 		),
 	});
 
@@ -49,7 +49,7 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 				toastBus.error("Failed to load envelopes.");
 				form.setFatalError(e);
 			},
-			[form],
+			[form.setFatalError],
 		),
 	});
 
@@ -80,7 +80,7 @@ function EnvelopeAllocationEditModal(props: EnvelopeAllocationEditModalProps): R
 			.finally(() => {
 				form.wgDone();
 			});
-	}, [createNew, form, envelopeAllocationId]);
+	}, [createNew, form.wgAdd, form.wgDone, form.setModel, form.setFatalError, envelopeAllocationId]);
 
 	React.useEffect(() => {
 		if (form.wgCount === 0 && focusOnNextRender) {

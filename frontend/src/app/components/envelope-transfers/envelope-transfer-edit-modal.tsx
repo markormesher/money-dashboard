@@ -37,7 +37,7 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
 				toastBus.error("Failed to load envelopes.");
 				form.setFatalError(e);
 			},
-			[form],
+			[form.setFatalError],
 		),
 	});
 
@@ -70,7 +70,7 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
 			.finally(() => {
 				form.wgDone();
 			});
-	}, [createNew, form, envelopeTransferId]);
+	}, [createNew, form.wgAdd, form.wgDone, form.setModel, form.setFatalError, envelopeTransferId]);
 
 	React.useEffect(() => {
 		if (form.wgCount === 0 && focusOnNextRender) {

@@ -36,7 +36,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 				toastBus.error("Failed to load accounts.");
 				form.setFatalError(e);
 			},
-			[form],
+			[form.setFatalError],
 		),
 	});
 
@@ -48,7 +48,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 				toastBus.error("Failed to load assets.");
 				form.setFatalError(e);
 			},
-			[form],
+			[form.setFatalError],
 		),
 	});
 
@@ -60,7 +60,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 				toastBus.error("Failed to load currencies.");
 				form.setFatalError(e);
 			},
-			[form],
+			[form.setFatalError],
 		),
 	});
 
@@ -97,7 +97,7 @@ function HoldingEditModal(props: HoldingEditModalProps): ReactElement {
 			.finally(() => {
 				form.wgDone();
 			});
-	}, [createNew, form, holdingId]);
+	}, [createNew, form.wgAdd, form.wgDone, form.setModel, form.setFatalError, holdingId]);
 
 	React.useEffect(() => {
 		if (form.wgCount === 0 && focusOnNextRender) {
