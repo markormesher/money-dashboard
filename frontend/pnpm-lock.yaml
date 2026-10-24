@@ -180,7 +180,7 @@ importers:
         version: 2.1.1
       chart.js:
         specifier: ^4.4.9
-        version: 4.5.1
+        version: 4.6.1
       material-symbols:
         specifier: ^0.48.0
         version: 0.48.1
@@ -189,7 +189,7 @@ importers:
         version: 19.3.1
       react-chartjs-2:
         specifier: ^5.3.0
-        version: 5.3.1(chart.js@4.5.1)(react@19.3.1)
+        version: 5.3.1(chart.js@4.6.1)(react@19.3.1)
       react-dom:
         specifier: ^19.0.0
         version: 19.3.1(react@19.3.1)
@@ -619,8 +619,8 @@ packages:
     resolution: {integrity: sha512-zlOQ80VrQ2Ue+ymH5OuM/DlDq64mEm+B9UTdHULv5osUMD6HalNTblf2b1u/m6QecjsnOkBpqVZ+XPwIVsy7Ng==}
     engines: {node: '>=12.13'}
 
-  chart.js@4.5.1:
-    resolution: {integrity: sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==}
+  chart.js@4.6.1:
+    resolution: {integrity: sha512-hJyniucsFmq//EvXYvJ6c6mahPoI3kaxdjVH8awTaJ/fDNWeSqqqArixMJWkWNN6fcYvPU3HneSANFNYtRi61g==}
     engines: {pnpm: '>=8'}
 
   csstype@3.2.3:
@@ -1091,7 +1091,7 @@ snapshots:
 
   case-anything@2.1.13: {}
 
-  chart.js@4.5.1:
+  chart.js@4.6.1:
     dependencies:
       '@kurkle/color': 0.3.4
 
@@ -1181,9 +1181,9 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.2
 
-  react-chartjs-2@5.3.1(chart.js@4.5.1)(react@19.3.1):
+  react-chartjs-2@5.3.1(chart.js@4.6.1)(react@19.3.1):
     dependencies:
-      chart.js: 4.5.1
+      chart.js: 4.6.1
       react: 19.3.1
 
   react-dom@19.3.1(react@19.3.1):
