@@ -53,7 +53,7 @@ const toastBus = (() => {
 })();
 
 function Toaster(): ReactElement {
-	const [_renderToken, setRenderToken] = React.useState(0);
+	const [renderToken, setRenderToken] = React.useState(0);
 	const [toasts, setToasts] = React.useState<Toast[]>([]);
 
 	// toast listener
@@ -68,6 +68,8 @@ function Toaster(): ReactElement {
 	// toast reaper + re-render
 	// this is used to avoid any effects running when there are no toasts to care about
 	React.useEffect(() => {
+		void renderToken;
+
 		// remove toasts that are past expiry + animation grace
 		const nowTs = Date.now();
 		setToasts((curr) => curr.filter((t) => t.expiryTs + animationGraceMs >= nowTs));
@@ -83,7 +85,7 @@ function Toaster(): ReactElement {
 				clearTimeout(t);
 			}
 		};
-	}, [toasts.length]);
+	}, [toasts.length, renderToken]);
 
 	const toastOutput: ReactElement[] = [];
 	let toastsVisible = 0;
