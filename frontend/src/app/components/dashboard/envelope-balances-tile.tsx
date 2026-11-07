@@ -43,6 +43,7 @@ function EnvelopeBalancesTile(): ReactElement | null {
 
 	envelopeBalances
 		.filter((b) => b.envelope?.id !== NULL_UUID)
+		.filter((b) => b.envelope?.active === true)
 		.sort((a, b) => a.envelope?.name.localeCompare(b.envelope?.name ?? "") ?? 0)
 		.forEach((balance) => {
 			balances.push(
