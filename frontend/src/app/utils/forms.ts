@@ -3,7 +3,7 @@ function safeParseFloat(v: string | undefined): number | undefined {
 		return undefined;
 	}
 
-	const clean = v.replaceAll(/[^0-9.,-]/, "");
+	const clean = v.replaceAll(/[^0-9.,-]/g, "");
 	return parseFloat(clean);
 }
 
