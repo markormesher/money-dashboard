@@ -4,7 +4,7 @@ import { Icon, IconGroup } from "../common/icon/icon.js";
 import type { Transaction } from "../../../api_gen/moneydashboard/v4/transactions_pb.js";
 import { transactionServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
-import { focusFieldByName, safeNumberValue } from "../../utils/forms.js";
+import { focusFieldByName, safeNumberValue, safeParseFloat } from "../../utils/forms.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { validateTransaction } from "../../schema/validation.js";
 import { Input, Select, SuggestionTextInput, Textarea } from "../common/form/inputs.js";
@@ -259,10 +259,9 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 						label={"Amount"}
 						formState={form}
 						fieldName={"amount"}
-						type={"number"}
-						step={0.01}
+						inputMode={"decimal"}
 						value={safeNumberValue(form.model?.amount)}
-						onChange={(evt) => form.patchModel({ amount: parseFloat(evt.target.value) })}
+						onChange={(evt) => form.patchModel({ amount: safeParseFloat(evt.target.value) })}
 					/>
 				</fieldset>
 
@@ -272,10 +271,9 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 							label={"Unit Value"}
 							formState={form}
 							fieldName={"unitValue"}
-							type={"number"}
-							step={0.0001}
+							inputMode={"decimal"}
 							value={safeNumberValue(form.model?.unitValue)}
-							onChange={(evt) => form.patchModel({ unitValue: parseFloat(evt.target.value) })}
+							onChange={(evt) => form.patchModel({ unitValue: safeParseFloat(evt.target.value) })}
 						/>
 
 						<IconGroup>
