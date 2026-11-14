@@ -259,9 +259,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 						label={"Amount"}
 						formState={form}
 						fieldName={"amount"}
-						type={"number"}
 						inputMode={"decimal"}
-						step={0.01}
 						value={safeNumberValue(form.model?.amount)}
 						onChange={(evt) => form.patchModel({ amount: safeParseFloat(evt.target.value) })}
 					/>
@@ -273,9 +271,7 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 							label={"Unit Value"}
 							formState={form}
 							fieldName={"unitValue"}
-							type={"number"}
 							inputMode={"decimal"}
-							step={0.0001}
 							value={safeNumberValue(form.model?.unitValue)}
 							onChange={(evt) => form.patchModel({ unitValue: safeParseFloat(evt.target.value) })}
 						/>
