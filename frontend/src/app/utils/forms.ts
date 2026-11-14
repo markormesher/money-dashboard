@@ -4,7 +4,11 @@ function safeParseFloat(v: string | undefined): number | undefined {
 	}
 
 	const clean = v.replaceAll(/[^0-9.,-]/g, "");
-	return parseFloat(clean);
+	const out = parseFloat(clean);
+
+	console.log(`${v} => ${clean} => ${out}`);
+
+	return out;
 }
 
 function safeNumberValue(v: number | undefined): number | string {
