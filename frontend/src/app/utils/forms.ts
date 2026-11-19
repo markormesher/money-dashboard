@@ -1,14 +1,3 @@
-function safeParseFloat(v: string | undefined): number | undefined {
-	if (!v) {
-		return undefined;
-	}
-
-	const clean = v.replaceAll(/[^0-9.,-]/g, "");
-	const out = parseFloat(clean);
-
-	return Number.isNaN(out) ? undefined : out;
-}
-
 function safeNumberValue(v: number | undefined): number | string {
 	if (v !== undefined && !Number.isNaN(v)) {
 		return v;
@@ -24,4 +13,4 @@ function focusFieldByName(name: string): void {
 	}, 100);
 }
 
-export { safeNumberValue, safeParseFloat, focusFieldByName };
+export { safeNumberValue, focusFieldByName };
