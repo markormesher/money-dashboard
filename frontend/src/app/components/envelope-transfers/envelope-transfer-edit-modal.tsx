@@ -3,10 +3,10 @@ import { Modal } from "../common/modal/modal.js";
 import { Icon, IconGroup } from "../common/icon/icon.js";
 import { envelopeTransferServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
-import { focusFieldByName, safeNumberValue } from "../../utils/forms.js";
+import { focusFieldByName } from "../../utils/forms.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { validateEnvelopeTransfer } from "../../schema/validation.js";
-import { Input, Select, Textarea } from "../common/form/inputs.js";
+import { DecimalInput, Input, Select, Textarea } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { useEnvelopeList } from "../../schema/hooks.js";
@@ -130,14 +130,12 @@ function EnvelopeTransferEditModal(props: EnvelopeTransferEditModalProps): React
 						}
 					/>
 
-					<Input
+					<DecimalInput
 						label={"Amount"}
 						formState={form}
 						fieldName={"amount"}
-						type={"number"}
-						step={0.01}
-						value={safeNumberValue(form.model?.amount)}
-						onChange={(evt) => form.patchModel({ amount: parseFloat(evt.target.value) })}
+						value={form.model?.amount}
+						onChange={(val) => form.patchModel({ amount: val })}
 					/>
 				</fieldset>
 

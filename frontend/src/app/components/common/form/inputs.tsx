@@ -287,4 +287,59 @@ function fuzzyScore(candidate: string, search: string): number {
 	return score;
 }
 
-export { Input, Textarea, Select, SuggestionTextInput };
+type DecimalInputProps<T> = FormInputProps<T> &
+	Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "onChange"> & {
+		value: number | undefined;
+		onChange: (value: number | undefined) => void;
+	};
+
+function DecimalInput<T>(props: DecimalInputProps<T>): ReactElement {
+	const { label, formState, fieldName, value, onChange, ...rest } = props;
+	const [lastModelIterationTouched, setLastModelIterationTouched] = React.useState(-1);
+	const [localValue, setLocalValue] = React.useState<string>(
+		value !== undefined && value !== null && !Number.isNaN(value) ? String(value) : "",
+	);
+	const [isFocused, setIsFocused] = React.useState(false);
+
+	const error = formState.fieldError(fieldName);
+	const hasError = !!error;
+	const showError = lastModelIterationTouched >= formState.modelIteration;
+
+	React.useEffect(() => {
+		if (!isFocused) {
+			setLocalValue(value !== undefined && value !== null && !Number.isNaN(value) ? String(value) : "");
+		}
+	}, [value, isFocused]);
+
+	return (
+		<label aria-disabled={formState.wgCount > 0}>
+			{label}
+			<input
+				name={fieldName}
+				disabled={formState.wgCount > 0}
+				aria-invalid={hasError && showError ? true : undefined}
+				type={"text"}
+				inputMode={"decimal"}
+				autoComplete={"off"}
+				value={localValue}
+				onFocus={() => setIsFocused(true)}
+				onChange={(evt) => {
+					const raw = evt.target.value;
+					const clean = raw.replaceAll(/[^0-9.,-]/g, "");
+					setLocalValue(clean);
+					const parsed = parseFloat(clean);
+					onChange(Number.isNaN(parsed) ? undefined : parsed);
+				}}
+				onBlur={(evt) => {
+					setIsFocused(false);
+					setLastModelIterationTouched(formState.modelIteration);
+					rest.onBlur?.(evt);
+				}}
+				{...rest}
+			/>
+			{hasError && showError ? <small>{error}</small> : null}
+		</label>
+	);
+}
+
+export { Input, Textarea, Select, SuggestionTextInput, DecimalInput };
