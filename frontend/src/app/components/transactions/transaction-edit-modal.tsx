@@ -4,10 +4,10 @@ import { Icon, IconGroup } from "../common/icon/icon.js";
 import type { Transaction } from "../../../api_gen/moneydashboard/v4/transactions_pb.js";
 import { transactionServiceClient } from "../../../api/api.js";
 import { toastBus } from "../toaster/toaster.js";
-import { focusFieldByName, safeNumberValue, safeParseFloat } from "../../utils/forms.js";
+import { focusFieldByName } from "../../utils/forms.js";
 import { ErrorPanel } from "../common/error/error.js";
 import { validateTransaction } from "../../schema/validation.js";
-import { Input, Select, SuggestionTextInput, Textarea } from "../common/form/inputs.js";
+import { DecimalInput, Input, Select, SuggestionTextInput, Textarea } from "../common/form/inputs.js";
 import { useForm } from "../common/form/hook.js";
 import { NULL_UUID } from "../../../config/consts.js";
 import { useCategoryList, useHoldingList, usePayeeList } from "../../schema/hooks.js";
@@ -255,25 +255,23 @@ function TransactionEditModal(props: TransactionEditModalProps): ReactElement {
 							))}
 					</Select>
 
-					<Input
+					<DecimalInput
 						label={"Amount"}
 						formState={form}
 						fieldName={"amount"}
-						inputMode={"decimal"}
-						value={safeNumberValue(form.model?.amount)}
-						onChange={(evt) => form.patchModel({ amount: safeParseFloat(evt.target.value) })}
+						value={form.model?.amount}
+						onChange={(val) => form.patchModel({ amount: val })}
 					/>
 				</fieldset>
 
 				{form.model?.category?.isCapitalEvent && form.model.holding?.asset ? (
 					<fieldset className={"grid"}>
-						<Input
+						<DecimalInput
 							label={"Unit Value"}
 							formState={form}
 							fieldName={"unitValue"}
-							inputMode={"decimal"}
-							value={safeNumberValue(form.model?.unitValue)}
-							onChange={(evt) => form.patchModel({ unitValue: safeParseFloat(evt.target.value) })}
+							value={form.model?.unitValue}
+							onChange={(val) => form.patchModel({ unitValue: val })}
 						/>
 
 						<IconGroup>

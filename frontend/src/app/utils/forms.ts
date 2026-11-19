@@ -6,9 +6,7 @@ function safeParseFloat(v: string | undefined): number | undefined {
 	const clean = v.replaceAll(/[^0-9.,-]/g, "");
 	const out = parseFloat(clean);
 
-	console.log(`${v} => ${clean} => ${out}`);
-
-	return out;
+	return Number.isNaN(out) ? undefined : out;
 }
 
 function safeNumberValue(v: number | undefined): number | string {
