@@ -226,8 +226,8 @@ importers:
         specifier: 2.17.0
         version: 2.17.0(@bufbuild/protobuf@2.17.0)
       '@markormesher/biome-config':
-        specifier: github:markormesher/biome-config#semver:v0.3.13
-        version: https://codeload.github.com/markormesher/biome-config/tar.gz/4cb132081679142511dcf62a079429199d3291ea
+        specifier: github:markormesher/biome-config#semver:v0.3.14
+        version: https://codeload.github.com/markormesher/biome-config/tar.gz/2c647b244854cecbd9aace6ed72a0f8d05b2e62b
       '@tsconfig/strictest':
         specifier: 2.0.9
         version: 2.0.9
@@ -407,8 +407,8 @@ packages:
   '@kurkle/color@0.3.4':
     resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
-  '@markormesher/biome-config@https://codeload.github.com/markormesher/biome-config/tar.gz/4cb132081679142511dcf62a079429199d3291ea':
-    resolution: {gitHosted: true, integrity: sha512-nPiS0n/HpCivYYKrDaSD144TU6jjU/XdLs0HHc23jKkkI9iOowP9smwT30EcnZp62O3RLWdsWqoZaqUuQmMxXw==, tarball: https://codeload.github.com/markormesher/biome-config/tar.gz/4cb132081679142511dcf62a079429199d3291ea}
+  '@markormesher/biome-config@https://codeload.github.com/markormesher/biome-config/tar.gz/2c647b244854cecbd9aace6ed72a0f8d05b2e62b':
+    resolution: {gitHosted: true, integrity: sha512-e/agnj9NWqbdY6XjPkrybRE4vf4dlse14XyPw0vMvaPWkDNG/Iz4Rz3v3sNMJuN2NgTTS7/FUV8oiR/EnMHrPA==, tarball: https://codeload.github.com/markormesher/biome-config/tar.gz/2c647b244854cecbd9aace6ed72a0f8d05b2e62b}
     version: 0.0.0
 
   '@napi-rs/wasm-runtime@1.2.6':
@@ -1037,7 +1037,7 @@ snapshots:
 
   '@kurkle/color@0.3.4': {}
 
-  '@markormesher/biome-config@https://codeload.github.com/markormesher/biome-config/tar.gz/4cb132081679142511dcf62a079429199d3291ea': {}
+  '@markormesher/biome-config@https://codeload.github.com/markormesher/biome-config/tar.gz/2c647b244854cecbd9aace6ed72a0f8d05b2e62b': {}
 
   '@napi-rs/wasm-runtime@1.2.6(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)':
     dependencies:
